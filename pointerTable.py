@@ -1,0 +1,124 @@
+import copy
+
+
+class PointerTable:
+    END_OF_DATA = (0xff, )
+
+    """
+        Class to manage a list of pointers to data objects
+        Can rewrite the rom to modify the data objects and still keep the pointers intact.
+    """
+    def __init__(self, rom, info):
+        assert "count" in info
+        assert "pointers_bank" in info
+        assert "pointers_addr" in info
+        assert ("banks_bank" in info and "banks_addr" in info) or ("data_bank" in info)
+        self.__info = info
+
+        self.__data = []
+        self.__banks = []
+        self.__storage = []
+
+        count = info["count"]
+        addr = info["pointers_addr"]
+        pointers_raw = rom.banks[info["pointers_bank"]][addr:addr+count*2]
+        if "data_bank" in info:
+            banks = [info["data_bank"]] * count
+        else:
+            addr = info["banks_addr"]
+            banks = rom.banks[info["banks_bank"]][addr:addr+count]
+
+        for n in range(count):
+            bank = banks[n] & 0x3f
+            pointer = pointers_raw[n*2] | pointers_raw[n*2+1] << 8
+            pointer &= 0x3fff
+            self.__data.append(self._readData(rom, bank, pointer))
+            self.__banks.append(bank)
+
+        while self.__mergeStorage():
+            pass
+
+        for s in self.__storage:
+            print(self.__class__.__name__, s)
+
+    def __setitem__(self, item, value):
+        self.__data[item] = value
+
+    def __getitem__(self, item):
+        return self.__data[item]
+
+    def store(self, rom):
+        pointers = []
+        banks = []
+        storage = copy.deepcopy(self.__storage)
+
+        pointers_bank = self.__info["pointers_bank"]
+        pointers_addr = self.__info["pointers_addr"]
+        if "banks_bank" in self.__info:
+            banks_bank = self.__info["banks_bank"]
+            banks_addr = self.__info["banks_addr"]
+        else:
+            banks_bank = None
+            banks_addr = None
+
+        done = {}
+        for n, s in enumerate(self.__data):
+            s = bytes(s)
+            if s in done:
+                bank, pointer = done[s]
+            else:
+                my_storage = None
+                for st in storage:
+                    if st["end"] - st["start"] >= len(s) and st["bank"] == self.__banks[n]:
+                        my_storage = st
+                        break
+                assert my_storage is not None, "Not enough room in storage..."
+
+                pointer = my_storage["start"]
+                bank = my_storage["bank"]
+                my_storage["start"] = pointer + len(s)
+                rom.banks[bank][pointer:pointer+len(s)] = s
+
+                done[s] = (bank, pointer)
+
+            pointers.append(pointer)
+            banks.append(bank)
+
+            if banks_bank is not None:
+                rom.banks[banks_bank][banks_addr+n] = bank | (rom.banks[banks_bank][banks_addr+n] & 0x80)
+            rom.banks[pointers_bank][pointers_addr+n*2] = pointer & 0xff
+            rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
+
+        space_left = sum(map(lambda n: n["end"] - n["start"], storage))
+        print(self.__class__.__name__, "Space left:", space_left)
+
+    def _readData(self, rom, bank_nr, pointer):
+        bank = rom.banks[bank_nr]
+        start = pointer
+        while bank[pointer] not in self.END_OF_DATA:
+            pointer += 1
+        pointer += 1
+        self._addStorage(bank_nr, start, pointer)
+        return bank[start:pointer]
+
+    def _addStorage(self, bank, start, end):
+        for n, data in enumerate(self.__storage):
+            if data["bank"] == bank:
+                if data["start"] == end:
+                    data["start"] = start
+                    return
+                if data["end"] == start:
+                    data["end"] = end
+                    return
+                if data["start"] <= start and data["end"] >= end:
+                    return
+        self.__storage.append({"bank": bank, "start": start, "end": end})
+
+    def __mergeStorage(self):
+        for n in range(len(self.__storage)):
+            for m in range(len(self.__storage)):
+                if n != m and (self.__storage[n]["end"] == self.__storage[m]["start"] or self.__storage[n]["end"] == self.__storage[m]["start"] - 1):
+                    self.__storage[n]["end"] = self.__storage[m]["end"]
+                    self.__storage.pop(m)
+                    return True
+        return False
