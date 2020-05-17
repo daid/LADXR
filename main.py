@@ -167,7 +167,6 @@ if __name__ == "__main__":
             except randomizer.Error:
                 print("Failed, trying again.")
 
-    rom.patch(7, 0x3F1D, "3E30", "3E2F")
     #rom.patch(0, 0x0003, "00", "01") # DEBUG SAVE PATCH
 
     rom.texts.store(rom)
