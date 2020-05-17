@@ -1,10 +1,15 @@
-from . import overworld
-from . import dungeon1
-from . import dungeon2
-from . import dungeon3
-from location import AND, OR
+from .beachSword import BeachSword
+from .chest import Chest, DungeonChest
+from .droppedKey import DroppedKey
+from .flyingKey import FlyingKey
+from .shop import ShopItem
+from .startItem import StartItem
+from .toadstool import Toadstool
+from .witch import Witch
+from .goldLeaf import GoldLeaf, SlimeKey
+from .boomerangGuy import BoomerangGuy
+from .anglerKey import AnglerKey
+from .hookshot import HookshotDrop
 
-dungeon1.entrance.connect(overworld.start, "TAIL_KEY")
-dungeon2.entrance.connect(overworld.swamp, "FEATHER")  # TODO: requires saving chomp
-dungeon3.entrance.connect(overworld.center_area, AND("SLIME_KEY", OR("FLIPPERS", "FEATHER")))
-start = overworld.start
+from .location import Location
+from .items import *

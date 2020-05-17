@@ -30,8 +30,12 @@ def ASM(code):
         if line.endswith(":"):
             label[line[:-1]] = len(result)
         elif len(line) > 0:
-            mnemonic, params = line.split(" ", 1)
-            params = list(map(str.strip, params.split(",")))
+            if " " in line:
+                mnemonic, params = line.split(" ", 1)
+                params = list(map(str.strip, params.split(",")))
+            else:
+                mnemonic = line
+                params = []
             if mnemonic == "NOP":
                 assert len(params) == 0
                 result.append(0x00)
@@ -47,9 +51,14 @@ def ASM(code):
                 if len(params) == 2:
                     result.append(0x20 | FLAGS[params[0]])
                     params.pop(0)
+                else:
+                    result.append(0x18)
                 assert len(params) == 1
-                link[len(result)] = params[0]
-                result.append(0)
+                if params[0].startswith("$"):
+                    result.append(toByte(params[0]))
+                else:
+                    link[len(result)] = params[0]
+                    result.append(0)
             elif mnemonic == "PUSH":
                 assert len(params) == 1
                 if params[0] == "BC":
@@ -131,6 +140,23 @@ def ASM(code):
                     result.append(0x33)
                 else:
                     raise RuntimeError("Cannot ASM: %s" % (line))
+            elif mnemonic == "LDH":
+                assert len(params) == 2
+                if params[0] == "A" and params[1].startswith("[") and params[1].endswith("]"):
+                    result.append(0xF0)
+                    result.append(toByte(params[1][1:-1]))
+                elif params[1] == "A" and params[0].startswith("[") and params[0].endswith("]"):
+                    result.append(0xE0)
+                    result.append(toByte(params[0][1:-1]))
+                else:
+                    raise RuntimeError("Cannot ASM: %s" % (line))
+            elif mnemonic == "BIT":
+                assert len(params) == 2
+                reg = REGS[params[1]]
+                bit = int(params[0])
+                assert bit >= 0 and bit < 8
+                result.append(0xCB)
+                result.append(0x40 | reg | (bit << 3))
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
     for offset, target in link.items():

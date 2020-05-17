@@ -1,4 +1,5 @@
-import location
+from logic import AND, OR, COUNT
+import locations.location
 
 class Explorer:
     def __init__(self):
@@ -82,13 +83,13 @@ class Explorer:
     def _processRequirement(self, req, func):
         if isinstance(req, str):
             return func(req)
-        elif isinstance(req, location.AND):
+        elif isinstance(req, AND):
             if all(map(lambda r: self._processRequirement(r, func), req)):
                 return True
-        elif isinstance(req, location.OR):
+        elif isinstance(req, OR):
             if any(map(lambda r: self._processRequirement(r, func), req)):
                 return True
-        elif isinstance(req, location.COUNT):
+        elif isinstance(req, COUNT):
             return self.__inventory.get(req.item, 0) >= req.amount
         else:
             raise RuntimeError("Unknown connection requirement: %s" % (req, ))
@@ -103,7 +104,7 @@ class Explorer:
 
     def dump(self):
         failed = 0
-        for loc in location.Location.all:
+        for loc in locations.location.Location.all:
             if loc not in self.__visited:
                 failed += 1
         for loc in self.__visited:
@@ -111,4 +112,4 @@ class Explorer:
                 if target not in self.__visited:
                     print("Missing:", req)
         print(self.__inventory)
-        print("Cannot reach: %s locations" % (failed))
+        print("Cannot reach: %d locations" % (failed))

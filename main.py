@@ -1,9 +1,13 @@
-import location
 from rom import ROM
 from pointerTable import PointerTable
+from assembler import ASM
 import randomizer
-from roomEditor import RoomEditor
 import patches.core
+import patches.bowwow
+import patches.desert
+import locations.itemInfo
+import explorer
+import logic
 
 
 class Texts(PointerTable):
@@ -112,6 +116,10 @@ if __name__ == "__main__":
 
     patches.core.noSwordMusic(rom)
     patches.core.chestForSword(rom)
+    patches.core.removeGhost(rom)
+    patches.core.removeBirdKeyDrop(rom)
+    patches.bowwow.neverGetBowwow(rom)
+    patches.desert.desertAccess(rom)
 
     # Always have the boomerang trade guy enabled.
     rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy
@@ -121,34 +129,18 @@ if __name__ == "__main__":
     # Note, this gives quite a bit of room for possible custom code to be located instead of the owl code.
     rom.patch(6, 0x27F7, "79EA01C5", "C9000000")
 
-    ### BowWow patches
-    rom.patch(0x03, 0x1DFE, "EA56DB", "000000") # Do not mark BowWow as kidnapped after we complete dungeon 1.
-    rom.patch(0x15, 0x06B6, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the moblin boss
-    rom.patch(0x03, 0x1824, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the cave moblins
-    rom.patch(0x07, 0x3983, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the cave moblin with sword
-    # TODO: Do something at the end of the bowwow cave, maybe place a chest there?
-
-    # Basic patch to have the swamp flowers delete themselves directly.
-    #  Could also patch to jump to the code area of the owl, and have some custom condition coded there.
-    #  Which is why we didn't just delete the entities from the rooms.
-    rom.patch(0x20, 0x7C * 3, "B56206", "843f00")
-    rom.patch(0x20, 0x7e * 3, "FE6306", "843f00")
-
-    ## Ghost patch
-    rom.patch(0x03, 0x1E0A, "EA79DB", "000000")  # Do not have the ghost follow you after dungeon 4
-
     ## Monkey bridge patch
-    rom.patch(0x00, 0x3334, "CB632805", "00000000")  # Do not have the ghost follow you after dungeon 4
+    rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), ASM("nop\nnop\nnop\nnop"))
 
-    # Remove low health beep
-    #rom.patch(2,  0x233D, "3604", "0000")
+    # Remove low health beep (remove loading the SFX)
+    rom.patch(2,  0x235b, ASM("ld hl, $FFF3\nld [hl], $04"), ASM("nop\nnop\nnop\nnop\nnop"))
 
     # Never allow stealing (always acts as if you do not have a sword)
     #rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
     # Always allow stealing (even without a sword)
     rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
-    # Into text from Marin. Gota go fast, so less text.
+    # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
     rom.texts[0x01] = b"Let^sa go!\xff"
 
     # Reduce length of a bunch of common texts
@@ -157,14 +149,25 @@ if __name__ == "__main__":
     rom.texts[0xEC] = rom.texts[0xEA]
     rom.texts[0x08] = b"You got a Piece " + b"of Power!\xff"
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
+    rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    while True:
-        try:
-            randomizer.Randomizer(rom)
-            break
-        except randomizer.Error:
-            print("Failed, trying again.")
+    test_logic = False
+    if test_logic:
+        for ii in locations.itemInfo.ItemInfo.all:
+            ii.item = ii.read(rom)
+            ii.patch(rom, ii.item)
+        e = explorer.Explorer()
+        e.visit(logic.start)
+        e.dump()
+    else:
+        while True:
+            try:
+                randomizer.Randomizer(rom)
+                break
+            except randomizer.Error:
+                print("Failed, trying again.")
 
+    rom.patch(7, 0x3F1D, "3E30", "3E2F")
     #rom.patch(0, 0x0003, "00", "01") # DEBUG SAVE PATCH
 
     rom.texts.store(rom)

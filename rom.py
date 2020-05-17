@@ -15,7 +15,7 @@ class ROM:
     def patch(self, bank_nr, addr, old, new):
         old = h2b(old)
         new = h2b(new)
-        assert len(old) == len(new), "Length mismatch: %d != %d" % (len(old), len(new))
+        assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
         assert addr >= 0 and addr + len(old) <= 16*1024
         bank = self.banks[bank_nr]
         if bank[addr:addr+len(old)] != old:

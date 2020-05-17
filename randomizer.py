@@ -1,6 +1,6 @@
-import location
+from locations import location
 import explorer
-import locations
+import logic
 import random
 
 
@@ -77,7 +77,7 @@ class Randomizer:
         for item_pool_item, count in self.item_pool.items():
             for n in range(count):
                 e.addItem(item_pool_item)
-        e.visit(locations.start)
+        e.visit(logic.start)
 
         if len(e.getAvailableLocations()) != len(location.Location.all) or not self.canStillPlaceItemPool():
             spot.item = None
