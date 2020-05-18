@@ -28,8 +28,8 @@ class ROM:
             assert False, "Patch mismatch: %s != %s at 0x%04x" % (b2h(bank[addr:addr+len(old)]), b2h(old), addr)
         bank[addr:addr+len(old)] = new
 
-    def save(self, filename):
-        f = open(filename, "wb")
+    def fixHeader():
+        # zero out the checksum before calculating it.
         self.banks[0][0x14E] = 0
         self.banks[0][0x14F] = 0
         checksum = 0
@@ -37,6 +37,10 @@ class ROM:
             checksum = (checksum + sum(bank)) & 0xFFFF
         self.banks[0][0x14E] = checksum >> 8
         self.banks[0][0x14F] = checksum & 0xFF
+
+    def save(self, filename):
+        self.fixHeader()
+        f = open(filename, "wb")
         for bank in self.banks:
             f.write(bank)
         f.close()

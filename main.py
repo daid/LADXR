@@ -5,6 +5,7 @@ import randomizer
 import patches.core
 import patches.bowwow
 import patches.desert
+import patches.owl
 import locations.itemInfo
 import explorer
 import logic
@@ -120,14 +121,11 @@ if __name__ == "__main__":
     patches.core.removeBirdKeyDrop(rom)
     patches.bowwow.neverGetBowwow(rom)
     patches.desert.desertAccess(rom)
+    patches.owl.removeOwlEvents(rom)
 
     # Always have the boomerang trade guy enabled.
     rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy
     rom.patch(0x00, 0x3190, "FA0EDBFE0E", "3E0E00FE0E")  # load the proper room loyout
-
-    # Remove the owl, just do not run its event (this might break something)
-    # Note, this gives quite a bit of room for possible custom code to be located instead of the owl code.
-    rom.patch(6, 0x27F7, "79EA01C5", "C9000000")
 
     ## Monkey bridge patch
     rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), ASM("nop\nnop\nnop\nnop"))
@@ -151,7 +149,7 @@ if __name__ == "__main__":
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
     rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    test_logic = False
+    test_logic = True
     if test_logic:
         for ii in locations.itemInfo.ItemInfo.all:
             ii.item = ii.read(rom)

@@ -1,5 +1,8 @@
 from .requirements import *
 
+#TODO: In this dungeon you can waste a key by going to the miniboss, which is useless and can be bypassed.
+#       Logic does not account for you wasting this key (maybe remove the keyblock?)
+
 entrance = Location(5)
 Location(5).add(DungeonChest(0x1A0)).connect(entrance, HOOKSHOT)
 compass = Location(5).add(DungeonChest(0x19E)).connect(entrance, OR(attack, HOOKSHOT))

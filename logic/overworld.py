@@ -4,7 +4,8 @@ start = Location().add(StartItem())
 Location().add(ShopItem(2)).connect(start, COUNT("RUPEES", 10))
 Location().add(ShopItem(0)).connect(start, COUNT("RUPEES", 200))
 Location().add(ShopItem(1)).connect(start, COUNT("RUPEES", 980))
-#TODO: dream hut
+dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, attack))
+Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
 
 sword_beach = Location().add(BeachSword()).connect(start, bush, SHIELD)
 Location().add(BoomerangGuy()).connect(sword_beach, BOMB)

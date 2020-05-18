@@ -1,4 +1,5 @@
 from .chest import Chest
+from .items import *
 from roomEditor import RoomEditor
 
 
@@ -8,7 +9,7 @@ class BeachSword(Chest):
         self.room = 0x0F2
 
     def patch(self, rom, option):
-        if option != "SWORD":
+        if option != SWORD:
             # Set the chest data
             super().patch(rom, option)
             # Patch the room to contain a chest instead of the sword on the beach
@@ -22,5 +23,5 @@ class BeachSword(Chest):
     def read(self, rom):
         re = RoomEditor(rom, 0x0F2)
         if re.hasEntity(0x31):
-            return "SWORD"
+            return SWORD
         return super().read(rom)
