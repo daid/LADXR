@@ -123,10 +123,6 @@ if __name__ == "__main__":
     patches.desert.desertAccess(rom)
     patches.owl.removeOwlEvents(rom)
 
-    # Always have the boomerang trade guy enabled.
-    rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy
-    rom.patch(0x00, 0x3190, "FA0EDBFE0E", "3E0E00FE0E")  # load the proper room loyout
-
     ## Monkey bridge patch
     rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), ASM("nop\nnop\nnop\nnop"))
 

@@ -12,6 +12,10 @@ class BoomerangGuy(ItemInfo):
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
 
     def patch(self, rom, option):
+        # Always have the boomerang trade guy enabled (normally you need the magnifier)
+        rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy
+        rom.patch(0x00, 0x3190, "FA0EDBFE0E", "3E0E00FE0E")  # load the proper room layout
+
         inv = INVENTORY_MAP[option]
         # Patch the check if you traded back the boomerang (so traded twice)
         rom.patch(0x19, 0x063F, ASM("cp $0D"), ASM("cp $%s" % (inv)))

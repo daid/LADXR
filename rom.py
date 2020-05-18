@@ -31,8 +31,14 @@ class ROM:
     def fixHeader(self, *, name=None):
         if name is not None:
             name = name.encode("utf-8")
-            name = (name + (b"\x00" * 16))[:16]
-            self.banks[0][0x134:0x144] = name
+            name = (name + (b"\x00" * 15))[:15]
+            self.banks[0][0x134:0x143] = name
+
+        checksum = 0
+        for c in self.banks[0][0x134:0x14D]:
+            checksum -= c + 1
+        self.banks[0][0x14D] = checksum & 0xFF
+
         # zero out the checksum before calculating it.
         self.banks[0][0x14E] = 0
         self.banks[0][0x14F] = 0
