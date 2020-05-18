@@ -18,6 +18,7 @@ forest = Location().add(Toadstool()).connect(start, bush)  # forest stretches al
 Location().add(Witch()).connect(forest, "TOADSTOOL")
 Location().add(Chest(0x071)).connect(forest, POWER_BRACELET)
 swamp = Location().connect(forest, MAGIC_POWDER, FEATHER)
+swamp.add(Chest(0x034)) # Chest in the swamp, assumes no flowers!
 forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
 Location().add(Chest(0x2BD)).connect(forest, SWORD)  # chest in forest cave on route to mushroom
 Location().add(Chest(0x2B3)).connect(forest, AND(POWER_BRACELET, HOOKSHOT))  # hookshot cave
@@ -49,10 +50,12 @@ Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, attack))  # in 
 Location().add(GoldLeaf(0x2C6)).connect(castle_inside, AND(POWER_BRACELET, attack))  # in the castle, spinning spikeball enemy
 
 animal_town = Location().connect(center_area, FLIPPERS, PEGASUS_BOOTS)
-desert = Location().add(AnglerKey()).connect(animal_town, bush)
+desert = Location().add(AnglerKey()).connect(animal_town, bush)  # Note: We removed the walrus blocking the desert.
 
 # Area below the windfish egg
 below_mountains = Location().connect(graveyard, POWER_BRACELET)
 into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(POWER_BRACELET, "SWORD"))
 Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT)
 right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS)
+
+#

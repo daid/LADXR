@@ -1,6 +1,7 @@
 from rom import ROM
 from pointerTable import PointerTable
 from assembler import ASM
+from roomEditor import RoomEditor
 import randomizer
 import patches.core
 import patches.bowwow
