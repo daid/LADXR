@@ -107,6 +107,7 @@ class Explorer:
         for loc in locations.location.Location.all:
             if loc not in self.__visited:
                 failed += 1
+                print(loc, hex(loc.items[0].addr - 0x560))
         for loc in self.__visited:
             for target, req in loc.connections.items():
                 if target not in self.__visited:

@@ -103,6 +103,62 @@ class RoomsIndoorB(RoomsTable):
         })
 
 
+class BackgroundTable(PointerTable):
+    def _readData(self, rom, bank_nr, pointer):
+        # Ignore 2 invalid pointers.
+        if pointer in (0, 0x1651):
+            return bytearray()
+
+        mem = {}
+        bank = rom.banks[bank_nr]
+        start = pointer
+        while bank[pointer] != 0x00:
+            addr = bank[pointer] << 8 | bank[pointer + 1]
+            amount = (bank[pointer + 2] & 0x3F) + 1
+            #assert (bank[pointer + 2] & 0x20) != 0x20
+            repeat = (bank[pointer + 2] & 0x40) == 0x40
+            vertical = (bank[pointer + 2] & 0x80) == 0x80
+            pointer += 3
+            for n in range(amount):
+                mem[addr] = bank[pointer]
+                if not repeat:
+                    pointer += 1
+                addr += 0x20 if vertical else 0x01
+            if repeat:
+                pointer += 1
+        pointer += 1
+        self._addStorage(bank_nr, start, pointer)
+
+        if mem:
+            low = min(mem.keys()) & 0xFFE0
+            high = (max(mem.keys()) | 0x001F) + 1
+            print(hex(start))
+            for addr in range(low, high, 0x20):
+                print("".join(map(lambda n: ("%02X" % (mem[addr + n])) if addr + n in mem else "  ", range(0x20))))
+        return bank[start:pointer]
+
+
+class BackgroundTilesTable(BackgroundTable):
+    def __init__(self, rom):
+        super().__init__(rom, {
+            "count": 0x25,
+            "pointers_addr": 0x052D,
+            "pointers_bank": 0x20,
+            "data_bank": 0x08,
+            "expand_to_end_of_bank": True
+        })
+
+
+class BackgroundAttributeTable(BackgroundTable):
+    def __init__(self, rom):
+        super().__init__(rom, {
+            "count": 0x25,
+            "pointers_addr": 0x1C4D,
+            "pointers_bank": 0x24,
+            "data_bank": 0x24,
+        })
+
+
 if __name__ == "__main__":
     import sys
     assert sys.argv[1] != sys.argv[2]
@@ -115,11 +171,14 @@ if __name__ == "__main__":
     rom.rooms_overworld_bottom = RoomsOverworldBottom(rom)
     rom.rooms_indoor_a = RoomsIndoorA(rom)
     rom.rooms_indoor_b = RoomsIndoorB(rom)
+    #rom.background_tiles = BackgroundTilesTable(rom)
+    #rom.background_attributes = BackgroundAttributeTable(rom)
 
     patches.core.noSwordMusic(rom)
     patches.core.chestForSword(rom)
     patches.core.removeGhost(rom)
-    patches.core.removeBirdKeyDrop(rom)
+    patches.core.removeBirdKeyHoleDrop(rom)
+    patches.core.alwaysAllowSecretBook(rom)
     patches.bowwow.neverGetBowwow(rom)
     patches.desert.desertAccess(rom)
     patches.owl.removeOwlEvents(rom)
@@ -146,7 +205,7 @@ if __name__ == "__main__":
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
     rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    test_logic = True
+    test_logic = False
     if test_logic:
         for ii in locations.itemInfo.ItemInfo.all:
             ii.item = ii.read(rom)
@@ -171,4 +230,6 @@ if __name__ == "__main__":
     rom.rooms_overworld_bottom.store(rom)
     rom.rooms_indoor_a.store(rom)
     rom.rooms_indoor_b.store(rom)
+    #rom.background_tiles.store(rom)
+    #rom.background_attributes.store(rom)
     rom.save(sys.argv[2], name="TEST")

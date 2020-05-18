@@ -12,6 +12,7 @@ class BeachSword(Chest):
         if option != SWORD:
             # Set the chest data
             super().patch(rom, option)
+
             # Patch the room to contain a chest instead of the sword on the beach
             re = RoomEditor(rom, 0x0F2)
             re.changeObject(7, 4, 0xA0)

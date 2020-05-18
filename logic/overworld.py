@@ -58,4 +58,7 @@ into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(PO
 Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT)
 right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS)
 
-#
+face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
+Location().add(FaceKey()).connect(face_shrine, BOW)
+
+dungeon6_entrance = Location().connect(animal_town, AND(FLIPPERS, HOOKSHOT))

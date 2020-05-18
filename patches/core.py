@@ -45,7 +45,7 @@ def removeGhost(rom):
     # Do not have the ghost follow you after dungeon 4
     rom.patch(0x03, 0x1E0A, ASM("LD [$DB79], A"), ASM("NOP\nNOP\nNOP"))
 
-def removeBirdKeyDrop(rom):
+def removeBirdKeyHoleDrop(rom):
     # Prevent the cave with the bird key from dropping you in the water
     # (if you do not have flippers this would softlock you)
     rom.patch(0x02, 0x1196, ASM("""
@@ -59,3 +59,6 @@ def removeBirdKeyDrop(rom):
         nop
         jr $30
     """))
+
+def alwaysAllowSecretBook(rom):
+    rom.patch(0x15, 0x3F25, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00\nnop\nnop"))

@@ -37,8 +37,11 @@ class PointerTable:
 
         while self.__mergeStorage():
             pass
+        if "expand_to_end_of_bank" in info and info["expand_to_end_of_bank"]:
+            for st in self.__storage:
+                st["end"] = 0x4000
 
-        for s in self.__storage:
+        for s in sorted(self.__storage, key=lambda s: (s["bank"], s["start"])):
             print(self.__class__.__name__, s)
 
     def __setitem__(self, item, value):
@@ -54,38 +57,35 @@ class PointerTable:
 
         pointers_bank = self.__info["pointers_bank"]
         pointers_addr = self.__info["pointers_addr"]
-        if "banks_bank" in self.__info:
-            banks_bank = self.__info["banks_bank"]
-            banks_addr = self.__info["banks_addr"]
-        else:
-            banks_bank = None
-            banks_addr = None
 
         done = {}
+        for st in storage:
+            done[st["bank"]] = {}
         for n, s in enumerate(self.__data):
             s = bytes(s)
-            if s in done and done[s][0] == self.__banks[n]:
-                bank, pointer = done[s]
+            bank = self.__banks[n]
+            if s in done[bank]:
+                pointer = done[bank][s]
+                assert rom.banks[bank][pointer:pointer+len(s)] == s
             else:
                 my_storage = None
                 for st in storage:
-                    if st["end"] - st["start"] >= len(s) and st["bank"] == self.__banks[n]:
+                    if st["end"] - st["start"] >= len(s) and st["bank"] == bank:
                         my_storage = st
                         break
-                assert my_storage is not None, "Not enough room in storage..."
+                assert my_storage is not None, "Not enough room in storage... %s" % (storage)
 
                 pointer = my_storage["start"]
-                bank = my_storage["bank"]
                 my_storage["start"] = pointer + len(s)
                 rom.banks[bank][pointer:pointer+len(s)] = s
 
-                done[s] = (bank, pointer)
+                # aggressive de-duplication causes the whole game to glitch out, not sure why...
+                # for n in range(len(s)):
+                #    done[bank][s[n:]] = pointer + n
+                done[bank][s] = pointer
 
             pointers.append(pointer)
-            banks.append(bank)
 
-            if banks_bank is not None:
-                rom.banks[banks_bank][banks_addr+n] = bank | (rom.banks[banks_bank][banks_addr+n] & 0x80)
             rom.banks[pointers_bank][pointers_addr+n*2] = pointer & 0xff
             rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
 
@@ -116,8 +116,14 @@ class PointerTable:
 
     def __mergeStorage(self):
         for n in range(len(self.__storage)):
+            n_end = self.__storage[n]["end"]
+            n_start = self.__storage[n]["start"]
             for m in range(len(self.__storage)):
-                if n != m and (self.__storage[n]["end"] == self.__storage[m]["start"] or self.__storage[n]["end"] == self.__storage[m]["start"] - 1):
+                if m == n or self.__storage[n]["bank"] != self.__storage[m]["bank"]:
+                    continue
+                m_end = self.__storage[m]["end"]
+                m_start = self.__storage[m]["start"]
+                if m_start - 1 <= n_end < m_end:
                     self.__storage[n]["end"] = self.__storage[m]["end"]
                     self.__storage.pop(m)
                     return True
