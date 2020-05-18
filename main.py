@@ -174,4 +174,4 @@ if __name__ == "__main__":
     rom.rooms_overworld_bottom.store(rom)
     rom.rooms_indoor_a.store(rom)
     rom.rooms_indoor_b.store(rom)
-    rom.save(sys.argv[2])
+    rom.save(sys.argv[2], name="TEST")
