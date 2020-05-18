@@ -64,7 +64,7 @@ class PointerTable:
         done = {}
         for n, s in enumerate(self.__data):
             s = bytes(s)
-            if s in done:
+            if s in done and done[s][0] == self.__banks[n]:
                 bank, pointer = done[s]
             else:
                 my_storage = None
