@@ -1,3 +1,4 @@
+import binascii
 from rom import ROM
 from pointerTable import PointerTable
 from assembler import ASM
@@ -209,8 +210,9 @@ if __name__ == "__main__":
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
     rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    test_logic = True
+    test_logic = False
     if test_logic:
+        seed = "DEFAULT"
         for ii in locations.itemInfo.ItemInfo.all:
             ii.item = ii.read(rom)
             ii.patch(rom, ii.item)
@@ -226,8 +228,8 @@ if __name__ == "__main__":
         retry_count = 0
         while True:
             try:
-                r = randomizer.Randomizer(rom)
-                print(r.seed)
+                seed = randomizer.Randomizer(rom).seed
+                seed = binascii.hexlify(seed).decode("ascii").upper()
                 break
             except randomizer.Error:
                 retry_count += 1
@@ -242,7 +244,9 @@ if __name__ == "__main__":
     rom.rooms_indoor_a.store(rom)
     rom.rooms_indoor_b.store(rom)
 
-    patches.titleScreen.setRomInfo(rom, "Version: XX.01", "Seed...")
+    import binascii
+    print("Seed: %s" % (seed))
+    patches.titleScreen.setRomInfo(rom, seed[:16], seed[16:])
 
     #rom.background_tiles.store(rom)
     #rom.background_attributes.store(rom)

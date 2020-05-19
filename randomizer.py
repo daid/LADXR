@@ -23,7 +23,7 @@ class Randomizer:
             if not self.placeItem():
                 bail_counter += 1
                 if bail_counter > 50:
-                    raise Error("Failed to place an item for a 100 retries")
+                    raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
 

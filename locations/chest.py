@@ -20,6 +20,7 @@ class Chest(ItemInfo):
 
     def __init__(self, room):
         super().__init__()
+        self.room = room
         self.addr = room + 0x560
 
     def patch(self, rom, option):
@@ -31,6 +32,9 @@ class Chest(ItemInfo):
             if v == value:
                 return k
         raise ValueError("Could not find chest contents in ROM (0x%02x)" % (value))
+
+    def __repr__(self):
+        return "%s:%03x" % (self.__class__.__name__, self.room)
 
 
 class DungeonChest(Chest):
