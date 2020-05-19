@@ -27,7 +27,7 @@ def chestForSword(rom):
         jr nz, end
         push af
         ld   a, [$DB4E] ; load sword level
-        xor  a
+        and  a
         jr   nz, skip
         inc  a
         ld   [$DB4E], a

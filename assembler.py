@@ -39,14 +39,6 @@ def ASM(code):
             if mnemonic == "NOP":
                 assert len(params) == 0
                 result.append(0x00)
-            elif mnemonic == "CP":
-                assert len(params) == 1
-                reg = REGS.get(params[0])
-                if reg is not None:
-                    result.append(0xB8 | reg)
-                else:
-                    result.append(0xFE)
-                    result.append(toByte(params[0]))
             elif mnemonic == "JR":
                 if len(params) == 2:
                     result.append(0x20 | FLAGS[params[0]])
@@ -123,8 +115,36 @@ def ASM(code):
                     raise RuntimeError("Cannot ASM: %s" % (line))
             elif mnemonic == "XOR":
                 assert len(params) == 1
-                reg = REGS[params[0]]
-                result.append(0xA8 | reg)
+                reg = REGS.get(params[0])
+                if reg is not None:
+                    result.append(0xA8 | reg)
+                else:
+                    result.append(0xEE)
+                    result.append(toByte(params[0]))
+            elif mnemonic == "AND":
+                assert len(params) == 1
+                reg = REGS.get(params[0])
+                if reg is not None:
+                    result.append(0xA0 | reg)
+                else:
+                    result.append(0xE6)
+                    result.append(toByte(params[0]))
+            elif mnemonic == "OR":
+                assert len(params) == 1
+                reg = REGS.get(params[0])
+                if reg is not None:
+                    result.append(0xB0 | reg)
+                else:
+                    result.append(0xF6)
+                    result.append(toByte(params[0]))
+            elif mnemonic == "CP":
+                assert len(params) == 1
+                reg = REGS.get(params[0])
+                if reg is not None:
+                    result.append(0xB8 | reg)
+                else:
+                    result.append(0xFE)
+                    result.append(toByte(params[0]))
             elif mnemonic == "INC":
                 assert len(params) == 1
                 reg = REGS.get(params[0])
