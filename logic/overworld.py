@@ -4,7 +4,7 @@ start = Location().add(StartItem())
 Location().add(ShopItem(2)).connect(start, COUNT("RUPEES", 10))
 Location().add(ShopItem(0)).connect(start, COUNT("RUPEES", 200))
 Location().add(ShopItem(1)).connect(start, COUNT("RUPEES", 980))
-dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, attack))
+dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, OR(SWORD, MAGIC_ROD, FEATHER)))
 Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
 
 sword_beach = Location().add(BeachSword()).connect(start, bush, SHIELD)
@@ -54,7 +54,7 @@ desert = Location().add(AnglerKey()).connect(animal_town, bush)  # Note: We remo
 
 # Area below the windfish egg
 below_mountains = Location().connect(graveyard, POWER_BRACELET)
-into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(POWER_BRACELET, "SWORD"))
+into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(POWER_BRACELET, SWORD))
 Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT)
 right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS)
 
@@ -68,3 +68,8 @@ raft_game = Location().add(Chest(0x05C), Chest(0x05D))
 raft_game.connect(below_mountains, HOOKSHOT)
 raft_game.connect(center_area, AND(FLIPPERS, HOOKSHOT))
 
+
+right_mountains_2 = Location().connect(right_mountains_1, FLIPPERS)
+Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2))
+Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # Chest(0x2F2) is also here, but that is the multi-chest puzzle.
+right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT))

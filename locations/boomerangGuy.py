@@ -27,6 +27,23 @@ class BoomerangGuy(ItemInfo):
         # Put the boomerang ID in the inventory of the boomerang guy (aka, traded back)
         rom.patch(0x19, 0x0710, ASM("ld a, $0D"), ASM("ld a, $%s" % (inv)))
 
+        rom.texts[0x222] = b"Okay, let's do  "\
+                           b"it!\xff"
+        rom.texts[0x224] = b"You got the a   "\
+                           b"new item in     "\
+                           b"exchange for the"\
+                           b"item you had.\xff"
+        rom.texts[0x225] = b"Give me back my "\
+                           b"item, I beg you!"\
+                           b"I'll return the "\
+                           b"item you gave me"\
+                           b"    Okay Not Now"\
+                           b"\xfe"
+        rom.texts[0x226] = b"The item came   "\
+                           b"back to you. You"\
+                           b"returned the    "\
+                           b"other item.\xff"
+
     def read(self, rom):
         for k, v in INVENTORY_MAP.items():
             if int(v, 16) == rom.banks[0x19][0x0640]:

@@ -46,7 +46,6 @@ class Randomizer:
 
     def readItemPool(self, rom):
         # Collect the item pool from the rom to see which items we can randomize.
-        item_spots = {}
         for spot in location.ItemInfo.all:
             item = spot.read(rom)
             # If a spot has no other placement options, just ignore this spot.
@@ -54,14 +53,9 @@ class Randomizer:
             if len(spot.getOptions()) > 1:
                 self.item_pool[item] = self.item_pool.get(item, 0) + 1
                 self.addSpot(spot)
+                spot.item = None
             else:
                 spot.item = item
-
-        #print("Item pool:")
-        #for k, v in sorted(self.item_pool.items()):
-        #    print("    ", k, v)
-        #print("Spot count: %d" % (len(self.spots)))
-        #print(item_spots)
 
     def placeItem(self):
         spot = self.rnd.choice(self.spots)
@@ -75,13 +69,7 @@ class Randomizer:
         self.removeItem(item)
         self.removeSpot(spot)
 
-        e = explorer.Explorer()
-        for item_pool_item, count in self.item_pool.items():
-            for n in range(count):
-                e.addItem(item_pool_item)
-        e.visit(logic.start)
-
-        if len(e.getAvailableLocations()) != len(location.Location.all) or not self.canStillPlaceItemPool():
+        if not self.logicStillValid():
             spot.item = None
             self.addItem(item)
             self.addSpot(spot)
@@ -89,6 +77,21 @@ class Randomizer:
             return False
         #print("Placed:", item)
         return True
+
+    def logicStillValid(self):
+        if not self.canStillPlaceItemPool():
+            return False
+
+        e = explorer.Explorer()
+        for item_pool_item, count in self.item_pool.items():
+            for n in range(count):
+                e.addItem(item_pool_item)
+        e.visit(logic.start)
+
+        if len(e.getAvailableLocations()) != len(location.Location.all):
+            return False
+        return True
+
 
     def canStillPlaceItemPool(self):
         # For each item in the pool, find which spots are available.

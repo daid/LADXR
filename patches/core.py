@@ -1,4 +1,6 @@
 from assembler import ASM
+from roomEditor import RoomEditor
+
 
 def noSwordMusic(rom):
     # Skip no-sword music override
@@ -62,3 +64,26 @@ def removeBirdKeyHoleDrop(rom):
 
 def alwaysAllowSecretBook(rom):
     rom.patch(0x15, 0x3F25, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00\nnop\nnop"))
+
+def cleanup(rom):
+    # Remove unused rooms to make some space in the rom
+    re = RoomEditor(rom, 0x2C4)
+    re.objects = []
+    re.entities = []
+    re.store(rom)
+    re = RoomEditor(rom, 0x2D4)
+    re.objects = []
+    re.entities = []
+    re.store(rom)
+    re = RoomEditor(rom, 0x277)
+    re.objects = []
+    re.entities = []
+    re.store(rom)
+    re = RoomEditor(rom, 0x278)
+    re.objects = []
+    re.entities = []
+    re.store(rom)
+    re = RoomEditor(rom, 0x279)
+    re.objects = []
+    re.entities = []
+    re.store(rom)

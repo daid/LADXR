@@ -30,3 +30,18 @@ INVENTORY_ICON = {
     MAGIC_POWDER: "8E",
     BOOMERANG: "A4",
 }
+INVENTORY_NAME = {
+    SWORD: "Sword",
+    BOMB: "Bombs",
+    POWER_BRACELET: "Power Bracelet",
+    SHIELD: "Shield",
+    BOW: "Bow",
+    HOOKSHOT: "Hookshot",
+    MAGIC_ROD: "Magic Rod",
+    PEGASUS_BOOTS: "Pegasus Boots",
+    OCARINA: "Ocarina",
+    FEATHER: "Roc's Feather",
+    SHOVEL: "Shovel",
+    MAGIC_POWDER: "Magic Powder",
+    BOOMERANG: "Boomerang",
+}

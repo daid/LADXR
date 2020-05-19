@@ -23,8 +23,9 @@ class ROM:
         assert addr >= 0 and addr + len(old) <= 16*1024
         bank = self.banks[bank_nr]
         if bank[addr:addr+len(old)] != old:
-            print("Bank data:")
-            print(b2h(bank))
+            if bank[addr:addr + len(old)] == new:
+                # Patch is already applied.
+                return
             loc = bank.find(old)
             while loc > -1:
                 print("Possible at:", hex(loc))

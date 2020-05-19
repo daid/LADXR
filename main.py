@@ -2,7 +2,6 @@ import binascii
 from rom import ROM
 from pointerTable import PointerTable
 from assembler import ASM
-from roomEditor import *
 import randomizer
 import patches.core
 import patches.bowwow
@@ -174,6 +173,7 @@ if __name__ == "__main__":
     patches.core.removeGhost(rom)
     patches.core.removeBirdKeyHoleDrop(rom)
     patches.core.alwaysAllowSecretBook(rom)
+    patches.core.cleanup(rom)
     patches.bowwow.neverGetBowwow(rom)
     patches.desert.desertAccess(rom)
     patches.owl.removeOwlEvents(rom)
@@ -189,6 +189,10 @@ if __name__ == "__main__":
 
     ## Monkey bridge patch, always have the bridge there.
     rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
+
+    # Remove "this object is heavy, bla bla", and other nag messages when touching an object
+    rom.patch(0x02, 0x2ba6, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
+    rom.patch(0x02, 0x3314, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
 
     # Low health beep patches
     rom.patch(2,  0x2359, ASM("ld a, $30"), ASM("ld a, $60")) # slow slow hp beep
@@ -210,7 +214,7 @@ if __name__ == "__main__":
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
     rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    test_logic = False
+    test_logic = True
     if test_logic:
         seed = "DEFAULT"
         for ii in locations.itemInfo.ItemInfo.all:
@@ -220,10 +224,17 @@ if __name__ == "__main__":
         e.visit(logic.start)
         e.dump()
 
-        #logic.start.items[0].patch(rom, "POWER_BRACELET")
-        #re = RoomEditor(rom, 0x2CE)
-        #re.objects = []
-        #re.store(rom)
+        from locations import Chest
+        Chest(0x2F2).patch(rom, "GOLD_LEAF")
+        print(hex(rom.banks[0x14][0x1D2]))
+        rom.banks[0x14][0x1D2] = 0x61
+        from roomEditor import RoomEditor, Object
+        re = RoomEditor(rom, 0x2D2)
+        re.objects.append(Object(8, 2, 0xA1))
+        re.store(rom)
+        re = RoomEditor(rom, 0x114)
+        for obj in re.objects:
+            print(obj)
     else:
         retry_count = 0
         while True:
@@ -235,7 +246,7 @@ if __name__ == "__main__":
                 retry_count += 1
                 print("Failed, trying again: %d" % (retry_count))
 
-    #rom.patch(0, 0x0003, "00", "01") # DEBUG SAVE PATCH
+    rom.patch(0, 0x0003, "00", "01")  # DEBUG SAVE PATCH
 
     rom.texts.store(rom)
     rom.entities.store(rom)
@@ -246,8 +257,8 @@ if __name__ == "__main__":
 
     import binascii
     print("Seed: %s" % (seed))
-    patches.titleScreen.setRomInfo(rom, seed[:16], seed[16:])
+    patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])
 
     #rom.background_tiles.store(rom)
     #rom.background_attributes.store(rom)
-    rom.save(sys.argv[2], name="TEST")
+    rom.save(sys.argv[2], name=seed)

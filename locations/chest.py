@@ -25,6 +25,8 @@ class Chest(ItemInfo):
 
     def patch(self, rom, option):
         rom.banks[0x14][self.addr] = self.MAPPING[option]
+        # Patch the chest message tables to be correct for the keys
+        rom.patch(0x07, 0x3be5, "A0A1A2A3A4A5", "A0A1A3A4A5E8")
 
     def read(self, rom):
         value = rom.banks[0x14][self.addr]

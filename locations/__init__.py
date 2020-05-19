@@ -11,6 +11,7 @@ from .boomerangGuy import BoomerangGuy
 from .anglerKey import AnglerKey
 from .hookshot import HookshotDrop
 from .faceKey import FaceKey
+from .birdKey import BirdKey
 
 from .location import Location
 from .items import *

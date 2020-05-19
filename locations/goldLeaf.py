@@ -1,5 +1,6 @@
 from .itemInfo import ItemInfo
 from .items import *
+from roomEditor import RoomEditor
 
 
 class GoldLeaf(ItemInfo):
@@ -17,10 +18,10 @@ class GoldLeaf(ItemInfo):
 
 
 class SlimeKey(ItemInfo):
-    OPTIONS = ["SLIME_KEY"]
+    OPTIONS = [GOLD_LEAF]
 
     def patch(self, rom, option):
         pass
 
     def read(self, rom):
-        return "SLIME_KEY"
+        return GOLD_LEAF

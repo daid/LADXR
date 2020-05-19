@@ -89,6 +89,9 @@ class RoomEditor:
         elif self.room < 0x100:
             rom.banks[0x27][(self.room - 0xCC) * 80:(self.room - 0xCC) * 80 + 80] = self.overlay
 
+    def addEntity(self, x, y, type_id):
+        self.entities.append((x, y, type_id))
+
     def removeEntities(self, type_id):
         self.entities = list(filter(lambda e: e[2] != type_id, self.entities))
 
@@ -101,6 +104,9 @@ class RoomEditor:
                 obj.type_id = new_type
                 if self.overlay is not None:
                     self.overlay[x + y * 10] = new_type
+
+    def removeObject(self, x, y):
+        self.objects = list(filter(lambda obj: obj.x != x or obj.y != y, self.objects))
 
     def moveObject(self, x, y, new_x, new_y):
         for obj in self.objects:
@@ -119,6 +125,9 @@ class Object:
 
     def export(self):
         return bytearray([self.x | (self.y << 4), self.type_id])
+
+    def __repr__(self):
+        return "%s:%d,%d:%02X" % (self.__class__.__name__, self.x, self.y, self.type_id)
 
 
 class ObjectHorizontal(Object):

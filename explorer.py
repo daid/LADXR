@@ -18,6 +18,7 @@ class Explorer:
         assert location not in self.__visited
         self.__visited.add(location)
         for ii in location.items:
+            #print(ii, ii.item)
             self.addItem(ii.item)
 
     def _process(self):
