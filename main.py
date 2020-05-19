@@ -1,12 +1,13 @@
 from rom import ROM
 from pointerTable import PointerTable
 from assembler import ASM
-from roomEditor import RoomEditor
+from roomEditor import *
 import randomizer
 import patches.core
 import patches.bowwow
 import patches.desert
 import patches.owl
+import patches.titleScreen
 import locations.itemInfo
 import explorer
 import logic
@@ -23,12 +24,6 @@ class Texts(PointerTable):
             "banks_addr": 0x741,
             "banks_bank": 0x1C,
         })
-
-        # I think it is safe to expand the storage to the end of the bank for each of the storage areas,
-        # as the rest of the bank seems unused.
-        # However, as we reduce the amount of text, this is not really needed.
-        #for bank in self.storage:
-        #    rom.banks[bank] = (self.storage[bank][1], 0x4000)
 
 
 class Entities(PointerTable):
@@ -115,7 +110,6 @@ class BackgroundTable(PointerTable):
         while bank[pointer] != 0x00:
             addr = bank[pointer] << 8 | bank[pointer + 1]
             amount = (bank[pointer + 2] & 0x3F) + 1
-            #assert (bank[pointer + 2] & 0x20) != 0x20
             repeat = (bank[pointer + 2] & 0x40) == 0x40
             vertical = (bank[pointer + 2] & 0x80) == 0x80
             pointer += 3
@@ -183,11 +177,21 @@ if __name__ == "__main__":
     patches.desert.desertAccess(rom)
     patches.owl.removeOwlEvents(rom)
 
-    ## Monkey bridge patch
-    rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), ASM("nop\nnop\nnop\nnop"))
+    # Show marin outside, even without a sword.
+    rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
+    # Make marin ignore the fact that you did not save the racoon
+    rom.patch(0x05, 0x0E87, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
+    rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
+    rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
+    # Show marin in the animal village
+    rom.patch(0x03, 0x0a84, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
 
-    # Remove low health beep (remove loading the SFX)
-    rom.patch(2,  0x235b, ASM("ld hl, $FFF3\nld [hl], $04"), ASM("nop\nnop\nnop\nnop\nnop"))
+    ## Monkey bridge patch, always have the bridge there.
+    rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
+
+    # Low health beep patches
+    rom.patch(2,  0x2359, ASM("ld a, $30"), ASM("ld a, $60")) # slow slow hp beep
+    #rom.patch(2,  0x235b, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
 
     # Never allow stealing (always acts as if you do not have a sword)
     #rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
@@ -205,7 +209,7 @@ if __name__ == "__main__":
     rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
     rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
 
-    test_logic = False
+    test_logic = True
     if test_logic:
         for ii in locations.itemInfo.ItemInfo.all:
             ii.item = ii.read(rom)
@@ -213,23 +217,33 @@ if __name__ == "__main__":
         e = explorer.Explorer()
         e.visit(logic.start)
         e.dump()
+
+        #logic.start.items[0].patch(rom, "POWER_BRACELET")
+        #re = RoomEditor(rom, 0x2CE)
+        #re.objects = []
+        #re.store(rom)
     else:
+        retry_count = 0
         while True:
             try:
-                randomizer.Randomizer(rom)
+                r = randomizer.Randomizer(rom)
+                print(r.seed)
                 break
             except randomizer.Error:
-                print("Failed, trying again.")
+                retry_count += 1
+                print("Failed, trying again: %d" % (retry_count))
 
     #rom.patch(0, 0x0003, "00", "01") # DEBUG SAVE PATCH
 
     rom.texts.store(rom)
     rom.entities.store(rom)
-    # Note: Changing the overworld also requires updating the GBC overlays.
     rom.rooms_overworld_top.store(rom)
     rom.rooms_overworld_bottom.store(rom)
     rom.rooms_indoor_a.store(rom)
     rom.rooms_indoor_b.store(rom)
+
+    patches.titleScreen.setRomInfo(rom, "Version: XX.01", "Seed...")
+
     #rom.background_tiles.store(rom)
     #rom.background_attributes.store(rom)
     rom.save(sys.argv[2], name="TEST")

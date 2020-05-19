@@ -50,9 +50,10 @@ class PointerTable:
     def __getitem__(self, item):
         return self.__data[item]
 
+    def __len__(self):
+        return len(self.__data)
+
     def store(self, rom):
-        pointers = []
-        banks = []
         storage = copy.deepcopy(self.__storage)
 
         pointers_bank = self.__info["pointers_bank"]
@@ -79,12 +80,10 @@ class PointerTable:
                 my_storage["start"] = pointer + len(s)
                 rom.banks[bank][pointer:pointer+len(s)] = s
 
-                # aggressive de-duplication causes the whole game to glitch out, not sure why...
-                # for n in range(len(s)):
-                #    done[bank][s[n:]] = pointer + n
+                # aggressive de-duplication.
+                for skip in range(len(s)):
+                    done[bank][s[skip:]] = pointer + skip
                 done[bank][s] = pointer
-
-            pointers.append(pointer)
 
             rom.banks[pointers_bank][pointers_addr+n*2] = pointer & 0xff
             rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40

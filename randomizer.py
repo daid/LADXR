@@ -2,6 +2,7 @@ from locations import location
 import explorer
 import logic
 import random
+import os
 
 
 class Error(Exception):
@@ -10,7 +11,8 @@ class Error(Exception):
 
 class Randomizer:
     def __init__(self, rom):
-        self.rnd = random.Random()
+        self.seed = os.urandom(16)
+        self.rnd = random.Random(self.seed)
         self.item_pool = {}
         self.spots = []
 

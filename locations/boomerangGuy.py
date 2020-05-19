@@ -10,6 +10,7 @@ class BoomerangGuy(ItemInfo):
     # SWORD, BOMB, SHIELD, POWER_BRACELET, OCARINA, MAGIC_POWDER, BOW
     # Checks for these are at $46A2, and potentially we could remove those.
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
+    # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
 
     def patch(self, rom, option):
         # Always have the boomerang trade guy enabled (normally you need the magnifier)

@@ -1,9 +1,4 @@
 
-OBJ_NORMAL = 0
-OBJ_HORIZONTAL = 1
-OBJ_VERTICAL = 2
-OBJ_WARP = 3
-
 
 class RoomEditor:
     def __init__(self, rom, room):
@@ -42,20 +37,20 @@ class RoomEditor:
                 count = x
                 x = objects_raw[idx + 1] & 0x0F
                 y = objects_raw[idx + 1] >> 4
-                self.objects.append([OBJ_HORIZONTAL, x, y, objects_raw[idx + 2], count])
+                self.objects.append(ObjectHorizontal(x, y, objects_raw[idx + 2], count))
                 idx += 3
             elif y == 0x0C: # vertical
                 count = x
                 x = objects_raw[idx + 1] & 0x0F
                 y = objects_raw[idx + 1] >> 4
-                self.objects.append([OBJ_VERTICAL, x, y, objects_raw[idx + 2], count])
+                self.objects.append(ObjectVertical(x, y, objects_raw[idx + 2], count))
                 idx += 3
             elif y == 0x0E:  # warp
                 # TODO: Figure out warp format. idx+2 seems target room, idx+3/idx+4 destination pixel location
-                self.objects.append([OBJ_WARP, objects_raw[idx:idx+5]])
+                self.objects.append(ObjectWarp(objects_raw[idx:idx+5]))
                 idx += 5
             else:
-                self.objects.append([OBJ_NORMAL, x, y, objects_raw[idx + 1]])
+                self.objects.append(Object(x, y, objects_raw[idx + 1]))
                 idx += 2
         assert idx == len(objects_raw) - 1
 
@@ -69,25 +64,7 @@ class RoomEditor:
     def store(self, rom):
         objects_raw = bytearray([self.animation_id, self.floor_tile])
         for obj in self.objects:
-            if obj[0] == OBJ_NORMAL:
-                x = obj[1]
-                y = obj[2]
-                id = obj[3]
-                objects_raw += bytearray([x | (y << 4), id])
-            elif obj[0] == OBJ_HORIZONTAL:
-                x = obj[1]
-                y = obj[2]
-                id = obj[3]
-                count = obj[4]
-                objects_raw += bytearray([0x80 | count, x | (y << 4), id])
-            elif obj[0] == OBJ_VERTICAL:
-                x = obj[1]
-                y = obj[2]
-                id = obj[3]
-                count = obj[4]
-                objects_raw += bytearray([0xC0 | count, x | (y << 4), id])
-            elif obj[0] == OBJ_WARP:
-                objects_raw += obj[1]
+            objects_raw += obj.export()
         objects_raw += bytearray([0xFE])
 
         if self.room < 0x080:
@@ -120,16 +97,52 @@ class RoomEditor:
 
     def changeObject(self, x, y, new_type):
         for obj in self.objects:
-            if obj[0] == OBJ_NORMAL and obj[1] == x and obj[2] == y:
-                obj[3] = new_type
+            if obj.x == x and obj.y == y:
+                obj.type_id = new_type
                 if self.overlay is not None:
                     self.overlay[x + y * 10] = new_type
 
     def moveObject(self, x, y, new_x, new_y):
         for obj in self.objects:
-            if obj[0] == OBJ_NORMAL and obj[1] == x and obj[2] == y:
+            if obj.x == x and obj.y == y:
                 if self.overlay is not None:
                     self.overlay[x + y * 10] = self.floor_tile
-                    self.overlay[new_x + new_y * 10] = obj[3]
-                obj[1] = new_x
-                obj[2] = new_y
+                    self.overlay[new_x + new_y * 10] = obj.type_id
+                obj.x = new_x
+                obj.y = new_y
+
+class Object:
+    def __init__(self, x, y, type_id):
+        self.x = x
+        self.y = y
+        self.type_id = type_id
+
+    def export(self):
+        return bytearray([self.x | (self.y << 4), self.type_id])
+
+
+class ObjectHorizontal(Object):
+    def __init__(self, x, y, type_id, count):
+        super().__init__(x, y, type_id)
+        self.count = count
+
+    def export(self):
+        return bytearray([0x80 | self.count, self.x | (self.y << 4), self.type_id])
+
+
+class ObjectVertical(Object):
+    def __init__(self, x, y, type_id, count):
+        super().__init__(x, y, type_id)
+        self.count = count
+
+    def export(self):
+        return bytearray([0xC0 | self.count, self.x | (self.y << 4), self.type_id])
+
+
+class ObjectWarp(Object):
+    def __init__(self, data):
+        super().__init__(None, None, None)
+        self.data = data
+
+    def export(self):
+        return self.data

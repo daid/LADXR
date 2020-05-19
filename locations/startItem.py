@@ -12,13 +12,15 @@ class StartItem(ItemInfo):
     def patch(self, rom, option):
         # Change which item you get at the start.
         # (NOTE: This also sets the shield level to 1, which is fine, even if we do not get the shield)
-        # Giving a sword here, gives a lvl0 sword. Which... does no damage.
+        # Giving a sword here, gives a lv0 sword. Which does no damage?
+        # Giving the power bracelet here gives a lv0 bracelet, most likely making lv2 inaccessible
         rom.patch(5, 0xCD1, "04", INVENTORY_MAP[option])
         rom.patch(5, 0xCC6, "86", INVENTORY_ICON[option]) # patch shield that icon that is shown.
         # Patch the text that Tarin uses to give your shield back.
         rom.texts[0x54] = b"#####, is it    " \
                         + b"dangerous to go " \
-                        + b"alone, take this\xff"
+                        + b"alone!          " \
+                        + b"take this!\xff"
         rom.texts[0x91] = b"Got the ...     " \
                         + b"something!\xff"
 

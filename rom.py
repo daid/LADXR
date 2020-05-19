@@ -12,10 +12,14 @@ class ROM:
         for n in range(0x40):
             self.banks.append(bytearray(data[n*16*1024:(n+1)*16*1024]))
 
-    def patch(self, bank_nr, addr, old, new):
+    def patch(self, bank_nr, addr, old, new, *, fill_nop=False):
         old = h2b(old)
         new = h2b(new)
-        assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
+        if fill_nop:
+            assert len(old) >= len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
+            new += b'\x00' * (len(old) - len(new))
+        else:
+            assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
         assert addr >= 0 and addr + len(old) <= 16*1024
         bank = self.banks[bank_nr]
         if bank[addr:addr+len(old)] != old:

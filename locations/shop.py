@@ -15,7 +15,9 @@ class ShopItem(ItemInfo):
             self.OPTIONS = [BOMB]
 
     def patch(self, rom, option):
-        pass
+        # Quick patch to allow buying bombs at all times
+        if option == BOMB:
+            rom.patch(0x04, 0x37b5, "01020300", "01020304")
 
     def read(self, rom):
         return self.OPTIONS[0]

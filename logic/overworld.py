@@ -62,3 +62,9 @@ face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_
 Location().add(FaceKey()).connect(face_shrine, BOW)
 
 dungeon6_entrance = Location().connect(animal_town, AND(FLIPPERS, HOOKSHOT))
+
+# Raft game.
+raft_game = Location().add(Chest(0x05C), Chest(0x05D))
+raft_game.connect(below_mountains, HOOKSHOT)
+raft_game.connect(center_area, AND(FLIPPERS, HOOKSHOT))
+
