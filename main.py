@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--dump', dest="dump", action="store_true",
         help="Dump the logic if the given rom (spoilers!)")
     parser.add_argument('--test', dest="test", action="store_true",
-        help="Test the logic if the given rom (spoilers!)")
+        help="Test the logic if the given rom, without showing anything.")
     parser.add_argument('-c', '--count', dest="count", type=int, required=False, default=1,
         help="Repeat the generation this many times.")
     parser.add_argument('-s', '--seed', dest="seed", type=str, required=False,
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     for generation_number in range(args.count):
         print("Loading: %s" % (args.input_filename))
         rom = ROMWithTables(args.input_filename)
+
         if args.dump or args.test:
             for ii in locations.itemInfo.ItemInfo.all:
                 ii.item = ii.read(rom)
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-        # Make marin ignore the fact that you did not save the racoon
+        # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song
         rom.patch(0x05, 0x0E87, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
         rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
         rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
@@ -109,8 +110,9 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(logic.start)
             e.dump()
-            from locations import Chest
-            Chest(0x1B6).patch(rom, "BOW")
+            #from locations import Chest
+            #from locations import StartItem
+            #StartItem().patch(rom, "SWORD")
         else:
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)

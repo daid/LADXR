@@ -20,7 +20,7 @@ def fixChests(rom):
     # Normally, there is some code related to the owl event when getting the tail key,
     # as we patched out the owl. We can use this area to set the sword level when we get the sword from a chest.
     rom.patch(0x03, 0x109D, ASM("""
-        cp $11
+        cp $11 ; if not tail key, skip
         jr nz, end
         push af
         ld   a, [$C501]
