@@ -9,39 +9,6 @@ def noSwordMusic(rom):
     rom.patch(2, 0x3B42, ASM("ld a, [$DB4E]"), ASM("ld a, $01\nNOP"))
     rom.patch(3, 0x0994, ASM("ld a, [$DB4E]"), ASM("ld a, $01\nNOP"))
 
-def chestForSword(rom):
-    # Patch the chest code, so it can give a lvl1 sword.
-    # Normally, there is some code related to the owl event when getting the tail key,
-    # as we patched out the owl. We can use this area to set the sword level when we get the sword from a chest.
-    rom.patch(3, 0x109D, ASM("""
-        cp $11
-        jr nz, end
-        push af
-        ld   a, [$C501]
-        ld   e, a
-        ld   hl, $C2F0
-        add  hl, de
-        ld   [hl], $38
-        pop af
-    end:
-    """), ASM("""
-        cp $0B ; if not sword, skip
-        jr nz, end
-        push af
-        ld   a, [$DB4E] ; load sword level
-        and  a
-        jr   nz, skip
-        inc  a
-        ld   [$DB4E], a
-    skip:
-        pop af
-    end:
-    """))
-    # Patch the palette used for the sword
-    rom.patch(7, 0x3Ba9, "8410", "8415")
-    # Alternative, use the basic sword slash sprite:
-    #  rom.patch(7, 0x3Ba9, "8410", "0410")
-
 def removeGhost(rom):
     ## Ghost patch
     # Do not have the ghost follow you after dungeon 4
@@ -64,6 +31,11 @@ def removeBirdKeyHoleDrop(rom):
 
 def alwaysAllowSecretBook(rom):
     rom.patch(0x15, 0x3F25, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00\nnop\nnop"))
+
+def flameThrowerShieldRequirement(rom):
+    rom.patch(0x03, 0x2EAF,
+        ASM("ld a, [$DB44]\ncp $02\nret nz"), # if not shield level 2
+        ASM("ld a, [$DB44]\ncp $02\nret nc")) # if not shield level 2 or higher
 
 def cleanup(rom):
     # Remove unused rooms to make some space in the rom

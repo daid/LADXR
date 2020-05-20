@@ -6,11 +6,14 @@ import patches.core
 import patches.bowwow
 import patches.desert
 import patches.owl
+import patches.chest
 import patches.titleScreen
 import locations.itemInfo
 import locations.location
 import explorer
 import logic
+import os
+import time
 
 
 if __name__ == "__main__":
@@ -32,7 +35,9 @@ if __name__ == "__main__":
         help="Generate the specified seed")
     args = parser.parse_args()
 
-    for n in range(args.count):
+    start_time = time.monotonic()
+    total_retries = 0
+    for generation_number in range(args.count):
         print("Loading: %s" % (args.input_filename))
         rom = ROMWithTables(args.input_filename)
         if args.dump or args.test:
@@ -51,10 +56,11 @@ if __name__ == "__main__":
 
         patches.core.cleanup(rom)
         patches.core.noSwordMusic(rom)
-        patches.core.chestForSword(rom)
         patches.core.removeGhost(rom)
         patches.core.removeBirdKeyHoleDrop(rom)
         patches.core.alwaysAllowSecretBook(rom)
+        patches.core.flameThrowerShieldRequirement(rom)
+        patches.chest.fixChests(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.owl.removeOwlEvents(rom)
@@ -103,6 +109,8 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(logic.start)
             e.dump()
+            from locations import Chest
+            Chest(0x1B6).patch(rom, "BOW")
         else:
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)
@@ -114,7 +122,11 @@ if __name__ == "__main__":
                     break
                 except randomizer.Error:
                     retry_count += 1
+                    if retry_count > 100:
+                        print("Randomization keeps failing, abort!")
+                        sys.exit(1)
                     print("Failed, trying again: %d" % (retry_count))
+            total_retries += retry_count
 
         rom.patch(0, 0x0003, "00", "01")  # DEBUG SAVE PATCH
 
@@ -122,6 +134,14 @@ if __name__ == "__main__":
         patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])
 
         if args.output_filename:
-            rom.save(args.output_filename, name=seed)
+            filename = args.output_filename
+            if generation_number > 0:
+                filename = "%s.%d%s" % (os.path.splitext(filename)[0], generation_number, os.path.splitext(filename)[1])
+            rom.save(filename, name=seed)
         else:
-            rom.save("%s.gbc" % (seed), name=seed)
+            rom.save("lozlar_%s.gbc" % (seed), name=seed)
+    if args.count > 1:
+        total_time = time.monotonic() - start_time
+        print("Generated: %d roms" % (args.count))
+        print("Success ratio: %g%%" % (args.count / (args.count + total_retries) * 100))
+        print("Total time: %gsec (Per generation: %gsec)" % (total_time, total_time / (args.count + total_retries)))

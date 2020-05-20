@@ -57,6 +57,13 @@ def ASM(code):
                 else:
                     link[len(result)] = params[0]
                     result.append(0)
+            elif mnemonic == "RET":
+                if len(params) == 0:
+                    result.append(0xC9)
+                elif len(params) == 1:
+                    result.append(0xC0 | FLAGS[params[0]])
+                else:
+                    raise RuntimeError("Cannot ASM: %s" % (line))
             elif mnemonic == "PUSH":
                 assert len(params) == 1
                 if params[0] == "BC":
