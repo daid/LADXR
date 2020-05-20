@@ -2,11 +2,12 @@ from logic import AND, OR, COUNT
 import locations.location
 
 class Explorer:
-    def __init__(self):
+    def __init__(self, *, verbose=False):
         self.__inventory = {}
         self.__visited = set()
+        self.__verbose = verbose
 
-    def getAvailableLocations(self):
+    def getAccessableLocations(self):
         return self.__visited
 
     def visit(self, location):
@@ -18,7 +19,8 @@ class Explorer:
         assert location not in self.__visited
         self.__visited.add(location)
         for ii in location.items:
-            #print(ii, ii.item)
+            if self.__verbose:
+                print("%20s at %s" % (ii.item, ii))
             self.addItem(ii.item)
 
     def _process(self):
@@ -32,7 +34,8 @@ class Explorer:
                     options.append((target, req))
 
         if len(options) > 0:
-            # TODO: Test all possible variations
+            # TODO: Test all possible variations, as right now we just take the first option.
+            #       this will most likely branch into many different paths.
             assert self.consumeRequirements(options[0][1])
             self._visit(options[0][0])
             return True

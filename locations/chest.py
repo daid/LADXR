@@ -56,3 +56,6 @@ class DungeonChest(Chest):
         if result in ["MAP", "COMPASS", "STONE_BEAK", "NIGHTMARE_KEY", "KEY"]:
             return "%s%d" % (result, self._location.dungeon)
         return result
+
+    def __repr__(self):
+        return "%s:%03x:%d" % (self.__class__.__name__, self.room, self._location.dungeon)

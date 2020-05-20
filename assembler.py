@@ -39,6 +39,12 @@ def ASM(code):
             if mnemonic == "NOP":
                 assert len(params) == 0
                 result.append(0x00)
+            elif mnemonic == "JP":
+                assert len(params) == 1
+                if params[0] == "HL":
+                    result.append(0xE9)
+                else:
+                    raise RuntimeError("Cannot ASM: %s" % (line))
             elif mnemonic == "JR":
                 if len(params) == 2:
                     result.append(0x20 | FLAGS[params[0]])

@@ -41,8 +41,8 @@ class PointerTable:
             for st in self.__storage:
                 st["end"] = 0x4000
 
-        for s in sorted(self.__storage, key=lambda s: (s["bank"], s["start"])):
-            print(self.__class__.__name__, s)
+        # for s in sorted(self.__storage, key=lambda s: (s["bank"], s["start"])):
+        #     print(self.__class__.__name__, s)
 
     def __setitem__(self, item, value):
         self.__data[item] = value
@@ -89,7 +89,7 @@ class PointerTable:
             rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
 
         space_left = sum(map(lambda n: n["end"] - n["start"], storage))
-        print(self.__class__.__name__, "Space left:", space_left)
+        # print(self.__class__.__name__, "Space left:", space_left)
 
     def _readData(self, rom, bank_nr, pointer):
         bank = rom.banks[bank_nr]
