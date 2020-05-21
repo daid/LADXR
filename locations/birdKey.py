@@ -9,11 +9,12 @@ class BirdKey(Chest):
         super().__init__(0x27A)
 
     def patch(self, rom, option):
+        re = RoomEditor(rom, self.room)
+
         if option != BIRD_KEY:
             super().patch(rom, option)
 
             # Patch the room to contain a chest instead of the key
-            re = RoomEditor(rom, self.room)
             re.removeEntities(0x30)  # remove the key
             re.moveObject(8, 6, 4, 2)  # Change one of the holes into a chest.
             re.changeObject(4, 2, 0xA0)
