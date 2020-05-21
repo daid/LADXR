@@ -16,10 +16,12 @@ class StartItem(ItemInfo):
         rom.patch(5, 0x0CD1, "04", INVENTORY_MAP[option])
         rom.patch(5, 0x0CC6, "86", INVENTORY_ICON[option]) # patch shield that icon that is shown.
         if option != SHIELD:
-            #   Do not set the shield level to 1
+            #   Do not set the shield level to 1, but potentially set another item level if needed.
             if option == SWORD:
-                rom.patch(5, 0x0CD7, ASM("ld [$DB44], a"), ASM("ld [$DB4E], a"), fill_nop=True)
                 # TOFIX: This directly hides marin and tarin
+                rom.patch(5, 0x0CD7, ASM("ld [$DB44], a"), ASM("ld [$DB4E], a"), fill_nop=True)
+            elif option == POWER_BRACELET:
+                rom.patch(5, 0x0CD7, ASM("ld [$DB44], a"), ASM("ld [$DB43], a"), fill_nop=True)
             else:
                 rom.patch(5, 0x0CD7, ASM("ld [$DB44], a"), "", fill_nop=True)
 

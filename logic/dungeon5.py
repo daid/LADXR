@@ -8,7 +8,7 @@ Location(5).add(DungeonChest(0x1A0)).connect(entrance, HOOKSHOT)
 compass = Location(5).add(DungeonChest(0x19E)).connect(entrance, OR(attack, HOOKSHOT))
 Location(5).add(DroppedKey(0x181)).connect(compass, AND(SWORD, FEATHER))
 
-area2 = Location(5).add(DungeonChest(0x198)).connect(entrance, KEY5)  # map chest
+area2 = Location(5).add(DungeonChest(0x19B)).connect(entrance, KEY5)  # map chest
 Location(5).add(DungeonChest(0x197)).connect(area2, HOOKSHOT)  # key chest on the left
 after_stalfos = Location(5).add(DungeonChest(0x196)).connect(area2, AND(SWORD, BOMB)) # Need to defeat master stalfos once for this empty chest
 Location(5).add(DungeonChest(0x18E), DungeonChest(0x188), DungeonChest(0x18F)).connect(after_stalfos, AND(FEATHER, HOOKSHOT))
