@@ -140,6 +140,9 @@ if __name__ == "__main__":
                     seed = binascii.hexlify(seed).decode("ascii").upper()
                     break
                 except randomizer.Error:
+                    if args.seed is not None:
+                        print("Specified seed does not produce a valid result.")
+                        sys.exit(1)
                     retry_count += 1
                     if retry_count > 100:
                         print("Randomization keeps failing, abort!")
