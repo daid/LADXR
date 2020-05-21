@@ -13,7 +13,7 @@ def fixAll(rom):
 
 def allowRaftGameWithoutFlippers(rom):
     # Allow jumping down the waterfall in the raft game without the flippers.
-    rom.patch(0x02, 0x2EB1, ASM("ld a, [$DB0C]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x02, 0x2E8F, ASM("ld a, [$DB0C]"), ASM("ld a, $01"), fill_nop=True)
     # Change the room that goes back up to the raft game from the bottom, so we no longer need flippers
     re = RoomEditor(rom, 0x1F7)
     re.changeObject(3, 2, 0x1B)
@@ -26,7 +26,7 @@ def allowRaftGameWithoutFlippers(rom):
 def removeBirdKeyHoleDrop(rom):
     # Prevent the cave with the bird key from dropping you in the water
     # (if you do not have flippers this would softlock you)
-    rom.patch(0x02, 0x1196, ASM("""
+    rom.patch(0x02, 0x1176, ASM("""
         ldh a, [$F7]
         cp $0A
         jr nz, $30

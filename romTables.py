@@ -125,7 +125,7 @@ class BackgroundTilesTable(BackgroundTable):
     def __init__(self, rom):
         super().__init__(rom, {
             "count": 0x25,
-            "pointers_addr": 0x052D,
+            "pointers_addr": 0x052B,
             "pointers_bank": 0x20,
             "data_bank": 0x08,
             "expand_to_end_of_bank": True
@@ -136,7 +136,7 @@ class BackgroundAttributeTable(BackgroundTable):
     def __init__(self, rom):
         super().__init__(rom, {
             "count": 0x25,
-            "pointers_addr": 0x1C4D,
+            "pointers_addr": 0x1C4B,
             "pointers_bank": 0x24,
             "data_bank": 0x24,
         })

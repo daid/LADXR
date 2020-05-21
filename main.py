@@ -91,18 +91,18 @@ if __name__ == "__main__":
         rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
         rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
         # Show marin in the animal village
-        rom.patch(0x03, 0x0a84, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
+        rom.patch(0x03, 0x0A86, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
 
         ## Monkey bridge patch, always have the bridge there.
-        rom.patch(0x00, 0x3334, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
+        rom.patch(0x00, 0x333D, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
 
         # Remove "this object is heavy, bla bla", and other nag messages when touching an object
-        rom.patch(0x02, 0x2ba6, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
-        rom.patch(0x02, 0x3314, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
+        rom.patch(0x02, 0x2B8A, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
+        rom.patch(0x02, 0x32EC, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
 
         # Low health beep patches
-        rom.patch(2,  0x2359, ASM("ld a, $30"), ASM("ld a, $60")) # slow slow hp beep
-        #rom.patch(2,  0x235b, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
+        rom.patch(2,  0x2338, ASM("ld a, $30"), ASM("ld a, $60")) # slow slow hp beep
+        #rom.patch(2,  0x233A, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
 
         # Never allow stealing (always acts as if you do not have a sword)
         #rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
@@ -130,8 +130,8 @@ if __name__ == "__main__":
             e.dump()
             #from locations import Chest
             #Chest(0x113).patch(rom, "SHIELD")
-            #from locations import StartItem
-            #StartItem().patch(rom, "SWORD")
+            from locations import StartItem
+            StartItem().patch(rom, "POWER_BRACELET")
         else:
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)

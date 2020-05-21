@@ -31,7 +31,7 @@ class Chest(ItemInfo):
         if self.room == 0x1B6:
             # Patch the code that gives the nightmare key when you throw the pot at the chest in dungeon 6
             # As this is hardcoded for a specific chest type
-            rom.patch(3, 0x1456, ASM("ld a, $19"), ASM("ld a, $%02x" % (self.MAPPING[option])))
+            rom.patch(3, 0x145D, ASM("ld a, $19"), ASM("ld a, $%02x" % (self.MAPPING[option])))
 
     def read(self, rom):
         value = rom.banks[0x14][self.addr]
