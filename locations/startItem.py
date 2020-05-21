@@ -10,6 +10,8 @@ class StartItem(ItemInfo):
     OPTIONS = [SWORD, SHIELD, POWER_BRACELET, FEATHER, BOOMERANG]
 
     def patch(self, rom, option):
+        # TODO: Seems walking back into the house with certain options causes the initial event to repeat.
+
         # Change which item you get at the start.
         # Giving a sword here, gives a lv0 sword. Which does no damage?
         # Giving the power bracelet here gives a lv0 bracelet, most likely making lv2 inaccessible

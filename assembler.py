@@ -98,8 +98,17 @@ def ASM(code):
                 elif params[1] == "A" and dst is None and params[0].startswith("[") and params[0].endswith("]"):
                     result.append(0xEA)
                     result += toWord(params[0][1:-1])
+                elif params[0] == "BC":
+                    result.append(0x01)
+                    result += toWord(params[1])
+                elif params[0] == "DE":
+                    result.append(0x11)
+                    result += toWord(params[1])
                 elif params[0] == "HL":
                     result.append(0x21)
+                    result += toWord(params[1])
+                elif params[0] == "SP":
+                    result.append(0x31)
                     result += toWord(params[1])
                 elif dst is not None and src is not None:
                     result.append(0x40 | src | (dst << 3))
@@ -190,6 +199,10 @@ def ASM(code):
                 assert bit >= 0 and bit < 8
                 result.append(0xCB)
                 result.append(0x40 | reg | (bit << 3))
+            elif mnemonic == "CALL":
+                assert len(params) == 1
+                result.append(0xCD)
+                result += toWord(params[0])
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
     for offset, target in link.items():

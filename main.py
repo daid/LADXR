@@ -13,6 +13,7 @@ import patches.reduceRNG
 import locations.itemInfo
 import locations.location
 import explorer
+import utils
 import logic
 import os
 import time
@@ -82,6 +83,7 @@ if __name__ == "__main__":
             # The default rom has this build in, just need to set a flag and we get this save.
             rom.patch(0, 0x0003, "00", "01")
 
+
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
         # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song
@@ -108,15 +110,15 @@ if __name__ == "__main__":
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
         # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
-        rom.texts[0x01] = b"Let^s a go!\xff"
+        rom.texts[0x01] = utils.formatText(b"Let's a go!")
 
         # Reduce length of a bunch of common texts
-        rom.texts[0xEA] = b"You^ve got a    " + b"Guardian Acorn!\xff"
+        rom.texts[0xEA] = utils.formatText(b"You've got a Guardian Acorn!")
         rom.texts[0xEB] = rom.texts[0xEA]
         rom.texts[0xEC] = rom.texts[0xEA]
-        rom.texts[0x08] = b"You got a Piece " + b"of Power!\xff"
-        rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
-        rom.texts[0xA7] = b"You^ve got the  " + b"Compass!\xff"
+        rom.texts[0x08] = utils.formatText(b"You got a Piece of Power!")
+        rom.texts[0xEF] = utils.formatText(b"You found a Secret Seashell!")
+        rom.texts[0xA7] = utils.formatText(b"You've got the Compass!")
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
