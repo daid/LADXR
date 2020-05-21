@@ -28,7 +28,7 @@ class RoomEditor:
             assert False, "Color dungeon not added yet"
 
         self.animation_id = objects_raw[0]
-        self.floor_tile = objects_raw[1]
+        self.floor_object = objects_raw[1]
         idx = 2
         while objects_raw[idx] != 0xFE:
             x = objects_raw[idx] & 0x0F
@@ -61,20 +61,22 @@ class RoomEditor:
         else:
             self.overlay = None
 
-    def store(self, rom):
-        objects_raw = bytearray([self.animation_id, self.floor_tile])
+    def store(self, rom, new_room_nr=None):
+        if new_room_nr is None:
+            new_room_nr = self.room
+        objects_raw = bytearray([self.animation_id, self.floor_object])
         for obj in self.objects:
             objects_raw += obj.export()
         objects_raw += bytearray([0xFE])
 
-        if self.room < 0x080:
-            rom.rooms_overworld_top[self.room] = objects_raw
-        elif self.room < 0x100:
-            rom.rooms_overworld_bottom[self.room - 0x80] = objects_raw
-        elif self.room < 0x200:
-            rom.rooms_indoor_a[self.room - 0x100] = objects_raw
-        elif self.room < 0x300:
-            rom.rooms_indoor_b[self.room - 0x200] = objects_raw
+        if new_room_nr < 0x080:
+            rom.rooms_overworld_top[new_room_nr] = objects_raw
+        elif new_room_nr < 0x100:
+            rom.rooms_overworld_bottom[new_room_nr - 0x80] = objects_raw
+        elif new_room_nr < 0x200:
+            rom.rooms_indoor_a[new_room_nr - 0x100] = objects_raw
+        elif new_room_nr < 0x300:
+            rom.rooms_indoor_b[new_room_nr - 0x200] = objects_raw
         else:
             assert False, "Color dungeon not added yet"
 
@@ -82,12 +84,12 @@ class RoomEditor:
         for entity in self.entities:
             entities_raw += bytearray([entity[0] | entity[1] << 4, entity[2]])
         entities_raw += bytearray([0xFF])
-        rom.entities[self.room] = entities_raw
+        rom.entities[new_room_nr] = entities_raw
 
-        if self.room < 0x0CC:
-            rom.banks[0x26][self.room * 80:self.room * 80 + 80] = self.overlay
-        elif self.room < 0x100:
-            rom.banks[0x27][(self.room - 0xCC) * 80:(self.room - 0xCC) * 80 + 80] = self.overlay
+        if new_room_nr < 0x0CC:
+            rom.banks[0x26][new_room_nr * 80:new_room_nr * 80 + 80] = self.overlay
+        elif new_room_nr < 0x100:
+            rom.banks[0x27][(new_room_nr - 0xCC) * 80:(new_room_nr - 0xCC) * 80 + 80] = self.overlay
 
     def addEntity(self, x, y, type_id):
         self.entities.append((x, y, type_id))
@@ -112,7 +114,7 @@ class RoomEditor:
         for obj in self.objects:
             if obj.x == x and obj.y == y:
                 if self.overlay is not None:
-                    self.overlay[x + y * 10] = self.floor_tile
+                    self.overlay[x + y * 10] = self.floor_object
                     self.overlay[new_x + new_y * 10] = obj.type_id
                 obj.x = new_x
                 obj.y = new_y
@@ -138,6 +140,9 @@ class ObjectHorizontal(Object):
     def export(self):
         return bytearray([0x80 | self.count, self.x | (self.y << 4), self.type_id])
 
+    def __repr__(self):
+        return "%s:%d,%d:%02Xx%d" % (self.__class__.__name__, self.x, self.y, self.type_id, self.count)
+
 
 class ObjectVertical(Object):
     def __init__(self, x, y, type_id, count):
@@ -147,6 +152,9 @@ class ObjectVertical(Object):
     def export(self):
         return bytearray([0xC0 | self.count, self.x | (self.y << 4), self.type_id])
 
+    def __repr__(self):
+        return "%s:%d,%d:%02Xx%d" % (self.__class__.__name__, self.x, self.y, self.type_id, self.count)
+
 
 class ObjectWarp(Object):
     def __init__(self, data):
@@ -155,3 +163,6 @@ class ObjectWarp(Object):
 
     def export(self):
         return self.data
+
+    def __repr__(self):
+        return "%s:%s" % (self.__class__.__name__, self.data)

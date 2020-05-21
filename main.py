@@ -7,6 +7,7 @@ import patches.bowwow
 import patches.desert
 import patches.owl
 import patches.chest
+import patches.softlock
 import patches.titleScreen
 import locations.itemInfo
 import locations.location
@@ -33,6 +34,10 @@ if __name__ == "__main__":
         help="Repeat the generation this many times.")
     parser.add_argument('-s', '--seed', dest="seed", type=str, required=False,
         help="Generate the specified seed")
+    parser.add_argument('--romdebugmode', dest="romdebugmode", action="store_true",
+        help="Patch the rom so that debug mode is enabled, this creates a default save with most items and unlocks some debug features.")
+    parser.add_argument('--exportmap', dest="exportmap", action="store_true",
+        help="Export the map (many graphical mistakes)")
     args = parser.parse_args()
 
     start_time = time.monotonic()
@@ -40,6 +45,11 @@ if __name__ == "__main__":
     for generation_number in range(args.count):
         print("Loading: %s" % (args.input_filename))
         rom = ROMWithTables(args.input_filename)
+
+        if args.exportmap:
+            import mapexport
+            mapexport.MapExport(rom)
+            sys.exit(0)
 
         if args.dump or args.test:
             for ii in locations.itemInfo.ItemInfo.all:
@@ -58,13 +68,17 @@ if __name__ == "__main__":
         patches.core.cleanup(rom)
         patches.core.noSwordMusic(rom)
         patches.core.removeGhost(rom)
-        patches.core.removeBirdKeyHoleDrop(rom)
+        #patches.core.removeBirdKeyHoleDrop(rom)
         patches.core.alwaysAllowSecretBook(rom)
         patches.core.flameThrowerShieldRequirement(rom)
+        patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.owl.removeOwlEvents(rom)
+        if args.romdebugmode:
+            # The default rom has this build in, just need to set a flag and we get this save.
+            rom.patch(0, 0x0003, "00", "01")
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
@@ -92,17 +106,17 @@ if __name__ == "__main__":
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
         # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
-        rom.texts[0x01] = b"Let^sa go!\xff"
+        rom.texts[0x01] = b"Let^s a go!\xff"
 
         # Reduce length of a bunch of common texts
-        rom.texts[0xEA] = b"You've got a    " + b"Guardian Acorn!\xff"
+        rom.texts[0xEA] = b"You^ve got a    " + b"Guardian Acorn!\xff"
         rom.texts[0xEB] = rom.texts[0xEA]
         rom.texts[0xEC] = rom.texts[0xEA]
         rom.texts[0x08] = b"You got a Piece " + b"of Power!\xff"
         rom.texts[0xEF] = b"You found a     " + b"Secret Seashell!\xff"
-        rom.texts[0xA7] = b"You've got the  " + b"Compass!\xff"
+        rom.texts[0xA7] = b"You^ve got the  " + b"Compass!\xff"
 
-        if args.seed == "DEFAULT":
+        if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
             for ii in locations.itemInfo.ItemInfo.all:
                 ii.item = ii.read(rom)
@@ -130,8 +144,6 @@ if __name__ == "__main__":
                     print("Failed, trying again: %d" % (retry_count))
             total_retries += retry_count
 
-        rom.patch(0, 0x0003, "00", "01")  # DEBUG SAVE PATCH
-
         print("Seed: %s" % (seed))
         patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])
 
@@ -142,6 +154,7 @@ if __name__ == "__main__":
             rom.save(filename, name=seed)
         else:
             rom.save("lozlar_%s.gbc" % (seed), name=seed)
+
     if args.count > 1:
         total_time = time.monotonic() - start_time
         print("Generated: %d roms" % (args.count))

@@ -73,3 +73,5 @@ right_mountains_2 = Location().connect(right_mountains_1, FLIPPERS)
 Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2))
 Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # Chest(0x2F2) is also here, but that is the multi-chest puzzle.
 right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT))
+
+left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(SWORD, MAGIC_ROD, BOMB, MAGIC_POWDER)))

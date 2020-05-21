@@ -14,48 +14,21 @@ def removeGhost(rom):
     # Do not have the ghost follow you after dungeon 4
     rom.patch(0x03, 0x1E0A, ASM("LD [$DB79], A"), ASM("NOP\nNOP\nNOP"))
 
-def removeBirdKeyHoleDrop(rom):
-    # Prevent the cave with the bird key from dropping you in the water
-    # (if you do not have flippers this would softlock you)
-    rom.patch(0x02, 0x1196, ASM("""
-        ldh a, [$F7]
-        cp $0A
-        jr nz, $30
-    """), ASM("""
-        nop
-        nop
-        nop
-        nop
-        jr $30
-    """))
-
 def alwaysAllowSecretBook(rom):
-    rom.patch(0x15, 0x3F25, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00\nnop\nnop"))
+    rom.patch(0x15, 0x3F25, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00"), fill_nop=True)
 
 def flameThrowerShieldRequirement(rom):
     rom.patch(0x03, 0x2EAF,
         ASM("ld a, [$DB44]\ncp $02\nret nz"), # if not shield level 2
-        ASM("ld a, [$DB44]\ncp $02\nret nc")) # if not shield level 2 or higher
+        ASM("ld a, [$DB44]\ncp $02\nret c")) # if not shield level 2 or higher
 
 def cleanup(rom):
     # Remove unused rooms to make some space in the rom
     re = RoomEditor(rom, 0x2C4)
     re.objects = []
     re.entities = []
-    re.store(rom)
-    re = RoomEditor(rom, 0x2D4)
-    re.objects = []
-    re.entities = []
-    re.store(rom)
-    re = RoomEditor(rom, 0x277)
-    re.objects = []
-    re.entities = []
-    re.store(rom)
-    re = RoomEditor(rom, 0x278)
-    re.objects = []
-    re.entities = []
-    re.store(rom)
-    re = RoomEditor(rom, 0x279)
-    re.objects = []
-    re.entities = []
-    re.store(rom)
+    re.store(rom, 0x2C4)
+    re.store(rom, 0x2D4)
+    re.store(rom, 0x277)
+    re.store(rom, 0x278)
+    re.store(rom, 0x279)

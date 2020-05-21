@@ -10,7 +10,6 @@ class StartItem(ItemInfo):
     OPTIONS = [SWORD, SHIELD, POWER_BRACELET, FEATHER, BOOMERANG]
 
     def patch(self, rom, option):
-        print(option)
         # Change which item you get at the start.
         # Giving a sword here, gives a lv0 sword. Which does no damage?
         # Giving the power bracelet here gives a lv0 bracelet, most likely making lv2 inaccessible
