@@ -1,6 +1,7 @@
 from logic import AND, OR, COUNT
 import locations.location
 
+
 class Explorer:
     def __init__(self, *, verbose=False):
         self.__inventory = {}

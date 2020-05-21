@@ -1,4 +1,5 @@
 from roomEditor import RoomEditor
+from assembler import ASM
 
 
 def fixAll(rom):

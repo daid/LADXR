@@ -9,6 +9,7 @@ import patches.owl
 import patches.chest
 import patches.softlock
 import patches.titleScreen
+import patches.reduceRNG
 import locations.itemInfo
 import locations.location
 import explorer
@@ -68,7 +69,7 @@ if __name__ == "__main__":
         patches.core.cleanup(rom)
         patches.core.noSwordMusic(rom)
         patches.core.removeGhost(rom)
-        #patches.core.removeBirdKeyHoleDrop(rom)
+        # patches.core.removeBirdKeyHoleDrop(rom)
         patches.core.alwaysAllowSecretBook(rom)
         patches.core.flameThrowerShieldRequirement(rom)
         patches.softlock.fixAll(rom)
@@ -76,6 +77,7 @@ if __name__ == "__main__":
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.owl.removeOwlEvents(rom)
+        patches.reduceRNG.slowdownThreeOfAKind(rom)
         if args.romdebugmode:
             # The default rom has this build in, just need to set a flag and we get this save.
             rom.patch(0, 0x0003, "00", "01")
@@ -125,6 +127,7 @@ if __name__ == "__main__":
             e.visit(logic.start)
             e.dump()
             #from locations import Chest
+            #Chest(0x113).patch(rom, "SHIELD")
             #from locations import StartItem
             #StartItem().patch(rom, "SWORD")
         else:
