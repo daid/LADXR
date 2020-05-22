@@ -7,9 +7,11 @@ import patches.bowwow
 import patches.desert
 import patches.owl
 import patches.chest
+import patches.droppedKey
 import patches.softlock
 import patches.titleScreen
 import patches.reduceRNG
+import patches.bank3f
 import locations.itemInfo
 import locations.location
 import explorer
@@ -68,6 +70,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
         patches.core.cleanup(rom)
+        patches.owl.removeOwlEvents(rom)
         patches.core.noSwordMusic(rom)
         patches.core.removeGhost(rom)
         # patches.core.removeBirdKeyHoleDrop(rom)
@@ -75,10 +78,11 @@ if __name__ == "__main__":
         patches.core.flameThrowerShieldRequirement(rom)
         patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
+        patches.droppedKey.fixDroppedKey(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
-        patches.owl.removeOwlEvents(rom)
         patches.reduceRNG.slowdownThreeOfAKind(rom)
+        patches.bank3f.addBank3F(rom)
         if args.romdebugmode:
             # The default rom has this build in, just need to set a flag and we get this save.
             rom.patch(0, 0x0003, "00", "01")
@@ -128,10 +132,10 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(logic.start)
             e.dump()
-            #from locations import Chest
-            #Chest(0x113).patch(rom, "SHIELD")
-            from locations import StartItem
-            StartItem().patch(rom, "POWER_BRACELET")
+            from locations import Chest
+            Chest(0x113).patch(rom, "BOW")
+            #from locations import StartItem
+            #StartItem().patch(rom, "POWER_BRACELET")
         else:
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)

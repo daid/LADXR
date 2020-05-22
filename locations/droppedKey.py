@@ -12,7 +12,7 @@ class DroppedKey(ItemInfo):
         self.OPTIONS = ["KEY%d" % (location.dungeon)]
 
     def patch(self, rom, option):
-        pass
+        rom.banks[0x3E][self.room + 0x3800] = 0x1A
 
     def read(self, rom):
         return self.OPTIONS[0]

@@ -10,28 +10,30 @@ class ROM:
         assert len(data) == 1024 * 1024
         self.banks = []
         for n in range(0x40):
-            self.banks.append(bytearray(data[n*16*1024:(n+1)*16*1024]))
+            self.banks.append(bytearray(data[n*0x4000:(n+1)*0x4000]))
 
     def patch(self, bank_nr, addr, old, new, *, fill_nop=False):
-        old = h2b(old)
         new = h2b(new)
-        if fill_nop:
-            assert len(old) >= len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
-            new += b'\x00' * (len(old) - len(new))
-        else:
-            assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
-        assert addr >= 0 and addr + len(old) <= 16*1024
         bank = self.banks[bank_nr]
-        if bank[addr:addr+len(old)] != old:
-            if bank[addr:addr + len(old)] == new:
-                # Patch is already applied.
-                return
-            loc = bank.find(old)
-            while loc > -1:
-                print("Possible at:", hex(loc))
-                loc = bank.find(old, loc+1)
-            assert False, "Patch mismatch: %s != %s at 0x%04x" % (b2h(bank[addr:addr+len(old)]), b2h(old), addr)
-        bank[addr:addr+len(old)] = new
+        if old is not None:
+            old = h2b(old)
+            if fill_nop:
+                assert len(old) >= len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
+                new += b'\x00' * (len(old) - len(new))
+            else:
+                assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
+            assert addr >= 0 and addr + len(old) <= 16*1024
+            if bank[addr:addr+len(old)] != old:
+                if bank[addr:addr + len(old)] == new:
+                    # Patch is already applied.
+                    return
+                loc = bank.find(old)
+                while loc > -1:
+                    print("Possible at:", hex(loc))
+                    loc = bank.find(old, loc+1)
+                assert False, "Patch mismatch:\n%s !=\n%s at 0x%04x" % (b2h(bank[addr:addr+len(old)]), b2h(old), addr)
+        bank[addr:addr+len(new)] = new
+        assert len(bank) == 0x4000
 
     def fixHeader(self, *, name=None):
         if name is not None:
