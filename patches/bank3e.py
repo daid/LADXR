@@ -69,6 +69,8 @@ GiveItemFromChest:
         dw AddRupees200     ; CHEST_RUPEES_200
         dw AddRupees500     ; CHEST_RUPEES_500
         dw AddSeashell      ; CHEST_SEASHELL
+        dw Exit             ; CHEST_MESSAGE
+        dw Exit             ; CHEST_GEL
 
 ChestPowerBracelet:
         ld   hl, $DB43 ; power bracelet level
@@ -241,13 +243,15 @@ ChestSpriteTable:
         db $A6, $15        ; CHEST_RUPEES_200
         db $A6, $15        ; CHEST_RUPEES_500
         db $9E, $14        ; CHEST_SEASHELL
+        db $FF, $18        ; CHEST_MESSAGE
+        db $FF, $18        ; CHEST_GEL
 
 ChestMessageTable:
         db $90, $91, $89, $93, $94, $95, $96, $97
         db $98, $99, $9A, $9B, $9C, $9D, $D9, $9F
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7
         db $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-        db $EF, $06
+        db $EF, $DA
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
