@@ -43,3 +43,6 @@ isAKey:
     rom.banks[0x3E][0x3800 + 0x27A] = 0x14
     # Set the proper face key by default
     rom.banks[0x3E][0x3800 + 0x27F] = 0x13
+
+    # Set the proper hookshot key by default
+    rom.banks[0x3E][0x3800 + 0x180] = 0x03

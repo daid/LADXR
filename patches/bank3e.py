@@ -213,7 +213,7 @@ ChestSpriteTable:
         db $82, $15        ; CHEST_POWER_BRACELET
         db $86, $15        ; CHEST_SHIELD
         db $88, $14        ; CHEST_BOW
-        db $8A, $10        ; CHEST_HOOKSHOT
+        db $8A, $14        ; CHEST_HOOKSHOT
         db $8C, $14        ; CHEST_MAGIC_ROD
         db $98, $16        ; CHEST_PEGASUS_BOOTS
         db $90, $17        ; CHEST_OCARINA

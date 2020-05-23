@@ -7,7 +7,7 @@ class DroppedKey(ItemInfo):
         FEATHER, SHOVEL, MAGIC_POWDER, BOMB, SWORD, FLIPPERS, MAGNIFYING_LENS, MEDICINE,
         TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF,
         RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
-        SEASHELL, MESSAGE, GEL, BOOMERANG]
+        SEASHELL, BOOMERANG]
 
     def __init__(self, room):
         super().__init__()

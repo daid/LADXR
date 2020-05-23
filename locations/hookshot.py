@@ -1,5 +1,4 @@
-from .itemInfo import ItemInfo
-from .items import *
+from .droppedKey import DroppedKey
 
 
 """
@@ -10,17 +9,10 @@ The master stalfos drops a "key" with, and modifies a bunch of properties:
     call SpawnNewEntity_trampoline                ; $7EE3: $CD $86 $3B
 
 And then the dropped key handles the rest with room number specific code.
+As we patched the dropped key, this requires no extra handling.
 """
 
 
-class HookshotDrop(ItemInfo):
-    OPTIONS = [HOOKSHOT]
-
+class HookshotDrop(DroppedKey):
     def __init__(self):
-        super().__init__()
-
-    def patch(self, rom, option):
-        pass
-
-    def read(self, rom):
-        return self.OPTIONS[0]
+        super().__init__(0x180)
