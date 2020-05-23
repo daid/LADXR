@@ -1,4 +1,6 @@
 from .requirements import *
+from .location import Location
+from locations import *
 
 start = Location().add(StartItem())
 Location().add(ShopItem(2)).connect(start, COUNT("RUPEES", 10))
@@ -59,7 +61,7 @@ Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT)
 right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS)
 
 face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
-Location().add(FaceKey()).connect(face_shrine, BOW)
+Location().add(FaceKey()).connect(face_shrine, OR(BOW, SWORD))
 
 dungeon6_entrance = Location().connect(animal_town, AND(FLIPPERS, HOOKSHOT))
 

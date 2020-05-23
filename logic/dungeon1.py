@@ -1,4 +1,7 @@
 from .requirements import *
+from .location import Location
+from locations import *
+
 
 entrance = Location(1)
 entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))

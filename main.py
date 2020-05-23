@@ -14,7 +14,7 @@ import patches.reduceRNG
 import patches.bank3e
 import patches.bank3f
 import locations.itemInfo
-import locations.location
+import logic.location
 import explorer
 import utils
 import logic
@@ -63,12 +63,13 @@ if __name__ == "__main__":
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)
             e.visit(logic.start)
-            if len(e.getAccessableLocations()) != len(locations.location.Location.all):
+            if len(e.getAccessableLocations()) != len(logic.location.Location.all):
                 print("Logic failure! Cannot access all locations.")
-                for loc in locations.location.Location.all:
+                print("Failed to find:")
+                for loc in logic.location.Location.all:
                     if loc not in e.getAccessableLocations():
                         for ii in loc.items:
-                            print(ii, ii.read(rom))
+                            print("%20s: %s" % (ii, ii.read(rom)))
                 sys.exit(1)
             sys.exit(0)
 
@@ -136,13 +137,13 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(logic.start)
             e.dump()
-            #from locations import Chest
-            #Chest(0x113).patch(rom, "SWORD")
-            #from locations import DroppedKey
-            #dk = DroppedKey(0x116)
-            #dk.patch(rom, "SWORD")
-            #from locations import StartItem
-            #StartItem().patch(rom, "POWER_BRACELET")
+            # from locations import Chest
+            # Chest(0x113).patch(rom, "SWORD")
+            # from locations import DroppedKey
+            # dk = DroppedKey(0x116)
+            # dk.patch(rom, "SWORD")
+            # from locations import StartItem
+            # StartItem().patch(rom, "POWER_BRACELET")
         else:
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)

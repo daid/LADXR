@@ -1,4 +1,7 @@
 from .requirements import *
+from .location import Location
+from locations import *
+
 
 entrance = Location(8)
 entrance_up = Location(8).add(DungeonChest(0x24F)).connect(entrance, FEATHER)

@@ -1,4 +1,4 @@
-from locations import *
+from locations.items import *
 
 
 class OR(list):
@@ -23,7 +23,23 @@ class COUNT:
         self.amount = amount
 
     def __repr__(self):
-        return "%dx%s" % (self.amount, self.item)
+        return "<%dx%s>" % (self.amount, self.item)
+
+
+def hasConsumableRequirement(requirements):
+    if isinstance(requirements, list) or isinstance(requirements, tuple):
+        return any(map(hasConsumableRequirement, requirements))
+    if isinstance(requirements, COUNT):
+        return isConsumable(requirements.item)
+    return isConsumable(requirements)
+
+
+def isConsumable(item):
+    if item.startswith("RUPEES_"):
+        return True
+    if item.startswith("KEY") and len(item) == 4:
+        return True
+    return False
 
 
 bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET)

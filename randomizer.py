@@ -1,8 +1,9 @@
-from locations import location
 import explorer
 import logic
 import random
 import os
+
+from logic import location
 
 
 class Error(Exception):
@@ -114,7 +115,6 @@ class Randomizer:
                 print("Not all locations are accessible anymore with the full item pool")
             return False
         return True
-
 
     def canStillPlaceItemPool(self, verbose=False):
         # For each item in the pool, find which spots are available.

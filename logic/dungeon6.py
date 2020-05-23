@@ -1,4 +1,7 @@
 from .requirements import *
+from .location import Location
+from locations import *
+
 
 entrance = Location(6)
 Location(6).add(DungeonChest(0x1CF)).connect(entrance, BOMB, BOW)

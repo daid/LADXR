@@ -1,4 +1,6 @@
 from .requirements import *
+from .location import Location
+from locations import *
 
 entrance = Location(4)
 entrance.add(DungeonChest(0x179))  # stone slab chest

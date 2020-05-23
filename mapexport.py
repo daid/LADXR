@@ -79,21 +79,24 @@ class RenderedMap:
         elif type_id == 0xF9:  # palace door
             self.placeObject(x + 0, y, 0xA4)
             self.placeObject(x + 1, y, 0xA5)
-            self.placeObject(x + 0, y + 1, 0xA6)
-            self.placeObject(x + 1, y + 1, 0xA7)
-            self.placeObject(x + 0, y + 2, 0xE3)
-            self.placeObject(x + 1, y + 2, 0xA8)
+            self.placeObject(x + 2, y, 0xA6)
+            self.placeObject(x + 0, y + 1, 0xA7)
+            self.placeObject(x + 1, y + 1, 0xE3)
+            self.placeObject(x + 2, y + 1, 0xA8)
         elif type_id == 0xFA:   # stone pig head
             self.placeObject(x + 0, y, 0xBB)
             self.placeObject(x + 1, y, 0xBC)
             self.placeObject(x + 0, y + 1, 0xBD)
             self.placeObject(x + 1, y + 1, 0xBE)
         elif type_id == 0xFB:  # palmtree
-            y = y | 1
-            self.placeObject(x + 0, y, 0xB6)
-            self.placeObject(x + 1, y, 0xB7)
-            self.placeObject(x + 0, y + 1, 0xCD)
-            self.placeObject(x + 1, y + 1, 0xCE)
+            if x == 15:
+                self.placeObject(x + 1, y + 1, 0xB7)
+                self.placeObject(x + 1, y + 2, 0xCE)
+            else:
+                self.placeObject(x + 0, y, 0xB6)
+                self.placeObject(x + 0, y + 1, 0xCD)
+                self.placeObject(x + 1, y + 0, 0xB7)
+                self.placeObject(x + 1, y + 1, 0xCE)
         elif type_id == 0xFC:  # square "hill with hole" (seen near lvl4 entrance)
             self.placeObject(x + 0, y, 0x2B)
             self.placeObject(x + 1, y, 0x2C)
@@ -130,18 +133,22 @@ class MapExport:
             0x0F: self.getTiles(0x0F),
         }
 
+        f = open("test.html", "wt")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x100):
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n), (x * 20 * 8, y * 16 * 8))
         result.save("overworld.png")
+        f.write("<img src='overworld.png'>")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x100):
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x100), (x * 20 * 8, y * 16 * 8))
         result.save("caves1.png")
+        f.write("<img src='caves1.png'>")
+        f.close()
 
     def exportRoom(self, room_nr):
         re = RoomEditor(self.__rom, room_nr)
@@ -205,7 +212,7 @@ class MapExport:
                 tiles[x*2+1 + (y*2+1)*20] = tile_info[obj*4+3]
 
         if room_nr < 0x100:
-            sub_tileset_offset = self.__rom.banks[0x20][0x2e7b + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)] << 4
+            sub_tileset_offset = self.__rom.banks[0x20][0x2E73 + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)] << 4
             tilemap = self.__tiles[0x0f][sub_tileset_offset:sub_tileset_offset+0x20]
             tilemap += self.__tiles[0x0c][0x120:0x180]
             tilemap += self.__tiles[0x0c][0x080:0x100]
@@ -214,7 +221,12 @@ class MapExport:
             tileset_nr = self.__rom.banks[0x20][0x2e7b + 0x40 + room_nr - 0x100]
             tilemap = [None] * 0x100
             tilemap[0x20:0x80] = self.__tiles[0x0D][0:0x60]
-        # TODO: 0x6C-0x6F are animated tiles
+
+        # Placeholder for animated tiles, this needs a more complex lookup depending on re.animation_id, but not a straight mapping.
+        addr = 0x2C0
+        tilemap[0x6C:0x70] = self.__tiles[0x0c][addr:addr+4]
+
+        assert len(tilemap) == 0x100
 
         result = PIL.Image.new('L', (8 * 20, 8 * 16))
         for y in range(16):

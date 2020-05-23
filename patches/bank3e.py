@@ -1,6 +1,9 @@
 from assembler import ASM
 
 
+def hasBank3E(rom):
+    return rom.banks[0x3E][0] != 0x00
+
 # Bank $3E is used for large chunks of custom code.
 #   Mainly for new chest and dropped items handling.
 def addBank3E(rom):

@@ -1,5 +1,6 @@
 import typing
-from .itemInfo import ItemInfo
+from .requirements import hasConsumableRequirement
+from locations.itemInfo import ItemInfo
 
 
 class Location:
@@ -8,7 +9,9 @@ class Location:
     def __init__(self, dungeon=None):
         self.items = []  # type: typing.List[ItemInfo]
         self.dungeon = dungeon
-        self.connections = {}
+        self.__connected_to = set()
+        self.simple_connections = []
+        self.gated_connections = []
         Location.all.append(self)
 
     def add(self, *item_infos):
@@ -20,10 +23,14 @@ class Location:
 
     def connect(self, other, *args, one_way=False):
         assert isinstance(other, Location)
+        assert other not in self.__connected_to
 
-        if other not in self.connections:
-            self.connections[other] = []
-        self.connections[other] += list(args)
+        self.__connected_to.add(other)
+
+        if hasConsumableRequirement(args):
+            self.gated_connections.append((other, args))
+        else:
+            self.simple_connections.append((other, args))
         if not one_way:
             other.connect(self, *args, one_way=True)
         return self
