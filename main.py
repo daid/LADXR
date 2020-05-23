@@ -31,6 +31,8 @@ if __name__ == "__main__":
         help="Rom file to use as input.")
     parser.add_argument('-o', '--output', dest="output_filename", metavar='output rom', type=str, required=False,
         help="Output filename to use. If not specified [seed].gbc is used.")
+    parser.add_argument('--seedlist', dest="seedlist", metavar='seed list', type=str, required=False,
+        help="Instead of generating ROMS, only generate valid seeds and append them to the specified file.")
     parser.add_argument('--dump', dest="dump", action="store_true",
         help="Dump the logic if the given rom (spoilers!)")
     parser.add_argument('--test', dest="test", action="store_true",
@@ -164,7 +166,11 @@ if __name__ == "__main__":
         print("Seed: %s" % (seed))
         patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])
 
-        if args.output_filename:
+        if args.seedlist:
+            f = open(args.seedlist, "at")
+            f.write("%s\n" % (seed))
+            f.close()
+        elif args.output_filename:
             filename = args.output_filename
             if generation_number > 0:
                 filename = "%s.%d%s" % (os.path.splitext(filename)[0], generation_number, os.path.splitext(filename)[1])
