@@ -15,9 +15,6 @@ def fixAll(rom):
 def fixDoghouse(rom):
     # Fix entering the dog house from the back, and ending up out of bounds.
     re = RoomEditor(rom, 0x0A1)
-    print(re.floor_object)
-    for idx, obj in enumerate(re.objects):
-        print(idx, obj)
     re.objects.append(Object(6, 2, 0x0E2))
     re.objects.append(re.objects[20])  # Move the flower patch after the warp entry definition so it overrules the tile
     re.objects.append(re.objects[3])
