@@ -6,7 +6,7 @@ entrance = Location(4)
 entrance.add(DungeonChest(0x179))  # stone slab chest
 entrance.add(DungeonChest(0x16A))  # map chest
 right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, attack))
-Location(4).add(DungeonChest(0x178)).connect(right_of_entrance, SWORD) # room with key chest
+Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, SWORD) # room with key chest
 Location(4).add(DungeonChest(0x171)).add(DungeonChest(0x165)).connect(entrance, AND(FEATHER, PEGASUS_BOOTS, BOMB))  # 2 key chests on the right.
 
 double_locked_room = Location(4).connect(right_of_entrance, KEY4)
