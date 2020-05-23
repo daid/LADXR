@@ -1,4 +1,4 @@
-from roomEditor import RoomEditor
+from roomEditor import RoomEditor, Object
 from assembler import ASM
 
 
@@ -10,6 +10,23 @@ def fixAll(rom):
 
     allowRaftGameWithoutFlippers(rom)
     removeBirdKeyHoleDrop(rom)
+    fixDoghouse(rom)
+
+def fixDoghouse(rom):
+    # Fix entering the dog house from the back, and ending up out of bounds.
+    re = RoomEditor(rom, 0x0A1)
+    print(re.floor_object)
+    for idx, obj in enumerate(re.objects):
+        print(idx, obj)
+    re.objects.append(Object(6, 2, 0x0E2))
+    re.objects.append(re.objects[20])  # Move the flower patch after the warp entry definition so it overrules the tile
+    re.objects.append(re.objects[3])
+
+    re.objects.pop(22)
+    re.objects.pop(21)
+    re.objects.pop(20)  # Remove the flower patch at the normal entry index
+    re.objects.pop(11)  # Duplicate object, we can just remove it, gives room for our custom entry door
+    re.store(rom)
 
 def allowRaftGameWithoutFlippers(rom):
     # Allow jumping down the waterfall in the raft game without the flippers.
