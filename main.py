@@ -11,6 +11,7 @@ import patches.droppedKey
 import patches.softlock
 import patches.titleScreen
 import patches.reduceRNG
+import patches.bank3e
 import patches.bank3f
 import locations.itemInfo
 import locations.location
@@ -70,6 +71,8 @@ if __name__ == "__main__":
             sys.exit(0)
 
         patches.core.cleanup(rom)
+        patches.bank3e.addBank3E(rom)
+        patches.bank3f.addBank3F(rom)
         patches.owl.removeOwlEvents(rom)
         patches.core.noSwordMusic(rom)
         patches.core.removeGhost(rom)
@@ -82,7 +85,6 @@ if __name__ == "__main__":
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.reduceRNG.slowdownThreeOfAKind(rom)
-        patches.bank3f.addBank3F(rom)
         if args.romdebugmode:
             # The default rom has this build in, just need to set a flag and we get this save.
             rom.patch(0, 0x0003, "00", "01")
@@ -132,8 +134,11 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(logic.start)
             e.dump()
-            from locations import Chest
-            Chest(0x113).patch(rom, "BOW")
+            #from locations import Chest
+            #Chest(0x113).patch(rom, "SWORD")
+            #from locations import DroppedKey
+            #dk = DroppedKey(0x116)
+            #dk.patch(rom, "SWORD")
             #from locations import StartItem
             #StartItem().patch(rom, "POWER_BRACELET")
         else:

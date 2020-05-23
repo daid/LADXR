@@ -46,13 +46,13 @@ class Assembler:
             mnemonic = line
             params = []
         if mnemonic == "NOP":
-            assert len(params) == 0
+            assert len(params) == 0, line
             self.__result.append(0x00)
         elif mnemonic == "STOP":
-            assert len(params) == 0
+            assert len(params) == 0, line
             self.__result.append(0x10)
         elif mnemonic == "JP":
-            assert len(params) == 1
+            assert len(params) == 1, line
             if params[0] == "HL":
                 self.__result.append(0xE9)
             else:
@@ -64,7 +64,7 @@ class Assembler:
                 params.pop(0)
             else:
                 self.__result.append(0x18)
-            assert len(params) == 1
+            assert len(params) == 1, line
             if params[0].startswith("$"):
                 self.__result.append(self.toByte(params[0]))
             else:
@@ -78,13 +78,13 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "RST":
-            assert len(params) == 1
+            assert len(params) == 1, line
             value = int(params[0])
-            assert (value & 0x07) == 0
-            assert 0 <= value < 0x40
+            assert (value & 0x07) == 0, line
+            assert 0 <= value < 0x40, line
             self.__result.append(0xC7 + value)
         elif mnemonic == "PUSH":
-            assert len(params) == 1
+            assert len(params) == 1, line
             if params[0] == "BC":
                 self.__result.append(0xC5)
             elif params[0] == "DE":
@@ -96,7 +96,7 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "POP":
-            assert len(params) == 1
+            assert len(params) == 1, line
             if params[0] == "BC":
                 self.__result.append(0xC1)
             elif params[0] == "DE":
@@ -108,7 +108,7 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "LD":
-            assert len(params) == 2
+            assert len(params) == 2, line
             dst = REGS.get(params[0])
             src = REGS.get(params[1])
             if params[0] == "A" and src is None and params[1].startswith("[") and params[1].endswith("]"):
@@ -137,7 +137,7 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "ADD":
-            assert len(params) == 2
+            assert len(params) == 2, line
             src = REGS.get(params[1])
             if params[0] == "A" and src is not None:
                 self.__result.append(0x80 | src)
@@ -155,7 +155,7 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "SUB":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0x90 | reg)
@@ -163,7 +163,7 @@ class Assembler:
                 self.__result.append(0xD6)
                 self.__result.append(self.toByte(params[0]))
         elif mnemonic == "XOR":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0xA8 | reg)
@@ -171,7 +171,7 @@ class Assembler:
                 self.__result.append(0xEE)
                 self.__result.append(self.toByte(params[0]))
         elif mnemonic == "AND":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0xA0 | reg)
@@ -179,7 +179,7 @@ class Assembler:
                 self.__result.append(0xE6)
                 self.__result.append(self.toByte(params[0]))
         elif mnemonic == "OR":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0xB0 | reg)
@@ -187,7 +187,7 @@ class Assembler:
                 self.__result.append(0xF6)
                 self.__result.append(self.toByte(params[0]))
         elif mnemonic == "CP":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0xB8 | reg)
@@ -195,7 +195,7 @@ class Assembler:
                 self.__result.append(0xFE)
                 self.__result.append(self.toByte(params[0]))
         elif mnemonic == "INC":
-            assert len(params) == 1
+            assert len(params) == 1, line
             reg = REGS.get(params[0])
             if reg is not None:
                 self.__result.append(0x04 | (reg << 3))
@@ -210,7 +210,7 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "LDH":
-            assert len(params) == 2
+            assert len(params) == 2, line
             if params[0] == "A" and params[1].startswith("[") and params[1].endswith("]"):
                 self.__result.append(0xF0)
                 self.__result.append(self.toByte(params[1][1:-1]))
@@ -220,14 +220,14 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "BIT":
-            assert len(params) == 2
+            assert len(params) == 2, line
             reg = REGS[params[1]]
             bit = int(params[0])
-            assert 0 <= bit < 8
+            assert 0 <= bit < 8, line
             self.__result.append(0xCB)
             self.__result.append(0x40 | reg | (bit << 3))
         elif mnemonic == "RES":
-            assert len(params) == 2
+            assert len(params) == 2, line
             reg = REGS[params[1]]
             bit = int(params[0])
             assert 0 <= bit < 8

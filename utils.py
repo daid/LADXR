@@ -1,5 +1,7 @@
 
 def formatText(s):
+    s = s.replace(b"'", b"^")
+
     result = b''
     for line in s.split(b'\n'):
         result_line = b''
