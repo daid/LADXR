@@ -1,12 +1,6 @@
-from .itemInfo import ItemInfo
-from .items import *
+from .droppedKey import DroppedKey
 
 
-class FaceKey(ItemInfo):
-    OPTIONS = [FACE_KEY]
-
-    def patch(self, rom, option):
-        pass
-
-    def read(self, rom):
-        return FACE_KEY
+class FaceKey(DroppedKey):
+    def __init__(self):
+        super().__init__(0x27F)

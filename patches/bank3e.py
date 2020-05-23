@@ -251,7 +251,7 @@ ChestMessageTable:
         db $98, $99, $9A, $9B, $9C, $9D, $D9, $9F
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7
         db $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-        db $EF, $DA
+        db $EF, $BE
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
