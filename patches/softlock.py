@@ -9,8 +9,10 @@ def fixAll(rom):
     re.store(rom)
 
     allowRaftGameWithoutFlippers(rom)
-    removeBirdKeyHoleDrop(rom)
+    # We cannot access thes holes in logic:
+    # removeBirdKeyHoleDrop(rom)
     fixDoghouse(rom)
+    flameThrowerShieldRequirement(rom)
 
 def fixDoghouse(rom):
     # Fix entering the dog house from the back, and ending up out of bounds.
@@ -55,3 +57,9 @@ def removeBirdKeyHoleDrop(rom):
     re = RoomEditor(rom, 0x01E)
     re.removeObject(5, 4)
     re.store(rom)
+
+def flameThrowerShieldRequirement(rom):
+    # if you somehow get a lvl3 shield or higher, it no longer works against the flamethrower, easy fix.
+    rom.patch(0x03, 0x2EBA,
+        ASM("ld a, [$DB44]\ncp $02\nret nz"),  # if not shield level 2
+        ASM("ld a, [$DB44]\ncp $02\nret c"))  # if not shield level 2 or higher

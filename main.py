@@ -13,6 +13,7 @@ import patches.titleScreen
 import patches.reduceRNG
 import patches.bank3e
 import patches.bank3f
+import patches.aesthetics
 import locations.itemInfo
 import logic.location
 import explorer
@@ -45,6 +46,16 @@ if __name__ == "__main__":
         help="Patch the rom so that debug mode is enabled, this creates a default save with most items and unlocks some debug features.")
     parser.add_argument('--exportmap', dest="exportmap", action="store_true",
         help="Export the map (many graphical mistakes)")
+
+    parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
+        help="Enable the nag messages on touching stones and crystals. By default they are removed.")
+    parser.add_argument('--lowhpbeep', dest="lowhpbeep", choices=['default', 'slow', 'none'], default='slow',
+        help="Force the palette of link")
+    parser.add_argument('--linkspalette', dest="linkspalette", type=int, default=None,
+        help="Force the palette of link")
+    parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
+        help="Configure when to allow stealing from the shop.")
+
     args = parser.parse_args()
 
     start_time = time.monotonic()
@@ -77,21 +88,32 @@ if __name__ == "__main__":
         patches.bank3e.addBank3E(rom)
         patches.bank3f.addBank3F(rom)
         patches.owl.removeOwlEvents(rom)
-        patches.core.noSwordMusic(rom)
         patches.core.removeGhost(rom)
-        # patches.core.removeBirdKeyHoleDrop(rom)
         patches.core.alwaysAllowSecretBook(rom)
-        patches.core.flameThrowerShieldRequirement(rom)
         patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
         patches.droppedKey.fixDroppedKey(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.reduceRNG.slowdownThreeOfAKind(rom)
+        patches.aesthetics.noSwordMusic(rom)
+        if args.removeNagMessages:
+            patches.aesthetics.removeNagMessages(rom)
+        if args.lowhpbeep == 'slow':
+            patches.aesthetics.slowLowHPBeep(rom)
+        if args.lowhpbeep == 'none':
+            patches.aesthetics.removeLowHPBeep(rom)
+        if args.linkspalette is not None:
+            patches.aesthetics.forceLinksPalette(rom, args.linkspalette)
         if args.romdebugmode:
             # The default rom has this build in, just need to set a flag and we get this save.
             rom.patch(0, 0x0003, "00", "01")
 
+        # Patch the sword check on the shopkeeper turning around.
+        if args.steal == 'never':
+            rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
+        elif args.steal == 'always':
+            rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
@@ -104,19 +126,6 @@ if __name__ == "__main__":
 
         ## Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-
-        # Remove "this object is heavy, bla bla", and other nag messages when touching an object
-        rom.patch(0x02, 0x2B8A, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
-        rom.patch(0x02, 0x32EC, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
-
-        # Low health beep patches
-        rom.patch(2,  0x2338, ASM("ld a, $30"), ASM("ld a, $60")) # slow slow hp beep
-        #rom.patch(2,  0x233A, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
-
-        # Never allow stealing (always acts as if you do not have a sword)
-        #rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
-        # Always allow stealing (even without a sword)
-        rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
         # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
         rom.texts[0x01] = utils.formatText(b"Let's a go!")
