@@ -177,7 +177,7 @@ if __name__ == "__main__":
                 filename = "%s.%d%s" % (os.path.splitext(filename)[0], generation_number, os.path.splitext(filename)[1])
             rom.save(filename, name=seed)
         else:
-            rom.save("lozlar_%s.gbc" % (seed), name=seed)
+            rom.save("LADXR_%s.gbc" % (seed), name=seed)
 
     if args.count > 1:
         total_time = time.monotonic() - start_time
