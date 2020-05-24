@@ -20,12 +20,15 @@ def fixDroppedKey(rom):
 notSpecialSideView:
         call $512A ; mark room as done
         
+        ; Handle item effect
         ld   a, $01
         call $3FF0
         
         ldh  a, [$F1] ; Load active sprite variant
         cp   $1A
         jr   z, isAKey
+        
+        ;Show message (if not a key)
         ld   a, $02
         call $3FF0
 isAKey:
@@ -46,3 +49,13 @@ isAKey:
 
     # Set the proper hookshot key by default
     rom.banks[0x3E][0x3800 + 0x180] = 0x03
+
+    # Set the proper golden leaves
+    rom.banks[0x3E][0x3800 + 0x058] = 0x15
+    rom.banks[0x3E][0x3800 + 0x05a] = 0x15
+    rom.banks[0x3E][0x3800 + 0x2d2] = 0x15
+    rom.banks[0x3E][0x3800 + 0x2c5] = 0x15
+    rom.banks[0x3E][0x3800 + 0x2c6] = 0x15
+
+    # Set the slime key drop.
+    rom.banks[0x3E][0x3800 + 0x0C6] = 0x0F

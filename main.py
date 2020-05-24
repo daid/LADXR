@@ -8,6 +8,7 @@ import patches.desert
 import patches.owl
 import patches.chest
 import patches.droppedKey
+import patches.goldenLeaf
 import patches.softlock
 import patches.titleScreen
 import patches.reduceRNG
@@ -93,6 +94,7 @@ if __name__ == "__main__":
         patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
         patches.droppedKey.fixDroppedKey(rom)
+        patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.reduceRNG.slowdownThreeOfAKind(rom)

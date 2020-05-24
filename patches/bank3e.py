@@ -1,4 +1,5 @@
 from assembler import ASM
+from utils import formatText
 
 
 def hasBank3E(rom):
@@ -7,6 +8,11 @@ def hasBank3E(rom):
 # Bank $3E is used for large chunks of custom code.
 #   Mainly for new chest and dropped items handling.
 def addBank3E(rom):
+    # No default text for getting the bow, so use an unused slot.
+    rom.texts[0x89] = formatText(b"Found the bow!")
+    rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
+    rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
+
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
     # the A register is preserved and can directly be used as a jumptable in page 3E.
@@ -54,13 +60,13 @@ GiveItemFromChest:
         dw Flippers          ; CHEST_FLIPPERS
         dw Exit             ; CHEST_MAGNIFYING_LENS
         dw ChestWithItem    ; Boomerang (used to be unused)
-        dw Exit             ; ?? right side of your trade quest item
+        dw SlimeKey         ; ?? right side of your trade quest item
         dw Exit             ; CHEST_MEDICINE (handled by base rom during drawing for some reason...)
         dw TailKey          ; CHEST_TAIL_KEY
         dw AnglerKey        ; CHEST_ANGLER_KEY
         dw FaceKey          ; CHEST_FACE_KEY
         dw BirdKey          ; CHEST_BIRD_KEY
-        dw Exit             ; CHEST_GOLD_LEAF
+        dw GoldenLeaf       ; CHEST_GOLD_LEAF
         dw ChestWithCurrentDungeonItem ; CHEST_MAP
         dw ChestWithCurrentDungeonItem ; CHEST_COMPASS
         dw ChestWithCurrentDungeonItem ; CHEST_STONE_BEAK
@@ -123,6 +129,16 @@ FaceKey:
 BirdKey:
         ld   a, $01
         ld   [$DB14], a
+        jp   Exit
+
+SlimeKey:
+        ld   a, $01
+        ld   [$DB15], a
+        jp   Exit
+
+GoldenLeaf:
+        ld   hl, $DB6D
+        inc  [hl]
         jp   Exit
 
 AddSeaShell:
@@ -228,7 +244,7 @@ ChestSpriteTable:
         db $94, $15        ; CHEST_FLIPPERS
         db $9A, $10        ; CHEST_MAGNIFYING_LENS
         db $24, $1C        ; Boomerang
-        db $9C, $10 ;?? right side of your trade quest item
+        db $4E, $1C        ; Slime key
         db $A0, $14        ; CHEST_MEDICINE
         db $30, $1C        ; CHEST_TAIL_KEY
         db $32, $1C        ; CHEST_ANGLER_KEY
@@ -251,7 +267,7 @@ ChestSpriteTable:
 
 ChestMessageTable:
         db $90, $91, $89, $93, $94, $95, $96, $97
-        db $98, $99, $9A, $9B, $9C, $9D, $D9, $9F
+        db $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7
         db $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
         db $EF, $BE
@@ -268,8 +284,8 @@ RenderDroppedKey:
     inc  a
     ld   [hl], a
 
-    ;TODO: Load the chest type from the chest table.
-    ldh  a, [$F6]
+    ;Load the chest type from the chest table.
+    ldh  a, [$F6] ; map room
     ld   e, a
     ld   a, [$DBA5] ; is indoor
     ld   d, a
@@ -293,6 +309,7 @@ loadedPointers:
     add  hl, de
 
     ld   a, [hl]
+    ldh  [$F1], a ; set currentEntitySpriteVariant
     call $3B0C ; SetEntitySpriteVariant
 DroppedKeyTypeLoaded:
     jp RenderChestItem
