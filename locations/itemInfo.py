@@ -3,12 +3,10 @@ import typing
 
 class ItemInfo:
     OPTIONS = []
-    all = []  # type: typing.List[ItemInfo]
 
     def __init__(self):
         self.item = None
         self._location = None
-        ItemInfo.all.append(self)
 
     def setLocation(self, location):
         self._location = location

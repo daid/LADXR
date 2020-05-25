@@ -89,7 +89,7 @@ class World:
         right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT))
 
         left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(SWORD, MAGIC_ROD, BOMB, MAGIC_POWDER)))
-        Location().add(HeartPiece(0x2EE)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
+        Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
 
         self.start = start
         self.swamp = swamp

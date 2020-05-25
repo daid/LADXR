@@ -8,6 +8,7 @@ class StartItem(ItemInfo):
     # FUTURE: Giving a TAIL_KEY here could potentially be done by patching the code, this would open up the
     #   first dungeon, which has chests available without fighting.
     OPTIONS = [SWORD, SHIELD, POWER_BRACELET, FEATHER, BOOMERANG]
+    MESSAGE = {SWORD: 0x9B, SHIELD: 0x91, POWER_BRACELET: 0x90, FEATHER: 0x97, BOOMERANG: 0xD9}
 
     def patch(self, rom, option):
         # TODO: Seems walking back into the house with certain options causes the initial event to repeat.
@@ -29,6 +30,7 @@ class StartItem(ItemInfo):
 
         # Patch the text that Tarin uses to give your shield back.
         rom.texts[0x54] = formatText(b"#####, it is dangerous to go alone!\nTake this!")
+        rom.patch(5, 0x0CDE, ASM("ld a, $91"), ASM("ld a, $%02x" % (self.MESSAGE[option])))
         rom.texts[0x91] = formatText(b"Got the %s!" % (INVENTORY_NAME[option]))
 
     def read(self, rom):

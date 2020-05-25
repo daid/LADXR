@@ -29,7 +29,7 @@ class Randomizer:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
-        for spot in location.ItemInfo.all:
+        for spot in logic.iteminfo_list:
             spot.patch(rom, spot.item)
 
     def addItem(self, item):
@@ -48,7 +48,7 @@ class Randomizer:
 
     def readItemPool(self, rom):
         # Collect the item pool from the rom to see which items we can randomize.
-        for spot in location.ItemInfo.all:
+        for spot in self.__logic.iteminfo_list:
             item = spot.read(rom)
             # If a spot has no other placement options, just ignore this spot.
             #  We still marked to spots so we can later patch them to allow more options.
@@ -85,7 +85,7 @@ class Randomizer:
         # Check if we still have new places to explore
         if self.spots:
             e = explorer.Explorer()
-            e.visit(self.__logic)
+            e.visit(self.__logic.start)
             valid = False
             for loc in e.getAccessableLocations():
                 for ii in loc.items:
@@ -107,9 +107,9 @@ class Randomizer:
         for item_pool_item, count in self.item_pool.items():
             for n in range(count):
                 e.addItem(item_pool_item)
-        e.visit(self.__logic)
+        e.visit(self.__logic.start)
 
-        if len(e.getAccessableLocations()) != len(location.Location.all):
+        if len(e.getAccessableLocations()) != len(self.__logic.location_list):
             if verbose:
                 print("Not all locations are accessible anymore with the full item pool")
             return False

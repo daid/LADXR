@@ -1,6 +1,5 @@
 from logic import AND, OR, COUNT
 from logic.requirements import isConsumable
-import logic.location
 
 
 class Explorer:
@@ -110,9 +109,9 @@ class Explorer:
             raise RuntimeError("Unknown connection requirement: %s" % (req, ))
         return False
 
-    def dump(self):
+    def dump(self, logic):
         failed = 0
-        for loc in logic.location.Location.all:
+        for loc in logic.location_list:
             if loc not in self.__visited:
                 failed += 1
         for loc in self.__visited:

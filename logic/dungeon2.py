@@ -8,7 +8,7 @@ class Dungeon2:
         entrance = Location(2)
         Location(2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
         dungeon2_l2 = Location(2).connect(entrance, KEY2)  # towards map chest
-        Location(2).add(DungeonChest(0x12E)).connect(dungeon2_l2, FEATHER)  # map chest
+        Location(2).add(DungeonChest(0x12E)).connect(dungeon2_l2, OR(FEATHER, HOOKSHOT))  # map chest
         dungeon2_r2 = Location(2).connect(entrance, fire)
         Location(2).add(DroppedKey(0x132)).connect(dungeon2_r2, attack_skeleton)
         Location(2).add(DungeonChest(0x137)).connect(dungeon2_r2, AND(KEY2, rear_attack))  # compass chest

@@ -123,7 +123,7 @@ ChestPowerBracelet:
         jr   ChestIncreaseItemLevel
 
 ChestShield:
-        ld   hl, $DB4f ; shield level
+        ld   hl, $DB44 ; shield level
         jr   ChestIncreaseItemLevel
 
 ChestSword:
