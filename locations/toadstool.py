@@ -1,4 +1,5 @@
 from .itemInfo import ItemInfo
+from .items import *
 
 
 class Toadstool(ItemInfo):

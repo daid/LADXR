@@ -27,6 +27,7 @@ miniboss.add(DungeonChest(0x237))
 up_left = Location(8).connect(upper_center, KEY8)
 up_left.add(DungeonChest(0x240))
 up_left.add(DungeonChest(0x23D))
+up_left.add(HeartPiece(0x000))  # Outside the dungeon on the platform
 Location(8).add(DroppedKey(0x241)).connect(up_left, BOW)
 Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT)
 
