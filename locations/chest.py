@@ -8,7 +8,7 @@ class Chest(ItemInfo):
         FEATHER, SHOVEL, MAGIC_POWDER, BOMB, SWORD, FLIPPERS, MAGNIFYING_LENS, MEDICINE,
         TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY,
         RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
-        SEASHELL, MESSAGE, GEL, BOOMERANG]
+        SEASHELL, MESSAGE, GEL, BOOMERANG, HEART_PIECE]
         #500 rupees show 200 rupees message
         #not sure if we should se MAGIC_POWDER, as it overrules the toadstool
 

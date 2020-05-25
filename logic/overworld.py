@@ -11,8 +11,8 @@ class World:
         Location().add(ShopItem(1)).connect(start, COUNT("RUPEES", 980))
         dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, OR(SWORD, MAGIC_ROD, FEATHER)))
         Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
-        Location().add(HeartPiece(0x24A)).connect(start, bush)  # well
-        Location().add(HeartPiece(0x2B1)).connect(start, bush)  # fishing game
+        Location().add(HeartPiece(0x2A4)).connect(start, bush)  # well
+        # Location().add(HeartPiece(0x2B1)).connect(start, bush)  # fishing game, hearth piece is directly done by the minigame.
 
         sword_beach = Location().add(BeachSword()).connect(start, bush, SHIELD)
         Location().add(BoomerangGuy()).connect(sword_beach, BOMB)

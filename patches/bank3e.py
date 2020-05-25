@@ -30,16 +30,23 @@ def addBank3E(rom):
         rst  0 ; JUMP TABLE
         dw   RenderChestItem    ; 0 
         dw   GiveItemFromChest  ; 1
-        dw   ChestMessage       ; 2
+        dw   ItemMessage       ; 2
         dw   RenderDroppedKey   ; 3
+        dw   RenderHeartPiece   ; 4
 
 RenderChestItem:
-        ld de, ChestSpriteTable
+        ldh  a, [$F1] ; active sprite
+        and  $40
+        jr   nz, RenderLargeItem
 
-        ;call $3BC0 ; RenderActiveEntitySpritePair
+        ld   de, ItemSpriteTable
         call $3C77 ; RenderActiveEntitySprite
-
-        jp Exit
+        jp   Exit
+RenderLargeItem:
+        ld   de, LargeItemSpriteTable
+        dec  d
+        call $3BC0 ; RenderActiveEntitySpritePair
+        jp   Exit
 
 GiveItemFromChest:
         ldh  a, [$F1] ; Load active sprite variant
@@ -80,6 +87,36 @@ GiveItemFromChest:
         dw AddSeashell      ; CHEST_SEASHELL
         dw Exit             ; CHEST_MESSAGE
         dw Exit             ; CHEST_GEL
+        dw Exit ; $23
+        dw Exit ; $24
+        dw Exit ; $25
+        dw Exit ; $26
+        dw Exit ; $27
+        dw Exit ; $28
+        dw Exit ; $29
+        dw Exit ; $2A
+        dw Exit ; $2B
+        dw Exit ; $2C
+        dw Exit ; $2D
+        dw Exit ; $2E
+        dw Exit ; $2F
+        dw Exit ; $30
+        dw Exit ; $31
+        dw Exit ; $32
+        dw Exit ; $33
+        dw Exit ; $34
+        dw Exit ; $35
+        dw Exit ; $36
+        dw Exit ; $37
+        dw Exit ; $38
+        dw Exit ; $39
+        dw Exit ; $3A
+        dw Exit ; $3B
+        dw Exit ; $3C
+        dw Exit ; $3D
+        dw Exit ; $3E
+        dw Exit ; $3F
+        dw PieceOfHeart     ; Heart piece
 
 ChestPowerBracelet:
         ld   hl, $DB43 ; power bracelet level
@@ -144,6 +181,22 @@ GoldenLeaf:
 AddSeaShell:
         ld   hl, $DB0F
         inc  [hl]
+        jp Exit
+
+PieceOfHeart:
+        ld   a, [$DB5C]
+        inc  a
+        cp   $04
+        jr   z, FullHeart 
+        ld   [$DB5C], a
+        jp Exit
+FullHeart:
+        xor a
+        ld   [$DB5C], a
+        ld   hl, $DB93
+        ld   [hl], $40 ; Regen HP
+        ld   hl, $DB5B
+        inc  [hl]      ; Add max health
         jp Exit
 
 ChestInventoryTable:
@@ -216,11 +269,11 @@ AddRupees:
         ld   [$C3CE], a
         jp   Exit
 
-ChestMessage:
+ItemMessage:
         ldh  a, [$F1]
         ld   d, $00
         ld   e, a
-        ld   hl, ChestMessageTable
+        ld   hl, ItemMessageTable
         add  hl, de
         ld   a, [hl] 
         call $2385 ; Opendialog
@@ -228,7 +281,7 @@ Exit:
         pop af
         jp $080C ; switch bank and return to normal code.
 
-ChestSpriteTable:
+ItemSpriteTable:
         db $82, $15        ; CHEST_POWER_BRACELET
         db $86, $15        ; CHEST_SHIELD
         db $88, $14        ; CHEST_BOW
@@ -265,16 +318,20 @@ ChestSpriteTable:
         db $FF, $18        ; CHEST_MESSAGE
         db $FF, $18        ; CHEST_GEL
 
-ChestMessageTable:
-        db $90, $91, $89, $93, $94, $95, $96, $97
-        db $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
-        db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7
-        db $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-        db $EF, $BE
+LargeItemSpriteTable:
+        db $AC, $02, $AC, $22 ; heart piece
+
+ItemMessageTable:
+        db $90, $91, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
+        db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
+        db $EF, $BE, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $4F
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
 
+RenderHeartPiece:
     ; Check if we need to load the chest type
     ld   hl, $C480 ; some unused entity state for the dropped key
     add  hl, bc

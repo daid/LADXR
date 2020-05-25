@@ -62,4 +62,6 @@ CHEST_ITEMS = {
 
     BOOMERANG: 0x0E,
     SLIME_KEY: 0x0F,
+
+    HEART_PIECE: 0x40,
 }

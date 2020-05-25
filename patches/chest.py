@@ -38,3 +38,9 @@ def fixChests(rom):
         call $3FF0
         jp $7CE9
     """))
+
+    # Sound to play is normally loaded from a table, which is no longer big enough. So always use the same sound.
+    rom.patch(0x07, 0x3C81, ASM("""
+        add  hl, de
+        ld   a, [hl]
+    """), ASM("ld a, $01"), fill_nop=True)
