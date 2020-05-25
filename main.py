@@ -80,7 +80,7 @@ if __name__ == "__main__":
             for ii in locations.itemInfo.ItemInfo.all:
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)
-            e.visit(logic.start)
+            e.visit(logic.construct())
             if len(e.getAccessableLocations()) != len(logic.location.Location.all):
                 print("Logic failure! Cannot access all locations.")
                 print("Failed to find:")
@@ -158,7 +158,7 @@ if __name__ == "__main__":
                 ii.item = ii.read(rom)
                 ii.patch(rom, ii.item)
             e = explorer.Explorer()
-            e.visit(logic.start)
+            e.visit(logic.construct())
             e.dump()
             # from locations import Chest
             # Chest(0x113).patch(rom, "SWORD")
@@ -171,9 +171,10 @@ if __name__ == "__main__":
             if args.seed:
                 args.seed = binascii.unhexlify(args.seed)
             retry_count = 0
+            my_logic = logic.construct()
             while True:
                 try:
-                    seed = randomizer.Randomizer(rom, seed=args.seed).seed
+                    seed = randomizer.Randomizer(rom, my_logic, seed=args.seed).seed
                     seed = binascii.hexlify(seed).decode("ascii").upper()
                     break
                 except randomizer.Error:

@@ -1,5 +1,4 @@
 import explorer
-import logic
 import random
 import os
 
@@ -11,10 +10,11 @@ class Error(Exception):
 
 
 class Randomizer:
-    def __init__(self, rom, *, seed=None):
+    def __init__(self, rom, logic, *, seed=None):
         self.seed = seed
         if self.seed is None:
             self.seed = os.urandom(16)
+        self.__logic = logic
         self.rnd = random.Random(self.seed)
         self.item_pool = {}
         self.spots = []
@@ -25,11 +25,10 @@ class Randomizer:
         while self.item_pool:
             if not self.placeItem():
                 bail_counter += 1
-                if bail_counter > 50:
+                if bail_counter > 10:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
-
         for spot in location.ItemInfo.all:
             spot.patch(rom, spot.item)
 
@@ -86,7 +85,7 @@ class Randomizer:
         # Check if we still have new places to explore
         if self.spots:
             e = explorer.Explorer()
-            e.visit(logic.start)
+            e.visit(self.__logic)
             valid = False
             for loc in e.getAccessableLocations():
                 for ii in loc.items:
@@ -108,7 +107,7 @@ class Randomizer:
         for item_pool_item, count in self.item_pool.items():
             for n in range(count):
                 e.addItem(item_pool_item)
-        e.visit(logic.start)
+        e.visit(self.__logic)
 
         if len(e.getAccessableLocations()) != len(location.Location.all):
             if verbose:
