@@ -238,7 +238,6 @@ class MapExport:
 
     def getTiles(self, bank_nr):
         bank = self.__rom.banks[bank_nr]
-        os.makedirs("tileset/%02x" % (bank_nr), exist_ok=True)
         buffer = bytearray(b'\x00' * 16 * 16)
         result = []
         for n in range(0, len(bank), 16):
