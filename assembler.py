@@ -52,12 +52,18 @@ class Assembler:
             assert len(params) == 0, line
             self.__result.append(0x10)
         elif mnemonic == "JP":
-            assert len(params) == 1, line
-            if params[0] == "HL":
-                self.__result.append(0xE9)
+            if len(params) == 2:
+                flag = FLAGS[params[0]]
+                self.__result.append(0xC2 | flag)
+                self.__result += self.toWord(params[1])
+            elif len(params) == 1:
+                if params[0] == "HL":
+                    self.__result.append(0xE9)
+                else:
+                    self.__result.append(0xC3)
+                    self.__result += self.toWord(params[0])
             else:
-                self.__result.append(0xC3)
-                self.__result += self.toWord(params[0])
+                raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "JR":
             if len(params) == 2:
                 self.__result.append(0x20 | FLAGS[params[0]])
@@ -105,6 +111,14 @@ class Assembler:
                 self.__result.append(0xE1)
             elif params[0] == "AF":
                 self.__result.append(0xF1)
+            else:
+                raise RuntimeError("Cannot ASM: %s" % (line))
+        elif mnemonic == "LDI":
+            assert len(params) == 2, line
+            if params[0] == "A" and params[1] == "[HL]":
+                self.__result.append(0x2A)
+            elif params[0] == "[HL]" and params[1] == "A":
+                self.__result.append(0x22)
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "LD":

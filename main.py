@@ -16,6 +16,7 @@ import patches.bank3e
 import patches.bank3f
 import patches.aesthetics
 import patches.health
+import patches.goal
 import locations.itemInfo
 import logic.location
 import explorer
@@ -54,6 +55,8 @@ if __name__ == "__main__":
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
+    parser.add_argument('--goal', dest="goal", type=int, default=8,
+        help="Configure the instrument goal for this rom, anything between 0 and 8.")
 
     # Just aestetic flags
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
@@ -128,6 +131,8 @@ if __name__ == "__main__":
             patches.health.inverseHealthContainers(rom)
         elif args.hpmode == '1':
             patches.health.setStartHealth(rom, 1)
+
+        patches.goal.setRequiredInstrumentCount(rom, args.goal)
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
