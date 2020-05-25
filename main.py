@@ -97,9 +97,9 @@ if __name__ == "__main__":
             sys.exit(0)
 
         patches.core.cleanup(rom)
+        patches.owl.removeOwlEvents(rom)
         patches.bank3e.addBank3E(rom)
         patches.bank3f.addBank3F(rom)
-        patches.owl.removeOwlEvents(rom)
         patches.core.removeGhost(rom)
         patches.core.alwaysAllowSecretBook(rom)
         patches.softlock.fixAll(rom)
