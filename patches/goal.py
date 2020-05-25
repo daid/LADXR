@@ -4,6 +4,10 @@ from utils import formatText
 def setRequiredInstrumentCount(rom, count):
     if count >= 8:
         return
+    if count < 0:
+        rom.patch(0x00, 0x31f5, ASM("ld a, [$D806]\nand $10\njr z, $25"), ASM(""), fill_nop=True)
+        rom.patch(0x20, 0x2dea, ASM("ld a, [$D806]\nand $10\njr z, $29"), ASM(""), fill_nop=True)
+        count = 0
 
     # TODO: Music bugs out at the end, unless you have all instruments.
     rom.texts[0x1A3] = formatText(b"You need %d instruments" % (count))
