@@ -209,6 +209,21 @@ class Assembler:
                 self.__result.append(0x33)
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
+        elif mnemonic == "DEC":
+            assert len(params) == 1, line
+            reg = REGS.get(params[0])
+            if reg is not None:
+                self.__result.append(0x05 | (reg << 3))
+            elif params[0] == "BC":
+                self.__result.append(0x0B)
+            elif params[0] == "DE":
+                self.__result.append(0x1B)
+            elif params[0] == "HL":
+                self.__result.append(0x2B)
+            elif params[0] == "SP":
+                self.__result.append(0x3B)
+            else:
+                raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "LDH":
             assert len(params) == 2, line
             if params[0] == "A" and params[1].startswith("[") and params[1].endswith("]"):

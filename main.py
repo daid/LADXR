@@ -117,6 +117,8 @@ if __name__ == "__main__":
         elif args.steal == 'always':
             rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
+        #rom.patch(0x03, 0x19F3, ASM("inc [hl]"), ASM("dec [hl]"))
+
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
         # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song

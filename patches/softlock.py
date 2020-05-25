@@ -13,6 +13,7 @@ def fixAll(rom):
     # removeBirdKeyHoleDrop(rom)
     fixDoghouse(rom)
     flameThrowerShieldRequirement(rom)
+    fixLessThen3MaxHealth(rom)
 
 def fixDoghouse(rom):
     # Fix entering the dog house from the back, and ending up out of bounds.
@@ -63,3 +64,7 @@ def flameThrowerShieldRequirement(rom):
     rom.patch(0x03, 0x2EBA,
         ASM("ld a, [$DB44]\ncp $02\nret nz"),  # if not shield level 2
         ASM("ld a, [$DB44]\ncp $02\nret c"))  # if not shield level 2 or higher
+
+def fixLessThen3MaxHealth(rom):
+    # The table that starts your start HP when you die is not working for less then 3 HP, and locks the game.
+    rom.patch(0x01, 0x1295, "18181818", "08081018")
