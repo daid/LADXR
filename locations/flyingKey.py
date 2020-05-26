@@ -8,8 +8,8 @@ class FlyingKey(ItemInfo):
         super().__init__()
         self.room = room
 
-    def setLocation(self, location):
-        self.OPTIONS = ["KEY%d" % (location.dungeon)]
+    def configure(self, options):
+        self.OPTIONS = ["KEY%d" % (self._location.dungeon)]
 
     def patch(self, rom, option):
         pass

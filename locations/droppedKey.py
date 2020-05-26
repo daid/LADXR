@@ -13,10 +13,13 @@ class DroppedKey(ItemInfo):
         super().__init__()
         self.room = room
 
-    def setLocation(self, location):
-        super().setLocation(location)
-        if location.dungeon is not None:
-            d = location.dungeon
+    def configure(self, options):
+        if options.keysanity:
+            self.OPTIONS = DroppedKey.OPTIONS
+            for n in range(9):
+                self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
+        elif self._location.dungeon is not None:
+            d = self._location.dungeon
             self.OPTIONS = DroppedKey.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
     def patch(self, rom, option):

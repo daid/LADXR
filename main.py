@@ -52,6 +52,10 @@ if __name__ == "__main__":
         help="Export the map (many graphical mistakes)")
 
     # Flags that effect gameplay
+    parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
+        help="Enables randomization of heart pieces.")
+    parser.add_argument('--keysanity', dest="keysanity", action="store_true",
+        help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
@@ -140,9 +144,9 @@ if __name__ == "__main__":
         patches.goal.setRequiredInstrumentCount(rom, args.goal)
 
         if args.quickswap == 'a':
-            patches.core.quickswap(rom, 0)
-        elif args.quickswap == 'b':
             patches.core.quickswap(rom, 1)
+        elif args.quickswap == 'b':
+            patches.core.quickswap(rom, 0)
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)

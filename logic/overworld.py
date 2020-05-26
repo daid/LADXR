@@ -26,7 +26,7 @@ class World:
         Location().add(Witch()).connect(forest, "TOADSTOOL")
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET)
         swamp = Location().connect(forest, MAGIC_POWDER, FEATHER)
-        swamp.add(Chest(0x034)) # Chest in the swamp, assumes no flowers!
+        Location().add(Chest(0x034)).connect(swamp, HOOKSHOT, MAGIC_ROD)  # Chest in the swamp, assumes no flowers!
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
         Location().add(Chest(0x2BD)).connect(forest, SWORD)  # chest in forest cave on route to mushroom
         Location().add(HeartPiece(0x2AB)).connect(forest, POWER_BRACELET)  # piece of heart in the forst cave on route to the mushroom

@@ -17,6 +17,12 @@ class Chest(ItemInfo):
         self.room = room
         self.addr = room + 0x560
 
+    def configure(self, options):
+        if options.keysanity:
+            self.OPTIONS = Chest.OPTIONS
+            for n in range(9):
+                self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
+
     def patch(self, rom, option):
         rom.banks[0x14][self.addr] = CHEST_ITEMS[option]
 
@@ -37,11 +43,12 @@ class Chest(ItemInfo):
 
 
 class DungeonChest(Chest):
-    def setLocation(self, location):
-        self._location = location
-        assert location.dungeon is not None
-        d = location.dungeon
-        self.OPTIONS = Chest.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
+    def configure(self, options):
+        if options.keysanity:
+            super().configure(options)
+        else:
+            d = self._location.dungeon
+            self.OPTIONS = Chest.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
     def patch(self, rom, option):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
