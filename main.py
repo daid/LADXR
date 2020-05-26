@@ -83,7 +83,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
         if args.dump or args.test:
-            my_logic = logic.Logic()
+            my_logic = logic.Logic(args)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         rom.texts[0xEF] = utils.formatText(b"You found a Secret Seashell!")
         rom.texts[0xA7] = utils.formatText(b"You've got the Compass!")
 
-        my_logic = logic.Logic()
+        my_logic = logic.Logic(args)
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"

@@ -14,6 +14,7 @@ def addBank3E(rom):
     rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
     for idx in range(8):
         rom.texts[0xBF + idx] = formatText(b"Found an item for dungeon %d" % (idx + 1))
+    rom.texts[0xC7] = formatText(b"Found an item for color dungeon")
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
@@ -97,6 +98,7 @@ GiveItemFromChest:
         dw AddKey ; KEY6
         dw AddKey ; KEY7
         dw AddKey ; KEY8
+        dw AddKey ; KEY9
         dw AddMap ; MAP1
         dw AddMap ; MAP2
         dw AddMap ; MAP3
@@ -105,6 +107,7 @@ GiveItemFromChest:
         dw AddMap ; MAP6
         dw AddMap ; MAP7
         dw AddMap ; MAP8
+        dw AddMap ; MAP9
         dw AddCompass ; COMPASS1
         dw AddCompass ; COMPASS2
         dw AddCompass ; COMPASS3
@@ -113,6 +116,7 @@ GiveItemFromChest:
         dw AddCompass ; COMPASS6
         dw AddCompass ; COMPASS7
         dw AddCompass ; COMPASS8
+        dw AddCompass ; COMPASS9
         dw AddStoneBeak ; STONE_BEAK1
         dw AddStoneBeak ; STONE_BEAK2
         dw AddStoneBeak ; STONE_BEAK3
@@ -121,6 +125,7 @@ GiveItemFromChest:
         dw AddStoneBeak ; STONE_BEAK6
         dw AddStoneBeak ; STONE_BEAK7
         dw AddStoneBeak ; STONE_BEAK8
+        dw AddStoneBeak ; STONE_BEAK9
         dw AddNightmareKey ; NIGHTMARE_KEY1
         dw AddNightmareKey ; NIGHTMARE_KEY2
         dw AddNightmareKey ; NIGHTMARE_KEY3
@@ -129,11 +134,7 @@ GiveItemFromChest:
         dw AddNightmareKey ; NIGHTMARE_KEY6
         dw AddNightmareKey ; NIGHTMARE_KEY7
         dw AddNightmareKey ; NIGHTMARE_KEY8
-        dw Exit ; $4B
-        dw Exit ; $4C
-        dw Exit ; $4D
-        dw Exit ; $4E
-        dw Exit ; $4F
+        dw AddNightmareKey ; NIGHTMARE_KEY9
         dw Exit ; $50
         dw Exit ; $51
         dw Exit ; $52
@@ -377,7 +378,7 @@ ItemMessage:
         ld   e, a
         ld   hl, ItemMessageTable
         add  hl, de
-        ld   a, [hl] 
+        ld   a, [hl]
         call $2385 ; Opendialog
 Exit:
         pop af
@@ -427,6 +428,7 @@ ItemSpriteTable:
         db $4A, $1F        ; KEY6
         db $4A, $1F        ; KEY7
         db $4A, $1F        ; KEY8
+        db $4A, $1F        ; KEY9
         db $40, $1C        ; MAP1
         db $40, $1C        ; MAP2
         db $40, $1C        ; MAP3
@@ -435,6 +437,7 @@ ItemSpriteTable:
         db $40, $1C        ; MAP6
         db $40, $1C        ; MAP7
         db $40, $1C        ; MAP8
+        db $40, $1C        ; MAP9
         db $42, $1D        ; COMPASS1
         db $42, $1D        ; COMPASS2
         db $42, $1D        ; COMPASS3
@@ -443,6 +446,7 @@ ItemSpriteTable:
         db $42, $1D        ; COMPASS6
         db $42, $1D        ; COMPASS7
         db $42, $1D        ; COMPASS8
+        db $42, $1D        ; COMPASS9
         db $44, $1C        ; STONE_BEAK1
         db $44, $1C        ; STONE_BEAK2
         db $44, $1C        ; STONE_BEAK3
@@ -451,6 +455,7 @@ ItemSpriteTable:
         db $44, $1C        ; STONE_BEAK6
         db $44, $1C        ; STONE_BEAK7
         db $44, $1C        ; STONE_BEAK8
+        db $44, $1C        ; STONE_BEAK9
         db $46, $1C        ; NIGHTMARE_KEY1
         db $46, $1C        ; NIGHTMARE_KEY2
         db $46, $1C        ; NIGHTMARE_KEY3
@@ -459,6 +464,7 @@ ItemSpriteTable:
         db $46, $1C        ; NIGHTMARE_KEY6
         db $46, $1C        ; NIGHTMARE_KEY7
         db $46, $1C        ; NIGHTMARE_KEY8
+        db $46, $1C        ; NIGHTMARE_KEY9
 
 LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
@@ -466,10 +472,10 @@ LargeItemSpriteTable:
 ItemMessageTable:
         db $90, $91, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-        db $EF, $BE, $00, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $C0, $01, $02, $03
-        db $C4, $C5, $C6, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $C0, $01, $02, $03
+        db $EF, $BE, $00, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2
+        db $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0
         ; $40
-        db $C4, $C5, $C6, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $00, $00, $00, $00
+        db $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00

@@ -14,10 +14,13 @@ class ItemInfo:
     def getOptions(self):
         return self.OPTIONS
 
-    def patch(self, rom, option):
-        raise NotImplementedError()
+    def configure(self, options):
+        pass
 
     def read(self, rom):
+        raise NotImplementedError()
+
+    def patch(self, rom, option):
         raise NotImplementedError()
 
     def __repr__(self):

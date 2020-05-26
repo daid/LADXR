@@ -12,7 +12,7 @@ from locations.items import *
 
 
 class Logic:
-    def __init__(self):
+    def __init__(self, configuration_options):
         world = overworld.World()
         d1 = dungeon1.Dungeon1()
         d2 = dungeon2.Dungeon2()
@@ -40,6 +40,9 @@ class Logic:
         self.__location_set = set()
         self.__recursiveFindAll(self.start)
         del self.__location_set
+
+        for ii in self.iteminfo_list:
+            ii.configure(configuration_options)
 
     def __recursiveFindAll(self, location):
         if location in self.__location_set:
