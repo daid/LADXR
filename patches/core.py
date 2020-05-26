@@ -21,6 +21,8 @@ def cleanup(rom):
     re.store(rom, 0x278)
     re.store(rom, 0x279)
 
+    rom.texts[0x02B] = b'' # unused text
+
 def quickswap(rom, button):
     rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
     rom.patch(0x00, 0x10BC,  # Patch the open minimap code to swap the your items instead
