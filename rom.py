@@ -16,7 +16,10 @@ class ROM:
         new = h2b(new)
         bank = self.banks[bank_nr]
         if old is not None:
-            old = h2b(old)
+            if isinstance(old, int):
+                old = bank[addr:old]
+            else:
+                old = h2b(old)
             if fill_nop:
                 assert len(old) >= len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
                 new += b'\x00' * (len(old) - len(new))

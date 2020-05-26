@@ -6,6 +6,7 @@ import patches.core
 import patches.bowwow
 import patches.desert
 import patches.owl
+import patches.shop
 import patches.chest
 import patches.droppedKey
 import patches.goldenLeaf
@@ -18,8 +19,6 @@ import patches.bank3f
 import patches.aesthetics
 import patches.health
 import patches.goal
-import locations.itemInfo
-import logic.location
 import explorer
 import utils
 import logic
@@ -110,6 +109,7 @@ if __name__ == "__main__":
         patches.core.alwaysAllowSecretBook(rom)
         patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
+        patches.shop.fixShop(rom)
         patches.droppedKey.fixDroppedKey(rom)
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
@@ -181,6 +181,8 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(my_logic.start)
             e.dump(my_logic)
+            from locations import ShopItem
+            ShopItem(0).patch(rom, "SWORD")
             # from locations import Chest
             # Chest(0x113).patch(rom, "KEY2")
             # from locations import DroppedKey

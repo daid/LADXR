@@ -11,8 +11,6 @@ def fixAll(rom):
     # Prevent getting stuck in the sidescroll room in the beginning of dungeon 5
     re = RoomEditor(rom, 0x1A9)
     re.objects[6].count = 7
-    for obj in re.objects:
-        print(obj)
     re.store(rom)
 
     allowRaftGameWithoutFlippers(rom)
