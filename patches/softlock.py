@@ -8,6 +8,13 @@ def fixAll(rom):
     re.removeObject(3, 3)
     re.store(rom)
 
+    # Prevent getting stuck in the sidescroll room in the beginning of dungeon 5
+    re = RoomEditor(rom, 0x1A9)
+    re.objects[6].count = 7
+    for obj in re.objects:
+        print(obj)
+    re.store(rom)
+
     allowRaftGameWithoutFlippers(rom)
     # We cannot access thes holes in logic:
     # removeBirdKeyHoleDrop(rom)

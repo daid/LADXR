@@ -38,7 +38,7 @@ def neverGetBowwow(rom):
         b"562B542B"
         b"5A2B582B"
         b"5C0B5C2B")
-    # Patch to use the chain sprite from second vram bank
+    # Patch to use the chain sprite from second vram bank (however, the chain bugs out various things)
     rom.patch(0x05, 0x0282,
         ASM("ld a, $4E\njr nz, $02\nld a, $7E\nld [de], a\ninc de\nld a, $00"),
         ASM("ld a, $5E\nld [de], a\ninc de\nld a, $08"), fill_nop=True)

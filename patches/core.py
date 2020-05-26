@@ -33,3 +33,6 @@ def quickswap(rom, button):
         ld [$DB%02X], a
         ret
     """ % (button, button + 2, button, button + 2)))
+
+# 0x10DB might be a good point to inject a "always running" piece of code.
+
