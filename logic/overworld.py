@@ -37,7 +37,7 @@ class World:
 
         graveyard = Location().connect(forest, FEATHER, POWER_BRACELET)  # whole area from the graveyard up to the moblin cave
         graveyard.connect(swamp, POWER_BRACELET)
-        Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, HOOKSHOT))  # grave cave
+        Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, HOOKSHOT, FEATHER))  # grave cave
 
         # "Ukuku Prairie"
         # The center_area is the whole area right of the start town, up to the river, and the castle.

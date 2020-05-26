@@ -470,7 +470,7 @@ LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
 
 ItemMessageTable:
-        db $90, $91, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
+        db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
         db $EF, $BE, $00, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2
         db $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0
