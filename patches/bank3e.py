@@ -499,7 +499,7 @@ RenderHeartPiece:
     jr   nz, notColorDungeon
 
     ld   d, $00
-    ld   hl, $7E00
+    ld   hl, $7B00
     jr   loadedPointers
 
 notColorDungeon:
