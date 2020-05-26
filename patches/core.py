@@ -20,3 +20,16 @@ def cleanup(rom):
     re.store(rom, 0x277)
     re.store(rom, 0x278)
     re.store(rom, 0x279)
+
+def quickswap(rom, button):
+    rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
+    rom.patch(0x00, 0x10BC,  # Patch the open minimap code to swap the your items instead
+        ASM("xor a\nld [$C16B], a\nld [$C16C], a\nld [$DB96], a\nld a, $07\nld [$DB95], a"), ASM("""
+        ld a, [$DB%02X]
+        ld e, a
+        ld a, [$DB%02X]
+        ld [$DB%02X], a
+        ld a, e
+        ld [$DB%02X], a
+        ret
+    """ % (button, button + 2, button, button + 2)))

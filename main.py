@@ -58,6 +58,8 @@ if __name__ == "__main__":
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--goal', dest="goal", type=int, default=8,
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
+    parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
+        help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
 
     # Just aestetic flags
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
@@ -136,6 +138,11 @@ if __name__ == "__main__":
             patches.health.setStartHealth(rom, 1)
 
         patches.goal.setRequiredInstrumentCount(rom, args.goal)
+
+        if args.quickswap == 'a':
+            patches.core.quickswap(rom, 0)
+        elif args.quickswap == 'b':
+            patches.core.quickswap(rom, 1)
 
         # Show marin outside, even without a sword.
         rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
