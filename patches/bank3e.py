@@ -36,7 +36,7 @@ def addBank3E(rom):
 
 RenderChestItem:
         ldh  a, [$F1] ; active sprite
-        and  $40
+        and  $80
         jr   nz, RenderLargeItem
 
         ld   de, ItemSpriteTable
@@ -87,35 +87,99 @@ GiveItemFromChest:
         dw AddSeashell      ; CHEST_SEASHELL
         dw Exit             ; CHEST_MESSAGE
         dw Exit             ; CHEST_GEL
-        dw Exit ; $23
-        dw Exit ; $24
-        dw Exit ; $25
-        dw Exit ; $26
-        dw Exit ; $27
-        dw Exit ; $28
-        dw Exit ; $29
-        dw Exit ; $2A
-        dw Exit ; $2B
-        dw Exit ; $2C
-        dw Exit ; $2D
-        dw Exit ; $2E
-        dw Exit ; $2F
-        dw Exit ; $30
-        dw Exit ; $31
-        dw Exit ; $32
-        dw Exit ; $33
-        dw Exit ; $34
-        dw Exit ; $35
-        dw Exit ; $36
-        dw Exit ; $37
-        dw Exit ; $38
-        dw Exit ; $39
-        dw Exit ; $3A
-        dw Exit ; $3B
-        dw Exit ; $3C
-        dw Exit ; $3D
-        dw Exit ; $3E
-        dw Exit ; $3F
+        dw Exit ; KEY1
+        dw Exit ; KEY2
+        dw Exit ; KEY3
+        dw Exit ; KEY4
+        dw Exit ; KEY5
+        dw Exit ; KEY6
+        dw Exit ; KEY7
+        dw Exit ; KEY8
+        dw Exit ; MAP1
+        dw Exit ; MAP2
+        dw Exit ; MAP3
+        dw Exit ; MAP4
+        dw Exit ; MAP5
+        dw Exit ; MAP6
+        dw Exit ; MAP7
+        dw Exit ; MAP8
+        dw Exit ; COMPASS1
+        dw Exit ; COMPASS2
+        dw Exit ; COMPASS3
+        dw Exit ; COMPASS4
+        dw Exit ; COMPASS5
+        dw Exit ; COMPASS6
+        dw Exit ; COMPASS7
+        dw Exit ; COMPASS8
+        dw Exit ; STONE_BEAK1
+        dw Exit ; STONE_BEAK2
+        dw Exit ; STONE_BEAK3
+        dw Exit ; STONE_BEAK4
+        dw Exit ; STONE_BEAK5
+        dw Exit ; STONE_BEAK6
+        dw Exit ; STONE_BEAK7
+        dw Exit ; STONE_BEAK8
+        dw Exit ; $43
+        dw Exit ; $44
+        dw Exit ; $45
+        dw Exit ; $46
+        dw Exit ; $47
+        dw Exit ; $48
+        dw Exit ; $49
+        dw Exit ; $4A
+        dw Exit ; $4B
+        dw Exit ; $4C
+        dw Exit ; $4D
+        dw Exit ; $4E
+        dw Exit ; $4F
+        dw Exit ; $50
+        dw Exit ; $51
+        dw Exit ; $52
+        dw Exit ; $53
+        dw Exit ; $54
+        dw Exit ; $55
+        dw Exit ; $56
+        dw Exit ; $57
+        dw Exit ; $58
+        dw Exit ; $59
+        dw Exit ; $5A
+        dw Exit ; $5B
+        dw Exit ; $5C
+        dw Exit ; $5D
+        dw Exit ; $5E
+        dw Exit ; $5F
+        dw Exit ; $60
+        dw Exit ; $61
+        dw Exit ; $62
+        dw Exit ; $63
+        dw Exit ; $64
+        dw Exit ; $65
+        dw Exit ; $66
+        dw Exit ; $67
+        dw Exit ; $68
+        dw Exit ; $69
+        dw Exit ; $6A
+        dw Exit ; $6B
+        dw Exit ; $6C
+        dw Exit ; $6D
+        dw Exit ; $6E
+        dw Exit ; $6F
+        dw Exit ; $70
+        dw Exit ; $71
+        dw Exit ; $72
+        dw Exit ; $73
+        dw Exit ; $74
+        dw Exit ; $75
+        dw Exit ; $76
+        dw Exit ; $77
+        dw Exit ; $78
+        dw Exit ; $79
+        dw Exit ; $7A
+        dw Exit ; $7B
+        dw Exit ; $7C
+        dw Exit ; $7D
+        dw Exit ; $7E
+        dw Exit ; $7F
         dw PieceOfHeart     ; Heart piece
 
 ChestPowerBracelet:
@@ -145,7 +209,7 @@ Flippers:
 
 Flippers:
         ld   a, $01
-        ld   [$DB0C], a    
+        ld   [$DB0C], a
         jp   Exit
 
 TailKey:
@@ -187,7 +251,7 @@ PieceOfHeart:
         ld   a, [$DB5C]
         inc  a
         cp   $04
-        jr   z, FullHeart 
+        jr   z, FullHeart
         ld   [$DB5C], a
         jp Exit
 FullHeart:
@@ -317,6 +381,38 @@ ItemSpriteTable:
         db $9E, $14        ; CHEST_SEASHELL
         db $FF, $18        ; CHEST_MESSAGE
         db $FF, $18        ; CHEST_GEL
+        db $4A, $1F        ; KEY1
+        db $4A, $1F        ; KEY2
+        db $4A, $1F        ; KEY3
+        db $4A, $1F        ; KEY4
+        db $4A, $1F        ; KEY5
+        db $4A, $1F        ; KEY6
+        db $4A, $1F        ; KEY7
+        db $4A, $1F        ; KEY8
+        db $40, $1C        ; MAP1
+        db $40, $1C        ; MAP2
+        db $40, $1C        ; MAP3
+        db $40, $1C        ; MAP4
+        db $40, $1C        ; MAP5
+        db $40, $1C        ; MAP6
+        db $40, $1C        ; MAP7
+        db $40, $1C        ; MAP8
+        db $42, $1D        ; COMPASS1
+        db $42, $1D        ; COMPASS2
+        db $42, $1D        ; COMPASS3
+        db $42, $1D        ; COMPASS4
+        db $42, $1D        ; COMPASS5
+        db $42, $1D        ; COMPASS6
+        db $42, $1D        ; COMPASS7
+        db $42, $1D        ; COMPASS8
+        db $44, $1C        ; STONE_BEAK1
+        db $44, $1C        ; STONE_BEAK2
+        db $44, $1C        ; STONE_BEAK3
+        db $44, $1C        ; STONE_BEAK4
+        db $44, $1C        ; STONE_BEAK5
+        db $44, $1C        ; STONE_BEAK6
+        db $44, $1C        ; STONE_BEAK7
+        db $44, $1C        ; STONE_BEAK8
 
 LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
@@ -326,6 +422,12 @@ ItemMessageTable:
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
         db $EF, $BE, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        ; $40
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        ; $80
         db $4F
 
 RenderDroppedKey:

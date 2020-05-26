@@ -121,3 +121,6 @@ def addBank3F(rom):
     rom.banks[0x3F][0x3400:0x3500] = rom.banks[0x32][0x3D00:0x3E00]  # dungeon key items
     # Add the slime key and mushroom which are not in the above sets
     rom.banks[0x3F][0x34C0:0x3500] = rom.banks[0x2C][0x28C0:0x2900]
+
+    # Add the bowwow sprites
+    rom.banks[0x3F][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]

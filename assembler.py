@@ -129,8 +129,11 @@ class Assembler:
                 self.__result.append(0xFA)
                 self.__result += self.toWord(params[1][1:-1])
             elif params[1] == "A" and dst is None and params[0].startswith("[") and params[0].endswith("]"):
-                self.__result.append(0xEA)
-                self.__result += self.toWord(params[0][1:-1])
+                if params[0] == "[DE]":
+                    self.__result.append(0x12)
+                else:
+                    self.__result.append(0xEA)
+                    self.__result += self.toWord(params[0][1:-1])
             elif params[0] == "BC":
                 self.__result.append(0x01)
                 self.__result += self.toWord(params[1])
