@@ -170,8 +170,8 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(my_logic.start)
             e.dump(my_logic)
-            # from locations import Chest
-            # Chest(0x113).patch(rom, "HEART_PIECE")
+            from locations import Chest
+            Chest(0x113).patch(rom, "KEY2")
             # from locations import DroppedKey
             # dk = DroppedKey(0x116)
             # dk.patch(rom, "HEART_PIECE")

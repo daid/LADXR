@@ -12,6 +12,8 @@ def addBank3E(rom):
     rom.texts[0x89] = formatText(b"Found the bow!")
     rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
     rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
+    for idx in range(8):
+        rom.texts[0xBF + idx] = formatText(b"Found an item for dungeon %d" % (idx + 1))
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
@@ -87,46 +89,46 @@ GiveItemFromChest:
         dw AddSeashell      ; CHEST_SEASHELL
         dw Exit             ; CHEST_MESSAGE
         dw Exit             ; CHEST_GEL
-        dw Exit ; KEY1
-        dw Exit ; KEY2
-        dw Exit ; KEY3
-        dw Exit ; KEY4
-        dw Exit ; KEY5
-        dw Exit ; KEY6
-        dw Exit ; KEY7
-        dw Exit ; KEY8
-        dw Exit ; MAP1
-        dw Exit ; MAP2
-        dw Exit ; MAP3
-        dw Exit ; MAP4
-        dw Exit ; MAP5
-        dw Exit ; MAP6
-        dw Exit ; MAP7
-        dw Exit ; MAP8
-        dw Exit ; COMPASS1
-        dw Exit ; COMPASS2
-        dw Exit ; COMPASS3
-        dw Exit ; COMPASS4
-        dw Exit ; COMPASS5
-        dw Exit ; COMPASS6
-        dw Exit ; COMPASS7
-        dw Exit ; COMPASS8
-        dw Exit ; STONE_BEAK1
-        dw Exit ; STONE_BEAK2
-        dw Exit ; STONE_BEAK3
-        dw Exit ; STONE_BEAK4
-        dw Exit ; STONE_BEAK5
-        dw Exit ; STONE_BEAK6
-        dw Exit ; STONE_BEAK7
-        dw Exit ; STONE_BEAK8
-        dw Exit ; $43
-        dw Exit ; $44
-        dw Exit ; $45
-        dw Exit ; $46
-        dw Exit ; $47
-        dw Exit ; $48
-        dw Exit ; $49
-        dw Exit ; $4A
+        dw AddKey ; KEY1
+        dw AddKey ; KEY2
+        dw AddKey ; KEY3
+        dw AddKey ; KEY4
+        dw AddKey ; KEY5
+        dw AddKey ; KEY6
+        dw AddKey ; KEY7
+        dw AddKey ; KEY8
+        dw AddMap ; MAP1
+        dw AddMap ; MAP2
+        dw AddMap ; MAP3
+        dw AddMap ; MAP4
+        dw AddMap ; MAP5
+        dw AddMap ; MAP6
+        dw AddMap ; MAP7
+        dw AddMap ; MAP8
+        dw AddCompass ; COMPASS1
+        dw AddCompass ; COMPASS2
+        dw AddCompass ; COMPASS3
+        dw AddCompass ; COMPASS4
+        dw AddCompass ; COMPASS5
+        dw AddCompass ; COMPASS6
+        dw AddCompass ; COMPASS7
+        dw AddCompass ; COMPASS8
+        dw AddStoneBeak ; STONE_BEAK1
+        dw AddStoneBeak ; STONE_BEAK2
+        dw AddStoneBeak ; STONE_BEAK3
+        dw AddStoneBeak ; STONE_BEAK4
+        dw AddStoneBeak ; STONE_BEAK5
+        dw AddStoneBeak ; STONE_BEAK6
+        dw AddStoneBeak ; STONE_BEAK7
+        dw AddStoneBeak ; STONE_BEAK8
+        dw AddNightmareKey ; NIGHTMARE_KEY1
+        dw AddNightmareKey ; NIGHTMARE_KEY2
+        dw AddNightmareKey ; NIGHTMARE_KEY3
+        dw AddNightmareKey ; NIGHTMARE_KEY4
+        dw AddNightmareKey ; NIGHTMARE_KEY5
+        dw AddNightmareKey ; NIGHTMARE_KEY6
+        dw AddNightmareKey ; NIGHTMARE_KEY7
+        dw AddNightmareKey ; NIGHTMARE_KEY8
         dw Exit ; $4B
         dw Exit ; $4C
         dw Exit ; $4D
@@ -204,7 +206,7 @@ DoNotIncreaseItemLevel:
 
 Flippers:
         ld   a, $01
-        ld   [$DB0C], a    
+        ld   [$DB0C], a
         jp   Exit
 
 Flippers:
@@ -291,13 +293,49 @@ ChestWithItem:
         jp Exit
 
 ChestWithCurrentDungeonItem:
-        sub  $16 ; a -= CHEST_MAP 
+        sub  $16 ; a -= CHEST_MAP
         ld   e, a
         ld   d, $00
         ld   hl, $DBCC ; hasDungeonMap
         add  hl, de
         inc  [hl]
-        call $2802  ; Sync current dungeon items with dungeon specific table 
+        call $2802  ; Sync current dungeon items with dungeon specific table
+        jp Exit
+
+AddKey:
+        sub $23 ; Make 'A' our dungeon index
+        ld   hl, $DB1A
+        jr   AddDungeonItem
+
+AddMap:
+        sub $2B ; Make 'A' our dungeon index
+        ld   hl, $DB16
+        jr   AddDungeonItem
+
+AddCompass:
+        sub $33 ; Make 'A' our dungeon index
+        ld   hl, $DB17
+        jr   AddDungeonItem
+
+AddStoneBeak:
+        sub $3B ; Make 'A' our dungeon index
+        ld   hl, $DB18
+        jr   AddDungeonItem
+
+AddNightmareKey:
+        sub $43 ; Make 'A' our dungeon index
+        ld   hl, $DB19
+        jr   AddDungeonItem
+
+AddDungeonItem:
+        ld   e, a
+        ld   d, $00
+        add  hl, de
+        add  hl, de
+        add  hl, de
+        add  hl, de
+        add  hl, de
+        inc  [hl]
         jp Exit
 
 AddRupees20:
@@ -413,6 +451,14 @@ ItemSpriteTable:
         db $44, $1C        ; STONE_BEAK6
         db $44, $1C        ; STONE_BEAK7
         db $44, $1C        ; STONE_BEAK8
+        db $46, $1C        ; NIGHTMARE_KEY1
+        db $46, $1C        ; NIGHTMARE_KEY2
+        db $46, $1C        ; NIGHTMARE_KEY3
+        db $46, $1C        ; NIGHTMARE_KEY4
+        db $46, $1C        ; NIGHTMARE_KEY5
+        db $46, $1C        ; NIGHTMARE_KEY6
+        db $46, $1C        ; NIGHTMARE_KEY7
+        db $46, $1C        ; NIGHTMARE_KEY8
 
 LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
@@ -420,10 +466,10 @@ LargeItemSpriteTable:
 ItemMessageTable:
         db $90, $91, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
         db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-        db $EF, $BE, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $EF, $BE, $00, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $C0, $01, $02, $03
+        db $C4, $C5, $C6, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $C0, $01, $02, $03
         ; $40
-        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $C4, $C5, $C6, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $BF, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00

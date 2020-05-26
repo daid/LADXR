@@ -14,14 +14,15 @@ class DroppedKey(ItemInfo):
         self.room = room
 
     def setLocation(self, location):
-        self._location = location
+        super().setLocation(location)
         if location.dungeon is not None:
             d = location.dungeon
             self.OPTIONS = DroppedKey.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
     def patch(self, rom, option):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            option = option[:-1]
+            if self._location.dungeon == int(option[-1]):
+                option = option[:-1]
         rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]
 
     def read(self, rom):

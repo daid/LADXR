@@ -45,7 +45,8 @@ class DungeonChest(Chest):
 
     def patch(self, rom, option):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            option = option[:-1]
+            if self._location.dungeon == int(option[-1]):
+                option = option[:-1]
         super().patch(rom, option)
 
     def read(self, rom):
