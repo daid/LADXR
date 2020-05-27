@@ -13,6 +13,7 @@ class Assembler:
         self.__result = bytearray()
         self.__label = {}
         self.__link = {}
+        self.__scope = None
 
     def toByte(self, code):
         if code.startswith("$") and len(code) == 3:
@@ -35,7 +36,13 @@ class Assembler:
         while "  " in line:
             line = line.strip().replace("  ", " ")
         if line.endswith(":"):
-            self.__label[line[:-1]] = len(self.__result)
+            line = line[:-1]
+            if line.startswith("."):
+                self.__label[self.__scope + line] = len(self.__result)
+            else:
+                assert "." not in line, line
+                self.__label[line] = len(self.__result)
+                self.__scope = line
             return
         if len(line) < 1:
             return
