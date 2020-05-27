@@ -25,6 +25,8 @@ class Assembler:
             value = int(code[1:], 16)
             return bytes([value & 0xFF, value >> 8])
         if self.__base_address is not None:
+            if code.startswith("."):
+                code = self.__scope + code
             self.__link[len(self.__result)] = (Assembler.LINK_ABS16, code)
             return b'\x00\x00'
         raise ValueError("Cannot ASM '%s' into 16bit" % (code))
@@ -81,6 +83,8 @@ class Assembler:
             if params[0].startswith("$"):
                 self.__result.append(self.toByte(params[0]))
             else:
+                if params[0].startswith("."):
+                    params[0] = self.__scope + params[0]
                 self.__link[len(self.__result)] = (Assembler.LINK_REL8, params[0])
                 self.__result.append(0)
         elif mnemonic == "RET":

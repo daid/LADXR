@@ -4,7 +4,7 @@ from assembler import ASM
 def fixDroppedKey(rom):
     # Patch the rendering code to use the dropped key rendering code.
     rom.patch(0x03, 0x1C99, None, ASM("""
-        ld   a, $03
+        ld   a, $04
         call $3FF0
         jp $5CA6
     """))
@@ -21,7 +21,7 @@ notSpecialSideView:
         call $512A ; mark room as done
         
         ; Handle item effect
-        ld   a, $01
+        ld   a, $02
         call $3FF0
         
         ldh  a, [$F1] ; Load active sprite variant
@@ -29,7 +29,7 @@ notSpecialSideView:
         jr   z, isAKey
         
         ;Show message (if not a key)
-        ld   a, $02
+        ld   a, $03
         call $3FF0
 isAKey:
         ret

@@ -19,7 +19,7 @@ def fixChests(rom):
         ld   e, a
         cp   $21 ; if is message chest or higher number, next instruction is to skip giving things.
     """), ASM("""
-        ld   a, $01
+        ld   a, $02
         call $3FF0
 
         and  a   ; clear the carry flag to always skip giving stuff.
@@ -27,14 +27,14 @@ def fixChests(rom):
 
     # Instead of the normal logic to on which sprite data to show, we jump to our custom code in bank 3E.
     rom.patch(0x07, 0x3C36, None, ASM("""
-        ld   a, $00
+        ld   a, $01
         call $3FF0
         jp $7C5E
     """), fill_nop=True)
 
     # Instead of the normal logic of showing the proper dialog, we jump to our custom code in bank 3E.
     rom.patch(0x07, 0x3C9C, None, ASM("""
-        ld   a, $02
+        ld   a, $03
         call $3FF0
         jp $7CE9
     """))

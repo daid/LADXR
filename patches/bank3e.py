@@ -31,11 +31,23 @@ def addBank3E(rom):
 
     rom.patch(0x3E, 0x0000, None, ASM("""
         rst  0 ; JUMP TABLE
-        dw   RenderChestItem    ; 0 
-        dw   GiveItemFromChest  ; 1
-        dw   ItemMessage       ; 2
-        dw   RenderDroppedKey   ; 3
-        dw   RenderHeartPiece   ; 4
+        dw   MainLoop           ; 0
+        dw   RenderChestItem    ; 1
+        dw   GiveItemFromChest  ; 2
+        dw   ItemMessage        ; 3
+        dw   RenderDroppedKey   ; 4
+        dw   RenderHeartPiece   ; 5
+
+MainLoop:
+        ; First, do the thing we injected our code in.
+        ld a, [$C14C]
+        and a
+        jr z, $04
+        dec a
+        ld [$C14C], a
+
+;actualMainLoop
+        jp Exit
 
 RenderChestItem:
         ldh  a, [$F1] ; active sprite
@@ -72,7 +84,7 @@ GiveItemFromChest:
         dw Exit             ; CHEST_MAGNIFYING_LENS
         dw ChestWithItem    ; Boomerang (used to be unused)
         dw SlimeKey         ; ?? right side of your trade quest item
-        dw Exit             ; CHEST_MEDICINE (handled by base rom during drawing for some reason...)
+        dw Medicine         ; CHEST_MEDICINE
         dw TailKey          ; CHEST_TAIL_KEY
         dw AnglerKey        ; CHEST_ANGLER_KEY
         dw FaceKey          ; CHEST_FACE_KEY
@@ -214,6 +226,11 @@ Flippers:
 Flippers:
         ld   a, $01
         ld   [$DB0C], a
+        jp   Exit
+
+Medicine:
+        ld   a, $01
+        ld   [$DB0D], a
         jp   Exit
 
 TailKey:
@@ -503,21 +520,21 @@ RenderHeartPiece:
     ld   d, a
     ldh  a, [$F7]   ; mapId
     cp   $FF
-    jr   nz, notColorDungeon
+    jr   nz, .notColorDungeon
 
     ld   d, $00
     ld   hl, $7B00
-    jr   loadedPointers
+    jr   .loadedPointers
 
-notColorDungeon:
+.notColorDungeon:
     cp   $1A
-    jr   nc, notCavesA
+    jr   nc, .notCavesA
     cp   $06
-    jr   c, notCavesA
+    jr   c, .notCavesA
     inc  d
-notCavesA:
+.notCavesA:
     ld   hl, $7800
-loadedPointers:
+.loadedPointers:
     add  hl, de
 
     ld   a, [hl]

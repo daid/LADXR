@@ -36,5 +36,5 @@ def quickswap(rom, button):
         ret
     """ % (button, button + 2, button, button + 2)))
 
-# 0x10DB might be a good point to inject a "always running" piece of code.
-
+def testMainLoop(rom):
+    rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\ncall $3FF0"), fill_nop=True)
