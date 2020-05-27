@@ -54,6 +54,8 @@ if __name__ == "__main__":
     # Flags that effect gameplay
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
         help="Enables randomization of heart pieces.")
+    parser.add_argument('--seashells', dest="seashells", action="store_true",
+        help="Enables seashells mode, which randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
