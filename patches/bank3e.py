@@ -48,6 +48,7 @@ RenderChestItem:
 RenderLargeItem:
         ld   de, LargeItemSpriteTable
         dec  d
+        dec  d
         call $3BC0 ; RenderActiveEntitySpritePair
         jp   Exit
 
