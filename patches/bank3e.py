@@ -40,11 +40,11 @@ def addBank3E(rom):
 
 MainLoop:
         ; First, do the thing we injected our code in.
-        ld a, [$C14C]
-        and a
-        jr z, $04
-        dec a
-        ld [$C14C], a
+        ld   a, [$C14C]
+        and  a
+        jr   z, $04
+        dec  a
+        ld   [$C14C], a
 
 ;actualMainLoop
         jp Exit
@@ -504,15 +504,6 @@ RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
 
 RenderHeartPiece:
-    ; Check if we need to load the chest type
-    ld   hl, $C480 ; some unused entity state for the dropped key
-    add  hl, bc
-    ld   a, [hl]
-    and  a
-    jr   nz, DroppedKeyTypeLoaded
-    inc  a
-    ld   [hl], a
-
     ;Load the chest type from the chest table.
     ldh  a, [$F6] ; map room
     ld   e, a
@@ -540,6 +531,21 @@ RenderHeartPiece:
     ld   a, [hl]
     ldh  [$F1], a ; set currentEntitySpriteVariant
     call $3B0C ; SetEntitySpriteVariant
-DroppedKeyTypeLoaded:
+
+    and  $80
+    ld   hl, $C340
+    add  hl, bc
+    ld   a, [hl]
+    jr   z, .singleSprite
+    ; We potentially need to fix the physics flags table to allocate 2 sprites for us
+    and  $F8
+    or   $02
+    ld   [hl], a
+    jr .droppedKeyTypeLoaded
+.singleSprite:
+    and  $F8
+    or   $01
+    ld   [hl], a
+.droppedKeyTypeLoaded:
     jp RenderChestItem
     """, 0x4000))

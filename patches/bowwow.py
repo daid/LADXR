@@ -22,7 +22,7 @@ def neverGetBowwow(rom):
     # Load followers in dungeons
     rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True);
     rom.patch(0x00, 0x2EB0, ASM("ld a, [$DB56]\ncp $01\nld a, $A4\njr z, $18"), "", fill_nop=True)
-    # Patch bowwow follor sprite to be used from 2nd vram bank
+    # Patch bowwow follower sprite to be used from 2nd vram bank
     rom.patch(0x05, 0x001C,
         b"40034023"
         b"42034223"
@@ -42,3 +42,29 @@ def neverGetBowwow(rom):
     rom.patch(0x05, 0x0282,
         ASM("ld a, $4E\njr nz, $02\nld a, $7E\nld [de], a\ninc de\nld a, $00"),
         ASM("ld a, $5E\nld [de], a\ninc de\nld a, $08"), fill_nop=True)
+
+    # Patch to modify how bowwow eats enemies, normally it just unloads them.
+    rom.patch(0x05, 0x03A0, 0x03A8, ASM("""
+        ; pack 'de' into 'bc', as 'de' get corrupted during the farcall, and we need de to know which entity to hurt
+        ld   b, e
+        ld   a, $06
+        call $3FF0
+        ret
+    """), fill_nop=True)
+    # Code for bank 3E, but bugs out most bosses if you let bowwow eat them
+    """
+        dw   BowwowEat          ; 6
+
+BowwowEat:
+        ; bc and de where packed into bc, unpack them
+        ld  e, b
+        xor a
+        ld  b, a
+        ld  d, a
+        
+        ld  hl, $C280
+        add hl, de
+        ld  [hl], $01
+        
+        jp Exit    
+    """

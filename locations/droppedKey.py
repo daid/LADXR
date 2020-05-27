@@ -34,6 +34,7 @@ class DroppedKey(ItemInfo):
         for k, v in CHEST_ITEMS.items():
             if v == value:
                 if k in [MAP, COMPASS, STONE_BEAK, NIGHTMARE_KEY, KEY]:
+                    assert self._location.dungeon is not None, "Dungeon item outside of dungeon? %r" % (self)
                     return "%s%d" % (k, self._location.dungeon)
                 return k
         raise ValueError("Could not find chest contents in ROM (0x%02x)" % (value))

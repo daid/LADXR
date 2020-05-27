@@ -42,6 +42,7 @@ def addBank3F(rom):
         ; Switch back to bank 0 after loading our own initializer
         ld   a, $01
         ld   [$2100], a
+        
         ; set a to 1 to indicate GBC
         ld   a, $01
         """), fill_nop=True)

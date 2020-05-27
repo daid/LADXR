@@ -11,6 +11,7 @@ import patches.chest
 import patches.droppedKey
 import patches.goldenLeaf
 import patches.heartPiece
+import patches.seashell
 import patches.softlock
 import patches.titleScreen
 import patches.reduceRNG
@@ -113,6 +114,7 @@ if __name__ == "__main__":
         patches.droppedKey.fixDroppedKey(rom)
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
+        patches.seashell.fixSeashell(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
         patches.reduceRNG.slowdownThreeOfAKind(rom)
@@ -181,8 +183,8 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(my_logic.start)
             e.dump(my_logic)
-            from locations import ShopItem
-            ShopItem(0).patch(rom, "SWORD")
+            # from locations import ShopItem
+            # ShopItem(0).patch(rom, "SWORD")
             # from locations import Chest
             # Chest(0x113).patch(rom, "KEY2")
             # from locations import DroppedKey
