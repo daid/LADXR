@@ -72,7 +72,7 @@ GiveItemFromChest:
         rst  0 ; JUMP TABLE
         dw ChestPowerBracelet; CHEST_POWER_BRACELET
         dw ChestShield       ; CHEST_SHIELD
-        dw ChestWithItem     ; CHEST_BOW
+        dw ChestBow          ; CHEST_BOW
         dw ChestWithItem     ; CHEST_HOOKSHOT
         dw ChestWithItem     ; CHEST_MAGIC_ROD
         dw ChestWithItem     ; CHEST_PEGASUS_BOOTS
@@ -218,6 +218,14 @@ ChestIncreaseItemLevel:
         jr   z, DoNotIncreaseItemLevel
         inc  [hl]
 DoNotIncreaseItemLevel:
+        jp   ChestWithItem
+
+ChestBow:
+        ld   a, [$DB45]
+        cp   $20
+        jp   nc, ChestWithItem
+        ld   a, $20
+        ld   [$DB45], a
         jp   ChestWithItem
 
 Flippers:

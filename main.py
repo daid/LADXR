@@ -193,9 +193,9 @@ if __name__ == "__main__":
             # ShopItem(0).patch(rom, "SWORD")
             # from locations import Chest
             # Chest(0x113).patch(rom, "KEY2")
-            # from locations import DroppedKey
-            # dk = DroppedKey(0x116)
-            # dk.patch(rom, "HEART_PIECE")
+            from locations import DroppedKey
+            dk = DroppedKey(0x116)
+            dk.patch(rom, "BOW")
             # from locations import StartItem
             # StartItem().patch(rom, "POWER_BRACELET")
         else:
