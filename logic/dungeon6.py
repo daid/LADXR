@@ -21,7 +21,7 @@ class Dungeon6:
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)
         miniboss = Location(6).connect(to_miniboss, BOMB)
-        lower_right_side = Location(6).add(DungeonChest(0x1D1), DungeonChest(0x1BE)).connect(to_miniboss, POWER_BRACELET)
+        lower_right_side = Location(6).add(DungeonChest(0x1D1), DungeonChest(0x1BE)).connect(to_miniboss, COUNT(POWER_BRACELET, 2))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER))
         center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, KEY6)
