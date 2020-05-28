@@ -338,22 +338,22 @@ AddKey:
         jr   AddDungeonItem
 
 AddMap:
-        sub $2B ; Make 'A' our dungeon index
+        sub $2C ; Make 'A' our dungeon index
         ld   hl, $DB16
         jr   AddDungeonItem
 
 AddCompass:
-        sub $33 ; Make 'A' our dungeon index
+        sub $35 ; Make 'A' our dungeon index
         ld   hl, $DB17
         jr   AddDungeonItem
 
 AddStoneBeak:
-        sub $3B ; Make 'A' our dungeon index
+        sub $3E ; Make 'A' our dungeon index
         ld   hl, $DB18
         jr   AddDungeonItem
 
 AddNightmareKey:
-        sub $43 ; Make 'A' our dungeon index
+        sub $47 ; Make 'A' our dungeon index
         ld   hl, $DB19
         jr   AddDungeonItem
 
