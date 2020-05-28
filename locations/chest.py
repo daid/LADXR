@@ -20,7 +20,7 @@ class Chest(ItemInfo):
     def configure(self, options):
         if options.keysanity:
             self.OPTIONS = Chest.OPTIONS
-            for n in range(9):
+            for n in range(10):
                 self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
 
     def patch(self, rom, option):
