@@ -14,6 +14,7 @@ import patches.goldenLeaf
 import patches.heartPiece
 import patches.seashell
 import patches.softlock
+import patches.maptweaks
 import patches.titleScreen
 import patches.reduceRNG
 import patches.bank3e
@@ -112,6 +113,7 @@ if __name__ == "__main__":
         patches.core.removeGhost(rom)
         patches.core.alwaysAllowSecretBook(rom)
         patches.softlock.fixAll(rom)
+        patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)
         patches.shop.fixShop(rom)
         patches.trendy.fixTrendy(rom)

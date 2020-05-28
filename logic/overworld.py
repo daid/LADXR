@@ -55,6 +55,7 @@ class World:
         Location().add(Seashell(0x0A6)).connect(center_area, FLIPPERS)  # next to lv3
         Location().add(Seashell(0x08B)).connect(center_area, bush)  # next to seashell house
         Location().add(Seashell(0x0A4)).connect(center_area, PEGASUS_BOOTS)  # smash into tree next to phonehouse
+        Location().add(Chest(0x11F)).connect(center_area, AND(FEATHER, PEGASUS_BOOTS))  # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(center_area, POWER_BRACELET)  # under the rock
         Location().add(Seashell(0x0E9)).connect(center_area, bush)  # same screen as mermaid statue
         Location().add(Seashell(0x0F8)).connect(center_area, AND(FLIPPERS, bush))  # tiny island
