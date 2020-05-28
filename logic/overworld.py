@@ -111,6 +111,7 @@ class World:
 
         self.start = start
         self.swamp = swamp
+        self.graveyard = graveyard
         self.center_area = center_area
         self.right_mountains_1 = right_mountains_1
         self.dungeon6_entrance = dungeon6_entrance

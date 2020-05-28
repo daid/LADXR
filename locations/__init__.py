@@ -14,5 +14,6 @@ from .hookshot import HookshotDrop
 from .faceKey import FaceKey
 from .birdKey import BirdKey
 from .heartPiece import HeartPiece
+from .tunicFairy import TunicFairy
 
 from .items import *
