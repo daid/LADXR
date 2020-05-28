@@ -60,6 +60,18 @@ class Assembler:
         elif mnemonic == "STOP":
             assert len(params) == 0, line
             self.__result.append(0x10)
+        elif mnemonic == "RLA":
+            assert len(params) == 0, line
+            self.__result.append(0x17)
+        elif mnemonic == "RLCA":
+            assert len(params) == 0, line
+            self.__result.append(0x07)
+        elif mnemonic == "RRA":
+            assert len(params) == 0, line
+            self.__result.append(0x1f)
+        elif mnemonic == "RRCA":
+            assert len(params) == 0, line
+            self.__result.append(0x0f)
         elif mnemonic == "JP":
             if len(params) == 2:
                 flag = FLAGS[params[0]]
