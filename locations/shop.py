@@ -13,7 +13,7 @@ class ShopItem(ItemInfo):
 
     def configure(self, options):
         if self.__index < 2:
-            self.OPTIONS = [SWORD, POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA, FEATHER, SHOVEL, BOOMERANG]
+            self.OPTIONS = [BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA, FEATHER, SHOVEL, BOOMERANG]
 
     def patch(self, rom, option):
         if self.__index == 0:

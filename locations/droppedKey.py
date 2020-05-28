@@ -27,6 +27,9 @@ class DroppedKey(ItemInfo):
             if self._location.dungeon == int(option[-1]):
                 option = option[:-1]
         rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]
+        if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
+            rom.banks[0x3E][0x017C + 0x3800] = CHEST_ITEMS[option]
+
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)
