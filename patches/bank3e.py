@@ -497,6 +497,9 @@ ItemSpriteTable:
 
 LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
+        db $54, $0A, $56, $0A ; bowwow
+        db $00, $0D, $22, $08 ; bomb upgrade
+        db $80, $0C, $22, $08 ; arrow upgrade
 
 ItemMessageTable:
         db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
