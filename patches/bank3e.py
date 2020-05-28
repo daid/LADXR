@@ -358,15 +358,22 @@ AddNightmareKey:
         jr   AddDungeonItem
 
 AddDungeonItem:
+        cp   $08
+        jr   z, .colorDungeon
         ld   e, a
         ld   d, $00
         add  hl, de
         add  hl, de
         add  hl, de
         add  hl, de
+.colorDungeonEntry:
         add  hl, de
         inc  [hl]
         jp Exit
+.colorDungeon:
+        ; Special case for the color dungeon, which is in a different location in memory.
+        ld   de, $02C4
+        jr   .colorDungeonEntry  
 
 AddRupees20:
         xor  a
