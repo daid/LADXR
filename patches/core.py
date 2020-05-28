@@ -37,4 +37,4 @@ def quickswap(rom, button):
     """ % (button, button + 2, button, button + 2)))
 
 def testMainLoop(rom):
-    rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\ncall $3FF0"), fill_nop=True)
+    rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\nrst 8"), fill_nop=True)

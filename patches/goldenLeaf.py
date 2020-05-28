@@ -8,16 +8,16 @@ def fixGoldenLeaf(rom):
         call $3C77 ; RenderActiveEntitySprite
     """), ASM("""
         ld   a, $04
-        call $3FF0
+        rst  8
     """), fill_nop=True)
     rom.patch(3, 0x2018, None, ASM("""
         ld   a, $02
-        call $3FF0
+        rst  8
         jp   $602F
     """))
     rom.patch(3, 0x2037, None, ASM("""
         ld   a, $03
-        call $3FF0
+        rst  8
         jp   $604B
     """))
 

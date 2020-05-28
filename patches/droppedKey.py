@@ -5,7 +5,7 @@ def fixDroppedKey(rom):
     # Patch the rendering code to use the dropped key rendering code.
     rom.patch(0x03, 0x1C99, None, ASM("""
         ld   a, $04
-        call $3FF0
+        rst  8
         jp $5CA6
     """))
 
@@ -22,7 +22,7 @@ notSpecialSideView:
         
         ; Handle item effect
         ld   a, $02
-        call $3FF0
+        rst  8
         
         ldh  a, [$F1] ; Load active sprite variant
         cp   $1A
@@ -30,7 +30,7 @@ notSpecialSideView:
         
         ;Show message (if not a key)
         ld   a, $03
-        call $3FF0
+        rst  8
 isAKey:
         ret
     """))

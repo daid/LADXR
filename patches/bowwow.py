@@ -48,7 +48,7 @@ def neverGetBowwow(rom):
         ; pack 'de' into 'bc', as 'de' get corrupted during the farcall, and we need de to know which entity to hurt
         ld   b, e
         ld   a, $06
-        call $3FF0
+        rst  8
         ret
     """), fill_nop=True)
     # Code for bank 3E, but bugs out most bosses if you let bowwow eat them

@@ -19,7 +19,9 @@ def addBank3E(rom):
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
     # the A register is preserved and can directly be used as a jumptable in page 3E.
-    rom.patch(0, 0x3FF0, "0000000000000000000000000000", ASM("""
+    # Trampoline at rst 8
+    # the A register is preserved and can directly be used as a jumptable in page 3E.
+    rom.patch(0, 0x0008, "0000000000000000000000000000", ASM("""
         ld   h, a
         ld   a, [$DBAF]
         push af
