@@ -7,6 +7,7 @@ import patches.bowwow
 import patches.desert
 import patches.owl
 import patches.shop
+import patches.trendy
 import patches.chest
 import patches.droppedKey
 import patches.goldenLeaf
@@ -113,6 +114,7 @@ if __name__ == "__main__":
         patches.softlock.fixAll(rom)
         patches.chest.fixChests(rom)
         patches.shop.fixShop(rom)
+        patches.trendy.fixTrendy(rom)
         patches.droppedKey.fixDroppedKey(rom)
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
