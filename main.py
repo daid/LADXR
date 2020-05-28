@@ -123,7 +123,7 @@ if __name__ == "__main__":
         patches.seashell.fixSeashell(rom)
         patches.bowwow.neverGetBowwow(rom)
         patches.desert.desertAccess(rom)
-        patches.reduceRNG.slowdownThreeOfAKind(rom)
+        # patches.reduceRNG.slowdownThreeOfAKind(rom)
         patches.aesthetics.noSwordMusic(rom)
         if args.removeNagMessages:
             patches.aesthetics.removeNagMessages(rom)
@@ -193,9 +193,9 @@ if __name__ == "__main__":
             # ShopItem(0).patch(rom, "SWORD")
             # from locations import Chest
             # Chest(0x113).patch(rom, "KEY2")
-            from locations import DroppedKey
-            dk = DroppedKey(0x116)
-            dk.patch(rom, "BOW")
+            # from locations import DroppedKey
+            # dk = DroppedKey(0x116)
+            # dk.patch(rom, "BOW")
             # from locations import StartItem
             # StartItem().patch(rom, "POWER_BRACELET")
         else:
