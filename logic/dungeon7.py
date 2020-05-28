@@ -16,7 +16,7 @@ class Dungeon7:
         bottomright_pillar.add(DungeonChest(0x224))  # nightmare key after the miniboss
         bottomright_pillar.add(DungeonChest(0x21A))  # mirror shield chest
 
-        final_pillar = Location(7).add(DroppedKey(0x21C)).connect(bottomright_pillar, HOOKSHOT)  # chest that needs to spawn to get to the last pillar
+        final_pillar = Location(7).add(DungeonChest(0x21C)).connect(bottomright_pillar, HOOKSHOT)  # chest that needs to spawn to get to the last pillar
         final_pillar.add(DungeonChest(0x220))  # 100 rupee chest
 
         boss = Location(7).connect(final_pillar, NIGHTMARE_KEY7)
