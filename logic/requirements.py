@@ -44,10 +44,11 @@ def isConsumable(item):
 
 bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET)
 attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
-attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT)
-attack_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, POWDER)
-attack_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT)
+attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
+attack_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, POWDER) # zols, keese, moldorm
+attack_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # ?
+attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
 attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
-rear_attack = OR(SWORD, BOMB)
-rear_attack_range = OR(MAGIC_ROD, BOW)
-fire = OR(MAGIC_POWDER, MAGIC_ROD)
+rear_attack = OR(SWORD, BOMB) # mimic
+rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
+fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
