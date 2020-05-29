@@ -1,31 +1,39 @@
 
 
 class RoomEditor:
-    def __init__(self, rom, room):
+    def __init__(self, rom, room=None, *, bank_nr=None, address=None):
+        assert room is not None or (bank_nr is not None and address is not None)
         self.room = room
+        self.bank_nr = bank_nr
+        self.address = address
+        self.length = None
         self.entities = []
         self.objects = []
 
-        entities_raw = rom.entities[room]
-        idx = 0
-        while entities_raw[idx] != 0xFF:
-            x = entities_raw[idx] & 0x0F
-            y = entities_raw[idx] >> 4
-            id = entities_raw[idx + 1]
-            self.entities.append((x, y, id))
-            idx += 2
-        assert idx == len(entities_raw) - 1
+        if room is not None:
+            entities_raw = rom.entities[room]
+            idx = 0
+            while entities_raw[idx] != 0xFF:
+                x = entities_raw[idx] & 0x0F
+                y = entities_raw[idx] >> 4
+                id = entities_raw[idx + 1]
+                self.entities.append((x, y, id))
+                idx += 2
+            assert idx == len(entities_raw) - 1
 
-        if room < 0x080:
-            objects_raw = rom.rooms_overworld_top[room]
-        elif room < 0x100:
-            objects_raw = rom.rooms_overworld_bottom[room - 0x80]
-        elif room < 0x200:
-            objects_raw = rom.rooms_indoor_a[room - 0x100]
-        elif room < 0x300:
-            objects_raw = rom.rooms_indoor_b[room - 0x200]
+        if room is not None:
+            if room < 0x080:
+                objects_raw = rom.rooms_overworld_top[room]
+            elif room < 0x100:
+                objects_raw = rom.rooms_overworld_bottom[room - 0x80]
+            elif room < 0x200:
+                objects_raw = rom.rooms_indoor_a[room - 0x100]
+            elif room < 0x300:
+                objects_raw = rom.rooms_indoor_b[room - 0x200]
+            else:
+                objects_raw = rom.rooms_color_dungeon[room - 0x300]
         else:
-            assert False, "Color dungeon not added yet"
+            objects_raw = rom.banks[bank_nr][address:]
 
         self.animation_id = objects_raw[0]
         self.floor_object = objects_raw[1]
@@ -46,17 +54,19 @@ class RoomEditor:
                 self.objects.append(ObjectVertical(x, y, objects_raw[idx + 2], count))
                 idx += 3
             elif y == 0x0E:  # warp
-                room_nr = (objects_raw[idx] & 0x0F) << 8 | objects_raw[idx + 2]
-                self.objects.append(ObjectWarp(room_nr, objects_raw[idx + 1], objects_raw[idx + 3], objects_raw[idx + 4]))
+                self.objects.append(ObjectWarp(objects_raw[idx] & 0x0F, objects_raw[idx + 1], objects_raw[idx + 2], objects_raw[idx + 3], objects_raw[idx + 4]))
                 idx += 5
             else:
                 self.objects.append(Object(x, y, objects_raw[idx + 1]))
                 idx += 2
-        assert idx == len(objects_raw) - 1
+        if room is not None:
+            assert idx == len(objects_raw) - 1
+        else:
+            self.length = idx + 1
 
-        if room < 0x0CC:
+        if room is not None and room < 0x0CC:
             self.overlay = rom.banks[0x26][room * 80:room * 80+80]
-        elif room < 0x100:
+        elif room is not None and room < 0x100:
             self.overlay = rom.banks[0x27][(room - 0xCC) * 80:(room - 0xCC) * 80 + 80]
         else:
             self.overlay = None
@@ -69,7 +79,10 @@ class RoomEditor:
             objects_raw += obj.export()
         objects_raw += bytearray([0xFE])
 
-        if new_room_nr < 0x080:
+        if new_room_nr is None:
+            assert len(objects_raw) <= self.length
+            rom.banks[self.bank_nr][self.address:self.address+len(objects_raw)] = objects_raw
+        elif new_room_nr < 0x080:
             rom.rooms_overworld_top[new_room_nr] = objects_raw
         elif new_room_nr < 0x100:
             rom.rooms_overworld_bottom[new_room_nr - 0x80] = objects_raw
@@ -80,16 +93,17 @@ class RoomEditor:
         else:
             assert False, "Color dungeon not added yet"
 
-        entities_raw = bytearray()
-        for entity in self.entities:
-            entities_raw += bytearray([entity[0] | entity[1] << 4, entity[2]])
-        entities_raw += bytearray([0xFF])
-        rom.entities[new_room_nr] = entities_raw
+        if new_room_nr is not None:
+            entities_raw = bytearray()
+            for entity in self.entities:
+                entities_raw += bytearray([entity[0] | entity[1] << 4, entity[2]])
+            entities_raw += bytearray([0xFF])
+            rom.entities[new_room_nr] = entities_raw
 
-        if new_room_nr < 0x0CC:
-            rom.banks[0x26][new_room_nr * 80:new_room_nr * 80 + 80] = self.overlay
-        elif new_room_nr < 0x100:
-            rom.banks[0x27][(new_room_nr - 0xCC) * 80:(new_room_nr - 0xCC) * 80 + 80] = self.overlay
+            if new_room_nr < 0x0CC:
+                rom.banks[0x26][new_room_nr * 80:new_room_nr * 80 + 80] = self.overlay
+            elif new_room_nr < 0x100:
+                rom.banks[0x27][(new_room_nr - 0xCC) * 80:(new_room_nr - 0xCC) * 80 + 80] = self.overlay
 
     def addEntity(self, x, y, type_id):
         self.entities.append((x, y, type_id))
@@ -118,6 +132,15 @@ class RoomEditor:
                     self.overlay[new_x + new_y * 10] = obj.type_id
                 obj.x = new_x
                 obj.y = new_y
+
+    def changeWarpTarget(self, from_room, to_room, new_map, target_x, target_y):
+        for obj in self.objects:
+            if isinstance(obj, ObjectWarp) and obj.room == from_room:
+                obj.room = to_room
+                obj.map_nr = new_map
+                obj.target_x = target_x
+                obj.target_y = target_y
+
 
 class Object:
     def __init__(self, x, y, type_id):
@@ -157,16 +180,24 @@ class ObjectVertical(Object):
 
 
 class ObjectWarp(Object):
-    def __init__(self, room_nr, map_nr, target_x, target_y):
+    def __init__(self, warp_type, map_nr, room_nr, target_x, target_y):
         super().__init__(None, None, None)
-        assert room_nr < 0x320
+        if warp_type > 0:
+            # indoor map
+            if map_nr == 0xff:
+                room_nr += 0x300  # color dungeon
+            elif 0x06 <= map_nr < 0x1A:
+                room_nr += 0x200  # indoor B
+            else:
+                room_nr += 0x100  # indoor A
+        self.warp_type = warp_type
         self.room = room_nr
         self.map_nr = map_nr
         self.target_x = target_x
         self.target_y = target_y
 
     def export(self):
-        return bytearray([0xE0 | (self.room >> 8), self.map_nr, self.room & 0xFF, self.target_x, self.target_y])
+        return bytearray([0xE0 | self.warp_type, self.map_nr, self.room & 0xFF, self.target_x, self.target_y])
 
     def __repr__(self):
-        return "%s:%03x:%02x:%d,%d" % (self.__class__.__name__, self.room, self.map_nr, self.target_x, self.target_y)
+        return "%s:%d:%03x:%02x:%d,%d" % (self.__class__.__name__, self.warp_type, self.room, self.map_nr, self.target_x, self.target_y)

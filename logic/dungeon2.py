@@ -22,4 +22,3 @@ class Dungeon2:
         # If we can get here, we have everything for the boss. So this is also the goal room.
         dungeon2_boss = Location(2).connect(dungeon2_pre_boss, NIGHTMARE_KEY2)
         self.entrance = entrance
-
