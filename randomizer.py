@@ -1,6 +1,7 @@
 import explorer
 import random
 import os
+import logic
 
 from logic import location
 
@@ -10,11 +11,11 @@ class Error(Exception):
 
 
 class Randomizer:
-    def __init__(self, rom, logic, *, seed=None):
+    def __init__(self, rom, options, *, seed=None):
         self.seed = seed
         if self.seed is None:
             self.seed = os.urandom(16)
-        self.__logic = logic
+        self.__logic = logic.Logic(options)
         self.rnd = random.Random(self.seed)
         self.item_pool = {}
         self.spots = []
@@ -29,7 +30,7 @@ class Randomizer:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
-        for spot in logic.iteminfo_list:
+        for spot in self.__logic.iteminfo_list:
             spot.patch(rom, spot.item)
 
     def addItem(self, item):

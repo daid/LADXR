@@ -179,10 +179,10 @@ if __name__ == "__main__":
         rom.texts[0xEF] = utils.formatText(b"You found a Secret Seashell!")
         rom.texts[0xA7] = utils.formatText(b"You've got the Compass!")
 
-        my_logic = logic.Logic(args)
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
+            my_logic = logic.Logic(args)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
                 ii.patch(rom, ii.item)
@@ -204,7 +204,7 @@ if __name__ == "__main__":
             retry_count = 0
             while True:
                 try:
-                    seed = randomizer.Randomizer(rom, my_logic, seed=args.seed).seed
+                    seed = randomizer.Randomizer(rom, args, seed=args.seed).seed
                     seed = binascii.hexlify(seed).decode("ascii").upper()
                     break
                 except randomizer.Error:

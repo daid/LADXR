@@ -46,8 +46,8 @@ class RoomEditor:
                 self.objects.append(ObjectVertical(x, y, objects_raw[idx + 2], count))
                 idx += 3
             elif y == 0x0E:  # warp
-                # TODO: Figure out warp format. idx+2 seems target room, idx+3/idx+4 destination pixel location
-                self.objects.append(ObjectWarp(objects_raw[idx:idx+5]))
+                room_nr = (objects_raw[idx] & 0x0F) << 8 | objects_raw[idx + 2]
+                self.objects.append(ObjectWarp(room_nr, objects_raw[idx + 1], objects_raw[idx + 3], objects_raw[idx + 4]))
                 idx += 5
             else:
                 self.objects.append(Object(x, y, objects_raw[idx + 1]))
@@ -157,12 +157,16 @@ class ObjectVertical(Object):
 
 
 class ObjectWarp(Object):
-    def __init__(self, data):
+    def __init__(self, room_nr, map_nr, target_x, target_y):
         super().__init__(None, None, None)
-        self.data = data
+        assert room_nr < 0x320
+        self.room = room_nr
+        self.map_nr = map_nr
+        self.target_x = target_x
+        self.target_y = target_y
 
     def export(self):
-        return self.data
+        return bytearray([0xE0 | (self.room >> 8), self.map_nr, self.room & 0xFF, self.target_x, self.target_y])
 
     def __repr__(self):
-        return "%s:%s" % (self.__class__.__name__, self.data)
+        return "%s:%03x:%02x:%d,%d" % (self.__class__.__name__, self.room, self.map_nr, self.target_x, self.target_y)

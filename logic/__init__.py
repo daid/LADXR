@@ -15,26 +15,29 @@ from locations.items import *
 class Logic:
     def __init__(self, configuration_options):
         world = overworld.World()
-        d1 = dungeon1.Dungeon1()
-        d2 = dungeon2.Dungeon2()
-        d3 = dungeon3.Dungeon3()
-        d4 = dungeon4.Dungeon4()
-        d5 = dungeon5.Dungeon5()
-        d6 = dungeon6.Dungeon6()
-        d7 = dungeon7.Dungeon7()
-        d8 = dungeon8.Dungeon8()
-        dColor = dungeonColor.DungeonColor()
 
-        d1.entrance.connect(world.start, TAIL_KEY)
-        d2.entrance.connect(world.swamp, FEATHER)  # TODO: requires saving chomp
-        d3.entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
-        #d4.entrance.connect(world.right_mountains_1, ANGLER_KEY, one_way=True)
-        d4.entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))
-        d5.entrance.connect(world.center_area, FLIPPERS)
-        d6.entrance.connect(world.dungeon6_entrance, FACE_KEY)
-        d7.entrance.connect(world.right_mountains_3, BIRD_KEY)
-        d8.entrance.connect(world.left_side_mountain, AND(COUNT(SHIELD, 2), OCARINA, SWORD))  # TODO: Requires song3
-        dColor.entrance.connect(world.graveyard, POWER_BRACELET)
+        dungeons = [
+            dungeon1.Dungeon1(),
+            dungeon2.Dungeon2(),
+            dungeon3.Dungeon3(),
+            dungeon4.Dungeon4(),
+            dungeon5.Dungeon5(),
+            dungeon6.Dungeon6(),
+            dungeon7.Dungeon7(),
+            dungeon8.Dungeon8(),
+            dungeonColor.DungeonColor()
+        ]
+
+        dungeons[0].entrance.connect(world.start, TAIL_KEY)
+        dungeons[1].entrance.connect(world.swamp, FEATHER)  # TODO: requires saving chomp
+        dungeons[2].entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
+        # dungeons[3].entrance.connect(world.right_mountains_1, ANGLER_KEY, one_way=True)
+        dungeons[3].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))
+        dungeons[4].entrance.connect(world.center_area, FLIPPERS)
+        dungeons[5].entrance.connect(world.dungeon6_entrance, FACE_KEY)
+        dungeons[6].entrance.connect(world.right_mountains_3, BIRD_KEY)
+        dungeons[7].entrance.connect(world.left_side_mountain, AND(COUNT(SHIELD, 2), OCARINA, SWORD))  # TODO: Requires song3
+        dungeons[8].entrance.connect(world.graveyard, POWER_BRACELET)
 
         self.start = world.start
         self.location_list = []
