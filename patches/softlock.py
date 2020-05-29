@@ -15,6 +15,7 @@ def fixAll(rom):
 
     # Cave that allows you to escape from D4 without flippers, make it no longer require a feather
     re = RoomEditor(rom, 0x1EA)
+    re.objects[9].count = 8
     re.removeObject(5, 4)
     re.moveObject(4, 4, 7, 5)
     re.store(rom)
