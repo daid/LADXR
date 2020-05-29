@@ -3,6 +3,7 @@ from .constants import *
 from assembler import ASM
 from utils import formatText
 
+
 class StartItem(ItemInfo):
     # We need to give something here that we can use to progress.
     # FUTURE: Giving a TAIL_KEY here could potentially be done by patching the code, this would open up the

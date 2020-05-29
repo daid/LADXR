@@ -47,6 +47,25 @@ class Logic:
         for ii in self.iteminfo_list:
             ii.configure(configuration_options)
 
+    def dumpFlatRequirements(self):
+        def __rec(location, req):
+            if hasattr(location, "flat_requirements"):
+                new_flat_requirements = requirements.mergeFlat(location.flat_requirements, requirements.flatten(req))
+                if new_flat_requirements == location.flat_requirements:
+                    return
+                location.flat_requirements = new_flat_requirements
+            else:
+                location.flat_requirements = requirements.flatten(req)
+            for connection, requirement in location.simple_connections:
+                __rec(connection, AND(req, requirement) if req else requirement)
+            for connection, requirement in location.gated_connections:
+                __rec(connection, AND(req, requirement) if req else requirement)
+        __rec(self.start, None)
+        for ii in self.iteminfo_list:
+            print(ii)
+            for fr in ii._location.flat_requirements:
+                print("    " + ", ".join(sorted(map(str, fr))))
+
     def __recursiveFindAll(self, location):
         if location in self.__location_set:
             return
