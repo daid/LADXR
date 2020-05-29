@@ -19,7 +19,7 @@ class Dungeon8:
         
         # right side
         Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_powder, POWER_BRACELET)))  # chest with slime
-        bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, FEATHER, OR(BOMB, AND(SWORD, BRACELET)) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
+        bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, FEATHER, OR(BOMB, AND(SWORD, BRACELET))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
         Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
 
         lower_center = Location(8).connect(entrance_up, KEY8)
