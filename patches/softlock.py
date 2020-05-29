@@ -13,6 +13,12 @@ def fixAll(rom):
     re.objects[6].count = 7
     re.store(rom)
 
+    # Cave that allows you to escape from D4 without flippers, make it no longer require a feather
+    re = RoomEditor(rom, 0x1EA)
+    re.removeObject(5, 4)
+    re.moveObject(4, 4, 7, 5)
+    re.store(rom)
+
     allowRaftGameWithoutFlippers(rom)
     # We cannot access thes holes in logic:
     # removeBirdKeyHoleDrop(rom)

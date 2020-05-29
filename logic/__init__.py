@@ -28,7 +28,7 @@ class Logic:
         d1.entrance.connect(world.start, TAIL_KEY)
         d2.entrance.connect(world.swamp, FEATHER)  # TODO: requires saving chomp
         d3.entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
-        d4.entrance.connect(world.right_mountains_1, ANGLER_KEY)
+        d4.entrance.connect(world.right_mountains_1, ANGLER_KEY, one_way=True)
         d4.entrance.connect(world.center_area, AND(ANGLER_KEY, FLIPPERS))
         d5.entrance.connect(world.center_area, FLIPPERS)
         d6.entrance.connect(world.dungeon6_entrance, FACE_KEY)
