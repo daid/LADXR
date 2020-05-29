@@ -4,7 +4,7 @@ from assembler import ASM
 
 
 class BoomerangGuy(ItemInfo):
-    OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
+    OPTIONS = [BOOMERANG]
 
     # Cannot trade:
     # SWORD, BOMB, SHIELD, POWER_BRACELET, OCARINA, MAGIC_POWDER, BOW
@@ -12,7 +12,19 @@ class BoomerangGuy(ItemInfo):
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
     # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
 
+    def __init__(self):
+        super().__init__()
+        self.enabled = False
+
+    def configure(self, options):
+        if options.boomerangtrade:
+            self.OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
+            self.enabled = True
+
     def patch(self, rom, option):
+        if not self.enabled:
+            return
+
         # Always have the boomerang trade guy enabled (normally you need the magnifier)
         rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy
         rom.patch(0x00, 0x3199, "FA0EDBFE0E", "3E0E00FE0E")  # load the proper room layout

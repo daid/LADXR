@@ -62,6 +62,8 @@ if __name__ == "__main__":
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
+    parser.add_argument('--boomerangtrade', dest="boomerangtrade", action="store_true",
+        help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--goal', dest="goal", type=int, default=8,
