@@ -21,7 +21,7 @@ class Dungeon3:
         Location(3).add(FlyingKey(0x155)).connect(area_left, AND(attack_hookshot, FEATHER)) # west key drop
 
         area_down = Location(3).connect(area3, KEY3)
-        Location(3).add(DroppedKey(0x155)).connect(area_down, attack_hookshot) # south keydrop
+        Location(3).add(DroppedKey(0x155)).connect(area_down, attack_no_boomerang) # south keydrop
 
         area_right = Location(3).connect(area3, KEY3)  # We enter the top part of the map here.
         Location(3).add(DroppedKey(0x14D)).connect(area_right, attack)  # key after the stairs.
@@ -30,7 +30,7 @@ class Dungeon3:
         Location(3).add(DungeonChest(0x146)).connect(area_right, BOMB)  # boots after the miniboss
         compass_chest = Location(3).add(DungeonChest(0x142)).connect(area_right, OR(SWORD, BOMB, AND(SHIELD, attack_powder))) # bomb only activates with sword, bomb or shield
         Location(3).add(DroppedKey(0x141)).connect(compass_chest, BOMB) # 3 bombite room
-        Location(3).add(DroppedKey(0x148)).connect(area_right, attack_hookshot) # 2 zol 2 owl drop key
+        Location(3).add(DroppedKey(0x148)).connect(area_right, attack_no_boomerang) # 2 zol 2 owl drop key
         Location(3).add(DungeonChest(0x144)).connect(area_right, attack_skeleton)  # map chest
 
         towards_boss1 = Location(3).connect(area_right, KEY3)
@@ -39,7 +39,7 @@ class Dungeon3:
         towards_boss4 = Location(3).connect(towards_boss3, KEY3)
 
         # Just the whole area before the boss, requirements for the boss itself and the rooms before it are the same.
-        pre_boss = Location(3).connect(towards_boss4, AND(attack, FEATHER, PEGASUS_BOOTS))
+        pre_boss = Location(3).connect(towards_boss4, AND(attack_no_boomerang, FEATHER, PEGASUS_BOOTS))
         pre_boss.add(DroppedKey(0x15B))
 
         boss = Location(3).connect(pre_boss, NIGHTMARE_KEY3)
