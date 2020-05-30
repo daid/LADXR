@@ -2,6 +2,12 @@ from assembler import ASM
 from roomEditor import RoomEditor
 
 
+def bugfixWrittingWrongRoomStatus(rom):
+    # The normal rom contains a pretty nasty bug where door closing triggers in D7/D8 can effect doors in
+    # dungeons D1-D6. This fix should prevent this.
+    rom.patch(0x02, 0x1D21, 0x1D3C, ASM("call $5B9F"), fill_nop=True)
+
+
 def removeGhost(rom):
     ## Ghost patch
     # Do not have the ghost follow you after dungeon 4
