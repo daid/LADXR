@@ -2,7 +2,7 @@ from .requirements import *
 from .location import Location
 from locations import *
 
-
+#test
 class World:
     def __init__(self):
         start = Location().add(StartItem())
