@@ -472,6 +472,13 @@ RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
 
 RenderHeartPiece:
+    ld   hl, $C2C0
+    add  hl, bc
+    ld   a, [hl]
+    and  a
+    jr   nz, .droppedKeyTypeLoaded
+    inc  [hl]
+
     ;Load the chest type from the chest table.
     ldh  a, [$F6] ; map room
     ld   e, a

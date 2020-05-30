@@ -113,6 +113,8 @@ class Assembler:
                     params[0] = self.__scope + params[0]
                 self.__link[len(self.__result)] = (Assembler.LINK_REL8, params[0])
                 self.__result.append(0)
+        elif mnemonic == "RETI":
+            self.__result.append(0xD9)
         elif mnemonic == "RET":
             if len(params) == 0:
                 self.__result.append(0xC9)
