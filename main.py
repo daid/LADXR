@@ -15,6 +15,7 @@ import patches.heartPiece
 import patches.seashell
 import patches.softlock
 import patches.maptweaks
+import patches.dungeonEntrances
 import patches.titleScreen
 import patches.reduceRNG
 import patches.bank3e
@@ -60,6 +61,8 @@ if __name__ == "__main__":
         help="Enables seashells mode, which randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
+    parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
+        help="Enable dungeon shuffle, puts dungeons on different spots.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
     parser.add_argument('--boomerangtrade', dest="boomerangtrade", action="store_true",
@@ -93,7 +96,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
         if args.dump or args.test:
-            my_logic = logic.Logic(args)
+            my_logic = logic.Logic(args, None)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)
@@ -177,7 +180,7 @@ if __name__ == "__main__":
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
-            my_logic = logic.Logic(args)
+            my_logic = logic.Logic(args, None)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
                 ii.patch(rom, ii.item)
@@ -199,8 +202,8 @@ if __name__ == "__main__":
             retry_count = 0
             while True:
                 try:
-                    seed = randomizer.Randomizer(rom, args, seed=args.seed).seed
-                    seed = binascii.hexlify(seed).decode("ascii").upper()
+                    r = randomizer.Randomizer(rom, args, seed=args.seed)
+                    seed = binascii.hexlify(r.seed).decode("ascii").upper()
                     break
                 except randomizer.Error:
                     if args.seed is not None:
@@ -212,6 +215,8 @@ if __name__ == "__main__":
                         sys.exit(1)
                     print("Failed, trying again: %d" % (retry_count))
             total_retries += retry_count
+            if r.entranceMapping:
+                patches.dungeonEntrances.changeEntrances(rom, r.entranceMapping)
 
         print("Seed: %s" % (seed))
         patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])

@@ -91,7 +91,7 @@ class RoomEditor:
         elif new_room_nr < 0x300:
             rom.rooms_indoor_b[new_room_nr - 0x200] = objects_raw
         else:
-            assert False, "Color dungeon not added yet"
+            rom.rooms_color_dungeon[new_room_nr - 0x300] = objects_raw
 
         if new_room_nr is not None:
             entities_raw = bytearray()

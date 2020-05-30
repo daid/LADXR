@@ -24,9 +24,8 @@ def changeEntrances(rom, mapping):
                 if isinstance(obj, ObjectWarp) and obj.room == room:
                     warp = obj
         exit_warps.append(warp)
-        print(idx, warp)
 
-    for a, b in mapping.items():
+    for a, b in enumerate(mapping):
         re = RoomEditor(rom, entrance_rooms[a])
         re.changeWarpTarget(enter_warps[a].room, enter_warps[b].room, enter_warps[b].map_nr, enter_warps[b].target_x, enter_warps[b].target_y)
         re.store(rom)

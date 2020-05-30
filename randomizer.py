@@ -15,8 +15,9 @@ class Randomizer:
         self.seed = seed
         if self.seed is None:
             self.seed = os.urandom(16)
-        self.__logic = logic.Logic(options)
         self.rnd = random.Random(self.seed)
+        self.__logic = logic.Logic(options, self.rnd)
+        self.entranceMapping = self.__logic.entranceMapping
         self.item_pool = {}
         self.spots = []
 

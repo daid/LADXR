@@ -18,18 +18,18 @@ class Location:
             self.items.append(ii)
         return self
 
-    def connect(self, other, *args, one_way=False):
+    def connect(self, other, req, *, one_way=False):
         assert isinstance(other, Location)
         assert other not in self.__connected_to
 
         self.__connected_to.add(other)
 
-        if hasConsumableRequirement(args):
-            self.gated_connections.append((other, OR(*args)))
+        if hasConsumableRequirement(req):
+            self.gated_connections.append((other, req))
         else:
-            self.simple_connections.append((other, OR(*args)))
+            self.simple_connections.append((other, req))
         if not one_way:
-            other.connect(self, *args, one_way=True)
+            other.connect(self, req, one_way=True)
         return self
 
     def __repr__(self):

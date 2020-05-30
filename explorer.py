@@ -83,15 +83,13 @@ class Explorer:
         return True
 
     def testRequirements(self, req):
-        for r in req:
-            if self._processRequirement(r, lambda n: n in self.__inventory):
-                return True
+        if self._processRequirement(req, lambda n: n in self.__inventory):
+            return True
         return False
 
     def consumeRequirements(self, req):
-        for r in req:
-            if self._processRequirement(r, self.consumeItem):
-                return True
+        if self._processRequirement(req, self.consumeItem):
+            return True
         return False
 
     def _processRequirement(self, req, func):

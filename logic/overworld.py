@@ -17,7 +17,7 @@ class World:
         Location().add(Seashell(0x2B2)).connect(start, SHOVEL)  # in the kennel
         Location().add(Seashell(0x0D2)).connect(start, PEGASUS_BOOTS)  # smash into tree next to lv1
 
-        sword_beach = Location().add(BeachSword()).connect(start, bush, SHIELD)
+        sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD))
         Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5))
         sword_beach_to_ghost_hut.connect(sword_beach, POWER_BRACELET)
@@ -29,8 +29,8 @@ class World:
         Location().add(HeartPiece(0x044)).connect(forest, FEATHER)  # next to the forest, surrounded by pits
         Location().add(Witch()).connect(forest, "TOADSTOOL")
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET)
-        swamp = Location().connect(forest, MAGIC_POWDER, FEATHER)
-        Location().add(Chest(0x034)).connect(swamp, BOWWOW, HOOKSHOT, MAGIC_ROD)
+        swamp = Location().connect(forest, OR(MAGIC_POWDER, FEATHER))
+        Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
         Location().add(Chest(0x2BD)).connect(forest, SWORD)  # chest in forest cave on route to mushroom
         Location().add(HeartPiece(0x2AB)).connect(forest, POWER_BRACELET)  # piece of heart in the forst cave on route to the mushroom
@@ -39,7 +39,7 @@ class World:
         writes_hut = Location().add(Chest(0x2AE)).connect(swamp, FEATHER)  # includes the cave behind the hut
         Location().add(Chest(0x2AF)).connect(writes_hut, POWER_BRACELET)  # 2nd chest in the cave behind the hut.
 
-        graveyard = Location().connect(forest, FEATHER, POWER_BRACELET)  # whole area from the graveyard up to the moblin cave
+        graveyard = Location().connect(forest, OR(FEATHER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         graveyard.connect(swamp, POWER_BRACELET)
         Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, HOOKSHOT, FEATHER))  # grave cave
         Location().add(Seashell(0x074)).connect(graveyard, POWER_BRACELET)  # next to grave cave
@@ -76,7 +76,7 @@ class World:
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, attack))  # in the castle, bomb wall to show enemy
         Location().add(GoldLeaf(0x2C6)).connect(castle_inside, AND(POWER_BRACELET, attack))  # in the castle, spinning spikeball enemy
 
-        animal_town = Location().connect(center_area, FLIPPERS, PEGASUS_BOOTS)
+        animal_town = Location().connect(center_area, OR(FLIPPERS, PEGASUS_BOOTS))
         Location().add(Seashell(0x0DA)).connect(animal_town, SHOVEL)  # owl statue at the water
         desert = Location().add(AnglerKey()).connect(animal_town, bush)  # Note: We removed the walrus blocking the desert.
         Location().add(HeartPiece(0x2E6)).connect(desert, AND(BOMB, HOOKSHOT))  # cave in the upper right of animal town

@@ -13,8 +13,8 @@ class Dungeon6:
         Location(6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER))
 
         # left side
-        Location(6).add(DungeonChest(0x1C0)).connect(entrance, POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD)) # 3 wizrobes raised blocks dont need to hit the switch
-        left_side = Location(6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, POWER_BRACELET, OR(BOMB, BOOMERANG))
+        Location(6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD))) # 3 wizrobes raised blocks dont need to hit the switch
+        left_side = Location(6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOOMERANG)))
         Location(6).add(DroppedKey(0x1B4)).connect(left_side, OR(BOMB, BOW, MAGIC_ROD)) # 2 wizrobe drop key
         top_left = Location(6).add(DungeonChest(0x1B0)).connect(left_side, COUNT(POWER_BRACELET, 2)) # top left chest horseheads
         top_left.add(Chest(0x06C))  # seashell chest in raft game
@@ -22,7 +22,7 @@ class Dungeon6:
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)
         miniboss = Location(6).connect(to_miniboss, BOMB)
-        lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD), COUNT(POWER_BRACELET, 2)) # waterway key
+        lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(OR(BOMB, BOW, MAGIC_ROD), COUNT(POWER_BRACELET, 2))) # waterway key
         Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) #ledge chest medicine
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop

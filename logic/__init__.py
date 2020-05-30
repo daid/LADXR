@@ -13,7 +13,7 @@ from locations.items import *
 
 
 class Logic:
-    def __init__(self, configuration_options):
+    def __init__(self, configuration_options, rnd):
         world = overworld.World()
 
         dungeons = [
@@ -28,17 +28,22 @@ class Logic:
             dungeonColor.DungeonColor()
         ]
 
-        dungeons[0].entrance.connect(world.start, TAIL_KEY)
-        dungeons[1].entrance.connect(world.swamp, BOWWOW, MAGIC_ROD, HOOKSHOT)
-        dungeons[2].entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
-        # dungeons[3].entrance.connect(world.right_mountains_1, ANGLER_KEY, one_way=True)
-        dungeons[3].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))
-        dungeons[4].entrance.connect(world.center_area, FLIPPERS)
-        dungeons[5].entrance.connect(world.dungeon6_entrance, FACE_KEY)
-        dungeons[6].entrance.connect(world.right_mountains_3, BIRD_KEY)
-        dungeons[7].entrance.connect(world.left_side_mountain, AND(COUNT(SHIELD, 2), OCARINA, SWORD))  # TODO: Requires song3
-        dungeons[8].entrance.connect(world.graveyard, POWER_BRACELET)
+        entranceMapping = list(range(9))
+        if configuration_options.dungeonshuffle:
+            rnd.shuffle(entranceMapping)
+            self.entranceMapping = entranceMapping
+        else:
+            self.entranceMapping = None
 
+        dungeons[entranceMapping[0]].entrance.connect(world.start, TAIL_KEY)
+        dungeons[entranceMapping[1]].entrance.connect(world.swamp, OR(BOWWOW, MAGIC_ROD, HOOKSHOT))
+        dungeons[entranceMapping[2]].entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
+        dungeons[entranceMapping[3]].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))
+        dungeons[entranceMapping[4]].entrance.connect(world.center_area, FLIPPERS)
+        dungeons[entranceMapping[5]].entrance.connect(world.dungeon6_entrance, FACE_KEY)
+        dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
+        dungeons[entranceMapping[7]].entrance.connect(world.left_side_mountain, AND(COUNT(SHIELD, 2), OCARINA, SWORD))  # TODO: Requires song3
+        dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
         self.start = world.start
         self.location_list = []
         self.iteminfo_list = []

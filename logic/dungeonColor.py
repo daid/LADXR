@@ -19,7 +19,7 @@ class DungeonColor:
         room4.add(DungeonChest(0x306))  # map
         room4.add(DroppedKey(0x307))
         room5 = Location(9).connect(room4, KEY9)  # before the boss
-        boss = Location(9).connect(room5, NIGHTMARE_KEY9, attack_no_bomb)
+        boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, attack_no_bomb))
         boss.add(TunicFairy())
 
         self.entrance = entrance
