@@ -8,7 +8,7 @@ class Dungeon8:
         entrance = Location(8)
         entrance_up = Location(8).add(DungeonChest(0x24F)).connect(entrance, FEATHER)
         entrance_left = Location(8).connect(entrance, attack_hookshot) # past hinox
-        entrance_right = Location(8).connect(entrance, attack_powder, POWER_BRACELET) # past pot room
+        entrance_right = Location(8).connect(entrance, attack_hookshot, POWER_BRACELET) # past pot room
         
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
@@ -18,12 +18,12 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
         # right side
-        Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_powder, POWER_BRACELET)))  # chest with slime
-        bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, FEATHER, OR(BOMB, AND(SWORD, BRACELET))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
+        Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_hookshot, POWER_BRACELET)))  # chest with slime
+        bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, FEATHER, OR(BOMB, AND(SWORD, POWER_BRACELET))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
         Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
 
         lower_center = Location(8).connect(entrance_up, KEY8)
-        upper_center = Location(8).connect(lower_center, attack_powder, KEY8)
+        upper_center = Location(8).connect(lower_center, attack_hookshot_powder, KEY8)
         Location(8).add(DroppedKey(0x23E)).connect(upper_center, attack_skeleton) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         # TODO: medicine chest right of boss room (either 0x234 or 0x236? not sure which screen it actually is in code)
                                                                   

@@ -6,7 +6,7 @@ from locations import *
 class Dungeon6:
     def __init__(self):
         entrance = Location(6)
-        Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
+        Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
         Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
 
         # Power bracelet chest

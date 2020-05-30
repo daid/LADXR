@@ -1,4 +1,6 @@
 from assembler import ASM
+from utils import formatText
+
 
 def noSwordMusic(rom):
     # Skip no-sword music override
@@ -26,3 +28,15 @@ def forceLinksPalette(rom, index):
     rom.patch(0, 0x1DD2,
             ASM("ld a, [$DC0F]\nand a\njr z, $03\ninc a"),
             ASM("ld a, $%02X" % (index)), fill_nop=True)
+
+def reduceMessageLengths(rom):
+    # Reduce length of a bunch of common texts
+    rom.texts[0xEA] = formatText(b"You've got a Guardian Acorn!")
+    rom.texts[0xEB] = rom.texts[0xEA]
+    rom.texts[0xEC] = rom.texts[0xEA]
+    rom.texts[0x08] = formatText(b"You got a Piece of Power!")
+    rom.texts[0xEF] = formatText(b"You found a Secret Seashell!")
+    rom.texts[0xA7] = formatText(b"You've got the Compass!")
+
+    rom.texts[0x07] = formatText(b"You need the nightmare key!")
+    rom.texts[0x8C] = formatText(b"You need a key!")  # keyhole block

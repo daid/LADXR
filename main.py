@@ -127,6 +127,7 @@ if __name__ == "__main__":
         patches.desert.desertAccess(rom)
         # patches.reduceRNG.slowdownThreeOfAKind(rom)
         patches.aesthetics.noSwordMusic(rom)
+        patches.aesthetics.reduceMessageLengths(rom)
         if args.removeNagMessages:
             patches.aesthetics.removeNagMessages(rom)
         if args.lowhpbeep == 'slow':
@@ -172,14 +173,6 @@ if __name__ == "__main__":
 
         # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
         rom.texts[0x01] = utils.formatText(b"Let's a go!")
-
-        # Reduce length of a bunch of common texts
-        rom.texts[0xEA] = utils.formatText(b"You've got a Guardian Acorn!")
-        rom.texts[0xEB] = rom.texts[0xEA]
-        rom.texts[0xEC] = rom.texts[0xEA]
-        rom.texts[0x08] = utils.formatText(b"You got a Piece of Power!")
-        rom.texts[0xEF] = utils.formatText(b"You found a Secret Seashell!")
-        rom.texts[0xA7] = utils.formatText(b"You've got the Compass!")
 
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":

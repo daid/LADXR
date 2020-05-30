@@ -8,7 +8,7 @@ class Dungeon4:
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
-        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, attack_powder)) # 2 zol 1 spike enemy
+        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, attack_hookshot)) # 2 zol 1 spike enemy
         Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, SWORD) # room with key chest
         Location(4).add(DungeonChest(0x171)).add(DungeonChest(0x165)).connect(entrance, AND(FEATHER, PEGASUS_BOOTS, BOMB))  # 2 key chests on the right.
 
