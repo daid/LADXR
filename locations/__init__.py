@@ -1,7 +1,6 @@
 from .beachSword import BeachSword
 from .chest import Chest, DungeonChest
 from .droppedKey import DroppedKey
-from .flyingKey import FlyingKey
 from .seashell import Seashell
 from .shop import ShopItem
 from .startItem import StartItem

@@ -20,6 +20,12 @@ def fixAll(rom):
     re.moveObject(4, 4, 7, 5)
     re.store(rom)
 
+    # D3 west side room requires feather to get the key. But feather is not required to unlock the door, potentially softlocking you.
+    re = RoomEditor(rom, 0x155)
+    re.changeObject(4, 1, 0xcf)
+    re.changeObject(4, 6, 0xd0)
+    re.store(rom)
+
     allowRaftGameWithoutFlippers(rom)
     # We cannot access thes holes in logic:
     # removeBirdKeyHoleDrop(rom)

@@ -19,7 +19,7 @@ class Dungeon3:
         Location(3).add(DungeonChest(0x150), DungeonChest(0x14C)).connect(area_up, attack)  # chests locked behind raised blocks in the first area
 
         area_left = Location(3).connect(area3, KEY3)
-        Location(3).add(FlyingKey(0x155)).connect(area_left, AND(attack_hookshot, FEATHER)) # west key drop
+        Location(3).add(DroppedKey(0x155)).connect(area_left, attack_hookshot) # west key drop (no longer requires feather to get across hole)
 
         area_down = Location(3).connect(area3, KEY3)
         Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
