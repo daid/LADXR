@@ -12,6 +12,7 @@ def removeOwlEvents(rom):
     rom.texts[0x0D9] = b'\xff'  # used by boomerang
     # 16 more available.
     # 1 Used by empty chest (master stalfos message)
-    # 8 used by keysanity items
+    # 9 used by keysanity items
+    # 1 used by bowwow in chest
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'

@@ -29,7 +29,7 @@ class Logic:
         ]
 
         dungeons[0].entrance.connect(world.start, TAIL_KEY)
-        dungeons[1].entrance.connect(world.swamp, FEATHER)  # TODO: requires saving chomp
+        dungeons[1].entrance.connect(world.swamp, BOWWOW, MAGIC_ROD, HOOKSHOT)
         dungeons[2].entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
         # dungeons[3].entrance.connect(world.right_mountains_1, ANGLER_KEY, one_way=True)
         dungeons[3].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))

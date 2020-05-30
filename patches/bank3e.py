@@ -15,6 +15,7 @@ def addBank3E(rom):
     for idx in range(8):
         rom.texts[0xBF + idx] = formatText(b"Found an item for dungeon %d" % (idx + 1))
     rom.texts[0xC7] = formatText(b"Found an item for color dungeon")
+    rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
@@ -40,6 +41,35 @@ def addBank3E(rom):
         dw   RenderDroppedKey   ; 4
         dw   RenderHeartPiece   ; 5
         dw   TakeHeart          ; 6
+        dw   CheckIfLoadBowWow  ; 7
+
+CheckIfLoadBowWow:
+        ; Check has bowwow flag
+        ld   a, [$DB56]
+        cp   $01
+        jr   nz, .noLoadBowwow
+
+        ldh  a, [$F6] ; load map number
+        cp   $22
+        jr   z, .loadBowwow
+        cp   $23
+        jr   z, .loadBowwow
+        cp   $24
+        jr   z, .loadBowwow
+        cp   $32
+        jr   z, .loadBowwow
+        cp   $33
+        jr   z, .loadBowwow
+        cp   $34
+        jr   z, .loadBowwow
+
+.noLoadBowwow:
+        ld   e, $00
+        jp   Exit
+
+.loadBowwow:
+        ld   e, $01
+        jp   Exit
 
 MainLoop:
         ; First, do the thing we injected our code in.
@@ -200,6 +230,7 @@ GiveItemFromChest:
         dw Exit ; $7E
         dw Exit ; $7F
         dw PieceOfHeart     ; Heart piece
+        dw GiveBowwow
 
 ChestPowerBracelet:
         ld   hl, $DB43 ; power bracelet level
@@ -285,17 +316,22 @@ PieceOfHeart:
         ld   a, [$DB5C]
         inc  a
         cp   $04
-        jr   z, FullHeart
+        jr   z, .FullHeart
         ld   [$DB5C], a
         jp Exit
-FullHeart:
-        xor a
+.FullHeart:
+        xor  a
         ld   [$DB5C], a
         ld   hl, $DB93
         ld   [hl], $40 ; Regen HP
         ld   hl, $DB5B
         inc  [hl]      ; Add max health
-        jp Exit
+        jp   Exit
+
+GiveBowwow:
+        ld   a, $01
+        ld   [$DB56], a
+        jp   Exit
 
 ChestInventoryTable:
         db   $03 ; CHEST_POWER_BRACELET
@@ -521,7 +557,7 @@ ItemMessageTable:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         ; $80
-        db $4F
+        db $4F, $C8
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
