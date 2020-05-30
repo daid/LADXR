@@ -40,9 +40,11 @@ class Assembler:
         if line.endswith(":"):
             line = line[:-1]
             if line.startswith("."):
+                assert self.__scope + line not in self.__label, "Duplicate label: %s" % (self.__scope + line)
                 self.__label[self.__scope + line] = len(self.__result)
             else:
                 assert "." not in line, line
+                assert line not in self.__label, "Duplicate label: %s" % (line)
                 self.__label[line] = len(self.__result)
                 self.__scope = line
             return
