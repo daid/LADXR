@@ -17,6 +17,7 @@ class Dungeon4:
         Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
         before_miniboss = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS, KEY4))
         Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
+        Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest
         before_miniboss.add(DungeonChest(0x168))  # key chest near the puzzle
         miniboss = Location(4).connect(before_miniboss, AND(KEY4, POWER_BRACELET))

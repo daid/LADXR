@@ -25,7 +25,7 @@ class Dungeon8:
         lower_center = Location(8).connect(entrance_up, KEY8)
         upper_center = Location(8).connect(lower_center, attack_hookshot_powder, KEY8)
         Location(8).add(DroppedKey(0x23E)).connect(upper_center, attack_skeleton) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
-        # TODO: medicine chest right of boss room (either 0x234 or 0x236? not sure which screen it actually is in code)
+        Location(8).add(DungeonChest(0x235)).connect(upper_center, HOOKSHOT)  # medicine chest
                                                                   
         middle_center_1 = Location(8).connect(upper_center, BOMB)
         middle_center_2 = Location(8).connect(middle_center_1, KEY8)

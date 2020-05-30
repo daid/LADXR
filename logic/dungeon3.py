@@ -16,6 +16,7 @@ class Dungeon3:
         # now we can go 4 directions,
         area_up = Location(3).connect(area3, KEY3)
         Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
+        Location(3).add(DungeonChest(0x150), DungeonChest(0x14C)).connect(area_up, attack)  # chests locked behind raised blocks in the first area
 
         area_left = Location(3).connect(area3, KEY3)
         Location(3).add(FlyingKey(0x155)).connect(area_left, AND(attack_hookshot, FEATHER)) # west key drop
@@ -44,6 +45,5 @@ class Dungeon3:
 
         boss = Location(3).connect(pre_boss, NIGHTMARE_KEY3)
         # TODO Set as target
-        # TODO Check two raised blocks chests (Should be 0x150 and 0x14C? Req are similar to 0x154)
 
         self.entrance = entrance
