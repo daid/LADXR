@@ -53,6 +53,9 @@ def neverGetBowwow(rom):
     # Patch madam meow meow to not take bowwow
     rom.patch(0x06, 0x1BD7, ASM("ld a, [$DB66]\nand $02"), ASM("ld a, $00\nand $02"), fill_nop=True)
 
+    # Patch kiki not to react to bowwow, as bowwow is not with link at this map
+    rom.patch(0x07, 0x18A8, ASM("ld a, [$DB56]\ncp $01"), ASM("ld a, $00\ncp $01"), fill_nop=True)
+
     return
     # Load followers in dungeons
     rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)
