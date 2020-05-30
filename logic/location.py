@@ -1,5 +1,5 @@
 import typing
-from .requirements import hasConsumableRequirement
+from .requirements import hasConsumableRequirement, OR
 from locations.itemInfo import ItemInfo
 
 
@@ -25,9 +25,9 @@ class Location:
         self.__connected_to.add(other)
 
         if hasConsumableRequirement(args):
-            self.gated_connections.append((other, args))
+            self.gated_connections.append((other, OR(*args)))
         else:
-            self.simple_connections.append((other, args))
+            self.simple_connections.append((other, OR(*args)))
         if not one_way:
             other.connect(self, *args, one_way=True)
         return self

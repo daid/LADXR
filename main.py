@@ -62,6 +62,8 @@ if __name__ == "__main__":
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
+    parser.add_argument('--boomerangtrade', dest="boomerangtrade", action="store_true",
+        help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--goal', dest="goal", type=int, default=8,
@@ -179,10 +181,10 @@ if __name__ == "__main__":
         rom.texts[0xEF] = utils.formatText(b"You found a Secret Seashell!")
         rom.texts[0xA7] = utils.formatText(b"You've got the Compass!")
 
-        my_logic = logic.Logic(args)
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
+            my_logic = logic.Logic(args)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
                 ii.patch(rom, ii.item)
@@ -204,7 +206,7 @@ if __name__ == "__main__":
             retry_count = 0
             while True:
                 try:
-                    seed = randomizer.Randomizer(rom, my_logic, seed=args.seed).seed
+                    seed = randomizer.Randomizer(rom, args, seed=args.seed).seed
                     seed = binascii.hexlify(seed).decode("ascii").upper()
                     break
                 except randomizer.Error:

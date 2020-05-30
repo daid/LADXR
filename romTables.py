@@ -87,6 +87,16 @@ class RoomsIndoorB(RoomsTable):
         })
 
 
+class RoomsColorDungeon(RoomsTable):
+    def __init__(self, rom):
+        super().__init__(rom, {
+            "count": 0x016,
+            "pointers_addr": 0x3B77,
+            "pointers_bank": 0x0A,
+            "data_bank": 0x0A,
+        })
+
+
 class BackgroundTable(PointerTable):
     def _readData(self, rom, bank_nr, pointer):
         # Ignore 2 invalid pointers.
@@ -154,6 +164,7 @@ class ROMWithTables(ROM):
         self.rooms_overworld_bottom = RoomsOverworldBottom(self)
         self.rooms_indoor_a = RoomsIndoorA(self)
         self.rooms_indoor_b = RoomsIndoorB(self)
+        self.rooms_color_dungeon = RoomsColorDungeon(self)
 
         # Backgrounds for things like the title screen.
         # Note: The PointerTable fails to write these back due to how they are overlapping by default.
@@ -167,6 +178,7 @@ class ROMWithTables(ROM):
         self.rooms_overworld_bottom.store(self)
         self.rooms_indoor_a.store(self)
         self.rooms_indoor_b.store(self)
+        self.rooms_color_dungeon.store(self)
         #self.background_tiles.store(self)
         #self.background_attributes.store(self)
         super().save(filename, name=name)

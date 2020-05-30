@@ -448,9 +448,9 @@ ItemSpriteTable:
         db $44, $1C        ; CHEST_STONE_BEAK
         db $46, $1C        ; CHEST_NIGHTMARE_KEY
         db $4A, $1F        ; CHEST_SMALL_KEY
-        db $38, $18        ; CHEST_RUPEES_50 (green)
-        db $A6, $15        ; CHEST_RUPEES_20 (normal blue)
-        db $38, $19        ; CHEST_RUPEES_100 (red)
+        db $A6, $15        ; CHEST_RUPEES_50 (normal blue)
+        db $38, $19        ; CHEST_RUPEES_20 (red)
+        db $38, $18        ; CHEST_RUPEES_100 (green)
         db $38, $1A        ; CHEST_RUPEES_200 (yellow)
         db $38, $1A        ; CHEST_RUPEES_500 (yellow)
         db $9E, $14        ; CHEST_SEASHELL
