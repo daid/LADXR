@@ -9,8 +9,8 @@ def noSwordMusic(rom):
 
 def removeNagMessages(rom):
     # Remove "this object is heavy, bla bla", and other nag messages when touching an object
-    rom.patch(0x02, 0x2B8A, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
-    rom.patch(0x02, 0x32EC, ASM("ld a, [$C5A6]\nand a"), ASM("ld a, $01\nand a"), fill_nop=True)
+    rom.patch(0x02, 0x2B88, ASM("jr nz, $0F"), ASM("jr $0F"), fill_nop=True)  # crystal blocks
+    rom.patch(0x02, 0x32D3, ASM("jr nz, $25"), ASM("jr $25"), fill_nop=True)  # stones/pots
 
 def removeLowHPBeep(rom):
     rom.patch(2,  0x233A, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
