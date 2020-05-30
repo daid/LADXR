@@ -275,8 +275,10 @@ GoldenLeaf:
         jp   Exit
 
 AddSeaShell:
-        ld   hl, $DB0F
-        inc  [hl]
+        ld   a, [$DB0F]
+        inc  a
+        daa
+        ld   [$DB0F], a
         jp Exit
 
 PieceOfHeart:

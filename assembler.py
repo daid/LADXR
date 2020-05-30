@@ -72,6 +72,18 @@ class Assembler:
         elif mnemonic == "RRCA":
             assert len(params) == 0, line
             self.__result.append(0x0f)
+        elif mnemonic == "DAA":
+            assert len(params) == 0, line
+            self.__result.append(0x27)
+        elif mnemonic == "SCF":
+            assert len(params) == 0, line
+            self.__result.append(0x37)
+        elif mnemonic == "CPL":
+            assert len(params) == 0, line
+            self.__result.append(0x2F)
+        elif mnemonic == "CCF":
+            assert len(params) == 0, line
+            self.__result.append(0x3F)
         elif mnemonic == "JP":
             if len(params) == 2:
                 flag = FLAGS[params[0]]
