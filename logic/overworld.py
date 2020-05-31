@@ -71,7 +71,7 @@ class World:
         Location().add(HeartPiece(0x078)).connect(center_area, FLIPPERS)  # in the moat of the castle
         castle_inside = Location().connect(castle, bush)
         Location().add(GoldLeaf(0x05A)).connect(castle, attack_no_boomerang)  # enemy hiding in the 6 holes
-        Location().add(GoldLeaf(0x058)).connect(castle, POWER_BRACELET)  # bird on tree, can kill with second rock
+        Location().add(GoldLeaf(0x058)).connect(castle, AND(POWER_BRACELET, attack_hookshot_powder))  # bird on tree, can kill with second rock
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, attack_hookshot_powder))  # in the castle, bomb wall to show enemy
         Location().add(GoldLeaf(0x2C6)).connect(castle_inside, OR(BOOMERANG, AND(POWER_BRACELET, attack_hookshot)))  # in the castle, spinning spikeball enemy
