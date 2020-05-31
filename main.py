@@ -122,7 +122,8 @@ if __name__ == "__main__":
         patches.bank3f.addBank3F(rom)
         patches.core.removeGhost(rom)
         patches.core.alwaysAllowSecretBook(rom)
-        patches.core.injectMainLoop(rom)
+        if args.multiworld:
+            patches.core.injectMainLoop(rom)
         patches.softlock.fixAll(rom)
         patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)

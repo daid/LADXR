@@ -300,47 +300,69 @@ ChestWithCurrentDungeonItem:
         ret
 
 AddKey:
-        sub $23 ; Make 'A' our dungeon index
-        ld   hl, $DB1A
+        sub $23 ; Make 'A' target dungeon index
+        ld   de, $0004
         jr   AddDungeonItem
 
 AddMap:
-        sub $2C ; Make 'A' our dungeon index
-        ld   hl, $DB16
+        sub $2C ; Make 'A' target dungeon index
+        ld   de, $0000
         jr   AddDungeonItem
 
 AddCompass:
-        sub $35 ; Make 'A' our dungeon index
-        ld   hl, $DB17
+        sub $35 ; Make 'A' target dungeon index
+        ld   de, $0001
         jr   AddDungeonItem
 
 AddStoneBeak:
-        sub $3E ; Make 'A' our dungeon index
-        ld   hl, $DB18
+        sub $3E ; Make 'A' target dungeon index
+        ld   de, $0002
         jr   AddDungeonItem
 
 AddNightmareKey:
-        sub $47 ; Make 'A' our dungeon index
-        ld   hl, $DB19
+        sub $47 ; Make 'A' target dungeon index
+        ld   de, $0003
         jr   AddDungeonItem
 
 AddDungeonItem:
         cp   $08
         jr   z, .colorDungeon
+        ; hl = dungeonitems + type_type + dungeon * 8
+        ld   hl, $DB16
+        add  hl, de
+        push de
         ld   e, a
-        ld   d, $00
         add  hl, de
         add  hl, de
         add  hl, de
         add  hl, de
-.colorDungeonEntry:
+        add  hl, de
+        pop  de
+        inc  [hl]
+        ; Check if we are in this specific dungeon, and then increase the copied counters as well.
+        ld   hl, $FFF7   ; is current map == target map
+        cp   [hl]
+        ret  nz
+        ld   a, [$DBA5] ; is indoor
+        and  a
+        ret  z
+
+        ld   hl, $DBCC
         add  hl, de
         inc  [hl]
         ret
 .colorDungeon:
         ; Special case for the color dungeon, which is in a different location in memory.
-        ld   de, $02C4
-        jr   .colorDungeonEntry
+        ld   hl, $DDDA
+        add  hl, de
+        inc  [hl]
+        ldh  a, [$F7]   ; is current map == color dungeon
+        cp   $ff
+        ret  nz
+        ld   hl, $DBCC
+        add  hl, de
+        inc  [hl]
+        ret
 
 AddRupees20:
         xor  a
