@@ -56,6 +56,9 @@ def neverGetBowwow(rom):
     # Patch kiki not to react to bowwow, as bowwow is not with link at this map
     rom.patch(0x07, 0x18A8, ASM("ld a, [$DB56]\ncp $01"), ASM("ld a, $00\ncp $01"), fill_nop=True)
 
+    # Patch the color dungeon entrance not to check for bowwow
+    rom.patch(0x02, 0x340D, ASM("ld hl, $DB56\nor [hl]"), "", fill_nop=True)
+
     return
     # Load followers in dungeons
     rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)
