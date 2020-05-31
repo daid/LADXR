@@ -21,7 +21,7 @@ class ItemInfo:
     def read(self, rom):
         raise NotImplementedError()
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
         raise NotImplementedError()
 
     def __repr__(self):

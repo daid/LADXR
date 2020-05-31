@@ -11,7 +11,8 @@ class StartItem(ItemInfo):
     OPTIONS = [SWORD, SHIELD, POWER_BRACELET, FEATHER, BOOMERANG, MAGIC_ROD]
     MESSAGE = {SWORD: 0x9B, SHIELD: 0x91, POWER_BRACELET: 0x90, FEATHER: 0x97, BOOMERANG: 0xD9, MAGIC_ROD: 0x94}
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
+        assert not cross_world
         # TODO: Seems walking back into the house with certain options causes the initial event to repeat.
 
         # Change which item you get at the start.

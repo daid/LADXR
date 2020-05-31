@@ -24,7 +24,7 @@ class Chest(ItemInfo):
             for n in range(10):
                 self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
         rom.banks[0x14][self.addr] = CHEST_ITEMS[option]
 
         if self.room == 0x1B6:
@@ -51,11 +51,11 @@ class DungeonChest(Chest):
             d = self._location.dungeon
             self.OPTIONS = Chest.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            if self._location.dungeon == int(option[-1]):
+            if self._location.dungeon == int(option[-1]) and not cross_world:
                 option = option[:-1]
-        super().patch(rom, option)
+        super().patch(rom, option, cross_world=cross_world)
 
     def read(self, rom):
         result = super().read(rom)

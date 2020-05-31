@@ -23,9 +23,9 @@ class DroppedKey(ItemInfo):
             d = self._location.dungeon
             self.OPTIONS = DroppedKey.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            if self._location.dungeon == int(option[-1]):
+            if self._location.dungeon == int(option[-1]) and not cross_world:
                 option = option[:-1]
         rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]
         if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller

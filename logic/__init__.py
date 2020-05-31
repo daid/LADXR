@@ -127,21 +127,24 @@ class MultiworldItemInfoWrapper:
 
     def getOptions(self):
         if self.OPTIONS is None:
-            if self.target.MULTIWORLD:
+            options = self.target.getOptions()
+            if self.target.MULTIWORLD and len(options) > 1:
                 self.OPTIONS = []
                 for n in range(2):
-                    self.OPTIONS += ["W%d_%s" % (n, t) for t in self.target.getOptions()]
+                    self.OPTIONS += ["W%d_%s" % (n, t) for t in options]
             else:
-                self.OPTIONS = ["W%d_%s" % (self.world, t) for t in self.target.getOptions()]
+                self.OPTIONS = ["W%d_%s" % (self.world, t) for t in options]
         return self.OPTIONS
 
     def patch(self, rom, option):
         if self.world != int(option[1]):
             rom.banks[0x3E][0x3300 + self.target.room] = 0x01
-        self.target.patch(rom, option[3:])
+            self.target.patch(rom, option[3:], cross_world=True)
+        else:
+            self.target.patch(rom, option[3:])
 
     def __repr__(self):
-        return repr(self.target)
+        return "W%d:%s" % (self.world, repr(self.target))
 
 
 def addWorldIdToRequirements(n, req):

@@ -21,7 +21,8 @@ class BoomerangGuy(ItemInfo):
             self.OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
             self.enabled = True
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
+        assert not cross_world
         if not self.enabled:
             return
 

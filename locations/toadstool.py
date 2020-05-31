@@ -5,7 +5,7 @@ from .items import *
 class Toadstool(ItemInfo):
     OPTIONS = ["TOADSTOOL"]
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
         pass
 
     def read(self, rom):

@@ -44,3 +44,5 @@ def quickswap(rom, button):
 
 def injectMainLoop(rom):
     rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\nrst 8"), fill_nop=True)
+    # Also enable serial interrupt when loading a room
+    rom.patch(0x00, 0x30F4, ASM("ld a, $01\nldh [$FF], a"), ASM("ld a, $09\nldh [$FF], a"))

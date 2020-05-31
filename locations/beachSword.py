@@ -8,10 +8,10 @@ class BeachSword(Chest):
         super().__init__(0x0F2)
         self.room = 0x0F2
 
-    def patch(self, rom, option):
-        if option != SWORD:
+    def patch(self, rom, option, *, cross_world=False):
+        if option != SWORD or cross_world:
             # Set the chest data
-            super().patch(rom, option)
+            super().patch(rom, option, cross_world=cross_world)
 
             # Patch the room to contain a chest instead of the sword on the beach
             re = RoomEditor(rom, 0x0F2)

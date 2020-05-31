@@ -4,8 +4,6 @@ InitLink:
     ldh  [$01], a
     ld   a, $82
     ldh  [$02], a
-    ld   a, $09
-    ldh  [$FF], a
 
     ld   a, $01     ; switch to RunLink
     ld   [$CEFF], a

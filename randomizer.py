@@ -17,6 +17,7 @@ class Randomizer:
             self.seed = os.urandom(16)
         self.rnd = random.Random(self.seed)
         if options.multiworld:
+            assert not options.dungeonshuffle, "Cannot use dungeonshuffle in multiworld at the moment"
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
             self.__logic = logic.Logic(options, self.rnd)

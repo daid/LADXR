@@ -15,7 +15,8 @@ class ShopItem(ItemInfo):
         if self.__index < 2:
             self.OPTIONS = [BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA, FEATHER, SHOVEL, BOOMERANG]
 
-    def patch(self, rom, option):
+    def patch(self, rom, option, *, cross_world=False):
+        assert not cross_world
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "0B", INVENTORY_MAP[option])
             rom.patch(0x04, 0x3AA9, ASM("ld d, $0B"), ASM("ld d, $%s" % (INVENTORY_MAP[option])))

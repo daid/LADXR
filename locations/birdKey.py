@@ -7,8 +7,8 @@ class BirdKey(DroppedKey):
     def __init__(self):
         super().__init__(0x27A)
 
-    def patch(self, rom, option):
-        super().patch(rom, option)
+    def patch(self, rom, option, *, cross_world=False):
+        super().patch(rom, option, cross_world=cross_world)
 
         re = RoomEditor(rom, self.room)
 
