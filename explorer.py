@@ -70,6 +70,10 @@ class Explorer:
             return
         if item.startswith("RUPEES_"):
             self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:])
+        elif item.startswith("W0_RUPEES_"):
+            self.__inventory["W0_RUPEES"] = self.__inventory.get("W0_RUPEES", 0) + int(item[10:])
+        elif item.startswith("W1_RUPEES_"):
+            self.__inventory["W1_RUPEES"] = self.__inventory.get("W1_RUPEES", 0) + int(item[10:])
         else:
             self.__inventory[item] = self.__inventory.get(item, 0) + 1
 

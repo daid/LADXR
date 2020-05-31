@@ -1,3 +1,5 @@
+; Some code that gets injected into the heart containers if you have inverted HP mode.
+; We need to take special care, as the game crashes if HP > maxHP
 TakeHeart:
     ld   hl, $DB5B
     dec  [hl]
@@ -13,4 +15,4 @@ TakeHeart:
 .noNeedToReduceHp:
     ld   hl, $DB93
     ld   [hl], $FF
-    jp Exit
+    ret

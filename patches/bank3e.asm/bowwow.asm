@@ -20,8 +20,8 @@ CheckIfLoadBowWow:
 
 .noLoadBowwow:
         ld   e, $00
-        jp   Exit
+        ret
 
 .loadBowwow:
         ld   e, $01
-        jp   Exit
+        ret

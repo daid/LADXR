@@ -26,6 +26,7 @@ class Assembler:
             return bytes([value & 0xFF, value >> 8])
         if self.__base_address is not None:
             if code.startswith("."):
+                assert self.__scope is not None, code
                 code = self.__scope + code
             self.__link[len(self.__result)] = (Assembler.LINK_ABS16, code)
             return b'\x00\x00'
@@ -110,6 +111,7 @@ class Assembler:
                 self.__result.append(self.toByte(params[0]))
             else:
                 if params[0].startswith("."):
+                    assert self.__scope is not None, line
                     params[0] = self.__scope + params[0]
                 self.__link[len(self.__result)] = (Assembler.LINK_REL8, params[0])
                 self.__result.append(0)

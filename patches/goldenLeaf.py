@@ -31,4 +31,4 @@ def fixGoldenLeaf(rom):
     rom.patch(0x06, 0x007D, ASM("ld a, [$DB15]"), ASM("ld a, [$DB6D]"))  # Richard message if no leaves
     rom.patch(0x06, 0x00B8, ASM("ld [$DB15], a"), ASM("ld [$DB6D], a"))  # Stores FF in the leaf counter if we opened the path
     # 6:40EE uses leaves == 6 to check if we have collected the key, but only to change the message.
-    rom.patch(0x06, 0x2AEF, ASM("ld a, [$DB15]"), ASM("ld a, [$DB6D]"))  # Telephone message handler
+    # rom.patch(0x06, 0x2AEF, ASM("ld a, [$DB15]"), ASM("ld a, [$DB6D]"))  # Telephone message handler

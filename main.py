@@ -3,6 +3,7 @@ from romTables import ROMWithTables
 from assembler import ASM
 import randomizer
 import patches.core
+import patches.phone
 import patches.bowwow
 import patches.desert
 import patches.owl
@@ -55,6 +56,8 @@ if __name__ == "__main__":
         help="Export the map (many graphical mistakes)")
 
     # Flags that effect gameplay
+    parser.add_argument('--multiworld', dest="multiworld", action="store_true",
+        help="Generates 2 roms, for link cable use.")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",
@@ -112,12 +115,14 @@ if __name__ == "__main__":
             sys.exit(0)
 
         patches.core.cleanup(rom)
+        patches.phone.patchPhone(rom)
         patches.core.bugfixWrittingWrongRoomStatus(rom)
         patches.owl.removeOwlEvents(rom)
         patches.bank3e.addBank3E(rom)
         patches.bank3f.addBank3F(rom)
         patches.core.removeGhost(rom)
         patches.core.alwaysAllowSecretBook(rom)
+        patches.core.injectMainLoop(rom)
         patches.softlock.fixAll(rom)
         patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)
@@ -216,8 +221,6 @@ if __name__ == "__main__":
                         sys.exit(1)
                     print("Failed, trying again: %d" % (retry_count))
             total_retries += retry_count
-            if r.entranceMapping:
-                patches.dungeonEntrances.changeEntrances(rom, r.entranceMapping)
 
         print("Seed: %s" % (seed))
         patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])

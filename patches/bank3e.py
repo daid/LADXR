@@ -17,6 +17,7 @@ def addBank3E(rom):
         rom.texts[0xBF + idx] = formatText(b"Found an item for dungeon %d" % (idx + 1))
     rom.texts[0xC7] = formatText(b"Found an item for color dungeon")
     rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
+    rom.texts[0xC9] = formatText(b"Got an item for your buddy!")
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
@@ -34,7 +35,12 @@ def addBank3E(rom):
     """), fill_nop=True)
 
     my_path = os.path.dirname(__file__)
-    rom.patch(0x3E, 0x0000, None, ASM("""
+    rom.patch(0x3E, 0x0000, 0x3000, ASM("""
+        call MainJumpTable
+        pop af
+        jp $080C ; switch bank and return to normal code.
+
+MainJumpTable:
         rst  0 ; JUMP TABLE
         dw   MainLoop           ; 0
         dw   RenderChestItem    ; 1
@@ -45,10 +51,6 @@ def addBank3E(rom):
         dw   TakeHeart          ; 6
         dw   CheckIfLoadBowWow  ; 7
 
-Exit:
-        pop af
-        jp $080C ; switch bank and return to normal code.
-
 MainLoop:
         ; First, do the thing we injected our code in.
         ld   a, [$C14C]
@@ -58,8 +60,12 @@ MainLoop:
         ld   [$C14C], a
 
 ;actualMainLoop
-        jp Exit
+        ld   a, [$CEFF] ; Get our LinkState
+        rst  0
+        dw   InitLink
+        dw   RunLink
 
-    """ + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
+    """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
+        + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
-        + open(os.path.join(my_path, "bank3e.asm/inverseHP.asm"), "rt").read(), 0x4000))
+        + open(os.path.join(my_path, "bank3e.asm/inverseHP.asm"), "rt").read(), 0x4000), fill_nop=True)

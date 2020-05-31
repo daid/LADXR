@@ -5,15 +5,30 @@ RenderChestItem:
 
         ld   de, ItemSpriteTable
         call $3C77 ; RenderActiveEntitySprite
-        jp   Exit
+        ret
 .renderLargeItem:
         ld   de, LargeItemSpriteTable
         dec  d
         dec  d
         call $3BC0 ; RenderActiveEntitySpritePair
-        jp   Exit
+        ret
+
+SendItemFromChestToOtherGame:
+        ldh  a, [$F1] ; Load active sprite variant
+        call LinkSendByte
+        ld   a, $F1   ; link command, give item
+        call LinkSendByte
+        ret
 
 GiveItemFromChest:
+        ; Check our "item is for other player" flag
+        ld   hl, $7300
+        call OffsetPointerByRoomNumber
+        ld   a, [hl]
+        and  a
+        jr   nz, SendItemFromChestToOtherGame
+
+GiveItemFromChestNoLink:
         ldh  a, [$F1] ; Load active sprite variant
 
         rst  0 ; JUMP TABLE
@@ -30,7 +45,7 @@ GiveItemFromChest:
         dw ChestWithItem     ; CHEST_BOMB
         dw ChestSword        ; CHEST_SWORD
         dw Flippers          ; CHEST_FLIPPERS
-        dw Exit             ; CHEST_MAGNIFYING_LENS
+        dw NoItem            ; CHEST_MAGNIFYING_LENS
         dw ChestWithItem    ; Boomerang (used to be unused)
         dw SlimeKey         ; ?? right side of your trade quest item
         dw Medicine         ; CHEST_MEDICINE
@@ -50,8 +65,8 @@ GiveItemFromChest:
         dw AddRupees200     ; CHEST_RUPEES_200
         dw AddRupees500     ; CHEST_RUPEES_500
         dw AddSeashell      ; CHEST_SEASHELL
-        dw Exit             ; CHEST_MESSAGE
-        dw Exit             ; CHEST_GEL
+        dw NoItem           ; CHEST_MESSAGE
+        dw NoItem           ; CHEST_GEL
         dw AddKey ; KEY1
         dw AddKey ; KEY2
         dw AddKey ; KEY3
@@ -97,56 +112,59 @@ GiveItemFromChest:
         dw AddNightmareKey ; NIGHTMARE_KEY7
         dw AddNightmareKey ; NIGHTMARE_KEY8
         dw AddNightmareKey ; NIGHTMARE_KEY9
-        dw Exit ; $50
-        dw Exit ; $51
-        dw Exit ; $52
-        dw Exit ; $53
-        dw Exit ; $54
-        dw Exit ; $55
-        dw Exit ; $56
-        dw Exit ; $57
-        dw Exit ; $58
-        dw Exit ; $59
-        dw Exit ; $5A
-        dw Exit ; $5B
-        dw Exit ; $5C
-        dw Exit ; $5D
-        dw Exit ; $5E
-        dw Exit ; $5F
-        dw Exit ; $60
-        dw Exit ; $61
-        dw Exit ; $62
-        dw Exit ; $63
-        dw Exit ; $64
-        dw Exit ; $65
-        dw Exit ; $66
-        dw Exit ; $67
-        dw Exit ; $68
-        dw Exit ; $69
-        dw Exit ; $6A
-        dw Exit ; $6B
-        dw Exit ; $6C
-        dw Exit ; $6D
-        dw Exit ; $6E
-        dw Exit ; $6F
-        dw Exit ; $70
-        dw Exit ; $71
-        dw Exit ; $72
-        dw Exit ; $73
-        dw Exit ; $74
-        dw Exit ; $75
-        dw Exit ; $76
-        dw Exit ; $77
-        dw Exit ; $78
-        dw Exit ; $79
-        dw Exit ; $7A
-        dw Exit ; $7B
-        dw Exit ; $7C
-        dw Exit ; $7D
-        dw Exit ; $7E
-        dw Exit ; $7F
+        dw NoItem ; $50
+        dw NoItem ; $51
+        dw NoItem ; $52
+        dw NoItem ; $53
+        dw NoItem ; $54
+        dw NoItem ; $55
+        dw NoItem ; $56
+        dw NoItem ; $57
+        dw NoItem ; $58
+        dw NoItem ; $59
+        dw NoItem ; $5A
+        dw NoItem ; $5B
+        dw NoItem ; $5C
+        dw NoItem ; $5D
+        dw NoItem ; $5E
+        dw NoItem ; $5F
+        dw NoItem ; $60
+        dw NoItem ; $61
+        dw NoItem ; $62
+        dw NoItem ; $63
+        dw NoItem ; $64
+        dw NoItem ; $65
+        dw NoItem ; $66
+        dw NoItem ; $67
+        dw NoItem ; $68
+        dw NoItem ; $69
+        dw NoItem ; $6A
+        dw NoItem ; $6B
+        dw NoItem ; $6C
+        dw NoItem ; $6D
+        dw NoItem ; $6E
+        dw NoItem ; $6F
+        dw NoItem ; $70
+        dw NoItem ; $71
+        dw NoItem ; $72
+        dw NoItem ; $73
+        dw NoItem ; $74
+        dw NoItem ; $75
+        dw NoItem ; $76
+        dw NoItem ; $77
+        dw NoItem ; $78
+        dw NoItem ; $79
+        dw NoItem ; $7A
+        dw NoItem ; $7B
+        dw NoItem ; $7C
+        dw NoItem ; $7D
+        dw NoItem ; $7E
+        dw NoItem ; $7F
         dw PieceOfHeart     ; Heart piece
         dw GiveBowwow
+
+NoItem:
+        ret
 
 ChestPowerBracelet:
         ld   hl, $DB43 ; power bracelet level
@@ -179,49 +197,49 @@ ChestBow:
 Flippers:
         ld   a, $01
         ld   [$DB0C], a
-        jp   Exit
+        ret
 
 Medicine:
         ld   a, $01
         ld   [$DB0D], a
-        jp   Exit
+        ret
 
 TailKey:
         ld   a, $01
         ld   [$DB11], a
-        jp   Exit
+        ret
 
 AnglerKey:
         ld   a, $01
         ld   [$DB12], a
-        jp   Exit
+        ret
 
 FaceKey:
         ld   a, $01
         ld   [$DB13], a
-        jp   Exit
+        ret
 
 BirdKey:
         ld   a, $01
         ld   [$DB14], a
-        jp   Exit
+        ret
 
 SlimeKey:
         ld   a, $01
         ld   [$DB15], a
-        jp   Exit
+        ret
 
 GoldenLeaf:
         ld   hl, $DB6D
         inc  [hl]
-        jp   Exit
+        ret
 
 AddSeaShell:
         ld   a, [$DB0F]
         inc  a
         daa
         ld   [$DB0F], a
-        jp Exit
+        ret
 
 PieceOfHeart:
         ld   a, [$DB5C]
@@ -229,7 +247,7 @@ PieceOfHeart:
         cp   $04
         jr   z, .FullHeart
         ld   [$DB5C], a
-        jp Exit
+        ret
 .FullHeart:
         xor  a
         ld   [$DB5C], a
@@ -237,12 +255,12 @@ PieceOfHeart:
         ld   [hl], $40 ; Regen HP
         ld   hl, $DB5B
         inc  [hl]      ; Add max health
-        jp   Exit
+        ret
 
 GiveBowwow:
         ld   a, $01
         ld   [$DB56], a
-        jp   Exit
+        ret
 
 ChestInventoryTable:
         db   $03 ; CHEST_POWER_BRACELET
@@ -269,7 +287,7 @@ ChestWithItem:
         add  hl, de
         ld   d, [hl]
         call $3E6B ; Give Inventory
-        jp Exit
+        ret
 
 ChestWithCurrentDungeonItem:
         sub  $16 ; a -= CHEST_MAP
@@ -279,7 +297,7 @@ ChestWithCurrentDungeonItem:
         add  hl, de
         inc  [hl]
         call $2802  ; Sync current dungeon items with dungeon specific table
-        jp Exit
+        ret
 
 AddKey:
         sub $23 ; Make 'A' our dungeon index
@@ -318,7 +336,7 @@ AddDungeonItem:
 .colorDungeonEntry:
         add  hl, de
         inc  [hl]
-        jp Exit
+        ret
 .colorDungeon:
         ; Special case for the color dungeon, which is in a different location in memory.
         ld   de, $02C4
@@ -355,17 +373,28 @@ AddRupees:
         ld   [$DB90], a
         ld   a, $18
         ld   [$C3CE], a
-        jp   Exit
+        ret
+
+ItemMessageForLink:
+        ld   a, $C9
+        jp  $2385 ; Opendialog in $000-$0FF range
 
 ItemMessage:
+        ; Check our "item is for other player" flag
+        ld   hl, $7300
+        call OffsetPointerByRoomNumber
+        ld   a, [hl]
+        and  a
+        jr   nz, ItemMessageForLink
+
+ItemMessageNoLink:
         ldh  a, [$F1]
         ld   d, $00
         ld   e, a
         ld   hl, ItemMessageTable
         add  hl, de
         ld   a, [hl]
-        call $2385 ; Opendialog
-        jp Exit
+        jp   $2385 ; Opendialog in $000-$0FF range
 
 ItemSpriteTable:
         db $82, $15        ; CHEST_POWER_BRACELET
@@ -472,6 +501,7 @@ RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
 
 RenderHeartPiece:
+    ; Check if our chest type is already loaded
     ld   hl, $C2C0
     add  hl, bc
     ld   a, [hl]
@@ -480,28 +510,8 @@ RenderHeartPiece:
     inc  [hl]
 
     ;Load the chest type from the chest table.
-    ldh  a, [$F6] ; map room
-    ld   e, a
-    ld   a, [$DBA5] ; is indoor
-    ld   d, a
-    ldh  a, [$F7]   ; mapId
-    cp   $FF
-    jr   nz, .notColorDungeon
-
-    ld   d, $00
-    ld   hl, $7B00
-    jr   .loadedPointers
-
-.notColorDungeon:
-    cp   $1A
-    jr   nc, .notCavesA
-    cp   $06
-    jr   c, .notCavesA
-    inc  d
-.notCavesA:
     ld   hl, $7800
-.loadedPointers:
-    add  hl, de
+    call OffsetPointerByRoomNumber
 
     ld   a, [hl]
     ldh  [$F1], a ; set currentEntitySpriteVariant
@@ -523,3 +533,26 @@ RenderHeartPiece:
     ld   [hl], a
 .droppedKeyTypeLoaded:
     jp RenderChestItem
+
+
+OffsetPointerByRoomNumber:
+    ldh  a, [$F6] ; map room
+    ld   e, a
+    ld   a, [$DBA5] ; is indoor
+    ld   d, a
+    ldh  a, [$F7]   ; mapId
+    cp   $FF
+    jr   nz, .notColorDungeon
+
+    ld   d, $03
+    jr   .notCavesA
+
+.notColorDungeon:
+    cp   $1A
+    jr   nc, .notCavesA
+    cp   $06
+    jr   c, .notCavesA
+    inc  d
+.notCavesA:
+    add  hl, de
+    ret

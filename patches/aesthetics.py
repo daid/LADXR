@@ -29,6 +29,9 @@ def forceLinksPalette(rom, index):
             ASM("ld a, [$DC0F]\nand a\njr z, $03\ninc a"),
             ASM("ld a, $%02X" % (index)), fill_nop=True)
 
+def fastText(rom):
+    rom.patch(0x00, 0x24CA, ASM("jp $2485"), ASM("call $2485"))
+
 def reduceMessageLengths(rom):
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText(b"You've got a Guardian Acorn!")

@@ -83,5 +83,5 @@ BowwowEat:
         add hl, de
         ld  [hl], $01
         
-        jp Exit    
+        ret    
     """

@@ -3,6 +3,7 @@ import typing
 
 class ItemInfo:
     OPTIONS = []
+    MULTIWORLD = False
 
     def __init__(self):
         self.item = None

@@ -10,9 +10,10 @@ def removeOwlEvents(rom):
             re.store(rom)
     # Clear texts used by the owl. Potentially reused somewhere else.
     rom.texts[0x0D9] = b'\xff'  # used by boomerang
-    # 16 more available.
     # 1 Used by empty chest (master stalfos message)
     # 9 used by keysanity items
     # 1 used by bowwow in chest
+    # 1 used by item for other player message
+    # 4 more available.
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'

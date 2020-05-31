@@ -2,8 +2,8 @@ import explorer
 import random
 import os
 import logic
-
-from logic import location
+import copy
+import patches.dungeonEntrances
 
 
 class Error(Exception):
@@ -16,12 +16,15 @@ class Randomizer:
         if self.seed is None:
             self.seed = os.urandom(16)
         self.rnd = random.Random(self.seed)
-        self.__logic = logic.Logic(options, self.rnd)
-        self.entranceMapping = self.__logic.entranceMapping
+        if options.multiworld:
+            self.__logic = logic.MultiworldLogic(options, self.rnd)
+        else:
+            self.__logic = logic.Logic(options, self.rnd)
         self.item_pool = {}
         self.spots = []
 
         self.readItemPool(rom)
+        assert self.logicStillValid(), "Sanity check failed"
 
         bail_counter = 0
         while self.item_pool:
@@ -31,8 +34,20 @@ class Randomizer:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
-        for spot in self.__logic.iteminfo_list:
-            spot.patch(rom, spot.item)
+
+        # Apply patches to rom
+        if self.__logic.entranceMapping:
+            patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
+        if options.multiworld:
+            for n in range(2):
+                result_rom = copy.deepcopy(rom)
+                for spot in self.__logic.iteminfo_list:
+                    if spot.world == n:
+                        spot.patch(result_rom, spot.item)
+                result_rom.save("Multiworld_%d.gbc" % (n + 1))
+        else:
+            for spot in self.__logic.iteminfo_list:
+                spot.patch(rom, spot.item)
 
     def addItem(self, item):
         self.item_pool[item] = self.item_pool.get(item, 0) + 1
@@ -113,6 +128,9 @@ class Randomizer:
 
         if len(e.getAccessableLocations()) != len(self.__logic.location_list):
             if verbose:
+                for loc in self.__logic.location_list:
+                    if loc not in e.getAccessableLocations():
+                        print("Cannot access: ", loc.items)
                 print("Not all locations are accessible anymore with the full item pool")
             return False
         return True

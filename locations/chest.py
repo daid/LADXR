@@ -11,6 +11,7 @@ class Chest(ItemInfo):
         SEASHELL, MESSAGE, GEL, BOOMERANG, HEART_PIECE, BOWWOW]
         #500 rupees show 200 rupees message
         #not sure if we should se MAGIC_POWDER, as it overrules the toadstool
+    MULTIWORLD = True
 
     def __init__(self, room):
         super().__init__()

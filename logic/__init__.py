@@ -9,6 +9,7 @@ from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
 from .requirements import AND, OR, COUNT
+from .location import Location
 from locations.items import *
 
 
@@ -85,3 +86,71 @@ class Logic:
             self.__recursiveFindAll(connection)
         for connection, requirement in location.gated_connections:
             self.__recursiveFindAll(connection)
+
+
+class MultiworldLogic:
+    def __init__(self, configuration_options, rnd):
+        self.worlds = []
+        self.start = Location()
+        self.location_list = [self.start]
+        self.iteminfo_list = []
+
+        for n in range(2):
+            world = Logic(configuration_options, rnd)
+            for ii in world.iteminfo_list:
+                ii.world = n
+
+            for loc in world.location_list:
+                loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
+                loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
+                loc.items = [MultiworldItemInfoWrapper(n, ii) for ii in loc.items]
+                self.iteminfo_list += loc.items
+
+            self.worlds.append(world)
+            self.start.simple_connections += world.start.simple_connections
+            self.start.gated_connections += world.start.gated_connections
+            self.start.items += world.start.items
+            world.start.items.clear()
+            self.location_list += world.location_list
+
+        self.entranceMapping = None
+
+
+class MultiworldItemInfoWrapper:
+    def __init__(self, world, target):
+        self.world = world
+        self.target = target
+        self.OPTIONS = None
+
+    def read(self, rom):
+        return "W%d_%s" % (self.world, self.target.read(rom))
+
+    def getOptions(self):
+        if self.OPTIONS is None:
+            if self.target.MULTIWORLD:
+                self.OPTIONS = []
+                for n in range(2):
+                    self.OPTIONS += ["W%d_%s" % (n, t) for t in self.target.getOptions()]
+            else:
+                self.OPTIONS = ["W%d_%s" % (self.world, t) for t in self.target.getOptions()]
+        return self.OPTIONS
+
+    def patch(self, rom, option):
+        if self.world != int(option[1]):
+            rom.banks[0x3E][0x3300 + self.target.room] = 0x01
+        self.target.patch(rom, option[3:])
+
+    def __repr__(self):
+        return repr(self.target)
+
+
+def addWorldIdToRequirements(n, req):
+    if isinstance(req, str):
+        return "W%d_%s" % (n, req)
+    if isinstance(req, COUNT):
+        return COUNT(addWorldIdToRequirements(n, req.item), req.amount)
+    if isinstance(req, AND):
+        return AND(*(addWorldIdToRequirements(n, r) for r in req))
+    if isinstance(req, OR):
+        return OR(*(addWorldIdToRequirements(n, r) for r in req))
+    raise RuntimeError("Unknown requirement type: %s" % (req))

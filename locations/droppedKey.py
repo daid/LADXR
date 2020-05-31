@@ -8,6 +8,7 @@ class DroppedKey(ItemInfo):
         TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY,
         RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
         SEASHELL, BOOMERANG, HEART_PIECE]
+    MULTIWORLD = True
 
     def __init__(self, room):
         super().__init__()

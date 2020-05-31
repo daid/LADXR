@@ -116,6 +116,56 @@ def addBank3F(rom):
         ret
         """))
 
+    # Patch the link interrupt to no call the printer routines, but our own code
+    rom.patch(0x00, 0x0408, ASM("""
+        push af
+        ld   a, $28
+        ld   [$2100], a
+        call $4601
+        ld   a, [$DBAF]
+        ld   [$2100], a
+        pop  af
+        reti
+    """), ASM("""
+        push af
+        ld   a, $3F
+        ld   [$2100], a
+        call $5000
+        ld   a, [$DBAF]
+        ld   [$2100], a
+        pop  af
+        reti    
+    """))
+    # Link interrupt handler.
+    rom.patch(0x3F, 0x1000, None, ASM("""
+LinkInterruptHandler:
+        ldh  a, [$02]
+        and  $81 ; ignore if we are still in transmission or when we are the master
+        jr   nz, skip
+        push bc
+        push de
+        push hl
+        
+        ; Load the received byte and store it in the command or data byte memory locations (CEFD and CEFE) 
+        ldh  a, [$01]
+        cp   $F0
+        jr   nc, .commandByte
+        ld   [$CEFD], a ; data byte
+        jr   .byteHandled   
+.commandByte:
+        ld   [$CEFE], a
+.byteHandled:
+        ld   a, $0F
+        ldh  [$01], a
+        ld   a, $82
+        ldh  [$02], a
+        
+        pop  hl
+        pop  de
+        pop  bc
+    skip:
+        ret     
+    """))
     # Copy all normal item graphics
     rom.banks[0x3F][0x3000:0x3300] = rom.banks[0x2C][0x0800:0x0B00]  # main items
     rom.banks[0x3F][0x3300:0x3400] = rom.banks[0x2C][0x0C00:0x0D00]  # overworld key items
