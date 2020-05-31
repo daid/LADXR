@@ -313,8 +313,13 @@ class Assembler:
             assert 0 <= bit < 8
             self.__result.append(0xCB)
             self.__result.append(0xC0 | reg | (bit << 3))
-        elif mnemonic == "CALL":
+        elif mnemonic == "SWAP":
             assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x30 | reg)
+        elif mnemonic == "CALL":
+            assert len(params) == 1, line
             self.__result.append(0xCD)
             self.__result += self.toWord(params[0])
         elif mnemonic == "DB":

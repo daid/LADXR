@@ -122,6 +122,7 @@ if __name__ == "__main__":
         patches.bank3f.addBank3F(rom)
         patches.core.removeGhost(rom)
         patches.core.alwaysAllowSecretBook(rom)
+        patches.core.warpHome(rom)
         if args.multiworld:
             patches.core.injectMainLoop(rom)
         patches.softlock.fixAll(rom)

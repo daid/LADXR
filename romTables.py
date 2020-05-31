@@ -103,7 +103,6 @@ class BackgroundTable(PointerTable):
         if pointer in (0, 0x1651):
             return bytearray()
 
-        mem = {}
         bank = rom.banks[bank_nr]
         start = pointer
         while bank[pointer] != 0x00:
@@ -112,22 +111,12 @@ class BackgroundTable(PointerTable):
             repeat = (bank[pointer + 2] & 0x40) == 0x40
             vertical = (bank[pointer + 2] & 0x80) == 0x80
             pointer += 3
-            for n in range(amount):
-                mem[addr] = bank[pointer]
-                if not repeat:
-                    pointer += 1
-                addr += 0x20 if vertical else 0x01
+            if not repeat:
+                pointer += amount
             if repeat:
                 pointer += 1
         pointer += 1
         self._addStorage(bank_nr, start, pointer)
-
-        if mem:
-            low = min(mem.keys()) & 0xFFE0
-            high = (max(mem.keys()) | 0x001F) + 1
-            print(hex(start))
-            for addr in range(low, high, 0x20):
-                print("".join(map(lambda n: ("%02X" % (mem[addr + n])) if addr + n in mem else "  ", range(0x20))))
         return bank[start:pointer]
 
 
@@ -168,7 +157,7 @@ class ROMWithTables(ROM):
 
         # Backgrounds for things like the title screen.
         # Note: The PointerTable fails to write these back due to how they are overlapping by default.
-        #self.background_tiles = BackgroundTilesTable(self)
+        self.background_tiles = BackgroundTilesTable(self)
         #self.background_attributes = BackgroundAttributeTable(self)
 
     def save(self, filename, *, name=None):
@@ -179,6 +168,6 @@ class ROMWithTables(ROM):
         self.rooms_indoor_a.store(self)
         self.rooms_indoor_b.store(self)
         self.rooms_color_dungeon.store(self)
-        #self.background_tiles.store(self)
+        self.background_tiles.store(self)
         #self.background_attributes.store(self)
         super().save(filename, name=name)

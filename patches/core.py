@@ -1,5 +1,6 @@
 from assembler import ASM
 from roomEditor import RoomEditor
+from backgroundEditor import BackgroundEditor
 
 
 def bugfixWrittingWrongRoomStatus(rom):
@@ -46,3 +47,128 @@ def injectMainLoop(rom):
     rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\nrst 8"), fill_nop=True)
     # Also enable serial interrupt when loading a room
     rom.patch(0x00, 0x30F4, ASM("ld a, $01\nldh [$FF], a"), ASM("ld a, $09\nldh [$FF], a"))
+
+def warpHome(rom):
+    # Patch the S&Q menu to allow 3 options
+    rom.patch(0x01, 0x012A, 0x0150, ASM("""
+        ld   hl, $C13F
+        call $6BA8 ; make sound on keypress
+        ldh  a, [$CC] ; load joystick status
+        and  $04      ; if up
+        jr   z, noUp
+        dec  [hl]
+noUp:
+        ldh  a, [$CC] ; load joystick status
+        and  $08      ; if down
+        jr   z, noDown
+        inc  [hl]
+noDown:
+
+        ld   a, [hl]
+        cp   $ff
+        jr   nz, noWrapUp
+        ld   a, $02
+noWrapUp:
+        cp   $03
+        jr   nz, noWrapDown
+        xor  a
+noWrapDown:
+        ld   [hl], a
+        jp   $7E02
+    """), fill_nop=True)
+    rom.patch(0x01, 0x3E02, 0x3E20, ASM("""
+        swap a
+        add  a, $48
+        ld   hl, $C018
+        ldi  [hl], a
+        ld   a, $24
+        ldi  [hl], a
+        ld   a, $BE
+        ldi  [hl], a
+        ld   [hl], $00
+        ret
+    """), fill_nop=True)
+
+    rom.patch(0x01, 0x00B7, ASM("""
+        ld   a, [$C13F]
+        cp   $01
+        jr   z, $3B
+    """), ASM("""
+        ld   a, [$C13F]
+        jp $7E20
+    """), fill_nop=True)
+    rom.patch(0x01, 0x3E20, 0x4000, ASM("""
+        ; First, handle save & quit
+        cp   $01
+        jp   z, $40F9
+        and  a
+        jp   z, $40BE ; return to normal "return to game" handling
+
+        ld   a, $0B
+        ld   [$DB95], a
+        call $0C7D
+
+        ; Replace warp0 tile data, and put link on that tile.
+        xor  a
+        ld   [$D401], a
+        ld   [$D402], a
+        ld   a, $A2 ; Room
+        ld   [$D403], a
+        ld   a, $58 ; X
+        ld   [$D404], a
+        ld   a, $5E ; Y
+        ld   [$D405], a
+
+        ldh  a, [$98]
+        swap a
+        and  $0F
+        ld   e, a
+        ldh  a, [$99]
+        sub  $08
+        and  $F0
+        or   e
+        ld   [$D416], a
+
+        ld   a, $07
+        ld   [$DB96], a
+        ret
+        jp   $40BE  ; return to normal "return to game" handling
+    """), fill_nop=True)
+
+
+    # Patch the S&Q screen to have 3 options.
+    be = BackgroundEditor(rom, 0x0D)
+    for n in range(2, 18):
+        be.tiles[0x99C0 + n] = be.tiles[0x9980 + n]
+        be.tiles[0x99A0 + n] = be.tiles[0x9960 + n]
+        be.tiles[0x9980 + n] = be.tiles[0x9940 + n]
+        be.tiles[0x9960 + n] = be.tiles[0x98e0 + n]
+    be.tiles[0x9960 + 10] = 0xCE
+    be.tiles[0x9960 + 11] = 0xCF
+    be.tiles[0x9960 + 12] = 0xC4
+    be.tiles[0x9960 + 13] = 0x7F
+    be.tiles[0x9960 + 14] = 0x7F
+    be.dump()
+    be.store(rom)
+
+    sprite_data = [
+        0b00000000,
+        0b01000100,
+        0b01000101,
+        0b01000101,
+        0b01111101,
+        0b01000101,
+        0b01000101,
+        0b01000100,
+
+        0b00000000,
+        0b11100100,
+        0b00010110,
+        0b00010101,
+        0b00010100,
+        0b00010100,
+        0b00010100,
+        0b11100100,
+    ]
+    for n in range(32):
+        rom.banks[0x0F][0x08E0 + n] = sprite_data[n // 2]
