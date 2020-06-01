@@ -16,7 +16,7 @@ import patches.heartPiece
 import patches.seashell
 import patches.softlock
 import patches.maptweaks
-import patches.dungeonEntrances
+import patches.inventory
 import patches.titleScreen
 import patches.reduceRNG
 import patches.bank3e
@@ -25,7 +25,6 @@ import patches.aesthetics
 import patches.health
 import patches.goal
 import explorer
-import utils
 import logic
 import os
 import time
@@ -125,6 +124,8 @@ if __name__ == "__main__":
         patches.core.warpHome(rom)
         if args.multiworld:
             patches.core.injectMainLoop(rom)
+        if args.keysanity:
+            patches.inventory.advancedInventorySubscreen(rom)
         patches.softlock.fixAll(rom)
         patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)
@@ -181,9 +182,6 @@ if __name__ == "__main__":
 
         ## Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-
-        # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
-        rom.texts[0x01] = utils.formatText(b"Let's a go!")
 
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":

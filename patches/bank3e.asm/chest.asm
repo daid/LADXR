@@ -454,15 +454,15 @@ ItemSpriteTable:
         db $9E, $14        ; CHEST_SEASHELL
         db $FF, $18        ; CHEST_MESSAGE
         db $FF, $18        ; CHEST_GEL
-        db $4A, $1F        ; KEY1
-        db $4A, $1F        ; KEY2
-        db $4A, $1F        ; KEY3
-        db $4A, $1F        ; KEY4
-        db $4A, $1F        ; KEY5
-        db $4A, $1F        ; KEY6
-        db $4A, $1F        ; KEY7
-        db $4A, $1F        ; KEY8
-        db $4A, $1F        ; KEY9
+        db $4A, $1D        ; KEY1
+        db $4A, $1D        ; KEY2
+        db $4A, $1D        ; KEY3
+        db $4A, $1D        ; KEY4
+        db $4A, $1D        ; KEY5
+        db $4A, $1D        ; KEY6
+        db $4A, $1D        ; KEY7
+        db $4A, $1D        ; KEY8
+        db $4A, $1D        ; KEY9
         db $40, $1C        ; MAP1
         db $40, $1C        ; MAP2
         db $40, $1C        ; MAP3

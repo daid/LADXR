@@ -123,7 +123,7 @@ class BackgroundTable(PointerTable):
 class BackgroundTilesTable(BackgroundTable):
     def __init__(self, rom):
         super().__init__(rom, {
-            "count": 0x25,
+            "count": 0x26,
             "pointers_addr": 0x052B,
             "pointers_bank": 0x20,
             "data_bank": 0x08,
@@ -134,10 +134,11 @@ class BackgroundTilesTable(BackgroundTable):
 class BackgroundAttributeTable(BackgroundTable):
     def __init__(self, rom):
         super().__init__(rom, {
-            "count": 0x25,
+            "count": 0x26,
             "pointers_addr": 0x1C4B,
             "pointers_bank": 0x24,
             "data_bank": 0x24,
+            "expand_to_end_of_bank": True
         })
 
 
@@ -158,7 +159,7 @@ class ROMWithTables(ROM):
         # Backgrounds for things like the title screen.
         # Note: The PointerTable fails to write these back due to how they are overlapping by default.
         self.background_tiles = BackgroundTilesTable(self)
-        #self.background_attributes = BackgroundAttributeTable(self)
+        self.background_attributes = BackgroundAttributeTable(self)
 
     def save(self, filename, *, name=None):
         self.texts.store(self)
@@ -169,5 +170,5 @@ class ROMWithTables(ROM):
         self.rooms_indoor_b.store(self)
         self.rooms_color_dungeon.store(self)
         self.background_tiles.store(self)
-        #self.background_attributes.store(self)
+        self.background_attributes.store(self)
         super().save(filename, name=name)

@@ -1,10 +1,14 @@
 
 class BackgroundEditor:
-    def __init__(self, rom, index):
+    def __init__(self, rom, index, *, attributes=False):
         self.__index = index
+        self.__is_attributes = attributes
 
         self.tiles = {}
-        data = rom.background_tiles[index]
+        if attributes:
+            data = rom.background_attributes[index]
+        else:
+            data = rom.background_tiles[index]
         idx = 0
         while data[idx] != 0x00:
             addr = data[idx] << 8 | data[idx + 1]
@@ -31,6 +35,7 @@ class BackgroundEditor:
 
     def store(self, rom):
         # NOTE: This is not a very good encoder, but the background back has so much free space that we really don't care.
+        # Improvements can be done to find long sequences of bytes and store those as repeated.
         result = bytearray()
         low = min(self.tiles.keys())
         high = max(self.tiles.keys()) + 1
@@ -39,7 +44,7 @@ class BackgroundEditor:
                 low += 1
                 continue
             count = 1
-            while low + count in self.tiles:
+            while low + count in self.tiles and count < 255:
                 count += 1
             result.append(low >> 8)
             result.append(low & 0xFF)
@@ -48,4 +53,7 @@ class BackgroundEditor:
                 result.append(self.tiles[low + n])
             low += count
         result.append(0x00)
-        rom.background_tiles[self.__index] = result
+        if self.__is_attributes:
+            rom.background_attributes[self.__index] = result
+        else:
+            rom.background_tiles[self.__index] = result

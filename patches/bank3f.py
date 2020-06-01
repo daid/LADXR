@@ -101,6 +101,24 @@ def addBank3F(rom):
         and  $80
         jr z, waitTillTransferDone2
 
+        ld   a, $70
+        ldh  [$51], a
+        ld   a, $00
+        ldh  [$52], a
+
+        ld   a, $90
+        ldh  [$53], a
+        ld   a, $00
+        ldh  [$54], a
+
+        ld   a, $7F
+        ldh  [$55], a
+
+    waitTillTransferDone3:
+        ldh  a, [$55]
+        and  $80
+        jr z, waitTillTransferDone3
+
         ; Switch VRAM bank back
         ld   a, $00
         ldh  [$4F], a

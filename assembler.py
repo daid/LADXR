@@ -167,8 +167,11 @@ class Assembler:
             dst = REGS.get(params[0])
             src = REGS.get(params[1])
             if params[0] == "A" and src is None and params[1].startswith("[") and params[1].endswith("]"):
-                self.__result.append(0xFA)
-                self.__result += self.toWord(params[1][1:-1])
+                if params[1] == "[DE]":
+                    self.__result.append(0x1A)
+                else:
+                    self.__result.append(0xFA)
+                    self.__result += self.toWord(params[1][1:-1])
             elif params[1] == "A" and dst is None and params[0].startswith("[") and params[0].endswith("]"):
                 if params[0] == "[DE]":
                     self.__result.append(0x12)

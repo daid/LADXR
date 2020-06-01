@@ -33,6 +33,9 @@ def fastText(rom):
     rom.patch(0x00, 0x24CA, ASM("jp $2485"), ASM("call $2485"))
 
 def reduceMessageLengths(rom):
+    # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
+    rom.texts[0x01] = formatText(b"Let's a go!")
+
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText(b"You've got a Guardian Acorn!")
     rom.texts[0xEB] = rom.texts[0xEA]

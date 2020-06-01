@@ -39,7 +39,12 @@ class PointerTable:
             pass
         if "expand_to_end_of_bank" in info and info["expand_to_end_of_bank"]:
             for st in self.__storage:
-                st["end"] = 0x4000
+                expand = True
+                for st2 in self.__storage:
+                    if st["bank"] == st2["bank"] and st["end"] < st2["end"]:
+                        expand = False
+                if expand:
+                    st["end"] = 0x4000
 
         # for s in sorted(self.__storage, key=lambda s: (s["bank"], s["start"])):
         #     print(self.__class__.__name__, s)
