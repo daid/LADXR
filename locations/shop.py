@@ -20,12 +20,12 @@ class ShopItem(ItemInfo):
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "0B", INVENTORY_MAP[option])
             rom.patch(0x04, 0x3AA9, ASM("ld d, $0B"), ASM("ld d, $%s" % (INVENTORY_MAP[option])))
-            rom.patch(0x04, 0x3B5A, "9617", INVENTORY_ICON[option] + "17")
+            rom.patch(0x04, 0x3B5A, "9617", INVENTORY_ICON[option])
             rom.texts[0x030] = formatText(b"Deluxe %s 200 Rupees!\n____Buy__No Way" % (INVENTORY_NAME[option]), ask=True)
         elif self.__index == 1:
             rom.patch(0x04, 0x37C6, "05", INVENTORY_MAP[option])
             rom.patch(0x04, 0x3A73, ASM("ld d, $05"), ASM("ld d, $%s" % (INVENTORY_MAP[option])))
-            rom.patch(0x04, 0x3B62, "8816", INVENTORY_ICON[option] + "17")
+            rom.patch(0x04, 0x3B62, "8816", INVENTORY_ICON[option])
             rom.texts[0x02C] = formatText(b"%s Only 980 Rupees!\n____Buy__No Way" % (INVENTORY_NAME[option]), ask=True)
 
     def read(self, rom):

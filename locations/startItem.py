@@ -19,7 +19,7 @@ class StartItem(ItemInfo):
         # Giving a sword here, gives a lv0 sword. Which does no damage?
         # Giving the power bracelet here gives a lv0 bracelet, most likely making lv2 inaccessible
         rom.patch(5, 0x0CD1, "04", INVENTORY_MAP[option])
-        rom.patch(5, 0x0CC6, "86", INVENTORY_ICON[option]) # patch shield that icon that is shown.
+        rom.patch(5, 0x0CC6, "8617", INVENTORY_ICON[option]) # patch shield that icon that is shown.
         if option != SHIELD:
             #   Do not set the shield level to 1, but potentially set another item level if needed.
             if option == SWORD:
