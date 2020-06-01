@@ -195,6 +195,7 @@ if __name__ == "__main__":
             e = explorer.Explorer()
             e.visit(my_logic.start)
             e.dump(my_logic)
+            # patches.dungeonEntrances.changeEntrances(rom, [1,2,3,4,5,6,7,8,0])
             # from locations import ShopItem
             # ShopItem(0).patch(rom, "SWORD")
             # from locations import Chest
