@@ -263,16 +263,21 @@ class EntityData:
         damage_per_damage_type = rom.banks[0x03][0x073C:0x073C+8*16]
         physics_flags = rom.banks[0x03][0x0000:0x0000+COUNT]
         damage_to_link = rom.banks[0x03][0x07F1:0x07F1+group_count]
+        bowwow_eatable = rom.banks[0x14][0x1218:0x1218 + COUNT]
 
+        #print(sum(bowwow_eatable))
+        #for n in range(COUNT):
+        #    if bowwow_eatable[n]:
+        #        print(hex(n), NAME[n])
         for n in range(group_count):
             entities = list(map(lambda data: NAME[data[0]], filter(lambda data: data[1] == n, enumerate(groups))))
-            print(hex(n), damage_to_link[n], entities)
+            #print(hex(n), damage_to_link[n], entities)
             dmg = bytearray()
             for m in range(16):
                 dmg.append(damage_per_damage_type[m*8+group_damage_type[n*16+m]])
             import binascii
             #print(binascii.hexlify(group_damage_type[n*16:n*16+16]))
-            print(binascii.hexlify(dmg))
+            #print(binascii.hexlify(dmg))
 
 
 if __name__ == "__main__":

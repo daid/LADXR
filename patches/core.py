@@ -148,7 +148,6 @@ noWrapDown:
     be.tiles[0x9960 + 12] = 0xC4
     be.tiles[0x9960 + 13] = 0x7F
     be.tiles[0x9960 + 14] = 0x7F
-    be.dump()
     be.store(rom)
 
     sprite_data = [
