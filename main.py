@@ -77,6 +77,8 @@ if __name__ == "__main__":
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
 
     # Just aestetic flags
+    parser.add_argument('--gfxmod', dest="gfxmod", action='append',
+        help="Load graphical mods.")
     parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'none'], default='default',
         help="Default just keeps text normal, fast makes text appear twice as fast, and none removes all text from the game.")
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
@@ -114,6 +116,9 @@ if __name__ == "__main__":
                             print("%20s: %s" % (ii, ii.read(rom)))
                 sys.exit(1)
             sys.exit(0)
+
+        for gfx in args.gfxmod:
+            patches.aesthetics.gfxMod(rom, gfx)
 
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
