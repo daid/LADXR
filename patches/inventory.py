@@ -12,7 +12,6 @@ def advancedInventorySubscreen(rom):
     for x in range(1, 10):
         be.tiles[0x9DE9 + x] = 0xB0 + (x % 9)
     be.tiles[0x9DE9] = 0xBA
-    be.dump()
     be.store(rom)
     be = BackgroundEditor(rom, 2, attributes=True)
 
@@ -39,7 +38,6 @@ def advancedInventorySubscreen(rom):
     for n in range(1, 10):
         be.tiles[0x9DA9 + n] = 0x0E
 
-    be.dump()
     be.store(rom)
 
     rom.patch(0x20, 0x19D3, ASM("ld bc, $5994\nld e, $33"), ASM("ld bc, $7E08\nld e, $%02x" % (0x33 + 24)))

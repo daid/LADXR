@@ -32,6 +32,10 @@ def forceLinksPalette(rom, index):
 def fastText(rom):
     rom.patch(0x00, 0x24CA, ASM("jp $2485"), ASM("call $2485"))
 
+def noText(rom):
+    for idx in range(len(rom.texts)):
+        rom.texts[idx] = rom.texts[idx][-1:]
+
 def reduceMessageLengths(rom):
     # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
     rom.texts[0x01] = formatText(b"Let's a go!")

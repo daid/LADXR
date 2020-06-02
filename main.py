@@ -77,6 +77,8 @@ if __name__ == "__main__":
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
 
     # Just aestetic flags
+    parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'none'], default='default',
+        help="Default just keeps text normal, fast makes text appear twice as fast, and none removes all text from the game.")
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
         help="Enable the nag messages on touching stones and crystals. By default they are removed.")
     parser.add_argument('--lowhpbeep', dest="lowhpbeep", choices=['default', 'slow', 'none'], default='slow',
@@ -140,6 +142,11 @@ if __name__ == "__main__":
         # patches.reduceRNG.slowdownThreeOfAKind(rom)
         patches.aesthetics.noSwordMusic(rom)
         patches.aesthetics.reduceMessageLengths(rom)
+        if args.textmode == 'fast':
+            patches.aesthetics.fastText(rom)
+        if args.textmode == 'none':
+            patches.aesthetics.fastText(rom)
+            patches.aesthetics.noText(rom)
         if args.removeNagMessages:
             patches.aesthetics.removeNagMessages(rom)
         if args.lowhpbeep == 'slow':
