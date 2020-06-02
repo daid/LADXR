@@ -56,7 +56,7 @@ def advancedInventorySubscreen(rom):
         jr   z, RenderDungeonFix
         cp   $06
         jr   z, D7RenderDungeonFix
-        cp   $0A
+        cp   $08
         jr   c, RenderDungeonFix 
 
 RenderKeysCounts:
