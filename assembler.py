@@ -60,9 +60,18 @@ class Assembler:
         if mnemonic == "NOP":
             assert len(params) == 0, line
             self.__result.append(0x00)
+        elif mnemonic == "HALT":
+            assert len(params) == 0, line
+            self.__result.append(0x76)
         elif mnemonic == "STOP":
             assert len(params) == 0, line
             self.__result.append(0x10)
+        elif mnemonic == "DI":
+            assert len(params) == 0, line
+            self.__result.append(0xF3)
+        elif mnemonic == "EI":
+            assert len(params) == 0, line
+            self.__result.append(0xFB)
         elif mnemonic == "RLA":
             assert len(params) == 0, line
             self.__result.append(0x17)
@@ -126,7 +135,7 @@ class Assembler:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "RST":
             assert len(params) == 1, line
-            value = int(params[0])
+            value = int(params[0], 16)
             assert (value & 0x07) == 0, line
             assert 0 <= value < 0x40, line
             self.__result.append(0xC7 + value)
@@ -162,22 +171,41 @@ class Assembler:
                 self.__result.append(0x22)
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
+        elif mnemonic == "LDD":
+            assert len(params) == 2, line
+            if params[0] == "A" and params[1] == "[HL]":
+                self.__result.append(0x3A)
+            elif params[0] == "[HL]" and params[1] == "A":
+                self.__result.append(0x32)
+            else:
+                raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "LD":
             assert len(params) == 2, line
             dst = REGS.get(params[0])
             src = REGS.get(params[1])
             if params[0] == "A" and src is None and params[1].startswith("[") and params[1].endswith("]"):
-                if params[1] == "[DE]":
+                if params[1] == "[BC]":
+                    self.__result.append(0x0A)
+                elif params[1] == "[DE]":
                     self.__result.append(0x1A)
+                elif params[1] == "[C]":
+                    self.__result.append(0xF2)
                 else:
                     self.__result.append(0xFA)
                     self.__result += self.toWord(params[1][1:-1])
             elif params[1] == "A" and dst is None and params[0].startswith("[") and params[0].endswith("]"):
-                if params[0] == "[DE]":
+                if params[0] == "[BC]":
+                    self.__result.append(0x02)
+                elif params[0] == "[DE]":
                     self.__result.append(0x12)
+                elif params[0] == "[C]":
+                    self.__result.append(0xE2)
                 else:
                     self.__result.append(0xEA)
                     self.__result += self.toWord(params[0][1:-1])
+            elif params[1] == "SP" and dst is None and params[0].startswith("[") and params[0].endswith("]"):
+                self.__result.append(0x08)
+                self.__result += self.toWord(params[0][1:-1])
             elif params[0] == "BC":
                 self.__result.append(0x01)
                 self.__result += self.toWord(params[1])
@@ -187,10 +215,13 @@ class Assembler:
             elif params[0] == "HL":
                 self.__result.append(0x21)
                 self.__result += self.toWord(params[1])
+            elif params[0] == "SP" and params[1] == "HL":
+                self.__result.append(0xF9)
             elif params[0] == "SP":
                 self.__result.append(0x31)
                 self.__result += self.toWord(params[1])
             elif dst is not None and src is not None:
+                assert src != 6 or dst != 6, line
                 self.__result.append(0x40 | src | (dst << 3))
             elif dst is not None:
                 self.__result.append(0x06 | (dst << 3))
@@ -213,6 +244,9 @@ class Assembler:
                 self.__result.append(0x29)
             elif params[0] == "HL" and params[1] == "SP":
                 self.__result.append(0x39)
+            elif params[0] == "SP":
+                self.__result.append(0xE8)
+                self.__result.append(self.toByte(params[1]))
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "SUB":
@@ -223,6 +257,24 @@ class Assembler:
             else:
                 self.__result.append(0xD6)
                 self.__result.append(self.toByte(params[0]))
+        elif mnemonic == "ADC":
+            assert len(params) == 2, line
+            assert params[0] == 'A', line
+            reg = REGS.get(params[1])
+            if reg is not None:
+                self.__result.append(0x88 | reg)
+            else:
+                self.__result.append(0xCE)
+                self.__result.append(self.toByte(params[1]))
+        elif mnemonic == "SBC":
+            assert len(params) == 2, line
+            assert params[0] == 'A', line
+            reg = REGS.get(params[1])
+            if reg is not None:
+                self.__result.append(0x98 | reg)
+            else:
+                self.__result.append(0xDE)
+                self.__result.append(self.toByte(params[1]))
         elif mnemonic == "XOR":
             assert len(params) == 1, line
             reg = REGS.get(params[0])
@@ -316,15 +368,56 @@ class Assembler:
             assert 0 <= bit < 8
             self.__result.append(0xCB)
             self.__result.append(0xC0 | reg | (bit << 3))
+        elif mnemonic == "RLC":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x00 | reg)
+        elif mnemonic == "RRC":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x08 | reg)
+        elif mnemonic == "RL":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x10 | reg)
+        elif mnemonic == "RR":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x18 | reg)
+        elif mnemonic == "SLA":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x20 | reg)
+        elif mnemonic == "SRA":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x28 | reg)
         elif mnemonic == "SWAP":
             assert len(params) == 1
             reg = REGS[params[0]]
             self.__result.append(0xCB)
             self.__result.append(0x30 | reg)
+        elif mnemonic == "SRL":
+            assert len(params) == 1
+            reg = REGS[params[0]]
+            self.__result.append(0xCB)
+            self.__result.append(0x38 | reg)
         elif mnemonic == "CALL":
-            assert len(params) == 1, line
-            self.__result.append(0xCD)
-            self.__result += self.toWord(params[0])
+            if len(params) == 1:
+                self.__result.append(0xCD)
+                self.__result += self.toWord(params[0])
+            elif len(params) == 2:
+                flag = FLAGS[params[0]]
+                self.__result.append(0xC4 | flag)
+                self.__result += self.toWord(params[1])
+            else:
+                raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "DB":
             for byte in params:
                 self.__result.append(self.toByte(byte))
@@ -355,3 +448,50 @@ def ASM(code, base_address=None):
         asm.assemble(line)
     asm.link()
     return binascii.hexlify(asm.getResult())
+
+
+if __name__ == "__main__":
+    import json
+    opcodes = json.load(open("Opcodes.json", "rt"))
+    for label in (False, True):
+        for prefix, codes in opcodes.items():
+            for num, op in codes.items():
+                if op['mnemonic'].startswith('ILLEGAL_') or op['mnemonic'] == 'PREFIX':
+                    continue
+                params = []
+                postfix = ''
+                for o in op['operands']:
+                    name = o['name']
+                    if name == 'd16' or name == 'a16':
+                        if label:
+                            name = 'LABEL'
+                        else:
+                            name = '$0000'
+                    if name == 'd8' or name == 'a8':
+                        name = '$00'
+                    if name == 'r8':
+                        if label and num != '0xE8':
+                            name = 'LABEL'
+                        else:
+                            name = '$00'
+                    if name[-1] == 'H' and name[0].isnumeric():
+                        name = name[:-1]
+                    if o['immediate']:
+                        params.append(name)
+                    else:
+                        params.append("[%s]" % (name))
+                    if 'increment' in o and o['increment']:
+                        postfix = 'I'
+                    if 'decrement' in o and o['decrement']:
+                        postfix = 'D'
+                code = op["mnemonic"] + postfix + " " + ", ".join(params)
+                code = code.strip()
+                try:
+                    data = ASM("LABEL:\n%s" % (code), 0x0000)
+                    if prefix == 'cbprefixed':
+                        assert data[0:2] == b'cb'
+                        data = data[2:]
+                    assert data[0:2] == num[2:].encode('ascii').lower(), data[0:2] + b"!=" + num[2:].encode('ascii').lower()
+                except Exception as e:
+                    print("%s\t\t|%r|\t%s" % (code, e, num))
+                    print(op)
