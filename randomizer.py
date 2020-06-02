@@ -80,7 +80,7 @@ class Randomizer:
     def placeItem(self):
         # Find a random spot and item to place
         spot = self.rnd.choice(self.spots)
-        options = list(filter(lambda i: i in self.item_pool.keys(), spot.getOptions()))
+        options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
 
         if not options:
             return False
