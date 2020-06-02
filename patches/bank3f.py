@@ -198,3 +198,6 @@ LinkInterruptHandler:
 
     # Add the bowwow sprites
     rom.banks[0x3F][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]
+
+    # Zol sprites, so we can have zol anywhere from a chest
+    rom.banks[0x3F][0x3600:0x3640] = rom.banks[0x2E][0x1120:0x1160]
