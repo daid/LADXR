@@ -13,7 +13,7 @@ class Dungeon7:
         bottomright_pillar = Location(7).add(DungeonChest(0x211)).connect(topright_pillar_area, AND(OR(FEATHER, attack_hookshot), OR(SHIELD, POWER_BRACELET, attack_hookshot)))  # compass chest; bracelet can be used in combination with ball; path without feather with hitting switch by falling on the raised blocks
         bottomright_pillar.add(DroppedKey(0x21B), DungeonChest(0x201))  # key at the hinox, and seashell chest on left F1 ledge
         # Most of the dungeon can be accessed at this point.
-        bottomleftF2_area = Location(7).add(DungeonChest(0x212)).connect(topright_pillar_area, attack_hookshot)  # area with hinox
+        bottomleftF2_area = Location(7).connect(topright_pillar_area, attack_hookshot)  # area with hinox
         bottomleftF2_area.add(DungeonChest(0x224))  # nightmare key after the miniboss
         bottomleftF2_area.add(DungeonChest(0x21A), DungeonChest(0x204))  # mirror shield chest, and chest on the F1 right ledge
 
