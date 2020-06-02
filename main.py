@@ -117,8 +117,9 @@ if __name__ == "__main__":
                 sys.exit(1)
             sys.exit(0)
 
-        for gfx in args.gfxmod:
-            patches.aesthetics.gfxMod(rom, gfx)
+        if args.gfxmod:
+            for gfx in args.gfxmod:
+                patches.aesthetics.gfxMod(rom, gfx)
 
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
