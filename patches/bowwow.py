@@ -59,6 +59,9 @@ def neverGetBowwow(rom):
     # Patch the color dungeon entrance not to check for bowwow
     rom.patch(0x02, 0x340D, ASM("ld hl, $DB56\nor [hl]"), "", fill_nop=True)
 
+    # Patch richard to ignore bowwow
+    rom.patch(0x06, 0x006C, ASM("ld a, [$DB56]"), ASM("xor a"), fill_nop=True)
+
     return
     # Load followers in dungeons
     rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)
