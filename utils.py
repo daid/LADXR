@@ -1,5 +1,5 @@
 
-def formatText(s, *, ask=False):
+def formatText(s, *, ask=None):
     s = s.replace(b"'", b"^")
 
     result = b''
@@ -14,9 +14,11 @@ def formatText(s, *, ask=False):
             result_line += word
         if result_line:
             result += result_line + b' ' * (16 - len(result_line))
-    result = result.replace(b'_', b' ')
-    if ask:
-        return result.rstrip() + b'\xfe'
+    if ask is not None:
+        result = result.rstrip()
+        while len(result) % 32 != 16:
+            result += b' '
+        return result + b'    ' + ask + b'\xfe'
     return result.rstrip() + b'\xff'
 
 
