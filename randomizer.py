@@ -16,6 +16,8 @@ class Randomizer:
         if self.seed is None:
             self.seed = os.urandom(16)
         self.rnd = random.Random(self.seed)
+        if options.race:
+            self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
         if options.multiworld:
             assert not options.dungeonshuffle, "Cannot use dungeonshuffle in multiworld at the moment"
             self.__logic = logic.MultiworldLogic(options, self.rnd)

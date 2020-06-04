@@ -19,11 +19,15 @@ def _encode(s):
     return result
 
 
-def setRomInfo(rom, seed):
+def setRomInfo(rom, seed, options):
     try:
         version = subprocess.run(['git', 'describe', '--tags', '--dirty=-D'], stdout=subprocess.PIPE).stdout.strip().decode("ascii", "replace")
     except:
         version = ""
+
+    if options.race:
+        seed = "Race"
+        rom.banks[0x05][0x0CCD:0x0CD2] = rom.banks[0x05][0x0CD0:0x0CD2] + rom.banks[0x05][0x0CCD:0x0CD0]
 
     line_1_hex = _encode(seed[:16])
     line_2_hex = _encode(seed[16:])
@@ -48,5 +52,3 @@ def setRomInfo(rom, seed):
         ba.store(rom)
         be.dump()
         ba.dump()
-
-    #rom.banks[0x05][0x0CCD:0x0CD2] = rom.banks[0x05][0x0CD0:0x0CD2] + rom.banks[0x05][0x0CCD:0x0CD0]

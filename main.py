@@ -55,6 +55,8 @@ if __name__ == "__main__":
         help="Export the map (many graphical mistakes)")
 
     # Flags that effect gameplay
+    parser.add_argument('--race', dest="race", action="store_true",
+        help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
     parser.add_argument('--multiworld', dest="multiworld", action="store_true",
         help="Generates 2 roms, for link cable use.")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
@@ -237,7 +239,7 @@ if __name__ == "__main__":
             total_retries += retry_count
 
         print("Seed: %s" % (seed))
-        patches.titleScreen.setRomInfo(rom, seed)
+        patches.titleScreen.setRomInfo(rom, seed, args)
 
         if args.seedlist:
             f = open(args.seedlist, "at")
