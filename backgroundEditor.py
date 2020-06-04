@@ -29,7 +29,7 @@ class BackgroundEditor:
             return
         low = min(self.tiles.keys()) & 0xFFE0
         high = (max(self.tiles.keys()) | 0x001F) + 1
-        print(hex(self.__index))
+        print("0x%02x " % (self.__index) + "".join(map(lambda n: "%2X" % (n), range(0x20))))
         for addr in range(low, high, 0x20):
             print("%04x " % (addr) + "".join(map(lambda n: ("%02X" % (self.tiles[addr + n])) if addr + n in self.tiles else "  ", range(0x20))))
 

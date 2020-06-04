@@ -237,7 +237,7 @@ if __name__ == "__main__":
             total_retries += retry_count
 
         print("Seed: %s" % (seed))
-        patches.titleScreen.setRomInfo(rom, seed[16:], seed[:16])
+        patches.titleScreen.setRomInfo(rom, seed)
 
         if args.seedlist:
             f = open(args.seedlist, "at")
