@@ -14,6 +14,7 @@ def neverGetBowwow(rom):
     re.removeEntities(0x6D)
     re.changeObject(8, 3, 0xA0)
     re.store(rom)
+    # Place bowwow in the chest table
     rom.banks[0x14][0x560 + 0x2E2] = 0x81
 
     # Patch bowwow follower sprite to be used from 2nd vram bank

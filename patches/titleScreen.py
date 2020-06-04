@@ -32,6 +32,12 @@ def setRomInfo(rom, seed, options):
 
     line_1_hex = _encode(seed[:16])
     line_2_hex = _encode(seed[16:])
+    try:
+        seednr = int(seed, 16)
+    except:
+        import hashlib
+        seednr = int(hashlib.md5(seed.encode('ascii', 'replace')).hexdigest(), 16)
+
 
     for n in (3, 4):
         be = BackgroundEditor(rom, n)
@@ -46,8 +52,30 @@ def setRomInfo(rom, seed, options):
             be.tiles[0x9a21 + n] = v
             ba.tiles[0x9a21 + n] = 0x00
         for n in range(0x09, 0x14):
-            be.tiles[0x9820 + n] = 0xF7
+            be.tiles[0x9820 + n] = 0x7F
             be.tiles[0x9840 + n] = 0xA0 + (n % 2)
             be.tiles[0x9860 + n] = 0xA2
+        sn = seednr
+        for n in range(0x0A, 0x14):
+            tilenr = sn % 30
+            sn //= 30
+            if tilenr > 12:
+                tilenr += 2
+            if tilenr > 16:
+                tilenr += 1
+            if tilenr > 19:
+                tilenr += 3
+            if tilenr > 27:
+                tilenr += 1
+            if tilenr > 29:
+                tilenr += 2
+            if tilenr > 35:
+                tilenr += 1
+            be.tiles[0x9800 + n] = tilenr * 2
+            be.tiles[0x9820 + n] = tilenr * 2 + 1
+            pal = sn % 8
+            sn //= 8
+            ba.tiles[0x9800 + n] = 0x08 | pal
+            ba.tiles[0x9820 + n] = 0x08 | pal
         be.store(rom)
         ba.store(rom)
