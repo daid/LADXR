@@ -426,7 +426,7 @@ ItemSpriteTable:
         db $8C, $14        ; CHEST_MAGIC_ROD
         db $98, $16        ; CHEST_PEGASUS_BOOTS
         db $90, $17        ; CHEST_OCARINA
-        db $92, $16        ; CHEST_FEATHER
+        db $92, $15        ; CHEST_FEATHER
         db $96, $17        ; CHEST_SHOVEL
         db $8E, $14        ; CHEST_MAGIC_POWDER_BAG
         db $80, $15        ; CHEST_BOMB

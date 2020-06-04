@@ -28,7 +28,7 @@ INVENTORY_ICON = {
     FEATHER: "9216",
     SHOVEL: "9617",
     MAGIC_POWDER: "8E14",
-    BOOMERANG: "A41C",
+    BOOMERANG: "241C",
 }
 INVENTORY_NAME = {
     SWORD: b"Sword",
