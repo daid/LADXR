@@ -27,6 +27,7 @@ def setRomInfo(rom, seed, options):
 
     if options.race:
         seed = "Race"
+        rom.patch(0x00, 0x07, "00", "01")
         rom.banks[0x05][0x0CCD:0x0CD2] = rom.banks[0x05][0x0CD0:0x0CD2] + rom.banks[0x05][0x0CCD:0x0CD0]
 
     line_1_hex = _encode(seed[:16])
@@ -50,5 +51,3 @@ def setRomInfo(rom, seed, options):
             be.tiles[0x9860 + n] = 0xA2
         be.store(rom)
         ba.store(rom)
-        be.dump()
-        ba.dump()

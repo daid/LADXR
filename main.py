@@ -104,6 +104,9 @@ if __name__ == "__main__":
             sys.exit(0)
 
         if args.dump or args.test:
+            if rom.banks[0][7] != 0x00:
+                print("Cannot read spoiler log for race rom")
+                sys.exit(1)
             my_logic = logic.Logic(args, None)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
