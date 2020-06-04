@@ -2,7 +2,7 @@ from backgroundEditor import BackgroundEditor
 import subprocess
 
 
-CHAR_MAP = {'z': 0x3E, '.': 0x39, ':': 0x42, '?': 0x3C, '!': 0x3D}
+CHAR_MAP = {'z': 0x3E, '-': 0x3F, '.': 0x39, ':': 0x42, '?': 0x3C, '!': 0x3D}
 
 
 def _encode(s):
@@ -21,9 +21,9 @@ def _encode(s):
 
 def setRomInfo(rom, seed):
     try:
-        version = subprocess.run(['git', 'describe', '--tags', '--dirty'], stdout=subprocess.PIPE).stdout.strip()
+        version = subprocess.run(['git', 'describe', '--tags', '--dirty=-D'], stdout=subprocess.PIPE).stdout.strip().decode("ascii", "replace")
     except:
-        version = b''
+        version = ""
 
     line_1_hex = _encode(seed[:16])
     line_2_hex = _encode(seed[16:])
@@ -31,6 +31,9 @@ def setRomInfo(rom, seed):
     for n in (3, 4):
         be = BackgroundEditor(rom, n)
         ba = BackgroundEditor(rom, n, attributes=True)
+        for n, v in enumerate(_encode(version)):
+            be.tiles[0x98a0 + 0x13 - len(version) + n] = v
+            ba.tiles[0x98a0 + 0x13 - len(version) + n] = 0x00
         for n, v in enumerate(line_1_hex):
             be.tiles[0x9a01 + n] = v
             ba.tiles[0x9a01 + n] = 0x00
