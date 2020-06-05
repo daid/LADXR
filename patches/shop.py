@@ -37,7 +37,7 @@ checkInventory:
         cp [hl]
         ret z
         ld hl, $DB00 ; inventory
-        ld c, $0B
+        ld c, $0C
 loop:
         cp [hl]
         ret z

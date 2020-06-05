@@ -38,7 +38,6 @@ def setRomInfo(rom, seed, options):
         import hashlib
         seednr = int(hashlib.md5(seed.encode('ascii', 'replace')).hexdigest(), 16)
 
-
     for n in (3, 4):
         be = BackgroundEditor(rom, n)
         ba = BackgroundEditor(rom, n, attributes=True)
