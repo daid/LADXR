@@ -252,18 +252,45 @@ NAME = [
     "HARDHIT_BEETLE",
     "PHOTOGRAPHER",
 ]
+
 assert len(NAME) == COUNT
+
+
+class Entity:
+    def __init__(self, index):
+        self.index = index
+        self.group = None
+        self.physics_flags = None
+        self.bowwow_eat_flag = None
+
+
+class Group:
+    def __init__(self, index):
+        self.index = index
+        self.health = None
+        self.link_damage = None
+
 
 class EntityData:
     def __init__(self, rom):
         groups = rom.banks[0x03][0x01F6:0x01F6+COUNT]
         group_count = max(groups) + 1
-        group_health = rom.banks[0x03][0x07BC:0x07BC+group_count]
         group_damage_type = rom.banks[0x03][0x03EC:0x03EC+group_count*16]
         damage_per_damage_type = rom.banks[0x03][0x073C:0x073C+8*16]
-        physics_flags = rom.banks[0x03][0x0000:0x0000+COUNT]
-        damage_to_link = rom.banks[0x03][0x07F1:0x07F1+group_count]
-        bowwow_eatable = rom.banks[0x14][0x1218:0x1218 + COUNT]
+
+        self.entities = []
+        self.groups = []
+        for n in range(group_count):
+            g = Group(n)
+            g.health = rom.banks[0x03][0x07BC+n]
+            g.link_damage = rom.banks[0x03][0x07F1+n]
+            self.groups.append(g)
+        for n in range(COUNT):
+            e = Entity(n)
+            e.group = self.groups[groups[n]]
+            e.physics_flags = rom.banks[0x03][0x0000 + n]
+            e.bowwow_eat_flag = rom.banks[0x14][0x1218+n]
+            self.entities.append(e)
 
         #print(sum(bowwow_eatable))
         #for n in range(COUNT):
@@ -284,4 +311,6 @@ if __name__ == "__main__":
     from rom import ROM
     import sys
     rom = ROM(sys.argv[1])
-    EntityData(rom)
+    ed = EntityData(rom)
+    for e in ed.entities:
+        print(NAME[e.index], e.bowwow_eat_flag)

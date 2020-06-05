@@ -34,6 +34,16 @@ def addBank3E(rom):
         jp $4000
     """), fill_nop=True)
 
+    # Special trampoline to jump to the damage-entity code, we use this from bowwow to damage instead of eat.
+    rom.patch(0x00, 0x0018, "000000000000000000000000000000", ASM("""
+        ld   a, $03
+        ld   [$2100], a
+        call $71C0
+        ld   a, [$DBAF]
+        ld   [$2100], a
+        ret
+    """))
+
     my_path = os.path.dirname(__file__)
     rom.patch(0x3E, 0x0000, 0x3000, ASM("""
         call MainJumpTable
@@ -50,6 +60,7 @@ MainJumpTable:
         dw   RenderHeartPiece   ; 5
         dw   TakeHeart          ; 6
         dw   CheckIfLoadBowWow  ; 7
+        dw   BowwowEat          ; 8
 
 MainLoop:
         ; First, do the thing we injected our code in.

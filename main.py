@@ -104,7 +104,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
         if args.dump or args.test:
-            if rom.banks[0][7] != 0x00:
+            if rom.banks[0][7] == 0x01:
                 print("Cannot read spoiler log for race rom")
                 sys.exit(1)
             my_logic = logic.Logic(args, None)
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
         patches.seashell.fixSeashell(rom)
-        patches.bowwow.neverGetBowwow(rom)
+        patches.bowwow.fixBowwow(rom)
         patches.desert.desertAccess(rom)
         # patches.reduceRNG.slowdownThreeOfAKind(rom)
         patches.aesthetics.noSwordMusic(rom)
@@ -252,9 +252,9 @@ if __name__ == "__main__":
             filename = args.output_filename
             if generation_number > 0:
                 filename = "%s.%d%s" % (os.path.splitext(filename)[0], generation_number, os.path.splitext(filename)[1])
-            rom.save(filename, name=seed)
+            rom.save(filename, name="LADXR")
         else:
-            rom.save("LADXR_%s.gbc" % (seed), name=seed)
+            rom.save("LADXR_%s.gbc" % (seed), name="LADXR")
 
     if args.count > 1:
         total_time = time.monotonic() - start_time

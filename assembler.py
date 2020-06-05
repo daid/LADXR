@@ -432,7 +432,7 @@ class Assembler:
             link_type, label = target
             if link_type == Assembler.LINK_REL8:
                 byte = self.__label[label] - offset - 1
-                assert -128 <= byte <= 127
+                assert -128 <= byte <= 127, label
                 self.__result[offset] = byte & 0xFF
             elif link_type == Assembler.LINK_ABS16:
                 self.__result[offset] = (self.__label[label] + self.__base_address) & 0xFF
