@@ -116,6 +116,7 @@ def fixBowwow(rom, everywhere=False):
     rom.patch(0x05, 0x0387, ASM("ld a, $03\nldh [$F2], a"), "", fill_nop=True)  # remove the default chomp sfx
 
     # Various enemies
+    rom.banks[0x14][0x1218 + 0xC5] = 0x01  # Urchin
     rom.banks[0x14][0x1218 + 0x93] = 0x01  # MadBomber
     rom.banks[0x14][0x1218 + 0x51] = 0x01  # Swinging ball&chain golden leaf enemy
     rom.banks[0x14][0x1218 + 0xF2] = 0x01  # Color dungeon flying hopper

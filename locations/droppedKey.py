@@ -16,7 +16,7 @@ class DroppedKey(ItemInfo):
 
     def configure(self, options):
         if options.keysanity:
-            self.OPTIONS = DroppedKey.OPTIONS
+            self.OPTIONS = DroppedKey.OPTIONS.copy()
             for n in range(10):
                 self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
         elif self._location.dungeon is not None:

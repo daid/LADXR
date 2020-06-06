@@ -20,7 +20,7 @@ class Chest(ItemInfo):
 
     def configure(self, options):
         if options.keysanity:
-            self.OPTIONS = Chest.OPTIONS
+            self.OPTIONS = Chest.OPTIONS.copy()
             for n in range(10):
                 self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
 
