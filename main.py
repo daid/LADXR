@@ -208,6 +208,7 @@ if __name__ == "__main__":
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
                 ii.patch(rom, ii.item)
+            # my_logic.dumpFlatRequirements()
             e = explorer.Explorer()
             e.visit(my_logic.start)
             e.dump(my_logic)

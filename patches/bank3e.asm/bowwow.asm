@@ -54,6 +54,8 @@ BowwowEat:
     jp   z, BowwowEatHotHead
     cp   $F9 ; Hardhit beetle
     jr   z, BowwowHurtEnemy
+    cp   $E6 ; Nightmare (all forms)
+    jp   z, BowwowEatNightmare
 
     ; Check for special handling for minibosses
     cp   $87 ; Lanmola
@@ -218,3 +220,73 @@ BowwowEatGrimCreeper:
     and  a
     ret  z
     jp   BowwowHurtEnemy
+
+BowwowEatNightmare:
+    ; Prepare loading state from hl
+    ld   hl, $C290
+    add  hl, bc
+
+    ld   a, [$D219] ; which form has the nightmare
+    cp   $01
+    jr   z, .slimeForm
+    cp   $02
+    jr   z, .agahnimForm
+    cp   $03 # moldormForm
+    jr   z, BowwowHurtEnemy
+    ; 0 is the intro form
+    ret
+
+.slimeForm:
+    ld   a, [hl]
+    cp   $02
+    jr   z, .canHurtSlime
+    cp   $03
+    ret  nz
+
+.canHurtSlime:
+    ; We need quite some custom handling, normally the nightmare checks very directly if you use powder.
+    ; No idea why this insta kills the slime form...
+    ; Change state to hurt state
+    ld   [hl], $07
+    ; Set flash count
+    ld   hl, $C420
+    add  hl, bc
+    ld   [hl], $14
+    ; play proper sfx
+    ld   a, $07
+    ldh  [$F3], a
+    ld   a, $37
+    ldh  [$F2], a
+    ; No idea why this is done, but it happens when you use powder on the slime
+    ld   a, $03
+    ld   [$D220], a
+    ret
+
+.agahnimForm:
+    ld   a, [hl]
+    ; only damage in states 2 to 4
+    cp   $02
+    ret  c
+    cp   $04
+    ret  nc
+
+    ; Decrease health
+    ld   a, [$D220]
+    inc  a
+    ld   [$D220], a
+    ; If dead, do stuff
+    cp   $04
+    jr   c, .agahnimNotDeadYet
+    ld   [hl], $07
+    ld   hl, $C2E0
+    add  hl, bc
+    ld   [hl], $C0
+    ld   a, $36
+    ldh  [$F2], a
+.agahnimNotDeadYet:
+    ld   hl, $C420
+    add  hl, bc
+    ld   [hl], $14
+    ld   a, $07
+    ldh  [$F3], a
+    ret
