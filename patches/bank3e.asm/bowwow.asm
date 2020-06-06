@@ -231,8 +231,8 @@ BowwowEatNightmare:
     jr   z, .slimeForm
     cp   $02
     jr   z, .agahnimForm
-    cp   $03 # moldormForm
-    jr   z, BowwowHurtEnemy
+    cp   $03 ; moldormForm
+    jp   z, BowwowHurtEnemy
     ; 0 is the intro form
     ret
 
