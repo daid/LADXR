@@ -29,6 +29,21 @@ INVENTORY_ICON = {
     SHOVEL: "9617",
     MAGIC_POWDER: "8E14",
     BOOMERANG: "241C",
+
+    FLIPPERS: "9415",
+    SLIME_KEY: "4E1C",
+    TAIL_KEY: "301C",
+    ANGLER_KEY: "321C",
+    FACE_KEY: "341C",
+    BIRD_KEY: "361C",
+    GOLD_LEAF: "3A1C",
+
+    RUPEES_50: "A615",
+    RUPEES_20: "3819",
+    RUPEES_100: "3818",
+    RUPEES_200: "381A",
+    RUPEES_500: "381A",
+    SEASHELL: "9E14",
 }
 INVENTORY_NAME = {
     SWORD: b"Sword",
@@ -44,6 +59,21 @@ INVENTORY_NAME = {
     SHOVEL: b"Shovel",
     MAGIC_POWDER: b"Magic Powder",
     BOOMERANG: b"Boomerang",
+
+    FLIPPERS: b"Flippers",
+    SLIME_KEY: b"Slime key",
+    TAIL_KEY: b"Tail key",
+    ANGLER_KEY: b"Angler key",
+    FACE_KEY: b"Face key",
+    BIRD_KEY: b"Bird key",
+    GOLD_LEAF: b"Golden leaf",
+
+    RUPEES_50: b"50 Rupees",
+    RUPEES_20: b"20 Rupees",
+    RUPEES_100: b"100 Rupees",
+    RUPEES_200: b"200 Rupees",
+    RUPEES_500: b"500 Rupees",
+    SEASHELL: b"Secret Seashell",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
