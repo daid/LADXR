@@ -13,7 +13,7 @@ class Dungeon4:
         Location(4).add(DungeonChest(0x171)).add(DungeonChest(0x165)).connect(entrance, AND(FEATHER, PEGASUS_BOOTS, BOMB))  # 2 key chests on the right.
 
         double_locked_room = Location(4).connect(right_of_entrance, KEY4)
-        after_double_lock = Location(4).connect(double_locked_room, OR(FEATHER, FLIPPERS))
+        after_double_lock = Location(4).connect(double_locked_room, AND(KEY4, OR(FEATHER, FLIPPERS)))
         Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
         before_miniboss = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS, KEY4))
         Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get

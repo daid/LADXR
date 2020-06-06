@@ -80,6 +80,7 @@ def fixBowwow(rom, everywhere=False):
         rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)  # dungeon
         rom.patch(0x01, 0x1FBC, ASM("ret nz"), "", fill_nop=True)  # sidescroller
     else:
+        # Patch the bowwow create code to call our custom check of we are in swamp function.
         rom.patch(0x01, 0x211F, ASM("ldh a, [$F6]\ncp $A7\nret z\nld a, [$DB56]\ncp $01\njr nz, $36"), ASM("""
             ld a, $07
             rst 8
@@ -144,6 +145,7 @@ def fixBowwow(rom, everywhere=False):
     rom.banks[0x14][0x1218 + 0x9C] = 0x01  # Star
     rom.banks[0x14][0x1218 + 0xA1] = 0x01  # Snake
     rom.banks[0x14][0x1218 + 0xBD] = 0x01  # Vire
+    rom.banks[0x14][0x1218 + 0xE4] = 0x01  # Moblin boss
 
     # Bosses
     rom.banks[0x14][0x1218 + 0x59] = 0x01  # Moldorm
@@ -170,3 +172,25 @@ def fixBowwow(rom, everywhere=False):
     rom.banks[0x14][0x1218 + 0xBE] = 0x01  # Blaino
     rom.banks[0x14][0x1218 + 0xF8] = 0x01  # Giant buzz blob
     rom.banks[0x14][0x1218 + 0xF4] = 0x01  # Avalaunch
+
+    # NPCs
+    rom.banks[0x14][0x1218 + 0x6F] = 0x01  # Dog
+    rom.banks[0x14][0x1218 + 0x6E] = 0x01  # Butterfly
+    rom.banks[0x14][0x1218 + 0x6C] = 0x01  # Cucco
+    rom.banks[0x14][0x1218 + 0x70] = 0x01  # Kid
+    rom.banks[0x14][0x1218 + 0x71] = 0x01  # Kid
+    rom.banks[0x14][0x1218 + 0x72] = 0x01  # Kid
+    rom.banks[0x14][0x1218 + 0x73] = 0x01  # Kid
+    rom.banks[0x14][0x1218 + 0xD0] = 0x01  # Animal
+    rom.banks[0x14][0x1218 + 0xD1] = 0x01  # Animal
+    rom.banks[0x14][0x1218 + 0xD2] = 0x01  # Animal
+    rom.banks[0x14][0x1218 + 0xD3] = 0x01  # Animal
+    rom.banks[0x14][0x1218 + 0xFA] = 0x01  # Photographer
+
+
+def swordlessBowwowMapPatches(rom):
+    # Remove all the cystal things that can only be destroyed with a sword.
+    for n in range(0x100, 0x2FF):
+        re = RoomEditor(rom, n)
+        re.objects = list(filter(lambda obj: obj.type_id != 0xDD, re.objects))
+        re.store(rom)
