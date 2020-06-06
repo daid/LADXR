@@ -222,6 +222,13 @@ BowwowEatGrimCreeper:
     jp   BowwowHurtEnemy
 
 BowwowEatNightmare:
+    ; Check if this is the staircase.
+    ld   hl, $C390
+    add  hl, bc
+    ld   a, [hl]
+    cp   $02
+    ret  z
+
     ; Prepare loading state from hl
     ld   hl, $C290
     add  hl, bc
@@ -232,6 +239,10 @@ BowwowEatNightmare:
     cp   $02
     jr   z, .agahnimForm
     cp   $03 ; moldormForm
+    jp   z, BowwowHurtEnemy
+    cp   $04 ; ganon and lanmola
+    jp   z, BowwowHurtEnemy
+    cp   $05 ; dethl
     jp   z, BowwowHurtEnemy
     ; 0 is the intro form
     ret
