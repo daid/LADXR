@@ -16,17 +16,20 @@ class ShopItem(ItemInfo):
             self.OPTIONS = [SWORD, POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS,
                             OCARINA, FEATHER, SHOVEL, BOOMERANG,
                             FLIPPERS, SLIME_KEY, TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF,
-                            RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL]
+                            RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL,
+                            HEART_PIECE, BOWWOW]
+            if options.keysanity:
+                for n in range(10):
+                    self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n),
+                                     "NIGHTMARE_KEY%d" % (n)]
 
     def patch(self, rom, option, *, cross_world=False):
         assert not cross_world
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "08", "%02X" % (CHEST_ITEMS[option]))
-            rom.patch(0x04, 0x3B5A, "9617", INVENTORY_ICON[option])
             rom.texts[0x030] = formatText(b"Deluxe %s 200 Rupees!" % (INVENTORY_NAME[option]), ask=b"Buy  No Way")
         elif self.__index == 1:
             rom.patch(0x04, 0x37C6, "02", "%02X" % (CHEST_ITEMS[option]))
-            rom.patch(0x04, 0x3B62, "8816", INVENTORY_ICON[option])
             rom.texts[0x02C] = formatText(b"%s Only 980 Rupees!" % (INVENTORY_NAME[option]), ask=b"Buy  No Way")
 
     def read(self, rom):

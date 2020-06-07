@@ -110,3 +110,40 @@ hasBow:
         ld   [hl], a
         ret
     """), fill_nop=True)
+
+    # Patch shop item graphics rendering to use some new code at the end of the bank.
+    rom.patch(0x04, 0x3B91, 0x3BAC, ASM("""
+        call $7FD0
+    """), fill_nop=True)
+    rom.patch(0x04, 0x3BD3, 0x3BE3, ASM("""
+        jp   $7FD0
+    """), fill_nop=True)
+    rom.patch(0x04, 0x3FD0, "00" * 42, ASM("""
+        ; Check if first key item
+        and  a
+        jr   nz, notShovel
+        ld   a, [$77C5]
+        ldh  [$F1], a
+        ld   a, $01
+        rst  8
+        ret
+notShovel:
+        cp   $04
+        jr   nz, notBow
+        ld   a, [$77C6]
+        ldh  [$F1], a
+        ld   a, $01
+        rst  8
+        ret
+notBow:
+        cp   $05
+        jr   nz, notArrows
+        ; Load arrow graphics and render then as a dual sprite
+        ld   de, $7B58
+        call $3BC0
+        ret
+notArrows:
+        ; Load the normal graphics
+        ld   de, $7B5A
+        jp   $3C77
+    """), fill_nop=True)
