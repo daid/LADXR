@@ -1,10 +1,11 @@
-from logic import AND, OR, COUNT
+from logic import AND, OR, COUNT, FOUND
 from logic.requirements import isConsumable
 
 
 class Explorer:
     def __init__(self, *, verbose=False):
         self.__inventory = {}
+        self.__inventory_found = {}
         self.__visited = set()
         self.__todo_simple = []
         self.__todo_gated = []
@@ -76,6 +77,7 @@ class Explorer:
             self.__inventory["W1_RUPEES"] = self.__inventory.get("W1_RUPEES", 0) + int(item[10:])
         else:
             self.__inventory[item] = self.__inventory.get(item, 0) + 1
+            self.__inventory_found[item] = self.__inventory_found.get(item, 0) + 1
 
     def consumeItem(self, item):
         if item not in self.__inventory:
@@ -107,6 +109,8 @@ class Explorer:
                 return True
         elif isinstance(req, COUNT):
             return self.__inventory.get(req.item, 0) >= req.amount
+        elif isinstance(req, FOUND):
+            return self.__inventory_found.get(req.item, 0) >= req.amount
         else:
             raise RuntimeError("Unknown connection requirement: %s" % (req, ))
         return False

@@ -32,6 +32,21 @@ class COUNT:
         return "<%dx%s>" % (self.amount, self.item)
 
 
+class FOUND:
+    def __init__(self, item, amount):
+        self.item = item
+        self.amount = amount
+
+    def __eq__(self, other):
+        return other.item == self.item and other.amount == self.amount
+
+    def __hash__(self):
+        return hash((self.item, self.amount))
+
+    def __repr__(self):
+        return "<%dx%s>" % (self.amount, self.item)
+
+
 def hasConsumableRequirement(requirements):
     if isinstance(requirements, list) or isinstance(requirements, tuple):
         return any(map(hasConsumableRequirement, requirements))

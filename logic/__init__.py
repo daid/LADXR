@@ -8,7 +8,7 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
-from .requirements import AND, OR, COUNT
+from .requirements import AND, OR, COUNT, FOUND
 from .location import Location
 from locations.items import *
 

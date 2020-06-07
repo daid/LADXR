@@ -15,7 +15,7 @@ class Dungeon2:
         dungeon2_r3 = Location(2).add(DungeonChest(0x138)).connect(dungeon2_r2, attack)  # first chest with key
         dungeon2_r4 = Location(2).add(DungeonChest(0x139)).connect(dungeon2_r3, FEATHER) # button spawn chest
         Location(2).add(DroppedKey(0x134)).connect(dungeon2_r3, OR(rear_attack, AND(FEATHER, rear_attack_range))) # shyguy drop key
-        dungeon2_r5 = Location(2).add(DungeonChest(0x126)).add(DungeonChest(0x121)).connect(dungeon2_r4, AND(KEY2, attack_hookshot)) # post hinox
+        dungeon2_r5 = Location(2).add(DungeonChest(0x126)).add(DungeonChest(0x121)).connect(dungeon2_r4, AND(KEY2, FOUND(KEY2, 3), attack_hookshot)) # post hinox
         Location(2).add(DungeonChest(0x120)).connect(dungeon2_r5, AND(KEY2, OR(fire, BOW)))  # bracelet chest
         dungeon2_r6 = Location(2).add(DungeonChest(0x122)).add(DungeonChest(0x127)).connect(dungeon2_r5, POWER_BRACELET)
         dungeon2_pre_boss = Location(2).connect(dungeon2_r6, KEY2)

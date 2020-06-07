@@ -24,7 +24,7 @@ class Dungeon3:
         area_down = Location(3).connect(area3, KEY3)
         Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
 
-        area_right = Location(3).connect(area3, KEY3)  # We enter the top part of the map here.
+        area_right = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
         Location(3).add(DroppedKey(0x14D)).connect(area_right, attack)  # key after the stairs.
 
         Location(3).add(DungeonChest(0x147)).connect(area_right, AND(BOMB, FEATHER, PEGASUS_BOOTS))  # nightmare key chest
