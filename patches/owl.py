@@ -1,4 +1,5 @@
 from roomEditor import RoomEditor
+from assembler import ASM
 
 
 def removeOwlEvents(rom):
@@ -17,3 +18,11 @@ def removeOwlEvents(rom):
     # 4 more available.
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'
+
+
+def upgradeOwlStatues(rom):
+    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$F7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
+    for room in range(0x2FF):
+        re = RoomEditor(rom, room)
+        if re.hasEntity(0x42):
+            print(hex(room))

@@ -145,6 +145,7 @@ if __name__ == "__main__":
         patches.shop.fixShop(rom)
         patches.trendy.fixTrendy(rom)
         patches.droppedKey.fixDroppedKey(rom)
+        # patches.owl.upgradeOwlStatues(rom)
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
         patches.seashell.fixSeashell(rom)

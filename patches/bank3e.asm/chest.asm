@@ -42,7 +42,7 @@ GiveItemFromChestNoLink:
         dw ChestWithItem     ; CHEST_FEATHER
         dw ChestWithItem     ; CHEST_SHOVEL
         dw ChestWithItem     ; CHEST_MAGIC_POWDER_BAG
-        dw ChestWithItem     ; CHEST_BOMB
+        dw ChestBomb         ; CHEST_BOMB
         dw ChestSword        ; CHEST_SWORD
         dw Flippers          ; CHEST_FLIPPERS
         dw NoItem            ; CHEST_MAGNIFYING_LENS
@@ -184,6 +184,18 @@ ChestIncreaseItemLevel:
         jr   z, DoNotIncreaseItemLevel
         inc  [hl]
 DoNotIncreaseItemLevel:
+        jp   ChestWithItem
+
+ChestBomb:
+        ld   a, [$DB4D] ; bomb count
+        add  a, $0A
+        daa
+        ld   hl, $DB77 ; max bombs
+        cp   [hl]
+        jr   c, .bombsNotFull
+        ld   a, [hl]
+.bombsNotFull:
+        ld   [$DB4D], a
         jp   ChestWithItem
 
 ChestBow:

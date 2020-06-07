@@ -61,6 +61,7 @@ MainJumpTable:
         dw   TakeHeart          ; 6
         dw   CheckIfLoadBowWow  ; 7
         dw   BowwowEat          ; 8
+        dw   HandleOwlStatue    ; 9
 
 MainLoop:
         ; First, do the thing we injected our code in.
@@ -79,4 +80,7 @@ MainLoop:
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
+        + open(os.path.join(my_path, "bank3e.asm/owl.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/inverseHP.asm"), "rt").read(), 0x4000), fill_nop=True)
+    # 3E:3300-3620: Multiworld flags per room
+    # 3E:3800-3A20: DroppedKey item types
