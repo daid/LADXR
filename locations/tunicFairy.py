@@ -1,12 +1,25 @@
 from .itemInfo import ItemInfo
-from .items import *
+from .constants import *
 
 
 class TunicFairy(ItemInfo):
-    OPTIONS = ["TUNIC"]
+    OPTIONS = [POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA,
+        FEATHER, SHOVEL, MAGIC_POWDER, BOMB, SWORD, FLIPPERS, MAGNIFYING_LENS, MEDICINE,
+        TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY,
+        RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
+        SEASHELL, MESSAGE, GEL, BOOMERANG, HEART_PIECE, BOWWOW, ARROWS_10, SINGLE_ARROW,
+        MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC]
+
+    def __init__(self, index):
+        super().__init__()
+        self.index = index
 
     def patch(self, rom, option, *, cross_world=False):
-        pass
+        rom.banks[0x36][0x11BF + self.index] = CHEST_ITEMS[option]
 
     def read(self, rom):
-        return "TUNIC"
+        value = rom.banks[0x36][0x11BF + self.index]
+        for k, v in CHEST_ITEMS.items():
+            if v == value:
+                return k
+        raise ValueError("Could not find tunic fairy contents in ROM (0x%02x)" % (value))

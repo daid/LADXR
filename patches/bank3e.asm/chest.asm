@@ -167,6 +167,8 @@ GiveItemFromChestNoLink:
         dw UpgradeMaxPowder
         dw UpgradeMaxBombs
         dw UpgradeMaxArrows
+        dw GiveRedTunic
+        dw GiveBlueTunic
 
 NoItem:
         ret
@@ -469,6 +471,23 @@ UpgradeMaxArrows:
         ld   [$DB45], a
         ret
 
+GiveRedTunic:
+        ld  a, $01
+        ld  [$DC0F], a
+        ; We use DB6D to store which tunics we have available.
+        ld  a, [$DB6D]
+        or  $01
+        ld  [$DB6D], a
+        ret
+
+GiveBlueTunic:
+        ld  a, $02
+        ld  [$DC0F], a
+        ; We use DB6D to store which tunics we have available.
+        ld  a, [$DB6D]
+        or  $02
+        ld  [$DB6D], a
+        ret
 
 ItemMessageForLink:
         ld   a, $C9
@@ -581,6 +600,8 @@ LargeItemSpriteTable:
         db $0E, $1C, $22, $0C ; powder upgrade
         db $00, $0D, $22, $0C ; bomb upgrade
         db $08, $1C, $22, $0C ; arrow upgrade
+        db $48, $0A, $48, $2A ; red tunic
+        db $48, $0B, $48, $2B ; blue tunic
 
 ItemMessageTable:
         db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -593,7 +614,7 @@ ItemMessageTable:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         ; $80
-        db $4F, $C8, $CA, $CB, $E2, $E3, $E4
+        db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

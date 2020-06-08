@@ -133,6 +133,9 @@ INVENTORY_NAME = {
     MAX_POWDER_UPGRADE: b"Powder upgrade",
     MAX_BOMBS_UPGRADE: b"Bombs upgrade",
     MAX_ARROWS_UPGRADE: b"Arrows upgrade",
+
+    RED_TUNIC: b"Red Tunic",
+    BLUE_TUNIC: b"Blue Tunic",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
@@ -210,4 +213,7 @@ CHEST_ITEMS = {
     MAX_POWDER_UPGRADE: 0x84,
     MAX_BOMBS_UPGRADE: 0x85,
     MAX_ARROWS_UPGRADE: 0x86,
+
+    RED_TUNIC: 0x87,
+    BLUE_TUNIC: 0x88,
 }

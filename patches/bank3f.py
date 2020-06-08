@@ -218,6 +218,8 @@ LinkInterruptHandler:
 
     # Add the slime key and mushroom which are not in the above sets
     rom.banks[0x3F][0x34C0:0x3500] = rom.banks[0x2C][0x28C0:0x2900]
+    # Add tunic sprites as well.
+    rom.banks[0x3F][0x3480:0x34A0] = rom.banks[0x35][0x0F00:0x0F20]
 
     # Add the bowwow sprites
     rom.banks[0x3F][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]

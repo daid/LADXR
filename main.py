@@ -13,6 +13,7 @@ import patches.chest
 import patches.droppedKey
 import patches.goldenLeaf
 import patches.madBatter
+import patches.tunicFairy
 import patches.heartPiece
 import patches.seashell
 import patches.softlock
@@ -152,6 +153,7 @@ if __name__ == "__main__":
         patches.trendy.fixTrendy(rom)
         patches.droppedKey.fixDroppedKey(rom)
         patches.madBatter.upgradeMadBatter(rom)
+        patches.tunicFairy.upgradeTunicFairy(rom)
         if args.owlstatues in ("dungeon", "both"):
             patches.owl.upgradeDungeonOwlStatues(rom)
         if args.owlstatues in ("overworld", "both"):

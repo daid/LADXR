@@ -16,7 +16,7 @@ def removeOwlEvents(rom):
     # 1 used by bowwow in chest
     # 1 used by item for other player message
     # 2 used by arrow chest messages
-    # 2 more available.
+    # 2 used by tunics
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'
 

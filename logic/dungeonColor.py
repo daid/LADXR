@@ -22,6 +22,6 @@ class DungeonColor:
         Location(9).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK9)
         room5 = Location(9).connect(room4, KEY9)  # before the boss
         boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, attack_no_bomb))
-        boss.add(TunicFairy())
+        boss.add(TunicFairy(0), TunicFairy(1))
 
         self.entrance = entrance
