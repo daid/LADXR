@@ -97,13 +97,19 @@ class Randomizer:
                 rupee_item_count.append(v)
         rupee_chests = sum(v for k, v in self.item_pool.items() if k.startswith("RUPEES_"))
         for n in range(rupee_chests // 5):
-            new_item = self.rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))[0]
+            new_item = self._rndChoices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))
             while True:
-                remove_item = self.rnd.choices(rupee_item, rupee_item_count)[0]
+                remove_item = self._rndChoices(rupee_item, rupee_item_count)
                 if remove_item in self.item_pool:
                     break
             self.addItem(new_item)
             self.removeItem(remove_item)
+
+    def _rndChoices(self, population, weights):
+        import bisect
+        import itertools
+        cum_weights = list(itertools.accumulate(weights))
+        return population[bisect.bisect(cum_weights, self.rnd.random() * cum_weights[-1], 0, len(cum_weights) - 1)]
 
     def placeItem(self):
         # Find a random spot and item to place

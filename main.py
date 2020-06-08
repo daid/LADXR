@@ -191,7 +191,7 @@ if __name__ == "__main__":
         elif args.hpmode == '1':
             patches.health.setStartHealth(rom, 1)
 
-        if args.goal != "random":
+        if args.goal != "random" and args.goal is not None:
             patches.goal.setRequiredInstrumentCount(rom, int(args.goal))
 
         patches.inventory.selectToSwitchSongs(rom)
