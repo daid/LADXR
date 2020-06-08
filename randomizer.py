@@ -4,6 +4,7 @@ import os
 import logic
 import copy
 import patches.dungeonEntrances
+import patches.goal
 from locations.items import *
 
 
@@ -41,6 +42,9 @@ class Randomizer:
                 bail_counter = 0
 
         # Apply patches to rom
+        if options.goal == "random":
+            patches.goal.setRequiredInstrumentCount(rom, self.rnd.randint(-1, 8))
+
         if self.__logic.entranceMapping:
             patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
         if options.multiworld:
