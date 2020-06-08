@@ -18,7 +18,7 @@ class Dungeon6:
         left_side = Location(6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOOMERANG)))
         Location(6).add(DroppedKey(0x1B4)).connect(left_side, OR(BOMB, BOW, MAGIC_ROD)) # 2 wizrobe drop key
         top_left = Location(6).add(DungeonChest(0x1B0)).connect(left_side, COUNT(POWER_BRACELET, 2)) # top left chest horseheads
-        top_left.add(Chest(0x06C))  # seashell chest in raft game
+        Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
 
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)

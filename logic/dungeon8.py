@@ -38,7 +38,7 @@ class Dungeon8:
         up_left = Location(8).connect(upper_center, KEY8) #TODO alternate path with fire rod through 2d section to nightmare key
         up_left.add(DungeonChest(0x240)) # beamos blocked chest
         Location(8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
-        up_left.add(HeartPiece(0x000))  # Outside the dungeon on the platform
+        Location().add(HeartPiece(0x000)).connect(up_left, FEATHER)  # Outside the dungeon on the platform (feather is a requirement as it needs at least 1 requirement, and feather is always required to get here)
         Location(8).add(DroppedKey(0x241)).connect(up_left, BOW) # lava statue
         Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
         Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
