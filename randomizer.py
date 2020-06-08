@@ -70,14 +70,16 @@ class Randomizer:
         # Collect the item pool from the rom to see which items we can randomize.
         for spot in self.__logic.iteminfo_list:
             item = spot.read(rom)
+            self.item_pool[item] = self.item_pool.get(item, 0) + 1
+
+        for spot in self.__logic.iteminfo_list:
             # If a spot has no other placement options, just ignore this spot.
-            #  We still marked to spots so we can later patch them to allow more options.
             if len(spot.getOptions()) > 1:
-                self.item_pool[item] = self.item_pool.get(item, 0) + 1
                 self.addSpot(spot)
                 spot.item = None
             else:
-                spot.item = item
+                self.removeItem(spot.getOptions()[0])
+                spot.item = spot.getOptions()[0]
 
     def placeItem(self):
         # Find a random spot and item to place

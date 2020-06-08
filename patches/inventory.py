@@ -1,6 +1,15 @@
 from assembler import ASM
 from backgroundEditor import BackgroundEditor
 
+
+def selectToSwitchSongs(rom):
+    # Do not ignore left/right keys when ocarina is selected
+    rom.patch(0x20, 0x1F18, ASM("and a"), ASM("xor a"))
+    # Change the keys which switch the ocarina song to select and no key.
+    rom.patch(0x20, 0x21A9, ASM("and $01"), ASM("and $40"))
+    rom.patch(0x20, 0x21C7, ASM("and $02"), ASM("and $00"))
+
+
 def advancedInventorySubscreen(rom):
     rom.patch(0x01, 0x2BCF,
               "0F51B1EFECAA4A0C",

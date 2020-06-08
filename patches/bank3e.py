@@ -87,3 +87,6 @@ MainLoop:
     # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
     # 3E:3800-3B16: DroppedKey item types
     # 3E:3B16-3E2C: Owl statue items
+
+    # Put 20 rupees in all owls by default.
+    rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)

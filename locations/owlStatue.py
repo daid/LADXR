@@ -14,6 +14,12 @@ class OwlStatue(ItemInfo):
         self.room = room
 
     def configure(self, options):
+        if options.owlstatues == "both":
+            return
+        if options.owlstatues == "dungeon" and self.room >= 0x100:
+            return
+        if options.owlstatues == "overworld" and self.room < 0x100:
+            return
         self.OPTIONS = [RUPEES_20]
 
     def patch(self, rom, option, *, cross_world=False):

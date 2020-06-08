@@ -37,10 +37,12 @@ class World:
         Location().add(Chest(0x2B3)).connect(forest, AND(POWER_BRACELET, HOOKSHOT))  # hookshot cave
 
         writes_hut = Location().add(Chest(0x2AE)).connect(swamp, FEATHER)  # includes the cave behind the hut
+        writes_hut.add(OwlStatue(0x11))
         Location().add(Chest(0x2AF)).connect(writes_hut, POWER_BRACELET)  # 2nd chest in the cave behind the hut.
 
         graveyard = Location().connect(forest, OR(FEATHER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         graveyard.connect(swamp, POWER_BRACELET)
+        graveyard.add(OwlStatue(0x035))
         Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER))  # grave cave
         Location().add(Seashell(0x074)).connect(graveyard, AND(POWER_BRACELET, SHOVEL))  # next to grave cave, digging spot
         Location().add(Chest(0x2E2)).connect(graveyard, SWORD)  # moblin cave, boss requires sword, contains Bowwow
@@ -60,10 +62,12 @@ class World:
         Location().add(Seashell(0x0B9)).connect(center_area, POWER_BRACELET)  # under the rock
         Location().add(Seashell(0x0E9)).connect(center_area, bush)  # same screen as mermaid statue
         Location().add(Seashell(0x0F8)).connect(center_area, AND(FLIPPERS, bush))  # tiny island
+        Location().add(OwlStatue(0x0A8)).connect(center_area, AND(BOMB, FEATHER))  # at the owl statue
         Location().add(Seashell(0x0A8)).connect(center_area, AND(BOMB, FEATHER, SHOVEL))  # at the owl statue
 
         # Richard
         richard_cave = Location().connect(center_area, COUNT(GOLD_LEAF, 5))
+        Location().add(OwlStatue(0x0C6)).connect(richard_cave, bush)
         Location().add(SlimeKey()).connect(richard_cave, AND(bush, SHOVEL))
         Location().add(Chest(0x2C8)).connect(richard_cave, OR(FEATHER, HOOKSHOT))
 
@@ -77,8 +81,11 @@ class World:
         Location().add(GoldLeaf(0x2C6)).connect(castle_inside, OR(BOOMERANG, AND(POWER_BRACELET, attack_hookshot)))  # in the castle, spinning spikeball enemy
 
         animal_town = Location().connect(center_area, OR(FLIPPERS, HOOKSHOT, AND(PEGASUS_BOOTS, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)))) # passage under river blocked by bush
+        animal_town.add(OwlStatue(0x0DA))
         Location().add(Seashell(0x0DA)).connect(animal_town, SHOVEL)  # owl statue at the water
-        desert = Location().add(AnglerKey()).connect(animal_town, bush)  # Note: We removed the walrus blocking the desert. TODO: angler key requirements?
+        desert = Location().connect(animal_town, bush)  # Note: We removed the walrus blocking the desert.
+        desert.add(OwlStatue(0x0CF))
+        Location().add(AnglerKey()).connect(desert, OR(BOW, SWORD, HOOKSHOT, MAGIC_ROD))
         Location().add(HeartPiece(0x2E6)).connect(desert, AND(BOMB, FEATHER, HOOKSHOT))  # cave in the upper right of animal town
         Location().add(HeartPiece(0x1E8)).connect(desert, BOMB)  # above the quicksand cave
         Location().add(Seashell(0x0FF)).connect(desert, POWER_BRACELET)
@@ -91,17 +98,20 @@ class World:
         Location().add(HeartPiece(0x1F2)).connect(below_mountains, FLIPPERS)  # cave next to level 4
 
         face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
+        face_shrine.add(OwlStatue(0x08F))
         Location().add(FaceKey()).connect(face_shrine, OR(BOW, MAGIC_ROD, SWORD))
 
         dungeon6_entrance = Location().connect(animal_town, AND(FLIPPERS, HOOKSHOT))
 
         # Raft game.
         raft_game = Location().add(Chest(0x05C), Chest(0x05D))
+        raft_game.add(OwlStatue(0x5D))
         raft_game.connect(below_mountains, OR(FLIPPERS, HOOKSHOT)) # flippers from d6 water area to one way cave. Flippers guarantee way back
         raft_game.connect(center_area, FLIPPERS)
 
 
         right_mountains_2 = Location().connect(right_mountains_1, FLIPPERS)
+        right_mountains_2.add(OwlStatue(0x1E))
         Location().add(Seashell(0x00C)).connect(right_mountains_2, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
         Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2))
         Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle and chest after it.

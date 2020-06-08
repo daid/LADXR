@@ -21,8 +21,32 @@ def removeOwlEvents(rom):
         rom.texts[idx] = b'\xff'
 
 
-def upgradeOwlStatues(rom):
+def upgradeDungeonOwlStatues(rom):
     # Call our custom handler after the check for the stone beak
     rom.patch(0x18, 0x1EA2, ASM("ldh a, [$F7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
-    # Put 20 rupees in all owls by default.
-    rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
+
+def upgradeOverworldOwlStatues(rom):
+    # Replace the code that handles signs/owl statues on the overworld
+    # This removes a "have marin with you" special case to make some room for our custom owl handling.
+    rom.patch(0x00, 0x201A, ASM("""
+        cp   $6F
+        jr   z, $2B
+        cp   $D4
+        jr   z, $27
+        ld   a, [$DB73]
+        and  a
+        jr   z, $08
+        ld   a, $78
+        call $237C
+        jp   $20CF
+    """), ASM("""
+        cp   $D4
+        jr   z, $2B
+        cp   $6F
+        jr   nz, skip
+
+        ld   a, $09
+        rst 8
+        jp   $20CF
+skip:
+    """), fill_nop=True)

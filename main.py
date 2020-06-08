@@ -64,6 +64,8 @@ if __name__ == "__main__":
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",
         help="Enables seashells mode, which randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)")
+    parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'],
+        help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
@@ -148,7 +150,10 @@ if __name__ == "__main__":
         patches.shop.fixShop(rom)
         patches.trendy.fixTrendy(rom)
         patches.droppedKey.fixDroppedKey(rom)
-        # patches.owl.upgradeOwlStatues(rom)
+        if args.owlstatues in ("dungeon", "both"):
+            patches.owl.upgradeDungeonOwlStatues(rom)
+        if args.owlstatues in ("overworld", "both"):
+            patches.owl.upgradeOverworldOwlStatues(rom)
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
         patches.seashell.fixSeashell(rom)
@@ -188,6 +193,7 @@ if __name__ == "__main__":
 
         patches.goal.setRequiredInstrumentCount(rom, args.goal)
 
+        patches.inventory.selectToSwitchSongs(rom)
         if args.quickswap == 'a':
             patches.core.quickswap(rom, 1)
         elif args.quickswap == 'b':
