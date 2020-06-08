@@ -193,6 +193,29 @@ LinkInterruptHandler:
     for n in range(0x3380, 0x33A0, 2):
         rom.banks[0x3F][n+1] ^= rom.banks[0x3F][n]
 
+    # Create capacity upgrade arrows
+    rom.banks[0x3F][0x3230:0x3240] = bytes([
+        0b00000000,
+        0b00000000,
+        0b00011000,
+        0b00011000,
+        0b00111100,
+        0b00100100,
+        0b01111110,
+        0b01000010,
+        0b11111111,
+        0b11100111,
+        0b00111100,
+        0b00100100,
+        0b00111100,
+        0b00111100,
+        0b00000000,
+        0b00000000,
+    ])
+    rom.banks[0x3F][0x3220:0x3230] = rom.banks[0x3F][0x3230:0x3240]
+    for n in range(0x3220, 0x3240, 2):
+        rom.banks[0x3F][n] |= rom.banks[0x3F][n + 1]
+
     # Add the slime key and mushroom which are not in the above sets
     rom.banks[0x3F][0x34C0:0x3500] = rom.banks[0x2C][0x28C0:0x2900]
 

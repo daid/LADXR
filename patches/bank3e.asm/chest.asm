@@ -164,6 +164,9 @@ GiveItemFromChestNoLink:
         dw GiveBowwow
         dw Give10Arrows
         dw Give1Arrow
+        dw UpgradeMaxPowder
+        dw UpgradeMaxBombs
+        dw UpgradeMaxArrows
 
 NoItem:
         ret
@@ -448,6 +451,25 @@ FinishGivingArrows:
         ld   [$DB45], a
         ret
 
+UpgradeMaxPowder:
+        ld   a, $40
+        ld   [$DB76], a
+        ld   [$DB4C], a
+        ret
+
+UpgradeMaxBombs:
+        ld   a, $60
+        ld   [$DB77], a
+        ld   [$DB4D], a
+        ret
+
+UpgradeMaxArrows:
+        ld   a, $60
+        ld   [$DB78], a
+        ld   [$DB45], a
+        ret
+
+
 ItemMessageForLink:
         ld   a, $C9
         jp  $2385 ; Opendialog in $000-$0FF range
@@ -556,8 +578,9 @@ LargeItemSpriteTable:
         db $54, $0A, $56, $0A ; bowwow
         db $2A, $41, $2A, $61 ; 10 arrows
         db $2A, $41, $2A, $61 ; single arrow
-        db $00, $0D, $22, $08 ; bomb upgrade
-        db $80, $0C, $22, $08 ; arrow upgrade
+        db $0E, $1C, $22, $0C ; powder upgrade
+        db $00, $0D, $22, $0C ; bomb upgrade
+        db $08, $1C, $22, $0C ; arrow upgrade
 
 ItemMessageTable:
         db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -570,7 +593,7 @@ ItemMessageTable:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         ; $80
-        db $4F, $C8, $CA, $CB
+        db $4F, $C8, $CA, $CB, $E2, $E3, $E4
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

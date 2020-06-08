@@ -129,6 +129,10 @@ INVENTORY_NAME = {
     BOWWOW: b"Bowwow",
     ARROWS_10: b"10 Arrows",
     SINGLE_ARROW: b"Single Arrow",
+
+    MAX_POWDER_UPGRADE: b"Powder upgrade",
+    MAX_BOMBS_UPGRADE: b"Bombs upgrade",
+    MAX_ARROWS_UPGRADE: b"Arrows upgrade",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
@@ -202,4 +206,8 @@ CHEST_ITEMS = {
     BOWWOW: 0x81,
     ARROWS_10: 0x82,
     SINGLE_ARROW: 0x83,
+
+    MAX_POWDER_UPGRADE: 0x84,
+    MAX_BOMBS_UPGRADE: 0x85,
+    MAX_ARROWS_UPGRADE: 0x86,
 }

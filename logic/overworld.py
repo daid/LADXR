@@ -29,6 +29,7 @@ class World:
         Location().add(HeartPiece(0x044)).connect(forest, OR(BOOMERANG, FEATHER, HOOKSHOT))  # next to the forest, surrounded by pits
         Location().add(Witch()).connect(forest, "TOADSTOOL")
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET) #chest at start forest with 2 zols
+        Location().add(MadBatter(0x1E1)).connect(forest, AND(POWER_BRACELET, MAGIC_POWDER))
         swamp = Location().connect(forest, OR(MAGIC_POWDER, FEATHER, POWER_BRACELET))
         Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
@@ -64,6 +65,7 @@ class World:
         Location().add(Seashell(0x0F8)).connect(center_area, AND(FLIPPERS, bush))  # tiny island
         Location().add(OwlStatue(0x0A8)).connect(center_area, AND(BOMB, FEATHER))  # at the owl statue
         Location().add(Seashell(0x0A8)).connect(center_area, AND(BOMB, FEATHER, SHOVEL))  # at the owl statue
+        Location().add(MadBatter(0x1E0)).connect(center_area, AND(FEATHER, OR(SWORD, MAGIC_ROD, BOOMERANG), FLIPPERS, MAGIC_POWDER))  # you can use powder instead of sword/magic-rod to clear the bushes, but it is a bit of an advanced action
 
         # Richard
         richard_cave = Location().connect(center_area, COUNT(GOLD_LEAF, 5))
@@ -119,6 +121,7 @@ class World:
 
         left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)))
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
+        Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
 
         self.start = start
