@@ -4,6 +4,7 @@ import os
 import logic
 import copy
 import patches.dungeonEntrances
+from locations.items import *
 
 
 class Error(Exception):
@@ -27,6 +28,7 @@ class Randomizer:
         self.spots = []
 
         self.readItemPool(rom)
+        self.modifyDefaultItemPool()
         assert self.logicStillValid(), "Sanity check failed"
 
         bail_counter = 0
@@ -80,6 +82,24 @@ class Randomizer:
             else:
                 self.removeItem(spot.getOptions()[0])
                 spot.item = spot.getOptions()[0]
+
+    def modifyDefaultItemPool(self):
+        # Remove rupees from the item pool and replace them with other items to create more variety
+        rupee_item = []
+        rupee_item_count = []
+        for k, v in self.item_pool.items():
+            if k.startswith("RUPEES_"):
+                rupee_item.append(k)
+                rupee_item_count.append(v)
+        rupee_chests = sum(v for k, v in self.item_pool.items() if k.startswith("RUPEES_"))
+        for n in range(rupee_chests // 5):
+            new_item = self.rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))[0]
+            while True:
+                remove_item = self.rnd.choices(rupee_item, rupee_item_count)[0]
+                if remove_item in self.item_pool:
+                    break
+            self.addItem(new_item)
+            self.removeItem(remove_item)
 
     def placeItem(self):
         # Find a random spot and item to place

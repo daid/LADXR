@@ -41,7 +41,7 @@ GiveItemFromChestNoLink:
         dw ChestWithItem     ; CHEST_OCARINA
         dw ChestWithItem     ; CHEST_FEATHER
         dw ChestWithItem     ; CHEST_SHOVEL
-        dw ChestWithItem     ; CHEST_MAGIC_POWDER_BAG
+        dw ChestMagicPowder  ; CHEST_MAGIC_POWDER_BAG
         dw ChestBomb         ; CHEST_BOMB
         dw ChestSword        ; CHEST_SWORD
         dw Flippers          ; CHEST_FLIPPERS
@@ -190,7 +190,7 @@ DoNotIncreaseItemLevel:
 
 ChestBomb:
         ld   a, [$DB4D] ; bomb count
-        add  a, $0A
+        add  a, $10
         daa
         ld   hl, $DB77 ; max bombs
         cp   [hl]
@@ -207,6 +207,25 @@ ChestBow:
         ld   a, $20
         ld   [$DB45], a
         jp   ChestWithItem
+
+ChestMagicPowder:
+        ; Reset the toadstool state
+        ld   a, $0B
+        ldh  [$A5], a
+        xor  a
+        ld   [$DB4B], a ; has toadstool
+
+        ld   a, [$DB4C] ; powder count
+        add  a, $10
+        daa
+        ld   hl, $DB76 ; max powder
+        cp   [hl]
+        jr   c, .magicPowderNotFull
+        ld   a, [hl]
+.magicPowderNotFull:
+        ld   [$DB4C], a
+        jp   ChestWithItem
+
 
 Flippers:
         ld   a, $01
@@ -460,7 +479,7 @@ ItemSpriteTable:
         db $90, $17        ; CHEST_OCARINA
         db $92, $15        ; CHEST_FEATHER
         db $96, $17        ; CHEST_SHOVEL
-        db $8E, $14        ; CHEST_MAGIC_POWDER_BAG
+        db $0E, $1C        ; CHEST_MAGIC_POWDER_BAG
         db $80, $15        ; CHEST_BOMB
         db $84, $15        ; CHEST_SWORD
         db $94, $15        ; CHEST_FLIPPERS
