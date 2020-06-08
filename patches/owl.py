@@ -15,14 +15,14 @@ def removeOwlEvents(rom):
     # 9 used by keysanity items
     # 1 used by bowwow in chest
     # 1 used by item for other player message
-    # 4 more available.
+    # 2 used by arrow chest messages
+    # 2 more available.
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'
 
 
 def upgradeOwlStatues(rom):
+    # Call our custom handler after the check for the stone beak
     rom.patch(0x18, 0x1EA2, ASM("ldh a, [$F7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
-    for room in range(0x2FF):
-        re = RoomEditor(rom, room)
-        if re.hasEntity(0x42):
-            print(hex(room))
+    # Put 20 rupees in all owls by default.
+    rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)

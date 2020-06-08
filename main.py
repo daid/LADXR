@@ -18,6 +18,7 @@ import patches.softlock
 import patches.maptweaks
 import patches.inventory
 import patches.titleScreen
+import patches.dungeonEntrances
 import patches.reduceRNG
 import patches.bank3e
 import patches.bank3f
@@ -107,7 +108,9 @@ if __name__ == "__main__":
             if rom.banks[0][7] == 0x01:
                 print("Cannot read spoiler log for race rom")
                 sys.exit(1)
-            my_logic = logic.Logic(args, None)
+            dungeon_order = patches.dungeonEntrances.readEntrances(rom)
+            print("Dungeon order:", ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(dungeon_order))))
+            my_logic = logic.Logic(args, dungeon_order)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)

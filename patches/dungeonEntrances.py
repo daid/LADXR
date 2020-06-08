@@ -45,3 +45,23 @@ def changeEntrances(rom, mapping):
         re = RoomEditor(rom, instrument_rooms[b])
         re.changeWarpTarget(entrance_rooms[b], exit_warps[a].room, exit_warps[a].map_nr, exit_warps[a].target_x, exit_warps[a].target_y)
         re.store(rom)
+
+
+def readEntrances(rom):
+    result = []
+    entrance_rooms = [0x0D3, 0x024, 0x0B5, (0x09, 0x109A), 0x0D9, (0x1A, 0x034E), (0x09, 0x07EC), 0x010, 0x077]
+
+    for idx, room in enumerate(entrance_rooms):
+        if isinstance(room, tuple):
+            re = RoomEditor(rom, bank_nr=room[0], address=room[1])
+        else:
+            re = RoomEditor(rom, room)
+        warp = None
+        for obj in re.objects:
+            if isinstance(obj, ObjectWarp) and (obj.map_nr < 9 or obj.map_nr == 0xff):
+                warp = obj
+        if warp.map_nr == 0xFF:
+            result.append(8)
+        else:
+            result.append(warp.map_nr)
+    return result

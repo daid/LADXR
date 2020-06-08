@@ -18,6 +18,8 @@ def addBank3E(rom):
     rom.texts[0xC7] = formatText(b"Found an item for color dungeon")
     rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
     rom.texts[0xC9] = formatText(b"Got an item for your buddy!")
+    rom.texts[0xCA] = formatText(b"Found 10 arrows!")
+    rom.texts[0xCB] = formatText(b"Found a single arrow... joy?")
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.
@@ -67,11 +69,11 @@ MainLoop:
         ; First, do the thing we injected our code in.
         ld   a, [$C14C]
         and  a
-        jr   z, $04
+        jr   z, .actualMainLoop
         dec  a
         ld   [$C14C], a
 
-;actualMainLoop
+.actualMainLoop:
         ld   a, [$CEFF] ; Get our LinkState
         rst  0
         dw   InitLink
@@ -82,5 +84,6 @@ MainLoop:
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/owl.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/inverseHP.asm"), "rt").read(), 0x4000), fill_nop=True)
-    # 3E:3300-3620: Multiworld flags per room
-    # 3E:3800-3A20: DroppedKey item types
+    # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
+    # 3E:3800-3B16: DroppedKey item types
+    # 3E:3B16-3E2C: Owl statue items

@@ -17,12 +17,14 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
         # right side
+        Location(8).add(OwlStatue(0x253)).connect(entrance, AND(STONE_BEAK8, FEATHER, POWER_BRACELET)) # Two ways to reach this owl statue, but both require the same (except that one route requires bombs as well)
         Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_hookshot, POWER_BRACELET)))  # chest with slime
         bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(SWORD, POWER_BRACELET)))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
         Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
 
         lower_center = Location(8).connect(entrance_up, KEY8)
         upper_center = Location(8).connect(lower_center, AND(attack_hookshot_powder, KEY8))
+        Location(8).add(OwlStatue(0x245)).connect(upper_center, STONE_BEAK8)
         Location(8).add(DroppedKey(0x23E)).connect(upper_center, attack_skeleton) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         Location(8).add(DungeonChest(0x235)).connect(upper_center, HOOKSHOT)  # medicine chest
                                                                   
@@ -38,7 +40,8 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
         up_left.add(HeartPiece(0x000))  # Outside the dungeon on the platform
         Location(8).add(DroppedKey(0x241)).connect(up_left, BOW) # lava statue
-        Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door 
+        Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
+        Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
 
         nightmare_key = Location(8).add(DungeonChest(0x232)).connect(entrance_up, AND(SWORD, MAGIC_ROD))
 

@@ -127,6 +127,8 @@ INVENTORY_NAME = {
 
     HEART_PIECE: b"Piece of Heart",
     BOWWOW: b"Bowwow",
+    ARROWS_10: b"10 Arrows",
+    SINGLE_ARROW: b"Single Arrow",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
@@ -198,4 +200,6 @@ CHEST_ITEMS = {
 
     HEART_PIECE: 0x80,
     BOWWOW: 0x81,
+    ARROWS_10: 0x82,
+    SINGLE_ARROW: 0x83,
 }

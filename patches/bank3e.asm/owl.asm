@@ -7,7 +7,9 @@ HandleOwlStatue:
     or   $20
     ld   [hl], a
 
-    ld   a, $00
+    ld   hl, $7B16
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
     ldh  [$F1], a
     call ItemMessage
     call GiveItemFromChest

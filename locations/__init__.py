@@ -3,6 +3,7 @@ from .chest import Chest, DungeonChest
 from .multiChest import MultiChest
 from .droppedKey import DroppedKey
 from .seashell import Seashell
+from .owlStatue import OwlStatue
 from .shop import ShopItem
 from .startItem import StartItem
 from .toadstool import Toadstool

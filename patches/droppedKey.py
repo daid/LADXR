@@ -37,7 +37,7 @@ isAKey:
     rom.patch(0x03, 0x24B7, "3E", "3E")  # sanity check
 
     # Mark all dropped keys as keys by default.
-    for n in range(0x400):
+    for n in range(0x316):
         rom.banks[0x3E][0x3800 + n] = 0x1A
     # Set the proper angler key by default
     rom.banks[0x3E][0x3800 + 0x0CE] = 0x12

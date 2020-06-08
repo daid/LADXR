@@ -16,6 +16,7 @@ class Dungeon4:
         after_double_lock = Location(4).connect(double_locked_room, AND(KEY4, OR(FEATHER, FLIPPERS)))
         Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
         before_miniboss = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS, KEY4))
+        Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
         Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest

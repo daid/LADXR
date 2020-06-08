@@ -162,6 +162,8 @@ GiveItemFromChestNoLink:
         dw NoItem ; $7F
         dw PieceOfHeart     ; Heart piece
         dw GiveBowwow
+        dw Give10Arrows
+        dw Give1Arrow
 
 NoItem:
         ret
@@ -409,6 +411,24 @@ AddRupees:
         ld   [$C3CE], a
         ret
 
+Give1Arrow:
+        ld   a, [$DB45]
+        inc  a
+        jp   FinishGivingArrows
+
+Give10Arrows:
+        ld   a, [$DB45]
+        add  a, $0A
+FinishGivingArrows:
+        daa
+        ld   [$DB45], a
+        ld   hl, $DB78
+        cp   [hl]
+        ret  c
+        ld   a, [hl]
+        ld   [$DB45], a
+        ret
+
 ItemMessageForLink:
         ld   a, $C9
         jp  $2385 ; Opendialog in $000-$0FF range
@@ -515,6 +535,8 @@ ItemSpriteTable:
 LargeItemSpriteTable:
         db $AC, $02, $AC, $22 ; heart piece
         db $54, $0A, $56, $0A ; bowwow
+        db $2A, $41, $2A, $61 ; 10 arrows
+        db $2A, $41, $2A, $61 ; single arrow
         db $00, $0D, $22, $08 ; bomb upgrade
         db $80, $0C, $22, $08 ; arrow upgrade
 
@@ -529,7 +551,7 @@ ItemMessageTable:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         ; $80
-        db $4F, $C8
+        db $4F, $C8, $CA, $CB
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.
