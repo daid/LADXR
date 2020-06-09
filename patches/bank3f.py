@@ -226,3 +226,6 @@ LinkInterruptHandler:
 
     # Zol sprites, so we can have zol anywhere from a chest
     rom.banks[0x3F][0x3600:0x3640] = rom.banks[0x2E][0x1120:0x1160]
+
+    # Elephant statue
+    rom.banks[0x3F][0x3640:0x3680] = rom.banks[0x2E][0x2680:0x26C0]
