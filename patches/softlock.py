@@ -26,6 +26,11 @@ def fixAll(rom):
     re.changeObject(4, 6, 0xd0)
     re.store(rom)
 
+    # D3 boots room requires boots to escape
+    re = RoomEditor(rom, 0x146)
+    re.removeObject(5, 6)
+    re.store(rom)
+
     allowRaftGameWithoutFlippers(rom)
     # We cannot access thes holes in logic:
     # removeBirdKeyHoleDrop(rom)
