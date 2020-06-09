@@ -15,18 +15,18 @@ from locations.items import *
 
 class Logic:
     def __init__(self, configuration_options, rnd):
-        world = overworld.World()
+        world = overworld.World(configuration_options)
 
         dungeons = [
-            dungeon1.Dungeon1(),
-            dungeon2.Dungeon2(),
-            dungeon3.Dungeon3(),
-            dungeon4.Dungeon4(),
-            dungeon5.Dungeon5(),
-            dungeon6.Dungeon6(),
-            dungeon7.Dungeon7(),
-            dungeon8.Dungeon8(),
-            dungeonColor.DungeonColor()
+            dungeon1.Dungeon1(configuration_options),
+            dungeon2.Dungeon2(configuration_options),
+            dungeon3.Dungeon3(configuration_options),
+            dungeon4.Dungeon4(configuration_options),
+            dungeon5.Dungeon5(configuration_options),
+            dungeon6.Dungeon6(configuration_options),
+            dungeon7.Dungeon7(configuration_options),
+            dungeon8.Dungeon8(configuration_options),
+            dungeonColor.DungeonColor(configuration_options)
         ]
 
         entranceMapping = list(range(9))

@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon7:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(7)
         Location(7).add(DroppedKey(0x210)).connect(entrance, attack)
         topright_pillar_area = Location(7).connect(entrance, KEY7)

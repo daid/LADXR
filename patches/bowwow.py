@@ -89,7 +89,15 @@ def fixBowwow(rom, everywhere=False):
             ret z
         """), fill_nop=True)
         # Patch bowwow to not stay around when we move from map to map
-        rom.patch(0x05, 0x0049, ASM("ld [hl], a"), "", fill_nop=True)
+        rom.patch(0x05, 0x0049, 0x0054, ASM("""
+            cp   [hl]
+            jr   z, Continue
+            ld   hl, $C280
+            add  hl, bc
+            ld   [hl], b
+            ret
+Continue:
+        """), fill_nop=True)
 
     # Patch madam meow meow to not take bowwow
     rom.patch(0x06, 0x1BD7, ASM("ld a, [$DB66]\nand $02"), ASM("ld a, $00\nand $02"), fill_nop=True)

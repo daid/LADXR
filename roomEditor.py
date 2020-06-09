@@ -141,6 +141,22 @@ class RoomEditor:
                 obj.target_x = target_x
                 obj.target_y = target_y
 
+    def updateOverlay(self, preserve_floor=False):
+        if self.overlay is None:
+            return
+        if not preserve_floor:
+            for n in range(80):
+                self.overlay[n] = self.floor_object
+        for obj in self.objects:
+            if isinstance(obj, ObjectHorizontal):
+                for n in range(obj.count):
+                    self.overlay[obj.x + n + obj.y * 10] = obj.type_id
+            elif isinstance(obj, ObjectVertical):
+                for n in range(obj.count):
+                    self.overlay[obj.x + n * 10 + obj.y * 10] = obj.type_id
+            elif not isinstance(obj, ObjectWarp):
+                self.overlay[obj.x + obj.y * 10] = obj.type_id
+
 
 class Object:
     def __init__(self, x, y, type_id):

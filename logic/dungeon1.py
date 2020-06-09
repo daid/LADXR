@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon1:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(1)
         entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))
         Location(1).add(DroppedKey(0x116)).connect(entrance, push_hardhat) #hardhat beetles

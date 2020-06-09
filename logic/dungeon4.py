@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon4:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest

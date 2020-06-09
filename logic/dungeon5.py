@@ -6,7 +6,7 @@ from locations import *
 #       Logic does not account for you wasting this key (maybe remove the keyblock?)
 
 class Dungeon5:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(5)
         Location(5).add(DungeonChest(0x1A0)).connect(entrance, HOOKSHOT)
         compass = Location(5).add(DungeonChest(0x19E)).connect(entrance, attack_hookshot)

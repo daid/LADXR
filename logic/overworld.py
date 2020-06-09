@@ -4,7 +4,7 @@ from locations import *
 
 
 class World:
-    def __init__(self):
+    def __init__(self, options):
         start = Location().add(StartItem())
         Location().add(ShopItem(2)).connect(start, COUNT("RUPEES", 10))
         Location().add(ShopItem(0)).connect(start, COUNT("RUPEES", 200))

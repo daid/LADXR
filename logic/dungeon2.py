@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon2:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(2)
         Location(2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
         dungeon2_l2 = Location(2).connect(entrance, KEY2)  # towards map chest

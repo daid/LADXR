@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon3:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(3)
         Location(3).add(DungeonChest(0x153)).connect(entrance, PEGASUS_BOOTS) # Right side reverse eye
         area2 = Location(3).connect(entrance, POWER_BRACELET)

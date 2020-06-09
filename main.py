@@ -78,7 +78,7 @@ if __name__ == "__main__":
         help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
-    parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random'],
+    parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
@@ -197,6 +197,8 @@ if __name__ == "__main__":
 
         if args.goal != "random" and args.goal is not None:
             patches.goal.setRequiredInstrumentCount(rom, int(args.goal))
+        if args.goal == "raft":
+            patches.goal.setRaftGoal(rom)
 
         patches.inventory.selectToSwitchSongs(rom)
         if args.quickswap == 'a':

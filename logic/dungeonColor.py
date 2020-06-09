@@ -4,7 +4,7 @@ from locations import *
 
 
 class DungeonColor:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(9)
         room2 = Location(9).connect(entrance, attack_hookshot_powder)
         room2.add(DungeonChest(0x314))  # key

@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon8:
-    def __init__(self):
+    def __init__(self, options):
         entrance = Location(8)
         entrance_up = Location(8).add(DungeonChest(0x24F)).connect(entrance, FEATHER)
         entrance_left = Location(8).connect(entrance, attack_hookshot) # past hinox
