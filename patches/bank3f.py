@@ -31,7 +31,6 @@ def addBank3F(rom):
     Init:
         """), ASM("""
         ; Check if we are a color gameboy, we require a color version now.
-    notGBC:
         cp $11
         jr nz, notGBC
 
@@ -45,6 +44,10 @@ def addBank3F(rom):
         
         ; set a to 1 to indicate GBC
         ld   a, $01
+        jr Init
+    notGBC:
+        xor a
+    Init:
         """), fill_nop=True)
 
     rom.patch(0x3F, 0x0000, None, ASM("""
