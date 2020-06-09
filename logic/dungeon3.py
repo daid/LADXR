@@ -16,7 +16,7 @@ class Dungeon3:
         # now we can go 4 directions,
         area_up = Location(3).connect(area3, KEY3)
         Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
-        Location(3).add(OwlStatue(0x154), OwlStatue(0x147)).connect(area_up, STONE_BEAK3)
+        Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         Location(3).add(DungeonChest(0x150), DungeonChest(0x14C)).connect(area_up, attack)  # chests locked behind raised blocks in the first area
 
         area_left = Location(3).connect(area3, KEY3)
