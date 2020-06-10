@@ -95,7 +95,7 @@ def main(mainargs=None):
     parser.add_argument('--linkspalette', dest="linkspalette", type=int, default=None,
         help="Force the palette of link")
 
-    args = parser.parse_args()
+    args = parser.parse_args(mainargs)
 
     start_time = time.monotonic()
     total_retries = 0
