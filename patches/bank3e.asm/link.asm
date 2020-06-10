@@ -10,33 +10,63 @@ InitLink:
     ret
 
 RunLink:
-    ; Load the command byte, and only continue if there is a command.
-    ld   a, [$CEFE]
-    and  a
-    ret  z
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
 
-    ; Reset our command byte to zero, and set HL to point at the data byte
-    ld   hl, $CEFE
-    ld   b, $00
-    ld   [hl], b
+    ; Get the byte and check if it is a command (0xF0-0xFF) or data (0x00-0xEF)
+    ldh  a, [$01]
+
+    ; Reset the receiver to receive the next byte
+    ld   e, a
+    ld   a, $0F
+    ldh  [$01], a
+    ld   a, $82
+    ldh  [$02], a
+    ld   a, e
+
+    cp   $F0
+    jr   c, .dataByte
 
     and  $0F
     rst  0
     dw   LinkTestMessage
     dw   LinkItem
+    dw   LinkSpawnObject
+
+.dataByte:
+    ld   [$CEFE], a ; set data byte
+    ret
 
 LinkTestMessage:
     ld   a, $41
-    call $3273 ; open dialog in table 1
+    call $2373 ; open dialog in table 1
     ret
 
 LinkItem:
-    ld   a, [$CEFD] ; get data byte
+    ld   a, [$CEFE] ; get data byte
     ldh  [$F1], a
     call GiveItemFromChestNoLink
     call ItemMessageNoLink
     ret
 
+LinkSpawnObject:
+    ld   a, $6C
+    ld   e, $0A
+    call $3B98 ; SpawnNewEntity in range
+    ret  c
+
+    ld   hl, $C200
+    add  hl, de
+    ldh  a, [$98]
+    ld   [hl], a
+    ld   hl, $C210
+    add  hl, de
+    ldh  a, [$99]
+    ld   [hl], a
+
+    ret
 
 LinkSendByte:
     ld   e, a
