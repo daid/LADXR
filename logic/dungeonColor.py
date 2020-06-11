@@ -14,13 +14,13 @@ class DungeonColor:
         room2_weapon.add(DungeonChest(0x311))  # stone beak
         room2_weapon.add(DroppedKey(0x308))
 
-        Location(9).connect(room2, AND(KEY9, MAGIC_POWDER)).add(DungeonChest(0x302))  # nightmare key after slime mini boss
+        Location(9).connect(room2, AND(KEY9, FOUND(KEY9, 3), MAGIC_POWDER)).add(DungeonChest(0x302))  # nightmare key after slime mini boss
         room3 = Location(9).connect(room2_weapon, KEY9) # After the miniboss
         room4 = Location(9).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
         room4.add(DungeonChest(0x306))  # map
         room4.add(DroppedKey(0x307))
         Location(9).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK9)
-        room5 = Location(9).connect(room4, KEY9)  # before the boss
+        room5 = Location(9).connect(room4, AND(KEY9, FOUND(KEY9, 3)))  # before the boss
         boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, attack_no_bomb))
         boss.add(TunicFairy(0), TunicFairy(1))
 

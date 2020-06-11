@@ -39,7 +39,7 @@ class Logic:
         dungeons[entranceMapping[0]].entrance.connect(world.start, TAIL_KEY)
         dungeons[entranceMapping[1]].entrance.connect(world.swamp, OR(BOWWOW, MAGIC_ROD, HOOKSHOT))
         dungeons[entranceMapping[2]].entrance.connect(world.center_area, AND(SLIME_KEY, OR(FLIPPERS, FEATHER)))
-        dungeons[entranceMapping[3]].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, PEGASUS_BOOTS))))
+        dungeons[entranceMapping[3]].entrance.connect(world.center_area, AND(ANGLER_KEY, OR(FLIPPERS, AND(POWER_BRACELET, SWORD, PEGASUS_BOOTS))))
         dungeons[entranceMapping[4]].entrance.connect(world.center_area, FLIPPERS)
         dungeons[entranceMapping[5]].entrance.connect(world.dungeon6_entrance, FACE_KEY)
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)

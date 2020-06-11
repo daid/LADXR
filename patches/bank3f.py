@@ -182,3 +182,9 @@ def addBank3F(rom):
 
     # Elephant statue
     rom.banks[0x3F][0x3640:0x3680] = rom.banks[0x2E][0x2680:0x26C0]
+    # Cucco
+    rom.banks[0x3F][0x3680:0x3700] = rom.banks[0x32][0x2500:0x2580]
+    # Patch the cucco graphics to load from 2nd vram bank
+    rom.patch(0x05, 0x0514,
+              "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
+              "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
