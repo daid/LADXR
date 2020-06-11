@@ -117,7 +117,7 @@ class World:
         right_mountains_2.add(OwlStatue(0x1E))
         Location().add(Seashell(0x00C)).connect(right_mountains_2, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
         Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2))
-        Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle and chest after it.
+        # Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle and chest after it.
         right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT))
 
         left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)))
