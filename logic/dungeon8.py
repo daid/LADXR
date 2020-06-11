@@ -49,4 +49,6 @@ class Dungeon8:
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
         middle_center_2.connect(up_left, AND(BOMB, FEATHER), one_way=True) # does this even skip a key? both middle_center_2 and up_left come from upper_center with 1 extra key
 
+        boss = Location(8).add(HeartContainer(0x234)).connect(entrance_up, AND(NIGHTMARE_KEY8, MAGIC_ROD))
+
         self.entrance = entrance

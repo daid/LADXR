@@ -22,5 +22,5 @@ class Dungeon2:
         dungeon2_r6 = Location(2).add(DungeonChest(0x122)).add(DungeonChest(0x127)).connect(dungeon2_r5, POWER_BRACELET)
         dungeon2_pre_boss = Location(2).connect(dungeon2_r6, KEY2)
         # If we can get here, we have everything for the boss. So this is also the goal room.
-        dungeon2_boss = Location(2).connect(dungeon2_pre_boss, NIGHTMARE_KEY2) #TODO: check knocking bottle requirements after genie retreats
+        dungeon2_boss = Location(2).add(HeartContainer(0x12B)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, OR(SWORD, MAGIC_ROD), POWER_BRACELET))
         self.entrance = entrance

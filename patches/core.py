@@ -44,7 +44,10 @@ def quickswap(rom, button):
     """ % (button, button + 2, button, button + 2)))
 
 def injectMainLoop(rom):
+    # Inject into the main interaction function
     rom.patch(0x02, 0x0287, ASM("ld a, [$C14C]\nand a\njr z, $04\ndec a\nld [$C14C], a"), ASM("xor a\nrst 8"), fill_nop=True)
+    # Inject into the swimming interaction, as that is not covered by the above
+    rom.patch(0x02, 0x0F30, ASM("ld a, [$C17B]\nand a\njr z, $06\nld a, $00\nld [$C11C], a\nret"), ASM("xor a\nrst 8"), fill_nop=True)
 
 def warpHome(rom):
     # Patch the S&Q menu to allow 3 options

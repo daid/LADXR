@@ -1,4 +1,5 @@
 import copy
+import struct
 
 
 class PointerTable:
@@ -21,7 +22,13 @@ class PointerTable:
 
         count = info["count"]
         addr = info["pointers_addr"]
-        pointers_raw = rom.banks[info["pointers_bank"]][addr:addr+count*2]
+        pointers_bank = rom.banks[info["pointers_bank"]]
+        if "data_addr" in info:
+            pointers_raw = []
+            for n in range(count):
+                pointers_raw.append(info["data_addr"] + pointers_bank[addr + n] * info["data_size"])
+        else:
+            pointers_raw = struct.unpack("<" + "H" * count, pointers_bank[addr:addr+count*2])
         if "data_bank" in info:
             banks = [info["data_bank"]] * count
         else:
@@ -30,13 +37,14 @@ class PointerTable:
 
         for n in range(count):
             bank = banks[n] & 0x3f
-            pointer = pointers_raw[n*2] | pointers_raw[n*2+1] << 8
+            pointer = pointers_raw[n]
             pointer &= 0x3fff
             self.__data.append(self._readData(rom, bank, pointer))
             self.__banks.append(bank)
 
         while self.__mergeStorage():
             pass
+        self.__storage.sort(key=lambda n: n["start"])
         if "expand_to_end_of_bank" in info and info["expand_to_end_of_bank"]:
             for st in self.__storage:
                 expand = True
@@ -85,13 +93,21 @@ class PointerTable:
                 my_storage["start"] = pointer + len(s)
                 rom.banks[bank][pointer:pointer+len(s)] = s
 
-                # aggressive de-duplication.
-                for skip in range(len(s)):
-                    done[bank][s[skip:]] = pointer + skip
+                if "data_size" not in self.__info:
+                    # aggressive de-duplication.
+                    for skip in range(len(s)):
+                        done[bank][s[skip:]] = pointer + skip
                 done[bank][s] = pointer
 
-            rom.banks[pointers_bank][pointers_addr+n*2] = pointer & 0xff
-            rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
+            if "data_addr" in self.__info:
+                offset = pointer - self.__info["data_addr"]
+                if "data_size" in self.__info:
+                    assert offset % self.__info["data_size"] == 0
+                    offset //= self.__info["data_size"]
+                rom.banks[pointers_bank][pointers_addr + n] = offset
+            else:
+                rom.banks[pointers_bank][pointers_addr+n*2] = pointer & 0xff
+                rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
 
         space_left = sum(map(lambda n: n["end"] - n["start"], storage))
         # print(self.__class__.__name__, "Space left:", space_left)
@@ -99,9 +115,12 @@ class PointerTable:
     def _readData(self, rom, bank_nr, pointer):
         bank = rom.banks[bank_nr]
         start = pointer
-        while bank[pointer] not in self.END_OF_DATA:
+        if "data_size" in self.__info:
+            pointer += self.__info["data_size"]
+        else:
+            while bank[pointer] not in self.END_OF_DATA:
+                pointer += 1
             pointer += 1
-        pointer += 1
         self._addStorage(bank_nr, start, pointer)
         return bank[start:pointer]
 
@@ -127,7 +146,8 @@ class PointerTable:
                     continue
                 m_end = self.__storage[m]["end"]
                 m_start = self.__storage[m]["start"]
-                if m_start - 1 <= n_end < m_end:
+                if m_start - 1 <= n_end <= m_end:
+                    self.__storage[n]["start"] = min(self.__storage[n]["start"], self.__storage[m]["start"])
                     self.__storage[n]["end"] = self.__storage[m]["end"]
                     self.__storage.pop(m)
                     return True

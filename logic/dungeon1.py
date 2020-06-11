@@ -20,6 +20,6 @@ class Dungeon1:
         Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(attack_hookshot, SHIELD)) # three of a kind, shield stops the suit from changing
         dungeon1_miniboss = Location(1).connect(dungeon1_right_side, FEATHER)
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
-        Location(1).connect(dungeon1_boss, SWORD) #TODO: goal room
+        Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, SWORD)
 
         self.entrance = entrance

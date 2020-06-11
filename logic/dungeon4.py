@@ -27,7 +27,8 @@ class Dungeon4:
         to_the_nightmare_key = Location(4).connect(before_miniboss, FLIPPERS)  # 5 symbol puzzle
         to_the_nightmare_key.add(DungeonChest(0x176))
 
-        boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4))
+        before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4))
+        boss = Location(4).add(HeartContainer(0x1FF)).connect(before_boss, OR(SWORD, MAGIC_ROD, BOW))
 
         self.entrance = entrance
 

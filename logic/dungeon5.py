@@ -22,7 +22,8 @@ class Dungeon5:
         Location(5).add(DungeonChest(0x188), DungeonChest(0x18F)).connect(after_stalfos, AND(FEATHER, HOOKSHOT)) # small key, bridge chest
         stone_tablet = Location(5).add(DungeonChest(0x183)).connect(after_stalfos, AND(FEATHER, POWER_BRACELET))  # stone tablet
         Location(5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
-        boss = Location(5).connect(after_stalfos, AND(FEATHER, HOOKSHOT))
+        before_boss = Location(5).connect(after_stalfos, AND(FEATHER, HOOKSHOT))
+        boss = Location(5).add(HeartContainer(0x185)).connect(before_boss, AND(HOOKSHOT, SWORD))
 
         # When we can reach the stone tablet chest, we can also reach the final location of master stalfos
         stone_tablet.add(HookshotDrop())

@@ -5,27 +5,15 @@ from utils import formatText
 
 
 class BoomerangGuy(ItemInfo):
-    OPTIONS = [BOOMERANG]
+    OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
 
     # Cannot trade:
     # SWORD, BOMB, SHIELD, POWER_BRACELET, OCARINA, MAGIC_POWDER, BOW
     # Checks for these are at $46A2, and potentially we could remove those.
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
     # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
-
-    def __init__(self):
-        super().__init__()
-        self.enabled = False
-
-    def configure(self, options):
-        if options.boomerangtrade:
-            self.OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
-            self.enabled = True
-
     def patch(self, rom, option, *, cross_world=False):
         assert not cross_world
-        if not self.enabled:
-            return
 
         # Always have the boomerang trade guy enabled (normally you need the magnifier)
         rom.patch(0x19, 0x05EC, "FA0EDBFE0E", "3E0E00FE0E")  # show the guy

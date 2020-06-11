@@ -142,6 +142,30 @@ class BackgroundAttributeTable(BackgroundTable):
         })
 
 
+class OverworldRoomSpriteData(PointerTable):
+    def __init__(self, rom):
+        super().__init__(rom, {
+            "count": 0x100,
+            "pointers_addr": 0x30D3,
+            "pointers_bank": 0x20,
+            "data_bank": 0x20,
+            "data_addr": 0x33F3,
+            "data_size": 4,
+        })
+
+
+class IndoorRoomSpriteData(PointerTable):
+    def __init__(self, rom):
+        super().__init__(rom, {
+            "count": 0x220,
+            "pointers_addr": 0x31D3,
+            "pointers_bank": 0x20,
+            "data_bank": 0x20,
+            "data_addr": 0x363B,
+            "data_size": 4,
+        })
+
+
 class ROMWithTables(ROM):
     def __init__(self, filename):
         super().__init__(filename)
@@ -155,9 +179,10 @@ class ROMWithTables(ROM):
         self.rooms_indoor_a = RoomsIndoorA(self)
         self.rooms_indoor_b = RoomsIndoorB(self)
         self.rooms_color_dungeon = RoomsColorDungeon(self)
+        self.room_sprite_data_overworld = OverworldRoomSpriteData(self)
+        self.room_sprite_data_indoor = IndoorRoomSpriteData(self)
 
         # Backgrounds for things like the title screen.
-        # Note: The PointerTable fails to write these back due to how they are overlapping by default.
         self.background_tiles = BackgroundTilesTable(self)
         self.background_attributes = BackgroundAttributeTable(self)
 
@@ -169,6 +194,8 @@ class ROMWithTables(ROM):
         self.rooms_indoor_a.store(self)
         self.rooms_indoor_b.store(self)
         self.rooms_color_dungeon.store(self)
+        self.room_sprite_data_overworld.store(self)
+        self.room_sprite_data_indoor.store(self)
         self.background_tiles.store(self)
         self.background_attributes.store(self)
         super().save(filename, name=name)

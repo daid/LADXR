@@ -23,6 +23,7 @@ class Dungeon7:
         final_pillar_area = Location(7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar
         final_pillar = Location(7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
-        boss = Location(7).add(DungeonChest(0x220)).connect(final_pillar, NIGHTMARE_KEY7) # 100 rupee chest / medicine chest (DX) behind boss door
+        pre_boss = Location(7).add(DungeonChest(0x220)).connect(final_pillar, NIGHTMARE_KEY7) # 100 rupee chest / medicine chest (DX) behind boss door
+        boss = Location(7).add(HeartContainer(0x2E8)).connect(pre_boss, AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), SHIELD))
 
         self.entrance = entrance

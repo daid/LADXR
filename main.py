@@ -66,6 +66,8 @@ def main(mainargs=None):
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",
         help="Enables seashells mode, which randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)")
+    parser.add_argument('--heartcontainers', dest="heartcontainers", action="store_true",
+        help="Enables heartcontainer mode, which randomizes the heart containers dropped by bosses.")
     parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'],
         help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
@@ -154,6 +156,7 @@ def main(mainargs=None):
         patches.droppedKey.fixDroppedKey(rom)
         patches.madBatter.upgradeMadBatter(rom)
         patches.tunicFairy.upgradeTunicFairy(rom)
+        patches.health.upgradeHealthContainers(rom)
         if args.owlstatues in ("dungeon", "both"):
             patches.owl.upgradeDungeonOwlStatues(rom)
         if args.owlstatues in ("overworld", "both"):
@@ -191,7 +194,6 @@ def main(mainargs=None):
 
         if args.hpmode == 'inverted':
             patches.health.setStartHealth(rom, 9)
-            patches.health.inverseHealthContainers(rom)
         elif args.hpmode == '1':
             patches.health.setStartHealth(rom, 1)
 

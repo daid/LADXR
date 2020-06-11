@@ -32,6 +32,6 @@ class Dungeon6:
         boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(KEY6, HOOKSHOT))
         Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).connect(center_1, NIGHTMARE_KEY6)
+        boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, BOMB))
 
         self.entrance = entrance
