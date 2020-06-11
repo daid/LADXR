@@ -136,6 +136,9 @@ INVENTORY_NAME = {
 
     RED_TUNIC: b"Red Tunic",
     BLUE_TUNIC: b"Blue Tunic",
+
+    HEART_CONTAINER: b"Heart Container",
+    BAD_HEART_CONTAINER: b"Anti-Heart Container",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
