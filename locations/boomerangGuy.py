@@ -31,7 +31,7 @@ class BoomerangGuy(ItemInfo):
 
         rom.texts[0x222] = formatText(b"Okay, let's do it!")
         rom.texts[0x224] = formatText(b"You got the %s in exchange for the item you had." % (INVENTORY_NAME[option]))
-        rom.texts[0x225] = formatText(b"Give me back my %s, I beg you! I'll return the item you gave me", ask=b"Okay Not Now")
+        rom.texts[0x225] = formatText(b"Give me back my %s, I beg you! I'll return the item you gave me" % (INVENTORY_NAME[option]), ask=b"Okay Not Now")
         rom.texts[0x226] = formatText(b"The item came back to you. You returned the other item.")
 
     def read(self, rom):
