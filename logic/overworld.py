@@ -43,7 +43,6 @@ class World:
         Location().add(Chest(0x2AF)).connect(writes_hut, POWER_BRACELET)  # 2nd chest in the cave behind the hut.
 
         graveyard = Location().connect(forest, OR(FEATHER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
-        graveyard.connect(swamp, POWER_BRACELET)
         graveyard.add(OwlStatue(0x035))
         Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER))  # grave cave
         Location().add(Seashell(0x074)).connect(graveyard, AND(POWER_BRACELET, SHOVEL))  # next to grave cave, digging spot
@@ -52,8 +51,8 @@ class World:
         # "Ukuku Prairie"
         # The center_area is the whole area right of the start town, up to the river, and the castle.
         # Dungeon 3 and 5 are accessed from here
-        center_area = Location().connect(start, AND(bush, POWER_BRACELET)).connect(graveyard, POWER_BRACELET) #just start + power bracelet would be enough without entrance or spawn shuffle
-        center_area.connect(ghost_hut, AND(FEATHER, PEGASUS_BOOTS))
+        center_area = Location().connect(start, POWER_BRACELET)
+        center_area.connect(graveyard, POWER_BRACELET)
         center_area.add(Chest(0x2CD))  # cave next to town
         Location().add(Chest(0x2F4), HeartPiece(0x2E5)).connect(center_area, AND(BOMB, PEGASUS_BOOTS))  # cave near honeycomb
         Location().add(Seashell(0x0A5)).connect(center_area, AND(OR(FEATHER, FLIPPERS), SHOVEL))  # above lv3

@@ -7,11 +7,11 @@ class Dungeon2:
     def __init__(self, options):
         entrance = Location(2)
         Location(2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
-        dungeon2_l2 = Location(2).connect(entrance, KEY2)  # towards map chest
+        dungeon2_l2 = Location(2).connect(entrance, AND(KEY2, FOUND(KEY2, 3)))  # towards map chest
         Location(2).add(DungeonChest(0x12E)).connect(dungeon2_l2, AND(attack_hookshot_powder, OR(FEATHER, HOOKSHOT)))  # map chest
         dungeon2_r2 = Location(2).connect(entrance, fire)
         Location(2).add(DroppedKey(0x132)).connect(dungeon2_r2, attack_skeleton)
-        Location(2).add(DungeonChest(0x137)).connect(dungeon2_r2, AND(KEY2, OR(rear_attack, rear_attack_range)))  # compass chest
+        Location(2).add(DungeonChest(0x137)).connect(dungeon2_r2, AND(KEY2, FOUND(KEY2, 3), OR(rear_attack, rear_attack_range)))  # compass chest
         Location(2).add(OwlStatue(0x133)).connect(dungeon2_r2, STONE_BEAK2)
         dungeon2_r3 = Location(2).add(DungeonChest(0x138)).connect(dungeon2_r2, attack)  # first chest with key
         dungeon2_r4 = Location(2).add(DungeonChest(0x139)).connect(dungeon2_r3, FEATHER) # button spawn chest
