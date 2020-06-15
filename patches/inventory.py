@@ -9,8 +9,49 @@ def selectToSwitchSongs(rom):
     rom.patch(0x20, 0x21A9, ASM("and $01"), ASM("and $40"))
     rom.patch(0x20, 0x21C7, ASM("and $02"), ASM("and $00"))
 
+def moreSlots(rom):
+    #Move flippers, medicine, trade item and seashells to DB3E+
+    rom.patch(0x02, 0x292B, ASM("ld a, [$DB0C]"), ASM("ld a, [$DB3E]"))
+    #rom.patch(0x02, 0x2E8F, ASM("ld a, [$DB0C]"), ASM("ld a, [$DB3E]"))
+    rom.patch(0x02, 0x3713, ASM("ld a, [$DB0C]"), ASM("ld a, [$DB3E]"))
+    rom.patch(0x20, 0x1A23, ASM("ld de, $DB0C"), ASM("ld de, $DB3E"))
+    rom.patch(0x02, 0x23a3, ASM("ld a, [$DB0D]"), ASM("ld a, [$DB3F]"))
+    rom.patch(0x02, 0x23d7, ASM("ld a, [$DB0D]"), ASM("ld a, [$DB3F]"))
+    rom.patch(0x02, 0x23aa, ASM("ld [$DB0D], a"), ASM("ld [$DB3F], a"))
+    rom.patch(0x04, 0x3b1f, ASM("ld [$DB0D], a"), ASM("ld [$DB3F], a"))
+    rom.patch(0x06, 0x1f58, ASM("ld a, [$DB0D]"), ASM("ld a, [$DB3F]"))
+    rom.patch(0x06, 0x1ff5, ASM("ld hl, $DB0D"), ASM("ld hl, $DB3F"))
+    rom.patch(0x20, 0x1a83, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
+
+    # Remove the gap in the inventory slots
+    rom.patch(0x20, 0x3E53, "00" * 32,
+        "9C019C06"
+        "9C619C65"
+        "9CA19CA5"
+        "9CE19CE5"
+        "9D219D25"
+        "9D619D65"
+        "9DA19DA5"
+        "9DE19DE5")
+    rom.patch(0x20, 0x1CC7, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
+    rom.patch(0x20, 0x1BCC, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
+    rom.patch(0x20, 0x1CF0, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
+
+    rom.patch(0x20, 0x1C84,
+        "9C019C069C619C659CC19CC59D219D25",
+        "28283838484858586868787888889898")
+    rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C84"))
+    rom.patch(0x20, 0x2298, "28284040", "08280828")
+
+    rom.patch(0x20, 0x1F33, ASM("ld a, $09"), ASM("ld a, $0D"))
+    rom.patch(0x20, 0x1F54, ASM("ld a, $09"), ASM("ld a, $0D"))
+    rom.patch(0x20, 0x1F2A, ASM("cp $0A"), ASM("cp $0E"))
+    rom.patch(0x20, 0x1F4B, ASM("cp $0A"), ASM("cp $0E"))
+    rom.patch(0x02, 0x217E, ASM("ld a, $0B"), ASM("ld a, $0F"))
+
 
 def advancedInventorySubscreen(rom):
+    # Instrument positions
     rom.patch(0x01, 0x2BCF,
               "0F51B1EFECAA4A0C",
               "090C0F12494C4F52")
@@ -51,12 +92,12 @@ def advancedInventorySubscreen(rom):
 
     rom.patch(0x20, 0x19D3, ASM("ld bc, $5994\nld e, $33"), ASM("ld bc, $7E08\nld e, $%02x" % (0x33 + 24)))
     rom.banks[0x20][0x3E08:0x3E08+0x33] = rom.banks[0x20][0x1994:0x1994+0x33]
-    rom.patch(0x20, 0x3E08+0x32, None, "9DAA08464646464646464646" "9DCA08B0B0B0B0B0B0B0B0B0" "00")
+    rom.patch(0x20, 0x3E08+0x32, "00" * 25, "9DAA08464646464646464646" "9DCA08B0B0B0B0B0B0B0B0B0" "00")
 
     # instead of doing an GBC specific check, jump to our custom handling
     rom.patch(0x20, 0x19DE, ASM("ldh a, [$FE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
 
-    rom.patch(0x20, 0x3F00, 0x4000, ASM("""
+    rom.patch(0x20, 0x3F00, "00" * 0x100, ASM("""
         ld   a, [$DBA5] ; isIndoor
         and  a
         jr   z, RenderKeysCounts
