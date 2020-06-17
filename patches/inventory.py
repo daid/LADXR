@@ -21,9 +21,78 @@ def moreSlots(rom):
     rom.patch(0x04, 0x3b1f, ASM("ld [$DB0D], a"), ASM("ld [$DB3F], a"))
     rom.patch(0x06, 0x1f58, ASM("ld a, [$DB0D]"), ASM("ld a, [$DB3F]"))
     rom.patch(0x06, 0x1ff5, ASM("ld hl, $DB0D"), ASM("ld hl, $DB3F"))
+    rom.patch(0x00, 0x1e01, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x00, 0x2d21, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x00, 0x3199, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x03, 0x0ae6, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x03, 0x0b6d, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x03, 0x0f68, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x04, 0x2faa, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x04, 0x3502, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x04, 0x3624, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x05, 0x0bff, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x05, 0x0d20, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x05, 0x0db1, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x05, 0x0dd5, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x05, 0x0e8e, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x05, 0x11ce, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x06, 0x1a2c, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x06, 0x1a7c, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x06, 0x1ab1, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x06, 0x2214, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x06, 0x223e, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x02f8, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x04bf, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x057f, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x07, 0x0797, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0856, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x07, 0x0a21, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0a33, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0a58, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0a81, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0acf, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0af9, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0b31, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x07, 0x0bcc, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0c23, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0c3c, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x0c60, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x07, 0x0d73, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x07, 0x1549, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x155d, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x159f, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x18e6, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x07, 0x19ce, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    #rom.patch(0x15, 0x3F23, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0966, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0972, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x18, 0x09f3, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0bf1, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0c2c, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0c6d, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x18, 0x0c8b, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0ce4, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x18, 0x0d3c, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0d4a, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0d95, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0da3, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0de4, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x18, 0x0e7a, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0e91, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x18, 0x0eb6, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x18, 0x219e, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x19, 0x05ec, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x19, 0x2d54, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x19, 0x2df2, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
+    rom.patch(0x19, 0x2ef1, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x19, 0x2f95, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x36, 0x0948, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x20, 0x1a83, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
 
-    # Remove the gap in the inventory slots
+    # Fix the whole inventory rendering, this needs to extend a few tables with more entries so it moves tables
+    # to the end of the bank as well.
     rom.patch(0x20, 0x3E53, "00" * 32,
         "9C019C06"
         "9C619C65"
@@ -37,17 +106,83 @@ def moreSlots(rom):
     rom.patch(0x20, 0x1BCC, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
     rom.patch(0x20, 0x1CF0, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
 
-    rom.patch(0x20, 0x1C84,
-        "9C019C069C619C659CC19CC59D219D25",
+    rom.patch(0x20, 0x1C8C,
+        "9CC19CC59D219D259D819D859DE19DE5",
         "28283838484858586868787888889898")
-    rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C84"))
+    rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C8C"))
     rom.patch(0x20, 0x2298, "28284040", "08280828")
 
+    # Allow selecting the 4 extra slots.
     rom.patch(0x20, 0x1F33, ASM("ld a, $09"), ASM("ld a, $0D"))
     rom.patch(0x20, 0x1F54, ASM("ld a, $09"), ASM("ld a, $0D"))
     rom.patch(0x20, 0x1F2A, ASM("cp $0A"), ASM("cp $0E"))
     rom.patch(0x20, 0x1F4B, ASM("cp $0A"), ASM("cp $0E"))
     rom.patch(0x02, 0x217E, ASM("ld a, $0B"), ASM("ld a, $0F"))
+
+    # Patch all the locations that iterate over inventory to check the extra slots
+    rom.patch(0x03, 0x2475, ASM("ld e, $0C"), ASM("ld e, $10"))
+    rom.patch(0x03, 0x248a, ASM("cp $0C"), ASM("cp $10"))
+    rom.patch(0x04, 0x3849, ASM("ld c, $0B"), ASM("ld c, $0F"))
+    rom.patch(0x04, 0x3862, ASM("ld c, $0B"), ASM("ld c, $0F"))
+    rom.patch(0x04, 0x39C2, ASM("ld d, $0C"), ASM("ld d, $10"))
+    rom.patch(0x04, 0x39E0, ASM("ld d, $0C"), ASM("ld d, $10"))
+    rom.patch(0x04, 0x39FE, ASM("ld d, $0C"), ASM("ld d, $10"))
+    rom.patch(0x05, 0x0F95, ASM("ld e, $0B"), ASM("ld e, $0F"))
+    rom.patch(0x05, 0x0FD1, ASM("ld c, $0B"), ASM("ld c, $0F"))
+    rom.patch(0x05, 0x1324, ASM("ld e, $0C"), ASM("ld e, $10"))
+    rom.patch(0x05, 0x1339, ASM("cp $0C"), ASM("cp $10"))
+    rom.patch(0x18, 0x005A, ASM("ld e, $0B"), ASM("ld e, $0F"))
+    rom.patch(0x18, 0x0571, ASM("ld e, $0B"), ASM("ld e, $0F"))
+    rom.patch(0x19, 0x0703, ASM("cp $0C"), ASM("cp $10"))
+    rom.patch(0x20, 0x235C, ASM("ld d, $0C"), ASM("ld d, $10"))
+    rom.patch(0x36, 0x31B8, ASM("ld e, $0C"), ASM("ld e, $10"))
+
+
+    # Patch the toadstool as a different item
+    rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")
+    rom.banks[0x20][0x1C32:0x1C8C] = rom.banks[0x20][0x1C30:0x1C8A]
+    rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C32"))
+    rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C35"))
+    rom.patch(0x20, 0x1C30, "7F7F", "0A0B")
+
+    # Allow usage of the toadstool
+    rom.patch(0x00, 0x12CC, ASM("jp z, $148d"), ASM("jp $3FEF"))
+    rom.patch(0x00, 0x3FEF, "00" * 17, ASM("""
+        jr z, UseMagicPowder
+        cp $0E
+        jp nz, $12CF
+        jp $1498
+UseMagicPowder:
+        jp $14A7
+    """), fill_nop=True)
+    # Fix the graphics of the toadstool hold over your head
+    rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $4C"))
+    rom.patch(0x02, 0x1241, ASM("ld a, $14"), ASM("ld a, $1C"))
+
+    # Do not remove powder when it is used up.
+    rom.patch(0x20, 0x0C59, ASM("jr nz, $12"), ASM("jr $12"))
+
+    # Patch the toadstool entity code to give the proper item, and not set the has-toadstool flag.
+    rom.patch(0x03, 0x1D6F, ASM("""
+        ld   a, $0A
+        ldh  [$A5], a
+        ld   d, $0C
+        call $6472
+        ld   a, $01
+        ld   [$DB4B], a
+    """), ASM("""
+        ld   d, $0E
+        call $6472
+    """), fill_nop=True)
+
+    # Patch the debug save game so it does not give a bunch of swords
+    rom.patch(0x01, 0x0673, "01010100", "0D0E0000")
+
+    # Patch the witch to use the new toadstool instead of the old flag
+    rom.patch(0x05, 0x081A, ASM("ld a, [$DB4B]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x05, 0x082A, ASM("cp $0C"), ASM("cp $0E"))
+    rom.patch(0x05, 0x083E, ASM("cp $0C"), ASM("cp $0E"))
+    rom.patch(0x02, 0x121E, ASM("ld e, $4C"), ASM("ld e, $8E"))  # Fix which item is hold over head
 
 
 def advancedInventorySubscreen(rom):
