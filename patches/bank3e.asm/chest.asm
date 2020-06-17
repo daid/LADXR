@@ -236,12 +236,12 @@ ChestMagicPowder:
 
 Flippers:
     ld   a, $01
-    ld   [$DB0C], a
+    ld   [wHasFlippers], a
     ret
 
 Medicine:
     ld   a, $01
-    ld   [$DB0D], a
+    ld   [wHasMedicine], a
     ret
 
 TailKey:
@@ -270,15 +270,15 @@ SlimeKey:
     ret
 
 GoldenLeaf:
-    ld   hl, $DB6D
+    ld   hl, wGoldenLeaves
     inc  [hl]
     ret
 
 AddSeaShell:
-    ld   a, [$DB0F]
+    ld   a, [wSeashellsCount]
     inc  a
     daa
-    ld   [$DB0F], a
+    ld   [wSeashellsCount], a
     ret
 
 PieceOfHeart:

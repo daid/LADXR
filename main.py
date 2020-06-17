@@ -1,6 +1,7 @@
 import binascii
 from romTables import ROMWithTables
 from assembler import ASM
+import assembler
 import randomizer
 import patches.core
 import patches.phone
@@ -135,6 +136,19 @@ def main(mainargs=None):
             for gfx in args.gfxmod:
                 patches.aesthetics.gfxMod(rom, gfx)
 
+        expanded_inventory = False
+        if expanded_inventory:
+            assembler.const("wHasFlippers", 0xDB3E)
+            assembler.const("wHasMedicine", 0xDB3F)
+            assembler.const("wTradeSequenceItem", 0xDB40)
+            assembler.const("wSeashellsCount", 0xDB41)
+        else:
+            assembler.const("wHasFlippers", 0xDB0C)
+            assembler.const("wHasMedicine", 0xDB0D)
+            assembler.const("wTradeSequenceItem", 0xDB0E)
+            assembler.const("wSeashellsCount", 0xDB0F)
+        assembler.const("wGoldenLeaves", 0xDB42) # New memory location where to store the golden leaf counter
+
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
         patches.core.bugfixWrittingWrongRoomStatus(rom)
@@ -148,6 +162,8 @@ def main(mainargs=None):
             patches.core.injectMainLoop(rom)
         if args.keysanity:
             patches.inventory.advancedInventorySubscreen(rom)
+        if expanded_inventory:
+            patches.inventory.moreSlots(rom)
         patches.softlock.fixAll(rom)
         patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)

@@ -3,6 +3,8 @@ import binascii
 REGS = {"A": 7, "B": 0, "C": 1, "D": 2, "E": 3, "H": 4, "L": 5, "(HL)": 6, "[HL]": 6}
 FLAGS = {"NZ": 0x00, "Z": 0x08, "NC": 0x10, "C": 0x18}
 
+CONST_MAP = {}
+
 
 class Assembler:
     LINK_REL8 = 0
@@ -24,6 +26,8 @@ class Assembler:
         if code.startswith("$") and len(code) == 5:
             value = int(code[1:], 16)
             return bytes([value & 0xFF, value >> 8])
+        if code in CONST_MAP:
+            return CONST_MAP[code]
         if self.__base_address is not None:
             if code.startswith("."):
                 assert self.__scope is not None, code
@@ -440,6 +444,12 @@ class Assembler:
 
     def getResult(self):
         return self.__result
+
+
+def const(name, address):
+    name = name.upper()
+    assert name not in CONST_MAP
+    CONST_MAP[name] = bytes([address & 0xFF, address >> 8])
 
 
 def ASM(code, base_address=None):
