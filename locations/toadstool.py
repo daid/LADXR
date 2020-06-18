@@ -1,12 +1,16 @@
-from .itemInfo import ItemInfo
+from .chest import Chest
 from .items import *
 
 
-class Toadstool(ItemInfo):
-    OPTIONS = ["TOADSTOOL"]
+class Toadstool(Chest):
+    def __init__(self):
+        super().__init__(0x050)
 
-    def patch(self, rom, option, *, cross_world=False):
-        pass
+    def configure(self, options):
+        if not options.witch:
+            self.OPTIONS = [TOADSTOOL]
 
     def read(self, rom):
-        return "TOADSTOOL"
+        if len(self.OPTIONS) == 1:
+            return TOADSTOOL
+        return super().read(rom)

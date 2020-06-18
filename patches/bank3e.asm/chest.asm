@@ -112,7 +112,7 @@ GiveItemFromChestNoLink:
     dw AddNightmareKey ; NIGHTMARE_KEY7
     dw AddNightmareKey ; NIGHTMARE_KEY8
     dw AddNightmareKey ; NIGHTMARE_KEY9
-    dw NoItem ; $50
+    dw AddToadstool ; Toadstool
     dw NoItem ; $51
     dw NoItem ; $52
     dw NoItem ; $53
@@ -333,6 +333,11 @@ ChestWithCurrentDungeonItem:
     add  hl, de
     inc  [hl]
     call $2802  ; Sync current dungeon items with dungeon specific table
+    ret
+
+AddToadstool:
+    ld   d, $0E
+    call $3E6B ; Give Inventory
     ret
 
 AddKey:
@@ -618,6 +623,7 @@ ItemSpriteTable:
     db $46, $1C        ; NIGHTMARE_KEY7
     db $46, $1C        ; NIGHTMARE_KEY8
     db $46, $1C        ; NIGHTMARE_KEY9
+    db $4C, $1C        ; Toadstool
 
 LargeItemSpriteTable:
     db $AC, $02, $AC, $22 ; heart piece
@@ -639,7 +645,7 @@ ItemMessageTable:
     db $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0
     ; $40
     db $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7
-    db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    db $0F, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80

@@ -17,6 +17,7 @@ import patches.madBatter
 import patches.tunicFairy
 import patches.heartPiece
 import patches.seashell
+import patches.witch
 import patches.softlock
 import patches.maptweaks
 import patches.inventory
@@ -75,6 +76,8 @@ def main(mainargs=None):
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
         help="Enable dungeon shuffle, puts dungeons on different spots.")
+    parser.add_argument('--witch', dest="witch", action="store_true",
+        help="Enables witch and toadstool in the item pool.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
     parser.add_argument('--boomerangtrade', dest="boomerangtrade", action="store_true",
@@ -136,7 +139,7 @@ def main(mainargs=None):
             for gfx in args.gfxmod:
                 patches.aesthetics.gfxMod(rom, gfx)
 
-        expanded_inventory = False
+        expanded_inventory = args.witch
         if expanded_inventory:
             assembler.const("wHasFlippers", 0xDB3E)
             assembler.const("wHasMedicine", 0xDB3F)
@@ -164,6 +167,8 @@ def main(mainargs=None):
             patches.inventory.advancedInventorySubscreen(rom)
         if expanded_inventory:
             patches.inventory.moreSlots(rom)
+        if args.witch:
+            patches.witch.updateWitch(rom)
         patches.softlock.fixAll(rom)
         patches.maptweaks.tweakMap(rom)
         patches.chest.fixChests(rom)

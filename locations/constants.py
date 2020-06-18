@@ -14,6 +14,7 @@ INVENTORY_MAP = {
     SHOVEL: "0B",
     MAGIC_POWDER: "0C",
     BOOMERANG: "0D",
+    TOADSTOOL: "0E",
 }
 INVENTORY_ICON = {
     SWORD: "8415",
@@ -139,6 +140,8 @@ INVENTORY_NAME = {
 
     HEART_CONTAINER: b"Heart Container",
     BAD_HEART_CONTAINER: b"Anti-Heart Container",
+
+    TOADSTOOL: b"Toadstool",
 }
 CHEST_ITEMS = {
     POWER_BRACELET: 0x00,
@@ -207,6 +210,8 @@ CHEST_ITEMS = {
     NIGHTMARE_KEY7: 0x4D,
     NIGHTMARE_KEY8: 0x4E,
     NIGHTMARE_KEY9: 0x4F,
+
+    TOADSTOOL: 0x50,
 
     HEART_PIECE: 0x80,
     BOWWOW: 0x81,

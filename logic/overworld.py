@@ -28,7 +28,7 @@ class World:
 
         forest = Location().add(Toadstool()).connect(start, bush)  # forest stretches all the way from the start town to the witch hut
         Location().add(HeartPiece(0x044)).connect(forest, OR(BOOMERANG, FEATHER, HOOKSHOT))  # next to the forest, surrounded by pits
-        Location().add(Witch()).connect(forest, "TOADSTOOL")
+        Location().add(Witch()).connect(forest, TOADSTOOL)
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET) #chest at start forest with 2 zols
         Location().add(MadBatter(0x1E1)).connect(forest, AND(POWER_BRACELET, MAGIC_POWDER))
         swamp = Location().connect(forest, OR(MAGIC_POWDER, FEATHER, POWER_BRACELET))
