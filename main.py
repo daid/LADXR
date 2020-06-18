@@ -147,7 +147,7 @@ def main(mainargs=None):
             assembler.const("wHasMedicine", 0xDB0D)
             assembler.const("wTradeSequenceItem", 0xDB0E)
             assembler.const("wSeashellsCount", 0xDB0F)
-        assembler.const("wGoldenLeaves", 0xDB42) # New memory location where to store the golden leaf counter
+        assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
 
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
