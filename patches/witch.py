@@ -7,6 +7,7 @@ def updateWitch(rom):
     re = RoomEditor(rom, 0x050)
     re.changeObject(2, 4, 0xA0)
     re.moveObject(2, 4, 2, 3)
+    re.entities.clear()
     re.store(rom)
     rom.banks[0x14][0x560 + 0x050] = 0x50
 
