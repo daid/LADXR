@@ -182,7 +182,6 @@ UseMagicPowder:
     rom.patch(0x05, 0x081A, ASM("ld a, [$DB4B]"), ASM("ld a, $01"), fill_nop=True)
     rom.patch(0x05, 0x082A, ASM("cp $0C"), ASM("cp $0E"))
     rom.patch(0x05, 0x083E, ASM("cp $0C"), ASM("cp $0E"))
-    rom.patch(0x02, 0x121E, ASM("ld e, $4C"), ASM("ld e, $8E"))  # Fix which item is hold over head
 
 
 def advancedInventorySubscreen(rom):
