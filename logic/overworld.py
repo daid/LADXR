@@ -17,7 +17,7 @@ class World:
         Location().add(Seashell(0x2B2)).connect(start, SHOVEL)  # in the kennel
         Location().add(Seashell(0x0D2)).connect(start, PEGASUS_BOOTS)  # smash into tree next to lv1
 
-        sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD))
+        sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD, attack))
         if options.boomerang != 'default':
             Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5))
@@ -33,7 +33,7 @@ class World:
         Location().add(MadBatter(0x1E1)).connect(forest, AND(POWER_BRACELET, MAGIC_POWDER))
         swamp = Location().connect(forest, OR(MAGIC_POWDER, FEATHER, POWER_BRACELET))
         Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
-        forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
+        forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)  # tail key
         Location().add(Chest(0x2BD)).connect(forest, SWORD)  # chest in forest cave on route to mushroom
         Location().add(HeartPiece(0x2AB)).connect(forest, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         hookshot_cave = Location().add(Chest(0x2B3)).connect(forest, AND(POWER_BRACELET, HOOKSHOT))
@@ -133,7 +133,7 @@ class World:
             hookshot_cave.connect(forest, HOOKSHOT)
 
         if options.logic == 'glitched':
-            dream_hut2.connect(start, AND(FEATHER, OR(HOOKSHOT, POWER_BRACELET)))  # super jump
+            dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
 
         self.start = start

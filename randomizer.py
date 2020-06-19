@@ -29,7 +29,7 @@ class Randomizer:
         self.spots = []
 
         self.readItemPool(rom)
-        self.modifyDefaultItemPool()
+        self.modifyDefaultItemPool(options)
         assert self.logicStillValid(), "Sanity check failed"
 
         bail_counter = 0
@@ -87,7 +87,16 @@ class Randomizer:
                 self.removeItem(spot.getOptions()[0])
                 spot.item = spot.getOptions()[0]
 
-    def modifyDefaultItemPool(self):
+    def modifyDefaultItemPool(self, options):
+        if options.bowwow == 'always':
+            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
+            self.addItem("SWORD")
+            self.removeItem("BOWWOW")
+        if options.bowwow == 'swordless':
+            # Bowwow mode takes a sword from the pool to give as bowwow.
+            self.removeItem("BOWWOW")
+            self.addItem("RUPEES_20")
+
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []
         rupee_item_count = []

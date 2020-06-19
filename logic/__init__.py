@@ -53,6 +53,11 @@ class Logic:
         self.__recursiveFindAll(self.start)
         del self.__location_set
 
+        if configuration_options.bowwow != 'normal':
+            # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword can do.
+            # Except for taking out bushes (and crystal pillars are removed)
+            requirements.bush.remove(SWORD)
+
         for ii in self.iteminfo_list:
             ii.configure(configuration_options)
 

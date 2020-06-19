@@ -88,6 +88,8 @@ def main(mainargs=None):
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
+    parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
+        help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
 
@@ -187,7 +189,9 @@ def main(mainargs=None):
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
         patches.seashell.fixSeashell(rom)
-        patches.bowwow.fixBowwow(rom)
+        patches.bowwow.fixBowwow(rom, everywhere=args.bowwow != 'normal')
+        if args.bowwow == 'swordless':
+            patches.bowwow.swordlessBowwowMapPatches(rom)
         patches.desert.desertAccess(rom)
         # patches.reduceRNG.slowdownThreeOfAKind(rom)
         patches.aesthetics.noSwordMusic(rom)
