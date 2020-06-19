@@ -33,11 +33,13 @@ class StartItem(ItemInfo):
                 ld   [$DB56], a
             """), fill_nop=True)
             rom.patch(0x05, 0x0CF3, ASM("ld de, $4CC6\ncall $3C77"), ASM("ld de, $401C\ncall $3BC0"))
+            rom.patch(5, 0x0CDA, ASM("ld a, $22"), ASM("ld a, $00"))  # do not change links sprite into the one with a shield
         else:
             # Change which item you get at the start.
             rom.patch(5, 0x0CD1, "04", INVENTORY_MAP[option])
             rom.patch(5, 0x0CC6, "8617", INVENTORY_ICON[option]) # patch shield that icon that is shown.
             if option != SHIELD:
+                rom.patch(5, 0x0CDA, ASM("ld a, $22"), ASM("ld a, $00"))  # do not change links sprite into the one with a shield
                 #   Do not set the shield level to 1, but potentially set another item level if needed.
                 if option == SWORD:
                     # TOFIX: This directly hides marin and tarin
@@ -50,6 +52,16 @@ class StartItem(ItemInfo):
         # Patch the text that Tarin uses to give your shield back.
         rom.texts[0x54] = formatText(b"#####, it is dangerous to go alone!\nTake this!")
         rom.patch(5, 0x0CDE, ASM("ld a, $91"), ASM("ld a, $%02x" % (self.MESSAGE[option])))
+
+        rom.patch(0x05, 0x0CAB, 0x0CB0, ASM("""
+            ; Set the room status to finished.
+            ld a, $20
+            call $36C4
+        """), fill_nop=True)
+
+        # Instead of checking for the shield level to put you in the bed, check the room flag.
+        rom.patch(0x05, 0x1202, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
+        rom.patch(0x05, 0x0C6D, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
 
     def read(self, rom):
         value = rom.banks[5][0xCD1]
