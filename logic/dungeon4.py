@@ -17,7 +17,7 @@ class Dungeon4:
         Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
         before_miniboss = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS, KEY4))
         Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
-        Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
+        sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest
         before_miniboss.add(DungeonChest(0x168))  # key chest near the puzzle
@@ -29,6 +29,10 @@ class Dungeon4:
 
         before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4))
         boss = Location(4).add(HeartContainer(0x1FF)).connect(before_boss, AND(NIGHTMARE_KEY4, OR(SWORD, MAGIC_ROD, BOW)))
+
+        if options.logic == 'hard' or options.logic == 'glitched':
+            sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG))
+            before_miniboss.connect(entrance, AND(FEATHER, PEGASUS_BOOTS))
 
         self.entrance = entrance
 

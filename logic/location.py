@@ -20,14 +20,22 @@ class Location:
 
     def connect(self, other, req, *, one_way=False):
         assert isinstance(other, Location)
-        assert other not in self.__connected_to
-
-        self.__connected_to.add(other)
-
-        if hasConsumableRequirement(req):
-            self.gated_connections.append((other, req))
+        if other in self.__connected_to:
+            for idx, data in enumerate(self.gated_connections):
+                if data[0] == other:
+                    self.gated_connections[idx] = (other, OR(req, data[1]))
+                    break
+            for idx, data in enumerate(self.simple_connections):
+                if data[0] == other:
+                    self.simple_connections[idx] = (other, OR(req, data[1]))
+                    break
         else:
-            self.simple_connections.append((other, req))
+            self.__connected_to.add(other)
+
+            if hasConsumableRequirement(req):
+                self.gated_connections.append((other, req))
+            else:
+                self.simple_connections.append((other, req))
         if not one_way:
             other.connect(self, req, one_way=True)
         return self

@@ -10,7 +10,7 @@ class World:
         Location().add(ShopItem(0)).connect(start, COUNT("RUPEES", 200))
         Location().add(ShopItem(1)).connect(start, COUNT("RUPEES", 980))
         dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)))
-        Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
+        dream_hut2 = Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
         Location().add(HeartPiece(0x2A4)).connect(start, bush)  # well
         # Location().add(HeartPiece(0x2B1)).connect(start, AND(bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(start, bush)  # bushes below the shop
@@ -36,7 +36,7 @@ class World:
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, bush)
         Location().add(Chest(0x2BD)).connect(forest, SWORD)  # chest in forest cave on route to mushroom
         Location().add(HeartPiece(0x2AB)).connect(forest, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
-        Location().add(Chest(0x2B3)).connect(forest, AND(POWER_BRACELET, HOOKSHOT))  # hookshot cave
+        hookshot_cave = Location().add(Chest(0x2B3)).connect(forest, AND(POWER_BRACELET, HOOKSHOT))
 
         writes_hut = Location().add(Chest(0x2AE)).connect(swamp, FEATHER)  # includes the cave behind the hut
         writes_hut.add(OwlStatue(0x11))
@@ -44,7 +44,7 @@ class World:
 
         graveyard = Location().connect(forest, OR(FEATHER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         graveyard.add(OwlStatue(0x035))
-        Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER))  # grave cave
+        graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER))  # grave cave
         Location().add(Seashell(0x074)).connect(graveyard, AND(POWER_BRACELET, SHOVEL))  # next to grave cave, digging spot
         Location().add(Chest(0x2E2)).connect(graveyard, SWORD)  # moblin cave, boss requires sword, contains Bowwow
 
@@ -123,6 +123,18 @@ class World:
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
+        dungeon8_entrance = Location().connect(left_side_mountain, COUNT(SHIELD, 2))
+
+        if options.logic == 'hard' or options.logic == 'glitched':
+            graveyard_heartpiece.connect(graveyard, FEATHER)
+            dungeon6_entrance.connect(animal_town, FEATHER)
+            dungeon8_entrance.connect(left_side_mountain, PEGASUS_BOOTS)
+            dream_hut.connect(start, HOOKSHOT)
+            hookshot_cave.connect(forest, HOOKSHOT)
+
+        if options.logic == 'glitched':
+            dream_hut2.connect(start, AND(FEATHER, OR(HOOKSHOT, POWER_BRACELET)))  # super jump
+            forest.connect(swamp, BOMB)  # bomb trigger tarin
 
         self.start = start
         self.swamp = swamp
@@ -131,4 +143,4 @@ class World:
         self.right_mountains_1 = right_mountains_1
         self.dungeon6_entrance = dungeon6_entrance
         self.right_mountains_3 = right_mountains_3
-        self.left_side_mountain = left_side_mountain
+        self.dungeon8_entrance = dungeon8_entrance

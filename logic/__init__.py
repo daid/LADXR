@@ -43,7 +43,7 @@ class Logic:
         dungeons[entranceMapping[4]].entrance.connect(world.center_area, FLIPPERS)
         dungeons[entranceMapping[5]].entrance.connect(world.dungeon6_entrance, FACE_KEY)
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
-        dungeons[entranceMapping[7]].entrance.connect(world.left_side_mountain, AND(COUNT(SHIELD, 2), OCARINA, SWORD))  # TODO: Requires song3
+        dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, AND(OCARINA, SWORD))  # TODO: Requires song3
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
         self.start = world.start
         self.location_list = []

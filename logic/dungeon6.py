@@ -11,7 +11,7 @@ class Dungeon6:
         Location(6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6)
 
         # Power bracelet chest
-        Location(6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER))
+        bracelet_chest = Location(6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER))
 
         # left side
         Location(6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD))) # 3 wizrobes raised blocks dont need to hit the switch
@@ -33,5 +33,8 @@ class Dungeon6:
         Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
         boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, BOMB))
+
+        if options.logic == 'hard' or options.logic == 'glitched':
+            bracelet_chest.connect(entrance, BOMB)
 
         self.entrance = entrance
