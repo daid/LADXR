@@ -21,6 +21,7 @@ def moreSlots(rom):
     rom.patch(0x04, 0x3b1f, ASM("ld [$DB0D], a"), ASM("ld [$DB3F], a"))
     rom.patch(0x06, 0x1f58, ASM("ld a, [$DB0D]"), ASM("ld a, [$DB3F]"))
     rom.patch(0x06, 0x1ff5, ASM("ld hl, $DB0D"), ASM("ld hl, $DB3F"))
+    rom.patch(0x07, 0x3c33, ASM("ld [$DB0D], a"), ASM("ld [$DB3F], a"))
     rom.patch(0x00, 0x1e01, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x00, 0x2d21, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x00, 0x3199, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
