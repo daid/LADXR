@@ -80,7 +80,7 @@ def main(mainargs=None):
         help="Enables witch and toadstool in the item pool.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',
         help="Set the HP gamplay mode. Inverted causes health containers to take HP instead of give it and you start with more health. 1 sets your starting health to just 1 hearth.")
-    parser.add_argument('--boomerangtrade', dest="boomerangtrade", action="store_true",
+    parser.add_argument('--boomerang', dest="boomerang", choices=['default', 'trade', 'gift'], default='default',
         help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
@@ -139,7 +139,7 @@ def main(mainargs=None):
             for gfx in args.gfxmod:
                 patches.aesthetics.gfxMod(rom, gfx)
 
-        expanded_inventory = args.witch
+        expanded_inventory = args.witch or args.boomerang == 'gift'
         if expanded_inventory:
             assembler.const("wHasFlippers", 0xDB3E)
             assembler.const("wHasMedicine", 0xDB3F)

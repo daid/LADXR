@@ -18,7 +18,7 @@ class World:
         Location().add(Seashell(0x0D2)).connect(start, PEGASUS_BOOTS)  # smash into tree next to lv1
 
         sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD))
-        if options.boomerangtrade:
+        if options.boomerang != 'default':
             Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5))
         sword_beach_to_ghost_hut.connect(sword_beach, POWER_BRACELET)
