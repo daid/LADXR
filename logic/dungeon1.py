@@ -13,7 +13,7 @@ class Dungeon1:
         Location(1).add(DungeonChest(0x10C)).connect(entrance, BOMB) # hidden seashell room
         dungeon1_upper_left = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         Location(1).add(OwlStatue(0x103), OwlStatue(0x104)).connect(dungeon1_upper_left, STONE_BEAK1)
-        Location(1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, push_hardhat)  # feather location, behind spike enemies. can shield bump into pit
+        Location(1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, SHIELD)  # feather location, behind spike enemies. can shield bump into pit (only shield works)
         boss_key = Location(1).add(DungeonChest(0x108)).connect(entrance, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # boss key
         dungeon1_right_side = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         Location(1).add(OwlStatue(0x10A)).connect(dungeon1_right_side, STONE_BEAK1)
@@ -23,6 +23,7 @@ class Dungeon1:
         Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, SWORD)
 
         if options.logic == 'glitched':
-            boss_key.connect(entrance, FEATHER)  # super jump
-
+            boss_key.connect(entrance, OR(FEATHER, AND(KEY1, FOUND(KEY1, 3))))  # super jump or use the hardhat to damage boost over the pit
+            dungeon1_miniboss.connect(dungeon1_right_side) # damage boost or buffer pause over the pit to cross or mushroom
+            
         self.entrance = entrance
