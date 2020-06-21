@@ -9,7 +9,7 @@ class BeachSword(HeartPiece):
         super().__init__(0x0F2)
 
     def patch(self, rom, option, *, cross_world=False):
-        if option != SWORD or cross_world or True:
+        if option != SWORD or cross_world:
             # Set the heart piece data
             super().patch(rom, option, cross_world=cross_world)
 
