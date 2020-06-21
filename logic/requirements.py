@@ -63,7 +63,7 @@ def isConsumable(item):
     return False
 
 
-bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET)
+bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET, BOOMERANG)
 attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
 attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
 attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
