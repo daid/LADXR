@@ -90,6 +90,12 @@ def moreSlots(rom):
     rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x36, 0x0948, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x19, 0x31Ca, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
+    rom.patch(0x19, 0x3215, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
+    rom.patch(0x19, 0x32a2, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
+    rom.patch(0x19, 0x3700, ASM("ld [$DB0F], a"), ASM("ld [$DB41], a"))
+    rom.patch(0x19, 0x38b3, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
+    rom.patch(0x19, 0x38c3, ASM("ld [$DB0F], a"), ASM("ld [$DB41], a"))
     rom.patch(0x20, 0x1a83, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
 
     # Fix the whole inventory rendering, this needs to extend a few tables with more entries so it moves tables

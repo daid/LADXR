@@ -459,6 +459,12 @@ FinishGivingArrows:
 UpgradeMaxPowder:
     ld   a, $40
     ld   [$DB76], a
+    ; If we have no powder, we should not increase the current amount, as that would prevent
+    ; The toadstool from showing up.
+    ld   a, [$DB4C]
+    and  a
+    ret  z
+    ld   a, $40
     ld   [$DB4C], a
     ret
 
