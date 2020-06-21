@@ -1,8 +1,8 @@
-from .chest import Chest
+from .heartPiece import HeartPiece
 from .items import *
 
 
-class Toadstool(Chest):
+class Toadstool(HeartPiece):
     def __init__(self):
         super().__init__(0x050)
 
