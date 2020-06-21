@@ -24,8 +24,8 @@ class Dungeon6:
         to_miniboss = Location(6).connect(entrance, KEY6)
         miniboss = Location(6).connect(to_miniboss, BOMB)
         lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(OR(BOMB, BOW, MAGIC_ROD), COUNT(POWER_BRACELET, 2))) # waterway key
-        Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) #ledge chest medicine
-        Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
+        Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) # ledge chest medicine
+        lower_right_owl = Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
         center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, KEY6) # top right chest horseheads
@@ -36,5 +36,12 @@ class Dungeon6:
 
         if options.logic == 'hard' or options.logic == 'glitched':
             bracelet_chest.connect(entrance, BOMB)
+            lower_right_owl.connect(lower_right_side, STONE_BEAK6) # wall clip from entrance to talk from the right side
+            
+        if options.logic == 'glitched':
+            left_side.connect(entrance, AND(POWER_BRACELET, FEATHER)) # use superjumps to pass raised blocks
+            center_2_and_upper_right_side.connect(lower_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # superjump from waterway towards dodongos. superjump next to corner block, so weapons added
+            center_1.connect(lower_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # POWER_BRACELET is implied from lower_right_side. superjump from waterway + shag jump to pass key block at tiles room
+            boss_key.connect(lower_right_side, FEATHER) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
         self.entrance = entrance
