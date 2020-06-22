@@ -63,6 +63,11 @@ class StartItem(ItemInfo):
         rom.patch(0x05, 0x1202, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
         rom.patch(0x05, 0x0C6D, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
 
+        # If the starting item is picked up, load the right palette when entering the room
+        rom.patch(0x21, 0x0176, ASM("ld a, [$DB48]\ncp $01"), ASM("ld a, [$DAA3]\ncp $A1"), fill_nop=True)
+        rom.patch(0x05, 0x0C94, "FF473152C5280000", "FD2ED911CE100000")
+        rom.patch(0x05, 0x0CB0, ASM("ld hl, $DC88"), ASM("ld hl, $DC80"))
+
     def read(self, rom):
         value = rom.banks[5][0xCD1]
         for k, v in INVENTORY_MAP.items():
