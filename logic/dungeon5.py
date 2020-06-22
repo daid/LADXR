@@ -38,7 +38,7 @@ class Dungeon5:
             butterfly_owl.connect(post_gohma, AND(FEATHER, HOOKSHOT, KEY5, FOUND(KEY5, 3))) # passage past gohma
             butterfly_owl.connect(after_stalfos, PEGASUS_BOOTS) # boots charge + bonk to cross 2d bridge
             before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk in 2d section to skip feather
-            north_of_crossroads.connect(after_stalfos, OR(HOOKSHOT, PEGASUS_BOOTS) # boots bonk over the pits, or hookshot the right block
+            north_of_crossroads.connect(after_stalfos, OR(HOOKSHOT, PEGASUS_BOOTS)) # boots bonk over the pits, or hookshot the right block
             
         if options.logic == 'glitched':
             post_gohma.connect(area2, HOOKSHOT) # glitch through the blocks/pots with hookshot. Zoomerang can be used but has no logical implications because of 2d section requiring hookshot

@@ -54,8 +54,8 @@ class Dungeon8:
         boss = Location(8).add(HeartContainer(0x234)).connect(entrance_up, AND(NIGHTMARE_KEY8, MAGIC_ROD))
         
         if options.logic == 'hard' or options.logic == 'glitched':
-            bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS) # underground section past mimics, boots bonking across the gap to the ladder
-            bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS) # underground section past mimics, boots bonking across the gap to the ladder
+            bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
+            bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
             map_chest.connect(bottom_right, AND(POWER_BRACELET, PEGASUS_BOOTS, BOMB)) # underground section south of smasher, use pegasus boots to cross lava pillars
             #entrance_left.connect(up_left, FEATHER, one_way=True) # not hard, but only useful in hard/glitched. One way. Needs a requirement so added feather 
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
@@ -66,7 +66,7 @@ class Dungeon8:
             miniboss.connect(lower_center, AND(BOMB, FEATHER, HOOKSHOT, SWORD)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
             up_left.connect(lower_center, FEATHER) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             upper_center.connect(lower_center, FEATHER) # from up left you can jesus jump around the key door next to the boss. Avoid circle referencing up_left + upper_center
-            nightmare_key.connect(up_left, AND(FEATHER, SWORD, attack_hookshot, KEY8) # superjump
+            nightmare_key.connect(up_left, AND(FEATHER, SWORD, attack_hookshot, KEY8)) # superjump
             #nightmare_key.connect(map_chest, AND(BOMB, PEGASUS_BOOTS, SWORD, MAGIC_ROD, KEY8)) # bomb trigger lava filler to stairs, use boots bonk to cross 2d
             medicine_chest.connect(upper_center, FEATHER) # jesus super jump
             #boss.connect(map_chest, AND(NIGHTMARE_KEY8, BOMB, PEGASUS_BOOTS, MAGIC_ROD)) # bomb trigger lava filler to stairs, use boots bonk to cross 2d
