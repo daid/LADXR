@@ -23,7 +23,8 @@ class Dungeon7:
         final_pillar_area = Location(7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar
         final_pillar = Location(7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
-        pre_boss = Location(7).add(DungeonChest(0x220)).connect(final_pillar, NIGHTMARE_KEY7) # 100 rupee chest / medicine chest (DX) behind boss door
+        pre_boss = Location(7).connect(final_pillar, NIGHTMARE_KEY7) 
+        beamos_horseheads = Location(7).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
         boss = Location(7).add(HeartContainer(0x2E8)).connect(pre_boss, AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), SHIELD))
             
         if options.logic == 'glitched':
@@ -31,6 +32,7 @@ class Dungeon7:
             toprightF1_chest.connect(entrance, FEATHER) # superjump through center and from F1 switch room
             final_pillar_area.connect(bottomleftF2_area, attack_hookshot) # sideways block push to get to the chest and pillar
             bottomleft_owl.connect(bottomleftF2_area, attack_hookshot) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
+            final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
             pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
             
         self.entrance = entrance

@@ -44,6 +44,10 @@ class Logic:
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
         dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, AND(OCARINA, SWORD))  # TODO: Requires song3
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
+        
+        if options.logic == 'glitched':
+            dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, BOMB) # bomb trigger
+            
         self.start = world.start
         self.location_list = []
         self.iteminfo_list = []

@@ -123,7 +123,7 @@ class World:
         left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)))
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
-        Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
+        mountain_heartpiece = Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
         dungeon8_entrance = Location().connect(left_side_mountain, COUNT(SHIELD, 2))
 
         if options.logic == 'hard' or options.logic == 'glitched':
@@ -150,17 +150,20 @@ class World:
             dream_hut.connect(start, FEATHER) # flock clip
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
+            forest_heartpiece.connect(graveyard, BOMB) # bomb trigger heartpiece
             #forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             log_cave_heartpiece.connect(forest, FEATHER) # super jump
+            log_cave_heartpiece.connect(forest, BOMB) # bomb trigger
             graveyard_heartpiece.connect(graveyard, bush) # sideways block push. added bush requirement since a requirement is necessary
             prairie_island_seashell.connect(center_area, AND(FEATHER, bush)) # jesus jump from right side
             prairie_3gap_stairs.connect(center_area, AND(FEATHER, HOOKSHOT)) # hookshot jump across pits
             tiny_island.connect(center_area, AND(FEATHER, bush)) # jesus jump around
             animal_town.connect(center_area, FEATHER) # jesus jump
+            animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS, FEATHER))) # bomb trigger from right side
             dungeon6_entrance.connect(animal_town, FEATHER) # jesus jump (3 screen)
             raft_game.connect(face_shrine, FEATHER) # jesus jump (2-ish screen)
             right_mountains_2.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
-            
+            mountain_heartpiece.connect(into_to_mountains, BOMB) # bomb trigger from boots crystal cave
             
         self.start = start
         self.swamp = swamp
