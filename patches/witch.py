@@ -3,14 +3,12 @@ from roomEditor import RoomEditor
 
 
 def updateWitch(rom):
-    # Change the toadstool into a chest with the toadstool, so it can be put in the item pool
+    # Change the toadstool into a heartpiece which other patches turn into the toadstool, so it can be put in the item pool
     # This also makes it so you can only get this once.
     re = RoomEditor(rom, 0x050)
-    re.changeObject(2, 4, 0xA0)
-    re.moveObject(2, 4, 2, 3)
     re.entities.clear()
+    re.addEntity(2, 3, 0x35)
     re.store(rom)
-    rom.banks[0x14][0x560 + 0x050] = 0x50
 
     # Change what happens when you trade the toadstool with the witch
     rom.patch(0x05, 0x08D4, 0x08F0, ASM("""

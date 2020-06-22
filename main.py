@@ -124,7 +124,7 @@ def main(mainargs=None):
                 sys.exit(1)
             dungeon_order = patches.dungeonEntrances.readEntrances(rom)
             print("Dungeon order:", ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(dungeon_order))))
-            my_logic = logic.Logic(args, dungeon_order)
+            my_logic = logic.Logic(args, None, entranceMapping=dungeon_order)
             for ii in my_logic.iteminfo_list:
                 ii.item = ii.read(rom)
             e = explorer.Explorer(verbose=args.dump)
