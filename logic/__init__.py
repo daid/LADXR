@@ -14,7 +14,7 @@ from locations.items import *
 
 
 class Logic:
-    def __init__(self, configuration_options, rnd):
+    def __init__(self, configuration_options, rnd, *, entranceMapping=None):
         world = overworld.World(configuration_options)
 
         dungeons = [
@@ -29,12 +29,11 @@ class Logic:
             dungeonColor.DungeonColor(configuration_options)
         ]
 
-        entranceMapping = list(range(9))
-        if configuration_options.dungeonshuffle:
-            rnd.shuffle(entranceMapping)
-            self.entranceMapping = entranceMapping
-        else:
-            self.entranceMapping = None
+        if entranceMapping is None:
+            entranceMapping = list(range(9))
+            if configuration_options.dungeonshuffle:
+                rnd.shuffle(entranceMapping)
+        self.entranceMapping = entranceMapping
 
         dungeons[entranceMapping[0]].entrance.connect(world.start, TAIL_KEY)
         dungeons[entranceMapping[1]].entrance.connect(world.swamp, OR(BOWWOW, MAGIC_ROD, HOOKSHOT))
@@ -56,7 +55,8 @@ class Logic:
         if configuration_options.bowwow != 'normal':
             # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword can do.
             # Except for taking out bushes (and crystal pillars are removed)
-            requirements.bush.remove(SWORD)
+            if SWORD in requirements.bush:
+                requirements.bush.remove(SWORD)
 
         for ii in self.iteminfo_list:
             ii.configure(configuration_options)
