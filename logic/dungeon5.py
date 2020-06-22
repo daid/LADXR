@@ -16,7 +16,7 @@ class Dungeon5:
         Location(5).add(OwlStatue(0x19A)).connect(area2, STONE_BEAK5)
         Location(5).add(DungeonChest(0x19B)).connect(area2, attack_hookshot)  # map chest
         blade_trap_chest = Location(5).add(DungeonChest(0x197)).connect(area2, HOOKSHOT)  # key chest on the left
-        post_gohma = Location(5).connect(area2, HOOKSHOT, KEY5)
+        post_gohma = Location(5).connect(area2, AND(HOOKSHOT, KEY5))
         after_stalfos = Location(5).add(DungeonChest(0x196)).connect(area2, AND(SWORD, BOMB)) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
         butterfly_owl = Location(5).add(OwlStatue(0x18A)).connect(after_stalfos, AND(FEATHER, STONE_BEAK5))
         north_of_crossroads = Location(5).connect(after_stalfos, FEATHER)
