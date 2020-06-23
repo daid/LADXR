@@ -24,6 +24,6 @@ class Dungeon1:
 
         if options.logic == 'glitched':
             boss_key.connect(entrance, FEATHER)  # super jump
-            dungeon1_miniboss.connect(dungeon1_right_side, attack_hookshot) # damage boost or buffer pause over the pit to cross or mushroom
+            #dungeon1_miniboss.connect(dungeon1_right_side, attack_hookshot) # damage boost or buffer pause over the pit to cross or mushroom
             
         self.entrance = entrance
