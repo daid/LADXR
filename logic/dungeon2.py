@@ -27,7 +27,7 @@ class Dungeon2:
         
 
         if options.logic == 'hard' or options.logic == 'glitched':
-            dungeon2_mapchest.connect(dungeon2_l2, AND(attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
+            dungeon2_map_chest.connect(dungeon2_l2, AND(attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
         
         if options.logic == 'glitched':
             dungeon2_ghosts_chest.connect(dungeon2_r5, AND(KEY2, FOUND(KEY2, 4), SWORD)) # use sword to spawn ghosts on other side of the room so they run away

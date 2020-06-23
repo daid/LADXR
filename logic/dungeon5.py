@@ -32,7 +32,7 @@ class Dungeon5:
         stone_tablet.add(HookshotDrop())
 
         if options.logic == 'hard' or options.logic == 'glitched':
-            blade_trap_chest.connect(area2, FEATHER, attack_hookshot_powder)
+            blade_trap_chest.connect(area2, AND(FEATHER, attack_hookshot_powder))
             boss_key.connect(after_stalfos, AND(FEATHER, PEGASUS_BOOTS)) # boots jump across
             after_stalfos.connect(post_gohma, AND(FEATHER, HOOKSHOT, KEY5, FOUND(KEY5, 3))) # passage past gohma
             butterfly_owl.connect(post_gohma, AND(FEATHER, HOOKSHOT, KEY5, FOUND(KEY5, 3))) # passage past gohma
