@@ -34,9 +34,8 @@ class Dungeon5:
         if options.logic == 'hard' or options.logic == 'glitched':
             blade_trap_chest.connect(area2, AND(FEATHER, attack_hookshot_powder))
             boss_key.connect(after_stalfos, AND(FEATHER, PEGASUS_BOOTS)) # boots jump across
-            after_stalfos.connect(post_gohma, AND(FEATHER, HOOKSHOT, KEY5, FOUND(KEY5, 3))) # passage past gohma
-            butterfly_owl.connect(post_gohma, AND(FEATHER, HOOKSHOT, KEY5, FOUND(KEY5, 3))) # passage past gohma
-            butterfly_owl.connect(after_stalfos, PEGASUS_BOOTS) # boots charge + bonk to cross 2d bridge
+            after_stalfos.connect(post_gohma, AND(FEATHER, HOOKSHOT, FOUND(KEY5, 3))) # passage past gohma 
+            butterfly_owl.connect(after_stalfos, AND(PEGASUS_BOOTS, STONE_BEAK5)) # boots charge + bonk to cross 2d bridge
             before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk in 2d section to skip feather
             north_of_crossroads.connect(after_stalfos, OR(HOOKSHOT, PEGASUS_BOOTS)) # boots bonk over the pits, or hookshot the right block
             

@@ -73,7 +73,7 @@ attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skele
 rear_attack = OR(SWORD, BOMB) # mimic
 rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
 fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
-push_hardhat = OR(SHIELD, SWORD, HOOKSHOT)
+push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
 
 
 def flatten(req):

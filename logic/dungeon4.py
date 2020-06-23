@@ -16,7 +16,8 @@ class Dungeon4:
         double_locked_room = Location(4).connect(right_of_entrance, KEY4)
         after_double_lock = Location(4).connect(double_locked_room, AND(KEY4, OR(FEATHER, FLIPPERS)))
         dungeon4_puddle_before_crossroads = Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
-        before_miniboss = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS, KEY4))
+        north_crossroads = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS))
+        before_miniboss = Location(4).connect(north_crossroads, KEY4)
         Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
         sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
@@ -35,7 +36,7 @@ class Dungeon4:
             sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG))
             rightside_crossroads.connect(entrance, FEATHER) # jump across the corners
             puddle_crack_block_chest.connect(rightside_crossroads, FEATHER) # jump around the bombable block
-            before_miniboss.connect(entrance, AND(FEATHER, KEY4, FOUND(KEY4, 3))) # jump across the corners
+            north_crossroads.connect(entrance, FEATHER) # jump across the corners
             dungeon4_puddle_before_crossroads.connect(entrance, FEATHER) # With a tight jump feather is enough to cross the puddle without flippers
             to_the_nightmare_key.connect(before_miniboss, OR(FEATHER, AND(FLIPPERS, PEGASUS_BOOTS))) # With a tight jump feather is enough to reach the top left switch without flippers
             before_boss.connect(before_miniboss, FEATHER) # jump to the bottom right corner of boss door room

@@ -59,7 +59,7 @@ class Dungeon3:
             dungeon3_raised_blocks_east.connect(area3, FEATHER) # use superjump to get over the bottom left block
             dungeon3_raised_blocks_north.connect(area3, AND(PEGASUS_BOOTS, FEATHER)) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, OR(BOMB, SHIELD))) # superjump using the stalfos next to chest, or room below and jump the 2 gap
-            dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, KEY3, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys, so needs total 6. With nag messages: only 1 key is needed or dodongo superjump to negate all extra keys which needs sword to turn
+            dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys, so needs total 6. TODO: With nag messages: only 1 key is needed or dodongo superjump to negate all extra keys which needs sword to turn
             
             #pre_boss.connect(towards_boss4, AND(attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
             #dungeon3_zol_stalfos.connect(area_up, AND(FEATHER, SWORD)) # use superjump near top blocks chest to get to zol without boots. TODO: Nag messages removes sword req
