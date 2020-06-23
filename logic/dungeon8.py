@@ -46,7 +46,7 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
 
         cueball_req = Location(8).connect(entrance_up, AND(FEATHER, SWORD, MAGIC_ROD))
-        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(cueball_req, KEY8))
+        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(cueball_req, KEY8)
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
