@@ -28,10 +28,10 @@ class Dungeon7:
         boss = Location(7).add(HeartContainer(0x2E8)).connect(pre_boss, AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), SHIELD))
             
         if options.logic == 'glitched':
-            topright_pillar_area.connect(entrance, FEATHER) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down
-            toprightF1_chest.connect(entrance, FEATHER) # superjump through center and from F1 switch room
+            topright_pillar_area.connect(entrance, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down
+            toprightF1_chest.connect(topright_pillar_area, FEATHER) # superjump from F1 switch room
             final_pillar_area.connect(bottomleftF2_area, attack_hookshot) # sideways block push to get to the chest and pillar
-            bottomleft_owl.connect(bottomleftF2_area, attack_hookshot) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
+            bottomleft_owl.connect(bottomleftF2_area, AND(attack_hookshot, STONE_BEAK7)) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
             final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
             pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
             

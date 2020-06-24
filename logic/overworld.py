@@ -134,20 +134,20 @@ class World:
             dream_hut.connect(start, HOOKSHOT) # clip past the rocks in front of dream hut
             hookshot_cave.connect(forest, HOOKSHOT) # clip past the rocks in front of log cave
             hookshot_cave.connect(forest, AND(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
-            forest_heartpiece.connect(forest, PEGASUS_BOOTS) # boots bonk across the pits
-            swamp.connect(forest, SHIELD) # damage boost from toadstool area across the pit
+            #forest_heartpiece.connect(forest, PEGASUS_BOOTS) # boots bonk across the pits
+            #swamp.connect(forest, SHIELD) # damage boost from toadstool area across the pit
             swamp_chest.connect(swamp, bush) # added bush requirement since a requirement is necessary
             writes_hut.connect(swamp, HOOKSHOT) # hookshot the sign in front of writes hut
-            writes_hut.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
-            graveyard.connect(forest, PEGASUS_BOOTS) # boots bonk witches hut
+            #writes_hut.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
+            #graveyard.connect(forest, PEGASUS_BOOTS) # boots bonk witches hut
             #prairie_plateau.connect(center_area, AND(BOMB, PEGASUS_BOOTS), one_way=True) # boots bonk across pits
-            richard_cave_chest.connect(richard_cave, PEGASUS_BOOTS) # boots bonk
+            #richard_cave_chest.connect(richard_cave, PEGASUS_BOOTS) # boots bonk
             animal_town_bombcave.connect(desert, AND(BOMB, PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
-            bridge_seashell.connect(right_mountains_2, AND(PEGASUS_BOOTS, POWER_BRACELET)) # boots bonk
+            #bridge_seashell.connect(right_mountains_2, AND(PEGASUS_BOOTS, POWER_BRACELET)) # boots bonk
             
             
         if options.logic == 'glitched':
-            dream_hut.connect(start, FEATHER) # flock clip
+            #dream_hut.connect(start, FEATHER) # flock clip
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest_heartpiece.connect(graveyard, BOMB) # bomb trigger heartpiece
@@ -159,7 +159,7 @@ class World:
             prairie_3gap_stairs.connect(center_area, AND(FEATHER, HOOKSHOT)) # hookshot jump across pits
             tiny_island.connect(center_area, AND(FEATHER, bush)) # jesus jump around
             animal_town.connect(center_area, FEATHER) # jesus jump
-            animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS, FEATHER))) # bomb trigger from right side
+            animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER))) # bomb trigger from right side
             dungeon6_entrance.connect(animal_town, FEATHER) # jesus jump (3 screen)
             raft_game.connect(face_shrine, FEATHER) # jesus jump (2-ish screen)
             right_mountains_2.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
