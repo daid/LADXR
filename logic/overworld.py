@@ -135,7 +135,6 @@ class World:
             hookshot_cave.connect(forest, HOOKSHOT) # clip past the rocks in front of log cave
             hookshot_cave.connect(forest, AND(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
             #forest_heartpiece.connect(forest, PEGASUS_BOOTS) # boots bonk across the pits
-            #swamp.connect(forest, SHIELD) # damage boost from toadstool area across the pit
             swamp_chest.connect(swamp, bush) # added bush requirement since a requirement is necessary
             writes_hut.connect(swamp, HOOKSHOT) # hookshot the sign in front of writes hut
             #writes_hut.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
@@ -147,11 +146,10 @@ class World:
             
             
         if options.logic == 'glitched':
-            #dream_hut.connect(start, FEATHER) # flock clip
+            #dream_hut.connect(start, FEATHER) # flock clip TODO: require nag messages
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest_heartpiece.connect(graveyard, BOMB) # bomb trigger heartpiece
-            #forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             log_cave_heartpiece.connect(forest, FEATHER) # super jump
             log_cave_heartpiece.connect(forest, BOMB) # bomb trigger
             graveyard_heartpiece.connect(graveyard, bush) # sideways block push. added bush requirement since a requirement is necessary
@@ -164,6 +162,10 @@ class World:
             raft_game.connect(face_shrine, FEATHER) # jesus jump (2-ish screen)
             right_mountains_2.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
             mountain_heartpiece.connect(into_to_mountains, BOMB) # bomb trigger from boots crystal cave
+            
+        #if options.logic == 'hell'
+            #swamp.connect(forest, SHIELD) # damage boost from toadstool area across the pit
+            #forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             
         self.start = start
         self.swamp = swamp
