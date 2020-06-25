@@ -17,7 +17,7 @@ class Dungeon4:
         after_double_lock = Location(4).connect(double_locked_room, AND(KEY4, OR(FEATHER, FLIPPERS)))
         dungeon4_puddle_before_crossroads = Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
         north_crossroads = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS))
-        before_miniboss = Location(4).connect(north_crossroads, KEY4)
+        before_miniboss = Location(4).connect(north_crossroads, AND(KEY4, FOUND(KEY4, 3))
         Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
         sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, FLIPPERS)  # key that drops in the hole and needs swim to get
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
