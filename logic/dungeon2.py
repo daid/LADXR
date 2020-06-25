@@ -33,6 +33,8 @@ class Dungeon2:
         if options.logic == 'glitched':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
             dungeon2_r6.connect(dungeon2_r5, FEATHER) # superjump to staircase next to hinox. 
+            
+        #if options.logic == 'hell':    
             #dungeon2_r4.connect(dungeon2_r3, AND(PEGASUS_BOOTS,HOOKSHOT)) # use pegasus boots to cross the pits, hookshot is nice
             #shyguy_key_drop.connect(dungeon2_r4,rear_attack_range) # adjust for alternate requirements for dungeon2_r4
     
