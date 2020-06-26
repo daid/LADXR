@@ -2,6 +2,7 @@ from .itemInfo import ItemInfo
 from .constants import *
 from assembler import ASM
 from utils import formatText
+from checkMetadata import checkMetadataTable
 
 
 class StartItem(ItemInfo):
@@ -14,6 +15,8 @@ class StartItem(ItemInfo):
     def __init__(self):
         super().__init__()
         self.give_bowwow = False
+        self.room = 0x2A3
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if options.bowwow != 'normal':

@@ -1,5 +1,6 @@
 from .itemInfo import ItemInfo
 from .constants import *
+from checkMetadata import checkMetadataTable
 
 
 class OwlStatue(ItemInfo):
@@ -13,6 +14,7 @@ class OwlStatue(ItemInfo):
     def __init__(self, room):
         super().__init__()
         self.room = room
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if options.owlstatues == "both":
@@ -45,3 +47,7 @@ class OwlStatue(ItemInfo):
             return "%s:%03x:%d" % (self.__class__.__name__, self.room, self._location.dungeon)
         else:
             return "%s:%03x" % (self.__class__.__name__, self.room)
+    
+    @property
+    def nameId(self):
+        return "0x%03X-Owl" % self.room
