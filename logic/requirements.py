@@ -63,7 +63,7 @@ def isConsumable(item):
     return False
 
 
-bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET)
+bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET, BOOMERANG)
 attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
 attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
 attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
@@ -73,7 +73,7 @@ attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skele
 rear_attack = OR(SWORD, BOMB) # mimic
 rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
 fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
-push_hardhat = OR(SHIELD, SWORD, HOOKSHOT)
+push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
 
 
 def flatten(req):
