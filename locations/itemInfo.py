@@ -1,5 +1,5 @@
 import typing
-
+from checkMetadata import checkMetadataTable
 
 class ItemInfo:
     OPTIONS = []
@@ -8,6 +8,7 @@ class ItemInfo:
     def __init__(self):
         self.item = None
         self._location = None
+        self.room = None
 
     def setLocation(self, location):
         self._location = location
@@ -26,3 +27,7 @@ class ItemInfo:
 
     def __repr__(self):
         return self.__class__.__name__
+    
+    @property
+    def nameId(self):
+        return "0x%03X" % self.room if self.room != None else "None"

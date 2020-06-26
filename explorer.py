@@ -1,5 +1,6 @@
 from logic import AND, OR, COUNT, FOUND
 from logic.requirements import isConsumable
+from checkMetadata import checkMetadataTable
 
 
 class Explorer:
@@ -27,7 +28,7 @@ class Explorer:
         self.__visited.add(location)
         for ii in location.items:
             if self.__verbose:
-                print("%20s at %s" % (ii.item, ii))
+                print("%20s at %s (%s)" % (ii.item, ii.metadata, ii))
             self.addItem(ii.item)
 
         for target, requirements in location.simple_connections:

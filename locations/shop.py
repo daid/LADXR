@@ -2,6 +2,7 @@ from .itemInfo import ItemInfo
 from .constants import *
 from utils import formatText
 from assembler import ASM
+from checkMetadata import checkMetadataTable
 
 
 class ShopItem(ItemInfo):
@@ -10,6 +11,7 @@ class ShopItem(ItemInfo):
     def __init__(self, index):
         super().__init__()
         self.__index = index
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if self.__index < 2:
@@ -42,3 +44,7 @@ class ShopItem(ItemInfo):
                     return k
             raise ValueError("Could not find start item contents in ROM (0x%02x)" % (value))
         return self.OPTIONS[0]
+
+    @property
+    def nameId(self):
+        return "0x2A1-%s" % self.__index

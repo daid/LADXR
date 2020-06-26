@@ -1,8 +1,14 @@
 from .constants import *
 from .itemInfo import ItemInfo
-
+from checkMetadata import checkMetadataTable
 
 class Witch(ItemInfo):
+
+    def __init__(self):
+        super().__init__()
+        self.room = 0x2A2
+        self.metadata = checkMetadataTable[self.nameId]
+
     OPTIONS = [POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA,
         FEATHER, SHOVEL, MAGIC_POWDER, BOMB, SWORD, FLIPPERS, MAGNIFYING_LENS, MEDICINE,
         TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY,

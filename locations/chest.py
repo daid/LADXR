@@ -1,6 +1,7 @@
 from .itemInfo import ItemInfo
 from .constants import *
 from assembler import ASM
+from checkMetadata import checkMetadataTable
 
 
 class Chest(ItemInfo):
@@ -19,6 +20,7 @@ class Chest(ItemInfo):
         super().__init__()
         self.room = room
         self.addr = room + 0x560
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if options.keysanity:

@@ -1,5 +1,6 @@
 from .itemInfo import ItemInfo
 from .constants import *
+from checkMetadata import checkMetadataTable
 
 
 class TunicFairy(ItemInfo):
@@ -14,6 +15,8 @@ class TunicFairy(ItemInfo):
     def __init__(self, index):
         super().__init__()
         self.index = index
+        self.room = 0x301
+        self.metadata = checkMetadataTable[self.nameId]
 
     def patch(self, rom, option, *, cross_world=False):
         rom.banks[0x36][0x11BF + self.index] = CHEST_ITEMS[option]
@@ -24,3 +27,7 @@ class TunicFairy(ItemInfo):
             if v == value:
                 return k
         raise ValueError("Could not find tunic fairy contents in ROM (0x%02x)" % (value))
+
+    @property
+    def nameId(self):
+        return "0x%03X-%s" % (self.room, self.index)

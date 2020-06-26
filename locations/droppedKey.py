@@ -1,5 +1,6 @@
 from .itemInfo import ItemInfo
 from .constants import *
+from checkMetadata import checkMetadataTable
 
 
 class DroppedKey(ItemInfo):
@@ -15,6 +16,7 @@ class DroppedKey(ItemInfo):
     def __init__(self, room):
         super().__init__()
         self.room = room
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if options.keysanity:

@@ -2,6 +2,7 @@ from .itemInfo import ItemInfo
 from .constants import *
 from assembler import ASM
 from utils import formatText
+from checkMetadata import checkMetadataTable
 
 
 class BoomerangGuy(ItemInfo):
@@ -10,6 +11,8 @@ class BoomerangGuy(ItemInfo):
     def __init__(self):
         super().__init__()
         self.setting = 'trade'
+        self.room = 0x1F5
+        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         self.setting = options.boomerang
