@@ -5,10 +5,11 @@ class ItemInfo:
     OPTIONS = []
     MULTIWORLD = False
 
-    def __init__(self):
+    def __init__(self, room=None):
         self.item = None
         self._location = None
-        self.room = None
+        self.room = room
+        self.metadata = checkMetadataTable[self.nameId]
 
     def setLocation(self, location):
         self._location = location

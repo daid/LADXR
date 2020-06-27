@@ -2,16 +2,14 @@ from .itemInfo import ItemInfo
 from .constants import *
 from utils import formatText
 from assembler import ASM
-from checkMetadata import checkMetadataTable
 
 
 class ShopItem(ItemInfo):
     OPTIONS = [BOMB]
 
     def __init__(self, index):
-        super().__init__()
         self.__index = index
-        self.metadata = checkMetadataTable[self.nameId]
+        super().__init__(0x2A1)
 
     def configure(self, options):
         if self.__index < 2:
@@ -47,4 +45,4 @@ class ShopItem(ItemInfo):
 
     @property
     def nameId(self):
-        return "0x2A1-%s" % self.__index
+        return "0x%03X-%s" % (self.room, self.__index)

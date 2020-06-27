@@ -1,6 +1,5 @@
 from .itemInfo import ItemInfo
 from .constants import *
-from checkMetadata import checkMetadataTable
 
 
 class TunicFairy(ItemInfo):
@@ -13,10 +12,8 @@ class TunicFairy(ItemInfo):
         HEART_CONTAINER, BAD_HEART_CONTAINER]
 
     def __init__(self, index):
-        super().__init__()
         self.index = index
-        self.room = 0x301
-        self.metadata = checkMetadataTable[self.nameId]
+        super().__init__(0x301)
 
     def patch(self, rom, option, *, cross_world=False):
         rom.banks[0x36][0x11BF + self.index] = CHEST_ITEMS[option]

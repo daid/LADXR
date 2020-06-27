@@ -7,6 +7,7 @@ class CheckMetadata:
         return "%s - %s" % (self.area, self.name)
 
 checkMetadataTable = {
+    "None": CheckMetadata("Unset Room", "None"),
     "0x1F5": CheckMetadata("Boomerang Guy Item", "Toronbo Shores"), #http://artemis251.fobby.net/zelda/maps/underworld1/01F5.GIF
     "0x2A3": CheckMetadata("Tarin's Gift", "Mabe Villiage"), #http://artemis251.fobby.net/zelda/maps/underworld2/02A3.GIF
     "0x301-0": CheckMetadata("Tunic Fairy Item 1", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0301.GIF
