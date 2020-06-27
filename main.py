@@ -135,7 +135,7 @@ def main(mainargs=None):
                 for loc in my_logic.location_list:
                     if loc not in e.getAccessableLocations():
                         for ii in loc.items:
-                            print("%20s at %s (%s)" % (ii.item, ii.metadata, ii))
+                            print("%20s at %s (%s)" % (ii.read(rom), ii.metadata, ii))
                 sys.exit(1)
             sys.exit(0)
 
