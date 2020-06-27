@@ -30,6 +30,7 @@ import patches.aesthetics
 import patches.health
 import patches.goal
 import explorer
+import hints
 import logic
 import os
 import time
