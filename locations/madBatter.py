@@ -1,6 +1,5 @@
 from .itemInfo import ItemInfo
 from .constants import *
-from checkMetadata import checkMetadataTable
 
 
 class MadBatter(ItemInfo):
@@ -10,11 +9,6 @@ class MadBatter(ItemInfo):
         RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
         SEASHELL, BOOMERANG, HEART_PIECE, ARROWS_10, SINGLE_ARROW,
         MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC]
-
-    def __init__(self, room):
-        super().__init__()
-        self.room = room
-        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         return

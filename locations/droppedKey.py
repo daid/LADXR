@@ -1,6 +1,5 @@
 from .itemInfo import ItemInfo
 from .constants import *
-from checkMetadata import checkMetadataTable
 
 
 class DroppedKey(ItemInfo):
@@ -12,11 +11,6 @@ class DroppedKey(ItemInfo):
         MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
         HEART_CONTAINER, BAD_HEART_CONTAINER, TOADSTOOL]
     MULTIWORLD = True
-
-    def __init__(self, room):
-        super().__init__()
-        self.room = room
-        self.metadata = checkMetadataTable[self.nameId]
 
     def configure(self, options):
         if options.keysanity:
