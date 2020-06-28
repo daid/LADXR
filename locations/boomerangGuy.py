@@ -8,7 +8,7 @@ class BoomerangGuy(ItemInfo):
     OPTIONS = [BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL]
 
     def __init__(self):
-        super().__init__()
+        super().__init__(0x1F5)
         self.setting = 'trade'
 
     def configure(self, options):

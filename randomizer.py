@@ -6,6 +6,7 @@ import copy
 import patches.dungeonEntrances
 import patches.goal
 from locations.items import *
+import hints
 
 
 class Error(Exception):
@@ -47,6 +48,7 @@ class Randomizer:
 
         if self.__logic.entranceMapping:
             patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
+        hints.addHints(rom, self.rnd, self.__logic.iteminfo_list)
         if options.multiworld:
             for n in range(2):
                 result_rom = copy.deepcopy(rom)

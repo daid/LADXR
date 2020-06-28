@@ -10,10 +10,6 @@ class MadBatter(ItemInfo):
         SEASHELL, BOOMERANG, HEART_PIECE, ARROWS_10, SINGLE_ARROW,
         MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC]
 
-    def __init__(self, room):
-        super().__init__()
-        self.room = room
-
     def configure(self, options):
         return
 

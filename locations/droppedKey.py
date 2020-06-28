@@ -12,10 +12,6 @@ class DroppedKey(ItemInfo):
         HEART_CONTAINER, BAD_HEART_CONTAINER, TOADSTOOL]
     MULTIWORLD = True
 
-    def __init__(self, room):
-        super().__init__()
-        self.room = room
-
     def configure(self, options):
         if options.keysanity:
             self.OPTIONS = DroppedKey.OPTIONS.copy()

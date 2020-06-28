@@ -10,10 +10,6 @@ class OwlStatue(ItemInfo):
         SEASHELL, BOOMERANG, HEART_PIECE, ARROWS_10, SINGLE_ARROW,
         MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC, TOADSTOOL]
 
-    def __init__(self, room):
-        super().__init__()
-        self.room = room
-
     def configure(self, options):
         if options.owlstatues == "both":
             return
@@ -45,3 +41,7 @@ class OwlStatue(ItemInfo):
             return "%s:%03x:%d" % (self.__class__.__name__, self.room, self._location.dungeon)
         else:
             return "%s:%03x" % (self.__class__.__name__, self.room)
+    
+    @property
+    def nameId(self):
+        return "0x%03X-Owl" % self.room

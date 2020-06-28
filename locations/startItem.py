@@ -12,7 +12,7 @@ class StartItem(ItemInfo):
     MESSAGE = {SWORD: 0x9B, SHIELD: 0x91, POWER_BRACELET: 0x90, FEATHER: 0x97, BOOMERANG: 0xD9, MAGIC_ROD: 0x94, BOWWOW: 0xC8}
 
     def __init__(self):
-        super().__init__()
+        super().__init__(0x2A3)
         self.give_bowwow = False
 
     def configure(self, options):

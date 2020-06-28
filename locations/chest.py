@@ -16,8 +16,7 @@ class Chest(ItemInfo):
     MULTIWORLD = True
 
     def __init__(self, room):
-        super().__init__()
-        self.room = room
+        super().__init__(room)
         self.addr = room + 0x560
 
     def configure(self, options):

@@ -8,8 +8,8 @@ class ShopItem(ItemInfo):
     OPTIONS = [BOMB]
 
     def __init__(self, index):
-        super().__init__()
         self.__index = index
+        super().__init__(0x2A1)
 
     def configure(self, options):
         if self.__index < 2:
@@ -42,3 +42,7 @@ class ShopItem(ItemInfo):
                     return k
             raise ValueError("Could not find start item contents in ROM (0x%02x)" % (value))
         return self.OPTIONS[0]
+
+    @property
+    def nameId(self):
+        return "0x%03X-%s" % (self.room, self.__index)

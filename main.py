@@ -30,6 +30,7 @@ import patches.aesthetics
 import patches.health
 import patches.goal
 import explorer
+import hints
 import logic
 import os
 import time
@@ -135,7 +136,7 @@ def main(mainargs=None):
                 for loc in my_logic.location_list:
                     if loc not in e.getAccessableLocations():
                         for ii in loc.items:
-                            print("%20s: %s" % (ii, ii.read(rom)))
+                            print("%20s at %s (%s)" % (ii.read(rom), ii.metadata, ii))
                 sys.exit(1)
             sys.exit(0)
 
