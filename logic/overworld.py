@@ -116,14 +116,16 @@ class World:
         right_mountains_2 = Location().connect(right_mountains_1, FLIPPERS)
         right_mountains_2.add(OwlStatue(0x1E))
         bridge_seashell = Location().add(Seashell(0x00C)).connect(right_mountains_2, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
-        Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2))
+        bird_key = Location().add(BirdKey()).connect(right_mountains_2, COUNT(POWER_BRACELET, 2)) # assumes rooster to cross the pits before the statue?
         # Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle and chest after it.
+        Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # chest after multichest puzzle
         right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT))
 
         left_side_mountain = Location().connect(right_mountains_2, AND(HOOKSHOT, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)))
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
-        mountain_heartpiece = Location().add(HeartPiece(0x2BA)).connect(left_side_mountain, BOMB)  # in the connecting cave from right to left
+        mountain_heartpiece = Location().add(HeartPiece(0x2BA)) # heartpiece in connecting cave
+        left_side_mountain.connect(mountain_heartpiece, BOMB, one_way=True)  # in the connecting cave from right to left. one_way to prevent access to left_side_mountain via glitched logic
         dungeon8_entrance = Location().connect(left_side_mountain, COUNT(SHIELD, 2))
 
         if options.logic == 'hard' or options.logic == 'glitched':
@@ -158,10 +160,12 @@ class World:
             tiny_island.connect(center_area, AND(FEATHER, bush)) # jesus jump around
             animal_town.connect(center_area, FEATHER) # jesus jump
             animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER))) # bomb trigger from right side
-            dungeon6_entrance.connect(animal_town, FEATHER) # jesus jump (3 screen)
-            raft_game.connect(face_shrine, FEATHER) # jesus jump (2-ish screen)
+            center_area.connect(dungeon6_entrance, FEATHER, one_way=True) # jesus jump (3 screen)
+            face_shrine.connect(raft_game, FEATHER, one_way=True) # jesus jump (2-ish screen)
+            right_mountains_1.connect(into_to_mountains, AND(FEATHER, HOOKSHOT)) # hookshot jump past the boots crystals
             right_mountains_2.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
-            mountain_heartpiece.connect(into_to_mountains, BOMB) # bomb trigger from boots crystal cave
+            bird_key.connect(right_mountains_2, AND(FEATHER, HOOKSHOT)) # hookshot jump across the big pits room
+            into_to_mountains.connect(mountain_heartpiece, BOMB, one_way=True) # bomb trigger from boots crystal cave
             
         #if options.logic == 'hell'
             #swamp.connect(forest, SHIELD) # damage boost from toadstool area across the pit
