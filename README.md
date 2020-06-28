@@ -1,9 +1,9 @@
 # Legend Of Zelda: Link's Awakening DX: Randomizer
-Or, Lozlar for short.
+Or, LADXR for short.
 
 ## What is this?
 
-TODO: Add website&link
+See https://daid.github.io/LADXR/
 
 ## Usage
 
