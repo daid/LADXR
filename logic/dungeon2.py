@@ -27,8 +27,8 @@ class Dungeon2:
         dungeon2_boss = Location(2).add(HeartContainer(0x12B)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, OR(SWORD, MAGIC_ROD), POWER_BRACELET, FEATHER))
         
 
-        if options.logic == 'hard' or options.logic == 'glitched':
-            dungeon2_map_chest.connect(dungeon2_l2, AND(attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
+        #if options.logic == 'hard' or options.logic == 'glitched':
+            #dungeon2_map_chest.connect(dungeon2_l2, AND(attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
         
         if options.logic == 'glitched':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)

@@ -56,8 +56,8 @@ class Dungeon3:
             dungeon3_south_key_drop.connect(area_down, POWER_BRACELET) # use pots to kill enemies
         
         if options.logic == 'glitched':
-            dungeon3_raised_blocks_east.connect(area3, FEATHER) # use superjump to get over the bottom left block
-            dungeon3_raised_blocks_north.connect(area3, AND(PEGASUS_BOOTS, FEATHER)) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks
+            area3.connect(dungeon3_raised_blocks_east, FEATHER, one_way=True) # use superjump to get over the bottom left block
+            area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, FEATHER), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
             dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys, so needs total 6. TODO: With nag messages: only 1 key is needed or dodongo superjump to negate all extra keys which needs sword to turn
         
