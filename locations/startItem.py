@@ -14,6 +14,7 @@ class StartItem(ItemInfo):
     def __init__(self):
         super().__init__(0x2A3)
         self.give_bowwow = False
+        self.priority = 1
 
     def configure(self, options):
         if options.bowwow != 'normal':

@@ -69,10 +69,14 @@ class Randomizer:
             del self.item_pool[item]
 
     def addSpot(self, spot):
-        self.spots.append(spot)
+        while len(self.spots) <= spot.priority:
+            self.spots.append([])
+        self.spots[spot.priority].append(spot)
 
     def removeSpot(self, spot):
-        self.spots.remove(spot)
+        self.spots[spot.priority].remove(spot)
+        while len(self.spots) > 0 and len(self.spots[-1]) == 0:
+            self.spots.pop()
 
     def readItemPool(self, rom):
         # Collect the item pool from the rom to see which items we can randomize.
@@ -124,7 +128,7 @@ class Randomizer:
 
     def placeItem(self):
         # Find a random spot and item to place
-        spot = self.rnd.choice(self.spots)
+        spot = self.rnd.choice(self.spots[-1])
         options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
 
         if not options:
@@ -152,8 +156,9 @@ class Randomizer:
             valid = False
             for loc in e.getAccessableLocations():
                 for ii in loc.items:
-                    if ii in self.spots:
-                        valid = True
+                    for spots in self.spots:
+                        if ii in spots:
+                            valid = True
             if not valid:
                 if verbose:
                     print("Can no longer find new locations to explore")
@@ -185,11 +190,12 @@ class Randomizer:
         # For each item in the pool, find which spots are available.
         # Then, from the hardest to place item to the easy stuff strip the availability pool
         item_spots = {}
-        for spot in self.spots:
-            for option in spot.getOptions():
-                if option not in item_spots:
-                    item_spots[option] = set()
-                item_spots[option].add(spot)
+        for spots in self.spots:
+            for spot in spots:
+                for option in spot.getOptions():
+                    if option not in item_spots:
+                        item_spots[option] = set()
+                    item_spots[option].add(spot)
         for item in sorted(self.item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
             spots = item_spots.get(item, set())
             for n in range(self.item_pool.get(item, 0)):

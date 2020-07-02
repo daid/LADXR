@@ -10,6 +10,7 @@ class ItemInfo:
         self._location = None
         self.room = room
         self.metadata = checkMetadataTable[self.nameId]
+        self.priority = 0
 
     def setLocation(self, location):
         self._location = location
