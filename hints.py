@@ -52,7 +52,6 @@ useless_hint = [
 
 def addHints(rom, rnd, spots):
     spots = list(filter(lambda spot: spot.item in hint_items, spots))
-    print(len(spots), len(hint_text_ids))
     text_ids = hint_text_ids.copy()
     rnd.shuffle(text_ids)
     for text_id in text_ids:
@@ -62,7 +61,6 @@ def addHints(rom, rnd, spots):
             hint = rnd.choice(hints).format(INVENTORY_NAME[spot.item].decode("ascii"), spot.metadata.area)
         else:
             hint = rnd.choice(hints).format(*rnd.choice(useless_hint))
-        print(hint)
         rom.texts[text_id] = formatText(hint.encode("ascii"))
 
     for text_id in range(0x200, 0x20C, 2):
