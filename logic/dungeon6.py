@@ -35,13 +35,13 @@ class Dungeon6:
         boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, BOMB))
 
         if options.logic == 'hard' or options.logic == 'glitched':
-            bracelet_chest.connect(entrance, BOMB)
-            lower_right_owl.connect(lower_right_side, STONE_BEAK6) # wall clip from entrance to talk from the right side
+            bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
+            center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS)) # use a boots dash to get over the platforms
             
         if options.logic == 'glitched':
-            left_side.connect(entrance, AND(POWER_BRACELET, FEATHER)) # use superjumps to pass raised blocks
-            center_2_and_upper_right_side.connect(lower_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # superjump from waterway towards dodongos. superjump next to corner block, so weapons added
-            center_1.connect(lower_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # POWER_BRACELET is implied from lower_right_side. superjump from waterway + shag jump to pass key block at tiles room
+            entrance.connect(left_side, AND(POWER_BRACELET, FEATHER), one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
+            lower_right_side.connect(center_2_and_upper_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)), one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
+            lower_right_side.connect(center_1, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)), one_way=True) # POWER_BRACELET is implied from lower_right_side. superjump from waterway + shag jump to pass key block at tiles room
             boss_key.connect(lower_right_side, FEATHER) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
         self.entrance = entrance

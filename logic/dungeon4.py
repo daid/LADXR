@@ -23,7 +23,7 @@ class Dungeon4:
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest
         before_miniboss.add(DungeonChest(0x168))  # key chest near the puzzle
-        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, POWER_BRACELET))) # move around miniboss through 5 tile room
+        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, POWER_BRACELET, SWORD))) # flippers to move around miniboss through 5 tile room
         miniboss.add(DungeonChest(0x160))  # flippers chest
 
         to_the_nightmare_key = Location(4).connect(before_miniboss, AND(FEATHER, OR(FLIPPERS, PEGASUS_BOOTS)))  # 5 symbol puzzle (does not need flippers with boots + feather)
