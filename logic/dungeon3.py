@@ -14,16 +14,16 @@ class Dungeon3:
         dungeon3_zol_stalfos = Location(3).add(DungeonChest(0x14E)).connect(area3, AND(PEGASUS_BOOTS, attack_skeleton))  # 3th chest requires killing the slime behind the crystal pillars
 
         # now we can go 4 directions,
-        area_up = Location(3).connect(area3, KEY3)
+        area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
         dungeon3_north_key_drop = Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
         Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)).connect(area_up, attack_hookshot)  # chests locked behind raised blocks near staircase
         dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)).connect(area_up, attack_hookshot) # chest locked behind raised blocks next to slime chest
         
-        area_left = Location(3).connect(area3, KEY3)
+        area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
         Location(3).add(DroppedKey(0x155)).connect(area_left, attack_hookshot) # west key drop (no longer requires feather to get across hole)
 
-        area_down = Location(3).connect(area3, KEY3)
+        area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
         dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
 
         area_right = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
@@ -38,10 +38,10 @@ class Dungeon3:
         Location(3).add(DungeonChest(0x144)).connect(area_right, attack_skeleton)  # map chest
         Location(3).add(OwlStatue(0x140), OwlStatue(0x147)).connect(area_right, STONE_BEAK3)
 
-        towards_boss1 = Location(3).connect(area_right, KEY3)
-        towards_boss2 = Location(3).connect(towards_boss1, KEY3)
-        towards_boss3 = Location(3).connect(towards_boss2, KEY3)
-        towards_boss4 = Location(3).connect(towards_boss3, KEY3)
+        towards_boss1 = Location(3).connect(area_right, AND(KEY3, FOUND(KEY3, 5)))
+        towards_boss2 = Location(3).connect(towards_boss1, AND(KEY3, FOUND(KEY3, 6)))
+        towards_boss3 = Location(3).connect(towards_boss2, AND(KEY3, FOUND(KEY3, 7)))
+        towards_boss4 = Location(3).connect(towards_boss3, AND(KEY3, FOUND(KEY3, 8)))
 
         # Just the whole area before the boss, requirements for the boss itself and the rooms before it are the same.
         pre_boss = Location(3).connect(towards_boss4, AND(attack_no_boomerang, FEATHER, PEGASUS_BOOTS))
