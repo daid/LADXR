@@ -126,5 +126,6 @@ class Explorer:
             for target, req in loc.gated_connections:
                 if target not in self.__visited:
                     print("Missing:", req)
-        print(self.__inventory)
+        for item, amount in sorted(self.__inventory_found.items()):
+            print("%s: %d (%d)" % (item, self.__inventory.get(item, 0), amount))
         print("Cannot reach: %d locations" % (failed))

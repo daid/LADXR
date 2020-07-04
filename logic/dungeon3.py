@@ -21,7 +21,7 @@ class Dungeon3:
         dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)).connect(area_up, attack_hookshot) # chest locked behind raised blocks next to slime chest
         
         area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
-        Location(3).add(DroppedKey(0x155)).connect(area_left, attack_hookshot) # west key drop (no longer requires feather to get across hole)
+        area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, attack_hookshot) # west key drop (no longer requires feather to get across hole)
 
         area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
         dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
@@ -49,6 +49,15 @@ class Dungeon3:
 
         boss = Location(3).add(HeartContainer(0x15A)).connect(pre_boss, AND(NIGHTMARE_KEY3, SWORD, PEGASUS_BOOTS))
         # TODO Set as target
+
+        if not options.keysanity:
+            # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
+            area_left.connect(area3, KEY3)
+            dungeon3_north_key_drop.items[0].forced_item = KEY3
+            area_down.connect(area3, KEY3)
+            area_left_key_drop.items[0].forced_item = KEY3
+            area_up.connect(area3, KEY3)
+            dungeon3_south_key_drop.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched':
             dungeon3_reverse_eye.connect(entrance, HOOKSHOT) # hookshot the chest to get to the right side
