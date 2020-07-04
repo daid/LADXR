@@ -126,21 +126,21 @@ class MultiworldItemInfoWrapper:
     def __init__(self, world, target):
         self.world = world
         self.target = target
-        self.OPTIONS = None
+        self.MULTIWORLD_OPTIONS = None
 
     def read(self, rom):
-        return "W%d_%s" % (self.world, self.target.read(rom))
+        return "%s_W%d" % (self.target.read(rom), self.world)
 
     def getOptions(self):
-        if self.OPTIONS is None:
+        if self.MULTIWORLD_OPTIONS is None:
             options = self.target.getOptions()
             if self.target.MULTIWORLD and len(options) > 1:
-                self.OPTIONS = []
+                self.MULTIWORLD_OPTIONS = []
                 for n in range(2):
-                    self.OPTIONS += ["W%d_%s" % (n, t) for t in options]
+                    self.MULTIWORLD_OPTIONS += ["%s_W%d" % (t, n) for t in options]
             else:
-                self.OPTIONS = ["W%d_%s" % (self.world, t) for t in options]
-        return self.OPTIONS
+                self.MULTIWORLD_OPTIONS = ["%s_W%d" % (t, self.world) for t in options]
+        return self.MULTIWORLD_OPTIONS
 
     def patch(self, rom, option):
         if self.world != int(option[1]):
@@ -153,13 +153,15 @@ class MultiworldItemInfoWrapper:
         return "W%d:%s" % (self.world, repr(self.target))
 
 
-def addWorldIdToRequirements(n, req):
+def addWorldIdToRequirements(world, req):
     if isinstance(req, str):
-        return "W%d_%s" % (n, req)
+        return "%s_W%d" % (req, world)
     if isinstance(req, COUNT):
-        return COUNT(addWorldIdToRequirements(n, req.item), req.amount)
+        return COUNT(addWorldIdToRequirements(world, req.item), req.amount)
+    if isinstance(req, FOUND):
+        return FOUND(addWorldIdToRequirements(world, req.item), req.amount)
     if isinstance(req, AND):
-        return AND(*(addWorldIdToRequirements(n, r) for r in req))
+        return AND(*(addWorldIdToRequirements(world, r) for r in req))
     if isinstance(req, OR):
-        return OR(*(addWorldIdToRequirements(n, r) for r in req))
+        return OR(*(addWorldIdToRequirements(world, r) for r in req))
     raise RuntimeError("Unknown requirement type: %s" % (req))
