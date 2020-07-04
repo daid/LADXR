@@ -23,13 +23,13 @@ class Dungeon4:
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest
         before_miniboss.add(DungeonChest(0x168))  # key chest near the puzzle
-        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, SWORD))) # flippers to move around miniboss through 5 tile room
+        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, FOUND(KEY4, 5), POWER_BRACELET,  SWORD))) # flippers to move around miniboss through 5 tile room
         miniboss.add(DungeonChest(0x160))  # flippers chest
 
         to_the_nightmare_key = Location(4).connect(before_miniboss, AND(FEATHER, OR(FLIPPERS, PEGASUS_BOOTS)))  # 5 symbol puzzle (does not need flippers with boots + feather)
         to_the_nightmare_key.add(DungeonChest(0x176))
 
-        before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4))
+        before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
         boss = Location(4).add(HeartContainer(0x1FF)).connect(before_boss, AND(NIGHTMARE_KEY4, FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':

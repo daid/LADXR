@@ -452,6 +452,10 @@ def const(name, address):
     CONST_MAP[name] = bytes([address & 0xFF, address >> 8])
 
 
+def resetConsts():
+    CONST_MAP.clear()
+
+
 def ASM(code, base_address=None):
     asm = Assembler(base_address)
     for line in code.split("\n"):

@@ -15,6 +15,32 @@ class Explorer:
     def getAccessableLocations(self):
         return self.__visited
 
+    def getRequiredItemsForNextLocations(self):
+        items = set()
+        def parse(req):
+            if isinstance(req, str):
+                if req not in self.__inventory:
+                    items.add(req)
+            elif isinstance(req, COUNT):
+                if self.__inventory.get(req.item, 0) >= req.amount:
+                    return
+                items.add(req.item)
+            elif isinstance(req, FOUND):
+                if self.__inventory_found.get(req.item, 0) >= req.amount:
+                    return
+                items.add(req.item)
+            else:
+                if isinstance(req, OR):
+                    if self.testRequirements(req):
+                        return
+                for r in req:
+                    parse(r)
+        for loc, req in self.__todo_simple:
+            parse(req)
+        for loc, req in self.__todo_gated:
+            parse(req)
+        return items
+
     def getInventory(self):
         return self.__visited
 
@@ -71,11 +97,9 @@ class Explorer:
         if item is None:
             return
         if item.startswith("RUPEES_"):
+            if "W_" in item:
+                item = item[:item.find("W_")]
             self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:])
-        elif item.startswith("W0_RUPEES_"):
-            self.__inventory["W0_RUPEES"] = self.__inventory.get("W0_RUPEES", 0) + int(item[10:])
-        elif item.startswith("W1_RUPEES_"):
-            self.__inventory["W1_RUPEES"] = self.__inventory.get("W1_RUPEES", 0) + int(item[10:])
         else:
             self.__inventory[item] = self.__inventory.get(item, 0) + 1
             self.__inventory_found[item] = self.__inventory_found.get(item, 0) + 1
@@ -128,5 +152,6 @@ class Explorer:
             for target, req in loc.gated_connections:
                 if target not in self.__visited:
                     print("Missing:", req)
-        print(self.__inventory)
+        for item, amount in sorted(self.__inventory_found.items()):
+            print("%s: %d (%d)" % (item, self.__inventory.get(item, 0), amount))
         print("Cannot reach: %d locations" % (failed))

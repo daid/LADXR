@@ -30,13 +30,13 @@ class Dungeon8:
         medicine_chest = Location(8).add(DungeonChest(0x235)).connect(upper_center, HOOKSHOT)  # medicine chest
                                                                   
         middle_center_1 = Location(8).connect(upper_center, BOMB)
-        middle_center_2 = Location(8).connect(middle_center_1, KEY8)
+        middle_center_2 = Location(8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
         middle_center_3 = Location(8).connect(middle_center_2, KEY8)
         miniboss_entrance = Location(8).connect(middle_center_3, KEY8)
         miniboss = Location(8).connect(miniboss_entrance, AND(HOOKSHOT, SWORD))  # hookshot to get to the miniboss, sword to kill
         miniboss.add(DungeonChest(0x237)) # fire rod chest
 
-        up_left = Location(8).connect(upper_center, AND(attack_hookshot_powder, KEY8)) 
+        up_left = Location(8).connect(upper_center, AND(attack_hookshot_powder, AND(KEY8, FOUND(KEY8, 4))))
         entrance_up.connect(up_left, AND(FEATHER, MAGIC_ROD), one_way=True) # alternate path with fire rod through 2d section to nightmare key
         up_left.add(DungeonChest(0x240)) # beamos blocked chest
         up_left.connect(entrance_left, FEATHER, one_way=True) # path from up_left to entrance_left: only useful in hard/glitched to skip hinox. One way. Needs a requirement so added feather 
