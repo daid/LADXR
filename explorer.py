@@ -15,6 +15,32 @@ class Explorer:
     def getAccessableLocations(self):
         return self.__visited
 
+    def getRequiredItemsForNextLocations(self):
+        items = set()
+        def parse(req):
+            if isinstance(req, str):
+                if req not in self.__inventory:
+                    items.add(req)
+            elif isinstance(req, COUNT):
+                if self.__inventory.get(req.item, 0) >= req.amount:
+                    return
+                items.add(req.item)
+            elif isinstance(req, FOUND):
+                if self.__inventory_found.get(req.item, 0) >= req.amount:
+                    return
+                items.add(req.item)
+            else:
+                if isinstance(req, OR):
+                    if self.testRequirements(req):
+                        return
+                for r in req:
+                    parse(r)
+        for loc, req in self.__todo_simple:
+            parse(req)
+        for loc, req in self.__todo_gated:
+            parse(req)
+        return items
+
     def getInventory(self):
         return self.__visited
 

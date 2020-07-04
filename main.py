@@ -145,6 +145,7 @@ def main(mainargs=None):
                 patches.aesthetics.gfxMod(rom, gfx)
 
         expanded_inventory = args.witch or args.boomerang == 'gift'
+        assembler.resetConsts()
         if expanded_inventory:
             assembler.const("wHasFlippers", 0xDB3E)
             assembler.const("wHasMedicine", 0xDB3F)

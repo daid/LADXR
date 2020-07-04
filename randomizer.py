@@ -28,16 +28,17 @@ class Randomizer:
             self.__logic = logic.Logic(options, self.rnd)
         self.item_pool = {}
         self.spots = []
+        self.forward_placement = not options.keysanity
 
         self.readItemPool(rom)
         self.modifyDefaultItemPool(options)
-        assert self.logicStillValid(), "Sanity check failed"
+        assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
 
         bail_counter = 0
         while self.item_pool:
             if not self.placeItem():
                 bail_counter += 1
-                if bail_counter > 10:
+                if bail_counter > 100:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
@@ -96,12 +97,12 @@ class Randomizer:
     def modifyDefaultItemPool(self, options):
         if options.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
-            self.addItem("SWORD")
-            self.removeItem("BOWWOW")
+            self.addItem(SWORD)
+            self.removeItem(BOWWOW)
         if options.bowwow == 'swordless':
             # Bowwow mode takes a sword from the pool to give as bowwow.
-            self.removeItem("BOWWOW")
-            self.addItem("RUPEES_20")
+            self.removeItem(BOWWOW)
+            self.addItem(RUPEES_20)
 
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []
@@ -128,8 +129,21 @@ class Randomizer:
 
     def placeItem(self):
         # Find a random spot and item to place
-        spot = self.rnd.choice(self.spots[-1])
-        options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
+        if self.forward_placement:
+            # Forward placement
+            e = explorer.Explorer()
+            e.addItem("RUPEES_2000")
+            e.visit(self.__logic.start)
+            spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
+            spot = self.rnd.choice(spots)
+            options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
+            req_items = e.getRequiredItemsForNextLocations()
+            if req_items:
+                options = list(filter(lambda i: i in req_items, options))
+        else:
+            # Random placement
+            spot = self.rnd.choice(self.spots[-1])
+            options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
 
         if not options:
             return False
@@ -202,6 +216,8 @@ class Randomizer:
                 if verbose:
                     print(n, item, spots)
                 if not spots:
+                    if verbose:
+                        print(item_spots)
                     return False
                 spot = next(iter(spots))
                 for spot_set in item_spots.values():
