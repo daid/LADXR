@@ -11,8 +11,8 @@ class Dungeon8:
 
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
-        entrance_left.add(DungeonChest(0x25C)) # eye magnet chest
-        entrance_left.add(DroppedKey(0x24C)) # vire drop key
+        Location(8).add(DungeonChest(0x25C)).connect(entrance_left, attack_hookshot) # eye magnet chest
+        Location(8).add(DroppedKey(0x24C)).connect(entrance_left, attack_hookshot) # vire drop key
         Location(8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
@@ -46,30 +46,33 @@ class Dungeon8:
         Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
         Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
 
-        cueball_req = Location(8).connect(entrance_up, AND(FEATHER, SWORD, MAGIC_ROD))
-        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(cueball_req, KEY8)
+        top_left_stairs = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
+        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8))
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
         middle_center_2.connect(up_left, AND(BOMB, FEATHER), one_way=True) # does this even skip a key? both middle_center_2 and up_left come from upper_center with 1 extra key
 
-        boss = Location(8).add(HeartContainer(0x234)).connect(entrance_up, AND(NIGHTMARE_KEY8, MAGIC_ROD))
+        boss = Location(8).add(HeartContainer(0x234)).connect(entrance_up, AND(NIGHTMARE_KEY8, FEATHER, MAGIC_ROD))
         
-        if options.logic == 'hard' or options.logic == 'glitched':
-            #bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
-            #bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
-            #map_chest.connect(bottom_right, AND(POWER_BRACELET, PEGASUS_BOOTS, BOMB)) # underground section south of smasher, use pegasus boots to cross lava pillars
+        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
             
-        if options.logic == 'glitched':
-            #entrance.connect(bottomright_pot_chest, AND(FEATHER, SWORD), one_way=True) # use staircase backwards, subpixel manip for superjump past the pots
+        if options.logic == 'glitched' or options.logic == 'hell':
             lower_center.connect(entrance_up, FEATHER) # sideways block push / superjump in peahat room to get past keyblock
             miniboss.connect(lower_center, AND(BOMB, FEATHER, HOOKSHOT, SWORD)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
             up_left.connect(lower_center, FEATHER) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             upper_center.connect(lower_center, FEATHER) # from up left you can jesus jump / lava swim around the key door next to the boss. Avoid circle referencing up_left + upper_center
-            cueball_req.connect(up_left, AND(FEATHER, SWORD)) # superjump
-            #cueball_req.connect(map_chest, AND(BOMB, PEGASUS_BOOTS, SWORD, MAGIC_ROD)) # bomb trigger lava filler to stairs, use boots bonk to cross 2d
+            top_left_stairs.connect(up_left, AND(FEATHER, SWORD)) # superjump
             medicine_chest.connect(upper_center, FEATHER) # jesus super jump
-            #boss.connect(map_chest, AND(NIGHTMARE_KEY8, BOMB, PEGASUS_BOOTS, MAGIC_ROD)) # bomb trigger lava filler to stairs, use boots bonk to cross 2d
 
+        if options.logic == 'hell':
+            bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
+            bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
+            entrance.connect(bottomright_pot_chest, AND(FEATHER, SWORD), one_way=True) # use staircase backwards, subpixel manip for superjump past the pots
+            map_chest.connect(bottom_right, AND(POWER_BRACELET, PEGASUS_BOOTS, BOMB)) # underground section south of smasher, use pegasus boots to cross lava pillars
+            top_left_stairs.connect(map_chest, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
+            nightmare_key.connect(top_left_stairs, AND(PEGASUS_BOOTS, SWORD, KEY8)) # use a boots bonk to cross the 2d section + the lava in cueball room TODO: fix key logic
+            boss.connect(bottom_right, AND(NIGHTMARE_KEY8, POWER_BRACELET, PEGASUS_BOOTS, MAGIC_ROD)) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
+            
         self.entrance = entrance

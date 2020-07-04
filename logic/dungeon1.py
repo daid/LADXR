@@ -22,8 +22,11 @@ class Dungeon1:
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
         Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, SWORD)
 
-        if options.logic == 'glitched':
+        if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, FEATHER)  # super jump
-            #dungeon1_miniboss.connect(dungeon1_right_side, attack_hookshot) # damage boost or buffer pause over the pit to cross or mushroom
+        
+        if options.logic == 'hell':
+            boss_key.connect(entrance, AND(KEY1, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
+            dungeon1_miniboss.connect(dungeon1_right_side, attack_hookshot) # damage boost or buffer pause over the pit to cross or mushroom
             
         self.entrance = entrance
