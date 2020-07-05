@@ -161,6 +161,7 @@ def main(mainargs=None):
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
         patches.core.bugfixWrittingWrongRoomStatus(rom)
+        patches.core.bugfixPowderBagSprite(rom)
         patches.owl.removeOwlEvents(rom)
         patches.bank3e.addBank3E(rom)
         patches.bank3f.addBank3F(rom)
