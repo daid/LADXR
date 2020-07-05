@@ -14,10 +14,10 @@ def addBank3E(rom):
     rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
     rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
     for idx in range(8):
-        rom.texts[0xBF + idx] = formatText(b"Found an item for dungeon %d" % (idx + 1))
-    rom.texts[0xC7] = formatText(b"Found an item for color dungeon")
+        rom.texts[0xBF + idx] = b""
+    rom.texts[0xC7] = b""
     rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
-    rom.texts[0xC9] = formatText(b"Got an item for your buddy!")
+    rom.texts[0xC9] = 0xC0A0  # Custom message slot
     rom.texts[0xCA] = formatText(b"Found 10 arrows!")
     rom.texts[0xCB] = formatText(b"Found a single arrow... joy?")
 
@@ -82,6 +82,7 @@ MainLoop:
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
+        + open(os.path.join(my_path, "bank3e.asm/message.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/owl.asm"), "rt").read(), 0x4000), fill_nop=True)
     # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
     # 3E:3800-3B16: DroppedKey item types

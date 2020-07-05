@@ -76,28 +76,31 @@ class PointerTable:
         for st in storage:
             done[st["bank"]] = {}
         for n, s in enumerate(self.__data):
-            s = bytes(s)
-            bank = self.__banks[n]
-            if s in done[bank]:
-                pointer = done[bank][s]
-                assert rom.banks[bank][pointer:pointer+len(s)] == s
+            if isinstance(s, int):
+                pointer = s
             else:
-                my_storage = None
-                for st in storage:
-                    if st["end"] - st["start"] >= len(s) and st["bank"] == bank:
-                        my_storage = st
-                        break
-                assert my_storage is not None, "Not enough room in storage... %s" % (storage)
+                s = bytes(s)
+                bank = self.__banks[n]
+                if s in done[bank]:
+                    pointer = done[bank][s]
+                    assert rom.banks[bank][pointer:pointer+len(s)] == s
+                else:
+                    my_storage = None
+                    for st in storage:
+                        if st["end"] - st["start"] >= len(s) and st["bank"] == bank:
+                            my_storage = st
+                            break
+                    assert my_storage is not None, "Not enough room in storage... %s" % (storage)
 
-                pointer = my_storage["start"]
-                my_storage["start"] = pointer + len(s)
-                rom.banks[bank][pointer:pointer+len(s)] = s
+                    pointer = my_storage["start"]
+                    my_storage["start"] = pointer + len(s)
+                    rom.banks[bank][pointer:pointer+len(s)] = s
 
-                if "data_size" not in self.__info:
-                    # aggressive de-duplication.
-                    for skip in range(len(s)):
-                        done[bank][s[skip:]] = pointer + skip
-                done[bank][s] = pointer
+                    if "data_size" not in self.__info:
+                        # aggressive de-duplication.
+                        for skip in range(len(s)):
+                            done[bank][s[skip:]] = pointer + skip
+                    done[bank][s] = pointer
 
             if "data_addr" in self.__info:
                 offset = pointer - self.__info["data_addr"]
