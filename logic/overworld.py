@@ -20,10 +20,8 @@ class World:
         sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD, attack_hookshot))
         if options.boomerang != 'default':
             Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
-        sword_beach_to_ghost_hut = Location().add(Chest(0x0E5))
-        sword_beach_to_ghost_hut.connect(sword_beach, POWER_BRACELET)
-        ghost_hut = Location()
-        ghost_hut.connect(sword_beach_to_ghost_hut, POWER_BRACELET) 
+        sword_beach_to_ghost_hut = Location().add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
+        ghost_hut = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET) 
         Location().add(Seashell(0x1E3)).connect(ghost_hut, POWER_BRACELET)
 
         forest = Location().add(Toadstool()).connect(start, bush)  # forest stretches all the way from the start town to the witch hut
@@ -100,7 +98,7 @@ class World:
         # Area below the windfish egg
         below_mountains = Location().connect(graveyard, POWER_BRACELET)
         into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(POWER_BRACELET, SWORD)) # chest outside obstacle cave
-        Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT) # chest at obstacles
+        obstacle_cave_chest = Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT) # chest at obstacles
         right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS) # chest in passage to papahl
         Location().add(HeartPiece(0x1F2)).connect(below_mountains, FLIPPERS)  # cave next to level 4
         dungeon4_entrance = Location().connect(below_mountains, FLIPPERS) # swim
@@ -149,39 +147,44 @@ class World:
             animal_town_bombcave.connect(desert, AND(BOMB, PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
             dungeon6_entrance.connect(animal_town, AND(FLIPPERS, FEATHER)) # jump the gap in underground passage to d6
             dungeon8_phone.connect(left_side_mountain, AND(BOMB, PEGASUS_BOOTS)) # flame skip
-            
-            
+        
         if options.logic == 'glitched' or options.logic == 'hell':
             #dream_hut.connect(start, FEATHER) # flock clip TODO: require nag messages
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
-            forest_heartpiece.connect(graveyard, BOMB) # bomb trigger heartpiece
+            forest_heartpiece.connect(forest, BOMB) # bomb trigger heartpiece
+            forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             log_cave_heartpiece.connect(forest, FEATHER) # super jump
             log_cave_heartpiece.connect(forest, BOMB) # bomb trigger
             graveyard_heartpiece.connect(graveyard, bush) # sideways block push. added bush requirement since a requirement is necessary
             prairie_island_seashell.connect(center_area, AND(FEATHER, bush)) # jesus jump from right side
-            prairie_3gap_stairs.connect(center_area, AND(FEATHER, HOOKSHOT)) # hookshot jump across pits
+            prairie_3gap_stairs.connect(center_area, FEATHER) # 1 pit buffer to clip bottom wall and jump across
             tiny_island.connect(center_area, AND(FEATHER, bush)) # jesus jump around
+            richard_cave.connect(center_area, bush) # break bushes on north side of the maze, and 1 pit buffer into the maze
             animal_town.connect(center_area, FEATHER) # jesus jump
-            animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER))) # bomb trigger from right side
+            animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             center_area.connect(dungeon6_entrance, FEATHER, one_way=True) # jesus jump (3 screen)
             face_shrine.connect(raft_game, FEATHER, one_way=True) # jesus jump (2-ish screen)
-            right_mountains_1.connect(into_to_mountains, AND(FEATHER, HOOKSHOT)) # hookshot jump past the boots crystals
+            obstacle_cave_chest.connect(into_to_mountains, FEATHER) # jump to the rightmost pits + 1 pit buffer to jump across
+            right_mountains_1.connect(into_to_mountains, FEATHER) #  1 pit buffer above boots crytals to get past
             right_mountains_2.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
             luigi_rooster_house.connect(right_mountains_1, FEATHER) # jesus jump (1 or 2 screen)
+            mountain_bridge_staircase.connect(luigi_rooster_house, AND(PEGASUS_BOOTS, FEATHER, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))) # cross bridge to staircase with pit buffer to clip bottom wall and jump across
             bird_key.connect(luigi_rooster_house, AND(FEATHER, HOOKSHOT)) # hookshot jump across the big pits room
+            right_mountains_3.connect(right_mountains_2, bush) # 2 seperate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
             into_to_mountains.connect(mountain_heartpiece, BOMB, one_way=True) # bomb trigger from boots crystal cave
             dungeon8_entrance.connect(dungeon8_phone, OR(BOMB, OCARINA)) # bomb trigger the head and walk trough, or play the ocarina song 3 and walk through
             
         if options.logic == 'hell':
             swamp.connect(forest, bush) # damage boost from toadstool area across the pit. added bush requirement since a requirement is necessary
-            forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             forest_heartpiece.connect(forest, PEGASUS_BOOTS) # boots bonk across the pits
+            forest_rear_chest.connect(forest, HOOKSHOT) # hookshot spam across the pits
             log_cave_heartpiece.connect(forest, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             writes_hut.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
             writes_cave_left_chest.connect(writes_hut, bush) # damage boost off the zol to get across the pit. added bush since a requirement is necessary
             graveyard.connect(forest, OR(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk witches hut, or hookshot spam across the pit
             dungeon3_entrance.connect(center_area, PEGASUS_BOOTS) # boots bonk + water buffer across bottom wall all the way to the entrance 
+            prairie_3gap_stairs.connect(center_area, PEGASUS_BOOTS) # pit buffer to clip bottom wall and boots bonk across
             prairie_plateau.connect(center_area, AND(BOMB, OR(PEGASUS_BOOTS, HOOKSHOT))) # boots bonk across pits, or hookshot spam
             dungeon5_entrance.connect(center_area, FEATHER) # jesus jump into d5 entrance (wall clip or fast fall), wall clip to get out
             richard_cave_chest.connect(richard_cave, PEGASUS_BOOTS) # boots bonk
@@ -189,8 +192,10 @@ class World:
             into_to_mountains.connect(below_mountains, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is
             face_shrine.connect(dungeon6_entrance, PEGASUS_BOOTS, one_way=True) # jesus jump from top to island with quick falling on top, boots bonk across water and pits
             bridge_seashell.connect(right_mountains_2, AND(PEGASUS_BOOTS, POWER_BRACELET)) # boots bonk
+            bird_key.connect(luigi_rooster_house, AND(FEATHER, PEGASUS_BOOTS)) # boots jump above wall, use multiple pit buffers to get across
+            mountain_bridge_staircase.connect(luigi_rooster_house, AND(OR(PEGASUS_BOOTS, FEATHER), OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
             #right_mountains_2.connect(right_mountains_1, AND(ANGLER_KEY, PEGASUS_BOOTS)) # boots bonk across bottom wall, dodge waterfalls because of LADXR hacks
-            
+            left_side_mountain.connect(mountain_bridge_staircase, AND(PEGASUS_BOOTS, FEATHER)) # boots jump to bottom left corner of pits, pit buffer and jump to left
             
         self.start = start
         self.dungeon2_entrance = dungeon2_entrance

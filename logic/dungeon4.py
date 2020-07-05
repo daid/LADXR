@@ -49,7 +49,7 @@ class Dungeon4:
             miniboss.connect(before_miniboss, FEATHER) # use jesus jump to transition over the water left of miniboss
         
         if options.logic == 'hell':
-            rightside_crossroads.connect(entrance, PEGASUS_BOOTS) # pit buffer into the wall of the first pit, then boots bonk across the center to a second villa buffer on the rightmost pit
+            rightside_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into the wall of the first pit, then boots bonk across the center, hookshot to get to the rightmost pit to a second villa buffer on the rightmost pit
             pushable_block_chest.connect(rightside_crossroads, OR(PEGASUS_BOOTS, FEATHER)) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
             north_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
             after_double_lock.connect(entrance, PEGASUS_BOOTS) # boots bonk + pit buffer to the bottom

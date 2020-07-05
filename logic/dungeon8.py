@@ -13,7 +13,7 @@ class Dungeon8:
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
         Location(8).add(DungeonChest(0x25C)).connect(entrance_left, attack_hookshot) # eye magnet chest
         Location(8).add(DroppedKey(0x24C)).connect(entrance_left, attack_hookshot) # vire drop key
-        Location(8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
+        sparks_chest = Location(8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
         # right side
@@ -59,6 +59,7 @@ class Dungeon8:
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
             
         if options.logic == 'glitched' or options.logic == 'hell':
+            sparks_chest.connect(entrance_left, OR(attack_hookshot, FEATHER, PEGASUS_BOOTS)) # 1 pit buffer across the pit. Add requirements for all the options to get to this area
             lower_center.connect(entrance_up, FEATHER) # sideways block push / superjump in peahat room to get past keyblock
             miniboss.connect(lower_center, AND(BOMB, FEATHER, HOOKSHOT, SWORD)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
             up_left.connect(lower_center, FEATHER) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump

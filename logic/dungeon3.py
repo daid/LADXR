@@ -78,6 +78,7 @@ class Dungeon3:
             area_left_key_drop.connect(area_left, SHIELD) # knock everything into the pit including the teleporting owls
             dungeon3_south_key_drop.connect(area_down, SHIELD) # knock everything into the pit including the teleporting owls
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, SHIELD)) # superjump into jumping stalfos and shield bump to right ledge
+            dungeon3_nightmare_key_chest.connect(area_right, AND(BOMB, PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the pits with pit buffering and hookshot to the chest
             pre_boss.connect(towards_boss4, AND(attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
             #pre_boss.connect(towards_boss4, AND(attack_no_boomerang, PEGASUS_BOOTS, MEDICINE)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             
