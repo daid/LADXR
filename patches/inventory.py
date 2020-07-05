@@ -119,6 +119,14 @@ def moreSlots(rom):
     rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C8C"))
     rom.patch(0x20, 0x2298, "28284040", "08280828")
 
+    # Piece of power overlay positions
+    rom.patch(0x20, 0x233A,
+        "1038103010301030103010300E0E2626",
+        "10381030103010301030103010301030")
+    rom.patch(0x20, 0x3E73, "00" * 16,
+        "0E0E2626363646465656666676768686")
+    rom.patch(0x20, 0x2377, ASM("ld hl, $6346"), ASM("ld hl, $7E73"))
+
     # Allow selecting the 4 extra slots.
     rom.patch(0x20, 0x1F33, ASM("ld a, $09"), ASM("ld a, $0D"))
     rom.patch(0x20, 0x1F54, ASM("ld a, $09"), ASM("ld a, $0D"))
