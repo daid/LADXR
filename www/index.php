@@ -11,25 +11,26 @@ foreach(scandir("LADXR/gfx") as $gfx)
 }
 $options = [
     'seed' => ['label' => 'Seed', 'type' => 'text', 'placeholder' => 'Leave empty for random seed', 'arg' => '--seed'],
-    'heartpiece' => ['label' => 'Randomize heart pieces', 'type' => 'check', 'default' => 'true', 'arg' => '--heartpiece'],
-    'seashells' => ['label' => 'Randomize hidden seashells', 'type' => 'check', 'default' => 'true', 'arg' => '--seashells'],
-    'keysanity' => ['label' => 'Keysanity', 'type' => 'check', 'default' => '', 'arg' => '--keysanity'],
-    'heartcontainers' => ['label' => 'Randomize heart containers', 'type' => 'check', 'default' => '', 'arg' => '--heartcontainers'],
-    'witch' => ['label' => 'Randomize item given by the witch', 'type' => 'check', 'default' => 'true', 'arg' => '--witch'],
-    'owlstatues' => ['label' => 'Add items on owl statues', 'type' => ['' => 'Never', 'dungeon' => 'In dungeons', 'overworld' => 'On the overworld', 'both' => 'Dungeons and Overworld'], 'arg' => '--owlstatues'],
-    'dungeonshuffle' => ['label' => 'Dungeon shuffle', 'type' => 'check', 'default' => '', 'arg' => '--dungeonshuffle'],
+    'heartpiece' => ['label' => 'Randomize heart pieces', 'type' => 'check', 'default' => 'true', 'arg' => '--heartpiece', 'tooltip' => 'Includes heart pieces in the item pool'],
+    'seashells' => ['label' => 'Randomize hidden seashells', 'type' => 'check', 'default' => 'true', 'arg' => '--seashells', 'tooltip' => 'Randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)'],
+    'keysanity' => ['label' => 'Keysanity', 'type' => 'check', 'default' => '', 'arg' => '--keysanity', 'tooltip' => 'Dungeon keys, maps and compasses can be found anywhere'],
+    'heartcontainers' => ['label' => 'Randomize heart containers', 'type' => 'check', 'default' => '', 'arg' => '--heartcontainers', 'tooltip' => 'Includes boss heart container drops in the item pool'],
+    'witch' => ['label' => 'Randomize item given by the witch', 'type' => 'check', 'default' => 'true', 'arg' => '--witch', 'tooltip' => 'Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool'],
+    'owlstatues' => ['label' => 'Add items on owl statues', 'type' => ['' => 'Never', 'dungeon' => 'In dungeons', 'overworld' => 'On the overworld', 'both' => 'Dungeons and Overworld'], 'arg' => '--owlstatues', 'tooltip' => 'Replaces the hints from owl statues with additional randomized items'],
+    'dungeonshuffle' => ['label' => 'Dungeon shuffle', 'type' => 'check', 'default' => '', 'arg' => '--dungeonshuffle', 'tooltip' => 'Randomizes the dungeon that each dungeon entrance leads to'],
     'boomerang' => ['label' => 'Boomerang trade', 'type' => ['default' => 'Normal (require magnifier for boomerang)', 'trade' => 'Trade: Trade is always available, boomerang is shuffled in pool', 'gift' => 'Gift: Boomerang trade guy gives you a gift, boomerang itself is shuffled in the item pool'], 'arg' => '--boomerang'],
-    'bowwow' => ['label' => 'Good boy mode', 'type' => ['normal' => 'Disabled', 'always' => 'Enabled', 'swordless' => 'Enabled (swordless)'], 'arg' => '--bowwow'],
-    'logic' => ['label' => 'Logic', 'type' => ['' => 'Normal', 'hard' => 'Hard', 'glitched' => 'Glitched'], 'arg' => '--logic'],
-    'goal' => ['label' => 'Amount of instruments needed to open egg', 'type' => ['8' => '8', '7' => '7', '6' => '6', '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1', '0' => '0', '-1' => 'Egg already open', 'random' => 'Random'], 'arg' => '--goal'],
+    'bowwow' => ['label' => 'Good boy mode', 'type' => ['normal' => 'Disabled', 'always' => 'Enabled', 'swordless' => 'Enabled (swordless)'], 'arg' => '--bowwow', 'tooltip' => 'Allows BowWow to be taken into any area, damage bosses and more enemies'],
+    'logic' => ['label' => 'Logic', 'type' => ['' => 'Normal', 'hard' => 'Hard', 'glitched' => 'Glitched'], 'arg' => '--logic', 'tooltip' => 'Affects where items are allowed to be placed.  See the main site linked above for details.'],
+    'goal' => ['label' => 'Instruments needed to open egg', 'type' => ['8' => '8', '7' => '7', '6' => '6', '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1', '0' => '0', '-1' => 'Egg already open', 'random' => 'Random'], 'arg' => '--goal'],
     'hpmode' => ['label' => 'Health mode', 'type' => ['default' => 'Normal', 'inverted' => 'Inverted, defeating bosses reduces hearts', '1' => 'Start with 1 heart'], 'arg' => '--hpmode'],
     'steal' => ['label' => 'Stealing from the shop', 'type' => ['always' => 'Always', 'never' => 'Never', 'default' => 'Normal'], 'arg' => '--steal'],
-    'quickswap' => ['label' => 'Quickswap with SELECT key', 'type' => ['none' => 'Disabled', 'a' => 'Swap A button', 'b' => 'Swap B button'], 'arg' => '--quickswap'],
-    'textmode' => ['label' => 'Text mode', 'type' => ['fast' => 'Fast', 'default' => 'Normal', 'none' => 'No-text'], 'arg' => '--textmode'],
-    'lowhpbeep' => ['label' => 'Low HP beeps', 'type' => ['slow' => 'Slow', 'default' => 'Normal', 'none' => 'Disabled'], 'arg' => '--lowhpbeep'],
-    'nag-messages' => ['label' => 'Show nag messages', 'type' => 'check', 'default' => false, 'arg' => '--nag-messages'],
-    'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod'],
-    'linkspalette' => ['label' => 'Links color', 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
+    'quickswap' => ['label' => 'Quickswap with SELECT key', 'type' => ['none' => 'Disabled', 'a' => 'Swap A button', 'b' => 'Swap B button'], 'arg' => '--quickswap', 'tooltip' => 'Adds a hidden item slot that select swaps with either A or B - think a Tetris hold piece.  The map is not available when quickswap is enabled.'],
+    'textmode' => ['label' => 'Text mode', 'type' => ['fast' => 'Fast', 'default' => 'Normal', 'none' => 'No-text'], 'arg' => '--textmode', 'tooltip' => 'Fast makes text appear twice as fast, none removes all text from the game'],
+    'lowhpbeep' => ['label' => 'Low HP beeps', 'type' => ['slow' => 'Slow', 'default' => 'Normal', 'none' => 'Disabled'], 'arg' => '--lowhpbeep', 'tooltip' => 'Slows or disables the low health beeping sound'],
+    'nag-messages' => ['label' => 'Show nag messages', 'type' => 'check', 'default' => false, 'arg' => '--nag-messages', 'tooltip' => 'Enables the nag messages normally shown when touching stones and crystals'],
+    'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod', 'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game'],
+    'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
+    'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => 'false', 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
 ];
 
 if (isset($_FILES["rom"]))
@@ -170,31 +171,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
     <?php } ?>
 })
 </script>
+<style>
+div.row {
+    border-style: none none solid none;
+    border-color: #e0e0e0;
+}
+div.container {
+    max-width: 1200px;
+}
+</style>
 </head>
 <body>
 
-<form action="?" method="post" enctype="multipart/form-data" id="form">
-  <fieldset>
-    <legend>LADXR: Legend Of Zelda: Links Awakening RANDOMIZER, v??</legend>
-    <div class="row">
-      <div class="col-sm-12 col-md-6">
-        <p>See: <a href="https://daid.github.io/LADXR/">main site</a> for description/details</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12 col-md-3">
-        <label for="file-rom">Input rom:</label>
-      </div>
-      <div class="col-sm-12 col-md">
-        <input type="file" id="rom" name="rom" style="display:none"/>
-        <label for="rom" class="button">Select input ROM</label>
-        <label>Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version</label>
-      </div>
-    </div>
+<div class="container">
+    <form action="?" method="post" enctype="multipart/form-data" id="form">
+    <fieldset>
+        <legend>LADXR: Legend Of Zelda: Links Awakening RANDOMIZER, v??</legend>
+        <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <p>See: <a href="https://daid.github.io/LADXR/">main site</a> for description/details</p>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 col-md-3">
+            <label for="file-rom">Input rom:</label>
+        </div>
+        <div class="col-sm-12 col-md">
+            <input type="file" id="rom" name="rom" style="display:none"/>
+            <label for="rom" class="button">Select input ROM</label>
+            <label>Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version</label>
+        </div>
+        </div>
 <?php
 foreach($options as $key => $option)
 {
-    echo('<div class="row"><div class="col-sm-12 col-md-3">');
+    echo('<div class="row"');
+
+    if(array_key_exists('tooltip', $option))
+         echo('title="'.$option['tooltip']);
+
+    echo('"><div class="col-sm-12 col-md-3">');
     echo("<label for='$key'>".$option['label'].":</label>");
     echo("</div><div class='col-sm-12 col-md'>");
     if($option['type'] == "text")
@@ -211,16 +227,17 @@ foreach($options as $key => $option)
     echo("</div></div id=row>");
 }
 ?>
-    <div class="row">
-      <div class="col-sm-12 col-md-3">
-        <div id="romwarning" class="card error">No (proper) rom selected</div>
-      </div>
-      <div class="col-sm-12 col-md">
-        <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
-      </div>
-    </div>
-  </fieldset>
-</form>
+        <div class="row">
+        <div class="col-sm-12 col-md-3">
+            <div id="romwarning" class="card error">No (proper) rom selected</div>
+        </div>
+        <div class="col-sm-12 col-md">
+            <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
+        </div>
+        </div>
+    </fieldset>
+    </form>
+</div>
 
 </body>
 </html>

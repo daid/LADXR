@@ -55,5 +55,74 @@
 
 <p>Source code is available at: <a href="https://github.com/daid/LADXR/">Source code</a>. If you want to contribute, that can be done in many ways, including updating documentation, logic. Or even just bug reports!</p>
 
+
+<h2>Seed Generation Options</h2>
+<ul>
+    <li><strong>Add items on owl statues</strong> - Replaces the hints from owl statues with additional randomized items.  Extra 20-rupees are added to the pool.</li>
+    <ul>
+        <li><strong>Never</strong> - All owl statues contain hints.</li>
+        <li><strong>In dungeons</strong> - Owl statues in dungeons give an item if you have the stone beak.</li>
+        <li><strong>On the overworld</strong> - Owl statues on the overworld give an item just by talking to them.</li>
+        <li><strong>Both</strong> - Owl statues both in dungeons and on the overworld give items.</li>
+    </ul>
+    <li><strong>Boomerang trade</strong> - Affects how the boomerang guy in the beach cave is handled.</li>
+    <ul>
+        <li><strong>Default</strong> - Boomerang guy requires the magnifying glass and will always trade you the boomerang.</li>
+        <li><strong>Trade</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying glass, and can trade you either the boomerang, the hookshot, the magic rod, the boots, the feather, or the shovel.</li>
+        <li><strong>Gift</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying glass, and simply gives you his item.  Also enables the expanded inventory patch.</li>
+    </ul>
+    <li><strong>Dungeon shuffle</strong> - Randomizes the dungeon that each dungeon entrance leads to.  For example, the entirety of D1 could be locked behind the face key.</li>
+    <li><strong>Good boy mode</strong> - Affects how BowWow is handled.</li>
+    <ul>
+        <li><strong>Disabled</strong> - BowWow's location is randomized, but he only appears in the swamp.</li>
+        <li><strong>Enabled</strong> - You start with BowWow, he can come with you to every screen and can damage bosses and more enemies.</li>
+        <li><strong>Enabled (swordless)</strong> - Same as above, but the sword is removed from the item pool and crystals that usually require the sword are removed.</li>
+    </ul>
+    <li><strong>Graphics</strong> - Applies the selected graphical mod.  Usually includes at least Link's sprite, but may also include any other graphics in the game.</li>
+    <li><strong>Health mode</strong> - Affects how health is handled.</li>
+    <ul>
+        <li><strong>Normal</strong> - Heath behaves exactly as in vanilla.</li>
+        <li><strong>Inverted</strong> - Link starts with 9 hearts and heart containers reduce health.  Works in combination with heart container randomization.  Collecting pieces of heart increases health as normal.</li>
+        <li><strong>Start with 1 heart</strong> - Link starts with 1 heart container, but otherwise health behaves normally.</li>
+    </ul>
+    <li><strong>Instruments needed to open egg</strong> - Sets the number of instruments required to open the egg.  Unless set to "Egg already open", the Ballad of the Wind Fish is still required to open the egg.</li>
+    <li><strong>Keysanity</strong> - All dungeon items (maps, compasses, small keys and nightmare keys) can be found anywhere, even in other dungeons.</li>
+    <li><strong>Link's color</strong> - Forces Link's sprite to use a specific palette.</li>
+    <li><strong>Logic</strong> - Affects the things the player is expected to be able to do to reach items.  
+        See the <a href="https://docs.google.com/spreadsheets/d/1YscJA-N8xudeOB9LtpxLJF4QSToVXdgSKNMkdV2QjcA/edit#gid=0">full requirements</a>, 
+        <a href="https://docs.google.com/document/d/1PiXq9eE6FUjnWcioXxZECHO1AnyHpLZWB9UPfYrTEf8/edit#heading=h.9g504gia4vh8">GIF demonstrations</a>, and 
+        <a href="https://docs.google.com/document/d/1OQ81MLbJRlcIgvcSc0oR__dg6MODRUGcQXb_kbovaoo/edit#heading=h.75hi9vfn554y">detailed trick guide</a> for more information.</li>
+    <ul>
+        <li><strong>Normal</strong> - Items are placed such that they can all be reached with the techniques the vanilla game expects you to use.  Somewhat lesser known things such as destroying bushes with powder may be required.</li>
+        <li><strong>Hard</strong> - More advanced techniques may be required, but glitches are not.  Examples include tricky jumps, killing enemies with only pots and skipping keys with smart routing.</li>
+        <li><strong>Glitched</strong> - Advanced glitches and techniques may be required, but extremely difficult or tedious tricks are not required.  Examples include Bomb Triggers, Super Jumps and Jesus Jumps.</li>
+    </ul>
+    <li><strong>Low HP beeps</strong> - Affects the low health beeping sound.</li>
+    <ul>
+        <li><strong>Slow</strong> - The time between low health beeps is increased.</li>
+        <li><strong>Normal</strong> - The low health beep is unchanged.</li>
+        <li><strong>Disabled</strong> - The low health beep is completely removed.</li>
+    </ul>
+    <li><strong>Quickswap with SELECT key</strong> - Adds a hidden item slot that the SELECT key swaps with either A or B like a Tetris hold piece.  The map is not available when quickswap is enabled.</li>
+    <li><strong>Race mode</strong> - Prevents spoiler logs from being generated from ROMs generated with race mode enabled.</li>
+    <li><strong>Randomize heart containers</strong> - Includes heart containers dropped from bosses in the randomization process.  Items dropped by bosses will have the correct graphic, and must be collected to access the instrument.</li>
+    <li><strong>Randomize heart pieces</strong> - Includes heart pieces in the randomization process.  Items placed in locations that were originally heart pieces will have the correct graphic, and can be collected the same way a heart piece can (e.g. with the hookshot).  The fishing minigame's heart piece is not randomized.</li>
+    <li><strong>Randomize hidden seashells</strong> - Includes secret seashells found via digging or bonking in the randomization process.  Seashells found in chests are always randomized.  Items placed in locations that were originally seashells will have the correct graphic and behave like a seashell.</li>
+    <li><strong>Randomize item given by the witch</strong> - Includes both the toadstool and the reward for giving the toadstool to the witch in the randomization process.  Also enables the expanded inventory, to allow for both the toadstool and powder to exist at the same time.</li>
+    <li><strong>Seed</strong> - Used to manually set the seed used for random number generation.  Leave this blank to get a randomly selected seed.</li>
+    <li><strong>Show nag messages</strong> - Enables the nag messages normally shown when touching stones and crystals.</li>
+    <li><strong>Stealing from the shop</strong> - Affects how stealing from the shop works.</li>
+    <ul>
+        <li><strong>Always</strong> - The shopkeeper never stops you from stealing, but still kills you if you come back to the shop after stealing.</li>
+        <li><strong>Never</strong> - The shopkeeper always looks at you, preventing you from stealing.</li>
+        <li><strong>Normal</strong> - The shopkeeper behaves normally, allowing you to steal if his back is turned.</li>
+    </ul>
+    <li><strong>Text mode</strong> - Affects how text is displayed.</li>
+    <ul>
+        <li><strong>Fast</strong> - Text boxes scroll twice as fast as vanilla.</li>
+        <li><strong>Normal</strong> - Text boxes scroll at the normal speed.</li>
+        <li><strong>No-text</strong> - All text is removed from the game.</li>
+    </ul>
+</ul>
 </body>
 </html>

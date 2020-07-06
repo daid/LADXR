@@ -90,7 +90,7 @@ def main(mainargs=None):
     parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
-        help="Configure the instrument goal for this rom, anything between 0 and 8.")
+        help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
     parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
 
@@ -102,7 +102,7 @@ def main(mainargs=None):
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
         help="Enable the nag messages on touching stones and crystals. By default they are removed.")
     parser.add_argument('--lowhpbeep', dest="lowhpbeep", choices=['default', 'slow', 'none'], default='slow',
-        help="Force the palette of link")
+        help="Slows or disables the low health beeping sound")
     parser.add_argument('--linkspalette', dest="linkspalette", type=int, default=None,
         help="Force the palette of link")
 
