@@ -1,38 +1,78 @@
-LinkSendByte:
-    ld   e, a
-.repeat:
-    ld   a, e
-    ldh  [$01], a
-    ld   a, $83
-    ldh  [$02], a
-.sendWait:
-    ldh  a, [$02]
-    and  $80
-    jr   nz, .sendWait
-    ldh  a, [$01]
-    cp   $0F ; Check if our byte is acknowledged.
-    jr   nz, .repeat
+; Handle the link cable
+; Request status > $EE            $..
+;                < $[STATUS_BITS] $[RES_SEQ]
+; SendItem       > $E0            $[ITEM]
+;                < $[STATUS_BITS] $..
+; GetItem        > $E1            $..          $..         $..       $..
+;                < $[STATUS_BITS] $[ROOM_HIGH] $[ROOM_LOW] $[TARGET] $[ITEM]
+; GetID          > $E2            $..    $..    $..    $..    $..
+;                < $[STATUS_BITS] $[ID1] $[ID2] $[ID3] $[ID4] $[PLAYER_ID]
 
-    ; Back to receive mode
-    ld   a, $0F
-    ldh  [$01], a
-    ld   a, $82
-    ldh  [$02], a
+MainLoop:
+    ; Check if the gameplay is world
+    ld   a, [$DB95]
+    cp   $0B
+    jr   nz, .readLinkCable
+    ; Check if the world subtype is the normal one
+    ld   a, [$DB96]
+    cp   $07
+    jr   nz, .readLinkCable
+    ; Check if we are moving between rooms
+    ld   a, [$C124]
+    and  a
+    jr   nz, .readLinkCable
+    ; Check if link is in a normal walking/swimming state
+    ld   a, [$C11C]
+    cp   $02
+    jr   nc, .readLinkCable
+    ; Check if a dialog is open
+    ld   a, [$C19F]
+    and  a
+    jr   nz, .readLinkCable
 
-    ret
+    ; Have an item to give?
+    ld   a, [wLinkStatusBits]
+    bit  0, a
+    jr   z, .readLinkCable
+    and  $FE
+    ld   [wLinkStatusBits], a
 
-InitLink:
+    ; Give it
+    ld   a, [wLinkGiveItem]
+    ldh  [$F1], a
+    call GiveItemFromChestNoLink
+    call ItemMessageNoLink
+
+.readLinkCable:
+    ld   a, [wLinkState] ; Get our LinkState
+    rst  0
+    dw   LinkInit ; 00
+    dw   LinkNewCommand ; 01
+    dw   LinkHandleSync ; 02
+    dw   LinkHandleGiveItem ; 03
+    dw   LinkHandleSendItemRoomHigh ; 04
+    dw   LinkHandleSendItemRoomLow  ; 05
+    dw   LinkHandleSendItemTarget ; 06
+    dw   LinkHandleSendItemItem ; 07
+    dw   LinkHandleSendID1 ; 08
+    dw   LinkHandleSendID2 ; 09
+    dw   LinkHandleSendID3 ; 0A
+    dw   LinkHandleSendID4 ; 0B
+    dw   LinkHandleSendPlayerID ; 0C
+
+LinkInit:
+    ld   a, $01     ; switch to LinkNewCommand
+    ld   [wLinkState], a
+
     ; Switch on the link port in receive mode with interrupts enabled.
-    ld   a, $0F
+    ld   a, [wLinkStatusBits]
+LinkStoreReply:
     ldh  [$01], a
     ld   a, $82
     ldh  [$02], a
-
-    ld   a, $01     ; switch to RunLink
-    ld   [$CEFF], a
     ret
 
-RunLink:
+LinkNewCommand:
     ; Received a new byte on the link?
     ldh  a, [$02]
     and  $80
@@ -41,38 +81,170 @@ RunLink:
     ; Get the byte and check if it is a command (0xF0-0xFF) or data (0x00-0xEF)
     ldh  a, [$01]
 
-    ; Reset the receiver to receive the next byte
-    ld   e, a
-    ld   a, $0F
-    ldh  [$01], a
-    ld   a, $82
-    ldh  [$02], a
-    ld   a, e
+    cp   $EE
+    jr   z, LinkSetupSync
+    cp   $E0
+    jr   z, LinkSetupGiveItem
+    cp   $E1
+    jr   z, LinkSetupSendItem
+    cp   $E2
+    jp   z, LinkSetupSendID
 
-    cp   $F0
-    jr   c, .dataByte
+    jp   LinkInit
 
-    and  $0F
-    rst  0
-    dw   LinkTestMessage
-    dw   LinkItem
-    dw   LinkEffect
 
-.dataByte:
-    ld   [$CEFE], a ; set data byte
-    ret
+LinkSetupSync:
+    ld   a, $02
+    ld   [wLinkState], a
+    ld   a, [wLinkSyncSequenceNumber]
+    jp   LinkStoreReply
 
-LinkTestMessage:
-    ld   a, $41
-    call $2373 ; open dialog in table 1
-    ret
+LinkHandleSync:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
 
-LinkItem:
-    ld   a, [$CEFE] ; get data byte
-    ldh  [$F1], a
-    call GiveItemFromChestNoLink
-    call ItemMessageNoLink
-    ret
+    ; Ignore the received byte
+    jp   LinkInit
+
+
+LinkSetupGiveItem:
+    ld   a, $03
+    ld   [wLinkState], a
+    xor  a
+    jp   LinkStoreReply
+
+LinkHandleGiveItem:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ldh  a, [$01] ; get data byte
+    ld   [wLinkGiveItem], a
+    ld   a, [wLinkStatusBits]
+    or   $01
+    ld   [wLinkStatusBits], a
+    ld   hl, wLinkSyncSequenceNumber
+    inc  [hl]
+    jp   LinkInit
+
+LinkSetupSendItem:
+    ld   a, $04
+    ld   [wLinkState], a
+    ld   a, [wLinkSendItemRoomHigh]
+    jp   LinkStoreReply
+
+LinkHandleSendItemRoomHigh:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $05
+    ld   [wLinkState], a
+    ld   a, [wLinkSendItemRoomLow]
+    jp   LinkStoreReply
+
+LinkHandleSendItemRoomLow:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $06
+    ld   [wLinkState], a
+    ld   a, [wLinkSendItemTarget]
+    jp   LinkStoreReply
+
+LinkHandleSendItemTarget:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $07
+    ld   [wLinkState], a
+    ld   a, [wLinkSendItemItem]
+    jp   LinkStoreReply
+
+LinkHandleSendItemItem:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ; Remove the "got item to send bit"
+    ld   a, [wLinkStatusBits]
+    and  $FD
+    ld   [wLinkStatusBits], a
+
+    ; Ignore the received byte
+    jp   LinkInit
+
+
+LinkSetupSendID:
+    ld   a, $08
+    ld   [wLinkState], a
+    ld   a, [$0051]
+    jp   LinkStoreReply
+
+LinkHandleSendID1:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $09
+    ld   [wLinkState], a
+    ld   a, [$0052]
+    jp   LinkStoreReply
+
+LinkHandleSendID2:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $0A
+    ld   [wLinkState], a
+    ld   a, [$0053]
+    jp   LinkStoreReply
+
+LinkHandleSendID3:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $0B
+    ld   [wLinkState], a
+    ld   a, [$0054]
+    jp   LinkStoreReply
+
+LinkHandleSendID4:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ld   a, $0C
+    ld   [wLinkState], a
+    ld   a, [$0055]
+    jp   LinkStoreReply
+
+LinkHandleSendPlayerID:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ; Ignore the received byte
+    jp   LinkInit
+
+
+;; OLD DEAD CODE AHEAD
 
 LinkEffect:
     ld   a, [$CEFE] ; get data byte

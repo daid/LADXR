@@ -121,6 +121,8 @@ class Randomizer:
                 remove_item = self._rndChoices(rupee_item, rupee_item_count)
                 if remove_item in self.item_pool:
                     break
+            if "_W" in remove_item:
+                new_item += remove_item[remove_item.rfind("_W"):]
             self.addItem(new_item)
             self.removeItem(remove_item)
 

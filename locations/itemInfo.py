@@ -33,4 +33,4 @@ class ItemInfo:
     
     @property
     def nameId(self):
-        return "0x%03X" % self.room if self.room != None else "None"
+        return "0x%03X" % self.room if self.room is not None else "None"

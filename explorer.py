@@ -97,9 +97,12 @@ class Explorer:
         if item is None:
             return
         if item.startswith("RUPEES_"):
-            if "W_" in item:
-                item = item[:item.find("W_")]
-            self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:])
+            if "_W" in item:
+                rupee_item = item[:item.find("_W")]
+                world_postfix = item[item.find("_W"):]
+                self.__inventory["RUPEES"+world_postfix] = self.__inventory.get("RUPEES"+world_postfix, 0) + int(rupee_item[7:])
+            else:
+                self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:])
         else:
             self.__inventory[item] = self.__inventory.get(item, 0) + 1
             self.__inventory_found[item] = self.__inventory_found.get(item, 0) + 1

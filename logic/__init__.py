@@ -128,6 +128,10 @@ class MultiworldItemInfoWrapper:
         self.target = target
         self.MULTIWORLD_OPTIONS = None
 
+    @property
+    def priority(self):
+        return self.target.priority
+
     def read(self, rom):
         return "%s_W%d" % (self.target.read(rom), self.world)
 
@@ -143,11 +147,9 @@ class MultiworldItemInfoWrapper:
         return self.MULTIWORLD_OPTIONS
 
     def patch(self, rom, option):
-        if self.world != int(option[1]):
-            rom.banks[0x3E][0x3300 + self.target.room] = 0x01
-            self.target.patch(rom, option[3:], cross_world=True)
-        else:
-            self.target.patch(rom, option[3:])
+        world = int(option[option.rfind("_W") + 2:])
+        rom.banks[0x3E][0x3300 + self.target.room] = world
+        self.target.patch(rom, option[3:], cross_world=self.world != world)
 
     def __repr__(self):
         return "W%d:%s" % (self.world, repr(self.target))

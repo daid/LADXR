@@ -159,6 +159,15 @@ def main(mainargs=None):
         assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
         assembler.const("wCustomMessage", 0xC0A0)
 
+        assembler.const("wLinkState", 0xCEFF)
+        assembler.const("wLinkSyncSequenceNumber", 0xCEFE)
+        assembler.const("wLinkStatusBits", 0xCEFD)
+        assembler.const("wLinkGiveItem", 0xCEFC)
+        assembler.const("wLinkSendItemRoomHigh", 0xCEFB)
+        assembler.const("wLinkSendItemRoomLow", 0xCEFA)
+        assembler.const("wLinkSendItemTarget", 0xCEF9)
+        assembler.const("wLinkSendItemItem", 0xCEF8)
+
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
         patches.core.bugfixWrittingWrongRoomStatus(rom)

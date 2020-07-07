@@ -13,11 +13,29 @@ RenderChestItem:
     call $3BC0 ; RenderActiveEntitySpritePair
     ret
 
+SendItemFromChestToOtherGameWait:
+    call MainLoop.readLinkCable
+
 SendItemFromChestToOtherGame:
+    ld   a, [wLinkStatusBits]
+    bit  1, a
+    jp   nz, SendItemFromChestToOtherGameWait
+    set  1, a
+    ld   [wLinkStatusBits], a
+
+    ; Store send item data
+    ld   hl, $0000
+    call OffsetPointerByRoomNumber
+    ld   a, h
+    ld   [wLinkSendItemRoomHigh], a
+    ld   a, l
+    ld   [wLinkSendItemRoomLow], a
+    ld   hl, $7300
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ld   [wLinkSendItemTarget], a
     ldh  a, [$F1] ; Load active sprite variant
-    call LinkSendByte
-    ld   a, $F1   ; link command, give item
-    call LinkSendByte
+    ld   [wLinkSendItemItem], a
     ret
 
 GiveItemFromChest:
@@ -25,7 +43,8 @@ GiveItemFromChest:
     ld   hl, $7300
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    and  a
+    ld   hl, $0055
+    cp   [hl]
     jr   nz, SendItemFromChestToOtherGame
 
 GiveItemFromChestNoLink:
@@ -538,7 +557,8 @@ ItemMessage:
     ld   hl, $7300
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    and  a
+    ld   hl, $0055
+    cp   [hl]
     jr   nz, ItemMessageForLink
 
 ItemMessageNoLink:

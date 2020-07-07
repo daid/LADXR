@@ -65,20 +65,6 @@ MainJumpTable:
         dw   BowwowEat          ; 8
         dw   HandleOwlStatue    ; 9
 
-MainLoop:
-        ; First, do the thing we injected our code in.
-        ld   a, [$C14C]
-        and  a
-        jr   z, .actualMainLoop
-        dec  a
-        ld   [$C14C], a
-
-.actualMainLoop:
-        ld   a, [$CEFF] ; Get our LinkState
-        rst  0
-        dw   InitLink
-        dw   RunLink
-
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
