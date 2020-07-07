@@ -14,7 +14,7 @@ class Dungeon3:
         dungeon3_zol_stalfos = Location(3).add(DungeonChest(0x14E)).connect(area3, AND(PEGASUS_BOOTS, attack_skeleton))  # 3th chest requires killing the slime behind the crystal pillars
 
         # now we can go 4 directions,
-        area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
+        area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         dungeon3_north_key_drop = Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
         Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks near staircase
@@ -22,10 +22,10 @@ class Dungeon3:
         area_up.connect(dungeon3_raised_blocks_north, attack_hookshot, one_way=True) # hit switch to reach north chest
         area_up.connect(dungeon3_raised_blocks_east, attack_hookshot, one_way=True) # hit switch to reach east chest
         
-        area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
+        area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, attack_no_boomerang) # west key drop (no longer requires feather to get across hole)
 
-        area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
+        area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
 
         area_right = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
