@@ -160,7 +160,7 @@ class World:
             prairie_island_seashell.connect(center_area, AND(FEATHER, bush)) # jesus jump from right side
             prairie_3gap_stairs.connect(center_area, FEATHER) # 1 pit buffer to clip bottom wall and jump across
             tiny_island.connect(center_area, AND(FEATHER, bush)) # jesus jump around
-            richard_cave.connect(center_area, bush) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            richard_cave.connect(center_area, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)) # break bushes on north side of the maze, and 1 pit buffer into the maze
             animal_town.connect(center_area, FEATHER) # jesus jump
             animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             center_area.connect(dungeon6_entrance, FEATHER, one_way=True) # jesus jump (3 screen)
@@ -178,7 +178,6 @@ class World:
         if options.logic == 'hell':
             swamp.connect(forest, bush) # damage boost from toadstool area across the pit. added bush requirement since a requirement is necessary
             forest_heartpiece.connect(forest, PEGASUS_BOOTS) # boots bonk across the pits
-            forest_rear_chest.connect(forest, HOOKSHOT) # hookshot spam across the pits
             log_cave_heartpiece.connect(forest, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             writes_hut.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
             writes_cave_left_chest.connect(writes_hut, bush) # damage boost off the zol to get across the pit. added bush since a requirement is necessary

@@ -36,13 +36,13 @@ class Logic:
         self.entranceMapping = entranceMapping
 
         dungeons[entranceMapping[0]].entrance.connect(world.start, TAIL_KEY)
-        dungeons[entranceMapping[1]].entrance.connect(world.dungeon2_entrance, OR(BOWWOW, MAGIC_ROD, HOOKSHOT, BOOMERANG, POWER_BRACELET))
+        dungeons[entranceMapping[1]].entrance.connect(world.dungeon2_entrance, OR(BOWWOW, MAGIC_ROD, HOOKSHOT, BOOMERANG, POWER_BRACELET)) # requirements handled in dungeon2_entrance
         dungeons[entranceMapping[2]].entrance.connect(world.dungeon3_entrance, SLIME_KEY)
         dungeons[entranceMapping[3]].entrance.connect(world.dungeon4_entrance, ANGLER_KEY)
-        dungeons[entranceMapping[4]].entrance.connect(world.dungeon5_entrance, OR(POWER_BRACELET, FEATHER, PEGASUS_BOOTS))
+        dungeons[entranceMapping[4]].entrance.connect(world.dungeon5_entrance, OR(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # requirements handled in dungeon5_entrance
         dungeons[entranceMapping[5]].entrance.connect(world.dungeon6_entrance, FACE_KEY)
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
-        dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, BOMB)  # TODO: Requires song3
+        dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, BOMB)  # TODO: Requires song3. Requirements handled in dungeon8_entrance
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
             
         self.start = world.start
