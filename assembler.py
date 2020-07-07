@@ -1,4 +1,5 @@
 import binascii
+import utils
 
 REGS = {"A": 7, "B": 0, "C": 1, "D": 2, "E": 3, "H": 4, "L": 5, "(HL)": 6, "[HL]": 6}
 FLAGS = {"NZ": 0x00, "Z": 0x08, "NC": 0x10, "C": 0x18}
@@ -39,6 +40,7 @@ class Assembler:
     def assemble(self, line):
         if ";" in line:
             line = line[:line.find(";")]
+        input_line = line.strip()
         line = line.strip().replace("\t", " ").upper()
         while "  " in line:
             line = line.strip().replace("  ", " ")
@@ -423,8 +425,13 @@ class Assembler:
             else:
                 raise RuntimeError("Cannot ASM: %s" % (line))
         elif mnemonic == "DB":
-            for byte in params:
-                self.__result.append(self.toByte(byte))
+            for param in map(str.strip, input_line[2:].strip().split(",")):
+                if param.startswith("\"") and param.endswith("\""):
+                    self.__result += param[1:-1].encode("ascii")
+                elif param.startswith("m\"") and param.endswith("\""):
+                    self.__result += utils.formatText(param[2:-1].encode("ascii"))
+                else:
+                    self.__result.append(self.toByte(param.strip()))
         elif mnemonic == "DW":
             for byte in params:
                 self.__result += self.toWord(byte)

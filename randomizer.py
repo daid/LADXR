@@ -103,6 +103,9 @@ class Randomizer:
             # Bowwow mode takes a sword from the pool to give as bowwow.
             self.removeItem(BOWWOW)
             self.addItem(RUPEES_20)
+        if options.hpmode == 'inverted':
+            self.item_pool[BAD_HEART_CONTAINER] = self.item_pool[HEART_CONTAINER]
+            del self.item_pool[HEART_CONTAINER]
 
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []

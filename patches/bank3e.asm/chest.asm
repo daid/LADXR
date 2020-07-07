@@ -532,6 +532,8 @@ ItemMessageForLink:
     jp  $2385 ; Opendialog in $000-$0FF range
 
 ItemMessage:
+    ; Fill the custom message slot with this item message.
+    call BuildItemMessage
     ; Check our "item is for other player" flag
     ld   hl, $7300
     call OffsetPointerByRoomNumber
@@ -647,10 +649,10 @@ LargeItemSpriteTable:
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
     db $A0, $A1, $A3, $A4, $A5, $E8, $A6, $A7, $A8, $A9, $AA, $AC, $AB, $AD, $AE, $AE
-    db $EF, $BE, $00, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2
-    db $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0
+    db $EF, $BE, $00, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
+    db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     ; $40
-    db $C1, $C2, $C3, $C4, $C5, $C6, $C7, $BF, $C0, $C1, $C2, $C3, $C4, $C5, $C6, $C7
+    db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     db $0F, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00

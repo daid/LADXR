@@ -8,6 +8,8 @@ def bugfixWrittingWrongRoomStatus(rom):
     # dungeons D1-D6. This fix should prevent this.
     rom.patch(0x02, 0x1D21, 0x1D3C, ASM("call $5B9F"), fill_nop=True)
 
+def bugfixPowderBagSprite(rom):
+    rom.patch(0x03, 0x2055, "8E16", "0E1E")
 
 def removeGhost(rom):
     ## Ghost patch
