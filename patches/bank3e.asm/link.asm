@@ -41,7 +41,11 @@ MainLoop:
     ld   a, [wLinkGiveItem]
     ldh  [$F1], a
     call GiveItemFromChestNoLink
-    call ItemMessageNoLink
+    call BuildItemMessage
+    call MessageAddFromPlayer
+    ; TODO: append ' from [player]' to message
+    ld   a, $C9
+    jp   $2385 ; Opendialog in $000-$0FF range
 
 .readLinkCable:
     ld   a, [wLinkState] ; Get our LinkState
@@ -64,8 +68,17 @@ LinkInit:
     ld   a, $01     ; switch to LinkNewCommand
     ld   [wLinkState], a
 
+    ; Get the game state to see if a save is loaded or not
+    ld   a, [$DB95]
+    cp   $06
+
     ; Switch on the link port in receive mode with interrupts enabled.
     ld   a, [wLinkStatusBits]
+    jr   nc, .gotSaveLoaded
+    or   $80
+.gotSaveLoaded:
+    or   $40
+
 LinkStoreReply:
     ldh  [$01], a
     ld   a, $82
@@ -91,7 +104,6 @@ LinkNewCommand:
     jp   z, LinkSetupSendID
 
     jp   LinkInit
-
 
 LinkSetupSync:
     ld   a, $02

@@ -160,14 +160,15 @@ def main(mainargs=None):
         assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
         assembler.const("wCustomMessage", 0xC0A0)
 
-        assembler.const("wLinkState", 0xCEFF)
-        assembler.const("wLinkSyncSequenceNumber", 0xCEFE)
-        assembler.const("wLinkStatusBits", 0xCEFD)
-        assembler.const("wLinkGiveItem", 0xCEFC)
-        assembler.const("wLinkSendItemRoomHigh", 0xCEFB)
-        assembler.const("wLinkSendItemRoomLow", 0xCEFA)
-        assembler.const("wLinkSendItemTarget", 0xCEF9)
-        assembler.const("wLinkSendItemItem", 0xCEF8)
+        assembler.const("wLinkState", 0xDE10)
+        # We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
+        assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
+        assembler.const("wLinkStatusBits", 0xDDF7)
+        assembler.const("wLinkGiveItem", 0xDDF8)
+        assembler.const("wLinkSendItemRoomHigh", 0xDDF9)
+        assembler.const("wLinkSendItemRoomLow", 0xDDFA)
+        assembler.const("wLinkSendItemTarget", 0xDDFB)
+        assembler.const("wLinkSendItemItem", 0xDDFC)
 
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)

@@ -13,9 +13,11 @@ BuildItemMessage:
     jp   MessageCopyString
 
 FoundItemForOtherPlayerPostfix:
-    db m" for MuffinJets", $ff
+    db m" for another    player", $ff
+GotItemFromOtherPlayerPostfix:
+    db m" from another   player", $ff
 
-MessageAddTargetPlayer:
+MessagePad:
     jr .start
 .loop:
     ld   a, $20
@@ -27,8 +29,17 @@ MessageAddTargetPlayer:
     ld   a, e
     and  $0F
     jr   nz, .loop
+    ret
 
+MessageAddTargetPlayer:
+    call MessagePad
     ld   hl, FoundItemForOtherPlayerPostfix
+    call MessageCopyString
+    ret
+
+MessageAddFromPlayer:
+    call MessagePad
+    ld   hl, GotItemFromOtherPlayerPostfix
     call MessageCopyString
     ret
 
@@ -191,184 +202,184 @@ ItemNamePointers:
     dw ItemNameBadHeartContainer
 
 ItemNameNone:
-    db m"Found the NONE", $ff
+    db m"NONE", $ff
 
 ItemNamePowerBracelet:
-    db m"Found the Power Bracelet", $ff
+    db m"Got the Power Bracelet", $ff
 ItemNameShield:
-    db m"Found a Shield", $ff
+    db m"Got a Shield", $ff
 ItemNameBow:
-    db m"Found the Bow", $ff
+    db m"Got the Bow", $ff
 ItemNameHookshot:
-    db m"Found the Hookshot", $ff
+    db m"Got the Hookshot", $ff
 ItemNameMagicRod:
-    db m"Found the Magic Rod", $ff
+    db m"Got the Magic Rod", $ff
 ItemNamePegasusBoots:
-    db m"Found the Pegasus Boots", $ff
+    db m"Got the Pegasus Boots", $ff
 ItemNameOcarina:
-    db m"Found the Ocarina", $ff
+    db m"Got the Ocarina", $ff
 ItemNameFeather:
-    db m"Found the Feather", $ff
+    db m"Got the Feather", $ff
 ItemNameShovel:
-    db m"Found the Shovel", $ff
+    db m"Got the Shovel", $ff
 ItemNameMagicPowder:
-    db m"Found Magic Powder", $ff
+    db m"Got Magic Powder", $ff
 ItemNameBomb:
-    db m"Found Bombs", $ff
+    db m"Got Bombs", $ff
 ItemNameSword:
-    db m"Found a Sword", $ff
+    db m"Got a Sword", $ff
 ItemNameFlippers:
-    db m"Found the Flippers", $ff
+    db m"Got the Flippers", $ff
 ItemNameBoomerang:
-    db m"Found the Boomerang", $ff
+    db m"Got the Boomerang", $ff
 ItemNameSlimeKey:
-    db m"Found the Slime Key", $ff
+    db m"Got the Slime Key", $ff
 ItemNameMedicine:
-    db m"Found some Medicine", $ff
+    db m"Got some Medicine", $ff
 ItemNameTailKey:
-    db m"Found the Tail Key", $ff
+    db m"Got the Tail Key", $ff
 ItemNameAnglerKey:
-    db m"Found the Angler Key", $ff
+    db m"Got the Angler Key", $ff
 ItemNameFaceKey:
-    db m"Found the Face Key", $ff
+    db m"Got the Face Key", $ff
 ItemNameBirdKey:
-    db m"Found the Bird Key", $ff
+    db m"Got the Bird Key", $ff
 ItemNameGoldLeaf:
-    db m"Found the Golden Leaf", $ff
+    db m"Got the Golden Leaf", $ff
 ItemNameMap:
-    db m"Found the Dungeon Map", $ff
+    db m"Got the Dungeon Map", $ff
 ItemNameCompass:
-    db m"Found the Dungeon Compass", $ff
+    db m"Got the Dungeon Compass", $ff
 ItemNameStoneBeak:
-    db m"Found the Stone Beak", $ff
+    db m"Got the Stone Beak", $ff
 ItemNameNightmareKey:
-    db m"Found the Nightmare Key", $ff
+    db m"Got the Nightmare Key", $ff
 ItemNameSmallKey:
-    db m"Found a Small Key", $ff
+    db m"Got a Small Key", $ff
 ItemNameRupees50:
-    db m"Found 50 Rupees", $ff
+    db m"Got 50 Rupees", $ff
 ItemNameRupees20:
-    db m"Found 20 Rupees", $ff
+    db m"Got 20 Rupees", $ff
 ItemNameRupees100:
-    db m"Found 100 Rupees", $ff
+    db m"Got 100 Rupees", $ff
 ItemNameRupees200:
-    db m"Found 200 Rupees", $ff
+    db m"Got 200 Rupees", $ff
 ItemNameRupees500:
-    db m"Found 500 Rupees", $ff
+    db m"Got 500 Rupees", $ff
 ItemNameSeashell:
-    db m"Found a Secret Seashell", $ff
+    db m"Got a Secret Seashell", $ff
 ItemNameKey1:
-    db m"Found a Tail Cave Small Key", $ff
+    db m"Got a Tail Cave Small Key", $ff
 ItemNameKey2:
-    db m"Found a Bottle Grotto Small Key", $ff
+    db m"Got a Bottle Grotto Small Key", $ff
 ItemNameKey3:
-    db m"Found a Key Cavern Small Key", $ff
+    db m"Got a Key Cavern Small Key", $ff
 ItemNameKey4:
-    db m"Found a Angler's Tunnel Small Key", $ff
+    db m"Got a Angler's Tunnel Small Key", $ff
 ItemNameKey5:
-    db m"Found a Catfish's Maw Small Key", $ff
+    db m"Got a Catfish's Maw Small Key", $ff
 ItemNameKey6:
-    db m"Found a Face Shrine Small Key", $ff
+    db m"Got a Face Shrine Small Key", $ff
 ItemNameKey7:
-    db m"Found a Eagle's Tower Small Key", $ff
+    db m"Got a Eagle's Tower Small Key", $ff
 ItemNameKey8:
-    db m"Found a Turtle Rock Small Key", $ff
+    db m"Got a Turtle Rock Small Key", $ff
 ItemNameKey9:
-    db m"Found a Color Dungeon Small Key", $ff
+    db m"Got a Color Dungeon Small Key", $ff
 ItemNameMap1:
-    db m"Found the Tail Cave Map", $ff
+    db m"Got the Tail Cave Map", $ff
 ItemNameMap2:
-    db m"Found the Bottle Grotto Map", $ff
+    db m"Got the Bottle Grotto Map", $ff
 ItemNameMap3:
-    db m"Found the Key Cavern Map", $ff
+    db m"Got the Key Cavern Map", $ff
 ItemNameMap4:
-    db m"Found the Angler's Tunnel Map", $ff
+    db m"Got the Angler's Tunnel Map", $ff
 ItemNameMap5:
-    db m"Found the Catfish's Maw Map", $ff
+    db m"Got the Catfish's Maw Map", $ff
 ItemNameMap6:
-    db m"Found the Face Shrine Map", $ff
+    db m"Got the Face Shrine Map", $ff
 ItemNameMap7:
-    db m"Found the Eagle's Tower Map", $ff
+    db m"Got the Eagle's Tower Map", $ff
 ItemNameMap8:
-    db m"Found the Turtle Rock Map", $ff
+    db m"Got the Turtle Rock Map", $ff
 ItemNameMap9:
-    db m"Found the Color Dungeon Map", $ff
+    db m"Got the Color Dungeon Map", $ff
 ItemNameCompass1:
-    db m"Found the Tail Cave Compass", $ff
+    db m"Got the Tail Cave Compass", $ff
 ItemNameCompass2:
-    db m"Found the Bottle Grotto Compass", $ff
+    db m"Got the Bottle Grotto Compass", $ff
 ItemNameCompass3:
-    db m"Found the Key Cavern Compass", $ff
+    db m"Got the Key Cavern Compass", $ff
 ItemNameCompass4:
-    db m"Found the Angler's Tunnel Compass", $ff
+    db m"Got the Angler's Tunnel Compass", $ff
 ItemNameCompass5:
-    db m"Found the Catfish's Maw Compass", $ff
+    db m"Got the Catfish's Maw Compass", $ff
 ItemNameCompass6:
-    db m"Found the Face Shrine Compass", $ff
+    db m"Got the Face Shrine Compass", $ff
 ItemNameCompass7:
-    db m"Found the Eagle's Tower Compass", $ff
+    db m"Got the Eagle's Tower Compass", $ff
 ItemNameCompass8:
-    db m"Found the Turtle Rock Compass", $ff
+    db m"Got the Turtle Rock Compass", $ff
 ItemNameCompass9:
-    db m"Found the Color Dungeon Compass", $ff
+    db m"Got the Color Dungeon Compass", $ff
 ItemNameStoneBeak1:
-    db m"Found the Tail Cave Stone Beak", $ff
+    db m"Got the Tail Cave Stone Beak", $ff
 ItemNameStoneBeak2:
-    db m"Found the Bottle Grotto Stone Beak", $ff
+    db m"Got the Bottle Grotto Stone Beak", $ff
 ItemNameStoneBeak3:
-    db m"Found the Key Cavern Stone Beak", $ff
+    db m"Got the Key Cavern Stone Beak", $ff
 ItemNameStoneBeak4:
-    db m"Found the Angler's Tunnel Stone Beak", $ff
+    db m"Got the Angler's Tunnel Stone Beak", $ff
 ItemNameStoneBeak5:
-    db m"Found the Catfish's Maw Stone Beak", $ff
+    db m"Got the Catfish's Maw Stone Beak", $ff
 ItemNameStoneBeak6:
-    db m"Found the Face Shrine Stone Beak", $ff
+    db m"Got the Face Shrine Stone Beak", $ff
 ItemNameStoneBeak7:
-    db m"Found the Eagle's Tower Stone Beak", $ff
+    db m"Got the Eagle's Tower Stone Beak", $ff
 ItemNameStoneBeak8:
-    db m"Found the Turtle Rock Stone Beak", $ff
+    db m"Got the Turtle Rock Stone Beak", $ff
 ItemNameStoneBeak9:
-    db m"Found the Color Dungeon Stone Beak", $ff
+    db m"Got the Color Dungeon Stone Beak", $ff
 ItemNameNightmareKey1:
-    db m"Found the Tail Cave Nightmare Key", $ff
+    db m"Got the Tail Cave Nightmare Key", $ff
 ItemNameNightmareKey2:
-    db m"Found the Bottle Grotto Nightmare Key", $ff
+    db m"Got the Bottle Grotto Nightmare Key", $ff
 ItemNameNightmareKey3:
-    db m"Found the Key Cavern Nightmare Key", $ff
+    db m"Got the Key Cavern Nightmare Key", $ff
 ItemNameNightmareKey4:
-    db m"Found the Angler's Tunnel Nightmare Key", $ff
+    db m"Got the Angler's Tunnel Nightmare Key", $ff
 ItemNameNightmareKey5:
-    db m"Found the Catfish's Maw Nightmare Key", $ff
+    db m"Got the Catfish's Maw Nightmare Key", $ff
 ItemNameNightmareKey6:
-    db m"Found the Face Shrine Nightmare Key", $ff
+    db m"Got the Face Shrine Nightmare Key", $ff
 ItemNameNightmareKey7:
-    db m"Found the Eagle's Tower Nightmare Key", $ff
+    db m"Got the Eagle's Tower Nightmare Key", $ff
 ItemNameNightmareKey8:
-    db m"Found the Turtle Rock Nightmare Key", $ff
+    db m"Got the Turtle Rock Nightmare Key", $ff
 ItemNameNightmareKey9:
-    db m"Found the Color Dungeon Nightmare Key", $ff
+    db m"Got the Color Dungeon Nightmare Key", $ff
 ItemNameToadstool:
-    db m"Found the Toadstool", $ff
+    db m"Got the Toadstool", $ff
 
 ItemNameHeartPiece:
-    db m"Found the Piece of Heart", $ff
+    db m"Got the Piece of Heart", $ff
 ItemNameBowwow:
-    db m"Found the Bowwow", $ff
+    db m"Got the Bowwow", $ff
 ItemName10Arrows:
-    db m"Found the 10 Arrows", $ff
+    db m"Got 10 Arrows", $ff
 ItemNameSingleArrow:
-    db m"Found the Single Arrow", $ff
+    db m"Got the Single Arrow", $ff
 ItemNamePowderUpgrade:
-    db m"Found the Magic Powder Upgrade", $ff
+    db m"Got the Magic Powder Upgrade", $ff
 ItemNameBombUpgrade:
-    db m"Found the Bombs Upgrade", $ff
+    db m"Got the Bombs Upgrade", $ff
 ItemNameArrowUpgrade:
-    db m"Found the Arrow Upgrade", $ff
+    db m"Got the Arrow Upgrade", $ff
 ItemNameRedTunic:
-    db m"Found the Red Tunic", $ff
+    db m"Got the Red Tunic", $ff
 ItemNameBlueTunic:
-    db m"Found the Blue Tunic", $ff
+    db m"Got the Blue Tunic", $ff
 ItemNameHeartContainer:
-    db m"Found the Heart Container", $ff
+    db m"Got the Heart Container", $ff
 ItemNameBadHeartContainer:
-    db m"Found the Bad Heart Container", $ff
+    db m"Got the Bad Heart Container", $ff

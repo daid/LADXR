@@ -546,13 +546,7 @@ TakeHeart:
     ld   [hl], $FF
     ret
 
-ItemMessageForLink:
-    ld   a, $C9
-    jp  $2385 ; Opendialog in $000-$0FF range
-
 ItemMessage:
-    ; Fill the custom message slot with this item message.
-    call BuildItemMessage
     ; Check our "item is for other player" flag
     ld   hl, $7300
     call OffsetPointerByRoomNumber
@@ -562,12 +556,20 @@ ItemMessage:
     jr   nz, ItemMessageForLink
 
 ItemMessageNoLink:
+    ; Fill the custom message slot with this item message.
+    call BuildItemMessage
     ldh  a, [$F1]
     ld   d, $00
     ld   e, a
     ld   hl, ItemMessageTable
     add  hl, de
     ld   a, [hl]
+    jp   $2385 ; Opendialog in $000-$0FF range
+
+ItemMessageForLink:
+    call BuildItemMessage
+    call MessageAddTargetPlayer
+    ld   a, $C9
     jp   $2385 ; Opendialog in $000-$0FF range
 
 ItemSpriteTable:
