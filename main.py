@@ -157,6 +157,7 @@ def main(mainargs=None):
             assembler.const("wTradeSequenceItem", 0xDB0E)
             assembler.const("wSeashellsCount", 0xDB0F)
         assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
+        assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
         assembler.const("wCustomMessage", 0xC0A0)
 
         assembler.const("wLinkState", 0xCEFF)

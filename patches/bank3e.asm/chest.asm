@@ -503,18 +503,18 @@ GiveRedTunic:
     ld  a, $01
     ld  [$DC0F], a
     ; We use DB6D to store which tunics we have available.
-    ld  a, [$DB6D]
+    ld  a, [wCollectedTunics]
     or  $01
-    ld  [$DB6D], a
+    ld  [wCollectedTunics], a
     ret
 
 GiveBlueTunic:
     ld  a, $02
     ld  [$DC0F], a
     ; We use DB6D to store which tunics we have available.
-    ld  a, [$DB6D]
+    ld  a, [wCollectedTunics]
     or  $02
-    ld  [$DB6D], a
+    ld  [wCollectedTunics], a
     ret
 
 GiveExtraHeart:

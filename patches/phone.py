@@ -33,7 +33,7 @@ def patchPhone(rom):
     rom.patch(0x06, 0x2A8F, 0x2BBC, ASM("""
         ; We use $DB6D to store which tunics we have. This is normally the Dungeon9 instrument, which does not exist.
         ld  a, [$DC0F]
-        ld  hl, $DB6D
+        ld  hl, wCollectedTunics
         inc a
 
         cp  $01
