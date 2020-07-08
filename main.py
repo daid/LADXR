@@ -63,7 +63,7 @@ def main(mainargs=None):
     # Flags that effect gameplay
     parser.add_argument('--race', dest="race", action="store_true",
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
-    parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched"],
+    parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
     parser.add_argument('--multiworld', dest="multiworld", action="store_true",
         help="Generates 2 roms, for link cable use.")

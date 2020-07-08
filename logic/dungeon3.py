@@ -14,16 +14,18 @@ class Dungeon3:
         dungeon3_zol_stalfos = Location(3).add(DungeonChest(0x14E)).connect(area3, AND(PEGASUS_BOOTS, attack_skeleton))  # 3th chest requires killing the slime behind the crystal pillars
 
         # now we can go 4 directions,
-        area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
+        area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         dungeon3_north_key_drop = Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
         Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
-        dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)).connect(area_up, attack_hookshot)  # chests locked behind raised blocks near staircase
-        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)).connect(area_up, attack_hookshot) # chest locked behind raised blocks next to slime chest
+        dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks near staircase
+        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks next to slime chest
+        area_up.connect(dungeon3_raised_blocks_north, attack_hookshot, one_way=True) # hit switch to reach north chest
+        area_up.connect(dungeon3_raised_blocks_east, attack_hookshot, one_way=True) # hit switch to reach east chest
         
-        area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
-        area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, attack_hookshot) # west key drop (no longer requires feather to get across hole)
+        area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
+        area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, attack_no_boomerang) # west key drop (no longer requires feather to get across hole)
 
-        area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 7)))
+        area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, attack_no_boomerang) # south keydrop
 
         area_right = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
@@ -59,20 +61,25 @@ class Dungeon3:
             area_up.connect(area3, KEY3)
             dungeon3_south_key_drop.items[0].forced_item = KEY3
 
-        if options.logic == 'hard' or options.logic == 'glitched':
+        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dungeon3_reverse_eye.connect(entrance, HOOKSHOT) # hookshot the chest to get to the right side
             dungeon3_north_key_drop.connect(area_up, POWER_BRACELET) # use pots to kill the enemies
             dungeon3_south_key_drop.connect(area_down, POWER_BRACELET) # use pots to kill enemies
         
-        if options.logic == 'glitched':
+        if options.logic == 'glitched' or options.logic == 'hell':
             area3.connect(dungeon3_raised_blocks_east, FEATHER, one_way=True) # use superjump to get over the bottom left block
             area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, FEATHER), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks
-
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
-            dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys, so needs total 6. TODO: With nag messages: only 1 key is needed or dodongo superjump to negate all extra keys which needs sword to turn
+            dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, OR(FOUND(KEY3, 5), SWORD))) # superjump from keyblock path. use 1 key to open first block + text clip 2nd or dodongo superjump to negate all extra keys which needs sword to turn
         
-        #if options.logic == 'hell':
-            #pre_boss.connect(towards_boss4, AND(attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
-            #dungeon3_zol_stalfos.connect(area_up, AND(FEATHER, SWORD)) # use superjump near top blocks chest to get to zol without boots. TODO: Nag messages removes sword req
-
+        if options.logic == 'hell':
+            area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, BOW), one_way=True) # use boots superjump off top wall
+            dungeon3_zol_stalfos.connect(area_up, AND(FEATHER, SWORD)) # use superjump near top blocks chest to get to zol without boots. TODO: Nag messages removes sword req
+            area_left_key_drop.connect(area_left, SHIELD) # knock everything into the pit including the teleporting owls
+            dungeon3_south_key_drop.connect(area_down, SHIELD) # knock everything into the pit including the teleporting owls
+            dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, SHIELD)) # superjump into jumping stalfos and shield bump to right ledge
+            dungeon3_nightmare_key_chest.connect(area_right, AND(BOMB, PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the pits with pit buffering and hookshot to the chest
+            pre_boss.connect(towards_boss4, AND(attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
+            #pre_boss.connect(towards_boss4, AND(attack_no_boomerang, PEGASUS_BOOTS, MEDICINE)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
+            
         self.entrance = entrance
