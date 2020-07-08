@@ -147,9 +147,11 @@ class MultiworldItemInfoWrapper:
         return self.MULTIWORLD_OPTIONS
 
     def patch(self, rom, option):
-        world = int(option[option.rfind("_W") + 2:])
+        idx = option.rfind("_W")
+        world = int(option[idx+2:])
+        option = option[:idx]
         rom.banks[0x3E][0x3300 + self.target.room] = world
-        self.target.patch(rom, option[3:], cross_world=self.world != world)
+        self.target.patch(rom, option, cross_world=self.world != world)
 
     def __repr__(self):
         return "W%d:%s" % (self.world, repr(self.target))
