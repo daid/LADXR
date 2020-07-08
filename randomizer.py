@@ -51,7 +51,7 @@ class Randomizer:
             patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
         hints.addHints(rom, self.rnd, self.__logic.iteminfo_list)
         if options.multiworld:
-            for n in range(2):
+            for n in range(options.multiworld):
                 result_rom = copy.deepcopy(rom)
                 for spot in self.__logic.iteminfo_list:
                     if spot.world == n:

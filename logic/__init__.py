@@ -101,7 +101,7 @@ class MultiworldLogic:
         self.location_list = [self.start]
         self.iteminfo_list = []
 
-        for n in range(2):
+        for n in range(configuration_options.multiworld):
             world = Logic(configuration_options, rnd)
             for ii in world.iteminfo_list:
                 ii.world = n
@@ -109,7 +109,7 @@ class MultiworldLogic:
             for loc in world.location_list:
                 loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
                 loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
-                loc.items = [MultiworldItemInfoWrapper(n, ii) for ii in loc.items]
+                loc.items = [MultiworldItemInfoWrapper(n, configuration_options.multiworld, ii) for ii in loc.items]
                 self.iteminfo_list += loc.items
 
             self.worlds.append(world)
@@ -123,8 +123,9 @@ class MultiworldLogic:
 
 
 class MultiworldItemInfoWrapper:
-    def __init__(self, world, target):
+    def __init__(self, world, world_count, target):
         self.world = world
+        self.world_count = world_count
         self.target = target
         self.MULTIWORLD_OPTIONS = None
 
@@ -140,7 +141,7 @@ class MultiworldItemInfoWrapper:
             options = self.target.getOptions()
             if self.target.MULTIWORLD and len(options) > 1:
                 self.MULTIWORLD_OPTIONS = []
-                for n in range(2):
+                for n in range(self.world_count):
                     self.MULTIWORLD_OPTIONS += ["%s_W%d" % (t, n) for t in options]
             else:
                 self.MULTIWORLD_OPTIONS = ["%s_W%d" % (t, self.world) for t in options]

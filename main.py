@@ -65,8 +65,8 @@ def main(mainargs=None):
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
     parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
-    parser.add_argument('--multiworld', dest="multiworld", action="store_true",
-        help="Generates 2 roms, for link cable use.")
+    parser.add_argument('--multiworld', dest="multiworld", type=int, required=False,
+        help="Generates multiple roms for a multiworld setup. WIP")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",
