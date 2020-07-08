@@ -51,8 +51,11 @@ class Randomizer:
             patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
         hints.addHints(rom, self.rnd, self.__logic.iteminfo_list)
         if options.multiworld:
+            for n in range(4):
+                rom.patch(0x00, 0x0051 + n, "00", "%02x" % (self.rnd.randint(0, 255)))
             for n in range(options.multiworld):
                 result_rom = copy.deepcopy(rom)
+                result_rom.patch(0x00, 0x0055, "00", "%02x" % (n))
                 for spot in self.__logic.iteminfo_list:
                     if spot.world == n:
                         spot.patch(result_rom, spot.item)
