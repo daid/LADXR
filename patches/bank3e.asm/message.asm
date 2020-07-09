@@ -200,6 +200,9 @@ ItemNamePointers:
     dw ItemNameBlueTunic
     dw ItemNameHeartContainer
     dw ItemNameBadHeartContainer
+    dw ItemNameSong1
+    dw ItemNameSong2
+    dw ItemNameSong3
 
 ItemNameNone:
     db m"NONE", $ff
@@ -383,3 +386,9 @@ ItemNameHeartContainer:
     db m"Got the Heart Container", $ff
 ItemNameBadHeartContainer:
     db m"Got the Bad Heart Container", $ff
+ItemNameSong1:
+    db m"Got the Ballad of the Wind Fish", $ff
+ItemNameSong2:
+    db m"Got the Manbo's Mambo", $ff
+ItemNameSong3:
+    db m"Got Frog's Song of Soul", $ff

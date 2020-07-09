@@ -190,6 +190,9 @@ GiveItemFromChest:
     dw GiveBlueTunic
     dw GiveExtraHeart
     dw TakeHeart
+    dw NoItem
+    dw NoItem
+    dw NoItem
 
 NoItem:
     ret
@@ -667,6 +670,9 @@ LargeItemSpriteTable:
     db $48, $0B, $48, $2B ; blue tunic
     db $2A, $0C, $2A, $2C ; heart container
     db $2A, $0F, $2A, $2F ; bad heart container
+    db $70, $09, $70, $29 ; song 1
+    db $72, $0B, $72, $2B ; song 2
+    db $74, $08, $74, $28 ; song 3
 
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -679,7 +685,7 @@ ItemMessageTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80
-    db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B
+    db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B, $C9, $C9, $C9
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

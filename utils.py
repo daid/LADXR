@@ -22,6 +22,43 @@ def formatText(s, *, ask=None):
     return result.rstrip() + b'\xff'
 
 
+def tileDataToString(data, key=" 123"):
+    result = ""
+    for n in range(0, len(data), 2):
+        a = data[n]
+        b = data[n+1]
+        for m in range(8):
+            bit = 0x80 >> m
+            if (a & bit) and (b & bit):
+                result += key[3]
+            elif (b & bit):
+                result += key[2]
+            elif (a & bit):
+                result += key[1]
+            else:
+                result += key[0]
+        result += "\n"
+    return result
+
+def createTileData(data, key=" 123"):
+    result = []
+    for line in data.split("\n"):
+        line = line + "        "
+        a = 0
+        b = 0
+        for n in range(8):
+            if line[n] == key[3]:
+                a |= 0x80 >> n
+                b |= 0x80 >> n
+            elif line[n] == key[2]:
+                b |= 0x80 >> n
+            elif line[n] == key[1]:
+                a |= 0x80 >> n
+        result.append(a)
+        result.append(b)
+    assert (len(result) % 16) == 0, len(result)
+    return bytes(result)
+
 if __name__ == "__main__":
     data = formatText(b"It is dangurous to go alone.\nTake\nthis\na\nline.")
     for i in range(0, len(data), 16):

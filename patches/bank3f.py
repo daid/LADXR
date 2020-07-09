@@ -1,4 +1,5 @@
 from assembler import ASM
+import utils
 
 
 def addBank3F(rom):
@@ -147,24 +148,14 @@ def addBank3F(rom):
         rom.banks[0x3F][n+1] ^= rom.banks[0x3F][n]
 
     # Create capacity upgrade arrows
-    rom.banks[0x3F][0x3230:0x3240] = bytes([
-        0b00000000,
-        0b00000000,
-        0b00011000,
-        0b00011000,
-        0b00111100,
-        0b00100100,
-        0b01111110,
-        0b01000010,
-        0b11111111,
-        0b11100111,
-        0b00111100,
-        0b00100100,
-        0b00111100,
-        0b00111100,
-        0b00000000,
-        0b00000000,
-    ])
+    rom.banks[0x3F][0x3230:0x3240] = utils.createTileData("""
+   33
+  3113
+ 311113
+33311333
+  3113
+  3333
+""")
     rom.banks[0x3F][0x3220:0x3230] = rom.banks[0x3F][0x3230:0x3240]
     for n in range(0x3220, 0x3240, 2):
         rom.banks[0x3F][n] |= rom.banks[0x3F][n + 1]
@@ -184,6 +175,57 @@ def addBank3F(rom):
     rom.banks[0x3F][0x3640:0x3680] = rom.banks[0x2E][0x2680:0x26C0]
     # Cucco
     rom.banks[0x3F][0x3680:0x3700] = rom.banks[0x32][0x2500:0x2580]
+    # Song symbols
+    rom.banks[0x3F][0x3700:0x3760] = utils.createTileData("""
+
+
+     ...
+  . .222
+ .2.2222
+.22.222.
+.22222.3
+.2..22.3
+ .33...3
+ .33.3.3
+ ..233.3
+.22.2333
+.222.233
+ .222...
+  ...
+""" + """
+
+
+      ..
+     .22
+    .223
+   ..222
+  .33.22
+  .3..22
+  .33.33
+   ..23.
+  ..233.
+ .22.333
+.22..233
+ ..  .23
+      ..
+""" + """
+
+
+    ...
+   .222.
+  .2.332
+  .23.32
+  .233.2
+ .222222
+.2222222
+.2..22.2
+.2.3.222
+.22...22
+ .2333..
+  .23333
+   .....""", " .23")
+    print(utils.tileDataToString(rom.banks[0x3F][0x3700:0x3760], " .23"))
+
     # Patch the cucco graphics to load from 2nd vram bank
     rom.patch(0x05, 0x0514,
               "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
