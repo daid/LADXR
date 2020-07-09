@@ -1,6 +1,7 @@
 import struct
 import asyncio
 import binascii
+import time
 
 
 class BGBClient:
@@ -16,7 +17,7 @@ class BGBClient:
         self.__server = server
         self.__reader = reader
         self.__writer = writer
-        self.__time = 0
+        self.__t0 = time.monotonic()
         self.__running = False
         self.__reply = asyncio.get_running_loop().create_future()
         self.__rom_id = None
@@ -56,8 +57,7 @@ class BGBClient:
                 self.__reply.set_result(-1)
             elif b1 == self.CMD_SYNC3 and b2 == 0:
                 # Time sync, need to reply to keep emulator running
-                await self.__send(self.CMD_SYNC3, 0, 0, 0, t)
-                self.__time = t
+                await self.__send(self.CMD_SYNC3, 0, 0, 0)
             elif b1 == self.CMD_STATUS:
                 self.__running = (b2 & 0x03) == 0x01
             elif b1 == self.CMD_DISCONNECT:
@@ -65,12 +65,13 @@ class BGBClient:
 
     async def __send(self, b1, b2, b3, b4, t=None):
         if t is None:
-            t = self.__time
+            t = int((time.monotonic() - self.__t0) * 2097152) & 0x7FFFFFFF
         self.__writer.write(struct.pack("<BBBBI", b1, b2, b3, b4, t))
         await self.__writer.drain()
 
     async def send(self, byte):
         await asyncio.sleep(0.1)
+        # print("Send:", hex(byte))
         self.__reply = asyncio.get_running_loop().create_future()
         await self.__send(self.CMD_SYNC1, byte, 0x87, 0)
         reply = await self.__reply
@@ -90,6 +91,8 @@ class BGBClient:
             # print(binascii.hexlify(self.__rom_id), self.__player_id, status_bits, seq_nr)
 
             if (status_bits & 0x80) != 0:
+                if self.__rom_id:
+                    print("Player did S&Q:", binascii.hexlify(self.__rom_id), self.__player_id)
                 self.__rom_id = None
                 self.__player_id = None
                 self.__player_info = None
@@ -127,7 +130,8 @@ class Server:
         print("del client")
 
     async def run(self, port=3333):
-        server = await asyncio.start_server(self.handleClient, "localhost", port)
+        print("Listening on port:", port)
+        server = await asyncio.start_server(self.handleClient, "0.0.0.0", port)
         async with server:
             await server.serve_forever()
 
