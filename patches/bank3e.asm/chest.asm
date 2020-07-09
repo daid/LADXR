@@ -190,9 +190,9 @@ GiveItemFromChest:
     dw GiveBlueTunic
     dw GiveExtraHeart
     dw TakeHeart
-    dw NoItem
-    dw NoItem
-    dw NoItem
+    dw GiveSong1
+    dw GiveSong2
+    dw GiveSong3
 
 NoItem:
     ret
@@ -547,6 +547,27 @@ TakeHeart:
 .noNeedToReduceHp:
     ld   hl, $DB93
     ld   [hl], $FF
+    ret
+
+GiveSong1:
+    ld   hl, $DB49
+    set  2, [hl]
+    ld   a, $00
+    ld   [$DB4A], a
+    ret
+
+GiveSong2:
+    ld   hl, $DB49
+    set  1, [hl]
+    ld   a, $01
+    ld   [$DB4A], a
+    ret
+
+GiveSong3:
+    ld   hl, $DB49
+    set  0, [hl]
+    ld   a, $02
+    ld   [$DB4A], a
     ret
 
 ItemMessageMultiworld:
