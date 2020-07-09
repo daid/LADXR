@@ -75,7 +75,7 @@ class BGBClient:
         await self.__send(self.CMD_SYNC1, byte, 0x87, 0)
         reply = await self.__reply
         if reply == -1:
-            print(">%02x ---" % (byte))
+            # print(">%02x ---" % (byte))
             return await self.send(byte)
         # print(">%02x <%02x" % (byte, reply))
         return reply
@@ -87,7 +87,7 @@ class BGBClient:
         while True:
             status_bits = await self.send(0xEE)
             seq_nr = await self.send(0xFF)
-            print(self, status_bits, seq_nr)
+            # print(binascii.hexlify(self.__rom_id), self.__player_id, status_bits, seq_nr)
 
             if (status_bits & 0x80) != 0:
                 self.__rom_id = None
@@ -112,7 +112,7 @@ class BGBClient:
                 item = await self.send(0xFF)
 
                 print("Got item:", target, hex(room), hex(item))
-                self.__server.getPlayerInfo(self.__rom_id, target).addItem(item, room)
+                self.__server.getGame(self.__rom_id).gotItem(self.__player_id, target, room, item)
 
 
 class Server:
@@ -126,25 +126,49 @@ class Server:
         await asyncio.gather(client.lowlevel(), client.highlevel(), return_exceptions=True)
         print("del client")
 
-    async def run(self):
-        server = await asyncio.start_server(self.handleClient, "localhost", 3333)
+    async def run(self, port=3333):
+        server = await asyncio.start_server(self.handleClient, "localhost", port)
         async with server:
             await server.serve_forever()
 
     def getPlayerInfo(self, rom_id, player_id):
-        game = self.__getGame(rom_id)
-        if player_id not in game:
-            game[player_id] = PlayerInfo()
-        return game[player_id]
+        return self.getGame(rom_id).getPlayer(player_id)
 
-    def __getGame(self, rom_id):
+    def getGame(self, rom_id):
         if rom_id not in self.games:
-            self.games[rom_id] = {}
+            self.games[rom_id] = Game(rom_id)
         return self.games[rom_id]
 
 
+class Game:
+    def __init__(self, rom_id):
+        self.__players = {}
+        self.__rom_id = rom_id
+        try:
+            for line in open(binascii.hexlify(self.__rom_id).decode("ascii") + ".log", "rt"):
+                source_player_id, target_player_id, room, item = map(int, line.strip().split(":"))
+                if self.getPlayer(source_player_id).markRoomDone(room):
+                    print(source_player_id, target_player_id, room, item)
+                    self.getPlayer(target_player_id).addItem(item)
+        except FileNotFoundError:
+            pass
+
+    def getPlayer(self, player_id):
+        if player_id not in self.__players:
+            self.__players[player_id] = PlayerInfo(self)
+        return self.__players[player_id]
+
+    def gotItem(self, source_player_id, target_player_id, room, item):
+        if self.getPlayer(source_player_id).markRoomDone(room):
+            self.getPlayer(target_player_id).addItem(item)
+            f = open(binascii.hexlify(self.__rom_id).decode("ascii") + ".log", "at")
+            f.write("%d:%d:%d:%d\n" % (source_player_id, target_player_id, room, item))
+            f.close()
+
+
 class PlayerInfo:
-    def __init__(self):
+    def __init__(self, game):
+        self.__game = game
         self.__items = []
         self.__done_rooms = set()
 
@@ -154,11 +178,14 @@ class PlayerInfo:
     def getItem(self, index):
         return self.__items[index]
 
-    def addItem(self, item, room):
-        if room in self.__done_rooms:
-            return
+    def addItem(self, item):
         self.__items.append(item)
+
+    def markRoomDone(self, room):
+        if room in self.__done_rooms:
+            return False
         self.__done_rooms.add(room)
+        return True
 
 
 if __name__ == "__main__":
