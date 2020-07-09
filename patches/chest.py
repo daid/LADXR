@@ -20,7 +20,7 @@ def fixChests(rom):
         ld   e, a
         cp   $21 ; if is message chest or higher number, next instruction is to skip giving things.
     """), ASM("""
-        ld   a, $02
+        ld   a, $06 ; GiveItemMultiworld
         rst  8
 
         and  a   ; clear the carry flag to always skip giving stuff.
@@ -35,7 +35,7 @@ def fixChests(rom):
 
     # Instead of the normal logic of showing the proper dialog, we jump to our custom code in bank 3E.
     rom.patch(0x07, 0x3C9C, None, ASM("""
-        ld   a, $03
+        ld   a, $0A ; showItemMessageMultiworld
         rst  8
         jp $7CE9
     """))

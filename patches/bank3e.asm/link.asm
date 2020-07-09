@@ -40,7 +40,7 @@ MainLoop:
     ; Give it
     ld   a, [wLinkGiveItem]
     ldh  [$F1], a
-    call GiveItemFromChestNoLink
+    call GiveItemFromChest
     call BuildItemMessage
     call MessageAddFromPlayer
     ; TODO: append ' from [player]' to message

@@ -21,15 +21,15 @@ notSpecialSideView:
         call $512A ; mark room as done
         
         ; Handle item effect
-        ld   a, $02
+        ld   a, $06 ; giveItemMultiworld
         rst  8
         
-        ldh  a, [$F1] ; Load active sprite variant
+        ldh  a, [$F1] ; Load active sprite variant to see if this is just a normal small key
         cp   $1A
         jr   z, isAKey
         
         ;Show message (if not a key)
-        ld   a, $03
+        ld   a, $0A ; showMessageMultiworld
         rst  8
 isAKey:
         ret

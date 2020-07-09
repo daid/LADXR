@@ -24,16 +24,17 @@ def upgradeMadBatter(rom):
         ldh [$F1], a
     
         ; Give item
-        ld  a, $02
+        ld  a, $06 ; giveItemMultiworld
         rst 8
         ; Message
-        ld  a, $03
+        ld  a, $0A ; showMessageMultiworld
         rst 8
         ; Force the dialog at the bottom
         ld  a, [$C19F]
         or  $80
         ld  [$C19F], a
     """), fill_nop=True)
+    # Setup the default items
     rom.patch(0x18, 0x0F90, "406060", "848586")
 
     rom.texts[0xE2] = formatText(b"You can now carry more Magic Powder!")

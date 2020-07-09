@@ -38,7 +38,7 @@ SendItemFromChestToOtherGame:
     ld   [wLinkSendItemItem], a
     ret
 
-GiveItemFromChest:
+GiveItemFromChestMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
     call OffsetPointerByRoomNumber
@@ -47,7 +47,7 @@ GiveItemFromChest:
     cp   [hl]
     jr   nz, SendItemFromChestToOtherGame
 
-GiveItemFromChestNoLink:
+GiveItemFromChest:
     ldh  a, [$F1] ; Load active sprite variant
 
     rst  0 ; JUMP TABLE
@@ -546,16 +546,16 @@ TakeHeart:
     ld   [hl], $FF
     ret
 
-ItemMessage:
+ItemMessageMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
     call OffsetPointerByRoomNumber
     ld   a, [hl]
     ld   hl, $0055
     cp   [hl]
-    jr   nz, ItemMessageForLink
+    jr   nz, ItemMessageForOtherPlayer
 
-ItemMessageNoLink:
+ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
     ldh  a, [$F1]
@@ -566,7 +566,7 @@ ItemMessageNoLink:
     ld   a, [hl]
     jp   $2385 ; Opendialog in $000-$0FF range
 
-ItemMessageForLink:
+ItemMessageForOtherPlayer:
     call BuildItemMessage
     call MessageAddTargetPlayer
     ld   a, $C9

@@ -54,16 +54,17 @@ def addBank3E(rom):
 
 MainJumpTable:
         rst  0 ; JUMP TABLE
-        dw   MainLoop           ; 0
-        dw   RenderChestItem    ; 1
-        dw   GiveItemFromChest  ; 2
-        dw   ItemMessage        ; 3
-        dw   RenderDroppedKey   ; 4
-        dw   RenderHeartPiece   ; 5
-        dw   $0000              ; 6
-        dw   CheckIfLoadBowWow  ; 7
-        dw   BowwowEat          ; 8
-        dw   HandleOwlStatue    ; 9
+        dw   MainLoop                     ; 0
+        dw   RenderChestItem              ; 1
+        dw   GiveItemFromChest            ; 2
+        dw   ItemMessage                  ; 3
+        dw   RenderDroppedKey             ; 4
+        dw   RenderHeartPiece             ; 5
+        dw   GiveItemFromChestMultiworld  ; 6
+        dw   CheckIfLoadBowWow            ; 7
+        dw   BowwowEat                    ; 8
+        dw   HandleOwlStatue              ; 9
+        dw   ItemMessageMultiworld        ; A
 
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
