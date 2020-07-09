@@ -224,7 +224,6 @@ def addBank3F(rom):
  .2333..
   .23333
    .....""", " .23")
-    print(utils.tileDataToString(rom.banks[0x3F][0x3700:0x3760], " .23"))
 
     # Patch the cucco graphics to load from 2nd vram bank
     rom.patch(0x05, 0x0514,

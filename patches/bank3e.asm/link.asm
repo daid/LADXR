@@ -29,6 +29,10 @@ MainLoop:
     ld   a, [$C19F]
     and  a
     jr   nz, .readLinkCable
+    ; Check if interaction is blocked
+    ldh  a, [$A1]
+    and  a
+    jr   nz, .readLinkCable
 
     ; Have an item to give?
     ld   a, [wLinkStatusBits]
