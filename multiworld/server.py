@@ -43,7 +43,7 @@ class BGBClient:
             except ValueError:
                 self.__reply.set_exception(ValueError())
                 return
-            # print(b1, b2, b3, b4, t)
+            # print("<", time.monotonic(), b1, b2, b3, b4, t)
             if b1 == self.CMD_VERSION:  # When we get the version need to reply with our status.
                 await self.__send(self.CMD_STATUS, 5, 0, 0, 0)
                 #self.server.clients.add(self)
@@ -57,7 +57,7 @@ class BGBClient:
                 self.__reply.set_result(-1)
             elif b1 == self.CMD_SYNC3 and b2 == 0:
                 # Time sync, need to reply to keep emulator running
-                await self.__send(self.CMD_SYNC3, 0, 0, 0)
+                pass # await self.__send(self.CMD_SYNC3, 0, 0, 0)
             elif b1 == self.CMD_STATUS:
                 self.__running = (b2 & 0x03) == 0x01
             elif b1 == self.CMD_DISCONNECT:
@@ -67,21 +67,31 @@ class BGBClient:
         if t is None:
             t = int((time.monotonic() - self.__t0) * 2097152) & 0x7FFFFFFF
         self.__writer.write(struct.pack("<BBBBI", b1, b2, b3, b4, t))
+        # print(">", time.monotonic(), b1, b2, b3, b4, t)
         await self.__writer.drain()
 
     async def send(self, byte):
         await asyncio.sleep(0.1)
-        # print("Send:", hex(byte))
+        print("Send:", hex(byte))
         self.__reply = asyncio.get_running_loop().create_future()
         await self.__send(self.CMD_SYNC1, byte, 0x87, 0)
         reply = await self.__reply
         if reply == -1:
-            # print(">%02x ---" % (byte))
+            print(">%02x ---" % (byte))
             return await self.send(byte)
-        # print(">%02x <%02x" % (byte, reply))
+        print(">%02x <%02x" % (byte, reply))
         return reply
 
+    async def ping(self):
+        t0 = time.monotonic()
+        while True:
+            await asyncio.sleep(0.01)
+            while time.monotonic() - t0 > 0.0:
+                await self.__send(self.CMD_SYNC3, 0, 0, 0)
+                t0 += 0.001
+
     async def highlevel(self):
+        await asyncio.sleep(20)
         await self.send(0xFF)
         await self.send(0xFF)
         await self.send(0xFF)
@@ -126,7 +136,7 @@ class Server:
     async def handleClient(self, reader, writer):
         client = BGBClient(self, reader, writer)
         print("new client")
-        await asyncio.gather(client.lowlevel(), client.highlevel(), return_exceptions=True)
+        await asyncio.gather(client.lowlevel(), client.ping(), client.highlevel(), return_exceptions=True)
         print("del client")
 
     async def run(self, port=3333):
