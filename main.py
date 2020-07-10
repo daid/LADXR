@@ -18,6 +18,7 @@ import patches.tunicFairy
 import patches.heartPiece
 import patches.seashell
 import patches.witch
+import patches.songs
 import patches.softlock
 import patches.maptweaks
 import patches.inventory
@@ -165,10 +166,11 @@ def main(mainargs=None):
         assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
         assembler.const("wLinkStatusBits", 0xDDF7)
         assembler.const("wLinkGiveItem", 0xDDF8)
-        assembler.const("wLinkSendItemRoomHigh", 0xDDF9)
-        assembler.const("wLinkSendItemRoomLow", 0xDDFA)
-        assembler.const("wLinkSendItemTarget", 0xDDFB)
-        assembler.const("wLinkSendItemItem", 0xDDFC)
+        assembler.const("wLinkGiveItemFrom", 0xDDF9)
+        assembler.const("wLinkSendItemRoomHigh", 0xDDFA)
+        assembler.const("wLinkSendItemRoomLow", 0xDDFB)
+        assembler.const("wLinkSendItemTarget", 0xDDFC)
+        assembler.const("wLinkSendItemItem", 0xDDFD)
 
         patches.core.cleanup(rom)
         patches.phone.patchPhone(rom)
@@ -204,6 +206,9 @@ def main(mainargs=None):
         patches.goldenLeaf.fixGoldenLeaf(rom)
         patches.heartPiece.fixHeartPiece(rom)
         patches.seashell.fixSeashell(rom)
+        patches.songs.upgradeMarin(rom)
+        patches.songs.upgradeManbo(rom)
+        patches.songs.upgradeMamu(rom)
         patches.bowwow.fixBowwow(rom, everywhere=args.bowwow != 'normal')
         if args.bowwow == 'swordless':
             patches.bowwow.swordlessBowwowMapPatches(rom)

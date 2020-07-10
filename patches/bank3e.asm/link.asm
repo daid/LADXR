@@ -60,15 +60,16 @@ MainLoop:
     dw   LinkNewCommand ; 01
     dw   LinkHandleSync ; 02
     dw   LinkHandleGiveItem ; 03
-    dw   LinkHandleSendItemRoomHigh ; 04
-    dw   LinkHandleSendItemRoomLow  ; 05
-    dw   LinkHandleSendItemTarget ; 06
-    dw   LinkHandleSendItemItem ; 07
-    dw   LinkHandleSendID1 ; 08
-    dw   LinkHandleSendID2 ; 09
-    dw   LinkHandleSendID3 ; 0A
-    dw   LinkHandleSendID4 ; 0B
-    dw   LinkHandleSendPlayerID ; 0C
+    dw   LinkHandleGiveItemFrom ; 04
+    dw   LinkHandleSendItemRoomHigh ; 05
+    dw   LinkHandleSendItemRoomLow  ; 06
+    dw   LinkHandleSendItemTarget ; 07
+    dw   LinkHandleSendItemItem ; 08
+    dw   LinkHandleSendID1 ; 09
+    dw   LinkHandleSendID2 ; 0A
+    dw   LinkHandleSendID3 ; 0B
+    dw   LinkHandleSendID4 ; 0C
+    dw   LinkHandleSendPlayerID ; 0D
 
 LinkInit:
     ld   a, $01     ; switch to LinkNewCommand
@@ -141,6 +142,19 @@ LinkHandleGiveItem:
 
     ldh  a, [$01] ; get data byte
     ld   [wLinkGiveItem], a
+    ld   a, $04
+    ld   [wLinkState], a
+    xor  a
+    jp   LinkStoreReply
+
+LinkHandleGiveItemFrom:
+    ; Received a new byte on the link?
+    ldh  a, [$02]
+    and  $80
+    ret  nz
+
+    ldh  a, [$01] ; get data byte
+    ld   [wLinkGiveItemFrom], a
     ld   a, [wLinkStatusBits]
     or   $01
     ld   [wLinkStatusBits], a
@@ -149,7 +163,7 @@ LinkHandleGiveItem:
     jp   LinkInit
 
 LinkSetupSendItem:
-    ld   a, $04
+    ld   a, $05
     ld   [wLinkState], a
     ld   a, [wLinkSendItemRoomHigh]
     jp   LinkStoreReply
@@ -160,7 +174,7 @@ LinkHandleSendItemRoomHigh:
     and  $80
     ret  nz
 
-    ld   a, $05
+    ld   a, $06
     ld   [wLinkState], a
     ld   a, [wLinkSendItemRoomLow]
     jp   LinkStoreReply
@@ -171,7 +185,7 @@ LinkHandleSendItemRoomLow:
     and  $80
     ret  nz
 
-    ld   a, $06
+    ld   a, $07
     ld   [wLinkState], a
     ld   a, [wLinkSendItemTarget]
     jp   LinkStoreReply
@@ -182,7 +196,7 @@ LinkHandleSendItemTarget:
     and  $80
     ret  nz
 
-    ld   a, $07
+    ld   a, $08
     ld   [wLinkState], a
     ld   a, [wLinkSendItemItem]
     jp   LinkStoreReply
@@ -203,7 +217,7 @@ LinkHandleSendItemItem:
 
 
 LinkSetupSendID:
-    ld   a, $08
+    ld   a, $09
     ld   [wLinkState], a
     ld   a, [$0051]
     jp   LinkStoreReply
@@ -214,7 +228,7 @@ LinkHandleSendID1:
     and  $80
     ret  nz
 
-    ld   a, $09
+    ld   a, $0A
     ld   [wLinkState], a
     ld   a, [$0052]
     jp   LinkStoreReply
@@ -225,7 +239,7 @@ LinkHandleSendID2:
     and  $80
     ret  nz
 
-    ld   a, $0A
+    ld   a, $0B
     ld   [wLinkState], a
     ld   a, [$0053]
     jp   LinkStoreReply
@@ -236,7 +250,7 @@ LinkHandleSendID3:
     and  $80
     ret  nz
 
-    ld   a, $0B
+    ld   a, $0C
     ld   [wLinkState], a
     ld   a, [$0054]
     jp   LinkStoreReply
@@ -247,7 +261,7 @@ LinkHandleSendID4:
     and  $80
     ret  nz
 
-    ld   a, $0C
+    ld   a, $0D
     ld   [wLinkState], a
     ld   a, [$0055]
     jp   LinkStoreReply

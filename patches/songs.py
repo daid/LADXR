@@ -1,6 +1,81 @@
 from assembler import ASM
 
 
+def upgradeMarin(rom):
+    # Instead of checking if we have the ballad, check if we have a specific room flag set
+    rom.patch(0x05, 0x0F89, ASM("""
+        ld   a, [$DB49]
+        and  $04
+    """), ASM("""
+        ld   a, [$D892]
+        and  $10
+    """), fill_nop=True)
+    rom.patch(0x05, 0x0FDF, ASM("""
+        ld   a, [$DB49]
+        and  $04
+    """), ASM("""
+        ld   a, [$D892]
+        and  $10
+    """), fill_nop=True)
+    rom.patch(0x05, 0x1042, ASM("""
+        ld   a, [$DB49]
+        and  $04
+    """), ASM("""
+        ld   a, [$D892]
+        and  $10
+    """), fill_nop=True)
+
+    # Patch that we call our specific handler instead of giving the song
+    rom.patch(0x05, 0x1170, ASM("""
+        ld   hl, $DB49
+        set  2, [hl]
+        xor  a
+        ld   [$DB4A], a
+    """), ASM("""
+        ; Mark Marin as done.
+        ld   a, [$D892]
+        or   $10
+        ld   [$D892], a
+    """), fill_nop=True)
+
+    # Note: Always shows the ocarina over your head right now.
+
+    # Patch the message that tells we got the song, to give the item and show the right message
+    rom.patch(0x05, 0x119C, ASM("""
+        ld   a, $13
+        call $2385
+    """), ASM("""
+        ld   a, $0B
+        rst  8
+    """), fill_nop=True)
+
+
+def upgradeManbo(rom):
+    # Instead of checking if we have the song, check if we have a specific room flag set
+    rom.patch(0x18, 0x0536, ASM("""
+        ld   a, [$DB49]
+        and  $02
+    """), ASM("""
+        ld   a, [$DAFD]
+        and  $20
+    """), fill_nop=True)
+
+    rom.patch(0x18, 0x0757, ASM("""
+        ld   a, $01
+        ld   [$DB4A], a
+        ld   hl, $DB49
+        set  1, [hl]
+    """), ASM("""
+        ; Mark Manbo as done.
+        ld   hl, $DAFD
+        set  5, [hl]
+        ; Show item message and give item
+        ld   a, $0B
+        rst  8
+    """), fill_nop=True)
+    # Remove the normal "got song message")
+    rom.patch(0x18, 0x076F, 0x0774, "", fill_nop=True)
+
 def upgradeMamu(rom):
     # Always allow the sign maze instead of only allowing the sign maze if you do not have song3
     rom.patch(0x00, 0x2057, ASM("ld a, [$DB49]"), ASM("ld a, $00"), fill_nop=True)
@@ -21,39 +96,17 @@ def upgradeMamu(rom):
         ld   hl, $DB49
         set  0, [hl]
     """), ASM("""
-        ld   a, [$474D]
-        ldh  [$F1], a
-        ; Call rst 8 for chest item
-        ld   a, $02
-        rst  8
-    """), fill_nop=True)
-    # Patch show the right item instead of the ocarina
-    rom.patch(0x18, 0x0299, ASM("""
-        ld   de, $474D
-        xor  a
-        ldh  [$F1], a
-        call $3C77
-    """), ASM("""
-        ld   a, [$474D]
-        ldh  [$F1], a
-        ; Call rst 8 to show item
-        ld   a, $01
-        rst  8
-    """), fill_nop=True)
-    # Patch to show the right message for the item
-    rom.patch(0x18, 0x0282, ASM("""
-        ld   a, $DF
-        call $4087
-    """), ASM("""
-        ;ld   a, [$474D]
-        ;ldh  [$F1], a
-        ; Call rst 8 to show message
-        ;ld   a, $03
-        ;rst  8
-
         ; Set the room complete flag.
         ld   hl, $DAFB
         set  4, [hl]
     """), fill_nop=True)
 
-    rom.patch(0x18, 0x074D, "90", "8D")
+    # Patch to show the right message for the item
+    rom.patch(0x18, 0x0282, ASM("""
+        ld   a, $DF
+        call $4087
+    """), ASM("""
+        ; Give item and message for room.
+        ld   a, $0B
+        rst  8
+    """), fill_nop=True)

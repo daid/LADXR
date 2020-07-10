@@ -65,6 +65,7 @@ MainJumpTable:
         dw   BowwowEat                    ; 8
         dw   HandleOwlStatue              ; 9
         dw   ItemMessageMultiworld        ; A
+        dw   GiveItemAndMessageForRoom    ; B
 
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
