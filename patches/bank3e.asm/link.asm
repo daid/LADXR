@@ -43,6 +43,8 @@ MainLoop:
 
     ; Give it
     ld   a, [wLinkGiveItem]
+    cp   $22 ; zol item
+    jp   z, LinkSpawnSlime
     ldh  [$F1], a
     call GiveItemFromChest
     call BuildItemMessage

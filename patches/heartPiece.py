@@ -13,11 +13,11 @@ def fixHeartPiece(rom):
         rst  8
     
         ; Handle item effect
-        ld   a, $02
+        ld   a, $06 ; giveItemMultiworld
         rst  8
         
         ;Show message
-        ld   a, $03
+        ld   a, $0A ; showMessageMultiworld
         rst  8
         
         ; Switch to state 5
