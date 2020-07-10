@@ -94,7 +94,7 @@ ItemNamePointers:
     dw ItemNameRupees200
     dw ItemNameRupees500
     dw ItemNameSeashell
-    dw ItemNameNone
+    dw ItemNameMessage
     dw ItemNameNone
     dw ItemNameKey1
     dw ItemNameKey2
@@ -271,6 +271,8 @@ ItemNameRupees500:
     db m"Got 500 Rupees", $ff
 ItemNameSeashell:
     db m"Got a Secret Seashell", $ff
+ItemNameMessage:
+    db m"Got ... nothing?", $ff
 ItemNameKey1:
     db m"Got a Tail Cave Small Key", $ff
 ItemNameKey2:
