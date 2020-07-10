@@ -59,7 +59,7 @@ class Randomizer:
                 for spot in self.__logic.iteminfo_list:
                     if spot.world == n:
                         spot.patch(result_rom, spot.item)
-                result_rom.save("Multiworld_%d.gbc" % (n + 1))
+                result_rom.save("Multiworld_%d_%d.gbc" % (options.multiworld, n + 1))
         else:
             for spot in self.__logic.iteminfo_list:
                 spot.patch(rom, spot.item)
