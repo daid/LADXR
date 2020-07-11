@@ -8,8 +8,8 @@ class StartItem(ItemInfo):
     # We need to give something here that we can use to progress.
     # FUTURE: Giving a TAIL_KEY here could potentially be done by patching the code, this would open up the
     #   first dungeon, which has chests available without fighting.
-    OPTIONS = [SWORD, SHIELD, POWER_BRACELET, FEATHER, BOOMERANG, MAGIC_ROD]
-    MESSAGE = {SWORD: 0x9B, SHIELD: 0x91, POWER_BRACELET: 0x90, FEATHER: 0x97, BOOMERANG: 0xD9, MAGIC_ROD: 0x94, BOWWOW: 0xC8}
+    OPTIONS = [SWORD, SHIELD, POWER_BRACELET, OCARINA, FEATHER, BOOMERANG, MAGIC_ROD]
+    MESSAGE = {SWORD: 0x9B, SHIELD: 0x91, POWER_BRACELET: 0x90, OCARINA: 0x96, FEATHER: 0x97, BOOMERANG: 0xD9, MAGIC_ROD: 0x94, BOWWOW: 0xC8}
 
     def __init__(self):
         super().__init__(0x2A3)
@@ -24,7 +24,6 @@ class StartItem(ItemInfo):
 
     def patch(self, rom, option, *, cross_world=False):
         assert not cross_world
-        # TODO: Seems walking back into the house with certain options causes the initial event to repeat.
 
         if self.give_bowwow:
             option = BOWWOW

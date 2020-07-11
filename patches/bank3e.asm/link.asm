@@ -1,8 +1,8 @@
 ; Handle the link cable
 ; Request status > $EE            $..
 ;                < $[STATUS_BITS] $[RES_SEQ]
-; SendItem       > $E0            $[ITEM]
-;                < $[STATUS_BITS] $..
+; SendItem       > $E0            $[ITEM] $[PLAYER]
+;                < $[STATUS_BITS] $00     $00
 ; GetItem        > $E1            $..          $..         $..       $..
 ;                < $[STATUS_BITS] $[ROOM_HIGH] $[ROOM_LOW] $[TARGET] $[ITEM]
 ; GetID          > $E2            $..    $..    $..    $..    $..
