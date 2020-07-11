@@ -18,5 +18,6 @@ from .faceKey import FaceKey
 from .birdKey import BirdKey
 from .heartPiece import HeartPiece
 from .tunicFairy import TunicFairy
+from .song import Song
 
 from .items import *

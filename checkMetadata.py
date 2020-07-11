@@ -236,4 +236,7 @@ checkMetadataTable = {
     "0x0CE": CheckMetadata("Lanmola", "Yarna Desert"), #http://artemis251.fobby.net/zelda/maps/overworld/00CE.GIF
     "0x27F": CheckMetadata("Armos Knight", "Southern Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld2/027F.GIF
     "0x27A": CheckMetadata("Bird Key Cave", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/underworld2/027A.GIF
+    "0x092": CheckMetadata("Ballad of the Wind Fish", "Mabe Village"),
+    "0x2FD": CheckMetadata("Manbo's Mambo", "Tal Tal Heights"),
+    "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
 }

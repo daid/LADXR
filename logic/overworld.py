@@ -16,6 +16,7 @@ class World:
         Location().add(Seashell(0x0A3)).connect(start, bush)  # bushes below the shop
         Location().add(Seashell(0x2B2)).connect(start, SHOVEL)  # in the kennel
         Location().add(Seashell(0x0D2)).connect(start, PEGASUS_BOOTS)  # smash into tree next to lv1
+        Location().add(Song(0x092)).connect(start, OCARINA)  # Marins song
 
         sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD, attack_hookshot))
         if options.boomerang != 'default':
@@ -54,6 +55,7 @@ class World:
         center_area = Location().connect(start, POWER_BRACELET)
         center_area.connect(graveyard, POWER_BRACELET)
         center_area.add(Chest(0x2CD))  # cave next to town
+        mamu = Location().add(Song(0x2FB)).connect(center_area, AND(FEATHER, PEGASUS_BOOTS, HOOKSHOT, POWER_BRACELET, OCARINA))
         Location().add(Chest(0x2F4), HeartPiece(0x2E5)).connect(center_area, AND(BOMB, PEGASUS_BOOTS))  # cave near honeycomb
         dungeon3_entrance = Location().connect(center_area, OR(FEATHER, FLIPPERS)) 
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
@@ -103,6 +105,7 @@ class World:
         Location().add(HeartPiece(0x1F2)).connect(below_mountains, FLIPPERS)  # cave next to level 4
         dungeon4_entrance = Location().connect(below_mountains, FLIPPERS) # swim
         dungeon4_entrance.connect(right_mountains_1, ANGLER_KEY) # go around right_mountains_1, "needs" angler key to unlock ledge
+        Location().add(Song(0x2FD)).connect(below_mountains, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
 
         face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
         face_shrine.add(OwlStatue(0x08F))
@@ -133,7 +136,7 @@ class World:
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         dungeon8_phone = Location().connect(left_side_mountain, AND(BOMB, COUNT(SHIELD, 2)))
-        dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SWORD)) # TODO: Song 3
+        dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dream_hut.connect(start, HOOKSHOT) # clip past the rocks in front of dream hut
