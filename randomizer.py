@@ -22,7 +22,6 @@ class Randomizer:
         if options.race:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
         if options.multiworld:
-            assert not options.dungeonshuffle, "Cannot use dungeonshuffle in multiworld at the moment"
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
             self.__logic = logic.Logic(options, self.rnd)
@@ -47,8 +46,6 @@ class Randomizer:
         if options.goal == "random":
             patches.goal.setRequiredInstrumentCount(rom, self.rnd.randint(-1, 8))
 
-        if self.__logic.entranceMapping:
-            patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
         hints.addHints(rom, self.rnd, self.__logic.iteminfo_list)
         if options.multiworld:
             for n in range(4):
@@ -56,11 +53,16 @@ class Randomizer:
             for n in range(options.multiworld):
                 result_rom = copy.deepcopy(rom)
                 result_rom.patch(0x00, 0x0055, "00", "%02x" % (n))
+                if self.__logic.worlds[n].entranceMapping:
+                    patches.dungeonEntrances.changeEntrances(result_rom, self.__logic.worlds[n].entranceMapping)
+
                 for spot in self.__logic.iteminfo_list:
                     if spot.world == n:
                         spot.patch(result_rom, spot.item)
                 result_rom.save("Multiworld_%d_%d.gbc" % (options.multiworld, n + 1))
         else:
+            if self.__logic.entranceMapping:
+                patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
             for spot in self.__logic.iteminfo_list:
                 spot.patch(rom, spot.item)
 
