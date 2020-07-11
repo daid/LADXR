@@ -38,7 +38,18 @@ def upgradeMarin(rom):
         ld   [$D892], a
     """), fill_nop=True)
 
-    # Note: Always shows the ocarina over your head right now.
+
+    # Show the right item instead of the ocerina
+    rom.patch(0x05, 0x11B3, ASM("""
+        ld   de, $515F
+        xor  a
+        ldh  [$F1], a
+        jp   $3C77
+    """), ASM("""
+        ld   a, $0C
+        rst  8
+        ret
+    """), fill_nop=True)
 
     # Patch the message that tells we got the song, to give the item and show the right message
     rom.patch(0x05, 0x119C, ASM("""
@@ -60,6 +71,19 @@ def upgradeManbo(rom):
         and  $20
     """), fill_nop=True)
 
+    # Show the right item instead of the ocerina
+    rom.patch(0x18, 0x0786, ASM("""
+        ld   de, $474D
+        xor  a
+        ldh  [$F1], a
+        jp   $3C77
+    """), ASM("""
+        ld   a, $0C
+        rst  8
+        ret
+    """), fill_nop=True)
+
+    # Patch to replace song giving to give the right item
     rom.patch(0x18, 0x0757, ASM("""
         ld   a, $01
         ld   [$DB4A], a
@@ -87,6 +111,17 @@ def upgradeMamu(rom):
     """), ASM("""
         ld   a, [$DAFB] ; load room flag of the Mamu room
         and  $10
+    """), fill_nop=True)
+
+    # Show the right item instead of the ocerina
+    rom.patch(0x18, 0x0299, ASM("""
+        ld   de, $474D
+        xor  a
+        ldh  [$F1], a
+        call $3C77
+    """), ASM("""
+        ld   a, $0C
+        rst  8
     """), fill_nop=True)
 
     # Patch given an item

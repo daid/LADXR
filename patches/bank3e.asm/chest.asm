@@ -776,3 +776,11 @@ GiveItemAndMessageForRoom:
     ldh  [$F1], a
     call GiveItemFromChest
     jp ItemMessage
+
+RenderItemForRoom:
+    ;Load the chest type from the chest table.
+    ld   hl, $7800
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ldh  [$F1], a
+    jp   RenderChestItem
