@@ -2,6 +2,7 @@ import struct
 import asyncio
 import binascii
 import time
+import argparse
 
 
 class BGBClient:
@@ -207,5 +208,9 @@ class PlayerInfo:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Multiworld server')
+    parser.add_argument('--port', type=int, default=3333)
+    args = parser.parse_args()
+
     server = Server()
-    asyncio.run(server.run())
+    asyncio.run(server.run(args.port))

@@ -41,7 +41,7 @@ def main(mainargs=None):
     import sys
     import argparse
 
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Randomize!')
     parser.add_argument('input_filename', metavar='input rom', type=str,
         help="Rom file to use as input.")
     parser.add_argument('-o', '--output', dest="output_filename", metavar='output rom', type=str, required=False,
