@@ -1,6 +1,7 @@
 from .constants import *
 from .itemInfo import ItemInfo
 
+
 class Witch(ItemInfo):
 
     def __init__(self):
@@ -18,7 +19,8 @@ class Witch(ItemInfo):
         if not options.witch:
             self.OPTIONS = [MAGIC_POWDER]
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
+        assert multiworld is None
         if len(self.OPTIONS) == 1:
             return
         rom.banks[0x05][0x08D5] = CHEST_ITEMS[option]

@@ -27,8 +27,8 @@ class BoomerangGuy(ItemInfo):
     # Checks for these are at $46A2, and potentially we could remove those.
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
     # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
-    def patch(self, rom, option, *, cross_world=False):
-        assert not cross_world
+    def patch(self, rom, option, *, multiworld=None):
+        assert multiworld is None
 
         # Always have the boomerang trade guy enabled (normally you need the magnifier)
         rom.patch(0x19, 0x05EC, ASM("ld a, [wTradeSequenceItem]\ncp $0E"), ASM("ld a, $0E\ncp $0E"), fill_nop=True)  # show the guy

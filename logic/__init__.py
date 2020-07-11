@@ -42,7 +42,7 @@ class Logic:
         dungeons[entranceMapping[4]].entrance.connect(world.dungeon5_entrance, OR(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # requirements handled in dungeon5_entrance
         dungeons[entranceMapping[5]].entrance.connect(world.dungeon6_entrance, FACE_KEY)
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
-        dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, BOMB)  # TODO: Requires song3. Requirements handled in dungeon8_entrance
+        dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, SONG3)
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
             
         self.start = world.start
@@ -151,11 +151,11 @@ class MultiworldItemInfoWrapper:
         idx = option.rfind("_W")
         world = int(option[idx+2:])
         option = option[:idx]
-        if self.target.MULTIWORLD:
-            rom.banks[0x3E][0x3300 + self.target.room] = world
-        else:
+        if not self.target.MULTIWORLD:
             assert self.world == world
-        self.target.patch(rom, option, cross_world=self.world != world)
+            self.target.patch(rom, option)
+        else:
+            self.target.patch(rom, option, multiworld=world)
 
     def __repr__(self):
         return "W%d:%s" % (self.world, repr(self.target))

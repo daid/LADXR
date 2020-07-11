@@ -14,8 +14,10 @@ class MadBatter(ItemInfo):
     def configure(self, options):
         return
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
         rom.banks[0x18][0x0F90 + (self.room & 0x0F)] = CHEST_ITEMS[option]
+        if multiworld is not None:
+            rom.banks[0x3E][0x3300 + self.room] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)
