@@ -116,6 +116,7 @@ class BGBClient:
                 print("Sending item:", hex(self.__player_info.getItem(seq_nr)))
                 await self.send(0xE0)
                 await self.send(self.__player_info.getItem(seq_nr))
+                await self.send(self.__player_info.getItemSource(seq_nr))
             elif (status_bits & 0x02) == 2:
                 await self.send(0xE1)
                 room_high = await self.send(0xFF)
@@ -174,7 +175,7 @@ class Game:
 
     def gotItem(self, source_player_id, target_player_id, room, item):
         if self.getPlayer(source_player_id).markRoomDone(room):
-            self.getPlayer(target_player_id).addItem(item)
+            self.getPlayer(target_player_id).addItem(item, source_player_id)
             f = open(binascii.hexlify(self.__rom_id).decode("ascii") + ".log", "at")
             f.write("%d:%d:%d:%d\n" % (source_player_id, target_player_id, room, item))
             f.close()
@@ -190,10 +191,13 @@ class PlayerInfo:
         return len(self.__items)
 
     def getItem(self, index):
-        return self.__items[index]
+        return self.__items[index][0]
 
-    def addItem(self, item):
-        self.__items.append(item)
+    def getItemSource(self, index):
+        return self.__items[index][1]
+
+    def addItem(self, item, source):
+        self.__items.append((item, source))
 
     def markRoomDone(self, room):
         if room in self.__done_rooms:
