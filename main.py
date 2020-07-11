@@ -255,18 +255,8 @@ def main(mainargs=None):
         elif args.quickswap == 'b':
             patches.core.quickswap(rom, 0)
 
-        # Show marin outside, even without a sword.
-        rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-        # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song
-        rom.patch(0x05, 0x0E87, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
-        rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
-        rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
-        # Show marin in the animal village
-        rom.patch(0x03, 0x0A86, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
-
         ## Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-
 
         if args.seed is not None and args.seed.upper() == "DEFAULT":
             seed = "DEFAULT"
