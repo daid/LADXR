@@ -93,19 +93,19 @@ class Explorer:
                 return True
         return False
 
-    def addItem(self, item):
+    def addItem(self, item, count=1):
         if item is None:
             return
         if item.startswith("RUPEES_"):
             if "_W" in item:
                 rupee_item = item[:item.find("_W")]
                 world_postfix = item[item.find("_W"):]
-                self.__inventory["RUPEES"+world_postfix] = self.__inventory.get("RUPEES"+world_postfix, 0) + int(rupee_item[7:])
+                self.__inventory["RUPEES"+world_postfix] = self.__inventory.get("RUPEES"+world_postfix, 0) + int(rupee_item[7:]) * count
             else:
-                self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:])
+                self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:]) * count
         else:
-            self.__inventory[item] = self.__inventory.get(item, 0) + 1
-            self.__inventory_found[item] = self.__inventory_found.get(item, 0) + 1
+            self.__inventory[item] = self.__inventory.get(item, 0) + count
+            self.__inventory_found[item] = self.__inventory_found.get(item, 0) + count
 
     def consumeItem(self, item):
         if item not in self.__inventory:

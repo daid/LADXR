@@ -28,4 +28,3 @@ class BirdKey(DroppedKey):
 
         # Do not give the rooster
         rom.patch(0x19, 0x0E9D, ASM("ld [$DB7B], a"), "", fill_nop=True)
-

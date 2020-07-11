@@ -133,6 +133,14 @@ class MultiworldItemInfoWrapper:
     def priority(self):
         return self.target.priority
 
+    @property
+    def forced_item(self):
+        if self.target.forced_item is None:
+            return None
+        if "_W" in self.target.forced_item:
+            return self.target.forced_item
+        return "%s_W%d" % (self.target.forced_item, self.world)
+
     def read(self, rom):
         return "%s_W%d" % (self.target.read(rom), self.world)
 

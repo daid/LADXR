@@ -2,11 +2,107 @@ import explorer
 import random
 import os
 import logic
-import copy
-import patches.dungeonEntrances
-import patches.goal
 from locations.items import *
-import hints
+import binascii
+import generator
+
+
+DEFAULT_ITEM_POOL = {
+    "SWORD": 1,
+    "FEATHER": 1,
+    "HOOKSHOT": 1,
+    "BOW": 1,
+    "BOMB": 2,
+    "MAGIC_POWDER": 1,
+    "MAGIC_ROD": 1,
+    "OCARINA": 1,
+    "PEGASUS_BOOTS": 1,
+    "POWER_BRACELET": 2,
+    "SHIELD": 2,
+    "SHOVEL": 1,
+
+    "TOADSTOOL": 1,
+
+    "SEASHELL": 24,
+
+    "SLIME_KEY": 1,
+    "TAIL_KEY": 1,
+    "ANGLER_KEY": 1,
+    "BIRD_KEY": 1,
+    "FACE_KEY": 1,
+
+    "GOLD_LEAF": 5,
+
+    "FLIPPERS": 1,
+    "BOWWOW": 1,
+    "SONG1": 1,
+    "SONG2": 1,
+    "SONG3": 1,
+
+    "BLUE_TUNIC": 1,
+    "RED_TUNIC": 1,
+    "MAX_ARROWS_UPGRADE": 1,
+    "MAX_BOMBS_UPGRADE": 1,
+    "MAX_POWDER_UPGRADE": 1,
+
+    "HEART_CONTAINER": 8,
+    "HEART_PIECE": 11,
+
+    "RUPEES_100": 3,
+    "RUPEES_20": 39,
+    "RUPEES_200": 3,
+    "RUPEES_50": 19,
+
+    "MEDICINE": 2,
+    "MESSAGE": 1,
+    "GEL": 4,
+
+    "COMPASS1": 1,
+    "COMPASS2": 1,
+    "COMPASS3": 1,
+    "COMPASS4": 1,
+    "COMPASS5": 1,
+    "COMPASS6": 1,
+    "COMPASS7": 1,
+    "COMPASS8": 1,
+    "COMPASS9": 1,
+    "KEY1": 3,
+    "KEY2": 5,
+    "KEY3": 9,
+    "KEY4": 5,
+    "KEY5": 3,
+    "KEY6": 3,
+    "KEY7": 3,
+    "KEY8": 7,
+    "KEY9": 3,
+    "MAP1": 1,
+    "MAP2": 1,
+    "MAP3": 1,
+    "MAP4": 1,
+    "MAP5": 1,
+    "MAP6": 1,
+    "MAP7": 1,
+    "MAP8": 1,
+    "MAP9": 1,
+    "NIGHTMARE_KEY1": 1,
+    "NIGHTMARE_KEY2": 1,
+    "NIGHTMARE_KEY3": 1,
+    "NIGHTMARE_KEY4": 1,
+    "NIGHTMARE_KEY5": 1,
+    "NIGHTMARE_KEY6": 1,
+    "NIGHTMARE_KEY7": 1,
+    "NIGHTMARE_KEY8": 1,
+    "NIGHTMARE_KEY9": 1,
+    "STONE_BEAK1": 1,
+    "STONE_BEAK2": 1,
+    "STONE_BEAK3": 1,
+    "STONE_BEAK4": 1,
+    "STONE_BEAK5": 1,
+    "STONE_BEAK6": 1,
+    "STONE_BEAK7": 1,
+    "STONE_BEAK8": 1,
+    "STONE_BEAK9": 1,
+}
 
 
 class Error(Exception):
@@ -14,7 +110,7 @@ class Error(Exception):
 
 
 class Randomizer:
-    def __init__(self, rom, options, *, seed=None):
+    def __init__(self, options, *, seed=None):
         self.seed = seed
         if self.seed is None:
             self.seed = os.urandom(16)
@@ -29,7 +125,7 @@ class Randomizer:
         self.spots = []
         self.forward_placement = not options.keysanity
 
-        self.readItemPool(rom)
+        self.readItemPool(options)
         self.modifyDefaultItemPool(options)
         assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
 
@@ -38,36 +134,28 @@ class Randomizer:
             if not self.placeItem():
                 bail_counter += 1
                 if bail_counter > 100:
+                    print(sum(self.item_pool.values()), self.item_pool)
+                    print(self.spots)
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
 
-        # Apply patches to rom
         if options.goal == "random":
-            patches.goal.setRequiredInstrumentCount(rom, self.rnd.randint(-1, 8))
+            options.goal = self.rnd.randint(-1, 8)
 
-        hints.addHints(rom, self.rnd, self.__logic.iteminfo_list)
         if options.multiworld:
-            for n in range(4):
-                rom.patch(0x00, 0x0051 + n, "00", "%02x" % (self.rnd.randint(0, 255)))
             for n in range(options.multiworld):
-                result_rom = copy.deepcopy(rom)
-                result_rom.patch(0x00, 0x0055, "00", "%02x" % (n))
-                if self.__logic.worlds[n].entranceMapping:
-                    patches.dungeonEntrances.changeEntrances(result_rom, self.__logic.worlds[n].entranceMapping)
-
-                for spot in self.__logic.iteminfo_list:
-                    if spot.world == n:
-                        spot.patch(result_rom, spot.item)
-                result_rom.save("Multiworld_%d_%d.gbc" % (options.multiworld, n + 1))
+                rom = generator.generateRom(options, self.seed, self.__logic, multiworld=n)
+                rom.save("LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1), name="LADXR")
         else:
-            if self.__logic.entranceMapping:
-                patches.dungeonEntrances.changeEntrances(rom, self.__logic.entranceMapping)
-            for spot in self.__logic.iteminfo_list:
-                spot.patch(rom, spot.item)
+            rom = generator.generateRom(options, self.seed, self.__logic)
+            filename = options.output_filename
+            if filename is None:
+                filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
+            rom.save(filename, name="LADXR")
 
-    def addItem(self, item):
-        self.item_pool[item] = self.item_pool.get(item, 0) + 1
+    def addItem(self, item, count=1):
+        self.item_pool[item] = self.item_pool.get(item, 0) + count
 
     def removeItem(self, item):
         self.item_pool[item] -= 1
@@ -84,20 +172,26 @@ class Randomizer:
         while len(self.spots) > 0 and len(self.spots[-1]) == 0:
             self.spots.pop()
 
-    def readItemPool(self, rom):
+    def readItemPool(self, options):
         # Collect the item pool from the rom to see which items we can randomize.
-        for spot in self.__logic.iteminfo_list:
-            item = spot.read(rom)
-            self.item_pool[item] = self.item_pool.get(item, 0) + 1
+        if options.multiworld is None:
+            self.item_pool = DEFAULT_ITEM_POOL.copy()
+        else:
+            for world in range(options.multiworld):
+                for item, count in DEFAULT_ITEM_POOL.items():
+                    self.addItem("%s_W%d" % (item, world), count)
 
         for spot in self.__logic.iteminfo_list:
-            # If a spot has no other placement options, just ignore this spot.
-            if len(spot.getOptions()) > 1:
-                self.addSpot(spot)
-                spot.item = None
-            else:
+            if spot.forced_item is not None:
+                self.removeItem(spot.forced_item)
+                spot.item = spot.forced_item
+            elif len(spot.getOptions()) == 1:
+                # If a spot has no other placement options, just ignore this spot.
                 self.removeItem(spot.getOptions()[0])
                 spot.item = spot.getOptions()[0]
+            else:
+                self.addSpot(spot)
+                spot.item = None
 
     def modifyDefaultItemPool(self, options):
         if options.bowwow == 'always':
@@ -197,8 +291,7 @@ class Randomizer:
         # Finally, check if the logic still makes everything accessible when we have all the items.
         e = explorer.Explorer()
         for item_pool_item, count in self.item_pool.items():
-            for n in range(count):
-                e.addItem(item_pool_item)
+            e.addItem(item_pool_item, count)
         e.visit(self.__logic.start)
 
         if len(e.getAccessableLocations()) != len(self.__logic.location_list):

@@ -18,7 +18,7 @@ class Dungeon3:
         dungeon3_north_key_drop = Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
         Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks near staircase
-        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks next to slime chest
+        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)) # chest locked behind raised blocks next to slime chest
         area_up.connect(dungeon3_raised_blocks_north, attack_hookshot, one_way=True) # hit switch to reach north chest
         area_up.connect(dungeon3_raised_blocks_east, attack_hookshot, one_way=True) # hit switch to reach east chest
         
