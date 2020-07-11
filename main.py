@@ -3,6 +3,7 @@ from romTables import ROMWithTables
 from assembler import ASM
 import assembler
 import randomizer
+import spoilerLog
 import patches.core
 import patches.phone
 import patches.bowwow
@@ -49,7 +50,9 @@ def main(mainargs=None):
     parser.add_argument('--seedlist', dest="seedlist", metavar='seed list', type=str, required=False,
         help="Instead of generating ROMS, only generate valid seeds and append them to the specified file.")
     parser.add_argument('--dump', dest="dump", action="store_true",
-        help="Dump the logic if the given rom (spoilers!)")
+        help="Dump the logic of the given rom (spoilers!)")
+    parser.add_argument('--spoilerformat', dest="spoilerformat", choices=["none", "console", "text", "json"], default="none",
+        help="Sets the output format for the generated seed's spoiler log")
     parser.add_argument('--test', dest="test", action="store_true",
         help="Test the logic if the given rom, without showing anything.")
     parser.add_argument('-c', '--count', dest="count", type=int, required=False, default=1,
@@ -121,23 +124,11 @@ def main(mainargs=None):
             sys.exit(0)
 
         if args.dump or args.test:
-            if rom.banks[0][7] == 0x01:
+            try:
+                log = spoilerLog.SpoilerLog(args, rom)
+                log.output()
+            except spoilerLog.RaceRomException:
                 print("Cannot read spoiler log for race rom")
-                sys.exit(1)
-            dungeon_order = patches.dungeonEntrances.readEntrances(rom)
-            print("Dungeon order:", ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(dungeon_order))))
-            my_logic = logic.Logic(args, None, entranceMapping=dungeon_order)
-            for ii in my_logic.iteminfo_list:
-                ii.item = ii.read(rom)
-            e = explorer.Explorer(verbose=args.dump)
-            e.visit(my_logic.start)
-            if len(e.getAccessableLocations()) != len(my_logic.location_list):
-                print("Logic failure! Cannot access all locations.")
-                print("Failed to find:")
-                for loc in my_logic.location_list:
-                    if loc not in e.getAccessableLocations():
-                        for ii in loc.items:
-                            print("%20s at %s (%s)" % (ii.read(rom), ii.metadata, ii))
                 sys.exit(1)
             sys.exit(0)
 
@@ -310,6 +301,10 @@ def main(mainargs=None):
 
         print("Seed: %s" % (seed))
         patches.titleScreen.setRomInfo(rom, seed, args)
+
+        if args.spoilerformat != "none" and not args.race:
+            log = spoilerLog.SpoilerLog(args, rom)
+            log.output()
 
         if args.seedlist:
             f = open(args.seedlist, "at")

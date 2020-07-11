@@ -4,13 +4,12 @@ from checkMetadata import checkMetadataTable
 
 
 class Explorer:
-    def __init__(self, *, verbose=False):
+    def __init__(self):
         self.__inventory = {}
         self.__inventory_found = {}
         self.__visited = set()
         self.__todo_simple = []
         self.__todo_gated = []
-        self.__verbose = verbose
 
     def getAccessableLocations(self):
         return self.__visited
@@ -53,8 +52,6 @@ class Explorer:
         assert location not in self.__visited
         self.__visited.add(location)
         for ii in location.items:
-            if self.__verbose:
-                print("%20s at %s (%s)" % (ii.item, ii.metadata, ii))
             self.addItem(ii.item)
 
         for target, requirements in location.simple_connections:
