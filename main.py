@@ -1,39 +1,10 @@
 import binascii
 from romTables import ROMWithTables
-from assembler import ASM
-import assembler
+import shlex
 import randomizer
-import patches.core
-import patches.phone
-import patches.bowwow
-import patches.desert
-import patches.owl
-import patches.shop
-import patches.trendy
-import patches.chest
-import patches.droppedKey
-import patches.goldenLeaf
-import patches.madBatter
-import patches.tunicFairy
-import patches.heartPiece
-import patches.seashell
-import patches.witch
-import patches.songs
-import patches.softlock
-import patches.maptweaks
-import patches.inventory
-import patches.titleScreen
-import patches.dungeonEntrances
-import patches.reduceRNG
-import patches.bank3e
-import patches.bank3f
-import patches.aesthetics
-import patches.health
-import patches.goal
-import explorer
 import logic
-import os
-import time
+import patches.dungeonEntrances
+import explorer
 
 
 def main(mainargs=None):
@@ -66,7 +37,9 @@ def main(mainargs=None):
     parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
     parser.add_argument('--multiworld', dest="multiworld", type=int, required=False,
-        help="Generates multiple roms for a multiworld setup. WIP")
+        help="Generates multiple roms for a multiworld setup.")
+    parser.add_argument('--multiworld-config', dest="multiworld_config", action="append", required=False,
+        help="Set configuration for a multiworld player, supply multiple times for settings per player")
     parser.add_argument('--forwardfactor', dest="forwardfactor", type=float, required=False,
         help="Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5.")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
@@ -109,6 +82,11 @@ def main(mainargs=None):
         help="Force the palette of link")
 
     args = parser.parse_args(mainargs)
+    if args.multiworld is not None:
+        args.multiworld_options = [args] * args.multiworld
+        if args.multiworld_config is not None:
+            for index, settings_string in enumerate(args.multiworld_config):
+                args.multiworld_options[index] = parser.parse_args(shlex.split(settings_string))
 
     if args.exportmap:
         import mapexport

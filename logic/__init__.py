@@ -102,7 +102,7 @@ class MultiworldLogic:
         self.iteminfo_list = []
 
         for n in range(configuration_options.multiworld):
-            world = Logic(configuration_options, rnd)
+            world = Logic(configuration_options.multiworld_options[n], rnd)
             for ii in world.iteminfo_list:
                 ii.world = n
 

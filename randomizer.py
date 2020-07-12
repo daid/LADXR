@@ -77,6 +77,7 @@ class Randomizer:
             item_placer = RandomItemPlacer(self.__logic)
 
         if options.plan:
+            assert options.multiworld is None
             self.readPlan(options.plan)
 
         item_pool = self.readItemPool(options, item_placer)
@@ -91,7 +92,7 @@ class Randomizer:
 
         if options.multiworld:
             for n in range(options.multiworld):
-                rom = generator.generateRom(options, self.seed, self.__logic, multiworld=n)
+                rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
                 rom.save("LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1), name="LADXR")
         else:
             rom = generator.generateRom(options, self.seed, self.__logic)
