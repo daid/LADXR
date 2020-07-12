@@ -17,6 +17,7 @@ class OwlStatue(ItemInfo):
             return
         if options.owlstatues == "overworld" and self.room < 0x100:
             return
+        raise RuntimeError("Tried to configure an owlstatue that was not enabled")
         self.OPTIONS = [RUPEES_20]
 
     def patch(self, rom, option, *, multiworld=None):

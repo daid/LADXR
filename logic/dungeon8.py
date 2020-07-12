@@ -17,7 +17,8 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
         # right side
-        bottomright_owl = Location(8).add(OwlStatue(0x253)).connect(entrance, AND(STONE_BEAK8, FEATHER, POWER_BRACELET)) # Two ways to reach this owl statue, but both require the same (except that one route requires bombs as well)
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            bottomright_owl = Location(8).add(OwlStatue(0x253)).connect(entrance, AND(STONE_BEAK8, FEATHER, POWER_BRACELET)) # Two ways to reach this owl statue, but both require the same (except that one route requires bombs as well)
         slime_chest = Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_hookshot, POWER_BRACELET)))  # chest with slime
         bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(SWORD, POWER_BRACELET)))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
         bottomright_pot_chest = Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
@@ -25,7 +26,8 @@ class Dungeon8:
         map_chest = Location(8).add(DungeonChest(0x24F)).connect(entrance, FEATHER)
         lower_center = Location(8).connect(entrance_up, KEY8)
         upper_center = Location(8).connect(lower_center, KEY8)
-        Location(8).add(OwlStatue(0x245)).connect(upper_center, STONE_BEAK8)
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(8).add(OwlStatue(0x245)).connect(upper_center, STONE_BEAK8)
         Location(8).add(DroppedKey(0x23E)).connect(upper_center, attack_skeleton) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         medicine_chest = Location(8).add(DungeonChest(0x235)).connect(upper_center, HOOKSHOT)  # medicine chest
                                                                   
@@ -43,7 +45,8 @@ class Dungeon8:
         Location(8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
         Location().add(HeartPiece(0x000)).connect(up_left, FEATHER)  # Outside the dungeon on the platform (feather is a requirement as it needs at least 1 requirement, and feather is always required to get here)
         Location(8).add(DroppedKey(0x241)).connect(up_left, BOW) # lava statue
-        Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
         Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
 
         top_left_stairs = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
@@ -69,7 +72,8 @@ class Dungeon8:
             medicine_chest.connect(upper_center, FEATHER) # jesus super jump
 
         if options.logic == 'hell':
-            bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
+            if options.owlstatues == "both" or options.owlstatues == "dungeon":
+                bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
             entrance.connect(bottomright_pot_chest, AND(FEATHER, SWORD), one_way=True) # use staircase backwards, subpixel manip for superjump past the pots
             map_chest.connect(bottom_right, AND(POWER_BRACELET, PEGASUS_BOOTS, BOMB)) # underground section south of smasher, use pegasus boots to cross lava pillars

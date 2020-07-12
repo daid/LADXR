@@ -8,100 +8,49 @@ import generator
 
 
 DEFAULT_ITEM_POOL = {
-    "SWORD": 1,
-    "FEATHER": 1,
-    "HOOKSHOT": 1,
-    "BOW": 1,
-    "BOMB": 2,
-    "MAGIC_POWDER": 1,
-    "MAGIC_ROD": 1,
-    "OCARINA": 1,
-    "PEGASUS_BOOTS": 1,
-    "POWER_BRACELET": 2,
-    "SHIELD": 2,
-    "SHOVEL": 1,
+    SWORD: 1,
+    FEATHER: 1,
+    HOOKSHOT: 1,
+    BOW: 1,
+    BOMB: 2,
+    MAGIC_POWDER: 1,
+    MAGIC_ROD: 1,
+    OCARINA: 1,
+    PEGASUS_BOOTS: 1,
+    POWER_BRACELET: 2,
+    SHIELD: 2,
+    SHOVEL: 1,
 
-    "TOADSTOOL": 1,
+    TOADSTOOL: 1,
 
-    "SEASHELL": 24,
+    TAIL_KEY: 1, SLIME_KEY: 1, ANGLER_KEY: 1, FACE_KEY: 1, BIRD_KEY: 1,
+    GOLD_LEAF: 5,
 
-    "SLIME_KEY": 1,
-    "TAIL_KEY": 1,
-    "ANGLER_KEY": 1,
-    "BIRD_KEY": 1,
-    "FACE_KEY": 1,
+    FLIPPERS: 1,
+    BOWWOW: 1,
+    SONG1: 1, SONG2: 1, SONG3: 1,
 
-    "GOLD_LEAF": 5,
+    BLUE_TUNIC: 1, RED_TUNIC: 1,
+    MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1,
 
-    "FLIPPERS": 1,
-    "BOWWOW": 1,
-    "SONG1": 1,
-    "SONG2": 1,
-    "SONG3": 1,
+    HEART_CONTAINER: 8,
+    HEART_PIECE: 11,
 
-    "BLUE_TUNIC": 1,
-    "RED_TUNIC": 1,
-    "MAX_ARROWS_UPGRADE": 1,
-    "MAX_BOMBS_UPGRADE": 1,
-    "MAX_POWDER_UPGRADE": 1,
+    RUPEES_100: 3,
+    RUPEES_20: 6,
+    RUPEES_200: 3,
+    RUPEES_50: 19,
 
-    "HEART_CONTAINER": 8,
-    "HEART_PIECE": 11,
+    SEASHELL: 24,
+    MEDICINE: 2,
+    GEL: 4,
+    MESSAGE: 1,
 
-    "RUPEES_100": 3,
-    "RUPEES_20": 39,
-    "RUPEES_200": 3,
-    "RUPEES_50": 19,
-
-    "MEDICINE": 2,
-    "MESSAGE": 1,
-    "GEL": 4,
-
-    "COMPASS1": 1,
-    "COMPASS2": 1,
-    "COMPASS3": 1,
-    "COMPASS4": 1,
-    "COMPASS5": 1,
-    "COMPASS6": 1,
-    "COMPASS7": 1,
-    "COMPASS8": 1,
-    "COMPASS9": 1,
-    "KEY1": 3,
-    "KEY2": 5,
-    "KEY3": 9,
-    "KEY4": 5,
-    "KEY5": 3,
-    "KEY6": 3,
-    "KEY7": 3,
-    "KEY8": 7,
-    "KEY9": 3,
-    "MAP1": 1,
-    "MAP2": 1,
-    "MAP3": 1,
-    "MAP4": 1,
-    "MAP5": 1,
-    "MAP6": 1,
-    "MAP7": 1,
-    "MAP8": 1,
-    "MAP9": 1,
-    "NIGHTMARE_KEY1": 1,
-    "NIGHTMARE_KEY2": 1,
-    "NIGHTMARE_KEY3": 1,
-    "NIGHTMARE_KEY4": 1,
-    "NIGHTMARE_KEY5": 1,
-    "NIGHTMARE_KEY6": 1,
-    "NIGHTMARE_KEY7": 1,
-    "NIGHTMARE_KEY8": 1,
-    "NIGHTMARE_KEY9": 1,
-    "STONE_BEAK1": 1,
-    "STONE_BEAK2": 1,
-    "STONE_BEAK3": 1,
-    "STONE_BEAK4": 1,
-    "STONE_BEAK5": 1,
-    "STONE_BEAK6": 1,
-    "STONE_BEAK7": 1,
-    "STONE_BEAK8": 1,
-    "STONE_BEAK9": 1,
+    COMPASS1: 1, COMPASS2: 1, COMPASS3: 1, COMPASS4: 1, COMPASS5: 1, COMPASS6: 1, COMPASS7: 1, COMPASS8: 1, COMPASS9: 1,
+    KEY1: 3, KEY2: 5, KEY3: 9, KEY4: 5, KEY5: 3, KEY6: 3, KEY7: 3, KEY8: 7, KEY9: 3,
+    MAP1: 1, MAP2: 1, MAP3: 1, MAP4: 1, MAP5: 1, MAP6: 1, MAP7: 1, MAP8: 1, MAP9: 1,
+    NIGHTMARE_KEY1: 1, NIGHTMARE_KEY2: 1, NIGHTMARE_KEY3: 1, NIGHTMARE_KEY4: 1, NIGHTMARE_KEY5: 1, NIGHTMARE_KEY6: 1, NIGHTMARE_KEY7: 1, NIGHTMARE_KEY8: 1, NIGHTMARE_KEY9: 1,
+    STONE_BEAK1: 1, STONE_BEAK2: 1, STONE_BEAK3: 1, STONE_BEAK4: 1, STONE_BEAK5: 1, STONE_BEAK6: 1, STONE_BEAK7: 1, STONE_BEAK8: 1, STONE_BEAK9: 1,
 }
 
 
@@ -122,9 +71,10 @@ class Randomizer:
         else:
             self.__logic = logic.Logic(options, self.rnd)
 
-        self.forward_placement = not options.keysanity
-
-        item_placer = RandomItemPlacer(self.__logic)
+        if not options.keysanity:
+            item_placer = ForwardItemPlacer(self.__logic)
+        else:
+            item_placer = RandomItemPlacer(self.__logic)
 
         if options.plan:
             self.readPlan(options.plan)
@@ -168,16 +118,26 @@ class Randomizer:
                     ii.forced_item = item.upper()
                     found = True
             if not found:
-                print("Plandomiser warning, spot not found:", location, item)
+                print("Plandomizer warning, spot not found:", location, item)
 
     def readItemPool(self, options, item_placer):
         item_pool = {}
         # Collect the item pool from the rom to see which items we can randomize.
+        default_item_pool = DEFAULT_ITEM_POOL.copy()
+        if options.boomerang != 'default':
+            default_item_pool[BOOMERANG] = 1
+        if options.owlstatues == 'both':
+            default_item_pool[RUPEES_20] += 9 + 24
+        elif options.owlstatues == 'dungeons':
+            default_item_pool[RUPEES_20] += 24
+        elif options.owlstatues == 'overworld':
+            default_item_pool[RUPEES_20] += 9
+
         if options.multiworld is None:
-            item_pool = DEFAULT_ITEM_POOL.copy()
+            item_pool = default_item_pool
         else:
             for world in range(options.multiworld):
-                for item, count in DEFAULT_ITEM_POOL.items():
+                for item, count in default_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
         for spot in self.__logic.iteminfo_list:
@@ -194,6 +154,7 @@ class Randomizer:
         return item_pool
 
     def modifyDefaultItemPool(self, options, item_pool):
+        # TODO: The plandomizer might cause an item pool item to go negative, and we need to correct for that.
         if options.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
             assert options.multiworld is None
@@ -274,6 +235,7 @@ class RandomItemPlacer:
             self.__spots.pop()
 
     def run(self, rnd):
+        assert sum(self.__item_pool.values()) == sum([len(spots) for spots in self.__spots]), "%d != %d" % (sum(self.__item_pool.values()), sum([len(spots) for spots in self.__spots]))
         assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
 
         bail_counter = 0
@@ -355,6 +317,120 @@ class RandomItemPlacer:
                     if option not in item_spots:
                         item_spots[option] = set()
                     item_spots[option].add(spot)
+        for item in sorted(self.__item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
+            spots = item_spots.get(item, set())
+            for n in range(self.__item_pool.get(item, 0)):
+                if verbose:
+                    print(n, item, spots)
+                if not spots:
+                    if verbose:
+                        print(item_spots)
+                    return False
+                spot = next(iter(spots))
+                for spot_set in item_spots.values():
+                    if spot in spot_set:
+                        spot_set.remove(spot)
+        return True
+
+
+class ForwardItemPlacer:
+    DUNGEON_ITEMS = [
+        COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS9,
+        MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP9,
+        STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
+    ]
+
+    def __init__(self, logic):
+        self.__logic = logic
+        self.__item_pool = {}
+        self.__spots = []
+        for ii in logic.iteminfo_list:
+            ii.weight = 1.0
+
+    def addItem(self, item, count=1):
+        self.__item_pool[item] = self.__item_pool.get(item, 0) + count
+
+    def removeItem(self, item):
+        self.__item_pool[item] -= 1
+        if self.__item_pool[item] == 0:
+            del self.__item_pool[item]
+
+    def addSpot(self, spot):
+        self.__spots.append(spot)
+
+    def removeSpot(self, spot):
+        self.__spots.remove(spot)
+
+    def run(self, rnd):
+        if sum(self.__item_pool.values()) != len(self.__spots):
+            for k, v in sorted(self.__item_pool.items()):
+                print(k, v)
+        assert sum(self.__item_pool.values()) == len(self.__spots), "%d != %d" % (sum(self.__item_pool.values()), len(self.__spots))
+        bail_counter = 0
+        while self.__item_pool:
+            if not self.__placeItem(rnd):
+                bail_counter += 1
+                if bail_counter > 100:
+                    raise Error("Failed to place an item for a bunch of retries")
+            else:
+                bail_counter = 0
+
+    def __placeItem(self, rnd):
+        e = explorer.Explorer()
+        e.visit(self.__logic.start)
+        spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
+        req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self.__item_pool]
+        if not req_items:
+            for di in self.DUNGEON_ITEMS:
+                if di in self.__item_pool:
+                    req_items = [item for item in self.DUNGEON_ITEMS if item in self.__item_pool]
+                    break
+        if req_items:
+            if "RUPEES" in req_items:
+                req_items += [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]
+        else:
+            req_items = [item for item in sorted(self.__item_pool.keys())]
+
+        item = rnd.choice(req_items)
+        spots = [spot for spot in spots if item in spot.getOptions()]
+        if not spots:
+            return False
+        spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
+
+        spot.item = item
+        if e.getRequiredItemsForNextLocations() and not self.hasNewPlacesToExplore():
+            spot.item = None
+            return False
+        self.removeItem(spot.item)
+        self.removeSpot(spot)
+        if not self.canStillPlaceItemPool():
+            self.addItem(spot.item)
+            self.addSpot(spot)
+            spot.item = None
+            return False
+        # For each item placed, make all accessible locations less likely to be picked
+        for spot in spots:
+            spot.weight *= 0.5
+        return True
+
+    def hasNewPlacesToExplore(self):
+        e = explorer.Explorer()
+        e.visit(self.__logic.start)
+        for loc in e.getAccessableLocations():
+            for spot in loc.items:
+                if spot.item is None:
+                    return True
+        return False
+
+    def canStillPlaceItemPool(self, verbose=False):
+        # For each item in the pool, find which spots are available.
+        # Then, from the hardest to place item to the easy stuff strip the availability pool
+        item_spots = {}
+        for spot in self.__spots:
+            for option in spot.getOptions():
+                if option not in item_spots:
+                    item_spots[option] = set()
+                item_spots[option].add(spot)
         for item in sorted(self.__item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
             spots = item_spots.get(item, set())
             for n in range(self.__item_pool.get(item, 0)):
