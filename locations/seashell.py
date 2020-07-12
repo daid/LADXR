@@ -8,3 +8,7 @@ class Seashell(DroppedKey):
     def configure(self, options):
         if not options.seashells:
             self.OPTIONS = [SEASHELL]
+
+
+class SeashellMansion(DroppedKey):
+    MULTIWORLD = False

@@ -19,3 +19,46 @@ def fixSeashell(rom):
         call $512A
         ret
     """), fill_nop=True)
+
+
+def upgradeMansion(rom):
+    rom.patch(0x19, 0x38EC, ASM("""
+        ld   hl, $78DC
+        jr   $03
+    """), "", fill_nop=True)
+    rom.patch(0x19, 0x38F1, ASM("""
+        ld   hl, $78CC
+        ld   c, $04
+        call $3CE6
+    """), ASM("""
+        ld   a, $0C
+        rst  8
+    """), fill_nop=True)
+    rom.patch(0x19, 0x3718, ASM("sub $13"), ASM("sub $0D"))
+    rom.patch(0x19, 0x3697, ASM("""
+        cp   $70
+        jr   c, $15
+        ld   [hl], $70
+    """), ASM("""
+        cp   $73
+        jr   c, $15
+        ld   [hl], $73
+    """))
+    rom.patch(0x19, 0x36F5, ASM("""
+        ld   a, $02
+        ld   [$DB4E], a
+    """), ASM("""
+        ld   a, $0B ; give item and message for current room
+        rst  8
+    """), fill_nop=True)
+    rom.patch(0x19, 0x36E6, ASM("""
+        ld   a, $9F
+        call $2385
+    """), "", fill_nop=True)
+    rom.patch(0x19, 0x31E8, ASM("""
+        ld   a, [$DB4E]
+        and  $02
+    """), ASM("""
+        ld   a, [$DAE9]
+        and  $10
+    """))

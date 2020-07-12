@@ -8,7 +8,7 @@ import generator
 
 
 DEFAULT_ITEM_POOL = {
-    SWORD: 1,
+    SWORD: 2,
     FEATHER: 1,
     HOOKSHOT: 1,
     BOW: 1,

@@ -100,6 +100,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.goldenLeaf.fixGoldenLeaf(rom)
     patches.heartPiece.fixHeartPiece(rom)
     patches.seashell.fixSeashell(rom)
+    patches.seashell.upgradeMansion(rom)
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
