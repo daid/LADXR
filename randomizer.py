@@ -121,24 +121,20 @@ class Randomizer:
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
             self.__logic = logic.Logic(options, self.rnd)
-        self.item_pool = {}
-        self.spots = []
+
         self.forward_placement = not options.keysanity
 
-        self.readItemPool(options)
-        self.modifyDefaultItemPool(options)
-        assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
+        item_placer = RandomItemPlacer(self.__logic)
 
-        bail_counter = 0
-        while self.item_pool:
-            if not self.placeItem():
-                bail_counter += 1
-                if bail_counter > 100:
-                    print(sum(self.item_pool.values()), self.item_pool)
-                    print(self.spots)
-                    raise Error("Failed to place an item for a bunch of retries")
-            else:
-                bail_counter = 0
+        if options.plan:
+            self.readPlan(options.plan)
+
+        item_pool = self.readItemPool(options, item_placer)
+        self.modifyDefaultItemPool(options, item_pool)
+        for item, count in item_pool.items():
+            if count > 0:
+                item_placer.addItem(item, count)
+        item_placer.run(self.rnd)
 
         if options.goal == "random":
             options.goal = self.rnd.randint(-1, 8)
@@ -154,98 +150,150 @@ class Randomizer:
                 filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
             rom.save(filename, name="LADXR")
 
-    def addItem(self, item, count=1):
-        self.item_pool[item] = self.item_pool.get(item, 0) + count
+    def readPlan(self, filename):
+        for line in open(filename, "rt"):
+            line = line.strip()
+            if ";" in line:
+                line = line[:line.find(";")]
+            if "#" in line:
+                line = line[:line.find("#")]
+            if ":" not in line:
+                continue
+            location, item = map(str.strip, line.upper().split(":", 1))
+            if item == "":
+                continue
+            found = False
+            for ii in self.__logic.iteminfo_list:
+                if ii.nameId.upper() == location:
+                    ii.forced_item = item.upper()
+                    found = True
+            if not found:
+                print("Plandomiser warning, spot not found:", location, item)
 
-    def removeItem(self, item):
-        self.item_pool[item] -= 1
-        if self.item_pool[item] == 0:
-            del self.item_pool[item]
-
-    def addSpot(self, spot):
-        while len(self.spots) <= spot.priority:
-            self.spots.append([])
-        self.spots[spot.priority].append(spot)
-
-    def removeSpot(self, spot):
-        self.spots[spot.priority].remove(spot)
-        while len(self.spots) > 0 and len(self.spots[-1]) == 0:
-            self.spots.pop()
-
-    def readItemPool(self, options):
+    def readItemPool(self, options, item_placer):
+        item_pool = {}
         # Collect the item pool from the rom to see which items we can randomize.
         if options.multiworld is None:
-            self.item_pool = DEFAULT_ITEM_POOL.copy()
+            item_pool = DEFAULT_ITEM_POOL.copy()
         else:
             for world in range(options.multiworld):
                 for item, count in DEFAULT_ITEM_POOL.items():
-                    self.addItem("%s_W%d" % (item, world), count)
+                    item_pool["%s_W%d" % (item, world)] = count
 
         for spot in self.__logic.iteminfo_list:
             if spot.forced_item is not None:
-                self.removeItem(spot.forced_item)
+                item_pool[spot.forced_item] -= 1
                 spot.item = spot.forced_item
             elif len(spot.getOptions()) == 1:
                 # If a spot has no other placement options, just ignore this spot.
-                self.removeItem(spot.getOptions()[0])
+                item_pool[spot.getOptions()[0]] -= 1
                 spot.item = spot.getOptions()[0]
             else:
-                self.addSpot(spot)
+                item_placer.addSpot(spot)
                 spot.item = None
+        return item_pool
 
-    def modifyDefaultItemPool(self, options):
+    def modifyDefaultItemPool(self, options, item_pool):
         if options.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
-            self.addItem(SWORD)
-            self.removeItem(BOWWOW)
+            assert options.multiworld is None
+            item_pool[SWORD] += 1
+            item_pool[BOWWOW] -= 1
         if options.bowwow == 'swordless':
+            assert options.multiworld is None
             # Bowwow mode takes a sword from the pool to give as bowwow.
-            self.removeItem(BOWWOW)
-            self.addItem(RUPEES_20)
+            item_pool[RUPEES_20] += 1
+            item_pool[BOWWOW] -= 1
         if options.hpmode == 'inverted':
-            self.item_pool[BAD_HEART_CONTAINER] = self.item_pool[HEART_CONTAINER]
-            del self.item_pool[HEART_CONTAINER]
+            assert options.multiworld is None
+            item_pool[BAD_HEART_CONTAINER] = item_pool[HEART_CONTAINER]
+            item_pool[HEART_CONTAINER] = 0
 
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []
         rupee_item_count = []
-        for k, v in self.item_pool.items():
-            if k.startswith("RUPEES_"):
+        for k, v in item_pool.items():
+            if k.startswith("RUPEES_") and v > 0:
                 rupee_item.append(k)
                 rupee_item_count.append(v)
-        rupee_chests = sum(v for k, v in self.item_pool.items() if k.startswith("RUPEES_"))
+        rupee_chests = sum(v for k, v in item_pool.items() if k.startswith("RUPEES_"))
         for n in range(rupee_chests // 5):
-            new_item = self.rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))
+            new_item = self.rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))[0]
             while True:
-                remove_item = self.rnd.choices(rupee_item, rupee_item_count)
-                if remove_item in self.item_pool:
+                remove_item = self.rnd.choices(rupee_item, rupee_item_count)[0]
+                if remove_item in item_pool:
                     break
             if "_W" in remove_item:
                 new_item += remove_item[remove_item.rfind("_W"):]
-            self.addItem(new_item)
-            self.removeItem(remove_item)
+            item_pool[new_item] = item_pool.get(new_item, 0) + 1
+            item_pool[remove_item] -= 1
 
-    def placeItem(self):
-        # Find a random spot and item to place
-        if self.forward_placement:
-            # Forward placement
-            e = explorer.Explorer()
-            e.addItem("RUPEES_2000")
-            e.visit(self.__logic.start)
-            spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-            spot = self.rnd.choice(spots)
-            options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
-            req_items = e.getRequiredItemsForNextLocations()
-            if req_items:
-                options = list(filter(lambda i: i in req_items, options))
-        else:
-            # Random placement
-            spot = self.rnd.choice(self.spots[-1])
-            options = list(filter(lambda i: i in self.item_pool, spot.getOptions()))
+
+class ItemPlacer:
+    def __init__(self):
+        pass
+
+    def addItem(self, item, count=1):
+        raise NotImplementedError()
+
+    def removeItem(self, item):
+        raise NotImplementedError()
+
+    def addSpot(self, spot):
+        raise NotImplementedError()
+
+    def removeSpot(self, spot):
+        raise NotImplementedError()
+
+    def run(self):
+        raise NotImplementedError()
+
+
+class RandomItemPlacer:
+    def __init__(self, logic):
+        self.__logic = logic
+        self.__item_pool = {}
+        self.__spots = []
+
+    def addItem(self, item, count=1):
+        self.__item_pool[item] = self.__item_pool.get(item, 0) + count
+
+    def removeItem(self, item):
+        self.__item_pool[item] -= 1
+        if self.__item_pool[item] == 0:
+            del self.__item_pool[item]
+
+    def addSpot(self, spot):
+        while len(self.__spots) <= spot.priority:
+            self.__spots.append([])
+        self.__spots[spot.priority].append(spot)
+
+    def removeSpot(self, spot):
+        self.__spots[spot.priority].remove(spot)
+        while len(self.__spots) > 0 and len(self.__spots[-1]) == 0:
+            self.__spots.pop()
+
+    def run(self, rnd):
+        assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
+
+        bail_counter = 0
+        while self.__item_pool:
+            assert sum(self.__item_pool.values()) == sum(map(lambda n: len(n), self.__spots))
+            if not self.__placeItem(rnd):
+                bail_counter += 1
+                if bail_counter > 10:
+                    raise Error("Failed to place an item for a bunch of retries")
+            else:
+                bail_counter = 0
+
+    def __placeItem(self, rnd):
+        # Random placement
+        spot = rnd.choice(self.__spots[-1])
+        options = list(filter(lambda i: i in self.__item_pool, spot.getOptions()))
 
         if not options:
             return False
-        item = self.rnd.choice(sorted(options))
+        item = rnd.choice(sorted(options))
 
         spot.item = item
         self.removeItem(item)
@@ -262,13 +310,13 @@ class Randomizer:
 
     def logicStillValid(self, verbose=False):
         # Check if we still have new places to explore
-        if self.spots:
+        if self.__spots:
             e = explorer.Explorer()
             e.visit(self.__logic.start)
             valid = False
             for loc in e.getAccessableLocations():
                 for ii in loc.items:
-                    for spots in self.spots:
+                    for spots in self.__spots:
                         if ii in spots:
                             valid = True
             if not valid:
@@ -284,7 +332,7 @@ class Randomizer:
 
         # Finally, check if the logic still makes everything accessible when we have all the items.
         e = explorer.Explorer()
-        for item_pool_item, count in self.item_pool.items():
+        for item_pool_item, count in self.__item_pool.items():
             e.addItem(item_pool_item, count)
         e.visit(self.__logic.start)
 
@@ -301,15 +349,15 @@ class Randomizer:
         # For each item in the pool, find which spots are available.
         # Then, from the hardest to place item to the easy stuff strip the availability pool
         item_spots = {}
-        for spots in self.spots:
+        for spots in self.__spots:
             for spot in spots:
                 for option in spot.getOptions():
                     if option not in item_spots:
                         item_spots[option] = set()
                     item_spots[option].add(spot)
-        for item in sorted(self.item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
+        for item in sorted(self.__item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
             spots = item_spots.get(item, set())
-            for n in range(self.item_pool.get(item, 0)):
+            for n in range(self.__item_pool.get(item, 0)):
                 if verbose:
                     print(n, item, spots)
                 if not spots:

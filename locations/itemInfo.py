@@ -1,6 +1,7 @@
 import typing
 from checkMetadata import checkMetadataTable
 
+
 class ItemInfo:
     OPTIONS = []
     MULTIWORLD = False

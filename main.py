@@ -55,8 +55,12 @@ def main(mainargs=None):
         help="Patch the rom so that debug mode is enabled, this creates a default save with most items and unlocks some debug features.")
     parser.add_argument('--exportmap', dest="exportmap", action="store_true",
         help="Export the map (many graphical mistakes)")
+    parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
+        help="Write an unfilled plan file")
 
     # Flags that effect gameplay
+    parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
+        help="Read an item placement plan")
     parser.add_argument('--race', dest="race", action="store_true",
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
     parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
@@ -104,13 +108,24 @@ def main(mainargs=None):
 
     args = parser.parse_args(mainargs)
 
-    start_time = time.monotonic()
-    total_retries = 0
     if args.exportmap:
         import mapexport
         print("Loading: %s" % (args.input_filename))
         rom = ROMWithTables(args.input_filename)
         mapexport.MapExport(rom)
+        sys.exit(0)
+
+    if args.emptyplan:
+        import checkMetadata
+        import locations.items
+        f = open(args.emptyplan, "wt")
+        f.write(";Plandomizer data\n;Items: %s\n" % (", ".join(map(lambda n: getattr(locations.items, n), filter(lambda n: not n.startswith("__"), dir(locations.items))))))
+        for key in dir(locations.items):
+            f.write("")
+        for name, data in sorted(checkMetadata.checkMetadataTable.items(), key=lambda n: str(n[1])):
+            if name is not "None":
+                f.write(";%s\n" % (data))
+                f.write("%s: \n" % (name))
         sys.exit(0)
 
     if args.dump or args.test:
@@ -139,45 +154,27 @@ def main(mainargs=None):
             sys.exit(1)
         sys.exit(0)
 
-    if args.seed is not None and args.seed.upper() == "DEFAULT":
-        seed = "DEFAULT"
-        my_logic = logic.Logic(args, None)
-        for ii in my_logic.iteminfo_list:
-            ii.item = ii.read(rom)
-            ii.patch(rom, ii.item)
-        # my_logic.dumpFlatRequirements()
-        e = explorer.Explorer()
-        e.visit(my_logic.start)
-        e.dump(my_logic)
-        # patches.dungeonEntrances.changeEntrances(rom, [1,2,3,4,5,6,7,8,0])
-        # from locations import ShopItem
-        # ShopItem(0).patch(rom, "SWORD")
-        # from locations import Chest
-        # Chest(0x113).patch(rom, "KEY2")
-        # from locations import DroppedKey
-        # dk = DroppedKey(0x116)
-        # dk.patch(rom, "BOW")
-        # from locations import StartItem
-        # StartItem().patch(rom, "POWER_BRACELET")
-    else:
-        if args.seed:
+    if args.seed:
+        try:
             args.seed = binascii.unhexlify(args.seed)
-        retry_count = 0
-        while True:
-            try:
-                r = randomizer.Randomizer(args, seed=args.seed)
-                seed = binascii.hexlify(r.seed).decode("ascii").upper()
-                break
-            except randomizer.Error:
-                if args.seed is not None:
-                    print("Specified seed does not produce a valid result.")
-                    sys.exit(1)
-                retry_count += 1
-                if retry_count > 100:
-                    print("Randomization keeps failing, abort!")
-                    sys.exit(1)
-                print("Failed, trying again: %d" % (retry_count))
-        total_retries += retry_count
+        except binascii.Error:
+            args.seed = args.seed.encode("ascii")
+
+    retry_count = 0
+    while True:
+        try:
+            r = randomizer.Randomizer(args, seed=args.seed)
+            seed = binascii.hexlify(r.seed).decode("ascii").upper()
+            break
+        except randomizer.Error:
+            if args.seed is not None:
+                print("Specified seed does not produce a valid result.")
+                sys.exit(1)
+            retry_count += 1
+            if retry_count > 100:
+                print("Randomization keeps failing, abort!")
+                sys.exit(1)
+            print("Failed, trying again: %d" % (retry_count))
 
     print("Seed: %s" % (seed))
 
