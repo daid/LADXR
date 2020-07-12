@@ -86,7 +86,7 @@ def main(mainargs=None):
         args.multiworld_options = [args] * args.multiworld
         if args.multiworld_config is not None:
             for index, settings_string in enumerate(args.multiworld_config):
-                args.multiworld_options[index] = parser.parse_args(shlex.split(settings_string))
+                args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string))
 
     if args.exportmap:
         import mapexport
@@ -125,7 +125,7 @@ def main(mainargs=None):
             print("Logic failure! Cannot access all locations.")
             print("Failed to find:")
             for loc in my_logic.location_list:
-                # if loc not in e.getAccessableLocations():
+                if loc not in e.getAccessableLocations():
                     for ii in loc.items:
                         print("%20s at %s (%s)" % (ii.read(rom), ii.metadata, ii))
                         if ii.MULTIWORLD:

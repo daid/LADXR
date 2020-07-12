@@ -80,9 +80,7 @@ class Randomizer:
             assert options.multiworld is None
             self.readPlan(options.plan)
 
-        item_pool = self.readItemPool(options, item_placer)
-        self.modifyDefaultItemPool(options, item_pool)
-        for item, count in item_pool.items():
+        for item, count in self.readItemPool(options, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
         item_placer.run(self.rnd)
@@ -121,9 +119,7 @@ class Randomizer:
             if not found:
                 print("Plandomizer warning, spot not found:", location, item)
 
-    def readItemPool(self, options, item_placer):
-        item_pool = {}
-        # Collect the item pool from the rom to see which items we can randomize.
+    def getDefaultItemPool(self, options):
         default_item_pool = DEFAULT_ITEM_POOL.copy()
         if options.boomerang != 'default':
             default_item_pool[BOOMERANG] = 1
@@ -133,11 +129,18 @@ class Randomizer:
             default_item_pool[RUPEES_20] += 24
         elif options.owlstatues == 'overworld':
             default_item_pool[RUPEES_20] += 9
+        return default_item_pool
 
+    def readItemPool(self, options, item_placer):
+        item_pool = {}
+        # Collect the item pool from the rom to see which items we can randomize.
         if options.multiworld is None:
-            item_pool = default_item_pool
+            item_pool = self.getDefaultItemPool(options)
+            self.modifyDefaultItemPool(options, item_pool)
         else:
             for world in range(options.multiworld):
+                default_item_pool = self.getDefaultItemPool(options.multiworld_options[world])
+                self.modifyDefaultItemPool(options, default_item_pool)
                 for item, count in default_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
