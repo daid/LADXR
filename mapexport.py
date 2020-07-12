@@ -1,6 +1,5 @@
-import PIL.Image
-import os
-from roomEditor import RoomEditor, Object, ObjectHorizontal, ObjectVertical, ObjectWarp
+import PIL.Image, PIL.ImageDraw
+from roomEditor import RoomEditor, ObjectHorizontal, ObjectVertical, ObjectWarp
 
 
 class RenderedMap:
@@ -9,8 +8,9 @@ class RenderedMap:
     WALL_LEFT = 0x04
     WALL_RIGHT = 0x08
 
-    def __init__(self, floor_object):
+    def __init__(self, floor_object, overworld=False):
         self.objects = {}
+        self.overworld = overworld
 
         for y in range(8):
             for x in range(10):
@@ -37,13 +37,28 @@ class RenderedMap:
             self.placeObject(9, 7, 0x28)
 
     def placeObject(self, x, y, type_id):
-        if type_id == 0xF5:
-            # TOFIX there seems to be some complex tree overlapping logic
-            self.placeObject(x, y, 0x25)
-            self.placeObject(x + 1, y, 0x26)
-            self.placeObject(x, y + 1, 0x27)
-            self.placeObject(x + 1, y + 1, 0x28)
-        elif type_id == 0xF6: # two door house
+        if type_id == 0xF5 and self.overworld:
+            if self.getObject(x, y) in (0x28, 0x83, 0x90):
+                self.placeObject(x, y, 0x29)
+            else:
+                self.placeObject(x, y, 0x25)
+            if self.getObject(x + 1, y) in (0x27, 0x82, 0x90):
+                self.placeObject(x + 1, y, 0x2A)
+            else:
+                self.placeObject(x + 1, y, 0x26)
+            if self.getObject(x, y + 1) in (0x26, 0x2A):
+                self.placeObject(x, y + 1, 0x2A)
+            elif self.getObject(x, y + 1) == 0x90:
+                self.placeObject(x, y + 1, 0x82)
+            else:
+                self.placeObject(x, y + 1, 0x27)
+            if self.getObject(x + 1, y + 1) in (0x25, 0x29):
+                self.placeObject(x + 1, y + 1, 0x29)
+            elif self.getObject(x + 1, y + 1) == 0x90:
+                self.placeObject(x + 1, y + 1, 0x83)
+            else:
+                self.placeObject(x + 1, y + 1, 0x28)
+        elif type_id == 0xF6 and self.overworld: # two door house
             self.placeObject(x + 0, y, 0x55)
             self.placeObject(x + 1, y, 0x5A)
             self.placeObject(x + 2, y, 0x5A)
@@ -59,7 +74,7 @@ class RenderedMap:
             self.placeObject(x + 2, y + 2, 0x5B)
             self.placeObject(x + 3, y + 2, 0xE2)
             self.placeObject(x + 4, y + 2, 0x5B)
-        elif type_id == 0xF7:  # large house
+        elif type_id == 0xF7 and self.overworld:  # large house
             self.placeObject(x + 0, y, 0x55)
             self.placeObject(x + 1, y, 0x5A)
             self.placeObject(x + 2, y, 0x56)
@@ -69,26 +84,26 @@ class RenderedMap:
             self.placeObject(x + 0, y + 2, 0x5B)
             self.placeObject(x + 1, y + 2, 0xE2)
             self.placeObject(x + 2, y + 2, 0x5B)
-        elif type_id == 0xF8:  # catfish
+        elif type_id == 0xF8 and self.overworld:  # catfish
             self.placeObject(x + 0, y, 0xB6)
             self.placeObject(x + 1, y, 0xB7)
             self.placeObject(x + 2, y, 0x66)
             self.placeObject(x + 0, y + 1, 0x67)
             self.placeObject(x + 1, y + 1, 0xE3)
             self.placeObject(x + 2, y + 1, 0x68)
-        elif type_id == 0xF9:  # palace door
+        elif type_id == 0xF9 and self.overworld:  # palace door
             self.placeObject(x + 0, y, 0xA4)
             self.placeObject(x + 1, y, 0xA5)
             self.placeObject(x + 2, y, 0xA6)
             self.placeObject(x + 0, y + 1, 0xA7)
             self.placeObject(x + 1, y + 1, 0xE3)
             self.placeObject(x + 2, y + 1, 0xA8)
-        elif type_id == 0xFA:   # stone pig head
+        elif type_id == 0xFA and self.overworld:   # stone pig head
             self.placeObject(x + 0, y, 0xBB)
             self.placeObject(x + 1, y, 0xBC)
             self.placeObject(x + 0, y + 1, 0xBD)
             self.placeObject(x + 1, y + 1, 0xBE)
-        elif type_id == 0xFB:  # palmtree
+        elif type_id == 0xFB and self.overworld:  # palmtree
             if x == 15:
                 self.placeObject(x + 1, y + 1, 0xB7)
                 self.placeObject(x + 1, y + 2, 0xCE)
@@ -97,7 +112,7 @@ class RenderedMap:
                 self.placeObject(x + 0, y + 1, 0xCD)
                 self.placeObject(x + 1, y + 0, 0xB7)
                 self.placeObject(x + 1, y + 1, 0xCE)
-        elif type_id == 0xFC:  # square "hill with hole" (seen near lvl4 entrance)
+        elif type_id == 0xFC and self.overworld:  # square "hill with hole" (seen near lvl4 entrance)
             self.placeObject(x + 0, y, 0x2B)
             self.placeObject(x + 1, y, 0x2C)
             self.placeObject(x + 2, y, 0x2D)
@@ -112,7 +127,7 @@ class RenderedMap:
             self.placeObject(x + 1, y + 3, 0x0A)
             self.placeObject(x + 2, y + 3, 0x0A)
             self.placeObject(x + 3, y + 3, 0x0A)
-        elif type_id == 0xFD:  # small house
+        elif type_id == 0xFD and self.overworld:  # small house
             self.placeObject(x + 0, y, 0x52)
             self.placeObject(x + 1, y, 0x52)
             self.placeObject(x + 2, y, 0x52)
@@ -121,6 +136,9 @@ class RenderedMap:
             self.placeObject(x + 2, y + 1, 0x5B)
         else:
             self.objects[(x & 15), (y & 15)] = type_id
+
+    def getObject(self, x, y):
+        return self.objects.get(((x & 15), (y & 15)), None)
 
 
 class MapExport:
@@ -131,6 +149,7 @@ class MapExport:
             0x0C: self.getTiles(0x0C),
             0x0D: self.getTiles(0x0D),
             0x0F: self.getTiles(0x0F),
+            0x12: self.getTiles(0x12),
         }
 
         f = open("test.html", "wt")
@@ -140,14 +159,21 @@ class MapExport:
             y = n // 0x10
             result.paste(self.exportRoom(n), (x * 20 * 8, y * 16 * 8))
         result.save("overworld.png")
-        f.write("<img src='overworld.png'>")
+        f.write("<img src='overworld.png'><br><br>")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x100):
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x100), (x * 20 * 8, y * 16 * 8))
         result.save("caves1.png")
-        f.write("<img src='caves1.png'>")
+        f.write("<img src='caves1.png'><br><br>")
+        result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
+        for n in range(0x0FF):
+            x = n % 0x10
+            y = n // 0x10
+            result.paste(self.exportRoom(n + 0x200), (x * 20 * 8, y * 16 * 8))
+        result.save("caves2.png")
+        f.write("<img src='caves2.png'>")
         f.close()
 
     def exportRoom(self, room_nr):
@@ -163,7 +189,7 @@ class MapExport:
         if room_nr >= 0x100:
             rendered_map = RenderedMap(re.floor_object & 0x0F)
         else:
-            rendered_map = RenderedMap(re.floor_object)
+            rendered_map = RenderedMap(re.floor_object, True)
         def objHSize(type_id):
             if type_id == 0xF5:
                 return 2
@@ -202,6 +228,9 @@ class MapExport:
                     rendered_map.placeObject(obj.x, obj.y + n * objVSize(obj.type_id), obj.type_id)
             else:
                 rendered_map.placeObject(obj.x, obj.y, obj.type_id)
+        # for y in range(8):
+        #     for x in range(8):
+        #         rendered_map.placeObject(x, y, x + y * 8 + 0)
         tiles = [0] * 20 * 16
         for y in range(8):
             for x in range(10):
@@ -220,10 +249,44 @@ class MapExport:
             # TODO: The whole indoor tileset loading seems complex...
             tileset_nr = self.__rom.banks[0x20][0x2e7b + 0x40 + room_nr - 0x100]
             tilemap = [None] * 0x100
-            tilemap[0x20:0x80] = self.__tiles[0x0D][0:0x60]
+            tilemap[0x20:0x80] = self.__tiles[0x0D][0x000:0x060]
+            tilemap[0x00:0x10] = self.__tiles[0x0D][0x110:0x120]
+            tilemap[0x10:0x20] = self.__tiles[0x0D][0x210:0x220]
+            tilemap[0xF0:0x100] = self.__tiles[0x12][0x380:0x390]
 
-        # Placeholder for animated tiles, this needs a more complex lookup depending on re.animation_id, but not a straight mapping.
-        addr = 0x2C0
+        if re.animation_id == 2:
+            addr = 0x2B0
+        elif re.animation_id == 3:
+            addr = 0x2C0
+        elif re.animation_id == 4:
+            addr = 0x2D0
+        elif re.animation_id == 5:
+            addr = 0x2E0
+        elif re.animation_id == 6:
+            addr = 0x2F0
+        elif re.animation_id == 7:
+            addr = 0x2D0
+        elif re.animation_id == 8:
+            addr = 0x300
+        elif re.animation_id == 9:
+            addr = 0x310
+        elif re.animation_id == 10:
+            addr = 0x320
+        elif re.animation_id == 11:
+            addr = 0x2A0
+        elif re.animation_id == 12:
+            addr = 0x330
+        elif re.animation_id == 13:
+            addr = 0x350
+        elif re.animation_id == 14:
+            addr = 0x360
+        elif re.animation_id == 15:
+            addr = 0x340
+        elif re.animation_id == 16:
+            addr = 0x370
+        else:
+            print(hex(room_nr), re.animation_id)
+            addr = 0x000
         tilemap[0x6C:0x70] = self.__tiles[0x0c][addr:addr+4]
 
         assert len(tilemap) == 0x100
@@ -234,6 +297,10 @@ class MapExport:
                 tile = tilemap[tiles[x+y*20]]
                 if tile is not None:
                     result.paste(tile, (x * 8, y * 8))
+        for x, y, type_id in re.entities:
+            draw = PIL.ImageDraw.Draw(result)
+            draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
+            draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id))
         return result
 
     def getTiles(self, bank_nr):
