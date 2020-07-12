@@ -67,6 +67,8 @@ def main(mainargs=None):
         help="Which level of logic is required.")
     parser.add_argument('--multiworld', dest="multiworld", type=int, required=False,
         help="Generates multiple roms for a multiworld setup. WIP")
+    parser.add_argument('--forwardfactor', dest="forwardfactor", type=float, required=False,
+        help="Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5.")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",

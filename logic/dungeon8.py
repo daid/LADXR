@@ -19,6 +19,8 @@ class Dungeon8:
         # right side
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             bottomright_owl = Location(8).add(OwlStatue(0x253)).connect(entrance, AND(STONE_BEAK8, FEATHER, POWER_BRACELET)) # Two ways to reach this owl statue, but both require the same (except that one route requires bombs as well)
+        else:
+            bottomright_owl = None
         slime_chest = Location(8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(attack_hookshot, POWER_BRACELET)))  # chest with slime
         bottom_right = Location(8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(SWORD, POWER_BRACELET)))) # zamboni key drop; bombs for entrance up, sword + bracelet for entrance right through mimic room
         bottomright_pot_chest = Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
@@ -72,7 +74,7 @@ class Dungeon8:
             medicine_chest.connect(upper_center, FEATHER) # jesus super jump
 
         if options.logic == 'hell':
-            if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottom_right.connect(entrance, AND(SWORD, POWER_BRACELET, PEGASUS_BOOTS)) # underground section past mimics, boots bonking across the gap to the ladder
             entrance.connect(bottomright_pot_chest, AND(FEATHER, SWORD), one_way=True) # use staircase backwards, subpixel manip for superjump past the pots

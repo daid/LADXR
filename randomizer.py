@@ -71,8 +71,8 @@ class Randomizer:
         else:
             self.__logic = logic.Logic(options, self.rnd)
 
-        if not options.keysanity:
-            item_placer = ForwardItemPlacer(self.__logic)
+        if not options.keysanity or options.forwardfactor:
+            item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor)
         else:
             item_placer = RandomItemPlacer(self.__logic)
 
@@ -340,12 +340,13 @@ class ForwardItemPlacer:
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
     ]
 
-    def __init__(self, logic):
+    def __init__(self, logic, forwardfactor):
         self.__logic = logic
         self.__item_pool = {}
         self.__spots = []
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
+        self.__forwardfactor = forwardfactor if forwardfactor else 0.5
 
     def addItem(self, item, count=1):
         self.__item_pool[item] = self.__item_pool.get(item, 0) + count
@@ -410,7 +411,7 @@ class ForwardItemPlacer:
             return False
         # For each item placed, make all accessible locations less likely to be picked
         for spot in spots:
-            spot.weight *= 0.5
+            spot.weight *= self.__forwardfactor
         return True
 
     def hasNewPlacesToExplore(self):

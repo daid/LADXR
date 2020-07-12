@@ -23,6 +23,8 @@ class Dungeon5:
         after_stalfos = Location(5).add(DungeonChest(0x196)).connect(area2, AND(SWORD, BOMB)) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             butterfly_owl = Location(5).add(OwlStatue(0x18A)).connect(after_stalfos, AND(FEATHER, STONE_BEAK5))
+        else:
+            butterfly_owl = None
         after_stalfos.connect(staircase_before_boss, AND(FEATHER, attack_hookshot_powder), one_way=True) # pathway from stalfos to staircase: past butterfly room and push the block
         north_of_crossroads = Location(5).connect(after_stalfos, FEATHER)
         first_bridge_chest = Location(5).add(DungeonChest(0x18E)).connect(north_of_crossroads, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # south of bridge
@@ -41,7 +43,7 @@ class Dungeon5:
             blade_trap_chest.connect(area2, AND(FEATHER, attack_hookshot_powder))
             boss_key.connect(after_stalfos, AND(FLIPPERS, FEATHER, PEGASUS_BOOTS)) # boots jump across
             after_stalfos.connect(after_keyblock_boss, AND(FEATHER, attack_hookshot_powder)) # circumvent stalfos by going past gohma and backwards from boss door
-            if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            if butterfly_owl:
                 butterfly_owl.connect(after_stalfos, AND(PEGASUS_BOOTS, STONE_BEAK5)) # boots charge + bonk to cross 2d bridge
             staircase_before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk in 2d section to skip feather
             north_of_crossroads.connect(after_stalfos, HOOKSHOT) # hookshot to the right block to cross pits
@@ -64,7 +66,7 @@ class Dungeon5:
             east_bridge_chest.connect(first_bridge_chest, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
             m_stalfos_drop.connect(third_arena, AND(PEGASUS_BOOTS, SWORD, BOMB)) # can reach fourth arena from entrance with pegasus boots and sword
             boss_key.connect(after_stalfos, FLIPPERS) # pit buffer across
-            if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            if butterfly_owl:
                 after_keyblock_boss.connect(butterfly_owl, STONE_BEAK5, one_way=True) # pit buffer from top right to bottom in right pits room
-            
+
         self.entrance = entrance
