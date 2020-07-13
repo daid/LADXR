@@ -5,6 +5,7 @@ import logic
 from locations.items import *
 import binascii
 import generator
+import spoilerLog
 
 
 DEFAULT_ITEM_POOL = {
@@ -90,14 +91,24 @@ class Randomizer:
 
         if options.multiworld:
             for n in range(options.multiworld):
+                baseFilename = "LADXR_Multiworld_%d_%d" % (options.multiworld, n + 1)
                 rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
-                rom.save("LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1), name="LADXR")
+                rom.save(baseFilename + ".gbc", name="LADXR")
+
+                if options.spoilerformat != "none" and not options.race:
+                    options.spoiler_filename = baseFilename + (".json" if options.spoilerformat == "json" else ".txt")
+                    log = spoilerLog.SpoilerLog(options, rom)
+                    log.output(options.spoiler_filename)
         else:
             rom = generator.generateRom(options, self.seed, self.__logic)
             filename = options.output_filename
             if filename is None:
                 filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
             rom.save(filename, name="LADXR")
+
+            if options.spoilerformat != "none" and not options.race:
+                log = spoilerLog.SpoilerLog(options, rom)
+                log.output(options.spoiler_filename)
 
     def readPlan(self, filename):
         for line in open(filename, "rt"):

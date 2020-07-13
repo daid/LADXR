@@ -1,21 +1,32 @@
 import json
 import logic
 import explorer
-import patches.dungeonEntrances
+import patches.witch
 import patches.titleScreen
+import patches.dungeonEntrances
+from locations.witch import Witch
 
 class RaceRomException(Exception):
     pass
 
 class SpoilerItemInfo():
-    def __init__(self, ii, rom):
+    def __init__(self, ii, rom, multiworld):
         self.id = ii.nameId
         self.area = ii.metadata.area
         self.locationName = ii.metadata.name
         self.itemName = str(ii.read(rom))
+        self.player = None
+
+        if multiworld:
+            self.player = rom.banks[0x3E][0x3300 + ii.room] + 1
     
     def __repr__(self):
-        return "%20s at %s - %s" % (self.itemName, self.area, self.locationName)
+        itemName = self.itemName
+
+        if self.player:
+            itemName = "P%s's %s" % (self.player, itemName)
+
+        return "%25s at %s - %s" % (itemName, self.area, self.locationName) 
 
 class SpoilerLog():
     def __init__(self, args, rom):
@@ -31,7 +42,10 @@ class SpoilerLog():
 
         # Assume the broadest settings if we're dumping a seed we didn't just create
         if args.dump:
-            args.witch = True
+            # The witch flag causes trouble if we blindly turn it on
+            if patches.witch.witchIsPatched(rom):
+                args.witch = True
+
             args.boomerang = "gift"
             args.heartpiece = True
             args.seashells = True
@@ -48,14 +62,14 @@ class SpoilerLog():
 
         for location in e.getAccessableLocations():
             for ii in location.items:
-                self.accessibleItems.append(SpoilerItemInfo(ii, rom))
+                self.accessibleItems.append(SpoilerItemInfo(ii, rom, args.multiworld))
 
         if len(e.getAccessableLocations()) != len(my_logic.location_list):
             self.inaccessibleItems = []
             for loc in my_logic.location_list:
                 if loc not in e.getAccessableLocations():
                     for ii in loc.items:
-                        self.inaccessibleItems.append(SpoilerItemInfo(ii, rom))
+                        self.inaccessibleItems.append(SpoilerItemInfo(ii, rom, args.multiworld))
     
     def output(self, filename=None):
         if self.outputFormat == "text":

@@ -19,3 +19,6 @@ def updateWitch(rom):
         ld  a, $03
         rst 8
     """), fill_nop=True)
+
+def witchIsPatched(rom):
+    return sum(rom.banks[0x05][0x08D4:0x08F0]) != 0x0DC2

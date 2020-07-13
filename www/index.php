@@ -31,7 +31,7 @@ $options = [
     'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod', 'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game'],
     'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
     'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => false, 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
-    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['none' => "None", 'text' => 'Text', 'json' => 'JSON'], 'default' => 'text', 'arg' => '--spoilerformat'],
+    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['text' => 'Text', 'json' => 'JSON', 'none' => "None"], 'arg' => '--spoilerformat'],
 ];
 
 if (isset($_FILES["rom"]))
