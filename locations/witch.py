@@ -26,8 +26,8 @@ class Witch(ItemInfo):
         rom.banks[0x05][0x08D5] = CHEST_ITEMS[option]
 
     def read(self, rom):
-        if len(self.OPTIONS) == 1:
-            return self.OPTIONS[0]
+        if rom.banks[0x05][0x08EF] != 0x00:
+            return MAGIC_POWDER
         value = rom.banks[0x05][0x08D5]
         for k, v in CHEST_ITEMS.items():
             if v == value:
