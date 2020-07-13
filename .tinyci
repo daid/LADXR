@@ -1,0 +1,10 @@
+[tinyci]
+enabled = True
+
+[build-test]
+directory = _text
+commands =
+    python3 ../main.py input.gbc --output /dev/null
+    python3 ../main.py input.gbc --keysanity --output /dev/null
+    python3 ../main.py input.gbc --logic glitched --keysanity --heartpiece --seashells --heartcontainers --owlstatues both --keysanity --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
+    python3 ../main.py input.gbc --textmode none --output /dev/null
