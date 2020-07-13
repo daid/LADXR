@@ -1,5 +1,6 @@
 from backgroundEditor import BackgroundEditor
 import subprocess
+import binascii
 
 
 CHAR_MAP = {'z': 0x3E, '-': 0x3F, '.': 0x39, ':': 0x42, '?': 0x3C, '!': 0x3D}

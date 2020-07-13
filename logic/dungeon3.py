@@ -16,9 +16,10 @@ class Dungeon3:
         # now we can go 4 directions,
         area_up = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         dungeon3_north_key_drop = Location(3).add(DroppedKey(0x154)).connect(area_up, attack_skeleton) # north key drop
-        Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks near staircase
-        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks next to slime chest
+        dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)) # chest locked behind raised blocks next to slime chest
         area_up.connect(dungeon3_raised_blocks_north, attack_hookshot, one_way=True) # hit switch to reach north chest
         area_up.connect(dungeon3_raised_blocks_east, attack_hookshot, one_way=True) # hit switch to reach east chest
         
@@ -38,7 +39,8 @@ class Dungeon3:
         dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
         Location(3).add(DroppedKey(0x148)).connect(area_right, attack_no_boomerang) # 2 zol 2 owl drop key
         Location(3).add(DungeonChest(0x144)).connect(area_right, attack_skeleton)  # map chest
-        Location(3).add(OwlStatue(0x140), OwlStatue(0x147)).connect(area_right, STONE_BEAK3)
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(3).add(OwlStatue(0x140), OwlStatue(0x147)).connect(area_right, STONE_BEAK3)
 
         towards_boss1 = Location(3).connect(area_right, AND(KEY3, FOUND(KEY3, 5)))
         towards_boss2 = Location(3).connect(towards_boss1, AND(KEY3, FOUND(KEY3, 6)))

@@ -25,8 +25,8 @@ class ShopItem(ItemInfo):
                     self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n),
                                      "NIGHTMARE_KEY%d" % (n)]
 
-    def patch(self, rom, option, *, cross_world=False):
-        assert not cross_world
+    def patch(self, rom, option, *, multiworld=None):
+        assert multiworld is None
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "08", "%02X" % (CHEST_ITEMS[option]))
             rom.texts[0x030] = formatText(b"Deluxe %s 200 Rupees!" % (INVENTORY_NAME[option]), ask=b"Buy  No Way")

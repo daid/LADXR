@@ -15,7 +15,8 @@ class TunicFairy(ItemInfo):
         self.index = index
         super().__init__(0x301)
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
+        assert multiworld is None
         rom.banks[0x36][0x11BF + self.index] = CHEST_ITEMS[option]
 
     def read(self, rom):

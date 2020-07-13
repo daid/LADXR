@@ -1,6 +1,7 @@
 import typing
 from checkMetadata import checkMetadataTable
 
+
 class ItemInfo:
     OPTIONS = []
     MULTIWORLD = False
@@ -25,7 +26,7 @@ class ItemInfo:
     def read(self, rom):
         raise NotImplementedError()
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
         raise NotImplementedError()
 
     def __repr__(self):

@@ -11,8 +11,3 @@ class HeartContainer(DroppedKey):
             self.OPTIONS = [BAD_HEART_CONTAINER]
         else:
             self.OPTIONS = [HEART_CONTAINER]
-
-    def read(self, rom):
-        if len(self.OPTIONS) == 1:
-            return self.OPTIONS[0]
-        return super().read(rom)

@@ -1,41 +1,10 @@
 import binascii
 from romTables import ROMWithTables
-from assembler import ASM
-import assembler
+import shlex
 import randomizer
-import spoilerLog
-import patches.core
-import patches.phone
-import patches.bowwow
-import patches.desert
-import patches.owl
-import patches.shop
-import patches.trendy
-import patches.chest
-import patches.droppedKey
-import patches.goldenLeaf
-import patches.madBatter
-import patches.tunicFairy
-import patches.heartPiece
-import patches.seashell
-import patches.witch
-import patches.songs
-import patches.softlock
-import patches.maptweaks
-import patches.inventory
-import patches.titleScreen
-import patches.dungeonEntrances
-import patches.reduceRNG
-import patches.bank3e
-import patches.bank3f
-import patches.aesthetics
-import patches.health
-import patches.goal
-import explorer
-import hints
 import logic
-import os
-import time
+import patches.dungeonEntrances
+import explorer
 
 
 def main(mainargs=None):
@@ -46,33 +15,33 @@ def main(mainargs=None):
     parser.add_argument('input_filename', metavar='input rom', type=str,
         help="Rom file to use as input.")
     parser.add_argument('-o', '--output', dest="output_filename", metavar='output rom', type=str, required=False,
-        help="Output filename to use. If not specified LADXR_[seed].gbc is used.")
-    parser.add_argument('--seedlist', dest="seedlist", metavar='seed list', type=str, required=False,
-        help="Instead of generating ROMS, only generate valid seeds and append them to the specified file.")
+        help="Output filename to use. If not specified [seed].gbc is used.")
     parser.add_argument('--dump', dest="dump", action="store_true",
-        help="Dump the logic of the given rom (spoilers!)")
-    parser.add_argument('--spoilerformat', dest="spoilerformat", choices=["none", "console", "text", "json"], default="none",
-        help="Sets the output format for the generated seed's spoiler log")
-    parser.add_argument('--spoilerfilename', dest="spoiler_filename", type=str, required=False,
-        help="Output filename to use for the spoiler log.  If not specified, LADXR_[seed].txt/json is used.")
+        help="Dump the logic if the given rom (spoilers!)")
     parser.add_argument('--test', dest="test", action="store_true",
         help="Test the logic if the given rom, without showing anything.")
-    parser.add_argument('-c', '--count', dest="count", type=int, required=False, default=1,
-        help="Repeat the generation this many times.")
     parser.add_argument('-s', '--seed', dest="seed", type=str, required=False,
         help="Generate the specified seed")
     parser.add_argument('--romdebugmode', dest="romdebugmode", action="store_true",
         help="Patch the rom so that debug mode is enabled, this creates a default save with most items and unlocks some debug features.")
     parser.add_argument('--exportmap', dest="exportmap", action="store_true",
         help="Export the map (many graphical mistakes)")
+    parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
+        help="Write an unfilled plan file")
 
     # Flags that effect gameplay
+    parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
+        help="Read an item placement plan")
     parser.add_argument('--race', dest="race", action="store_true",
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
     parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
     parser.add_argument('--multiworld', dest="multiworld", type=int, required=False,
-        help="Generates multiple roms for a multiworld setup. WIP")
+        help="Generates multiple roms for a multiworld setup.")
+    parser.add_argument('--multiworld-config', dest="multiworld_config", action="append", required=False,
+        help="Set configuration for a multiworld player, supply multiple times for settings per player")
+    parser.add_argument('--forwardfactor', dest="forwardfactor", type=float, required=False,
+        help="Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5.")
     parser.add_argument('--heartpiece', dest="heartpiece", action="store_true",
         help="Enables randomization of heart pieces.")
     parser.add_argument('--seashells', dest="seashells", action="store_true",
@@ -113,221 +82,82 @@ def main(mainargs=None):
         help="Force the palette of link")
 
     args = parser.parse_args(mainargs)
+    if args.multiworld is not None:
+        args.multiworld_options = [args] * args.multiworld
+        if args.multiworld_config is not None:
+            for index, settings_string in enumerate(args.multiworld_config):
+                args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string))
 
-    start_time = time.monotonic()
-    total_retries = 0
-    for generation_number in range(args.count):
+    if args.exportmap:
+        import mapexport
         print("Loading: %s" % (args.input_filename))
         rom = ROMWithTables(args.input_filename)
+        mapexport.MapExport(rom)
+        sys.exit(0)
 
-        if args.exportmap:
-            import mapexport
-            mapexport.MapExport(rom)
-            sys.exit(0)
+    if args.emptyplan:
+        import checkMetadata
+        import locations.items
+        f = open(args.emptyplan, "wt")
+        f.write(";Plandomizer data\n;Items: %s\n" % (", ".join(map(lambda n: getattr(locations.items, n), filter(lambda n: not n.startswith("__"), dir(locations.items))))))
+        for key in dir(locations.items):
+            f.write("")
+        for name, data in sorted(checkMetadata.checkMetadataTable.items(), key=lambda n: str(n[1])):
+            if name is not "None":
+                f.write(";%s\n" % (data))
+                f.write("%s: \n" % (name))
+        sys.exit(0)
 
-        if args.dump or args.test:
-            if args.spoilerformat == "none":
-                args.spoilerformat = "console"
+    if args.dump or args.test:
+        print("Loading: %s" % (args.input_filename))
+        rom = ROMWithTables(args.input_filename)
+        if rom.banks[0][7] == 0x01:
+            print("Cannot read spoiler log for race rom")
+            sys.exit(1)
+        dungeon_order = patches.dungeonEntrances.readEntrances(rom)
+        print("Dungeon order:", ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(dungeon_order))))
+        my_logic = logic.Logic(args, None, entranceMapping=dungeon_order)
+        for ii in my_logic.iteminfo_list:
+            ii.item = ii.read(rom)
+        e = explorer.Explorer(verbose=args.dump)
+        e.visit(my_logic.start)
+        if len(e.getAccessableLocations()) != len(my_logic.location_list):
+            print("Logic failure! Cannot access all locations.")
+            print("Failed to find:")
+            for loc in my_logic.location_list:
+                if loc not in e.getAccessableLocations():
+                    for ii in loc.items:
+                        print("%20s at %s (%s)" % (ii.read(rom), ii.metadata, ii))
+                        if ii.MULTIWORLD:
+                            if rom.banks[0x00][0x0055] != rom.banks[0x3E][0x3300 + ii.room]:
+                                print("  for player %d" % (rom.banks[0x3E][0x3300 + ii.room] + 1))
+            sys.exit(1)
+        sys.exit(0)
 
-            try:
-                log = spoilerLog.SpoilerLog(args, rom)
-                log.output(args.spoiler_filename)
-            except spoilerLog.RaceRomException:
-                print("Cannot read spoiler log for race rom")
+    if args.seed:
+        try:
+            args.seed = binascii.unhexlify(args.seed)
+        except binascii.Error:
+            args.seed = args.seed.encode("ascii")
+
+    retry_count = 0
+    while True:
+        try:
+            r = randomizer.Randomizer(args, seed=args.seed)
+            seed = binascii.hexlify(r.seed).decode("ascii").upper()
+            break
+        except randomizer.Error:
+            if args.seed is not None:
+                print("Specified seed does not produce a valid result.")
                 sys.exit(1)
-            sys.exit(0)
+            retry_count += 1
+            if retry_count > 100:
+                print("Randomization keeps failing, abort!")
+                sys.exit(1)
+            print("Failed, trying again: %d" % (retry_count))
 
-        if args.gfxmod:
-            for gfx in args.gfxmod:
-                patches.aesthetics.gfxMod(rom, gfx)
+    print("Seed: %s" % (seed))
 
-        expanded_inventory = args.witch or args.boomerang == 'gift'
-        assembler.resetConsts()
-        if expanded_inventory:
-            assembler.const("wHasFlippers", 0xDB3E)
-            assembler.const("wHasMedicine", 0xDB3F)
-            assembler.const("wTradeSequenceItem", 0xDB40)
-            assembler.const("wSeashellsCount", 0xDB41)
-        else:
-            assembler.const("wHasFlippers", 0xDB0C)
-            assembler.const("wHasMedicine", 0xDB0D)
-            assembler.const("wTradeSequenceItem", 0xDB0E)
-            assembler.const("wSeashellsCount", 0xDB0F)
-        assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
-        assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
-        assembler.const("wCustomMessage", 0xC0A0)
-
-        assembler.const("wLinkState", 0xDE10)
-        # We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
-        assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
-        assembler.const("wLinkStatusBits", 0xDDF7)
-        assembler.const("wLinkGiveItem", 0xDDF8)
-        assembler.const("wLinkGiveItemFrom", 0xDDF9)
-        assembler.const("wLinkSendItemRoomHigh", 0xDDFA)
-        assembler.const("wLinkSendItemRoomLow", 0xDDFB)
-        assembler.const("wLinkSendItemTarget", 0xDDFC)
-        assembler.const("wLinkSendItemItem", 0xDDFD)
-
-        patches.core.cleanup(rom)
-        patches.phone.patchPhone(rom)
-        patches.core.bugfixWrittingWrongRoomStatus(rom)
-        patches.core.bugfixPowderBagSprite(rom)
-        patches.owl.removeOwlEvents(rom)
-        patches.bank3e.addBank3E(rom)
-        patches.bank3f.addBank3F(rom)
-        patches.core.removeGhost(rom)
-        patches.core.alwaysAllowSecretBook(rom)
-        patches.core.warpHome(rom)
-        if args.multiworld:
-            patches.core.injectMainLoop(rom)
-        if args.keysanity:
-            patches.inventory.advancedInventorySubscreen(rom)
-        if expanded_inventory:
-            patches.inventory.moreSlots(rom)
-        if args.witch:
-            patches.witch.updateWitch(rom)
-        patches.softlock.fixAll(rom)
-        patches.maptweaks.tweakMap(rom)
-        patches.chest.fixChests(rom)
-        patches.shop.fixShop(rom)
-        patches.trendy.fixTrendy(rom)
-        patches.droppedKey.fixDroppedKey(rom)
-        patches.madBatter.upgradeMadBatter(rom)
-        patches.tunicFairy.upgradeTunicFairy(rom)
-        patches.health.upgradeHealthContainers(rom)
-        if args.owlstatues in ("dungeon", "both"):
-            patches.owl.upgradeDungeonOwlStatues(rom)
-        if args.owlstatues in ("overworld", "both"):
-            patches.owl.upgradeOverworldOwlStatues(rom)
-        patches.goldenLeaf.fixGoldenLeaf(rom)
-        patches.heartPiece.fixHeartPiece(rom)
-        patches.seashell.fixSeashell(rom)
-        patches.songs.upgradeMarin(rom)
-        patches.songs.upgradeManbo(rom)
-        patches.songs.upgradeMamu(rom)
-        patches.bowwow.fixBowwow(rom, everywhere=args.bowwow != 'normal')
-        if args.bowwow == 'swordless':
-            patches.bowwow.swordlessBowwowMapPatches(rom)
-        patches.desert.desertAccess(rom)
-        # patches.reduceRNG.slowdownThreeOfAKind(rom)
-        patches.aesthetics.noSwordMusic(rom)
-        patches.aesthetics.reduceMessageLengths(rom)
-        if args.textmode == 'fast':
-            patches.aesthetics.fastText(rom)
-        if args.textmode == 'none':
-            patches.aesthetics.fastText(rom)
-            patches.aesthetics.noText(rom)
-        if args.removeNagMessages:
-            patches.aesthetics.removeNagMessages(rom)
-        if args.lowhpbeep == 'slow':
-            patches.aesthetics.slowLowHPBeep(rom)
-        if args.lowhpbeep == 'none':
-            patches.aesthetics.removeLowHPBeep(rom)
-        if args.linkspalette is not None:
-            patches.aesthetics.forceLinksPalette(rom, args.linkspalette)
-        if args.romdebugmode:
-            # The default rom has this build in, just need to set a flag and we get this save.
-            rom.patch(0, 0x0003, "00", "01")
-
-        # Patch the sword check on the shopkeeper turning around.
-        if args.steal == 'never':
-            rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
-        elif args.steal == 'always':
-            rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
-
-        if args.hpmode == 'inverted':
-            patches.health.setStartHealth(rom, 9)
-        elif args.hpmode == '1':
-            patches.health.setStartHealth(rom, 1)
-
-        if args.goal != "random" and args.goal is not None:
-            patches.goal.setRequiredInstrumentCount(rom, int(args.goal))
-        if args.goal == "raft":
-            patches.goal.setRaftGoal(rom)
-
-        patches.inventory.selectToSwitchSongs(rom)
-        if args.quickswap == 'a':
-            patches.core.quickswap(rom, 1)
-        elif args.quickswap == 'b':
-            patches.core.quickswap(rom, 0)
-
-        # Show marin outside, even without a sword.
-        rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-        # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song
-        rom.patch(0x05, 0x0E87, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
-        rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
-        rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
-        # Show marin in the animal village
-        rom.patch(0x03, 0x0A86, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
-
-        ## Monkey bridge patch, always have the bridge there.
-        rom.patch(0x00, 0x333D, ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-
-
-        if args.seed is not None and args.seed.upper() == "DEFAULT":
-            seed = "DEFAULT"
-            my_logic = logic.Logic(args, None)
-            for ii in my_logic.iteminfo_list:
-                ii.item = ii.read(rom)
-                ii.patch(rom, ii.item)
-            # my_logic.dumpFlatRequirements()
-            e = explorer.Explorer()
-            e.visit(my_logic.start)
-            e.dump(my_logic)
-            # patches.dungeonEntrances.changeEntrances(rom, [1,2,3,4,5,6,7,8,0])
-            # from locations import ShopItem
-            # ShopItem(0).patch(rom, "SWORD")
-            # from locations import Chest
-            # Chest(0x113).patch(rom, "KEY2")
-            # from locations import DroppedKey
-            # dk = DroppedKey(0x116)
-            # dk.patch(rom, "BOW")
-            # from locations import StartItem
-            # StartItem().patch(rom, "POWER_BRACELET")
-        else:
-            if args.seed:
-                args.seed = binascii.unhexlify(args.seed)
-            retry_count = 0
-            while True:
-                try:
-                    r = randomizer.Randomizer(rom, args, seed=args.seed)
-                    seed = binascii.hexlify(r.seed).decode("ascii").upper()
-                    break
-                except randomizer.Error:
-                    if args.seed is not None:
-                        print("Specified seed does not produce a valid result.")
-                        sys.exit(1)
-                    retry_count += 1
-                    if retry_count > 100:
-                        print("Randomization keeps failing, abort!")
-                        sys.exit(1)
-                    print("Failed, trying again: %d" % (retry_count))
-            total_retries += retry_count
-
-        print("Seed: %s" % (seed))
-        patches.titleScreen.setRomInfo(rom, seed, args)
-
-        if args.spoilerformat != "none" and not args.race:
-            log = spoilerLog.SpoilerLog(args, rom)
-            log.output(args.spoiler_filename)
-
-        if args.seedlist:
-            f = open(args.seedlist, "at")
-            f.write("%s\n" % (seed))
-            f.close()
-        elif args.output_filename:
-            filename = args.output_filename
-            if generation_number > 0:
-                filename = "%s.%d%s" % (os.path.splitext(filename)[0], generation_number, os.path.splitext(filename)[1])
-            rom.save(filename, name="LADXR")
-        else:
-            rom.save("LADXR_%s.gbc" % (seed), name="LADXR")
-
-    if args.count > 1:
-        total_time = time.monotonic() - start_time
-        print("Generated: %d roms" % (args.count))
-        print("Success ratio: %g%%" % (args.count / (args.count + total_retries) * 100))
-        print("Total time: %gsec (Per generation: %gsec)" % (total_time, total_time / (args.count + total_retries)))
 
 if __name__ == "__main__":
     main()

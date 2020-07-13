@@ -17,11 +17,12 @@ class OwlStatue(ItemInfo):
             return
         if options.owlstatues == "overworld" and self.room < 0x100:
             return
+        raise RuntimeError("Tried to configure an owlstatue that was not enabled")
         self.OPTIONS = [RUPEES_20]
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            if self._location.dungeon == int(option[-1]) and not cross_world:
+            if self._location.dungeon == int(option[-1]) and multiworld is not None:
                 option = option[:-1]
         rom.banks[0x3E][self.room + 0x3B16] = CHEST_ITEMS[option]
 

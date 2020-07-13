@@ -21,14 +21,18 @@ class DroppedKey(ItemInfo):
             d = self._location.dungeon
             self.OPTIONS = DroppedKey.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
 
-    def patch(self, rom, option, *, cross_world=False):
+    def patch(self, rom, option, *, multiworld=None):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            if self._location.dungeon == int(option[-1]) and not cross_world:
+            if self._location.dungeon == int(option[-1]) and multiworld is None:
                 option = option[:-1]
         rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]
         if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
             rom.banks[0x3E][0x017C + 0x3800] = CHEST_ITEMS[option]
 
+        if multiworld is not None:
+            rom.banks[0x3E][0x3300 + self.room] = multiworld
+            if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
+                rom.banks[0x3E][0x3300 + 0x017C] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)

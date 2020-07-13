@@ -22,8 +22,8 @@ class StartItem(ItemInfo):
             self.OPTIONS = [SWORD]
             self.give_bowwow = True
 
-    def patch(self, rom, option, *, cross_world=False):
-        assert not cross_world
+    def patch(self, rom, option, *, multiworld=None):
+        assert multiworld is None
 
         if self.give_bowwow:
             option = BOWWOW
