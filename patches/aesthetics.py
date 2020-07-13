@@ -43,7 +43,8 @@ def fastText(rom):
 
 def noText(rom):
     for idx in range(len(rom.texts)):
-        rom.texts[idx] = rom.texts[idx][-1:]
+        if not isinstance(rom.texts[idx], int):
+            rom.texts[idx] = rom.texts[idx][-1:]
 
 def reduceMessageLengths(rom):
     # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
