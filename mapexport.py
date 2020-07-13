@@ -151,6 +151,7 @@ class MapExport:
             0x0F: self.getTiles(0x0F),
             0x12: self.getTiles(0x12),
         }
+        self.__room_map_info = {}
 
         f = open("test.html", "wt")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
@@ -160,8 +161,29 @@ class MapExport:
             result.paste(self.exportRoom(n), (x * 20 * 8, y * 16 * 8))
         result.save("overworld.png")
         f.write("<img src='overworld.png'><br><br>")
+
+        for n in (0,1,2,3,4,5,6,7, 10, 11):
+            addr = 0x0220 + n * 8 * 8
+            result = PIL.Image.new("L", (8 * 20 * 8, 8 * 16 * 8))
+            for y in range(8):
+                for x in range(8):
+                    room = rom.banks[0x14][addr] + 0x100
+                    if n > 5:
+                        room += 0x100
+                    if n == 11:
+                        room += 0x100
+                    addr += 1
+                    if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
+                        continue
+                    self.__room_map_info[room] = (x, y, n)
+                    result.paste(self.exportRoom(room), (x * 20 * 8, y * 16 * 8))
+            result.save("dungeon_%d.png" % (n))
+            f.write("<img src='dungeon_%d.png'><br><br>" % (n))
+
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x100):
+            if n + 0x100 in self.__room_map_info:
+                continue
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x100), (x * 20 * 8, y * 16 * 8))
@@ -169,6 +191,8 @@ class MapExport:
         f.write("<img src='caves1.png'><br><br>")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x0FF):
+            if n + 0x200 in self.__room_map_info:
+                continue
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x200), (x * 20 * 8, y * 16 * 8))
