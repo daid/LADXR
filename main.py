@@ -46,13 +46,15 @@ def main(mainargs=None):
     parser.add_argument('input_filename', metavar='input rom', type=str,
         help="Rom file to use as input.")
     parser.add_argument('-o', '--output', dest="output_filename", metavar='output rom', type=str, required=False,
-        help="Output filename to use. If not specified [seed].gbc is used.")
+        help="Output filename to use. If not specified LADXR_[seed].gbc is used.")
     parser.add_argument('--seedlist', dest="seedlist", metavar='seed list', type=str, required=False,
         help="Instead of generating ROMS, only generate valid seeds and append them to the specified file.")
     parser.add_argument('--dump', dest="dump", action="store_true",
         help="Dump the logic of the given rom (spoilers!)")
     parser.add_argument('--spoilerformat', dest="spoilerformat", choices=["none", "console", "text", "json"], default="none",
         help="Sets the output format for the generated seed's spoiler log")
+    parser.add_argument('--spoilerfilename', dest="spoiler_filename", type=str, required=False,
+        help="Output filename to use for the spoiler log.  If not specified, LADXR_[seed].txt/json is used.")
     parser.add_argument('--test', dest="test", action="store_true",
         help="Test the logic if the given rom, without showing anything.")
     parser.add_argument('-c', '--count', dest="count", type=int, required=False, default=1,
@@ -124,9 +126,12 @@ def main(mainargs=None):
             sys.exit(0)
 
         if args.dump or args.test:
+            if args.spoilerformat == "none":
+                args.spoilerformat = "console"
+
             try:
                 log = spoilerLog.SpoilerLog(args, rom)
-                log.output()
+                log.output(args.spoiler_filename)
             except spoilerLog.RaceRomException:
                 print("Cannot read spoiler log for race rom")
                 sys.exit(1)
@@ -304,7 +309,7 @@ def main(mainargs=None):
 
         if args.spoilerformat != "none" and not args.race:
             log = spoilerLog.SpoilerLog(args, rom)
-            log.output()
+            log.output(args.spoiler_filename)
 
         if args.seedlist:
             f = open(args.seedlist, "at")

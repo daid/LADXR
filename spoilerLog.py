@@ -7,7 +7,7 @@ import patches.titleScreen
 class RaceRomException(Exception):
     pass
 
-class JsonItemInfo():
+class SpoilerItemInfo():
     def __init__(self, ii, rom):
         self.id = ii.nameId
         self.area = ii.metadata.area
@@ -29,6 +29,15 @@ class SpoilerLog():
         self.dungeonOrder = patches.dungeonEntrances.readEntrances(rom)
         self.outputFormat = args.spoilerformat
 
+        # Assume the broadest settings if we're dumping a seed we didn't just create
+        if args.dump:
+            args.witch = True
+            args.boomerang = "gift"
+            args.heartpiece = True
+            args.seashells = True
+            args.heartcontainers = True
+            args.owlstatues = "both"
+
         my_logic = logic.Logic(args, None, entranceMapping=self.dungeonOrder)
 
         for ii in my_logic.iteminfo_list:
@@ -39,20 +48,20 @@ class SpoilerLog():
 
         for location in e.getAccessableLocations():
             for ii in location.items:
-                self.accessibleItems.append(JsonItemInfo(ii, rom))
+                self.accessibleItems.append(SpoilerItemInfo(ii, rom))
 
         if len(e.getAccessableLocations()) != len(my_logic.location_list):
             self.inaccessibleItems = []
             for loc in my_logic.location_list:
                 if loc not in e.getAccessableLocations():
                     for ii in loc.items:
-                        self.inaccessibleItems.append(JsonItemInfo(ii, rom))
+                        self.inaccessibleItems.append(SpoilerItemInfo(ii, rom))
     
-    def output(self):
+    def output(self, filename=None):
         if self.outputFormat == "text":
-            self.outputTextFile()
+            self.outputTextFile(filename)
         elif self.outputFormat == "json":
-            self.outputJson()
+            self.outputJson(filename)
         elif self.outputFormat == "console":
             print(self)
 

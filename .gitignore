@@ -139,3 +139,5 @@ cython_debug/
 
 *.gbc
 .vscode
+LADXR_*.txt
+LADXR_*.json
