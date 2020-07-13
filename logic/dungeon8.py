@@ -62,7 +62,7 @@ class Dungeon8:
         
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
-            slime_chest = Location(8).add(DungeonChest(0x259)).connect(entrance, AND(attack_hookshot_powder, POWER_BRACELET))  # kill vire with powder or bombs 
+            slime_chest.connect(entrance, AND(attack_hookshot_powder, POWER_BRACELET))  # kill vire with powder or bombs 
         
         if options.logic == 'glitched' or options.logic == 'hell':
             sparks_chest.connect(entrance_left, OR(attack_hookshot, FEATHER, PEGASUS_BOOTS)) # 1 pit buffer across the pit. Add requirements for all the options to get to this area
