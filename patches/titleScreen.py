@@ -19,6 +19,7 @@ def _encode(s):
             result.append(CHAR_MAP.get(char, 0x7E))
     return result
 
+
 def setRomInfo(rom, seed, options):
     try:
         version = subprocess.run(['git', 'describe', '--tags', '--dirty=-D'], stdout=subprocess.PIPE).stdout.strip().decode("ascii", "replace")
