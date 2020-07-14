@@ -8,8 +8,8 @@ import explorer
 
 
 def main(mainargs=None):
-    import sys
     import argparse
+    import sys
 
     parser = argparse.ArgumentParser(description='Randomize!')
     parser.add_argument('input_filename', metavar='input rom', type=str,
@@ -28,6 +28,8 @@ def main(mainargs=None):
         help="Export the map (many graphical mistakes)")
     parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
         help="Write an unfilled plan file")
+    parser.add_argument('--timeout', type=float, required=False,
+        help="Timeout generating the seed after the specified number of seconds")
 
     # Flags that effect gameplay
     parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
@@ -89,6 +91,17 @@ def main(mainargs=None):
         if args.multiworld_config is not None:
             for index, settings_string in enumerate(args.multiworld_config):
                 args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string))
+
+    if args.timeout is not None:
+        import threading
+        import time
+        import os
+        def timeoutFunction():
+            time.sleep(args.timeout)
+            print("TIMEOUT")
+            sys.stdout.flush()
+            os._exit(1)
+        threading.Thread(target=timeoutFunction, daemon=True).start()
 
     if args.exportmap:
         import mapexport

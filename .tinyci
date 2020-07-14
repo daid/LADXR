@@ -4,8 +4,8 @@ enabled = True
 [build-test]
 directory = _test
 commands =
-    python3 ../main.py ../input.gbc --output /dev/null
-    python3 ../main.py ../input.gbc --keysanity --output /dev/null
-    python3 ../main.py ../input.gbc --logic glitched --keysanity --heartpiece --seashells --heartcontainers --owlstatues both --keysanity --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
-    python3 ../main.py ../input.gbc --textmode none --output /dev/null
-    python3 ../main.py ../input.gbc --heartpiece --seashells --heartcontainers --keysanity --multiworld 2 --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --keysanity --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --logic glitched --keysanity --heartpiece --seashells --heartcontainers --owlstatues both --keysanity --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --textmode none --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --heartpiece --seashells --heartcontainers --keysanity --multiworld 2 --output /dev/null
