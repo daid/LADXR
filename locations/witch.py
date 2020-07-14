@@ -23,7 +23,7 @@ class Witch(ItemInfo):
         assert multiworld is None
         if len(self.OPTIONS) == 1:
             return
-        rom.banks[0x05][0x08D5] = CHEST_ITEMS[option]
+        rom.patch(0x05, 0x08D5, "09", "%02x" % (CHEST_ITEMS[option]))
 
     def read(self, rom):
         if rom.banks[0x05][0x08EF] != 0x00:
