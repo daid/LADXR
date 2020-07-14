@@ -65,7 +65,7 @@ class ROM:
             for bank in self.banks:
                 f.write(bank)
             f.close()
-            print("Saved:", filename)
+            print("Saved:", file)
         else:
             for bank in self.banks:
                 file.write(bank)
