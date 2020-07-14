@@ -1,9 +1,11 @@
-import explorer
 import random
+import zipfile
 import os
+import binascii
+
+import explorer
 import logic
 from locations.items import *
-import binascii
 import generator
 import itempool
 
@@ -43,9 +45,16 @@ class Randomizer:
             options.goal = self.rnd.randint(-1, 8)
 
         if options.multiworld:
+            z = None
+            if options.output_filename is not None:
+                z = zipfile.ZipFile(options.output_filename, "w")
             for n in range(options.multiworld):
                 rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
-                rom.save("LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1), name="LADXR")
+                fname = "LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1)
+                if z:
+                    rom.save(z.open(fname, "w"), name="LADXR")
+                else:
+                    rom.save(fname, name="LADXR")
         else:
             rom = generator.generateRom(options, self.seed, self.__logic)
             filename = options.output_filename
