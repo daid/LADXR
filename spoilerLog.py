@@ -2,9 +2,7 @@ import json
 import logic
 import explorer
 import patches.witch
-import patches.titleScreen
 import patches.dungeonEntrances
-from locations.witch import Witch
 
 class RaceRomException(Exception):
     pass
@@ -33,7 +31,7 @@ class SpoilerLog():
         if rom.banks[0][7] == 0x01:
             raise RaceRomException()
 
-        self.seed = patches.titleScreen.readSeed(rom)
+        self.seed = rom.readHexSeed()
         self.testOnly = args.test
         self.accessibleItems = []
         self.inaccessibleItems = None

@@ -19,31 +19,6 @@ def _encode(s):
             result.append(CHAR_MAP.get(char, 0x7E))
     return result
 
-def _decode(byte):
-    if byte < 26:
-        return chr(byte + ord("A"))
-    elif 26 <= byte < 51:
-        return chr(byte - 26 + ord("a"))
-    elif 0x70 <= byte < 0x80:
-        return chr(byte - 0x70 + ord("0"))
-    else:
-        for k, v in CHAR_MAP.items():
-            if byte == v:
-                return k
-
-        return "?"
-
-def readSeed(rom):
-    be = BackgroundEditor(rom, 3)
-    seedLow = ""
-    seedHigh = ""
-
-    for i in range(16):
-        seedLow += _decode(be.tiles[0x9a01 + i])
-        seedHigh += _decode(be.tiles[0x9a21 + i])
-    
-    return seedLow + seedHigh
-
 def setRomInfo(rom, seed, options):
     try:
         version = subprocess.run(['git', 'describe', '--tags', '--dirty=-D'], stdout=subprocess.PIPE).stdout.strip().decode("ascii", "replace")
