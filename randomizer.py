@@ -129,6 +129,20 @@ class Randomizer:
             default_item_pool[RUPEES_20] += 24
         elif options.owlstatues == 'overworld':
             default_item_pool[RUPEES_20] += 9
+
+        if options.bowwow == 'always':
+            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
+            default_item_pool[SWORD] += 1
+            default_item_pool[BOWWOW] -= 1
+        elif options.bowwow == 'swordless':
+            # Bowwow mode takes a sword from the pool to give as bowwow, we need to remove all swords and Bowwow except for 1
+            default_item_pool[RUPEES_20] += default_item_pool[BOWWOW] + default_item_pool[SWORD] - 1
+            default_item_pool[SWORD] = 1
+            default_item_pool[BOWWOW] = 0
+        if options.hpmode == 'inverted':
+            default_item_pool[BAD_HEART_CONTAINER] = default_item_pool[HEART_CONTAINER]
+            default_item_pool[HEART_CONTAINER] = 0
+
         return default_item_pool
 
     def readItemPool(self, options, item_placer):
@@ -159,20 +173,6 @@ class Randomizer:
 
     def modifyDefaultItemPool(self, options, item_pool):
         # TODO: The plandomizer might cause an item pool item to go negative, and we need to correct for that.
-        if options.bowwow == 'always':
-            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
-            assert options.multiworld is None
-            item_pool[SWORD] += 1
-            item_pool[BOWWOW] -= 1
-        if options.bowwow == 'swordless':
-            assert options.multiworld is None
-            # Bowwow mode takes a sword from the pool to give as bowwow.
-            item_pool[RUPEES_20] += 1
-            item_pool[BOWWOW] -= 1
-        if options.hpmode == 'inverted':
-            assert options.multiworld is None
-            item_pool[BAD_HEART_CONTAINER] = item_pool[HEART_CONTAINER]
-            item_pool[HEART_CONTAINER] = 0
 
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []
