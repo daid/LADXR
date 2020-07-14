@@ -69,29 +69,37 @@ class SpoilerLog():
                     for ii in loc.items:
                         self.inaccessibleItems.append(SpoilerItemInfo(ii, rom, args.multiworld))
     
-    def output(self, filename=None):
+    def output(self, filename=None, zipFile=None):
         if self.outputFormat == "text":
-            self.outputTextFile(filename)
+            self.outputTextFile(filename, zipFile)
         elif self.outputFormat == "json":
-            self.outputJson(filename)
+            self.outputJson(filename, zipFile)
         elif self.outputFormat == "console":
             print(self)
 
-    def outputTextFile(self, filename=None):
+    def outputTextFile(self, filename=None, zipFile=None):
         if not filename:
             filename = "LADXR_%s.txt" % self.seed
 
-        with open(filename, 'w') as logFile:
-            logFile.write(str(self))
+        if zipFile:
+            zipFile.writestr(filename, str(self))
+        else:
+            with open(filename, 'w') as logFile:
+                logFile.write(str(self))
         
         print("Saved: %s" % filename)
     
-    def outputJson(self, filename=None):
+    def outputJson(self, filename=None, zipFile=None):
         if not filename:
             filename = "LADXR_%s.json" % self.seed
 
-        with open(filename, 'w') as logFile:
-            logFile.write(json.dumps(self, default=lambda x: x.__dict__))
+        jsonContent = json.dumps(self, default=lambda x: x.__dict__)
+
+        if zipFile:
+            zipFile.writestr(filename, jsonContent)
+        else:
+            with open(filename, 'w') as logFile:
+                logFile.write(jsonContent)
 
         print("Saved: %s" % filename)
 
