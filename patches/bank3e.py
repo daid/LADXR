@@ -81,4 +81,4 @@ MainJumpTable:
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
 
-    rom.patch(0x3E, 0x2F00, "00" * 0x10, binascii.hexlify(seed))
+    rom.patch(0x3E, 0x2F00, "00" * len(seed), binascii.hexlify(seed))
