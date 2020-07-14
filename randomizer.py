@@ -5,53 +5,7 @@ import logic
 from locations.items import *
 import binascii
 import generator
-
-
-DEFAULT_ITEM_POOL = {
-    SWORD: 2,
-    FEATHER: 1,
-    HOOKSHOT: 1,
-    BOW: 1,
-    BOMB: 2,
-    MAGIC_POWDER: 1,
-    MAGIC_ROD: 1,
-    OCARINA: 1,
-    PEGASUS_BOOTS: 1,
-    POWER_BRACELET: 2,
-    SHIELD: 2,
-    SHOVEL: 1,
-
-    TOADSTOOL: 1,
-
-    TAIL_KEY: 1, SLIME_KEY: 1, ANGLER_KEY: 1, FACE_KEY: 1, BIRD_KEY: 1,
-    GOLD_LEAF: 5,
-
-    FLIPPERS: 1,
-    BOWWOW: 1,
-    SONG1: 1, SONG2: 1, SONG3: 1,
-
-    BLUE_TUNIC: 1, RED_TUNIC: 1,
-    MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1,
-
-    HEART_CONTAINER: 8,
-    HEART_PIECE: 11,
-
-    RUPEES_100: 3,
-    RUPEES_20: 6,
-    RUPEES_200: 3,
-    RUPEES_50: 19,
-
-    SEASHELL: 24,
-    MEDICINE: 2,
-    GEL: 4,
-    MESSAGE: 1,
-
-    COMPASS1: 1, COMPASS2: 1, COMPASS3: 1, COMPASS4: 1, COMPASS5: 1, COMPASS6: 1, COMPASS7: 1, COMPASS8: 1, COMPASS9: 1,
-    KEY1: 3, KEY2: 5, KEY3: 9, KEY4: 5, KEY5: 3, KEY6: 3, KEY7: 3, KEY8: 7, KEY9: 3,
-    MAP1: 1, MAP2: 1, MAP3: 1, MAP4: 1, MAP5: 1, MAP6: 1, MAP7: 1, MAP8: 1, MAP9: 1,
-    NIGHTMARE_KEY1: 1, NIGHTMARE_KEY2: 1, NIGHTMARE_KEY3: 1, NIGHTMARE_KEY4: 1, NIGHTMARE_KEY5: 1, NIGHTMARE_KEY6: 1, NIGHTMARE_KEY7: 1, NIGHTMARE_KEY8: 1, NIGHTMARE_KEY9: 1,
-    STONE_BEAK1: 1, STONE_BEAK2: 1, STONE_BEAK3: 1, STONE_BEAK4: 1, STONE_BEAK5: 1, STONE_BEAK6: 1, STONE_BEAK7: 1, STONE_BEAK8: 1, STONE_BEAK9: 1,
-}
+import itempool
 
 
 class Error(Exception):
@@ -119,42 +73,15 @@ class Randomizer:
             if not found:
                 print("Plandomizer warning, spot not found:", location, item)
 
-    def getDefaultItemPool(self, options):
-        default_item_pool = DEFAULT_ITEM_POOL.copy()
-        if options.boomerang != 'default':
-            default_item_pool[BOOMERANG] = 1
-        if options.owlstatues == 'both':
-            default_item_pool[RUPEES_20] += 9 + 24
-        elif options.owlstatues == 'dungeons':
-            default_item_pool[RUPEES_20] += 24
-        elif options.owlstatues == 'overworld':
-            default_item_pool[RUPEES_20] += 9
-
-        if options.bowwow == 'always':
-            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
-            default_item_pool[SWORD] += 1
-            default_item_pool[BOWWOW] -= 1
-        elif options.bowwow == 'swordless':
-            # Bowwow mode takes a sword from the pool to give as bowwow, we need to remove all swords and Bowwow except for 1
-            default_item_pool[RUPEES_20] += default_item_pool[BOWWOW] + default_item_pool[SWORD] - 1
-            default_item_pool[SWORD] = 1
-            default_item_pool[BOWWOW] = 0
-        if options.hpmode == 'inverted':
-            default_item_pool[BAD_HEART_CONTAINER] = default_item_pool[HEART_CONTAINER]
-            default_item_pool[HEART_CONTAINER] = 0
-        return default_item_pool
-
     def readItemPool(self, options, item_placer):
         item_pool = {}
         # Collect the item pool from the rom to see which items we can randomize.
         if options.multiworld is None:
-            item_pool = self.getDefaultItemPool(options)
-            self.modifyDefaultItemPool(options, item_pool)
+            item_pool = itempool.ItemPool(options, self.rnd).toDict()
         else:
             for world in range(options.multiworld):
-                default_item_pool = self.getDefaultItemPool(options.multiworld_options[world])
-                self.modifyDefaultItemPool(options, default_item_pool)
-                for item, count in default_item_pool.items():
+                world_item_pool = itempool.ItemPool(options.multiworld_options[world], self.rnd).toDict()
+                for item, count in world_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
         for spot in self.__logic.iteminfo_list:
@@ -176,26 +103,6 @@ class Randomizer:
                 need_to_remove -= count
         item_pool[RUPEES_50] -= need_to_remove
         return item_pool
-
-    def modifyDefaultItemPool(self, options, item_pool):
-        # Remove rupees from the item pool and replace them with other items to create more variety
-        rupee_item = []
-        rupee_item_count = []
-        for k, v in item_pool.items():
-            if k.startswith("RUPEES_") and v > 0:
-                rupee_item.append(k)
-                rupee_item_count.append(v)
-        rupee_chests = sum(v for k, v in item_pool.items() if k.startswith("RUPEES_"))
-        for n in range(rupee_chests // 5):
-            new_item = self.rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))[0]
-            while True:
-                remove_item = self.rnd.choices(rupee_item, rupee_item_count)[0]
-                if remove_item in item_pool:
-                    break
-            if "_W" in remove_item:
-                new_item += remove_item[remove_item.rfind("_W"):]
-            item_pool[new_item] = item_pool.get(new_item, 0) + 1
-            item_pool[remove_item] -= 1
 
 
 class ItemPlacer:
