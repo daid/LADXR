@@ -142,7 +142,6 @@ class Randomizer:
         if options.hpmode == 'inverted':
             default_item_pool[BAD_HEART_CONTAINER] = default_item_pool[HEART_CONTAINER]
             default_item_pool[HEART_CONTAINER] = 0
-
         return default_item_pool
 
     def readItemPool(self, options, item_placer):
@@ -160,7 +159,7 @@ class Randomizer:
 
         for spot in self.__logic.iteminfo_list:
             if spot.forced_item is not None:
-                item_pool[spot.forced_item] -= 1
+                item_pool[spot.forced_item] = item_pool.get(spot.forced_item, 0) - 1
                 spot.item = spot.forced_item
             elif len(spot.getOptions()) == 1:
                 # If a spot has no other placement options, just ignore this spot.
@@ -169,11 +168,16 @@ class Randomizer:
             else:
                 item_placer.addSpot(spot)
                 spot.item = None
+
+        # The plandomizer might cause an item pool item to go negative, and we need to correct for that.
+        need_to_remove = 0
+        for item, count in item_pool.items():
+            if count < 0:
+                need_to_remove -= count
+        item_pool[RUPEES_50] -= need_to_remove
         return item_pool
 
     def modifyDefaultItemPool(self, options, item_pool):
-        # TODO: The plandomizer might cause an item pool item to go negative, and we need to correct for that.
-
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []
         rupee_item_count = []
