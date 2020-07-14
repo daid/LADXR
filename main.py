@@ -66,12 +66,14 @@ def main(mainargs=None):
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
         help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
-    parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
-        help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
+    parser.add_argument('--pool', dest="itempool", choices=['normal', 'casual', 'pain', 'keyup'], default='normal',
+        help="Sets up different item pools, for easier or harder gameplay.")
 
     # Just aestetic flags
     parser.add_argument('--gfxmod', dest="gfxmod", action='append',
         help="Load graphical mods.")
+    parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
+        help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
     parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'none'], default='default',
         help="Default just keeps text normal, fast makes text appear twice as fast, and none removes all text from the game.")
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",

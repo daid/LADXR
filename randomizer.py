@@ -101,7 +101,8 @@ class Randomizer:
         for item, count in item_pool.items():
             if count < 0:
                 need_to_remove -= count
-        item_pool[RUPEES_50] -= need_to_remove
+        if need_to_remove > 0:
+            item_pool[RUPEES_50] -= need_to_remove
         return item_pool
 
 

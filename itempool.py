@@ -66,6 +66,17 @@ class ItemPool:
     def get(self, item):
         return self.__pool.get(item, 0)
 
+    def removeRupees(self, count):
+        for n in range(count):
+            self.removeRupee()
+
+    def removeRupee(self):
+        for item in (RUPEES_20, RUPEES_50, RUPEES_200, RUPEES_500):
+            if self.get(item) > 0:
+                self.remove(item)
+                return
+        raise RuntimeError("Wanted to remove more rupees from the pool then we have")
+
     def __setup(self, options):
         for item, count in DEFAULT_ITEM_POOL.items():
             self.add(item, count)
@@ -90,6 +101,42 @@ class ItemPool:
         if options.hpmode == 'inverted':
             self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+
+        if options.itempool == 'casual':
+            self.add(FLIPPERS)
+            self.add(FEATHER)
+            self.add(HOOKSHOT)
+            self.add(BOW)
+            self.add(BOMB)
+            self.add(MAGIC_POWDER)
+            self.add(MAGIC_ROD)
+            self.add(OCARINA)
+            self.add(PEGASUS_BOOTS)
+            self.add(POWER_BRACELET)
+            self.add(SHOVEL)
+            self.removeRupees(11)
+
+            for n in range(9):
+                self.remove("MAP%d" % (n + 1))
+                self.remove("COMPASS%d" % (n + 1))
+                self.add("KEY%d" % (n +1))
+                self.add("NIGHTMARE_KEY%d" % (n +1))
+        elif options.itempool == 'pain':
+            self.add(BAD_HEART_CONTAINER, 12)
+            self.remove(BLUE_TUNIC)
+            self.remove(MEDICINE, 2)
+            self.remove(HEART_PIECE, 4)
+            self.removeRupees(5)
+        elif options.itempool == 'keyup':
+            for n in range(9):
+                self.remove("MAP%d" % (n + 1))
+                self.remove("COMPASS%d" % (n + 1))
+                self.add("KEY%d" % (n +1))
+                self.add("NIGHTMARE_KEY%d" % (n +1))
+            if options.owlstatues in ("none", "overworld"):
+                for n in range(9):
+                    self.remove("STONE_BEAK%d" % (n + 1))
+                    self.add("KEY%d" % (n +1))
 
     def __randomizeRupees(self, options, rnd):
         # Remove rupees from the item pool and replace them with other items to create more variety
