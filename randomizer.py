@@ -52,11 +52,13 @@ class Randomizer:
             for n in range(options.multiworld):
                 rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
                 fname = "LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1)
-                romOutput = z.open(fname, "w") if z else fname
-                rom.save(romOutput, name="LADXR")
+                if z:
+                    handle = z.open(fname, "w")
+                    rom.save(handle, name="LADXR")
+                    handle.close()
+                else:
+                    rom.save(fname, name="LADXR")
                 if options.spoilerformat != "none" and not options.race:
-                    if z:
-                        romOutput.close()
                     extension = "json" if options.spoilerformat == "json" else "txt"
                     sfname = "LADXR_Multiworld_%d_%d.%s" % (options.multiworld, n + 1, extension)
                     log = spoilerLog.SpoilerLog(options, rom)
