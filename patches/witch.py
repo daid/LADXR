@@ -18,9 +18,9 @@ def updateWitch(rom):
         ld  hl, $DAA2
         ld  a, [hl]
         and $30
-        jr  z, skip
         set 4, [hl]
         set 5, [hl]
+        jr  z, skip
         ld  e, $09 ; give powder every time after the first time.
 skip:
         ld  a, e
@@ -36,9 +36,11 @@ skip:
         ld   hl, $DB4B
         ld   a, [$DB4C]
         or   [hl]
+        jp   nz, $3F8D
     """), ASM("""
         ld   a, [$DAA2]
         and  $20
+        jp   z, $3F8D
     """), fill_nop=True)
 
     # Patch what happens when we pickup the toadstool, call our chest code to give a toadstool.
@@ -47,4 +49,7 @@ skip:
         ldh  [$F1], a
         ld  a, $02 ; give item
         rst 8
+
+        ld   hl, $DAA2
+        res  5, [hl]
     """), fill_nop=True)

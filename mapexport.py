@@ -339,10 +339,11 @@ class MapExport:
             tilemap += self.__tiles[0x0c][0x080:0x100]
         else:
             # TODO: The whole indoor tileset loading seems complex...
-            tileset_nr = self.__rom.banks[0x20][0x2e7b + 0x40 + room_nr - 0x100]
+            tileset_nr = self.__rom.banks[0x20][0x2eB3 + room_nr - 0x100]
             tilemap = [None] * 0x100
             tilemap[0x20:0x80] = self.__tiles[0x0D][0x000:0x060]
-            tilemap[0x00:0x10] = self.__tiles[0x0D][0x110:0x120]
+            if tileset_nr != 0xFF:
+                tilemap[0x00:0x10] = self.__tiles[0x0D][0x100 + tileset_nr * 0x10:0x110 + tileset_nr * 0x10]
             tilemap[0x10:0x20] = self.__tiles[0x0D][0x210:0x220]
             tilemap[0xF0:0x100] = self.__tiles[0x12][0x380:0x390]
 
