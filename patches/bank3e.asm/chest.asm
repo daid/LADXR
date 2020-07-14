@@ -533,9 +533,15 @@ GiveExtraHeart:
     ret
 
 TakeHeart:
+    ; First, reduce the max HP
     ld   hl, $DB5B
-    dec  [hl]
     ld   a, [hl]
+    cp   $01
+    ret  z
+    dec  a
+    ld   [$DB5B], a
+
+    ; Next, check if we need to reduce our actual HP to keep it below the maximum.
     rlca
     rlca
     rlca
@@ -545,6 +551,7 @@ TakeHeart:
     jr   nc, .noNeedToReduceHp
     ld   [hl], a
 .noNeedToReduceHp:
+    ; Finally, give all health back.
     ld   hl, $DB93
     ld   [hl], $FF
     ret

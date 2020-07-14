@@ -1,0 +1,10 @@
+[tinyci]
+enabled = True
+
+[build-test]
+directory = _test
+commands =
+    python3 ../main.py ../input.gbc --timeout 120 --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --keysanity --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --logic glitched --keysanity --heartpiece --seashells --heartcontainers --owlstatues both --keysanity --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --textmode none --output /dev/null

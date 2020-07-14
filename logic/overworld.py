@@ -19,8 +19,10 @@ class World:
         Location().add(Song(0x092)).connect(start, OCARINA)  # Marins song
 
         sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD, attack_hookshot))
-        if options.boomerang != 'default':
+        if options.boomerang == 'trade':
             Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
+        elif options.boomerang == 'gift':
+            Location().add(BoomerangGuy()).connect(sword_beach, BOMB)
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
         ghost_hut = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET) 
         Location().add(Seashell(0x1E3)).connect(ghost_hut, POWER_BRACELET)

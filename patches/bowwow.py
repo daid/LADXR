@@ -4,10 +4,10 @@ from roomEditor import RoomEditor
 
 def fixBowwow(rom, everywhere=False):
     ### BowWow patches
-    rom.patch(0x03, 0x1E0E, "EA56DB", "000000")  # Do not mark BowWow as kidnapped after we complete dungeon 1.
-    rom.patch(0x15, 0x06B6, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the moblin boss
-    rom.patch(0x03, 0x182D, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the cave moblins
-    rom.patch(0x07, 0x3947, "FA56DBFE80C2", "FA56DBFE80CA")  # always load the cave moblin with sword
+    rom.patch(0x03, 0x1E0E, ASM("ld [$DB56], a"), "", fill_nop=True)  # Do not mark BowWow as kidnapped after we complete dungeon 1.
+    rom.patch(0x15, 0x06B6, ASM("ld a, [$DB56]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the moblin boss if the chest has not been opened
+    rom.patch(0x03, 0x182D, ASM("ld a, [$DB56]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblins if the chest is not opened
+    rom.patch(0x07, 0x3947, ASM("ld a, [$DB56]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblin with sword if the chest is not opened
 
     # Modify the moblin cave to contain a chest at the end, which contains bowwow
     re = RoomEditor(rom, 0x2E2)
