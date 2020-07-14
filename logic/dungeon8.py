@@ -7,12 +7,12 @@ class Dungeon8:
     def __init__(self, options):
         entrance = Location(8)
         entrance_up = Location(8).connect(entrance, FEATHER)
-        entrance_left = Location(8).connect(entrance, attack_hookshot) # past hinox
+        entrance_left = Location(8).connect(entrance, attack_hookshot_no_bomb) # past hinox
 
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
         Location(8).add(DungeonChest(0x25C)).connect(entrance_left, attack_hookshot) # eye magnet chest
-        Location(8).add(DroppedKey(0x24C)).connect(entrance_left, attack_hookshot) # vire drop key
+        Location(8).add(DroppedKey(0x24C)).connect(entrance_left, attack_hookshot_no_bomb) # vire drop key
         sparks_chest = Location(8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
@@ -32,7 +32,7 @@ class Dungeon8:
             Location(8).add(OwlStatue(0x245)).connect(upper_center, STONE_BEAK8)
         Location(8).add(DroppedKey(0x23E)).connect(upper_center, attack_skeleton) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         medicine_chest = Location(8).add(DungeonChest(0x235)).connect(upper_center, HOOKSHOT)  # medicine chest
-                                                                  
+
         middle_center_1 = Location(8).connect(upper_center, BOMB)
         middle_center_2 = Location(8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
         middle_center_3 = Location(8).connect(middle_center_2, KEY8)
