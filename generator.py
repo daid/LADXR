@@ -72,7 +72,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.bugfixWrittingWrongRoomStatus(rom)
     patches.core.bugfixPowderBagSprite(rom)
     patches.owl.removeOwlEvents(rom)
-    patches.bank3e.addBank3E(rom)
+    patches.bank3e.addBank3E(rom, seed)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
     patches.core.alwaysAllowSecretBook(rom)

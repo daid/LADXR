@@ -31,13 +31,16 @@ $options = [
     'nag-messages' => ['label' => 'Show nag messages', 'type' => 'check', 'default' => false, 'arg' => '--nag-messages', 'tooltip' => 'Enables the nag messages normally shown when touching stones and crystals'],
     'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod', 'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game'],
     'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
-    'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => 'false', 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
+    'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => false, 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
+    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['text' => 'Text', 'json' => 'JSON', 'none' => "None"], 'arg' => '--spoilerformat'],
 ];
 
 if (isset($_FILES["rom"]))
 {
-    $file = $_FILES["rom"]["tmp_name"];
-    $command = "/usr/bin/python3 main.py " . escapeshellarg($file) . " -o " . escapeshellarg($file);
+    $romInputPath = $_FILES["rom"]["tmp_name"];
+    $romOutputPath = tempnam("temp", "rom");
+    $spoilerPath = tempnam("temp", "spoiler");
+    $command = "/usr/bin/python3 main.py " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
     foreach($options as $key => $option)
     {
         if (isset($_POST[$key]) && $_POST[$key] != "")
@@ -58,6 +61,7 @@ if (isset($_FILES["rom"]))
         exit();
     }
     chdir("LADXR");
+
     $output = []; $result = -1;
     exec($command, $output, $result);
 
@@ -67,27 +71,31 @@ if (isset($_FILES["rom"]))
         foreach($output as $line)
             if (strpos($line, "Seed:") !== false)
                 $seed = trim(substr($line, 5));
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="LADXR_'.$seed.'.gbc"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($file));
-        readfile($file);
-        unlink($file);
+        
+        $romContents = base64_encode(file_get_contents($romOutputPath));
+        $spoilerContents = file_get_contents($spoilerPath);
+
+        $json = ['success' => true, 'seed' => $seed, 'romFilename' => 'LADXR_'.$seed.'.gbc', 'rom' => $romContents, 'spoiler' => $spoilerContents];
+
+        header('Content-Type: application/json');
+        print(json_encode($json));
+        unlink($romOutputPath);
+        unlink($spoilerPath);
+        unlink($romInputPath);
         exit();
     }
-    print("<pre>Failed:");
-    print_r($command);
-    print_r($output);
-    print_r($result);
+
+    $message = "Command:\n$command\nOutput:\n" . print_r($output, true);
+    $json = ['success' => false, 'message' => $message];
+    header('Content-Type: application/json');
+    print(json_encode($json));
     exit();
 }
 ?><html>
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 function updateForm()
 {
@@ -125,6 +133,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("submitbutton").onclick = function(event) {
         setTimeout(1, function() {document.getElementById("submitbutton").disabled = true;});
         document.getElementById("submitbutton").value = "Working... be patient.";
+        $("#seedSpinner").attr('style', '');
         return true;
     }
     document.getElementById("form").oninput = function() {
@@ -171,6 +180,78 @@ document.addEventListener('DOMContentLoaded', (event) => {
         gfxInfoMap["<?=$k?>"] = "<?=$v?>";
     <?php } ?>
 })
+
+function b64toBlob(b64Data, contentType='', sliceSize=512)
+{
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+}
+
+function downloadRom(filename, blob)
+{
+    var element = document.createElement('a');
+    element.href = window.URL.createObjectURL(blob);
+    element.download = filename;
+    element.click();
+}
+
+function downloadSpoilers()
+{
+    var spoilerContent = $("#spoilerContent").html();
+    var seed = $("#seedSpan").html();
+    var fileExtension = $("#spoilerformat").val() === "text" ? ".txt" : ".json";
+
+    var element = document.createElement('a');
+    element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(spoilerContent);
+    element.download = "LADXR_" + seed + fileExtension;
+    element.click();
+}
+
+function seedComplete(data)
+{
+    $('#submitbutton').attr('value', "Randomize!");
+    $('#seedSpinner').attr('style', 'display: none;');
+
+    if (data.success)
+    {
+        $('#errorCard').attr('style', 'display: none;');
+        $('#successCard').attr('style', '');
+        $('#seedSpan').html(data.seed);
+
+        if ($("#spoilerformat").val() !== "none")
+        {
+            $('#spoilerBox').attr('style', '');
+            $('#spoilerButton').attr('style', '');
+            $('#spoilerContent').html(data.spoiler);
+        }
+        else
+        {
+            $('#spoilerBox').attr('style', 'display: none;');
+            $('#spoilerButton').attr('style', 'display: none;');
+        }
+    }
+    else
+    {
+        $('#successCard').attr('style', 'display: none;');
+        $('#failureCard').attr('style', '');
+        $('#failureMessage').html(data.message);
+    }
+}
 </script>
 <style>
 div.row {
@@ -180,11 +261,43 @@ div.row {
 div.container {
     max-width: 1200px;
 }
+
+div.spinner {
+    float: right;
+    margin-top: 15px; /* Ugly attempt at centering the spinner vertically */
+}
+
+div.card {
+    max-width: 100%;
+}
+
+div.success {
+    background-color: #d9f0d1;
+}
+
+div.failure {
+    background-color: #ffccd7;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
+    <div id="successCard" class="card success" style="display: none;">
+        <h2>Seed generation complete!<small>Seed: <span id="seedSpan"></span></small></h2>
+        <button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button>
+        <div id="spoilerBox" class="collapse" style="display: none;">
+            <input type="checkbox" id="spoiler-collapse" aria-hidden="true">
+            <label for="spoiler-collapse" aria-hidden="true">Spoilers</label>
+            <div>
+                <pre id="spoilerContent"></pre>
+            </div>
+        </div>
+    </div>
+    <div id="failureCard" class="card failure" style="display: none;">
+        <h2>Error:</h2>
+        <pre id="failureMessage"></pre>
+    </div>
     <form action="?" method="post" enctype="multipart/form-data" id="form">
     <fieldset>
         <legend>LADXR: Legend Of Zelda: Links Awakening RANDOMIZER, v??</legend>
@@ -231,6 +344,7 @@ foreach($options as $key => $option)
         <div class="row">
         <div class="col-sm-12 col-md-3">
             <div id="romwarning" class="card error">No (proper) rom selected</div>
+            <div id="seedSpinner" class="spinner" style="display: none;"></div>
         </div>
         <div class="col-sm-12 col-md">
             <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
@@ -239,6 +353,39 @@ foreach($options as $key => $option)
     </fieldset>
     </form>
 </div>
+
+<script>
+$("#form").submit(function(e) {
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr('action');
+    var formData = new FormData(form[0]);
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(data)
+        {
+            if(data.success)
+            {
+                blob = b64toBlob(data.rom, "application/octet-stream");
+                downloadRom(data.romFilename, blob);
+            }
+
+            seedComplete(data);
+        },
+        error: function(data)
+        {
+            var result = {success: false, message: data};
+            seedComplete(result);
+        }
+        });
+});
+</script>
 
 </body>
 </html>

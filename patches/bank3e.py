@@ -1,4 +1,5 @@
 import os
+import binascii
 from assembler import ASM
 from utils import formatText
 
@@ -8,7 +9,7 @@ def hasBank3E(rom):
 
 # Bank $3E is used for large chunks of custom code.
 #   Mainly for new chest and dropped items handling.
-def addBank3E(rom):
+def addBank3E(rom, seed):
     # No default text for getting the bow, so use an unused slot.
     rom.texts[0x89] = formatText(b"Found the bow!")
     rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
@@ -79,3 +80,5 @@ MainJumpTable:
 
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
+
+    rom.patch(0x3E, 0x2F00, "00" * len(seed), binascii.hexlify(seed))

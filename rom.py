@@ -69,3 +69,6 @@ class ROM:
         else:
             for bank in self.banks:
                 file.write(bank)
+
+    def readHexSeed(self):
+        return self.banks[0x3E][0x2F00:0x2F10].hex().upper()
