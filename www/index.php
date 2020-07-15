@@ -32,14 +32,14 @@ $options = [
     'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod', 'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game'],
     'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
     'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => false, 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
-    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['text' => 'Text', 'json' => 'JSON', 'none' => "None"], 'arg' => '--spoilerformat'],
+    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['none' => 'None', 'text' => 'Text', 'json' => 'JSON'], 'arg' => '--spoilerformat'],
 ];
 
 if (isset($_FILES["rom"]))
 {
     $romInputPath = $_FILES["rom"]["tmp_name"];
-    $romOutputPath = tempnam("temp", "rom");
-    $spoilerPath = tempnam("temp", "spoiler");
+    $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");
+    $spoilerPath = @tempnam(sys_get_temp_dir(), "spoiler");
     $command = "/usr/bin/python3 main.py " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
     foreach($options as $key => $option)
     {
@@ -71,7 +71,7 @@ if (isset($_FILES["rom"]))
         foreach($output as $line)
             if (strpos($line, "Seed:") !== false)
                 $seed = trim(substr($line, 5));
-        
+
         $romContents = base64_encode(file_get_contents($romOutputPath));
         $spoilerContents = file_get_contents($spoilerPath);
 
@@ -308,6 +308,15 @@ div.failure {
         </div>
         <div class="row">
         <div class="col-sm-12 col-md-3">
+            <div id="romwarning" class="card error">No (proper) rom selected</div>
+            <div id="seedSpinner" class="spinner" style="display: none;"></div>
+        </div>
+        <div class="col-sm-12 col-md">
+            <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 col-md-3">
             <label for="file-rom">Input rom:</label>
         </div>
         <div class="col-sm-12 col-md">
@@ -341,15 +350,6 @@ foreach($options as $key => $option)
     echo("</div></div id=row>");
 }
 ?>
-        <div class="row">
-        <div class="col-sm-12 col-md-3">
-            <div id="romwarning" class="card error">No (proper) rom selected</div>
-            <div id="seedSpinner" class="spinner" style="display: none;"></div>
-        </div>
-        <div class="col-sm-12 col-md">
-            <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
-        </div>
-        </div>
     </fieldset>
     </form>
 </div>
