@@ -1,3 +1,4 @@
+import sys
 import json
 import logic
 import explorer
@@ -12,6 +13,7 @@ class SpoilerItemInfo():
         self.id = ii.nameId
         self.area = ii.metadata.area
         self.locationName = ii.metadata.name
+        self.sphere = ii.metadata.sphere
         self.itemName = str(ii.read(rom))
         self.player = None
 
@@ -24,7 +26,12 @@ class SpoilerItemInfo():
         if self.player:
             itemName = "P%s's %s" % (self.player, itemName)
 
-        return "%25s at %s - %s" % (itemName, self.area, self.locationName) 
+        result = "%25s at %s - %s" % (itemName, self.area, self.locationName)
+
+        if self.sphere != None:
+            result += " (Sphere %d)" % self.sphere
+
+        return result
 
 class SpoilerLog():
     def __init__(self, args, rom):
@@ -50,13 +57,40 @@ class SpoilerLog():
             args.heartcontainers = True
             args.owlstatues = "both"
 
+        self._loadItems(args, rom)
+    
+    def _loadItems(self, args, rom):
         my_logic = logic.Logic(args, None, entranceMapping=self.dungeonOrder)
+        remainingItems = set(my_logic.iteminfo_list)
 
+        currentSphere = 0
+        lastAccessibleLocations = set()
+        itemContents = {}
         for ii in my_logic.iteminfo_list:
-            ii.item = ii.read(rom)
+            itemContents[ii] = ii.read(rom)
 
-        e = explorer.Explorer()
-        e.visit(my_logic.start)
+        # Feed the logic items one sphere at a time
+        while remainingItems:
+            e = explorer.Explorer()
+            e.visit(my_logic.start)
+
+            newLocations = e.getAccessableLocations() - lastAccessibleLocations
+
+            if not newLocations:
+                # Some locations must be inaccessible, stop counting spheres
+                break
+
+            for location in newLocations:
+                for ii in location.items:
+                    ii.metadata.sphere = currentSphere
+                    ii.item = itemContents[ii]
+                    remainingItems.remove(ii)
+            
+            lastAccessibleLocations = e.getAccessableLocations()
+            currentSphere += 1
+
+        for ii in remainingItems:
+            ii.item = itemContents[ii]
 
         for location in e.getAccessableLocations():
             for ii in location.items:
@@ -68,7 +102,7 @@ class SpoilerLog():
                 if loc not in e.getAccessableLocations():
                     for ii in loc.items:
                         self.inaccessibleItems.append(SpoilerItemInfo(ii, rom, args.multiworld))
-    
+
     def output(self, filename=None, zipFile=None):
         if self.outputFormat == "text":
             self.outputTextFile(filename, zipFile)
@@ -106,12 +140,12 @@ class SpoilerLog():
     def __repr__(self):
         if not self.testOnly:
             lines = ["Dungeon order:" + ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(self.dungeonOrder)))]
-            lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.area, x.locationName))]
+            lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.sphere if x.sphere != None else sys.maxsize, x.area, x.locationName))]
 
         if self.inaccessibleItems:
             lines.append("Logic failure! Cannot access all locations.")
             lines.append("Failed to find:")
-            lines += [str(x) for x in sorted(self.inaccessibleItems, key=lambda x: (x.area, x.locationName))]
+            lines += [str(x) for x in sorted(self.inaccessibleItems, key=lambda x: (x.sphere if x.sphere != None else sys.maxsize, x.area, x.locationName))]
         else:
             lines.append("Success!  All locations can be accessed.")
         
