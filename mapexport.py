@@ -270,7 +270,7 @@ class MapExport:
 
     def exportRoom(self, room_nr):
         re = RoomEditor(self.__rom, room_nr)
-        # TODO: Caves&Dungeons (proper tileset and templates)
+
         if room_nr < 0x100:
             tile_info_offset = self.__rom.banks[0x1A].find(b'\x7C\x7C\x7C\x7C\x7D\x7D\x7D\x7D')
             tile_info = self.__rom.banks[0x1A][tile_info_offset:tile_info_offset + 0x100 * 4]
@@ -320,9 +320,7 @@ class MapExport:
                     rendered_map.placeObject(obj.x, obj.y + n * objVSize(obj.type_id), obj.type_id)
             else:
                 rendered_map.placeObject(obj.x, obj.y, obj.type_id)
-        # for y in range(8):
-        #     for x in range(8):
-        #         rendered_map.placeObject(x, y, x + y * 8 + 0)
+
         tiles = [0] * 20 * 16
         for y in range(8):
             for x in range(10):
@@ -385,15 +383,25 @@ class MapExport:
         assert len(tilemap) == 0x100
 
         result = PIL.Image.new('L', (8 * 20, 8 * 16))
+        draw = PIL.ImageDraw.Draw(result)
         for y in range(16):
             for x in range(20):
                 tile = tilemap[tiles[x+y*20]]
                 if tile is not None:
                     result.paste(tile, (x * 8, y * 8))
+        warp_pos = []
+        for y in range(8):
+            for x in range(10):
+                if rendered_map.objects[(x, y)] in (0xE1, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB):
+                    warp_pos.append((x, y))
         for x, y, type_id in re.entities:
-            draw = PIL.ImageDraw.Draw(result)
             draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
             draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id))
+        y = 8
+        for obj in re.objects:
+            if isinstance(obj, ObjectWarp):
+                draw.text((8, y), "W:" + str(obj))
+                y += 16
         return result
 
     def getTiles(self, bank_nr):

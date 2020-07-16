@@ -595,6 +595,26 @@ ItemMessage:
     ld   hl, ItemMessageTable
     add  hl, de
     ld   a, [hl]
+    cp   $90
+    jr   .powerBracelet
+    cp   $3D
+    jr   .shield
+    jp   $2385 ; Opendialog in $000-$0FF range
+
+.powerBracelet:
+    ; Check the power bracelet level, and give a different message when we get the lv2 bracelet
+    ld   hl, $DB43 ; power bracelet level
+    bit  1, [hl]
+    jp   z, $2385 ; Opendialog in $000-$0FF range
+    ld   a, $EE
+    jp   $2385 ; Opendialog in $000-$0FF range
+
+.shield:
+    ; Check the shield level, and give a different message when we get the lv2 shield
+    ld   hl, $DB44 ; shield level
+    bit  1, [hl]
+    jp   z, $2385 ; Opendialog in $000-$0FF range
+    ld   a, $ED
     jp   $2385 ; Opendialog in $000-$0FF range
 
 ItemMessageForOtherPlayer:
