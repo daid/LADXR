@@ -8,6 +8,28 @@ def bugfixWrittingWrongRoomStatus(rom):
     # dungeons D1-D6. This fix should prevent this.
     rom.patch(0x02, 0x1D21, 0x1D3C, ASM("call $5B9F"), fill_nop=True)
 
+def bugfixBossroomTopPush(rom):
+    rom.patch(0x14, 0x14D9, ASM("""
+        ldh  a, [$99]
+        dec  a
+        ldh  [$99], a
+    """), ASM("""
+        jp   $7F80
+    """), fill_nop=True)
+    rom.patch(0x14, 0x3F80, "00" * 0x80, ASM("""
+        ldh  a, [$99]
+        cp   $50
+        jr   nc, up
+down:
+        inc  a
+        ldh  [$99], a
+        jp   $54DE
+up:
+        dec  a
+        ldh  [$99], a
+        jp   $54DE
+    """), fill_nop=True)
+
 def bugfixPowderBagSprite(rom):
     rom.patch(0x03, 0x2055, "8E16", "0E1E")
 

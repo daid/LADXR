@@ -70,6 +70,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.cleanup(rom)
     patches.phone.patchPhone(rom)
     patches.core.bugfixWrittingWrongRoomStatus(rom)
+    patches.core.bugfixBossroomTopPush(rom)
     patches.core.bugfixPowderBagSprite(rom)
     patches.owl.removeOwlEvents(rom)
     patches.bank3e.addBank3E(rom, seed)
