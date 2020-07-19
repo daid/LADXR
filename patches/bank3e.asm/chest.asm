@@ -596,9 +596,9 @@ ItemMessage:
     add  hl, de
     ld   a, [hl]
     cp   $90
-    jr   .powerBracelet
+    jr   z, .powerBracelet
     cp   $3D
-    jr   .shield
+    jr   z, .shield
     jp   $2385 ; Opendialog in $000-$0FF range
 
 .powerBracelet:
