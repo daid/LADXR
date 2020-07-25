@@ -85,7 +85,12 @@ class BoomerangGuy(ItemInfo):
             rom.patch(0x19, 0x0668, ASM("ld a, [$DB7D]"), ASM("ret"), fill_nop=True)
 
     def read(self, rom):
-        for k, v in INVENTORY_MAP.items():
-            if int(v, 16) == rom.banks[0x19][0x0640]:
-                return k
+        if rom.banks[0x19][0x06C5] == 0x00:
+            for k, v in CHEST_ITEMS.items():
+                if v == rom.banks[0x19][0x072B]:
+                    return k
+        else:
+            for k, v in INVENTORY_MAP.items():
+                if int(v, 16) == rom.banks[0x19][0x0640]:
+                    return k
         raise ValueError()
