@@ -18,6 +18,7 @@ import patches.chest
 import patches.shop
 import patches.trendy
 import patches.goal
+import patches.hardMode
 import patches.health
 import patches.heartPiece
 import patches.droppedKey
@@ -112,6 +113,8 @@ def generateRom(options, seed, logic, multiworld=None):
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom)
+    if options.hardMode:
+        patches.hardMode.enableHardMode(rom)
     if options.textmode == 'fast':
         patches.aesthetics.fastText(rom)
     if options.textmode == 'none':

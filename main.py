@@ -69,6 +69,8 @@ def main(mainargs=None):
         help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
+    parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
+        help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
     parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
