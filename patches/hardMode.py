@@ -15,6 +15,9 @@ def enableHardMode(rom):
     """), ASM("""
         call $6625
     """), fill_nop=True)
+    # Reduce bomb blast push back on link
+    rom.patch(0x03, 0x2643, ASM("sla [hl]"), ASM("sra [hl]"), fill_nop=True)
+    rom.patch(0x03, 0x2648, ASM("sla [hl]"), ASM("sra [hl]"), fill_nop=True)
 
     # Never spawn a piece of power or acorn
     rom.patch(0x03, 0x1608, ASM("jr nz, $05"), ASM("jr $05"))
