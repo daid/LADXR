@@ -113,8 +113,8 @@ class World:
         obstacle_cave_chest = Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT) # chest at obstacles
         right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS) # chest in passage to papahl
         Location().add(HeartPiece(0x1F2)).connect(below_mountains, FLIPPERS)  # cave next to level 4
-        dungeon4_entrance = Location().connect(below_mountains, FLIPPERS, one_way=True) # swim
-        dungeon4_entrance.connect(right_mountains_1, ANGLER_KEY, one_way=True) # go around right_mountains_1, "needs" angler key to unlock ledge
+        dungeon4_entrance = Location().connect(below_mountains, FLIPPERS) # swim
+        right_mountains_1.connect(dungeon4_entrance, ANGLER_KEY, one_way=True) # go around right_mountains_1, "needs" angler key to unlock ledge
         Location().add(Song(0x2FD)).connect(below_mountains, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
 
         face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
