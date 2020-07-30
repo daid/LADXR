@@ -84,7 +84,7 @@ class ItemPool:
             self.add(BOOMERANG)
         if options.owlstatues == 'both':
             self.add(RUPEES_20, 9 + 24)
-        elif options.owlstatues == 'dungeons':
+        elif options.owlstatues == 'dungeon':
             self.add(RUPEES_20, 24)
         elif options.owlstatues == 'overworld':
             self.add(RUPEES_20, 9)
