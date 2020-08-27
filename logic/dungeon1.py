@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon1:
-    def __init__(self, options):
+    def __init__(self, options, boss_requirement):
         entrance = Location(1)
         entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))
         Location(1).add(DroppedKey(0x116)).connect(entrance, OR(BOMB, push_hardhat)) # hardhat beetles (can kill with bomb)
@@ -22,7 +22,7 @@ class Dungeon1:
         Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(attack_hookshot, SHIELD)) # three of a kind, shield stops the suit from changing
         dungeon1_miniboss = Location(1).connect(dungeon1_right_side, AND(attack_hookshot, FEATHER))
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
-        Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, SWORD)
+        Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, boss_requirement)
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, FEATHER)  # super jump

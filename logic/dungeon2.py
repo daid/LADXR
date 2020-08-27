@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon2:
-    def __init__(self, options):
+    def __init__(self, options, boss_requirement):
         entrance = Location(2)
         Location(2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
         dungeon2_l2 = Location(2).connect(entrance, AND(KEY2, FOUND(KEY2, 5)))  # towards map chest
@@ -26,7 +26,7 @@ class Dungeon2:
         dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, OR(BOW, BOMB, MAGIC_ROD, OCARINA, POWER_BRACELET)) # TODO: song 1
         dungeon2_pre_boss = Location(2).connect(dungeon2_r6, AND(POWER_BRACELET, FEATHER, KEY2, FOUND(KEY2, 5)))
         # If we can get here, we have everything for the boss. So this is also the goal room.
-        dungeon2_boss = Location(2).add(HeartContainer(0x12B)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, OR(SWORD, MAGIC_ROD), POWER_BRACELET, FEATHER))
+        dungeon2_boss = Location(2).add(HeartContainer(0x12B)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, boss_requirement, FEATHER))
         
         if options.logic == 'glitched' or options.logic == 'hell':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)

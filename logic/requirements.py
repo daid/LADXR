@@ -76,6 +76,17 @@ rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
 fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
 push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
 
+boss_requirements = [
+    SWORD,  # D1 boss
+    AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
+    AND(PEGASUS_BOOTS, SWORD),  # D3 boss
+    AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB)),  # D4 boss
+    AND(HOOKSHOT, SWORD),  # D5 boss
+    BOMB,  # D6 boss
+    AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
+    MAGIC_ROD,  # D8 boss
+    attack_no_bomb,  # D9 boss
+]
 
 def flatten(req):
     result = set()

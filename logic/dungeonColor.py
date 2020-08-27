@@ -4,7 +4,7 @@ from locations import *
 
 
 class DungeonColor:
-    def __init__(self, options):
+    def __init__(self, options, boss_requirement):
         entrance = Location(9)
         room2 = Location(9).connect(entrance, attack_hookshot_powder)
         room2.add(DungeonChest(0x314))  # key
@@ -24,7 +24,7 @@ class DungeonColor:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(9).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK9)
         room5 = Location(9).connect(room4, AND(KEY9, FOUND(KEY9, 3)))  # before the boss
-        boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, attack_no_bomb))
+        boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, boss_requirement))
         boss.add(TunicFairy(0), TunicFairy(1))
         
         if options.logic == 'hard' or options.logic == 'glitched':

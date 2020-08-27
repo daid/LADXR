@@ -85,7 +85,7 @@ checkMetadataTable = {
     "0x168": CheckMetadata("Spark Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0168.GIF
     "0x160": CheckMetadata("Flippers Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0160.GIF
     "0x176": CheckMetadata("Nightmare Key Ledge Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0176.GIF
-    "0x1FF": CheckMetadata("Angler Fish Heart Container", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/01FF.GIF
+    "0x166": CheckMetadata("Angler Fish Heart Container", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/01FF.GIF
     "0x1A0": CheckMetadata("Entrance Hookshottable Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/01A0.GIF
     "0x19E": CheckMetadata("Spark, Two Iron Mask Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019E.GIF
     "0x181": CheckMetadata("Crystal Key", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0181.GIF
@@ -133,7 +133,7 @@ checkMetadataTable = {
     "0x224": CheckMetadata("Nightmare Key/After Grim Creeper Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0224.GIF
     "0x21A": CheckMetadata("Mirror Shield Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/021A.GIF
     "0x220": CheckMetadata("Conveyor Beamos Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0220.GIF
-    "0x2E8": CheckMetadata("Evil Eagle Heart Container", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E8.GIF
+    "0x223": CheckMetadata("Evil Eagle Heart Container", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E8.GIF
     "0x24F": CheckMetadata("Push Block Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/024F.GIF
     "0x24D": CheckMetadata("Left of Hinox Zamboni Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/024D.GIF
     "0x25C": CheckMetadata("Vacuum Mouth Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/025C.GIF

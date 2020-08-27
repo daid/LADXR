@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon6:
-    def __init__(self, options):
+    def __init__(self, options, boss_requirement):
         entrance = Location(6)
         Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
         Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
@@ -35,7 +35,7 @@ class Dungeon6:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, BOMB))
+        boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, boss_requirement))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders

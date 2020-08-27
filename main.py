@@ -61,6 +61,8 @@ def main(mainargs=None):
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
         help="Enable dungeon shuffle, puts dungeons on different spots.")
+    parser.add_argument('--bossshuffle', dest="bossshuffle", action="store_true",
+        help="Enable boss shuffle, swaps around dungeon bosses.")
     parser.add_argument('--witch', dest="witch", action="store_true",
         help="Enables witch and toadstool in the item pool.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',

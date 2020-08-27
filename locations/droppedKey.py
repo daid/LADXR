@@ -28,11 +28,19 @@ class DroppedKey(ItemInfo):
         rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]
         if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
             rom.banks[0x3E][0x017C + 0x3800] = CHEST_ITEMS[option]
+        elif self.room == 0x166:  # D4 boss, also place the item in out real boss room.
+            rom.banks[0x3E][0x01ff + 0x3800] = CHEST_ITEMS[option]
+        elif self.room == 0x223:  # D7 boss, also place the item in our real boss room.
+            rom.banks[0x3E][0x02E8 + 0x3800] = CHEST_ITEMS[option]
 
         if multiworld is not None:
             rom.banks[0x3E][0x3300 + self.room] = multiworld
             if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
                 rom.banks[0x3E][0x3300 + 0x017C] = multiworld
+            elif self.room == 0x166:  # D4 boss, also place the item in out real boss room.
+                rom.banks[0x3E][0x3300 + 0x01ff] = multiworld
+            elif self.room == 0x223:  # D7 boss, also place the item in our real boss room.
+                rom.banks[0x3E][0x3300 + 0x02E8] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)

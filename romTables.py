@@ -94,6 +94,7 @@ class RoomsColorDungeon(RoomsTable):
             "pointers_addr": 0x3B77,
             "pointers_bank": 0x0A,
             "data_bank": 0x0A,
+            "expand_to_end_of_bank": True
         })
 
 

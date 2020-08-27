@@ -6,7 +6,7 @@ from locations import *
 #       Logic does not account for you wasting this key (maybe remove the keyblock?)
 
 class Dungeon5:
-    def __init__(self, options):
+    def __init__(self, options, boss_requirement):
         entrance = Location(5)
         start_hookshot_chest = Location(5).add(DungeonChest(0x1A0)).connect(entrance, HOOKSHOT)
         compass = Location(5).add(DungeonChest(0x19E)).connect(entrance, attack_hookshot_powder)
@@ -34,7 +34,7 @@ class Dungeon5:
         stone_tablet = Location(5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, attack_skeleton))  # stone tablet
         boss_key = Location(5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
         before_boss = Location(5).connect(after_keyblock_boss, HOOKSHOT) 
-        boss = Location(5).add(HeartContainer(0x185)).connect(before_boss, AND(HOOKSHOT, SWORD, NIGHTMARE_KEY5))
+        boss = Location(5).add(HeartContainer(0x185)).connect(before_boss, AND(boss_requirement, NIGHTMARE_KEY5))
 
         # When we can reach the stone tablet chest, we can also reach the final location of master stalfos
         m_stalfos_drop = Location(5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB)) # can reach fourth arena from entrance with feather and sword

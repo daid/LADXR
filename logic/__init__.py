@@ -8,32 +8,38 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
-from .requirements import AND, OR, COUNT, FOUND
+from .requirements import AND, OR, COUNT, FOUND, boss_requirements
 from .location import Location
 from locations.items import *
 
 
 class Logic:
-    def __init__(self, configuration_options, rnd, *, entranceMapping=None):
-        world = overworld.World(configuration_options)
-
-        dungeons = [
-            dungeon1.Dungeon1(configuration_options),
-            dungeon2.Dungeon2(configuration_options),
-            dungeon3.Dungeon3(configuration_options),
-            dungeon4.Dungeon4(configuration_options),
-            dungeon5.Dungeon5(configuration_options),
-            dungeon6.Dungeon6(configuration_options),
-            dungeon7.Dungeon7(configuration_options),
-            dungeon8.Dungeon8(configuration_options),
-            dungeonColor.DungeonColor(configuration_options)
-        ]
-
+    def __init__(self, configuration_options, rnd, *, entranceMapping=None, bossMapping=None):
         if entranceMapping is None:
             entranceMapping = list(range(9))
             if configuration_options.dungeonshuffle:
                 rnd.shuffle(entranceMapping)
         self.entranceMapping = entranceMapping
+        if bossMapping is None:
+            bossMapping = list(range(8))
+            if configuration_options.bossshuffle:
+                rnd.shuffle(bossMapping)
+            bossMapping += [8]  # Shuffling the color dungeon boss does not work properly, so we ignore that one.
+        self.bossMapping = bossMapping
+
+        world = overworld.World(configuration_options)
+
+        dungeons = [
+            dungeon1.Dungeon1(configuration_options, boss_requirements[bossMapping[0]]),
+            dungeon2.Dungeon2(configuration_options, boss_requirements[bossMapping[1]]),
+            dungeon3.Dungeon3(configuration_options, boss_requirements[bossMapping[2]]),
+            dungeon4.Dungeon4(configuration_options, boss_requirements[bossMapping[3]]),
+            dungeon5.Dungeon5(configuration_options, boss_requirements[bossMapping[4]]),
+            dungeon6.Dungeon6(configuration_options, boss_requirements[bossMapping[5]]),
+            dungeon7.Dungeon7(configuration_options, boss_requirements[bossMapping[6]]),
+            dungeon8.Dungeon8(configuration_options, boss_requirements[bossMapping[7]]),
+            dungeonColor.DungeonColor(configuration_options, boss_requirements[bossMapping[8]])
+        ]
 
         dungeons[entranceMapping[0]].entrance.connect(world.start, TAIL_KEY)
         dungeons[entranceMapping[1]].entrance.connect(world.dungeon2_entrance, OR(BOWWOW, MAGIC_ROD, HOOKSHOT, BOOMERANG, POWER_BRACELET)) # requirements handled in dungeon2_entrance
@@ -44,7 +50,7 @@ class Logic:
         dungeons[entranceMapping[6]].entrance.connect(world.right_mountains_3, BIRD_KEY)
         dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, SONG3)
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
-            
+
         self.start = world.start
         self.location_list = []
         self.iteminfo_list = []
