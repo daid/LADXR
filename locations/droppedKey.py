@@ -32,6 +32,8 @@ class DroppedKey(ItemInfo):
             rom.banks[0x3E][0x01ff + 0x3800] = CHEST_ITEMS[option]
         elif self.room == 0x223:  # D7 boss, also place the item in our real boss room.
             rom.banks[0x3E][0x02E8 + 0x3800] = CHEST_ITEMS[option]
+        elif self.room == 0x092:  # Marins song
+            rom.banks[0x3E][0x00DC + 0x3800] = CHEST_ITEMS[option]
 
         if multiworld is not None:
             rom.banks[0x3E][0x3300 + self.room] = multiworld
@@ -41,6 +43,8 @@ class DroppedKey(ItemInfo):
                 rom.banks[0x3E][0x3300 + 0x01ff] = multiworld
             elif self.room == 0x223:  # D7 boss, also place the item in our real boss room.
                 rom.banks[0x3E][0x3300 + 0x02E8] = multiworld
+            elif self.room == 0x092:  # Marins song
+                rom.banks[0x3E][0x3300 + 0x00DC] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)
