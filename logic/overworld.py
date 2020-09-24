@@ -168,7 +168,7 @@ class World:
             #dream_hut.connect(start, FEATHER) # flock clip TODO: require nag messages
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
-            forest_heartpiece.connect(forest, BOMB) # bomb trigger heartpiece
+            forest.connect(forest_heartpiece, BOMB, one_way=True) # bomb trigger heartpiece
             forest_heartpiece.connect(graveyard, bush) # villa buffer from top. added bush requirement since a requirement is necessary
             log_cave_heartpiece.connect(forest, FEATHER) # super jump
             log_cave_heartpiece.connect(forest, BOMB) # bomb trigger
