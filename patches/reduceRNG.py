@@ -6,4 +6,4 @@ def slowdownThreeOfAKind(rom):
 
 
 def fixHorseHeads(rom):
-    rom.patch(0x07, 0x366D, ASM("ld a, [hl]"), ASM("xor a"))
+    rom.patch(0x07, 0x3653, "00010400", "00010000")
