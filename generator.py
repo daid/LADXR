@@ -27,6 +27,7 @@ import patches.goldenLeaf
 import patches.songs
 import patches.bowwow
 import patches.desert
+import patches.reduceRNG
 import patches.madBatter
 import patches.tunicFairy
 import patches.seashell
@@ -112,6 +113,7 @@ def generateRom(options, seed, logic, multiworld=None):
         patches.bowwow.swordlessBowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
+    patches.reduceRNG.fixHorseHeads(rom)
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom)
     if options.hardMode:
