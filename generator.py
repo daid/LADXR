@@ -31,6 +31,7 @@ import patches.reduceRNG
 import patches.madBatter
 import patches.tunicFairy
 import patches.seashell
+import patches.endscreen
 import hints
 
 
@@ -184,5 +185,6 @@ def generateRom(options, seed, logic, multiworld=None):
         patches.enemies.changeBosses(rom, logic.worlds[multiworld].bossMapping)
 
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
+    patches.endscreen.updateEndScreen(rom)
 
     return rom
