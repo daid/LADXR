@@ -110,8 +110,8 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
     patches.bowwow.fixBowwow(rom, everywhere=options.bowwow != 'normal')
-    if options.bowwow == 'swordless':
-        patches.bowwow.swordlessBowwowMapPatches(rom)
+    if options.bowwow != 'normal':
+        patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)

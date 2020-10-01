@@ -197,7 +197,7 @@ Continue:
     rom.banks[0x14][0x1218 + 0xFA] = 0x01  # Photographer
 
 
-def swordlessBowwowMapPatches(rom):
+def bowwowMapPatches(rom):
     # Remove all the cystal things that can only be destroyed with a sword.
     for n in range(0x100, 0x2FF):
         re = RoomEditor(rom, n)
