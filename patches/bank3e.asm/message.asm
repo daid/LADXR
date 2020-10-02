@@ -203,6 +203,14 @@ ItemNamePointers:
     dw ItemNameSong1
     dw ItemNameSong2
     dw ItemNameSong3
+    dw ItemInstrument1
+    dw ItemInstrument2
+    dw ItemInstrument3
+    dw ItemInstrument4
+    dw ItemInstrument5
+    dw ItemInstrument6
+    dw ItemInstrument7
+    dw ItemInstrument8
 
 ItemNameNone:
     db m"NONE", $ff
@@ -394,3 +402,20 @@ ItemNameSong2:
     db m"Got the Manbo's Mambo", $ff
 ItemNameSong3:
     db m"Got Frog's Song of Soul", $ff
+
+ItemInstrument1:
+    db m"You've got the Full Moon Cello", $ff
+ItemInstrument2:
+    db m"You've got the Conch Horn", $ff
+ItemInstrument3:
+    db m"You've got the Sea Lily's Bell", $ff
+ItemInstrument4:
+    db m"You've got the Surf Harp", $ff
+ItemInstrument5:
+    db m"You've got the Wind Marimba", $ff
+ItemInstrument6:
+    db m"You've got the Coral Triangle", $ff
+ItemInstrument7:
+    db m"You've got the Organ of Evening Calm", $ff
+ItemInstrument8:
+    db m"You've got the Thunder Drum", $ff

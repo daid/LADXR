@@ -31,7 +31,7 @@ class Dungeon4:
         to_the_nightmare_key.add(DungeonChest(0x176))
 
         before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
-        boss = Location(4).add(HeartContainer(0x166)).connect(before_boss, AND(NIGHTMARE_KEY4, boss_requirement))
+        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, boss_requirement))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG)) # grab the key jumping over the water and boomerang downwards

@@ -26,7 +26,7 @@ class Dungeon2:
         dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, OR(BOW, BOMB, MAGIC_ROD, OCARINA, POWER_BRACELET)) # TODO: song 1
         dungeon2_pre_boss = Location(2).connect(dungeon2_r6, AND(POWER_BRACELET, FEATHER, KEY2, FOUND(KEY2, 5)))
         # If we can get here, we have everything for the boss. So this is also the goal room.
-        dungeon2_boss = Location(2).add(HeartContainer(0x12B)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, boss_requirement, FEATHER))
+        dungeon2_boss = Location(2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, boss_requirement, FEATHER))
         
         if options.logic == 'glitched' or options.logic == 'hell':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)

@@ -51,7 +51,7 @@ def hasConsumableRequirement(requirements):
     if isinstance(requirements, list) or isinstance(requirements, tuple):
         return any(map(hasConsumableRequirement, requirements))
     if isinstance(requirements, COUNT):
-        return isConsumable(requirements.item)
+        return hasConsumableRequirement(requirements.item)
     return isConsumable(requirements)
 
 

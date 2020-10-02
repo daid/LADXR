@@ -22,7 +22,7 @@ class Dungeon1:
         Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(attack_hookshot, SHIELD)) # three of a kind, shield stops the suit from changing
         dungeon1_miniboss = Location(1).connect(dungeon1_right_side, AND(attack_hookshot, FEATHER))
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
-        Location(1).add(HeartContainer(0x106)).connect(dungeon1_boss, boss_requirement)
+        Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss, boss_requirement)
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, FEATHER)  # super jump

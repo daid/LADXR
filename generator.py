@@ -31,6 +31,7 @@ import patches.reduceRNG
 import patches.madBatter
 import patches.tunicFairy
 import patches.seashell
+import patches.instrument
 import patches.endscreen
 import hints
 
@@ -105,6 +106,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.goldenLeaf.fixGoldenLeaf(rom)
     patches.heartPiece.fixHeartPiece(rom)
     patches.seashell.fixSeashell(rom)
+    patches.instrument.fixInstruments(rom)
     patches.seashell.upgradeMansion(rom)
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)

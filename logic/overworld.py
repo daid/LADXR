@@ -150,6 +150,15 @@ class World:
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         dungeon8_phone = Location().connect(left_side_mountain, AND(BOMB, COUNT(SHIELD, 2)))
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
+        
+        if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, BOW))
+        elif int(options.goal) < 0:
+            windfish = Location().connect(below_mountains, AND(MAGIC_POWDER, SWORD, BOW))
+        elif int(options.goal) == 0:
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, BOW))
+        else:
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, BOW))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dream_hut.connect(start, HOOKSHOT) # clip past the rocks in front of dream hut
@@ -223,3 +232,4 @@ class World:
         self.dungeon6_entrance = dungeon6_entrance
         self.right_mountains_3 = right_mountains_3
         self.dungeon8_entrance = dungeon8_entrance
+        self.windfish = windfish

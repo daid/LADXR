@@ -51,8 +51,7 @@ class Dungeon3:
         pre_boss = Location(3).connect(towards_boss4, AND(attack_no_boomerang, FEATHER, PEGASUS_BOOTS))
         pre_boss.add(DroppedKey(0x15B))
 
-        boss = Location(3).add(HeartContainer(0x15A)).connect(pre_boss, AND(NIGHTMARE_KEY3, boss_requirement))
-        # TODO Set as target
+        boss = Location(3).add(HeartContainer(0x15A), Instrument(0x159)).connect(pre_boss, AND(NIGHTMARE_KEY3, boss_requirement))
 
         if not options.keysanity:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.

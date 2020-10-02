@@ -35,7 +35,7 @@ class Dungeon6:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC)).connect(center_1, AND(NIGHTMARE_KEY6, boss_requirement))
+        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, boss_requirement))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders

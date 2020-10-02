@@ -55,6 +55,8 @@ def main(mainargs=None):
         help="Enables seashells mode, which randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)")
     parser.add_argument('--heartcontainers', dest="heartcontainers", action="store_true",
         help="Enables heartcontainer mode, which randomizes the heart containers dropped by bosses.")
+    parser.add_argument('--instruments', dest="instruments", action="store_true",
+        help="Shuffle the instruments in the item pool.")
     parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'],
         help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",

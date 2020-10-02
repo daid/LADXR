@@ -34,7 +34,7 @@ class Dungeon5:
         stone_tablet = Location(5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, attack_skeleton))  # stone tablet
         boss_key = Location(5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
         before_boss = Location(5).connect(after_keyblock_boss, HOOKSHOT) 
-        boss = Location(5).add(HeartContainer(0x185)).connect(before_boss, AND(boss_requirement, NIGHTMARE_KEY5))
+        boss = Location(5).add(HeartContainer(0x185), Instrument(0x182)).connect(before_boss, AND(boss_requirement, NIGHTMARE_KEY5))
 
         # When we can reach the stone tablet chest, we can also reach the final location of master stalfos
         m_stalfos_drop = Location(5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB)) # can reach fourth arena from entrance with feather and sword

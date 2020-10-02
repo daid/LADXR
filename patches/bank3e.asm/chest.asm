@@ -11,6 +11,17 @@ RenderChestItem:
     dec  d
     dec  d
     call $3BC0 ; RenderActiveEntitySpritePair
+
+    ; If we are an instrument
+    ldh  a, [$F1]
+    cp   $8E
+    ret  c
+    ; Call the color cycling code
+    xor  a
+    ld   [$DC82], a
+    ld   [$DC83], a
+    ld   a, $3e
+    call $0AD2
     ret
 
 SendItemFromChestToOtherGameWait:
@@ -193,6 +204,14 @@ GiveItemFromChest:
     dw GiveSong1
     dw GiveSong2
     dw GiveSong3
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
+    dw GiveInstrument
 
 NoItem:
     ret
@@ -577,6 +596,15 @@ GiveSong3:
     ld   [$DB4A], a
     ret
 
+GiveInstrument:
+    ldh  a, [$F1] ; Load active sprite variant
+    ld   d, $00
+    ld   e, a
+    ld   hl, $db65 ; has instrument table
+    add  hl, de
+    set  1, [hl]
+    ret
+
 ItemMessageMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
@@ -721,6 +749,14 @@ LargeItemSpriteTable:
     db $70, $09, $70, $29 ; song 1
     db $72, $0B, $72, $2B ; song 2
     db $74, $08, $74, $28 ; song 3
+    db $80, $0E, $82, $0E ; Instrument1
+    db $84, $0E, $86, $0E ; Instrument2
+    db $88, $0E, $8A, $0E ; Instrument3
+    db $8C, $0E, $8E, $0E ; Instrument4
+    db $90, $0E, $92, $0E ; Instrument5
+    db $94, $0E, $96, $0E ; Instrument6
+    db $98, $0E, $9A, $0E ; Instrument7
+    db $9C, $0E, $9E, $0E ; Instrument8
 
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -733,7 +769,8 @@ ItemMessageTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80
-    db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B, $C9, $C9, $C9
+    db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B, $C9, $C9, $C9, $C9, $C9
+    db $C9, $C9, $C9, $C9, $C9, $C9
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

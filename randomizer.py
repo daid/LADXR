@@ -23,6 +23,8 @@ class Randomizer:
         self.rnd = random.Random(self.seed)
         if options.race:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
+        if options.goal == "random":
+            options.goal = self.rnd.randint(-1, 8)
         if options.multiworld:
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
@@ -41,9 +43,6 @@ class Randomizer:
             if count > 0:
                 item_placer.addItem(item, count)
         item_placer.run(self.rnd)
-
-        if options.goal == "random":
-            options.goal = self.rnd.randint(-1, 8)
 
         if options.multiworld:
             z = None

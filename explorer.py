@@ -21,9 +21,18 @@ class Explorer:
                 if req not in self.__inventory:
                     items.add(req)
             elif isinstance(req, COUNT):
-                if self.__inventory.get(req.item, 0) >= req.amount:
-                    return
-                items.add(req.item)
+                if isinstance(req.item, list):
+                    count = 0
+                    for item in req.item:
+                        count += self.__inventory.get(item, 0)
+                    if count >= req.amount:
+                        return
+                    for item in req.item:
+                        items.add(item)
+                else:
+                    if self.__inventory.get(req.item, 0) >= req.amount:
+                        return
+                    items.add(req.item)
             elif isinstance(req, FOUND):
                 if self.__inventory_found.get(req.item, 0) >= req.amount:
                     return
@@ -133,7 +142,13 @@ class Explorer:
             if any(map(lambda r: self._processRequirement(r, func), req)):
                 return True
         elif isinstance(req, COUNT):
-            return self.__inventory.get(req.item, 0) >= req.amount
+            if isinstance(req.item, list):
+                count = 0
+                for item in req.item:
+                    count += self.__inventory.get(item, 0)
+                return count >= req.amount
+            else:
+                return self.__inventory.get(req.item, 0) >= req.amount
         elif isinstance(req, FOUND):
             return self.__inventory_found.get(req.item, 0) >= req.amount
         else:

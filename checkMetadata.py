@@ -34,6 +34,7 @@ checkMetadataTable = {
     "0x10A": CheckMetadata("Three of a Kind Chest", "Tail Cave"), #http://artemis251.fobby.net/zelda/maps/underworld1/010A.GIF
     "0x10A-Owl": CheckMetadata("Three of a Kind Owl", "Tail Cave"), #http://artemis251.fobby.net/zelda/maps/underworld1/010A.GIF
     "0x106": CheckMetadata("Moldorm Heart Container", "Tail Cave"), #http://artemis251.fobby.net/zelda/maps/underworld1/0106.GIF
+    "0x102": CheckMetadata("Full Moon Cello", "Tail Cave"), #http://artemis251.fobby.net/zelda/maps/underworld1/0102.GIF
     "0x136": CheckMetadata("Entrance Chest", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/0136.GIF
     "0x12E": CheckMetadata("Hardhat Beetle Pit Chest", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/012E.GIF
     "0x132": CheckMetadata("Two Stalfos Key", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/0132.GIF
@@ -50,6 +51,7 @@ checkMetadataTable = {
     "0x122": CheckMetadata("Second Switch Locked Chest", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/0122.GIF
     "0x127": CheckMetadata("Enemy Order Room Chest", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/0127.GIF
     "0x12B": CheckMetadata("Genie Heart Container", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/012B.GIF
+    "0x12A": CheckMetadata("Conch Horn", "Bottle Grotto"), #http://artemis251.fobby.net/zelda/maps/underworld1/012A.GIF
     "0x153": CheckMetadata("Vacuum Mouth Chest", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/0153.GIF
     "0x151": CheckMetadata("Two Bombite, Sword Stalfos, Zol Chest", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/0151.GIF
     "0x14F": CheckMetadata("Four Zol Chest", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/014F.GIF
@@ -71,6 +73,7 @@ checkMetadataTable = {
     "0x140-Owl": CheckMetadata("Flying Bomb Owl", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/0140.GIF
     "0x15B": CheckMetadata("Nightmare Door Key", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/015B.GIF
     "0x15A": CheckMetadata("Slime Eye Heart Container", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/015A.GIF
+    "0x159": CheckMetadata("Sea Lily's Bell", "Key Cavern"), #http://artemis251.fobby.net/zelda/maps/underworld1/0159.GIF
     "0x179": CheckMetadata("Watery Statue Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0179.GIF
     "0x16A": CheckMetadata("NW of Boots Pit Ledge Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/016A.GIF
     "0x178": CheckMetadata("Two Spiked Beetle, Zol Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0178.GIF
@@ -86,6 +89,7 @@ checkMetadataTable = {
     "0x160": CheckMetadata("Flippers Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0160.GIF
     "0x176": CheckMetadata("Nightmare Key Ledge Chest", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0176.GIF
     "0x166": CheckMetadata("Angler Fish Heart Container", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/01FF.GIF
+    "0x162": CheckMetadata("Surf Harp", "Angler's Tunnel"), #http://artemis251.fobby.net/zelda/maps/underworld1/0162.GIF
     "0x1A0": CheckMetadata("Entrance Hookshottable Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/01A0.GIF
     "0x19E": CheckMetadata("Spark, Two Iron Mask Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019E.GIF
     "0x181": CheckMetadata("Crystal Key", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0181.GIF
@@ -101,6 +105,7 @@ checkMetadataTable = {
     "0x183": CheckMetadata("Three Stalfos Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0183.GIF
     "0x186": CheckMetadata("Nightmare Key/Torch Cross Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0186.GIF
     "0x185": CheckMetadata("Slime Eel Heart Container", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0185.GIF
+    "0x182": CheckMetadata("Wind Marimba", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0182.GIF
     "0x1CF": CheckMetadata("Mini-Moldorm, Spark Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01CF.GIF
     "0x1C9": CheckMetadata("Flying Heart, Statue Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01C9.GIF
     "0x1BB-Owl": CheckMetadata("Corridor Owl", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01BB.GIF
@@ -119,6 +124,7 @@ checkMetadataTable = {
     "0x1B6-Owl": CheckMetadata("Pot Owl", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B6.GIF
     "0x1B6": CheckMetadata("Pot Locked Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B6.GIF
     "0x1BC": CheckMetadata("Facade Heart Container", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01BC.GIF
+    "0x1B5": CheckMetadata("Coral Triangle", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B5.GIF
     "0x210": CheckMetadata("Entrance Key", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0210.GIF
     "0x216-Owl": CheckMetadata("Ball Owl", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0216.GIF
     "0x212": CheckMetadata("Horse Head, Bubble Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0212.GIF
@@ -134,6 +140,7 @@ checkMetadataTable = {
     "0x21A": CheckMetadata("Mirror Shield Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/021A.GIF
     "0x220": CheckMetadata("Conveyor Beamos Chest", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/0220.GIF
     "0x223": CheckMetadata("Evil Eagle Heart Container", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E8.GIF
+    "0x22C": CheckMetadata("Organ of Evening Calm", "Eagle's Tower"), #http://artemis251.fobby.net/zelda/maps/underworld2/022C.GIF
     "0x24F": CheckMetadata("Push Block Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/024F.GIF
     "0x24D": CheckMetadata("Left of Hinox Zamboni Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/024D.GIF
     "0x25C": CheckMetadata("Vacuum Mouth Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/025C.GIF
@@ -156,6 +163,7 @@ checkMetadataTable = {
     "0x23A": CheckMetadata("West of Boss Door Ledge Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/023A.GIF
     "0x232": CheckMetadata("Nightmare Key/Big Zamboni Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0232.GIF
     "0x234": CheckMetadata("Hot Head Heart Container", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0234.GIF
+    "0x230": CheckMetadata("Thunder Drum", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0230.GIF
     "0x314": CheckMetadata("Lower Small Key", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0314.GIF
     "0x308-Owl": CheckMetadata("Upper Key Owl", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0308.GIF
     "0x308": CheckMetadata("Upper Small Key", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0308.GIF
