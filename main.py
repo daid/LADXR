@@ -77,6 +77,8 @@ def main(mainargs=None):
         help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
     parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
+    parser.add_argument('--accessibility', dest="accessibility_rule", choices=['all', 'goal'],
+        help="Switches between making sure all locations are reachable or only the goal is reachable")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
         help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
     parser.add_argument('--pool', dest="itempool", choices=['normal', 'casual', 'pain', 'keyup'], default='normal',

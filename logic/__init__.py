@@ -52,6 +52,7 @@ class Logic:
         dungeons[entranceMapping[8]].entrance.connect(world.graveyard, POWER_BRACELET)
 
         self.start = world.start
+        self.windfish = world.windfish
         self.location_list = []
         self.iteminfo_list = []
 

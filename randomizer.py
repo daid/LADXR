@@ -31,9 +31,9 @@ class Randomizer:
             self.__logic = logic.Logic(options, self.rnd)
 
         if not options.keysanity or options.forwardfactor:
-            item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor)
+            item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)
         else:
-            item_placer = RandomItemPlacer(self.__logic)
+            item_placer = RandomItemPlacer(self.__logic, options.accessibility_rule)
 
         if options.plan:
             assert options.multiworld is None
@@ -147,10 +147,11 @@ class ItemPlacer:
 
 
 class RandomItemPlacer:
-    def __init__(self, logic):
+    def __init__(self, logic, accessibility_rule):
         self.__logic = logic
         self.__item_pool = {}
         self.__spots = []
+        self.__accessibility_rule = accessibility_rule
 
     def addItem(self, item, count=1):
         self.__item_pool[item] = self.__item_pool.get(item, 0) + count
@@ -234,13 +235,16 @@ class RandomItemPlacer:
             e.addItem(item_pool_item, count)
         e.visit(self.__logic.start)
 
-        if len(e.getAccessableLocations()) != len(self.__logic.location_list):
-            if verbose:
-                for loc in self.__logic.location_list:
-                    if loc not in e.getAccessableLocations():
-                        print("Cannot access: ", loc.items)
-                print("Not all locations are accessible anymore with the full item pool")
-            return False
+        if self.__accessibility_rule == "goal":
+            return self.__logic.windfish in e.getAccessableLocations()
+        else:
+            if len(e.getAccessableLocations()) != len(self.__logic.location_list):
+                if verbose:
+                    for loc in self.__logic.location_list:
+                        if loc not in e.getAccessableLocations():
+                            print("Cannot access: ", loc.items)
+                    print("Not all locations are accessible anymore with the full item pool")
+                return False
         return True
 
     def canStillPlaceItemPool(self, verbose=False):
@@ -276,13 +280,14 @@ class ForwardItemPlacer:
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
     ]
 
-    def __init__(self, logic, forwardfactor):
+    def __init__(self, logic, forwardfactor, accessibility_rule):
         self.__logic = logic
         self.__item_pool = {}
         self.__spots = []
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
         self.__forwardfactor = forwardfactor if forwardfactor else 0.5
+        self.__accessibility_rule = accessibility_rule
 
     def addItem(self, item, count=1):
         self.__item_pool[item] = self.__item_pool.get(item, 0) + count
@@ -315,8 +320,12 @@ class ForwardItemPlacer:
     def __placeItem(self, rnd):
         e = explorer.Explorer()
         e.visit(self.__logic.start)
-        spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-        req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self.__item_pool]
+        if self.__accessibility_rule == "goal" and self.__logic.windfish in e.getAccessableLocations():
+            spots = self.__spots
+            req_items = []
+        else:
+            spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
+            req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self.__item_pool]
         if not req_items:
             for di in self.DUNGEON_ITEMS:
                 if di in self.__item_pool:
@@ -335,9 +344,10 @@ class ForwardItemPlacer:
         spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
 
         spot.item = item
-        if e.getRequiredItemsForNextLocations() and not self.hasNewPlacesToExplore():
-            spot.item = None
-            return False
+        if self.__accessibility_rule != "goal" or self.__logic.windfish not in e.getAccessableLocations():
+            if e.getRequiredItemsForNextLocations() and not self.hasNewPlacesToExplore():
+                spot.item = None
+                return False
         self.removeItem(spot.item)
         self.removeSpot(spot)
         if not self.canStillPlaceItemPool():
