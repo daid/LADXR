@@ -35,7 +35,7 @@ function stateTryToConnect()
         socket = socketlib.tcp()
         socket:settimeout(5)
     end
-    local ret, err = socket:connect("localhost", 32032)
+    local ret, err = socket:connect("daid.eu", 32032)
     if ret ~= 1 then
         print("Connection failed: " .. err)
         connection_state = stateError
