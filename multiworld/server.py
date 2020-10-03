@@ -1,159 +1,37 @@
-import struct
-import asyncio
-import binascii
-import time
+import socketserver
 import argparse
+import sys
+import binascii
 
 
-class BGBClient:
-    CMD_VERSION = 1
-    CMD_JOYPAD = 101
-    CMD_SYNC1 = 104
-    CMD_SYNC2 = 105
-    CMD_SYNC3 = 106
-    CMD_STATUS = 108
-    CMD_DISCONNECT = 109
-
-    def __init__(self, server, reader, writer):
-        self.__server = server
-        self.__reader = reader
-        self.__writer = writer
-        self.__t0 = time.monotonic()
-        self.__running = False
-        self.__reply = asyncio.get_running_loop().create_future()
-        self.__rom_id = None
-        self.__player_id = None
-        self.__player_info = None
-
-    async def __readPacket(self):
-        packet = b''
+class Connection(socketserver.StreamRequestHandler):
+    def handle(self):
+        print("Open", self)
         while True:
-            data = await self.__reader.read(8 - len(packet))
+            data = self.rfile.read(1)
             if data == b'':
-                self.__writer.close()
-                raise ValueError()
-            packet += data
-            if len(packet) == 8:
-                return struct.unpack("<BBBBI", packet)
+                break
+            command = data[0]
+            if command == 0x00:
+                sync_nr = self.rfile.read(1)[0]
+                
+                player_info = self.server.getGame(self.game_id).getPlayer(self.player_id)
+                if player_info.getItemCount() > sync_nr:
+                    self.wfile.write(bytes([0x01, player_info.getItem(sync_nr), player_info.getItemSource(sync_nr)]))
+                else:
+                    self.wfile.write(bytes([0x00]))
+            elif command == 0x10:
+                data = self.rfile.read(4)
+                room_nr = (data[0] << 8) | data[1]
+                target_player_id = data[2]
+                item_id = data[3]
 
-    async def lowlevel(self):
-        await self.__send(self.CMD_VERSION, 1, 4, 0, 0)
-        while True:
-            try:
-                b1, b2, b3, b4, t = await self.__readPacket()
-            except ValueError:
-                self.__reply.set_exception(ValueError())
-                return
-            # print("<", time.monotonic(), b1, b2, b3, b4, t)
-            if b1 == self.CMD_VERSION:  # When we get the version need to reply with our status.
-                await self.__send(self.CMD_STATUS, 5, 0, 0, 0)
-                #self.server.clients.add(self)
-            elif b1 == self.CMD_JOYPAD:
-                pass  # ignore JOYPAD commands
-            elif b1 == self.CMD_SYNC1:
-                pass  # link master transmit command
-            elif b1 == self.CMD_SYNC2:  # link slave reply
-                self.__reply.set_result(b2)
-            elif b1 == self.CMD_SYNC3 and b2 == 1:
-                self.__reply.set_result(-1)
-            elif b1 == self.CMD_SYNC3 and b2 == 0:
-                # Time sync, need to reply to keep emulator running
-                pass # await self.__send(self.CMD_SYNC3, 0, 0, 0)
-            elif b1 == self.CMD_STATUS:
-                self.__running = (b2 & 0x03) == 0x01
-            elif b1 == self.CMD_DISCONNECT:
-                pass
-
-    async def __send(self, b1, b2, b3, b4, t=None):
-        if t is None:
-            t = int((time.monotonic() - self.__t0) * 2097152) & 0x7FFFFFFF
-        self.__writer.write(struct.pack("<BBBBI", b1, b2, b3, b4, t))
-        # print(">", time.monotonic(), b1, b2, b3, b4, t)
-        await self.__writer.drain()
-
-    async def send(self, byte):
-        await asyncio.sleep(0.1)
-        print("Send:", hex(byte))
-        self.__reply = asyncio.get_running_loop().create_future()
-        await self.__send(self.CMD_SYNC1, byte, 0x87, 0)
-        reply = await self.__reply
-        if reply == -1:
-            print(">%02x ---" % (byte))
-            return await self.send(byte)
-        print(">%02x <%02x" % (byte, reply))
-        return reply
-
-    async def ping(self):
-        t0 = time.monotonic()
-        while True:
-            await asyncio.sleep(0.01)
-            while time.monotonic() - t0 > 0.0:
-                await self.__send(self.CMD_SYNC3, 0, 0, 0)
-                t0 += 0.001
-
-    async def highlevel(self):
-        await asyncio.sleep(20)
-        await self.send(0xFF)
-        await self.send(0xFF)
-        await self.send(0xFF)
-        while True:
-            status_bits = await self.send(0xEE)
-            seq_nr = await self.send(0xFF)
-            # print(binascii.hexlify(self.__rom_id), self.__player_id, status_bits, seq_nr)
-
-            if (status_bits & 0x80) != 0:
-                if self.__rom_id:
-                    print("Player did S&Q:", binascii.hexlify(self.__rom_id), self.__player_id)
-                self.__rom_id = None
-                self.__player_id = None
-                self.__player_info = None
-            elif self.__rom_id is None:
-                await self.send(0xE2)
-                self.__rom_id = bytes([await self.send(0xFF) for _ in range(4)])
-                self.__player_id = await self.send(0xFF)
-                self.__player_info = self.__server.getPlayerInfo(self.__rom_id, self.__player_id)
-                print("Player connected:", binascii.hexlify(self.__rom_id), self.__player_id)
-            elif (status_bits & 0x01) == 0 and seq_nr < self.__player_info.getItemCount():
-                print("Sending item:", hex(self.__player_info.getItem(seq_nr)))
-                await self.send(0xE0)
-                await self.send(self.__player_info.getItem(seq_nr))
-                await self.send(self.__player_info.getItemSource(seq_nr))
-            elif (status_bits & 0x02) == 2:
-                await self.send(0xE1)
-                room_high = await self.send(0xFF)
-                room_low = await self.send(0xFF)
-                room = room_low | (room_high << 8)
-                target = await self.send(0xFF)
-                item = await self.send(0xFF)
-
-                print("Got item:", target, hex(room), hex(item))
-                self.__server.getGame(self.__rom_id).gotItem(self.__player_id, target, room, item)
-
-
-class Server:
-    def __init__(self):
-        self.clients = set()
-        self.games = {}
-
-    async def handleClient(self, reader, writer):
-        client = BGBClient(self, reader, writer)
-        print("new client")
-        await asyncio.gather(client.lowlevel(), client.ping(), client.highlevel(), return_exceptions=True)
-        print("del client")
-
-    async def run(self, port=3333):
-        print("Listening on port:", port)
-        server = await asyncio.start_server(self.handleClient, "0.0.0.0", port)
-        async with server:
-            await server.serve_forever()
-
-    def getPlayerInfo(self, rom_id, player_id):
-        return self.getGame(rom_id).getPlayer(player_id)
-
-    def getGame(self, rom_id):
-        if rom_id not in self.games:
-            self.games[rom_id] = Game(rom_id)
-        return self.games[rom_id]
+                self.server.getGame(self.game_id).gotItem(self.player_id, target_player_id, room_nr, item_id)
+            elif command == 0x20:
+                self.game_id = self.rfile.read(4)
+                self.player_id = self.rfile.read(1)[0]
+                print("Player connected: %d (%s)" % (self.player_id, binascii.hexlify(self.game_id)))
+        print("Close", self)
 
 
 class Game:
@@ -164,8 +42,7 @@ class Game:
             for line in open(binascii.hexlify(self.__rom_id).decode("ascii") + ".log", "rt"):
                 source_player_id, target_player_id, room, item = map(int, line.strip().split(":"))
                 if self.getPlayer(source_player_id).markRoomDone(room):
-                    print(source_player_id, target_player_id, room, item)
-                    self.getPlayer(target_player_id).addItem(item)
+                    self.getPlayer(target_player_id).addItem(item, source_player_id)
         except FileNotFoundError:
             pass
 
@@ -207,10 +84,25 @@ class PlayerInfo:
         return True
 
 
+class Server(socketserver.ThreadingTCPServer):
+    block_on_close = False
+    daemon_threads = True
+
+    def __init__(self, port):
+        super().__init__(("0.0.0.0", port), Connection)
+        self.games = {}
+
+    def getGame(self, game_id):
+        if game_id not in self.games:
+            self.games[game_id] = Game(game_id)
+        return self.games[game_id]
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Multiworld server')
     parser.add_argument('--port', type=int, default=3333)
     args = parser.parse_args()
 
-    server = Server()
-    asyncio.run(server.run(args.port))
+    server = Server(args.port)
+    server.serve_forever()
+    sys.exit(0)
