@@ -598,6 +598,7 @@ GiveSong3:
 
 GiveInstrument:
     ldh  a, [$F1] ; Load active sprite variant
+    sub  $8E
     ld   d, $00
     ld   e, a
     ld   hl, $db65 ; has instrument table
