@@ -10,7 +10,7 @@ foreach(scandir("LADXR/gfx") as $gfx)
     }
 }
 $options = [
-    'seed' => ['label' => 'Seed', 'type' => 'text', 'placeholder' => 'Leave empty for random seed', 'arg' => '--seed'],
+    'seed' => ['label' => 'Seed', 'type' => 'text', 'placeholder' => 'Leave empty for random seed', 'arg' => '--seed', 'multiworld' => False],
     'heartpiece' => ['label' => 'Randomize heart pieces', 'type' => 'check', 'default' => 'true', 'arg' => '--heartpiece', 'tooltip' => 'Includes heart pieces in the item pool'],
     'seashells' => ['label' => 'Randomize hidden seashells', 'type' => 'check', 'default' => 'true', 'arg' => '--seashells', 'tooltip' => 'Randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)'],
     'keysanity' => ['label' => 'Keysanity', 'type' => 'check', 'default' => '', 'arg' => '--keysanity', 'tooltip' => 'Dungeon keys, maps and compasses can be found anywhere'],
@@ -34,7 +34,7 @@ $options = [
     'nag-messages' => ['label' => 'Show nag messages', 'type' => 'check', 'default' => false, 'arg' => '--nag-messages', 'tooltip' => 'Enables the nag messages normally shown when touching stones and crystals'],
     'gfxmod' => ['label' => 'Graphics', 'type' => $gfx_options, 'arg' => '--gfxmod', 'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game'],
     'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal (depending on tunic)', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette'],
-    'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => false, 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled'],
-    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['none' => 'None', 'text' => 'Text', 'json' => 'JSON'], 'arg' => '--spoilerformat'],
+    'race' => ['label' => 'Race mode', 'type' => 'check', 'default' => false, 'arg' => '--race', 'tooltip' => 'Spoiler logs can not be generated for ROMs generated with race mode enabled', 'multiworld' => False],
+    'spoilerformat' => ['label' => 'Spoiler Format', 'type' => ['none' => 'None', 'text' => 'Text', 'json' => 'JSON'], 'arg' => '--spoilerformat', 'multiworld' => False],
 ];
 ?>
