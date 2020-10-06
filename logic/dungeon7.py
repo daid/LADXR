@@ -27,7 +27,7 @@ class Dungeon7:
         final_pillar = Location(7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
         pre_boss = Location(7).connect(final_pillar, NIGHTMARE_KEY7) 
-        beamos_horseheads = Location(7).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
+        beamos_horseheads = Location(7).add(DungeonChest(0x220)).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
         boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, boss_requirement)
 
         if not options.keysanity:
