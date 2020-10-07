@@ -7,41 +7,61 @@ if (isset($_FILES["rom"]))
     $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");
     $spoilerPath = @tempnam(sys_get_temp_dir(), "spoiler");
     $command = "/usr/bin/python3 main.py " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
+    $player_count = (int)$_POST["player_count"];
+    $command .= " --multiworld ${player_count}";
     foreach($options as $key => $option)
     {
-        if (isset($_POST[$key]) && $_POST[$key] != "")
+        if(!isset($option['multiworld']) || $option['multiworld'] !== False)
+            continue;
+
+        $pkey = "${key}_0";
+        if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
         {
-            if ($key == "gfxmod")
-                $_POST[$key] = "gfx/" . $_POST[$key];
             if ($option['type'] == 'check')
                 $command .= " ".$option['arg'];
             else
-                $command .= " ".$option['arg']." ".escapeshellarg($_POST[$key]);
+                $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
         }
     }
-    $command .= " 2>&1";
+    for($player=0; $player<$player_count; $player++)
+    {
+        $command .= " --multiworld-config \"";
 
+        foreach($options as $key => $option)
+        {
+            $pkey = "${key}_${player}";
+            if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
+            {
+                if ($pkey == "gfxmod")
+                    $_POST[$pkey] = "gfx/" . $_POST[$pkey];
+                if ($option['type'] == 'check')
+                    $command .= " ".$option['arg'];
+                else
+                    $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
+            }
+        }
+        $command .= "\"";
+    }
+    $command .= " 2>&1";
     if (false)
     {
-        echo("<pre>"); print_r($_FILES); print_r($_POST); print_r($command);
-        exit();
+        echo("<pre>"); print_r($_FILES); print_r($_POST); print_r($command); exit();
     }
     chdir("LADXR");
-
     $output = []; $result = -1;
     exec($command, $output, $result);
-
     if ($result == 0)
     {
         $seed = "";
+
         foreach($output as $line)
             if (strpos($line, "Seed:") !== false)
                 $seed = trim(substr($line, 5));
 
-        $romContents = base64_encode(file_get_contents($romOutputPath));
+        $romContents = base64_encode(file_get_contents($romOutputPath)); 
         $spoilerContents = file_get_contents($spoilerPath);
 
-        $json = ['success' => true, 'seed' => $seed, 'romFilename' => 'LADXR_'.$seed.'.gbc', 'rom' => $romContents, 'spoiler' => $spoilerContents];
+        $json = ['success' => true, 'seed' => $seed, 'romFilename' => 'LADXR_Multiworld_'.$seed.'.zip', 'rom' => $romContents, 'spoiler' => $spoilerContents];
 
         header('Content-Type: application/json');
         print(json_encode($json));
@@ -57,6 +77,14 @@ if (isset($_FILES["rom"]))
     print(json_encode($json));
     exit();
 }
+
+if (!isset($_GET["player_count"]))
+{
+    echo "Missing player count...";
+    exit();
+}
+$player_count = (int)$_GET["player_count"];
+
 ?><html>
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
@@ -129,22 +157,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 e.value = kv[1];
         }
     }
-    var gfxinfo = document.createElement("span");
-    var gfximg = document.createElement("img");
-    document.getElementById("gfxmod").parentElement.appendChild(gfximg);
-    document.getElementById("gfxmod").parentElement.appendChild(gfxinfo);
-    document.getElementById("gfxmod").oninput = function()
-    {
-        if (document.getElementById("gfxmod").value != "")
-            gfximg.src = "LADXR/gfx/" + document.getElementById("gfxmod").value + ".png";
-        else
-            gfximg.src = "";
-        gfxinfo.innerHTML = gfxInfoMap[document.getElementById("gfxmod").value];
-    }
-    var gfxInfoMap = {};
-    <?php foreach($gfx_info as $k => $v) { ?>
-        gfxInfoMap["<?=$k?>"] = "<?=$v?>";
-    <?php } ?>
 })
 
 function b64toBlob(b64Data, contentType='', sliceSize=512)
@@ -266,7 +278,7 @@ div.failure {
     </div>
     <form action="?" method="post" enctype="multipart/form-data" id="form">
     <fieldset>
-        <legend>LADXR: Legend Of Zelda: Links Awakening RANDOMIZER, v??</legend>
+        <legend>LADXR: Legend Of Zelda: Links Awakening MULTIWORLD RANDOMIZER, v??</legend>
         <div class="row">
         <div class="col-sm-12 col-md-6">
             <p>See: <a href="https://daid.github.io/LADXR/">main site</a> for description/details</p>
@@ -278,7 +290,7 @@ div.failure {
             <div id="seedSpinner" class="spinner" style="display: none;"></div>
         </div>
         <div class="col-sm-12 col-md">
-            <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 2 minutes. Slow server)
+            <input id="submitbutton" type="submit" value="Randomize!" disabled/> (Be patient, generation takes up to 10 minutes. Slow server)
         </div>
         </div>
         <div class="row">
@@ -292,7 +304,8 @@ div.failure {
         </div>
         </div>
 <?php
-$player_count = 4;
+
+echo("<input type='hidden' name='player_count' value='$player_count'>");
 
 foreach($options as $key => $option)
 {
@@ -304,17 +317,14 @@ foreach($options as $key => $option)
     echo('"><div class="col-sm-12 col-md-3">');
     echo("<label for='$key'>".$option['label'].":</label>");
     echo("</div>");
-    
-    var $pkey = "$key_$player";
-    var $count = $player_count;
+
+    $count = $player_count;
     if(isset($option['multiworld']) && $option['multiworld'] === False)
-    {
-        $pkey = "$key";
-        $counter = 1;
-    }
+        $count = 1;
     for($player=0; $player<$count; $player++)
     {
-        echo("<div class='col-sm-12 col-md'>");
+        $pkey = "${key}_${player}";
+        echo("<div class='col-sm-12 col-md-2'>");
         if($option['type'] == "text")
             echo("<input type='text' id='$pkey' name='$pkey' placeholder='".$option['placeholder']."'/>");
         if($option['type'] == "check")
