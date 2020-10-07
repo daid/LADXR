@@ -37,7 +37,7 @@ DEFAULT_ITEM_POOL = {
     RUPEES_50: 19,
 
     SEASHELL: 24,
-    MEDICINE: 2,
+    MEDICINE: 3,
     GEL: 4,
     MESSAGE: 1,
 
