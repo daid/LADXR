@@ -131,7 +131,7 @@ def main(mainargs=None):
         for key in dir(locations.items):
             f.write("")
         for name, data in sorted(checkMetadata.checkMetadataTable.items(), key=lambda n: str(n[1])):
-            if name is not "None":
+            if name != "None":
                 f.write(";%s\n" % (data))
                 f.write("%s: \n" % (name))
         sys.exit(0)
