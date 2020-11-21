@@ -13,6 +13,7 @@ import patches.bank3e
 import patches.bank3f
 import patches.inventory
 import patches.witch
+import patches.tarin
 import patches.softlock
 import patches.maptweaks
 import patches.chest
@@ -98,6 +99,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.droppedKey.fixDroppedKey(rom)
     patches.madBatter.upgradeMadBatter(rom)
     patches.tunicFairy.upgradeTunicFairy(rom)
+    patches.tarin.updateTarin(rom)
     patches.health.upgradeHealthContainers(rom)
     if options.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)
