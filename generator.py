@@ -151,10 +151,10 @@ def generateRom(options, seed, logic, multiworld=None):
     elif options.hpmode == '1':
         patches.health.setStartHealth(rom, 1)
 
-    if options.goal != "random" and options.goal is not None:
-        patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
     if options.goal == "raft":
         patches.goal.setRaftGoal(rom)
+    elif options.goal != "random" and options.goal is not None:
+        patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
 
     patches.inventory.selectToSwitchSongs(rom)
     if options.quickswap == 'a':
