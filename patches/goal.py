@@ -65,9 +65,17 @@ noinc:
 def setRaftGoal(rom):
     rom.texts[0x1A3] = formatText(b"Just sail away.")
 
-    # Remove the egg event handler.
+    # Remove the egg and egg event handler.
     re = RoomEditor(rom, 0x006)
+    print(re.objects)
+    for x in range(4, 7):
+        for y in range(0, 4):
+            re.removeObject(x, y)
+    re.objects.append(ObjectHorizontal(4, 1, 0x4d, 3))
+    re.objects.append(ObjectHorizontal(4, 2, 0x03, 3))
+    re.objects.append(ObjectHorizontal(4, 3, 0x03, 3))
     re.entities = []
+    re.updateOverlay()
     re.store(rom)
 
     re = RoomEditor(rom, 0x08D)
