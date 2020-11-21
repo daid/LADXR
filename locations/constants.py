@@ -16,36 +16,6 @@ INVENTORY_MAP = {
     BOOMERANG: "0D",
     TOADSTOOL: "0E",
 }
-INVENTORY_ICON = {
-    SWORD: "8415",
-    BOMB: "8015",
-    POWER_BRACELET: "8215",
-    SHIELD: "8615",
-    BOW: "8814",
-    HOOKSHOT: "8A14",
-    MAGIC_ROD: "8C14",
-    PEGASUS_BOOTS: "9816",
-    OCARINA: "9014",
-    FEATHER: "9216",
-    SHOVEL: "9617",
-    MAGIC_POWDER: "8E14",
-    BOOMERANG: "241C",
-
-    FLIPPERS: "9415",
-    SLIME_KEY: "4E1C",
-    TAIL_KEY: "301C",
-    ANGLER_KEY: "321C",
-    FACE_KEY: "341C",
-    BIRD_KEY: "361C",
-    GOLD_LEAF: "3A1C",
-
-    RUPEES_50: "A615",
-    RUPEES_20: "3819",
-    RUPEES_100: "3818",
-    RUPEES_200: "381A",
-    RUPEES_500: "381A",
-    SEASHELL: "9E14",
-}
 INVENTORY_NAME = {
     SWORD: b"Sword",
     BOMB: b"Bombs",
