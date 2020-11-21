@@ -3,6 +3,7 @@ import json
 import logic
 import explorer
 import patches.witch
+import patches.startLocation
 import patches.dungeonEntrances
 import patches.enemies
 
@@ -43,6 +44,7 @@ class SpoilerLog():
         self.testOnly = args.test
         self.accessibleItems = []
         self.inaccessibleItems = None
+        self.start_house_index = patches.startLocation.readStartLocation(rom)
         self.dungeonOrder = patches.dungeonEntrances.readEntrances(rom)
         self.bossMapping = patches.enemies.readBossMapping(rom)
         self.outputFormat = args.spoilerformat
@@ -62,7 +64,7 @@ class SpoilerLog():
         self._loadItems(args, rom)
     
     def _loadItems(self, args, rom):
-        my_logic = logic.Logic(args, None, entranceMapping=self.dungeonOrder, bossMapping=self.bossMapping)
+        my_logic = logic.Logic(args, start_house_index=self.start_house_index, entranceMapping=self.dungeonOrder, bossMapping=self.bossMapping)
         remainingItems = set(my_logic.iteminfo_list)
 
         currentSphere = 0

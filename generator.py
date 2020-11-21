@@ -3,6 +3,7 @@ import binascii
 from romTables import ROMWithTables
 import assembler
 import patches.dungeonEntrances
+import patches.startLocation
 import patches.enemies
 import patches.titleScreen
 import patches.aesthetics
@@ -169,6 +170,7 @@ def generateRom(options, seed, logic, multiworld=None):
         hints.addHints(rom, random, logic.iteminfo_list)
 
         # Patch the generated logic into the rom
+        patches.startLocation.setStartLocation(rom, logic.start_house_index)
         if logic.entranceMapping:
             patches.dungeonEntrances.changeEntrances(rom, logic.entranceMapping)
         for spot in logic.iteminfo_list:
@@ -181,6 +183,7 @@ def generateRom(options, seed, logic, multiworld=None):
         rom.patch(0x00, 0x0055, "00", "%02x" % (multiworld))
 
         # Patch the generated logic into the rom
+        patches.startLocation.setStartLocation(rom, logic.worlds[multiworld].start_house_index)
         if logic.worlds[multiworld].entranceMapping:
             patches.dungeonEntrances.changeEntrances(rom, logic.worlds[multiworld].entranceMapping)
         for spot in logic.iteminfo_list:

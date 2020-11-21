@@ -5,20 +5,21 @@ from locations import *
 
 class World:
     def __init__(self, options):
-        start = Location().add(StartItem())
-        Location().add(ShopItem(2)).connect(start, COUNT("RUPEES", 10))
-        Location().add(ShopItem(0)).connect(start, COUNT("RUPEES", 200))
-        Location().add(ShopItem(1)).connect(start, COUNT("RUPEES", 980))
-        dream_hut = Location().add(Chest(0x2BF)).connect(start, AND(POWER_BRACELET, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)))
+        start_house = Location().add(StartItem())
+        mabe_village = Location()
+        Location().add(ShopItem(2)).connect(mabe_village, COUNT("RUPEES", 10))
+        Location().add(ShopItem(0)).connect(mabe_village, COUNT("RUPEES", 200))
+        Location().add(ShopItem(1)).connect(mabe_village, COUNT("RUPEES", 980))
+        dream_hut = Location().add(Chest(0x2BF)).connect(mabe_village, AND(POWER_BRACELET, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)))
         dream_hut2 = Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
-        Location().add(HeartPiece(0x2A4)).connect(start, bush)  # well
-        # Location().add(HeartPiece(0x2B1)).connect(start, AND(bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
-        Location().add(Seashell(0x0A3)).connect(start, bush)  # bushes below the shop
-        Location().add(Seashell(0x2B2)).connect(start, SHOVEL)  # in the kennel
-        Location().add(Seashell(0x0D2)).connect(start, PEGASUS_BOOTS)  # smash into tree next to lv1
-        Location().add(Song(0x092)).connect(start, OCARINA)  # Marins song
+        Location().add(HeartPiece(0x2A4)).connect(mabe_village, bush)  # well
+        # Location().add(HeartPiece(0x2B1)).connect(mabe_village, AND(bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
+        Location().add(Seashell(0x0A3)).connect(mabe_village, bush)  # bushes below the shop
+        Location().add(Seashell(0x2B2)).connect(mabe_village, SHOVEL)  # in the kennel
+        Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
+        Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
 
-        sword_beach = Location().add(BeachSword()).connect(start, OR(bush, SHIELD, attack_hookshot))
+        sword_beach = Location().add(BeachSword()).connect(mabe_village, OR(bush, SHIELD, attack_hookshot))
         if options.boomerang == 'trade':
             Location().add(BoomerangGuy()).connect(sword_beach, AND(BOMB, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
         elif options.boomerang == 'gift':
@@ -27,7 +28,7 @@ class World:
         ghost_hut = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET) 
         Location().add(Seashell(0x1E3)).connect(ghost_hut, POWER_BRACELET)
 
-        forest = Location().add(Toadstool()).connect(start, bush)  # forest stretches all the way from the start town to the witch hut
+        forest = Location().add(Toadstool()).connect(mabe_village, bush)  # forest stretches all the way from the start town to the witch hut
         forest_heartpiece = Location().add(HeartPiece(0x044)).connect(forest, OR(BOOMERANG, FEATHER, HOOKSHOT))  # next to the forest, surrounded by pits
         Location().add(Witch()).connect(forest, TOADSTOOL)
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET) #chest at start forest with 2 zols
@@ -56,7 +57,7 @@ class World:
         # "Ukuku Prairie"
         # The center_area is the whole area right of the start town, up to the river, and the castle.
         # Dungeon 3 and 5 are accessed from here
-        center_area = Location().connect(start, POWER_BRACELET)
+        center_area = Location().connect(mabe_village, POWER_BRACELET)
         center_area.connect(graveyard, POWER_BRACELET)
         center_area.add(Chest(0x2CD))  # cave next to town
         mamu = Location().add(Song(0x2FB)).connect(center_area, AND(FEATHER, PEGASUS_BOOTS, HOOKSHOT, POWER_BRACELET, OCARINA))
@@ -107,14 +108,14 @@ class World:
         Location().add(HeartPiece(0x1E8)).connect(desert, BOMB)  # above the quicksand cave
         Location().add(Seashell(0x0FF)).connect(desert, POWER_BRACELET)
 
-        # Area below the windfish egg
+        # Area below the windfish egg and to the right below the L4 entrance
         below_mountains = Location().connect(graveyard, POWER_BRACELET)
         into_to_mountains = Location().add(Chest(0x018)).connect(below_mountains, AND(POWER_BRACELET, SWORD)) # chest outside obstacle cave
         obstacle_cave_chest = Location().add(Chest(0x2BB)).connect(into_to_mountains, HOOKSHOT) # chest at obstacles
         right_mountains_1 = Location().add(Chest(0x28A)).connect(into_to_mountains, PEGASUS_BOOTS) # chest in passage to papahl
         Location().add(HeartPiece(0x1F2)).connect(below_mountains, FLIPPERS)  # cave next to level 4
         dungeon4_entrance = Location().connect(below_mountains, FLIPPERS) # swim
-        right_mountains_1.connect(dungeon4_entrance, ANGLER_KEY, one_way=True) # go around right_mountains_1, "needs" angler key to unlock ledge
+        right_mountains_1.connect(dungeon4_entrance, OR(FLIPPERS, AND(SWORD, PEGASUS_BOOTS, POWER_BRACELET, ANGLER_KEY)), one_way=True) # go around right_mountains_1, "needs" angler key, and requirements to get to the keyhole to unlock ledge
         Location().add(Song(0x2FD)).connect(below_mountains, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
 
         face_shrine = Location().add(Chest(0x2FC)).connect(animal_town, AND(bush, POWER_BRACELET))
@@ -132,11 +133,13 @@ class World:
         raft_game.connect(center_area, FLIPPERS)
 
         right_mountains_2 = Location().connect(right_mountains_1, FLIPPERS) # towards d7
+        right_mountains_2.connect(below_mountains, FLIPPERS, one_way=True)  # drop down the waterfall
         luigi_rooster_house = Location().connect(right_mountains_1, FLIPPERS) # up the ladder
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             right_mountains_2.add(OwlStatue(0x1E)) # owl statue below d7
         bridge_seashell = Location().add(Seashell(0x00C)).connect(luigi_rooster_house, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
         bird_key = Location().add(BirdKey()).connect(luigi_rooster_house, COUNT(POWER_BRACELET, 2)) # assumes rooster to cross the pits before the statue?
+        luigi_rooster_house.connect(right_mountains_1, None, one_way=True) # Drop down the hole at the bird key
         # MultiChest is causing issues with the sanity checker when keysanity is disabled, so disabled it for now.
         # Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle.
         Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # chest after multichest puzzle outside
@@ -149,6 +152,7 @@ class World:
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         dungeon8_phone = Location().connect(left_side_mountain, AND(BOMB, COUNT(SHIELD, 2)))
+        dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
         
         if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
@@ -161,7 +165,7 @@ class World:
             windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, BOW))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            dream_hut.connect(start, HOOKSHOT) # clip past the rocks in front of dream hut
+            dream_hut.connect(mabe_village, HOOKSHOT) # clip past the rocks in front of dream hut
             hookshot_cave.connect(forest, HOOKSHOT) # clip past the rocks in front of log cave
             hookshot_cave.connect(forest, AND(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
             swamp_chest.connect(swamp, bush) # added bush requirement since a requirement is necessary
@@ -174,7 +178,7 @@ class World:
             dungeon8_phone.connect(left_side_mountain, AND(BOMB, PEGASUS_BOOTS)) # flame skip
         
         if options.logic == 'glitched' or options.logic == 'hell':
-            #dream_hut.connect(start, FEATHER) # flock clip TODO: require nag messages
+            #dream_hut.connect(mabe_village, FEATHER) # flock clip TODO: require nag messages
             dream_hut2.connect(dream_hut, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest.connect(forest_heartpiece, BOMB, one_way=True) # bomb trigger heartpiece
@@ -221,7 +225,19 @@ class World:
             #right_mountains_2.connect(right_mountains_1, AND(ANGLER_KEY, PEGASUS_BOOTS)) # boots bonk across bottom wall, dodge waterfalls because of LADXR hacks
             left_side_mountain.connect(mountain_bridge_staircase, AND(PEGASUS_BOOTS, FEATHER)) # boots jump to bottom left corner of pits, pit buffer and jump to left
             
-        self.start = start
+        self.start = start_house
+        # List of all the possible locations where we can place our starting house
+        self.start_locations = [
+            mabe_village,   # http://artemis251.fobby.net/zelda/maps/overworld/00A2.GIF
+            sword_beach,    # http://artemis251.fobby.net/zelda/maps/overworld/00E3.GIF
+            center_area,    # http://artemis251.fobby.net/zelda/maps/overworld/0088.GIF
+            swamp,          # http://artemis251.fobby.net/zelda/maps/overworld/0031.GIF
+            graveyard,      # http://artemis251.fobby.net/zelda/maps/overworld/0037.GIF
+            dungeon8_phone, # http://artemis251.fobby.net/zelda/maps/overworld/0011.GIF
+            animal_town,    # http://artemis251.fobby.net/zelda/maps/overworld/00DB.GIF
+            luigi_rooster_house, # http://artemis251.fobby.net/zelda/maps/overworld/000A.GIF
+        ]
+        self.dungeon1_entrance = mabe_village
         self.dungeon2_entrance = dungeon2_entrance
         self.graveyard = graveyard
         self.center_area = center_area

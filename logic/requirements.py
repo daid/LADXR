@@ -56,6 +56,8 @@ def hasConsumableRequirement(requirements):
 
 
 def isConsumable(item):
+    if item is None:
+        return False
     if item.startswith("RUPEES_"):
         return True
     if item.startswith("KEY"):

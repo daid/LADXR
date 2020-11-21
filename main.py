@@ -61,6 +61,8 @@ def main(mainargs=None):
         help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
+    parser.add_argument('--randomstartlocation', dest="randomstartlocation", action="store_true",
+        help="Place your starting house at a random location.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
         help="Enable dungeon shuffle, puts dungeons on different spots.")
     parser.add_argument('--bossshuffle', dest="bossshuffle", action="store_true",

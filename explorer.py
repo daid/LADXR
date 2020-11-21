@@ -151,6 +151,8 @@ class Explorer:
                 return self.__inventory.get(req.item, 0) >= req.amount
         elif isinstance(req, FOUND):
             return self.__inventory_found.get(req.item, 0) >= req.amount
+        elif req is None:
+            return True
         else:
             raise RuntimeError("Unknown connection requirement: %s" % (req, ))
         return False

@@ -67,7 +67,6 @@ def setRaftGoal(rom):
 
     # Remove the egg and egg event handler.
     re = RoomEditor(rom, 0x006)
-    print(re.objects)
     for x in range(4, 7):
         for y in range(0, 4):
             re.removeObject(x, y)

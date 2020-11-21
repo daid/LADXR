@@ -25,10 +25,22 @@ class Randomizer:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
         if options.goal == "random":
             options.goal = self.rnd.randint(-1, 8)
+
         if options.multiworld:
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
-            self.__logic = logic.Logic(options, self.rnd)
+            start_house_index = 0
+            entranceMapping = list(range(9))
+            bossMapping = list(range(8))
+            if options.randomstartlocation:
+                start_house_index = self.rnd.randint(0, 8)
+            if options.dungeonshuffle:
+                self.rnd.shuffle(entranceMapping)
+            if options.bossshuffle:
+                self.rnd.shuffle(bossMapping)
+            bossMapping += [8]  # Shuffling the color dungeon boss does not work properly, so we ignore that one.
+
+            self.__logic = logic.Logic(options, start_house_index=start_house_index, entranceMapping=entranceMapping, bossMapping=bossMapping)
 
         if not options.keysanity or options.forwardfactor:
             item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)

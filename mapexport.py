@@ -400,7 +400,7 @@ class MapExport:
         y = 8
         for obj in re.objects:
             if isinstance(obj, ObjectWarp):
-                draw.text((8, y), "W:" + str(obj))
+                draw.text((8, y), "W:%03x:%d,%d" % (obj.room, obj.target_x, obj.target_y))
                 y += 16
         return result
 
