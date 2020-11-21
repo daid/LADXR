@@ -187,3 +187,17 @@ def changeBosses(rom, mapping):
                 # ]
 
             re.store(rom)
+
+def readBossMapping(rom):
+    mapping = []
+    for dungeon_nr in range(9):
+        r = RoomEditor(rom, BOSS_ROOMS[dungeon_nr][0])
+        if r.entities:
+            mapping.append(BOSS_ENTITIES.index(r.entities[0]))
+        elif isinstance(r.objects[-1], ObjectWarp) and r.objects[-1].room == 0x1ef:
+            mapping.append(3)
+        elif isinstance(r.objects[-1], ObjectWarp) and r.objects[-1].room == 0x2f8:
+            mapping.append(6)
+        else:
+            mapping.append(dungeon_nr)
+    return mapping
