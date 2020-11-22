@@ -15,6 +15,7 @@ import patches.bank3f
 import patches.inventory
 import patches.witch
 import patches.tarin
+import patches.fishingMinigame
 import patches.softlock
 import patches.maptweaks
 import patches.chest
@@ -101,6 +102,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.madBatter.upgradeMadBatter(rom)
     patches.tunicFairy.upgradeTunicFairy(rom)
     patches.tarin.updateTarin(rom)
+    patches.fishingMinigame.updateFinishingMinigame(rom)
     patches.health.upgradeHealthContainers(rom)
     if options.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)

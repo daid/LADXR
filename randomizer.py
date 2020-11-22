@@ -123,8 +123,9 @@ class Randomizer:
                 need_to_remove -= count
         for item in (RUPEES_50, RUPEES_20, RUPEES_200, MESSAGE, MEDICINE, GEL, SEASHELL):
             remove = min(need_to_remove, item_pool.get(item, 0))
-            item_pool[item] -= remove
-            need_to_remove -= remove
+            if remove:
+                item_pool[item] -= remove
+                need_to_remove -= remove
         return item_pool
 
 

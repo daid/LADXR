@@ -20,5 +20,6 @@ from .heartPiece import HeartPiece
 from .tunicFairy import TunicFairy
 from .song import Song
 from .instrument import Instrument
+from .fishingMinigame import FishingMinigame
 
 from .items import *

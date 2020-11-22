@@ -13,7 +13,7 @@ class World:
         dream_hut = Location().add(Chest(0x2BF)).connect(mabe_village, AND(POWER_BRACELET, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)))
         dream_hut2 = Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, bush)  # well
-        # Location().add(HeartPiece(0x2B1)).connect(mabe_village, AND(bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
+        Location().add(FishingMinigame()).connect(mabe_village, AND(bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(mabe_village, bush)  # bushes below the shop
         Location().add(Seashell(0x2B2)).connect(mabe_village, SHOVEL)  # in the kennel
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
