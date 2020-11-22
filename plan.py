@@ -4,6 +4,7 @@
 class Plan:
     def __init__(self, filename):
         self.forced_items = {}
+        self.item_pool = {}
 
         for line in open(filename, "rt"):
             line = line.strip()
@@ -20,3 +21,6 @@ class Plan:
                 if item == "":
                     continue
                 self.forced_items[location] = item
+            elif entry_type == "POOL" and ":" in params:
+                item, count = map(str.strip, params.split(":", 1))
+                self.item_pool[item] = self.item_pool.get(item, 0) + int(count)

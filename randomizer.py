@@ -112,13 +112,19 @@ class Randomizer:
                 item_placer.addSpot(spot)
                 spot.item = None
 
+        if self.plan:
+            for item, count in self.plan.item_pool.items():
+                item_pool[item] = item_pool.get(item, 0) + count
+
         # The plandomizer might cause an item pool item to go negative, and we need to correct for that.
         need_to_remove = 0
         for item, count in item_pool.items():
             if count < 0:
                 need_to_remove -= count
-        if need_to_remove > 0:
-            item_pool[RUPEES_50] -= need_to_remove
+        for item in (RUPEES_50, RUPEES_20, RUPEES_200, MESSAGE, MEDICINE, GEL, ARROWS_10, SEASHELL):
+            remove = min(need_to_remove, item_pool[item])
+            item_pool[item] -= remove
+            need_to_remove -= remove
         return item_pool
 
 

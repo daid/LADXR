@@ -130,8 +130,9 @@ def main(mainargs=None):
         import logic
         f = open(args.emptyplan, "wt")
         f.write(";Plandomizer data\n;Items: %s\n" % (", ".join(map(lambda n: getattr(locations.items, n), filter(lambda n: not n.startswith("__"), dir(locations.items))))))
-        for key in dir(locations.items):
-            f.write("")
+        f.write(";Modify the item pool:")
+        f.write(";Pool:SWORD:+5")
+        f.write(";Pool:RUPEES_50:-5")
         iteminfo_list = logic.Logic(args, start_house_index=0, entranceMapping=list(range(9)), bossMapping=list(range(9))).iteminfo_list
         for ii in sorted(iteminfo_list, key=lambda n: (n.location.dungeon if n.location.dungeon else -1, repr(n.metadata))):
             if len(ii.OPTIONS) > 1:
