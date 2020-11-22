@@ -9,6 +9,7 @@ from locations.items import *
 import generator
 import spoilerLog
 import itempool
+from plan import Plan
 
 
 class Error(Exception):
@@ -18,6 +19,7 @@ class Error(Exception):
 class Randomizer:
     def __init__(self, options, *, seed=None):
         self.seed = seed
+        self.plan = None
         if self.seed is None:
             self.seed = os.urandom(16)
         self.rnd = random.Random(self.seed)
@@ -25,6 +27,9 @@ class Randomizer:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
         if options.goal == "random":
             options.goal = self.rnd.randint(-1, 8)
+        if options.plan:
+            assert options.multiworld is None
+            self.plan = Plan(options.plan)
 
         if options.multiworld:
             self.__logic = logic.MultiworldLogic(options, self.rnd)
@@ -33,7 +38,7 @@ class Randomizer:
             entranceMapping = list(range(9))
             bossMapping = list(range(8))
             if options.randomstartlocation:
-                start_house_index = self.rnd.randint(0, 8)
+                start_house_index = self.rnd.randint(0, 7)
             if options.dungeonshuffle:
                 self.rnd.shuffle(entranceMapping)
             if options.bossshuffle:
@@ -42,15 +47,14 @@ class Randomizer:
 
             self.__logic = logic.Logic(options, start_house_index=start_house_index, entranceMapping=entranceMapping, bossMapping=bossMapping)
 
+        if self.plan:
+            for ii in self.__logic.iteminfo_list:
+                ii.forced_item = self.plan.forced_items.get(ii.nameId.upper(), None)
+
         if not options.keysanity or options.forwardfactor:
             item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)
         else:
             item_placer = RandomItemPlacer(self.__logic, options.accessibility_rule)
-
-        if options.plan:
-            assert options.multiworld is None
-            self.readPlan(options.plan)
-
         for item, count in self.readItemPool(options, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
@@ -84,26 +88,6 @@ class Randomizer:
             if options.spoilerformat != "none" and not options.race:
                 log = spoilerLog.SpoilerLog(options, rom)
                 log.output(options.spoiler_filename)
-
-    def readPlan(self, filename):
-        for line in open(filename, "rt"):
-            line = line.strip()
-            if ";" in line:
-                line = line[:line.find(";")]
-            if "#" in line:
-                line = line[:line.find("#")]
-            if ":" not in line:
-                continue
-            location, item = map(str.strip, line.upper().split(":", 1))
-            if item == "":
-                continue
-            found = False
-            for ii in self.__logic.iteminfo_list:
-                if ii.nameId.upper() == location:
-                    ii.forced_item = item.upper()
-                    found = True
-            if not found:
-                print("Plandomizer warning, spot not found:", location, item)
 
     def readItemPool(self, options, item_placer):
         item_pool = {}

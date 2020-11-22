@@ -20,7 +20,6 @@ def setStartLocation(rom, index):
     def swapWarps(r0, r1):
         r0warps = list(filter(lambda obj: isinstance(obj, ObjectWarp), r0.objects))
         r1warps = list(filter(lambda obj: isinstance(obj, ObjectWarp), r1.objects))
-        print(r0warps, r1warps)
         r0.objects = list(filter(lambda obj: not isinstance(obj, ObjectWarp), r0.objects)) + r0warps[:-1] + r1warps[-1:]
         r1.objects = list(filter(lambda obj: not isinstance(obj, ObjectWarp), r1.objects)) + r1warps[:-1] + r0warps[-1:]
         return r0warps[-1].room, r1warps[-1].room

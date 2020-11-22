@@ -14,6 +14,10 @@ class ItemInfo:
         self.priority = 0
         self.forced_item = None
 
+    @property
+    def location(self):
+        return self._location
+
     def setLocation(self, location):
         self._location = location
 

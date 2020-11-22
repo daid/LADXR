@@ -126,16 +126,17 @@ def main(mainargs=None):
         sys.exit(0)
 
     if args.emptyplan:
-        import checkMetadata
         import locations.items
+        import logic
         f = open(args.emptyplan, "wt")
         f.write(";Plandomizer data\n;Items: %s\n" % (", ".join(map(lambda n: getattr(locations.items, n), filter(lambda n: not n.startswith("__"), dir(locations.items))))))
         for key in dir(locations.items):
             f.write("")
-        for name, data in sorted(checkMetadata.checkMetadataTable.items(), key=lambda n: str(n[1])):
-            if name != "None":
-                f.write(";%s\n" % (data))
-                f.write("%s: \n" % (name))
+        iteminfo_list = logic.Logic(args, start_house_index=0, entranceMapping=list(range(9)), bossMapping=list(range(9))).iteminfo_list
+        for ii in sorted(iteminfo_list, key=lambda n: (n.location.dungeon if n.location.dungeon else -1, repr(n.metadata))):
+            if len(ii.OPTIONS) > 1:
+                f.write(";%r\n" % (ii.metadata))
+                f.write("Location:%s: \n" % (ii.nameId))
         sys.exit(0)
 
     if args.dump or args.test:

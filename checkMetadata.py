@@ -6,7 +6,7 @@ class CheckMetadata:
     
     def __repr__(self):
         result = "%s - %s" % (self.area, self.name)
-        if self.sphere != None:
+        if self.sphere is not None:
             result += " (Sphere %d)" % self.sphere
         return result
 
