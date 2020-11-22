@@ -323,6 +323,11 @@ AddSeaShell:
     ret
 
 PieceOfHeart:
+#IF HARD_MODE
+    ld   a, $FF
+    ld   [$DB93], a
+#ENDIF
+
     ld   a, [$DB5C]
     inc  a
     cp   $04
@@ -541,14 +546,14 @@ GiveBlueTunic:
 
 GiveExtraHeart:
     ; Regen all health
-    ld  hl, $DB93
+    ld   hl, $DB93
     ld   [hl], $FF
     ; Increase max health if health is lower then 14 hearts
-    ld  hl, $DB5B
-    ld  a, $0E
-    cp  [hl]
-    ret z
-    inc [hl]
+    ld   hl, $DB5B
+    ld   a, $0E
+    cp   [hl]
+    ret  z
+    inc  [hl]
     ret
 
 TakeHeart:

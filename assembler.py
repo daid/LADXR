@@ -465,8 +465,20 @@ def resetConsts():
 
 def ASM(code, base_address=None):
     asm = Assembler(base_address)
+    conditional_stack = [True]
     for line in code.split("\n"):
-        asm.assemble(line)
+        if line.startswith("#"):
+            if line.startswith("#IF "):
+                conditional_stack.append(conditional_stack[-1] and CONST_MAP.get(line[4:].strip(), 0) != b'\x00\x00')
+            elif line == "#ENDIF":
+                conditional_stack.pop()
+                assert conditional_stack
+            else:
+                raise RuntimeError("Unknown preprocessor thingy: %s" % (line))
+        elif conditional_stack[-1]:
+            asm.assemble(line)
+        else:
+            print("Skipping", line)
     asm.link()
     return binascii.hexlify(asm.getResult())
 

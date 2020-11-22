@@ -74,6 +74,7 @@ def generateRom(options, seed, logic, multiworld=None):
     assembler.const("wLinkSendItemRoomLow", 0xDDFB)
     assembler.const("wLinkSendItemTarget", 0xDDFC)
     assembler.const("wLinkSendItemItem", 0xDDFD)
+    assembler.const("HARD_MODE", 1 if options.hardMode else 0)
 
     patches.core.cleanup(rom)
     patches.phone.patchPhone(rom)
