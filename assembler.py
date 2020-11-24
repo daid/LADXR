@@ -477,8 +477,6 @@ def ASM(code, base_address=None):
                 raise RuntimeError("Unknown preprocessor thingy: %s" % (line))
         elif conditional_stack[-1]:
             asm.assemble(line)
-        else:
-            print("Skipping", line)
     asm.link()
     return binascii.hexlify(asm.getResult())
 
