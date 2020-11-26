@@ -135,6 +135,7 @@ def moreSlots(rom):
     rom.patch(0x02, 0x217E, ASM("ld a, $0B"), ASM("ld a, $0F"))
 
     # Patch all the locations that iterate over inventory to check the extra slots
+    rom.patch(0x02, 0x33FC, ASM("cp $0C"), ASM("cp $10"))
     rom.patch(0x03, 0x2475, ASM("ld e, $0C"), ASM("ld e, $10"))
     rom.patch(0x03, 0x248a, ASM("cp $0C"), ASM("cp $10"))
     rom.patch(0x04, 0x3849, ASM("ld c, $0B"), ASM("ld c, $0F"))
