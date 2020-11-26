@@ -1,3 +1,4 @@
+import json
 
 
 class RoomEditor:
@@ -9,6 +10,8 @@ class RoomEditor:
         self.length = None
         self.entities = []
         self.objects = []
+        self.tileset_index = None
+        self.palette_index = None
 
         if room is not None:
             entities_raw = rom.entities[room]
@@ -93,6 +96,17 @@ class RoomEditor:
         else:
             rom.rooms_color_dungeon[new_room_nr - 0x300] = objects_raw
 
+        if self.tileset_index is not None and new_room_nr < 0x100:
+            rom.banks[0x3F][0x2f00 + new_room_nr] = self.tileset_index
+            # With a tileset, comes metatile gbc data that we need to store a proper bank+pointer.
+            BANK = {0x0F: 0x22, 0x22: 0x22, 0x38: 0x25, 0x24: 0x22}
+            ADDR = {0x0F: 0x4000, 0x22: 0x5000, 0x38: 0x6800, 0x24: 0x4000}
+            rom.banks[0x1A][0x2476 + new_room_nr] = BANK[self.tileset_index]
+            rom.banks[0x1A][0x1E76 + new_room_nr*2] = ADDR[self.tileset_index] & 0xFF
+            rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = ADDR[self.tileset_index] >> 8
+        if self.palette_index is not None and new_room_nr < 0x100:
+            rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
+
         if new_room_nr is not None:
             entities_raw = bytearray()
             for entity in self.entities:
@@ -156,6 +170,48 @@ class RoomEditor:
                     self.overlay[obj.x + n * 10 + obj.y * 10] = obj.type_id
             elif not isinstance(obj, ObjectWarp):
                 self.overlay[obj.x + obj.y * 10] = obj.type_id
+
+    def loadFromJson(self, filename):
+        self.objects = []
+        self.entities = []
+        self.animation_id = 0
+        self.tileset_index = 0x0F
+        self.palette_index = 0x01
+        
+        data = json.load(open(filename))
+        
+        for tileset in data["tilesets"]:
+            if tileset["name"].startswith("anim_"):
+                self.animation_id = int(tileset["name"][5:], 16)
+            elif len(tileset["name"]) == 2:
+                self.tileset_index = int(tileset["name"], 16)
+        
+        tiles = [0] * 80
+        for layer in data["layers"]:
+            if "data" in layer:
+                for n in range(80):
+                    if layer["data"][n] > 0:
+                        tiles[n] = (layer["data"][n] - 1) & 0xFF
+            if "objects" in layer:
+                for obj in layer["objects"]:
+                    if obj["type"] == "warp":
+                        map, room, x, y = obj["name"].split(":")
+                        self.objects.append(ObjectWarp(1, int(map, 16), int(room, 16), int(x), int(y)))
+                    else:
+                        self.addEntity(int(obj["x"] // 16), int(obj["y"] // 16), int(obj["name"], 16))
+        counts = {}
+        for n in tiles:
+            counts[n] = counts.get(n, 0) + 1
+        self.floor_object = max(counts, key=counts.get)
+        for y in range(8):
+            for x in range(10):
+                obj = tiles[x + y * 10]
+                if obj == self.floor_object:
+                    continue
+                #TODO: Horizontal/vertical strips
+                self.objects.append(Object(x, y, obj))
+        self.updateOverlay()
+        return data
 
 
 class Object:

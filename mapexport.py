@@ -229,6 +229,12 @@ class MapExport:
             result.paste(self.exportRoom(n), (x * 20 * 8, y * 16 * 8))
         result.save("overworld.png")
         f.write("<img src='overworld.png'><br><br>")
+        
+        self.exportMetaTiles(f, "metatiles_main.png", 0x0F, 0, lambda n: n >= 32 and (n < 0x6C or n >= 0x70))
+        for n in (0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3E):
+            self.exportMetaTiles(f, "metatiles_%02x.png" % (n), n, 0, lambda n: n < 32)
+        for n in range(2, 17):
+            self.exportMetaTiles(f, "metatiles_anim_%02x.png" % (n), 0x0F, n, lambda n: n >= 0x6C and n < 0x70)
 
         for n in (0,1,2,3,4,5,6,7, 10, 11):
             addr = 0x0220 + n * 8 * 8
@@ -267,6 +273,37 @@ class MapExport:
         result.save("caves2.png")
         f.write("<img src='caves2.png'>")
         f.close()
+
+    def exportMetaTiles(self, f, name, main_set, animation_set, condition_func):
+        condition = lambda n: condition_func(n) and (n < 0x80 or n >= 0xF0)
+
+        metatile_info_offset = self.__rom.banks[0x1A].find(b'\x7C\x7C\x7C\x7C\x7D\x7D\x7D\x7D')
+        metatile_info = self.__rom.banks[0x1A][metatile_info_offset:metatile_info_offset + 0x100 * 4]
+
+        result = PIL.Image.new("L", (16 * 16, 16 * 16))
+
+        sub_tileset_offset = main_set * 0x10
+        tilemap = self.__tiles[0x0f][sub_tileset_offset:sub_tileset_offset+0x20]
+        tilemap += self.__tiles[0x0c][0x120:0x180]
+        tilemap += self.__tiles[0x0c][0x080:0x100]
+        
+        addr = (0x000, 0x000, 0x2B0, 0x2C0, 0x2D0, 0x2E0, 0x2F0, 0x2D0, 0x300, 0x310, 0x320, 0x2A0, 0x330, 0x350, 0x360, 0x340, 0x370)[animation_set]
+        tilemap[0x6C:0x70] = self.__tiles[0x0c][addr:addr+4]
+
+        for x in range(16):
+            for y in range(16):
+                obj = x + y * 16
+                if condition(metatile_info[obj*4+0]):
+                    result.paste(tilemap[metatile_info[obj*4+0]], (x*16+0, y*16+0))
+                if condition(metatile_info[obj*4+1]):
+                    result.paste(tilemap[metatile_info[obj*4+1]], (x*16+8, y*16+0))
+                if condition(metatile_info[obj*4+2]):
+                    result.paste(tilemap[metatile_info[obj*4+2]], (x*16+0, y*16+8))
+                if condition(metatile_info[obj*4+3]):
+                    result.paste(tilemap[metatile_info[obj*4+3]], (x*16+8, y*16+8))
+
+        result.save(name)
+        f.write("%s<br><img src='%s'><br><br>" % (name, name))
 
     def exportRoom(self, room_nr):
         re = RoomEditor(self.__rom, room_nr)
@@ -400,7 +437,7 @@ class MapExport:
         y = 8
         for obj in re.objects:
             if isinstance(obj, ObjectWarp):
-                draw.text((8, y), "W:%03x:%d,%d" % (obj.room, obj.target_x, obj.target_y))
+                draw.text((8, y), "W%d:%02x:%03x:%d,%d" % (obj.warp_type, obj.map_nr, obj.room, obj.target_x, obj.target_y))
                 y += 16
         return result
 

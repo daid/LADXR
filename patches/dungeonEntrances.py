@@ -32,6 +32,8 @@ def changeEntrances(rom, mapping):
                 assert obj.room == entrance_rooms[idx]
 
     for a, b in enumerate(mapping):
+        if a == b:
+            continue
         re = RoomEditor(rom, entrance_rooms[a])
         re.changeWarpTarget(enter_warps[a].room, enter_warps[b].room, enter_warps[b].map_nr, enter_warps[b].target_x, enter_warps[b].target_y)
         re.store(rom)
