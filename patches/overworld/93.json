@@ -10,7 +10,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 44, 45, 45, 45, 46, 42, 43, 42, 42, 43, 47, 48, 48, 48, 79, 40, 41, 40, 43, 41, 58, 355, 484, 355, 60, 11, 11, 5, 41, 11, 11, 10, 10, 10, 10, 10, 10, 10, 111, 11, 439, 10, 10, 10, 439, 10, 10, 10, 111, 5, 440, 10, 10, 10, 440, 10, 5, 5, 111, 5, 5, 10, 10, 10, 10, 5, 5, 5, 48, 48, 73, 75, 74, 48, 48, 48, 48, 48],
+         "data":[45, 50, 63, 59, 59, 59, 59, 59, 64, 63, 5, 5, 58, 363, 365, 365, 365, 363, 60, 63, 5, 5, 439, 364, 355, 484, 355, 364, 439, 63, 5, 5, 440, 274, 540, 540, 540, 275, 440, 63, 5, 5, 5, 278, 273, 273, 273, 279, 5, 63, 10, 5, 10, 439, 5, 5, 5, 439, 5, 58, 38, 39, 10, 440, 5, 5, 5, 440, 5, 38, 40, 42, 39, 38, 39, 38, 39, 38, 39, 40],
          "height":8,
          "id":1,
          "name":"Tile Layer 1",
@@ -29,7 +29,7 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"00:17:80:124",
+                 "name":"02:52:80:124",
                  "point":true,
                  "rotation":0,
                  "type":"warp",
@@ -47,6 +47,12 @@
  "nextlayerid":3,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"pal",
+         "type":"string",
+         "value":"01"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -67,11 +73,24 @@
         {
          "columns":16,
          "firstgid":257,
-         "image":"metatiles_24.png",
+         "image":"metatiles_2e.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
-         "name":"24",
+         "name":"2e",
+         "spacing":0,
+         "tilecount":256,
+         "tileheight":16,
+         "tilewidth":16
+        }, 
+        {
+         "columns":16,
+         "firstgid":513,
+         "image":"metatiles_anim_03.png",
+         "imageheight":256,
+         "imagewidth":256,
+         "margin":0,
+         "name":"anim_03",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

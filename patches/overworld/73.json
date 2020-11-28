@@ -10,7 +10,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 44, 45, 45, 45, 46, 42, 43, 42, 42, 43, 47, 48, 48, 48, 79, 40, 41, 40, 43, 41, 58, 355, 484, 355, 60, 11, 11, 5, 41, 11, 11, 10, 10, 10, 10, 10, 10, 10, 111, 11, 439, 10, 10, 10, 439, 10, 10, 10, 111, 5, 440, 10, 10, 10, 440, 10, 5, 5, 111, 5, 5, 10, 10, 10, 10, 5, 5, 5, 48, 48, 73, 75, 74, 48, 48, 48, 48, 48],
+         "data":[2, 2, 2, 436, 436, 436, 436, 436, 2, 2, 2, 2, 44, 436, 436, 436, 436, 436, 46, 2, 81, 81, 76, 430, 434, 488, 430, 434, 57, 2, 4, 4, 4, 431, 435, 484, 431, 435, 57, 2, 4, 4, 4, 4, 4, 4, 4, 4, 57, 2, 4, 4, 4, 4, 4, 4, 4, 4, 57, 2, 48, 48, 48, 48, 48, 48, 48, 48, 53, 2, 59, 59, 59, 59, 59, 59, 59, 59, 64, 2],
          "height":8,
          "id":1,
          "name":"Tile Layer 1",
@@ -29,14 +29,38 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"00:17:80:124",
+                 "name":"05:d4:80:124",
                  "point":true,
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
                  "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
+                 "x":21.6666666666667,
+                 "y":35.6666666666667
+                }, 
+                {
+                 "height":0,
+                 "id":2,
+                 "name":"0F",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":72.3333333333333,
+                 "y":75
+                }, 
+                {
+                 "height":0,
+                 "id":3,
+                 "name":"0F",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":103.666666666667,
+                 "y":75.3333333333333
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -47,6 +71,12 @@
  "nextlayerid":3,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"pal",
+         "type":"string",
+         "value":"1C"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -67,11 +97,11 @@
         {
          "columns":16,
          "firstgid":257,
-         "image":"metatiles_24.png",
+         "image":"metatiles_2a.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
-         "name":"24",
+         "name":"2a",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

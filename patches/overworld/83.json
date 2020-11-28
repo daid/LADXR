@@ -10,7 +10,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 44, 45, 45, 45, 46, 42, 43, 42, 42, 43, 47, 48, 48, 48, 79, 40, 41, 40, 43, 41, 58, 355, 484, 355, 60, 11, 11, 5, 41, 11, 11, 10, 10, 10, 10, 10, 10, 10, 111, 11, 439, 10, 10, 10, 439, 10, 10, 10, 111, 5, 440, 10, 10, 10, 440, 10, 5, 5, 111, 5, 5, 10, 10, 10, 10, 5, 5, 5, 48, 48, 73, 75, 74, 48, 48, 48, 48, 48],
+         "data":[59, 64, 38, 39, 72, 59, 59, 59, 59, 60, 59, 64, 40, 41, 57, 695, 696, 615, 594, 594, 59, 60, 212, 212, 57, 616, 740, 617, 594, 715, 5, 5, 5, 5, 57, 271, 271, 271, 271, 715, 5, 5, 62, 225, 53, 271, 271, 271, 271, 715, 5, 5, 57, 271, 271, 271, 271, 271, 594, 715, 5, 33, 57, 271, 271, 271, 271, 594, 594, 715, 48, 61, 51, 45, 45, 45, 45, 45, 45, 45],
          "height":8,
          "id":1,
          "name":"Tile Layer 1",
@@ -29,7 +29,7 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"00:17:80:124",
+                 "name":"04:A1:80:124",
                  "point":true,
                  "rotation":0,
                  "type":"warp",
@@ -47,6 +47,12 @@
  "nextlayerid":3,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"pal",
+         "type":"string",
+         "value":"09"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -67,11 +73,24 @@
         {
          "columns":16,
          "firstgid":257,
-         "image":"metatiles_24.png",
+         "image":"metatiles_anim_03.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
-         "name":"24",
+         "name":"anim_03",
+         "spacing":0,
+         "tilecount":256,
+         "tileheight":16,
+         "tilewidth":16
+        }, 
+        {
+         "columns":16,
+         "firstgid":513,
+         "image":"metatiles_3a.png",
+         "imageheight":256,
+         "imagewidth":256,
+         "margin":0,
+         "name":"3a",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

@@ -66,7 +66,10 @@ def readEntrances(rom):
         for obj in re.objects:
             if isinstance(obj, ObjectWarp) and (obj.map_nr < 9 or obj.map_nr == 0xff):
                 warp = obj
-        if warp.map_nr == 0xFF:
+        if not warp:
+            # TODO: This indicates a different map setup...
+            result.append(idx)
+        elif warp.map_nr == 0xFF:
             result.append(8)
         else:
             result.append(warp.map_nr)

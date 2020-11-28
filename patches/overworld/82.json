@@ -10,7 +10,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 44, 45, 45, 45, 46, 42, 43, 42, 42, 43, 47, 48, 48, 48, 79, 40, 41, 40, 43, 41, 58, 355, 484, 355, 60, 11, 11, 5, 41, 11, 11, 10, 10, 10, 10, 10, 10, 10, 111, 11, 439, 10, 10, 10, 439, 10, 10, 10, 111, 5, 440, 10, 10, 10, 440, 10, 5, 5, 111, 5, 5, 10, 10, 10, 10, 5, 5, 5, 48, 48, 73, 75, 74, 48, 48, 48, 48, 48],
+         "data":[59, 59, 225, 59, 59, 59, 59, 59, 59, 59, 59, 59, 225, 59, 59, 59, 59, 59, 59, 59, 59, 59, 225, 59, 187, 59, 59, 59, 59, 59, 5, 5, 12, 10, 212, 10, 5, 5, 5, 5, 5, 5, 12, 5, 10, 5, 11, 11, 11, 5, 5, 5, 12, 5, 5, 11, 93, 93, 93, 11, 39, 5, 5, 5, 5, 11, 93, 93, 93, 11, 41, 5, 5, 5, 5, 5, 11, 11, 11, 62],
          "height":8,
          "id":1,
          "name":"Tile Layer 1",
@@ -28,15 +28,15 @@
          "objects":[
                 {
                  "height":0,
-                 "id":1,
-                 "name":"00:17:80:124",
+                 "id":4,
+                 "name":"-1:16:40:80",
                  "point":true,
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
                  "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
+                 "x":15,
+                 "y":19
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -45,8 +45,19 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":4,
+ "nextobjectid":5,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"pal",
+         "type":"string",
+         "value":"01"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"10F"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -59,19 +70,6 @@
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_24.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"24",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

@@ -10,7 +10,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 44, 45, 45, 45, 46, 42, 43, 42, 42, 43, 47, 48, 48, 48, 79, 40, 41, 40, 43, 41, 58, 355, 484, 355, 60, 11, 11, 5, 41, 11, 11, 10, 10, 10, 10, 10, 10, 10, 111, 11, 439, 10, 10, 10, 439, 10, 10, 10, 111, 5, 440, 10, 10, 10, 440, 10, 5, 5, 111, 5, 5, 10, 10, 10, 10, 5, 5, 5, 48, 48, 73, 75, 74, 48, 48, 48, 48, 48],
+         "data":[43, 42, 63, 59, 59, 59, 59, 59, 64, 42, 42, 43, 63, 59, 439, 472, 439, 59, 64, 40, 43, 41, 58, 439, 440, 226, 440, 439, 60, 11, 41, 338, 338, 540, 540, 540, 540, 338, 275, 5, 338, 540, 540, 540, 540, 540, 540, 283, 279, 5, 338, 338, 540, 540, 338, 338, 540, 275, 33, 5, 338, 338, 338, 540, 540, 540, 540, 275, 33, 5, 38, 39, 38, 39, 38, 39, 38, 39, 38, 39],
          "height":8,
          "id":1,
          "name":"Tile Layer 1",
@@ -29,7 +29,7 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"00:17:80:124",
+                 "name":"01:36:80:124",
                  "point":true,
                  "rotation":0,
                  "type":"warp",
@@ -47,6 +47,12 @@
  "nextlayerid":3,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"pal",
+         "type":"string",
+         "value":"0e"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -67,11 +73,24 @@
         {
          "columns":16,
          "firstgid":257,
-         "image":"metatiles_24.png",
+         "image":"metatiles_36.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
-         "name":"24",
+         "name":"36",
+         "spacing":0,
+         "tilecount":256,
+         "tileheight":16,
+         "tilewidth":16
+        }, 
+        {
+         "columns":16,
+         "firstgid":513,
+         "image":"metatiles_anim_03.png",
+         "imageheight":256,
+         "imagewidth":256,
+         "margin":0,
+         "name":"anim_03",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,
