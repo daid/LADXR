@@ -28,8 +28,9 @@ def setRomInfo(rom, seed, options):
 
     if options.race:
         seed = "Race"
+        if isinstance(options.race, str):
+            seed += " " + options.race
         rom.patch(0x00, 0x07, "00", "01")
-        rom.banks[0x05][0x0CCD:0x0CD2] = rom.banks[0x05][0x0CD0:0x0CD2] + rom.banks[0x05][0x0CCD:0x0CD0]
     else:
         rom.patch(0x00, 0x07, "00", "52")
 

@@ -39,7 +39,7 @@ def main(mainargs=None):
     # Flags that effect gameplay
     parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
         help="Read an item placement plan")
-    parser.add_argument('--race', dest="race", action="store_true",
+    parser.add_argument('--race', dest="race", nargs="?", default=False, const=True,
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
     parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
