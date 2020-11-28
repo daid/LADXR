@@ -170,7 +170,7 @@ def generateRom(options, seed, logic, multiworld=None):
     rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
 
     if multiworld is None:
-        hints.addHints(rom, random, logic.iteminfo_list)
+        hints.addHints(rom, random.Random(seed), logic.iteminfo_list)
 
         # Patch the generated logic into the rom
         patches.startLocation.setStartLocation(rom, logic.start_house_index)

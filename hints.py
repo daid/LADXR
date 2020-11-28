@@ -51,7 +51,7 @@ useless_hint = [
 
 
 def addHints(rom, rnd, spots):
-    spots = list(filter(lambda spot: spot.item in hint_items, spots))
+    spots = list(sorted(filter(lambda spot: spot.item in hint_items, spots), key=lambda spot: spot.nameId))
     text_ids = hint_text_ids.copy()
     rnd.shuffle(text_ids)
     for text_id in text_ids:
