@@ -341,7 +341,7 @@ class ForwardItemPlacer:
             req_items = [item for item in sorted(self.__item_pool.keys())]
 
         item = rnd.choice(req_items)
-        spots = [spot for spot in spots if item in spot.getOptions()]
+        spots = list(sorted([spot for spot in spots if item in spot.getOptions()], key=lambda spot: spot.nameId))
         if not spots:
             return False
         spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
