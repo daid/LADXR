@@ -429,7 +429,7 @@ class MapExport:
         warp_pos = []
         for y in range(8):
             for x in range(10):
-                if rendered_map.objects[(x, y)] in (0xE1, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB):
+                if rendered_map.objects[(x, y)] in (0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB):
                     warp_pos.append((x, y))
         for x, y, type_id in re.entities:
             draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)

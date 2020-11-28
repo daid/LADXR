@@ -237,15 +237,13 @@ class World:
             animal_town,    # http://artemis251.fobby.net/zelda/maps/overworld/00DB.GIF
             luigi_rooster_house, # http://artemis251.fobby.net/zelda/maps/overworld/000A.GIF
         ]
-        self.dungeon1_entrance = mabe_village
+        self.dungeon1_entrance = Location().connect(mabe_village, TAIL_KEY)
         self.dungeon2_entrance = dungeon2_entrance
-        self.graveyard = graveyard
-        self.center_area = center_area
-        self.dungeon3_entrance = dungeon3_entrance
-        self.right_mountains_1 = right_mountains_1
-        self.dungeon4_entrance = dungeon4_entrance
+        self.dungeon3_entrance = Location().connect(dungeon3_entrance, SLIME_KEY)
+        self.dungeon4_entrance = Location().connect(dungeon4_entrance, ANGLER_KEY)
         self.dungeon5_entrance = dungeon5_entrance
-        self.dungeon6_entrance = dungeon6_entrance
-        self.right_mountains_3 = right_mountains_3
-        self.dungeon8_entrance = dungeon8_entrance
+        self.dungeon6_entrance = Location().connect(dungeon6_entrance, FACE_KEY)
+        self.dungeon7_entrance = Location().connect(right_mountains_3, BIRD_KEY)
+        self.dungeon8_entrance = Location().connect(dungeon8_entrance, SONG3)
+        self.dungeon9_entrance = Location().connect(graveyard, POWER_BRACELET)
         self.windfish = windfish

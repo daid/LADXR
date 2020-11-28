@@ -147,6 +147,9 @@ class RoomEditor:
                 obj.x = new_x
                 obj.y = new_y
 
+    def getWarps(self):
+        return list(filter(lambda obj: isinstance(obj, ObjectWarp), self.objects))
+
     def changeWarpTarget(self, from_room, to_room, new_map, target_x, target_y):
         for obj in self.objects:
             if isinstance(obj, ObjectWarp) and obj.room == from_room:
@@ -185,7 +188,12 @@ class RoomEditor:
                 self.animation_id = int(tileset["name"][5:], 16)
             elif len(tileset["name"]) == 2:
                 self.tileset_index = int(tileset["name"], 16)
-        
+        for prop in data.get("properties", []):
+            if prop["name"] == "pal":
+                self.palette_index = int(prop["value"], 16)
+            if prop["name"] == "tileset":
+                self.tileset_index = int(prop["value"], 16)
+
         tiles = [0] * 80
         for layer in data["layers"]:
             if "data" in layer:
@@ -196,7 +204,10 @@ class RoomEditor:
                 for obj in layer["objects"]:
                     if obj["type"] == "warp":
                         map, room, x, y = obj["name"].split(":")
-                        self.objects.append(ObjectWarp(1, int(map, 16), int(room, 16), int(x), int(y)))
+                        if int(map, 16) < 0:
+                            self.objects.append(ObjectWarp(0, 0, int(room, 16), int(x), int(y)))
+                        else:
+                            self.objects.append(ObjectWarp(1, int(map, 16), int(room, 16), int(x), int(y)))
                     else:
                         self.addEntity(int(obj["x"] // 16), int(obj["y"] // 16), int(obj["name"], 16))
         counts = {}

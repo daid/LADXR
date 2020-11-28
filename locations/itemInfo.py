@@ -10,7 +10,7 @@ class ItemInfo:
         self.item = None
         self._location = None
         self.room = room
-        self.metadata = checkMetadataTable[self.nameId]
+        self.metadata = checkMetadataTable.get(self.nameId, checkMetadataTable["None"])
         self.priority = 0
         self.forced_item = None
 
