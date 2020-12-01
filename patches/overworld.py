@@ -1,5 +1,5 @@
 from assembler import ASM
-from roomEditor import RoomEditor, ObjectWarp
+from roomEditor import RoomEditor, ObjectWarp, Object
 import os
 
 
@@ -77,4 +77,6 @@ def createDungeonOnlyOverworld(rom):
                             o.target_x = e.x * 16 + 8
                             o.target_y = e.y * 16 + 16
                     other.store(rom)
+        if n == 0x06:
+            re.objects.insert(0, Object(5, 3, 0xE1))
         re.store(rom)
