@@ -85,6 +85,7 @@ def main(mainargs=None):
         help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
     parser.add_argument('--pool', dest="itempool", choices=['normal', 'casual', 'pain', 'keyup'], default='normal',
         help="Sets up different item pools, for easier or harder gameplay.")
+    parser.add_argument('--overworld', dest="overworld", choices=['normal', 'dungeondive'], default='normal')
 
     # Just aestetic flags
     parser.add_argument('--gfxmod', dest="gfxmod", action='append',

@@ -140,6 +140,28 @@ class ItemPool:
                     self.remove("STONE_BEAK%d" % (n + 1))
                     self.add("KEY%d" % (n +1))
 
+        if options.overworld == "dungeondive":
+            self.remove(SWORD)
+            self.remove(MAX_ARROWS_UPGRADE)
+            self.remove(MAX_BOMBS_UPGRADE)
+            self.remove(MAX_POWDER_UPGRADE)
+            self.remove(SEASHELL, 24)
+            self.remove(TAIL_KEY)
+            self.remove(SLIME_KEY)
+            self.remove(ANGLER_KEY)
+            self.remove(FACE_KEY)
+            self.remove(BIRD_KEY)
+            self.remove(GOLD_LEAF, 5)
+            self.remove(SONG2)
+            self.remove(SONG3)
+            self.remove(HEART_PIECE, 8)
+            self.remove(RUPEES_50, 9)
+            self.remove(RUPEES_20, 2)
+            self.remove(MEDICINE, 3)
+            self.remove(MESSAGE)
+            self.remove(BOWWOW)
+            self.remove(GEL, 2)
+
     def __randomizeRupees(self, options, rnd):
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []

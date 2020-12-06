@@ -2,6 +2,7 @@ import random
 import binascii
 from romTables import ROMWithTables
 import assembler
+import patches.overworld
 import patches.dungeonEntrances
 import patches.startLocation
 import patches.enemies
@@ -121,6 +122,9 @@ def generateRom(options, seed, logic, multiworld=None):
     if options.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
+    if options.overworld == 'dungeondive':
+        patches.overworld.patchOverworldTilesets(rom)
+        patches.overworld.createDungeonOnlyOverworld(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.aesthetics.noSwordMusic(rom)
@@ -196,5 +200,4 @@ def generateRom(options, seed, logic, multiworld=None):
 
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
     patches.endscreen.updateEndScreen(rom)
-
     return rom

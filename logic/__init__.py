@@ -19,7 +19,10 @@ class Logic:
         self.entranceMapping = entranceMapping
         self.bossMapping = bossMapping
 
-        world = overworld.World(configuration_options)
+        if configuration_options.overworld == "dungeondive":
+            world = overworld.DungeonDiveOverworld(configuration_options)
+        else:
+            world = overworld.World(configuration_options)
 
         world.start.connect(world.start_locations[start_house_index], None)
 
