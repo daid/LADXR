@@ -113,8 +113,9 @@ class MultiworldLogic:
             if configuration_options.bossshuffle:
                 rnd.shuffle(bossMapping)
             bossMapping += [8]  # Shuffling the color dungeon boss does not work properly, so we ignore that one.
+            start_house_index = 0
 
-            world = Logic(configuration_options.multiworld_options[n], entranceMapping=entranceMapping, bossMapping=bossMapping)
+            world = Logic(configuration_options.multiworld_options[n], start_house_index=start_house_index, entranceMapping=entranceMapping, bossMapping=bossMapping)
             for ii in world.iteminfo_list:
                 ii.world = n
 
