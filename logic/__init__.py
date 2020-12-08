@@ -183,6 +183,8 @@ class MultiworldItemInfoWrapper:
 
 
 def addWorldIdToRequirements(world, req):
+    if req is None:
+        return None
     if isinstance(req, str):
         return "%s_W%d" % (req, world)
     if isinstance(req, COUNT):
