@@ -143,6 +143,10 @@ class MultiworldItemInfoWrapper:
         self.MULTIWORLD_OPTIONS = None
 
     @property
+    def nameId(self):
+        return self.target.nameId
+
+    @property
     def priority(self):
         return self.target.priority
 
