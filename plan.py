@@ -20,6 +20,8 @@ class Plan:
                 location, item = map(str.strip, params.split(":", 1))
                 if item == "":
                     continue
+                if "," in item:
+                    item = list(map(str.strip, item.split(",")))
                 self.forced_items[location] = item
             elif entry_type == "POOL" and ":" in params:
                 item, count = map(str.strip, params.split(":", 1))
