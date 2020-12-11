@@ -6,7 +6,7 @@ if (isset($_FILES["rom"]))
     $romInputPath = $_FILES["rom"]["tmp_name"];
     $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");
     $spoilerPath = @tempnam(sys_get_temp_dir(), "spoiler");
-    $command = "/usr/bin/python3 main.py " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
+    $command = "/usr/bin/python3 main.py --timeout 1200 " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
     $player_count = (int)$_POST["player_count"];
     $command .= " --multiworld ${player_count}";
     foreach($options as $key => $option)
