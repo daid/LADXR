@@ -127,6 +127,9 @@ noWrapDown:
         ld   a, [$C13F]
         jp $7E20
     """), fill_nop=True)
+
+    re = RoomEditor(rom, 0x2a3)
+    warp = re.getWarps()[0]
     rom.patch(0x01, 0x3E20, 0x4000, ASM("""
         ; First, handle save & quit
         cp   $01
@@ -142,11 +145,11 @@ noWrapDown:
         xor  a
         ld   [$D401], a
         ld   [$D402], a
-        ld   a, $A2 ; Room
+        ld   a, $%02x ; Room
         ld   [$D403], a
-        ld   a, $58 ; X
+        ld   a, $%02x ; X
         ld   [$D404], a
-        ld   a, $5E ; Y
+        ld   a, $%02x ; Y
         ld   [$D405], a
 
         ldh  a, [$98]
@@ -163,7 +166,7 @@ noWrapDown:
         ld   [$DB96], a
         ret
         jp   $40BE  ; return to normal "return to game" handling
-    """), fill_nop=True)
+    """ % (warp.room, warp.target_x, warp.target_y)), fill_nop=True)
 
 
     # Patch the S&Q screen to have 3 options.

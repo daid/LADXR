@@ -87,7 +87,6 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
     patches.core.alwaysAllowSecretBook(rom)
-    patches.core.warpHome(rom)
     patches.core.injectMainLoop(rom)
     if options.keysanity:
         patches.inventory.advancedInventorySubscreen(rom)
@@ -198,6 +197,7 @@ def generateRom(options, seed, logic, multiworld=None):
                 spot.patch(rom, spot.item)
         patches.enemies.changeBosses(rom, logic.worlds[multiworld].bossMapping)
 
+    patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
     patches.endscreen.updateEndScreen(rom)
     return rom
