@@ -5,6 +5,7 @@ class Plan:
     def __init__(self, filename):
         self.forced_items = {}
         self.item_pool = {}
+        item_group = {}
 
         for line in open(filename, "rt"):
             line = line.strip()
@@ -20,9 +21,18 @@ class Plan:
                 location, item = map(str.strip, params.split(":", 1))
                 if item == "":
                     continue
+                if item.startswith("[") and item.endswith("]"):
+                    item = item_group[item[1:-1]]
                 if "," in item:
                     item = list(map(str.strip, item.split(",")))
                 self.forced_items[location] = item
             elif entry_type == "POOL" and ":" in params:
                 item, count = map(str.strip, params.split(":", 1))
                 self.item_pool[item] = self.item_pool.get(item, 0) + int(count)
+            elif entry_type == "GROUP" and ":" in params:
+                name, item = map(str.strip, params.split(":", 1))
+                if item == "":
+                    continue
+                if "," in item:
+                    item = list(map(str.strip, item.split(",")))
+                item_group[name] = item
