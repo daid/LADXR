@@ -151,7 +151,8 @@ class World:
         left_side_mountain = Location().connect(mountain_bridge_staircase, HOOKSHOT) # pass through the underground passage to left side
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
-        dungeon8_phone = Location().connect(left_side_mountain, AND(BOMB, COUNT(SHIELD, 2)))
+        dungeon8_phone = Location()
+        left_side_mountain.connect(dungeon8_phone, AND(BOMB, COUNT(SHIELD, 2)), one_way=True)
         dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
         
@@ -175,7 +176,7 @@ class World:
             graveyard_heartpiece.connect(graveyard, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
             animal_town_bombcave.connect(desert, AND(BOMB, PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
             dungeon6_entrance.connect(animal_town, AND(FLIPPERS, FEATHER)) # jump the gap in underground passage to d6
-            dungeon8_phone.connect(left_side_mountain, AND(BOMB, PEGASUS_BOOTS)) # flame skip
+            left_side_mountain.connect(dungeon8_phone, AND(BOMB, PEGASUS_BOOTS), one_way=True) # flame skip
         
         if options.logic == 'glitched' or options.logic == 'hell':
             #dream_hut.connect(mabe_village, FEATHER) # flock clip TODO: require nag messages
