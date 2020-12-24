@@ -151,18 +151,19 @@ class World:
         left_side_mountain = Location().connect(mountain_bridge_staircase, HOOKSHOT) # pass through the underground passage to left side
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
-        dungeon8_phone = Location().connect(left_side_mountain, AND(BOMB, COUNT(SHIELD, 2)))
+        dungeon8_phone = Location()
+        left_side_mountain.connect(dungeon8_phone, AND(BOMB, COUNT(SHIELD, 2)), one_way=True)
         dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
         
         if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         elif int(options.goal) < 0:
-            windfish = Location().connect(below_mountains, AND(MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(below_mountains, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         elif int(options.goal) == 0:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         else:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dream_hut.connect(mabe_village, HOOKSHOT) # clip past the rocks in front of dream hut
@@ -175,7 +176,7 @@ class World:
             graveyard_heartpiece.connect(graveyard, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
             animal_town_bombcave.connect(desert, AND(BOMB, PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
             dungeon6_entrance.connect(animal_town, AND(FLIPPERS, FEATHER)) # jump the gap in underground passage to d6
-            dungeon8_phone.connect(left_side_mountain, AND(BOMB, PEGASUS_BOOTS)) # flame skip
+            left_side_mountain.connect(dungeon8_phone, AND(BOMB, PEGASUS_BOOTS), one_way=True) # flame skip
         
         if options.logic == 'glitched' or options.logic == 'hell':
             #dream_hut.connect(mabe_village, FEATHER) # flock clip TODO: require nag messages
@@ -266,13 +267,13 @@ class DungeonDiveOverworld:
             Location().add(BoomerangGuy()).connect(start_house, BOMB)
 
         if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(egg, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         elif int(options.goal) < 0:
-            windfish = Location().connect(egg, AND(MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(egg, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         elif int(options.goal) == 0:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(egg, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         else:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, BOW))
+            windfish = Location().connect(egg, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         self.start = start_house
         # List of all the possible locations where we can place our starting house

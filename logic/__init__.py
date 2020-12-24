@@ -192,6 +192,8 @@ def addWorldIdToRequirements(world, req):
     if isinstance(req, str):
         return "%s_W%d" % (req, world)
     if isinstance(req, COUNT):
+        if isinstance(req.item, list):
+            return COUNT([addWorldIdToRequirements(world, item) for item in req.item], req.amount)
         return COUNT(addWorldIdToRequirements(world, req.item), req.amount)
     if isinstance(req, FOUND):
         return FOUND(addWorldIdToRequirements(world, req.item), req.amount)
