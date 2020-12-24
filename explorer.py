@@ -113,11 +113,11 @@ class Explorer:
             self.__inventory[item] = self.__inventory.get(item, 0) + count
             self.__inventory_found[item] = self.__inventory_found.get(item, 0) + count
 
-    def consumeItem(self, item):
+    def consumeItem(self, item, amount=1):
         if item not in self.__inventory:
             return False
         if isConsumable(item):
-            self.__inventory[item] -= 1
+            self.__inventory[item] -= amount
             if self.__inventory[item] <= 0:
                 del self.__inventory[item]
         return True
@@ -148,6 +148,8 @@ class Explorer:
                     count += self.__inventory.get(item, 0)
                 return count >= req.amount
             else:
+                if func == self.consumeItem:
+                    return self.consumeItem(req.item, req.amount)
                 return self.__inventory.get(req.item, 0) >= req.amount
         elif isinstance(req, FOUND):
             return self.__inventory_found.get(req.item, 0) >= req.amount
