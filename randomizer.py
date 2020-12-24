@@ -311,6 +311,7 @@ class ForwardItemPlacer:
         self.__spots.remove(spot)
 
     def run(self, rnd):
+        assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool(True))
         if sum(self.__item_pool.values()) != len(self.__spots):
             for k, v in sorted(self.__item_pool.items()):
                 print(k, v)
