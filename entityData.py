@@ -151,7 +151,7 @@ NAME = [
     "KANALET_BOMBABLE_WALL",
     "RICHARD",
     "RICHARD_FROG",
-    "97",
+    "DIVE_SPOT",
     "HORSE_PIECE",
     "WATER_TEKTITE",
     "FLYING_TILES",
@@ -252,6 +252,90 @@ NAME = [
     "HARDHIT_BEETLE",
     "PHOTOGRAPHER",
 ]
+# For each entity, which sprite slot is used and which value should be used.
+SPRITE_DATA = {
+    0x09: (2, 0xE3), # OCTOROCK
+    0x0B: (2, 0x92), # MOBLIN
+    0x0D: (1, 0x87), # TEKTITE
+    0x0E: (1, 0x81), # LEEVER
+    0x0F: (2, 0x78), # ARMOS_STATUE
+    0x10: (1, 0x42), # HIDING_GHINI
+    0x11: (2, 0x8A), # GIANT_GHINI
+    0x12: (1, 0x42), # GHINI
+    0x14: (2, 0x92), # MOBLIN_SWORD
+    0x1B: None,      # GEL
+    0x23: (3, 0x93), # LIKE_LIKE
+    0x29: (3, 0x98), # MINI_MOLDORM
+    0x2D: None,      # DROPPABLE_HEART
+    0x2F: None,      # DROPPABLE_FAIRY
+    0x31: None,      # SWORD
+    0x35: None,      # HEART_PIECE
+    0x38: None,      # DROPPABLE_BOMBS
+    0x3A: (1, 0x8e), # SLEEPY_TOADSTOOL
+    0x3C: None,      # HIDING_SLIME_KEY
+    0x3D: None,      # DROPPABLE_SECRET_SEASHELL
+    0x3E: (2, 0xe6), # MARIN
+    0x3F: (1, 0x6c), # RACOON  ((1, 0x6c) indoors and (1, 0x6c) + (3, 0xc8) in the woods)
+    0x41: None,      # OWL_EVENT
+    0x43: None,      # SEASHELL_MANSION_TREES
+    0x44: None,      # YARNA_TALKING_BONES
+    0x45: (1, 0x44), # BOULDERS
+    0x54: (3, 0x4e), # FISHERMAN_FISHING_GAME
+    0x61: None,      # WARP
+    0x6A: (1, 0x87), # RAFT_RAFT_OWNER
+    0x6C: None,      # CUCCU
+    0x6D: None,      # BOW_WOW (TODO, BowWow can use sprites from 2nd VRAM bank)
+    0x6E: (1, 0xE5), # BUTTERFLY
+    0x6F: (1, 0xE5), # DOG
+    0x70: (3, 0xE7), # KID_70
+    0x71: (3, 0xE7), # KID_71
+    0x72: (3, 0xE7), # KID_72
+    0x73: (3, 0xE7), # KID_73
+    0x75: (2, 0x43), # GRANDMA_ULRIRA
+    0x7A: (1, 0xC6), # CROW
+    0x7C: (1, 0x40), # GIANT_GOPONGA_FLOWER
+    0x7E: (1, 0x4A), # GOPONGA_FLOWER
+    0x7F: (3, 0x41), # TURTLE_ROCK_HEAD
+    0x84: (1, 0x4D), # BIG_FAIRY
+    0x86: None,      # FLOATING_ITEM
+    0x87: (3, 0x52), # DESERT_LANMOLA
+    0x93: (3, 0x5A), # MAD_BOMBER
+    0x97: None,      # DIVE_SPOT
+    0x9B: None,      # HIDING_GEL
+    0xAD: (3, 0x67), # KIKI_THE_MONKEY
+    0xAE: (1, 0xE3), # WINGED_OCTOROCK
+    0xAF: None,      # TRADING_ITEM
+    0xB0: (2, 0x8B), # PINCER
+    0xB2: (2, 0x8C), # BEETLE_SPAWNER
+    0xB3: (3, 0x6B), # HONEYCOMB
+    0xB4: (1, 0x6C), # TARIN
+    0xB6: (3, 0x6D), # PAPAHL
+    0xB7: (3, 0x71), # MERMAID
+    0xB9: (2, 0x79), # BUZZ_BLOB
+    0xBA: (3, 0x76), # BOMBER
+    0xBB: (3, 0x76), # BUSH_CRAWLER
+    0xBF: (2, 0x82), # ZOMBIE
+    0xC0: None,      # MAZE_SIGNPOST
+    0xC1: (2, 0x8F), # MARIN_AT_THE_SHORE (could be something missing here)
+    0xC2: (2, 0x8F), # MARIN_AT_TAL_TAL_HEIGHTS
+    0xC4: (2, 0x6E), # WALRUS (and (3, 0x6F))
+    0xC5: (1, 0x81), # URCHIN
+    0xC6: (1, 0x81), # SAND_CRAB
+    0xCB: (1, 0x61), # ZORA
+    0xCC: (1, 0x4A), # FISH
+    0xCD: (3, 0xD4), # BANANAS_SCHULE_SALE
+    0xCE: (3, 0x73), # MERMAID_STATUE
+    0xD0: (1, 0xC4), # ANIMAL_D0
+    0xD1: (3, 0xCF), # ANIMAL_D1
+    0xD2: (3, 0xCF), # ANIMAL_D2
+    0xD3: (1, 0xC4), # BUNNY_D3
+    0xDC: None,      # FLYING_ROOSTER_EVENTS
+    0xDE: None,      # EGG_SONG_EVENT (TODO: Instrument sprites from 2nd vram bank)
+    0xE0: (3, 0xD4), # MONKEY
+    0xE3: (3, 0x8C), # POKEY
+    0xE5: None,      # FLOATING_ITEM_2
+    0xFA: None,      # PHOTOGRAPHER
+}
 
 assert len(NAME) == COUNT
 
