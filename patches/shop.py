@@ -2,44 +2,21 @@ from assembler import ASM
 
 
 def fixShop(rom):
-    # Turn the shop into:
-    # KEYITEM (x2), SHIELD, ARROWS, BOMBS
-    rom.patch(0x04, 0x37b5,
-              "01020300" "01020304" "05020304" "06020304",
-              "01030604" "05030604" "00030604" "00000000")
     # Move shield visuals to the 2nd slot, and arrow to 3th slot
     rom.patch(0x04, 0x3732 + 22, "986A027FB2B098AC01BAB1", "9867027FB2B098A801BAB1")
     rom.patch(0x04, 0x3732 + 55, "986302B1B07F98A4010A09", "986B02B1B07F98AC010A09")
 
-    # Just use a fixed location in memory to store which inventory we check for, easier to patch later on.
+    # Just use a fixed location in memory to store which inventory we give.
     rom.patch(0x04, 0x37C5, "0708", "0802")
+
     # Patch the code that decides which shop to show.
     rom.patch(0x04, 0x3839, 0x388E, ASM("""
         push bc
-
-        ; load $0000 into de
-        ld d, b
-        ld e, b
-        
-        ; Get the room status, and check if bits are set for buying one time items
-        ldh  a, [$F8]
-        and  $10
-        jr   z, shopEntrySelected
-        ld   e, $04
-        
-        ldh  a, [$F8]
-        and  $20
-        jr   z, shopEntrySelected
-        ld   e, $08
-
-        jr shopEntrySelected
+        jr skipSubRoutine
 
 checkInventory:
-        ld hl, $DB7D ; item traded for the boomerang
-        cp [hl]
-        ret z
         ld hl, $DB00 ; inventory
-        ld c, $0C
+        ld c, INV_SIZE
 loop:
         cp [hl]
         ret z
@@ -49,32 +26,54 @@ loop:
         and a
         ret
 
-shopEntrySelected:
-
-        ld   hl, $77B5 ; load shop table into C505-C509
-        add  hl, de
-        ld   de, $C505 
-        ld   c, $04
-loop2:
-        ldi  a, [hl]
+skipSubRoutine:
+        ; Set the shop table to all nothing.
+        ld   hl, $C505
+        xor  a
+        ldi  [hl], a
+        ldi  [hl], a
+        ldi  [hl], a
+        ldi  [hl], a
+        ld   de, $C505
+        
+        ; Check if we want to load a key item into the shop.
+        ldh  a, [$F8]
+        bit  4, a
+        jr   nz, checkForSecondKeyItem
+        ld   a, $01
         ld   [de], a
+        jr   checkForShield
+checkForSecondKeyItem:
+        bit  5, a
+        jr   nz, checkForShield
+        ld   a, $05
+        ld   [de], a
+
+checkForShield:
         inc  de
-        dec  c
-        jr   nz, loop2
-    
         ; Check if we have the shield or the bow to see if we need to remove certain entries from the shop
         ld   a, [$DB44]
         and  a
-        jr   nz, hasShield
-        ld   [$C506], a ; Remove shield buy option
-hasShield:
+        jr   z, hasNoShieldLevel
+        ld   a, $03
+        ld   [de], a ; Add shield buy option
+hasNoShieldLevel:
 
+        inc  de
         ld   a, $05
         call checkInventory
-        jr   z, hasBow
-        xor  a
-        ld   [$C507], a ; Remove arrow buy option
-hasBow:
+        jr   nz, hasNoBow
+        ld   a, $06
+        ld   [de], a ; Add arrow buy option
+hasNoBow:
+
+        inc  de
+        ld   a, $02
+        call checkInventory
+        jr   nz, hasNoBombs
+        ld   a, $04
+        ld   [de], a ; Add bomb buy option
+hasNoBombs:
 
         pop  bc
         call $3B12 ; increase entity state

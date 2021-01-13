@@ -7,7 +7,6 @@ class World:
     def __init__(self, options):
         start_house = Location().add(StartItem())
         mabe_village = Location()
-        Location().add(ShopItem(2)).connect(mabe_village, COUNT("RUPEES", 10))
         Location().add(ShopItem(0)).connect(mabe_village, COUNT("RUPEES", 200))
         Location().add(ShopItem(1)).connect(mabe_village, COUNT("RUPEES", 980))
         dream_hut = Location().add(Chest(0x2BF)).connect(mabe_village, AND(POWER_BRACELET, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)))

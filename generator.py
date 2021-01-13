@@ -20,6 +20,7 @@ import patches.fishingMinigame
 import patches.softlock
 import patches.maptweaks
 import patches.chest
+import patches.bomb
 import patches.shop
 import patches.trendy
 import patches.goal
@@ -52,11 +53,13 @@ def generateRom(options, seed, logic, multiworld=None):
     expanded_inventory = options.witch or options.boomerang == 'gift'
     assembler.resetConsts()
     if expanded_inventory:
+        assembler.const("INV_SIZE", 16)
         assembler.const("wHasFlippers", 0xDB3E)
         assembler.const("wHasMedicine", 0xDB3F)
         assembler.const("wTradeSequenceItem", 0xDB40)
         assembler.const("wSeashellsCount", 0xDB41)
     else:
+        assembler.const("INV_SIZE", 12)
         assembler.const("wHasFlippers", 0xDB0C)
         assembler.const("wHasMedicine", 0xDB0D)
         assembler.const("wTradeSequenceItem", 0xDB0E)
@@ -126,6 +129,7 @@ def generateRom(options, seed, logic, multiworld=None):
         patches.overworld.createDungeonOnlyOverworld(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
+    patches.bomb.onlyDropBombsWhenHaveBombs(rom)
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom)
     if options.hardMode:

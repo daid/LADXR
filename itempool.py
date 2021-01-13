@@ -7,7 +7,7 @@ DEFAULT_ITEM_POOL = {
     FEATHER: 1,
     HOOKSHOT: 1,
     BOW: 1,
-    BOMB: 2,
+    BOMB: 1,
     MAGIC_POWDER: 1,
     MAGIC_ROD: 1,
     OCARINA: 1,

@@ -21,6 +21,8 @@ class Assembler:
     def toByte(self, code):
         if code.startswith("$") and len(code) == 3:
             return int(code[1:], 16)
+        if code in CONST_MAP:
+            return CONST_MAP[code][0]
         raise ValueError("Cannot ASM '%s' into 8bit" % (code))
 
     def toWord(self, code):

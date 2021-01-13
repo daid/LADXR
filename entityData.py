@@ -267,11 +267,16 @@ SPRITE_DATA = {
     0x23: (3, 0x93), # LIKE_LIKE
     0x29: (3, 0x98), # MINI_MOLDORM
     0x2D: None,      # DROPPABLE_HEART
+    0x2E: None,      # DROPPABLE_RUPEE
     0x2F: None,      # DROPPABLE_FAIRY
+    0x30: None,      # KEY_DROP_POINT
     0x31: None,      # SWORD
     0x35: None,      # HEART_PIECE
+    0x37: None,      # DROPPABLE_ARROWS
     0x38: None,      # DROPPABLE_BOMBS
+    0x39: None,      # INSTRUMENT_OF_THE_SIRENS
     0x3A: (1, 0x8e), # SLEEPY_TOADSTOOL
+    0x3B: None,      # DROPPABLE_MAGIC_POWDER
     0x3C: None,      # HIDING_SLIME_KEY
     0x3D: None,      # DROPPABLE_SECRET_SEASHELL
     0x3E: (2, 0xe6), # MARIN
