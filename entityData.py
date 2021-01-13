@@ -263,9 +263,25 @@ SPRITE_DATA = {
     0x11: (2, 0x8A), # GIANT_GHINI
     0x12: (1, 0x42), # GHINI
     0x14: (2, 0x92), # MOBLIN_SWORD
+    0x15: (1, 0x91), # ANTI_FAIRY
+    0x16: (1, 0x91), # SPARK_COUNTER_CLOCKWISE (or (1, 0x65))
+    0x17: (1, 0x91), # SPARK_CLOCKWISE (or (1, 0x65))
+    0x18: (3, 0x93), # POLS_VOICE
+    0x19: (0, 0x90), # KEESE
+    0x1A: (0, 0x90), # STALFOS_AGGRESSIVE
     0x1B: None,      # GEL
+    0x1C: (1, 0x91), # MINI_GEL
+    0x1E: (0, 0x90), # STALFOS_EVASIVE
+    0x1F: (3, 0x93), # GIBDO
+    0x20: (0, 0x90), # HARDHAT_BEETLE
+    0x21: (2, 0x95), # WIZROBE
     0x23: (3, 0x93), # LIKE_LIKE
+    0x24: (2, 0x94), # IRON_MASK and (3, 0x9f)
+    0x27: (1, 0x91), # SPIKE_TRAP
+    0x28: (2, 0x96), # MIMIC
     0x29: (3, 0x98), # MINI_MOLDORM
+    0x2A: (3, 0x99), # LASER
+    0x2C: (3, 0x60), # SPIKED_BEETLE (or 0x9b?)
     0x2D: None,      # DROPPABLE_HEART
     0x2E: None,      # DROPPABLE_RUPEE
     0x2F: None,      # DROPPABLE_FAIRY
@@ -281,10 +297,23 @@ SPRITE_DATA = {
     0x3D: None,      # DROPPABLE_SECRET_SEASHELL
     0x3E: (2, 0xe6), # MARIN
     0x3F: (1, 0x6c), # RACOON  ((1, 0x6c) indoors and (1, 0x6c) + (3, 0xc8) in the woods)
+    0x40: (2, 0xa3), # WITCH
     0x41: None,      # OWL_EVENT
+    0x42: (1, 0x91), # OWL_STATUE
     0x43: None,      # SEASHELL_MANSION_TREES
     0x44: None,      # YARNA_TALKING_BONES
     0x45: (1, 0x44), # BOULDERS
+    0x46: None,      # MOVING_BLOCK_LEFT_TOP
+    0x47: None,      # MOVING_BLOCK_LEFT_BOTTOM
+    0x48: None,      # MOVING_BLOCK_BOTTOM_LEFT
+    0x49: None,      # MOVING_BLOCK_BOTTOM_RIGHT
+    0x4A: (1, 0xd5), # COLOR_DUNGEON_BOOK
+    0x4D: (2, 0x88), # SHOP_OWNER and (3, 0xc7)
+    0x4F: (2, 0x84), # TRENDY_GAME_OWNER and (3, 0x89)
+    0x50: (2, 0x97), # BOO_BUDDY
+    0x51: (2, 0x92), # KNIGHT
+    0x52: (0, 0x7b), # TRACTOR_DEVICE or (0, 0xa6)
+    0x53: (0, 0x7b), # TRACTOR_DEVICE_REVERSE or (0, 0xa6)
     0x54: (3, 0x4e), # FISHERMAN_FISHING_GAME
     0x61: None,      # WARP
     0x6A: (1, 0x87), # RAFT_RAFT_OWNER
