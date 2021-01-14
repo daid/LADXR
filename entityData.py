@@ -255,7 +255,7 @@ NAME = [
 # For each entity, which sprite slot is used and which value should be used.
 SPRITE_DATA = {
     0x09: (2, 0xE3), # OCTOROCK
-    0x0B: (2, 0x92), # MOBLIN
+    0x0B: (2, 0x7c), # MOBLIN (or 0x92 0x9c 0x83 0x7c for different sprites depending on the location)
     0x0D: (1, 0x87), # TEKTITE
     0x0E: (1, 0x81), # LEEVER
     0x0F: (2, 0x78), # ARMOS_STATUE
@@ -290,14 +290,14 @@ SPRITE_DATA = {
     0x35: None,      # HEART_PIECE
     0x37: None,      # DROPPABLE_ARROWS
     0x38: None,      # DROPPABLE_BOMBS
-    0x39: None,      # INSTRUMENT_OF_THE_SIRENS
-    0x3A: (1, 0x8e), # SLEEPY_TOADSTOOL
+    0x39: (2, 0x4F), # INSTRUMENT_OF_THE_SIRENS
+    0x3A: (1, 0x8E), # SLEEPY_TOADSTOOL
     0x3B: None,      # DROPPABLE_MAGIC_POWDER
     0x3C: None,      # HIDING_SLIME_KEY
     0x3D: None,      # DROPPABLE_SECRET_SEASHELL
-    0x3E: (2, 0xe6), # MARIN
-    0x3F: (1, 0x6c), # RACOON  ((1, 0x6c) indoors and (1, 0x6c) + (3, 0xc8) in the woods)
-    0x40: (2, 0xa3), # WITCH
+    0x3E: (2, 0xE6), # MARIN
+    0x3F: (1, 0x6C), # RACOON  ((1, 0x6c) indoors and (1, 0x6c) + (3, 0xc8) in the woods)
+    0x40: (2, 0xA3), # WITCH
     0x41: None,      # OWL_EVENT
     0x42: (1, 0x91), # OWL_STATUE
     0x43: None,      # SEASHELL_MANSION_TREES
@@ -315,7 +315,23 @@ SPRITE_DATA = {
     0x52: (0, 0x7b), # TRACTOR_DEVICE or (0, 0xa6)
     0x53: (0, 0x7b), # TRACTOR_DEVICE_REVERSE or (0, 0xa6)
     0x54: (3, 0x4e), # FISHERMAN_FISHING_GAME
+    0x55: (3, 0x9d), # BOUNCING_BOMBITE
+    0x56: (3, 0x9d), # TIMER_BOMBITE
+    0x57: (3, 0x9e), # PAIRODD
+    0x59: (2, 0xb0, 3, 0xb1), # MOLDORM
+    0x5A: (2, 0xb2, 3, 0xb3), # FACADE
+    0x5B: (2, 0xb4, 3, 0xb5), # SLIME_EYE
+    0x5C: (2, 0xb6, 3, 0xb7), # GENIE
+    0x5D: (2, 0xb8, 3, 0xb9), # SLIME_EEL
+    0x5E: (2, 0xa8), # GHOMA
+    0x5F: (2, 0x62, 3, 0x63), # MASTER_STALFOS
+    0x60: (2, 0xaa), # DODONGO_SNAKE (TODO: or spot 3 for IndoorB)
     0x61: None,      # WARP
+    0x62: (2, 0xba, 3, 0xbb), # HOT_HEAD
+    0x63: (0, 0xbc, 1, 0xbd, 2, 0xbe, 3, 0xbf), # EVIL_EAGLE
+    0x65: (0, 0xac, 1, 0xad, 2, 0xae, 3, 0xaf), # ANGLER_FISH
+    0x66: (1, 0x91), # CRYSTAL_SWITCH
+    0x69: (0, 0x66), # MOVING_BLOCK_MOVER
     0x6A: (1, 0x87), # RAFT_RAFT_OWNER
     0x6C: None,      # CUCCU
     0x6D: None,      # BOW_WOW (TODO, BowWow can use sprites from 2nd VRAM bank)
@@ -325,49 +341,113 @@ SPRITE_DATA = {
     0x71: (3, 0xE7), # KID_71
     0x72: (3, 0xE7), # KID_72
     0x73: (3, 0xE7), # KID_73
+    0x74: (2, 0x45), # PAPAHLS_WIFE
     0x75: (2, 0x43), # GRANDMA_ULRIRA
+    0x76: (3, 0x4b), # MR_WRITE
+    0x77: (3, 0x46), # GRANDPA_ULRIRA
+    0x78: (3, 0x48), # YIP_YIP
+    0x79: (2, 0x47), # MADAM_MEOWMEOW
     0x7A: (1, 0xC6), # CROW
+    0x7B: (2, 0x49), # CRAZY_TRACY
     0x7C: (1, 0x40), # GIANT_GOPONGA_FLOWER
     0x7E: (1, 0x4A), # GOPONGA_FLOWER
     0x7F: (3, 0x41), # TURTLE_ROCK_HEAD
+    0x80: (1, 0x4C), # TELEPHONE
+    0x81: (2, 0xAB), # ROLLING_BONES (sometimes in slot 3?)
+    0x82: (2, 0xAB), # ROLLING_BONES_BAR (sometimes in slot 3?)
+    0x83: (1, 0x8D), # DREAM_SHRINE_BED
     0x84: (1, 0x4D), # BIG_FAIRY
+    0x85: (1, 0x4C), # MR_WRITES_BIRD
     0x86: None,      # FLOATING_ITEM
     0x87: (3, 0x52), # DESERT_LANMOLA
+    0x88: (3, 0x53), # ARMOS_KNIGHT
+    0x89: (2, 0x54), # HINOX
+    0x8A: None,      # TILE_GLINT_SHOWN
+    0x8B: None,      # TILE_GLINT_HIDDEN
+    0x8E: (2, 0x56), # CUE_BALL
+    0x8F: (2, 0x58), # MASKED_MIMIC_GORIYA (or 0x86 when it's GORIYA...)
+    0x90: (3, 0x59), # THREE_OF_A_KIND
+    0x91: (2, 0x55), # ANTI_KIRBY
+    0x92: (2, 0x57), # SMASHER
     0x93: (3, 0x5A), # MAD_BOMBER
+    0x94: (2, 0x92), # KANALET_BOMBABLE_WALL
+    0x95: (1, 0x5b), # RICHARD
+    0x96: (2, 0x5c), # RICHARD_FROG
     0x97: None,      # DIVE_SPOT
+    0x98: (2, 0x5e), # HORSE_PIECE
+    0x99: (3, 0x60), # WATER_TEKTITE
+    0x9A: (0, 0xa6), # FLYING_TILES (or 0x66)
     0x9B: None,      # HIDING_GEL
+    0x9C: (3, 0x60), # STAR
+    0x9D: (0, 0xa6), # LIFTABLE_STATUE (or was this patched to use 2nd vram bank?)
+    0x9E: None,      # FIREBALL_SHOOTER
+    0x9F: (0, 0x5f), # GOOMBA
+    0xA0: (0, 0x5f), # PEAHAT (or 0x68)
+    0xA1: (0, 0x7b), # SNAKE (or 0x5f)
+    0xA2: (3, 0x64), # PIRANHA_PLANT
+    0xA3: (1, 0x65), # SIDE_VIEW_PLATFORM_HORIZONTAL
+    0xA4: (1, 0x65), # SIDE_VIEW_PLATFORM_VERTICAL
+    0xA5: (1, 0x65), # SIDE_VIEW_PLATFORM
+    0xA6: (1, 0x65), # SIDE_VIEW_WEIGHTS
+    0xA7: (0, 0x66), # SMASHABLE_PILLAR
+    0xA9: (2, 0x5d), # BLOOPER
+    0xAA: (2, 0x5d), # CHEEP_CHEEP_HORIZONTAL
+    0xAB: (2, 0x5d), # CHEEP_CHEEP_VERTICAL
+    0xAC: (2, 0x5d), # CHEEP_CHEEP_JUMPING
     0xAD: (3, 0x67), # KIKI_THE_MONKEY
     0xAE: (1, 0xE3), # WINGED_OCTOROCK
     0xAF: None,      # TRADING_ITEM
     0xB0: (2, 0x8B), # PINCER
+    0xb1: (0, 0x7b), # HOLE_FILLER (or 0x77)
     0xB2: (2, 0x8C), # BEETLE_SPAWNER
     0xB3: (3, 0x6B), # HONEYCOMB
     0xB4: (1, 0x6C), # TARIN
+    0xB5: (3, 0x69), # BEAR
     0xB6: (3, 0x6D), # PAPAHL
     0xB7: (3, 0x71), # MERMAID
+    0xB8: (1, 0xa1, 2, 0x75, 3, 0x4e), # FISHERMAN_UNDER_BRIDGE
     0xB9: (2, 0x79), # BUZZ_BLOB
     0xBA: (3, 0x76), # BOMBER
     0xBB: (3, 0x76), # BUSH_CRAWLER
+    0xBC: (3, 0xa9), # GRIM_CREEPER
+    0xBD: (2, 0x7a), # VIRE
+    0xBE: (2, 0xa7), # BLAINO
     0xBF: (2, 0x82), # ZOMBIE
     0xC0: None,      # MAZE_SIGNPOST
     0xC1: (2, 0x8F), # MARIN_AT_THE_SHORE (could be something missing here)
     0xC2: (2, 0x8F), # MARIN_AT_TAL_TAL_HEIGHTS
-    0xC4: (2, 0x6E), # WALRUS (and (3, 0x6F))
+    0xC3: (1, 0x7d, 2, 0x7e, 3, 0x7F), # MAMU_AND_FROGS
+    0xC4: (2, 0x6E, 3, 0x6F), # WALRUS
     0xC5: (1, 0x81), # URCHIN
     0xC6: (1, 0x81), # SAND_CRAB
+    0xC7: (0, 0xC0, 1, 0xc1, 2, 0xc2, 3, 0xc3), # MANBO_AND_FISHES
+    0xCA: (3, 0xc7), # MAD_BATTER
     0xCB: (1, 0x61), # ZORA
     0xCC: (1, 0x4A), # FISH
     0xCD: (3, 0xD4), # BANANAS_SCHULE_SALE
     0xCE: (3, 0x73), # MERMAID_STATUE
+    0xCF: (1, 0xC9, 2, 0xCA, 3, 0xCB), # SEASHELL_MANSION
     0xD0: (1, 0xC4), # ANIMAL_D0
     0xD1: (3, 0xCF), # ANIMAL_D1
     0xD2: (3, 0xCF), # ANIMAL_D2
     0xD3: (1, 0xC4), # BUNNY_D3
+    0xD6: (1, 0x65), # SIDE_VIEW_POT
+    0xD7: (1, 0x65), # THWIMP
+    0xD8: (2, 0xDA, 3, 0xDB), # THWOMP
+    0xD9: (1, 0xD9), # THWOMP_RAMMABLE
+    0xDA: (3, 0x64), # PODOBOO
+    0xDB: (2, 0xDA), # GIANT_BUBBLE
     0xDC: None,      # FLYING_ROOSTER_EVENTS
+    0xDD: (1, 0xD5), # BOOK
     0xDE: None,      # EGG_SONG_EVENT (TODO: Instrument sprites from 2nd vram bank)
     0xE0: (3, 0xD4), # MONKEY
+    0xE1: (1, 0xDF), # WITCH_RAT
+    0xE2: (3, 0xF4), # FLAME_SHOOTER
     0xE3: (3, 0x8C), # POKEY
+    0xE4: (1, 0x80), # MOBLIN_KING
     0xE5: None,      # FLOATING_ITEM_2
+    0xE6: (0, 0xe8, 1, 0xe9, 2, 0xea, 3, 0xeb), # FINAL_NIGHTMARE
+    0xE7: None,      # KANALET_CASTLE_GATE_SWITCH
     0xFA: None,      # PHOTOGRAPHER
 }
 
