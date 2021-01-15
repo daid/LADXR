@@ -61,3 +61,41 @@ def reduceMessageLengths(rom):
 
     rom.texts[0x07] = formatText(b"You need the nightmare key!")
     rom.texts[0x8C] = formatText(b"You need a key!")  # keyhole block
+
+def allowColorDungeonSpritesEverywhere(rom):
+    # Set sprite set numbers $01-$40 to map to the color dungeon sprites
+    rom.patch(0x00, 0x2E6F, "00", "15")
+    # Patch the spriteset loading code to load the 4 entries from the normal table instead of skipping this for color dungeon specific exception weirdness
+    rom.patch(0x00, 0x0DA4, ASM("jr nc, $05"), ASM("jr nc, $41"))
+    rom.patch(0x00, 0x0DE5, ASM("""
+        ldh  a, [$F7]
+        cp   $FF
+        jr   nz, $06
+        ld a, $01
+        ldh [$91], a
+        jr $40
+    """), ASM("""
+        jr $0A ; skip over the rest of the code
+        cp $FF ; check if color dungeon
+        jp nz, $0DAB
+        inc d
+        jp $0DAA
+    """), fill_nop=True)
+    # Disable color dungeon specific tile load hacks
+    rom.patch(0x00, 0x06A7, ASM("jr nz, $22"), ASM("jr $22"))
+    rom.patch(0x00, 0x2E77, ASM("jr nz, $0B"), ASM("jr $0B"))
+    
+    # Finally fill in the sprite data for the color dungeon
+    for n in range(22):
+        data = b''
+        for m in range(4):
+            v = rom.banks[0x20][0x06AA + 44 * m + n * 2] - 0x40
+            if v == -0x40:
+                v = 0xFF
+            data += bytes([v])
+        rom.room_sprite_data_indoor[0x200 + n] = data
+        print(n, data)
+    rom.room_sprite_data_indoor[0x000] = b'\xff\xff\xff\x07'
+    re = RoomEditor(rom, 0x100)
+    re.entities = [(3, 3, 0xF3)]
+    re.store(rom)

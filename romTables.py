@@ -152,6 +152,7 @@ class OverworldRoomSpriteData(PointerTable):
             "data_bank": 0x20,
             "data_addr": 0x33F3,
             "data_size": 4,
+            "claim_storage_gaps": True,
         })
 
 
@@ -164,6 +165,7 @@ class IndoorRoomSpriteData(PointerTable):
             "data_bank": 0x20,
             "data_addr": 0x363B,
             "data_size": 4,
+            "claim_storage_gaps": True,
         })
 
 
