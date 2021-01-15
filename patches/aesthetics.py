@@ -89,13 +89,62 @@ def allowColorDungeonSpritesEverywhere(rom):
     for n in range(22):
         data = b''
         for m in range(4):
-            v = rom.banks[0x20][0x06AA + 44 * m + n * 2] - 0x40
-            if v == -0x40:
+            idx = rom.banks[0x20][0x06AA + 44 * m + n * 2]
+            bank = rom.banks[0x20][0x06AA + 44 * m + n * 2 + 1]
+            if idx == 0 and bank == 0:
                 v = 0xFF
+            elif bank == 0x35:
+                v = idx - 0x40
+            elif bank == 0x31:
+                v = idx
+            elif bank == 0x2E:
+                v = idx + 0x40
+            else:
+                assert False, "%02x %02x" % (idx, bank)
             data += bytes([v])
         rom.room_sprite_data_indoor[0x200 + n] = data
-        print(n, data)
-    rom.room_sprite_data_indoor[0x000] = b'\xff\xff\xff\x07'
-    re = RoomEditor(rom, 0x100)
-    re.entities = [(3, 3, 0xF3)]
-    re.store(rom)
+
+    # Patch the graphics loading code to use DMA and load all sets that need to be reloaded, not just the first and last
+    rom.patch(0x00, 0x06FA, 0x07AF, ASM("""
+        ;We enter this code with the right bank selected for tile data copy,
+        ;d = tile row (source addr = (d*$100+$4000))
+        ;e = $00
+        ;$C197 = index of sprite set to update (target addr = ($8400 + $100 * [$C197]))
+        ld  a, d
+        add a, $40
+        ldh [$51], a
+        xor a
+        ldh [$52], a
+        ldh [$54], a
+        ld  a, [$C197]
+        add a, $84
+        ldh [$53], a
+        ld  a, $0F
+        ldh [$55], a
+
+        ; See if we need to do anything next
+        ld  a, [$C10E] ; check the 2nd update flag
+        and a
+        jr  nz, getNext
+        ldh [$91], a ; no 2nd update flag, so clear primary update flag
+        ret
+    getNext:
+        ld  hl, $C197
+        inc [hl]
+        ld  a, [$C10D]
+        cp  [hl]
+        ret nz
+        xor a ; clear the 2nd update flag when we prepare to update the last spriteset
+        ld  [$C10E], a
+        ret
+    """), fill_nop=True)
+    rom.patch(0x00, 0x073E, "00" * (0x07AF - 0x073E), ASM("""
+        ;If we get here, only the 2nd flag is filled and the primary is not. So swap those around.
+        ld  a, [$C10D] ;copy the index number
+        ld  [$C197], a
+        xor a
+        ld  [$C10E], a ; clear the 2nd update flag
+        inc a
+        ldh [$91], a ; set the primary update flag
+        ret
+    """), fill_nop=True)
