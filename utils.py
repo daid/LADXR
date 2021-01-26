@@ -1,19 +1,26 @@
 
-def formatText(s, *, ask=None):
+def formatText(s, *, center=False, ask=None):
     s = s.replace(b"'", b"^")
+    
+    def padLine(line):
+        return line + b' ' * (16 - len(line))
+    if center:
+        def padLine(line):
+            padding = (16 - len(line))
+            return b' ' * (padding // 2) + line + b' ' * (padding - padding // 2)
 
     result = b''
     for line in s.split(b'\n'):
         result_line = b''
         for word in line.split(b' '):
             if len(result_line) + 1 + len(word) > 16:
-                result += result_line + b' ' * (16 - len(result_line))
+                result += padLine(result_line)
                 result_line = b''
             elif result_line:
                 result_line += b' '
             result_line += word
         if result_line:
-            result += result_line + b' ' * (16 - len(result_line))
+            result += padLine(result_line)
     if ask is not None:
         result = result.rstrip()
         while len(result) % 32 != 16:
