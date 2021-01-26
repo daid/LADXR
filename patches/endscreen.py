@@ -1,8 +1,83 @@
 from assembler import ASM
+from utils import formatText
 import os
 
 
+def updateWindfish(rom):
+    tiles = open("GDQHotfix.tiles", "rb").read()
+    # There are two types of tiles, windfish graphics and cloud graphics, make sure we only write on top of the windfish
+    rom.banks[0x33][0x1050:0x10F0] = tiles[0x0000:0x00A0]
+    rom.banks[0x33][0x1130:0x1200] = tiles[0x00A0:0x0170]
+    rom.banks[0x33][0x1220:0x1300] = tiles[0x0170:0x0250]
+    rom.banks[0x33][0x1310:0x1400] = tiles[0x0250:0x0340]
+    rom.banks[0x33][0x1400:0x15A0] = tiles[0x0340:0x04E0]
+    rom.banks[0x33][0x15B0:0x15B0+len(tiles)-0x04E0] = tiles[0x04E0:]
+
+    tilemap = open("GDQHotfix.map", "rb").read()
+    offset = 0x0EEF
+    for y in range(10):
+        offset += 3
+        for x in range(20):
+            tile = tilemap[(x + y * 20) * 2]
+            tile += 5
+            if tile >= 0x0F: tile += 4
+            if tile >= 0x20: tile += 2
+            if tile >= 0x30: tile += 1
+            if tile >= 0x5A: tile += 1
+            rom.banks[0x17][offset] = tile
+
+            attr = tilemap[(x + y * 20) * 2 + 1]
+            rom.banks[0x17][offset + 0x0FDF - 0x0EEF] = attr + 2
+
+            offset += 1
+            
+        offset += 1
+
+    palette = open("GDQHotfix.pal", "rb").read()
+    for n in range(8):
+        for m in range(0, len(palette), 2):
+            p = (palette[m] | palette[m + 1] << 8)
+            r = p & 0x1F
+            g = (p >> 5) & 0x1F
+            b = (p >> 10) & 0x1F
+            r = r * (8 - n) // 8
+            g = g * (8 - n) // 8
+            b = b * (8 - n) // 8
+            p = r | (g << 5) | (b << 10)
+            
+            rom.banks[0x17][0x11B7+n*64+m+0] = p & 0xFF
+            rom.banks[0x17][0x11B7+n*64+m+1] = (p >> 8) & 0xFF
+
+    rom.texts[0xCE] = formatText(b"""Hoot! Young lad, I mean... #####, the hero! You have defeated the Nightmares! You have proven your wisdom, courage and power!
+... ... ... ...
+As part of the  Wind Fish's spirit, I am the guardian of his dream world...
+But one day, the Nightmares entered the dream and began wreaking havoc. Then you, #####, came to rescue the island...
+I have always trusted in your courage to turn back the Nightmares.
+Thank you, #####...
+My work is done...
+GDQ will awake soon.
+Good bye...Hoot!""")
+    rom.texts[0xCF] = rom.texts[0xCE]
+    rom.texts[0xD0] = formatText(b"""... ... ... ...
+... ... ... ...
+I AM THE GDQ HOTFIX...
+LONG HAS BEEN MY SLUMBER...
+IN MY DREAMS...
+SPEEDRUNNERS WERE GOING FAST, RACES WHERE DONE
+... ... ... ...
+BUT, IT BE THE NATURE OF RACES TO END!
+SO NOW, LET US END THIS RACE...
+ONLY THE MEMORY OF THE SPEEDRUN WILL EXIST...
+AS WELL AS THE RECORDINGS ON TWITCH AND YOUTUBE
+SO DO NOT FORGET TO SUBSCRIBE...
+... ... ... ...
+COME, #####...
+LET US GO FAST TOGETHER!!""", center=True)
+
+
 def updateEndScreen(rom):
+    updateWindfish(rom)
+
     # Call our custom data loader in bank 3F
     rom.patch(0x00, 0x391D, ASM("""
         ld   a, $20
