@@ -154,15 +154,9 @@ class World:
         left_side_mountain.connect(dungeon8_phone, AND(BOMB, COUNT(SHIELD, 2)), one_way=True)
         dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
-        
-        if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        elif int(options.goal) < 0:
-            windfish = Location().connect(below_mountains, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        elif int(options.goal) == 0:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        else:
-            windfish = Location().connect(below_mountains, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+
+        nightmare = Location()
+        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dream_hut.connect(mabe_village, HOOKSHOT) # clip past the rocks in front of dream hut
@@ -246,6 +240,8 @@ class World:
         self.dungeon7_entrance = Location().connect(right_mountains_3, BIRD_KEY)
         self.dungeon8_entrance = Location().connect(dungeon8_entrance, SONG3)
         self.dungeon9_entrance = Location().connect(graveyard, POWER_BRACELET)
+        self.egg = below_mountains
+        self.nightmare = nightmare
         self.windfish = windfish
 
 
@@ -265,14 +261,8 @@ class DungeonDiveOverworld:
         elif options.boomerang == 'gift':
             Location().add(BoomerangGuy()).connect(start_house, BOMB)
 
-        if options.goal is None or options.goal == "raft" or int(options.goal) == 8:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        elif int(options.goal) < 0:
-            windfish = Location().connect(egg, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        elif int(options.goal) == 0:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
-        else:
-            windfish = Location().connect(egg, AND(OCARINA, SONG1, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal)), MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        nightmare = Location()
+        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         self.start = start_house
         # List of all the possible locations where we can place our starting house
@@ -295,4 +285,6 @@ class DungeonDiveOverworld:
         self.dungeon7_entrance = start_house
         self.dungeon8_entrance = start_house
         self.dungeon9_entrance = start_house
+        self.egg = egg
+        self.nightmare = nightmare
         self.windfish = windfish

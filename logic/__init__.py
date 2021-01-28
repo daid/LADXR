@@ -47,6 +47,19 @@ class Logic:
         dungeons[entranceMapping[6]].entrance.connect(world.dungeon7_entrance, None)
         dungeons[entranceMapping[7]].entrance.connect(world.dungeon8_entrance, None)
         dungeons[entranceMapping[8]].entrance.connect(world.dungeon9_entrance, None)
+        
+        egg_trigger = AND(OCARINA, SONG1)
+        if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
+            egg_trigger = OR(AND(OCARINA, SONG1), BOMB)
+
+        if configuration_options.goal is None or configuration_options.goal == "raft" or int(configuration_options.goal) == 8:
+            world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
+        elif int(options.goal) < 0:
+            world.nightmare.connect(world.egg, None)
+        elif int(options.goal) == 0:
+            world.nightmare.connect(world.egg, egg_trigger)
+        else:
+            world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal))))
 
         self.start = world.start
         self.windfish = world.windfish
