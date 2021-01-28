@@ -54,9 +54,9 @@ class Logic:
 
         if configuration_options.goal is None or configuration_options.goal == "raft" or int(configuration_options.goal) == 8:
             world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
-        elif int(options.goal) < 0:
+        elif int(configuration_options.goal) < 0:
             world.nightmare.connect(world.egg, None)
-        elif int(options.goal) == 0:
+        elif int(configuration_options.goal) == 0:
             world.nightmare.connect(world.egg, egg_trigger)
         else:
             world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal))))
