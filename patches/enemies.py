@@ -157,8 +157,8 @@ def changeBosses(rom, mapping):
             re.store(rom)
 
             # Patch the proper item towards the D7 boss
-            rom.banks[0x3E][0x3800 + 0x0223] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr][0]]
-            rom.banks[0x3E][0x3300 + 0x0223] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
+            rom.banks[0x3E][0x3800 + 0x02E8] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr][0]]
+            rom.banks[0x3E][0x3300 + 0x02E8] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
         else:
             rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x21
             rom.room_sprite_data_indoor[BOSS_ROOMS[dungeon_nr][0] - 0x100] = SPRITE_DATA[target]
