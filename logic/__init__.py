@@ -59,7 +59,7 @@ class Logic:
         elif int(configuration_options.goal) == 0:
             world.nightmare.connect(world.egg, egg_trigger)
         else:
-            world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(options.goal))))
+            world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], int(configuration_options.goal))))
 
         self.start = world.start
         self.windfish = world.windfish
