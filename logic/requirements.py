@@ -89,17 +89,18 @@ boss_requirements = [
     MAGIC_ROD,  # D8 boss
     attack_no_bomb,  # D9 boss
 ]
-miniboss_requirements = [
-    attack_hookshot,   # ROLLING_BONES
-    attack_hookshot,   # HINOX
-    BOMB,              # DODONGO
-    SWORD,             # CUE_BALL
-    OR(BOW, HOOKSHOT), # GHOMA
-    POWER_BRACELET,    # SMASHER
-    attack_no_bomb,    # GRIM_CREEPER
-    SWORD,             # BLAINO
-    attack_hookshot,   # AVALAUNCH
-]
+miniboss_requirements = {
+    "ROLLING_BONES":    attack_hookshot,
+    "HINOX":            attack_hookshot,
+    "DODONGO":          BOMB,
+    "CUE_BALL":         SWORD,
+    "GHOMA":            OR(BOW, HOOKSHOT),
+    "SMASHER":          POWER_BRACELET,
+    "GRIM_CREEPER":     attack_no_bomb,
+    "BLAINO":           SWORD,
+    "AVALAUNCH":        attack_hookshot,
+    "GIANT_BUZZ_BLOB":  AND(MAGIC_POWDER, SWORD),
+}
 
 def flatten(req):
     result = set()

@@ -11,6 +11,7 @@ from . import dungeonColor
 from .requirements import AND, OR, COUNT, FOUND, boss_requirements
 from .location import Location
 from locations.items import *
+from worldSetup import WorldSetup
 
 
 class Logic:
@@ -110,14 +111,16 @@ class Logic:
 
 
 class MultiworldLogic:
-    def __init__(self, configuration_options, rnd, WorldSetupClass):
+    def __init__(self, configuration_options, rnd):
         self.worlds = []
         self.start = Location()
         self.location_list = [self.start]
         self.iteminfo_list = []
 
         for n in range(configuration_options.multiworld):
-            world = Logic(configuration_options.multiworld_options[n], WorldSetupClass(configuration_options, rnd))
+            world_setup = WorldSetup()
+            world_setup.randomize(configuration_options, rnd)
+            world = Logic(configuration_options.multiworld_options[n], world_setup=world_setup)
             for ii in world.iteminfo_list:
                 ii.world = n
 

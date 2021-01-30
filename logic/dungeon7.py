@@ -20,7 +20,7 @@ class Dungeon7:
         # Most of the dungeon can be accessed at this point.
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             bottomleft_owl = Location(7).add(OwlStatue(0x21C)).connect(bottomleftF2_area, AND(BOMB, STONE_BEAK7))
-        nightmare_key = Location(7).add(DungeonChest(0x224)).connect(bottomleftF2_area, attack_no_bomb) # nightmare key after the miniboss
+        nightmare_key = Location(7).add(DungeonChest(0x224)).connect(bottomleftF2_area, miniboss_requirements[world_setup.miniboss_mapping[6]]) # nightmare key after the miniboss
         bottomleftF2_area.add(DungeonChest(0x21A))  # mirror shield chest
         toprightF1_chest = Location(7).add(DungeonChest(0x204)).connect(bottomleftF2_area, attack_hookshot)  # chest on the F1 right ledge. Added attack_hookshot since 1 requirement is needed
         final_pillar_area = Location(7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar

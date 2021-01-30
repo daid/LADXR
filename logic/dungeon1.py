@@ -20,7 +20,7 @@ class Dungeon1:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(1).add(OwlStatue(0x10A)).connect(dungeon1_right_side, STONE_BEAK1)
         Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(attack_hookshot, SHIELD)) # three of a kind, shield stops the suit from changing
-        dungeon1_miniboss = Location(1).connect(dungeon1_right_side, AND(attack_hookshot, FEATHER))
+        dungeon1_miniboss = Location(1).connect(dungeon1_right_side, AND(miniboss_requirements[world_setup.miniboss_mapping[0]], FEATHER))
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
         Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss, boss_requirements[world_setup.boss_mapping[0]])
 

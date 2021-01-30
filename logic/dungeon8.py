@@ -37,7 +37,7 @@ class Dungeon8:
         middle_center_2 = Location(8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
         middle_center_3 = Location(8).connect(middle_center_2, KEY8)
         miniboss_entrance = Location(8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 5))) # hookshot to get across to keyblock, 5 to make vanilla possible
-        miniboss = Location(8).connect(miniboss_entrance, AND(FEATHER, SWORD))  # feather for 2d section, sword to kill
+        miniboss = Location(8).connect(miniboss_entrance, AND(FEATHER, miniboss_requirements[world_setup.miniboss_mapping[7]]))  # feather for 2d section, sword to kill
         miniboss.add(DungeonChest(0x237)) # fire rod chest
 
         up_left = Location(8).connect(upper_center, AND(attack_hookshot_powder, AND(KEY8, FOUND(KEY8, 4))))

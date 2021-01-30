@@ -6,17 +6,11 @@ import patches.witch
 import patches.startLocation
 import patches.dungeonEntrances
 import patches.enemies
+from worldSetup import WorldSetup
 
 
 class RaceRomException(Exception):
     pass
-
-
-class SpoilerWorldSetup:
-    def __init__(self, rom):
-        self.start_house_index = patches.startLocation.readStartLocation(rom)
-        self.dungeon_entrance_mapping = patches.dungeonEntrances.readEntrances(rom)
-        self.boss_mapping = patches.enemies.readBossMapping(rom)
 
 
 class SpoilerItemInfo:
@@ -55,7 +49,6 @@ class SpoilerLog:
         self.accessibleItems = []
         self.inaccessibleItems = None
         self.outputFormat = args.spoilerformat
-        self.world_setup = SpoilerWorldSetup(rom)
 
         # Assume the broadest settings if we're dumping a seed we didn't just create
         if args.dump:
@@ -68,6 +61,9 @@ class SpoilerLog:
             args.seashells = True
             args.heartcontainers = True
             args.owlstatues = "both"
+
+        self.world_setup = WorldSetup()
+        self.world_setup.loadFromRom(rom)
 
         self._loadItems(args, rom)
     
@@ -96,7 +92,8 @@ class SpoilerLog:
                 for ii in location.items:
                     ii.metadata.sphere = currentSphere
                     ii.item = itemContents[ii]
-                    remainingItems.remove(ii)
+                    if ii in remainingItems:
+                        remainingItems.remove(ii)
             
             lastAccessibleLocations = e.getAccessableLocations()
             currentSphere += 1
