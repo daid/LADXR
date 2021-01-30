@@ -16,6 +16,21 @@ class Error(Exception):
     pass
 
 
+class WorldSetup:
+    def __init__(self, options, rnd):
+        self.start_house_index = 0
+        self.dungeon_entrance_mapping = list(range(9))
+        self.boss_mapping = list(range(8))
+
+        if options.randomstartlocation:
+            self.start_house_index = rnd.randint(0, 7)
+        if options.dungeonshuffle:
+            rnd.shuffle(self.dungeon_entrance_mapping)
+        if options.bossshuffle:
+            rnd.shuffle(self.boss_mapping)
+        self.boss_mapping += [8]  # Shuffling the color dungeon boss does not work properly, so we ignore that one.
+
+
 class Randomizer:
     def __init__(self, options, *, seed=None):
         self.seed = seed
@@ -32,20 +47,10 @@ class Randomizer:
             self.plan = Plan(options.plan)
 
         if options.multiworld:
-            self.__logic = logic.MultiworldLogic(options, self.rnd)
+            self.__logic = logic.MultiworldLogic(options, self.rnd, WorldSetupClass=WorldSetup)
         else:
-            start_house_index = 0
-            entranceMapping = list(range(9))
-            bossMapping = list(range(8))
-            if options.randomstartlocation:
-                start_house_index = self.rnd.randint(0, 7)
-            if options.dungeonshuffle:
-                self.rnd.shuffle(entranceMapping)
-            if options.bossshuffle:
-                self.rnd.shuffle(bossMapping)
-            bossMapping += [8]  # Shuffling the color dungeon boss does not work properly, so we ignore that one.
-
-            self.__logic = logic.Logic(options, start_house_index=start_house_index, entranceMapping=entranceMapping, bossMapping=bossMapping)
+            world_setup = WorldSetup(options, self.rnd)
+            self.__logic = logic.Logic(options, world_setup=world_setup)
 
         if self.plan:
             for ii in self.__logic.iteminfo_list:

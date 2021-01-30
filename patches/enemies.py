@@ -22,7 +22,7 @@ SPRITE_DATA = [
     b'\xff\xff\xb2\xb3',  # (flying tiles are in first graphics set)
     None,
     b'\xff\xff\xba\xbb',
-    b'\x90\xff\x94\xff',
+    b'\x11\xff\x10\xff',
 ]
 BOSS_ENTITIES = [
     (3, 2, 0x59),
@@ -103,6 +103,7 @@ def getCleanBossRoom(rom, dungeon_nr):
 
 
 def changeBosses(rom, mapping):
+    print(mapping)
     for dungeon_nr in range(9):
         target = mapping[dungeon_nr]
         if target == dungeon_nr:
