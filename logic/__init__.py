@@ -25,15 +25,15 @@ class Logic:
         world.start.connect(world.start_locations[world_setup.start_house_index], None)
 
         dungeons = [
-            dungeon1.Dungeon1(configuration_options, boss_requirements[world_setup.boss_mapping[0]]),
-            dungeon2.Dungeon2(configuration_options, boss_requirements[world_setup.boss_mapping[1]]),
-            dungeon3.Dungeon3(configuration_options, boss_requirements[world_setup.boss_mapping[2]]),
-            dungeon4.Dungeon4(configuration_options, boss_requirements[world_setup.boss_mapping[3]]),
-            dungeon5.Dungeon5(configuration_options, boss_requirements[world_setup.boss_mapping[4]]),
-            dungeon6.Dungeon6(configuration_options, boss_requirements[world_setup.boss_mapping[5]]),
-            dungeon7.Dungeon7(configuration_options, boss_requirements[world_setup.boss_mapping[6]]),
-            dungeon8.Dungeon8(configuration_options, boss_requirements[world_setup.boss_mapping[7]]),
-            dungeonColor.DungeonColor(configuration_options, boss_requirements[world_setup.boss_mapping[8]])
+            dungeon1.Dungeon1(configuration_options, world_setup),
+            dungeon2.Dungeon2(configuration_options, world_setup),
+            dungeon3.Dungeon3(configuration_options, world_setup),
+            dungeon4.Dungeon4(configuration_options, world_setup),
+            dungeon5.Dungeon5(configuration_options, world_setup),
+            dungeon6.Dungeon6(configuration_options, world_setup),
+            dungeon7.Dungeon7(configuration_options, world_setup),
+            dungeon8.Dungeon8(configuration_options, world_setup),
+            dungeonColor.DungeonColor(configuration_options, world_setup)
         ]
 
         dungeons[world_setup.dungeon_entrance_mapping[0]].entrance.connect(world.dungeon1_entrance, None)

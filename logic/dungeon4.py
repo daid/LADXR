@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon4:
-    def __init__(self, options, boss_requirement):
+    def __init__(self, options, world_setup):
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
@@ -31,7 +31,7 @@ class Dungeon4:
         to_the_nightmare_key.add(DungeonChest(0x176))
 
         before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
-        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, boss_requirement))
+        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, boss_requirements[world_setup.boss_mapping[3]]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG)) # grab the key jumping over the water and boomerang downwards

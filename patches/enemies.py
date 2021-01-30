@@ -103,7 +103,6 @@ def getCleanBossRoom(rom, dungeon_nr):
 
 
 def changeBosses(rom, mapping):
-    print(mapping)
     for dungeon_nr in range(9):
         target = mapping[dungeon_nr]
         if target == dungeon_nr:

@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon7:
-    def __init__(self, options, boss_requirement):
+    def __init__(self, options, world_setup):
         entrance = Location(7)
         first_key = Location(7).add(DroppedKey(0x210)).connect(entrance, attack_hookshot_powder)
         topright_pillar_area = Location(7).connect(entrance, KEY7)
@@ -28,7 +28,7 @@ class Dungeon7:
 
         pre_boss = Location(7).connect(final_pillar, NIGHTMARE_KEY7) 
         beamos_horseheads = Location(7).add(DungeonChest(0x220)).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
-        boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, boss_requirement)
+        boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, boss_requirements[world_setup.boss_mapping[6]])
 
         if not options.keysanity:
             first_key.items[0].forced_item = KEY7

@@ -4,7 +4,7 @@ from locations import *
 
 
 class Dungeon3:
-    def __init__(self, options, boss_requirement):
+    def __init__(self, options, world_setup):
         entrance = Location(3)
         dungeon3_reverse_eye = Location(3).add(DungeonChest(0x153)).connect(entrance, PEGASUS_BOOTS) # Right side reverse eye
         area2 = Location(3).connect(entrance, POWER_BRACELET)
@@ -51,7 +51,7 @@ class Dungeon3:
         pre_boss = Location(3).connect(towards_boss4, AND(attack_no_boomerang, FEATHER, PEGASUS_BOOTS))
         pre_boss.add(DroppedKey(0x15B))
 
-        boss = Location(3).add(HeartContainer(0x15A), Instrument(0x159)).connect(pre_boss, AND(NIGHTMARE_KEY3, boss_requirement))
+        boss = Location(3).add(HeartContainer(0x15A), Instrument(0x159)).connect(pre_boss, AND(NIGHTMARE_KEY3, boss_requirements[world_setup.boss_mapping[2]]))
 
         if not options.keysanity:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.

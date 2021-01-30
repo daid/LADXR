@@ -182,7 +182,7 @@ def generateRom(options, seed, logic, multiworld=None):
 
         # Patch the generated logic into the rom
         patches.startLocation.setStartLocation(rom, logic.world_setup.start_house_index)
-        patches.dungeonEntrances.changeEntrances(rom, logic.world_setup.entrance_mapping)
+        patches.dungeonEntrances.changeEntrances(rom, logic.world_setup.dungeon_entrance_mapping)
         for spot in logic.iteminfo_list:
             spot.patch(rom, spot.item)
         patches.enemies.changeBosses(rom, logic.world_setup.boss_mapping)
@@ -195,7 +195,7 @@ def generateRom(options, seed, logic, multiworld=None):
         # Patch the generated logic into the rom
         patches.startLocation.setStartLocation(rom, logic.worlds[multiworld].world_setup.start_house_index)
         if logic.worlds[multiworld].world_setup.entrance_mapping:
-            patches.dungeonEntrances.changeEntrances(rom, logic.worlds[multiworld].world_setup.entrance_mapping)
+            patches.dungeonEntrances.changeEntrances(rom, logic.worlds[multiworld].world_setup.dungeon_entrance_mapping)
         for spot in logic.iteminfo_list:
             if spot.world == multiworld:
                 spot.patch(rom, spot.item)

@@ -21,6 +21,7 @@ class WorldSetup:
         self.start_house_index = 0
         self.dungeon_entrance_mapping = list(range(9))
         self.boss_mapping = list(range(8))
+        self.miniboss_mapping = list(range(9))
 
         if options.randomstartlocation:
             self.start_house_index = rnd.randint(0, 7)
