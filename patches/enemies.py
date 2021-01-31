@@ -1,5 +1,6 @@
 from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
+import entityData
 
 
 BOSS_ROOMS = [
@@ -35,6 +36,22 @@ BOSS_ENTITIES = [
     (4, 3, 0x62),
     (5, 2, 0xF9),
 ]
+MINIBOSS_ENTITIES = {
+    "ROLLING_BONES":    [(8, 3, 0x81), (6, 3, 0x82)],
+    "HINOX":            [(5, 2, 0x89)],
+    "DODONGO":          [(3, 2, 0x60), (5, 2, 0x60)],
+    "CUE_BALL":         [(1, 1, 0x8e)],
+    "GHOMA":            [(2, 1, 0x5e), (2, 4, 0x5e)],
+    "SMASHER":          [(5, 3, 0x92)],
+    "GRIM_CREEPER":     [(4, 0, 0xbc)],
+    "BLAINO":           [(5, 3, 0xbe)],
+    "AVALAUNCH":        [(5, 1, 0xf4)],
+    "GIANT_BUZZ_BLOB":  [(4, 2, 0xf8)],
+}
+MINIBOSS_ROOMS = {
+    0: 0x111, 1: 0x128, 2: 0x145, 3: 0x164, 4: 0x193, 5: 0x1C5, 6: 0x228, 7: 0x23F,
+    "c1": 0x30C, "c2": 0x303,
+}
 
 
 def getCleanBossRoom(rom, dungeon_nr):
@@ -188,6 +205,7 @@ def changeBosses(rom, mapping):
 
             re.store(rom)
 
+
 def readBossMapping(rom):
     mapping = []
     for dungeon_nr in range(9):
@@ -201,3 +219,45 @@ def readBossMapping(rom):
         else:
             mapping.append(dungeon_nr)
     return mapping
+
+
+def changeMiniBosses(rom, mapping):
+    # Fix avalaunch not working when entering a room from the left or right
+    rom.patch(0x03, 0x0BE0, ASM("""
+        ld  [hl], $50
+        ld  hl, $C2D0
+        add hl, bc
+        ld  [hl], $00
+        jp  $4B56
+    """), ASM("""
+        ld  a, [hl]
+        sub $08
+        ld  [hl], a    
+        ld  hl, $C2D0
+        add hl, bc
+        ld  [hl], b ; b is always zero here
+        ret
+    """), fill_nop=True)
+
+    for target, name in mapping.items():
+        re = RoomEditor(rom, MINIBOSS_ROOMS[target])
+        re.entities = [e for e in re.entities if e[2] == 0x61]  # Only keep warp, if available
+        re.entities += MINIBOSS_ENTITIES[name]
+        if name == "CUE_BALL":
+            re.objects += [
+                Object(3, 3, 0x2c),
+                ObjectHorizontal(4, 3, 0x22, 2),
+                Object(6, 3, 0x2b),
+                Object(3, 4, 0x2a),
+                ObjectHorizontal(4, 4, 0x21, 2),
+                Object(6, 4, 0x29),
+            ]
+        if name == "BLAINO":
+            # BLAINO needs a warp object to hit you to the entrance of the dungeon.
+            if len(re.getWarps()) < 1:
+                re.objects.append(ObjectWarp(1, 0, 0x117, 80, 80))
+        re.store(rom)
+
+        sprite_data = entityData.SPRITE_DATA[MINIBOSS_ENTITIES[name][0][2]]
+        for n in range(0, len(sprite_data), 2):
+            rom.room_sprite_data_indoor[re.room - 0x100][sprite_data[n]] = sprite_data[n+1]

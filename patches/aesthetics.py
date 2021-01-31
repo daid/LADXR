@@ -87,7 +87,7 @@ def allowColorDungeonSpritesEverywhere(rom):
     
     # Finally fill in the sprite data for the color dungeon
     for n in range(22):
-        data = b''
+        data = bytearray()
         for m in range(4):
             idx = rom.banks[0x20][0x06AA + 44 * m + n * 2]
             bank = rom.banks[0x20][0x06AA + 44 * m + n * 2 + 1]

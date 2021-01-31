@@ -99,7 +99,7 @@ miniboss_requirements = {
     "GRIM_CREEPER":     attack_no_bomb,
     "BLAINO":           SWORD,
     "AVALAUNCH":        attack_hookshot,
-    "GIANT_BUZZ_BLOB":  AND(MAGIC_POWDER, SWORD),
+    "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
 }
 
 def flatten(req):

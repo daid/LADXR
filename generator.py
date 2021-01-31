@@ -186,6 +186,7 @@ def generateRom(options, seed, logic, multiworld=None):
         for spot in logic.iteminfo_list:
             spot.patch(rom, spot.item)
         patches.enemies.changeBosses(rom, logic.world_setup.boss_mapping)
+        patches.enemies.changeMiniBosses(rom, logic.world_setup.miniboss_mapping)
     else:
         # Set a unique ID in the rom for multiworld
         for n in range(4):
@@ -200,6 +201,7 @@ def generateRom(options, seed, logic, multiworld=None):
             if spot.world == multiworld:
                 spot.patch(rom, spot.item)
         patches.enemies.changeBosses(rom, logic.worlds[multiworld].world_setup.boss_mapping)
+        patches.enemies.changeMiniBosses(rom, logic.worlds[multiworld].world_setup.miniboss_mapping)
 
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
