@@ -67,6 +67,8 @@ def main(mainargs=None):
         help="Enable dungeon shuffle, puts dungeons on different spots.")
     parser.add_argument('--bossshuffle', dest="bossshuffle", action="store_true",
         help="Enable boss shuffle, swaps around dungeon bosses.")
+    parser.add_argument('--miniboss', dest="miniboss", choices=["default", "shuffle", "random"], default="default",
+        help="Shuffle the minibosses or just randomize them.")
     parser.add_argument('--witch', dest="witch", action="store_true",
         help="Enables witch and toadstool in the item pool.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1'], default='default',

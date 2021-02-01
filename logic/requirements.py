@@ -100,6 +100,7 @@ miniboss_requirements = {
     "BLAINO":           SWORD,
     "AVALAUNCH":        attack_hookshot,
     "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
+    "MOBLIN_KING":      SWORD,
 }
 
 def flatten(req):

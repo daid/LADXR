@@ -13,6 +13,8 @@ class WorldSetup:
             0: "ROLLING_BONES", 1: "HINOX", 2: "DODONGO", 3: "CUE_BALL", 4: "GHOMA", 5: "SMASHER", 6: "GRIM_CREEPER", 7: "BLAINO",
             # Color dungeon needs to be special, as always.
             "c1": "AVALAUNCH", "c2": "GIANT_BUZZ_BLOB",
+            # Overworld
+            "moblin_cave": "MOBLIN_KING",
         }
 
     def randomize(self, options, rnd):
@@ -28,6 +30,12 @@ class WorldSetup:
             rnd.shuffle(self.boss_mapping)
             if options.heartcontainers:
                 self.boss_mapping += [8]
+        if options.miniboss != "default":
+            values = [name for name in self.miniboss_mapping.values()]
+            for key in self.miniboss_mapping.keys():
+                self.miniboss_mapping[key] = rnd.choice(values)
+                if options.miniboss == 'shuffle':
+                    values.remove(self.miniboss_mapping[key])
 
     def loadFromRom(self, rom):
         self.start_house_index = patches.startLocation.readStartLocation(rom)
