@@ -245,6 +245,12 @@ def changeMiniBosses(rom, mapping):
         re = RoomEditor(rom, MINIBOSS_ROOMS[target])
         re.entities = [e for e in re.entities if e[2] == 0x61]  # Only keep warp, if available
         re.entities += MINIBOSS_ENTITIES[name]
+
+        if re.room == 0x228 and name != "GRIM_CREEPER":
+            for x in range(3, 7):
+                for y in range(0, 3):
+                    re.removeObject(x, y)
+
         if name == "CUE_BALL":
             re.objects += [
                 Object(3, 3, 0x2c),
@@ -259,21 +265,21 @@ def changeMiniBosses(rom, mapping):
             if len(re.getWarps()) < 1:
                 # Default to start house.
                 target = (0x10, 0x2A3, 0x50, 0x7c, 0x2A3)
-                if re.room >= 0x100 and re.room < 0x11D: #D1
+                if 0x100 <= re.room < 0x11D: #D1
                     target = (0, 0x117, 80, 80)
-                elif re.room >= 0x11D and re.room < 0x140: #D2
+                elif 0x11D <= re.room < 0x140: #D2
                     target = (1, 0x136, 80, 80)
-                elif re.room >= 0x140 and re.room < 0x15D: #D3
+                elif 0x140 <= re.room < 0x15D: #D3
                     target = (2, 0x152, 80, 80)
-                elif re.room >= 0x15D and re.room < 0x180: #D4
+                elif 0x15D <= re.room < 0x180: #D4
                     target = (2, 0x174, 80, 80)
-                elif re.room >= 0x180 and re.room < 0x1AC: #D5
+                elif 0x180 <= re.room < 0x1AC: #D5
                     target = (2, 0x1A1, 80, 80)
-                elif re.room >= 0x1B0 and re.room < 0x1DE: #D6
+                elif 0x1B0 <= re.room < 0x1DE: #D6
                     target = (2, 0x1D4, 80, 80)
-                elif re.room >= 0x200 and re.room < 0x22D: #D7
+                elif 0x200 <= re.room < 0x22D: #D7
                     target = (6, 0x20E, 80, 80)
-                elif re.room >= 0x22D and re.room < 0x26C: #D8
+                elif 0x22D <= re.room < 0x26C: #D8
                     target = (7, 0x25D, 80, 80)
                 elif re.room >= 0x300: #D0
                     target = (0xFF, 0x312, 80, 80)
@@ -285,3 +291,13 @@ def changeMiniBosses(rom, mapping):
         sprite_data = entityData.SPRITE_DATA[MINIBOSS_ENTITIES[name][0][2]]
         for n in range(0, len(sprite_data), 2):
             rom.room_sprite_data_indoor[re.room - 0x100][sprite_data[n]] = sprite_data[n+1]
+
+
+def readMiniBossMapping(rom):
+    mapping = {}
+    for key, room in MINIBOSS_ROOMS.items():
+        r = RoomEditor(rom, room)
+        for me_key, me_data in MINIBOSS_ENTITIES.items():
+            if me_data[-1][2] == r.entities[-1][2]:
+                mapping[key] = me_key
+    return mapping

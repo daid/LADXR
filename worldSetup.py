@@ -41,3 +41,4 @@ class WorldSetup:
         self.start_house_index = patches.startLocation.readStartLocation(rom)
         self.dungeon_entrance_mapping = patches.dungeonEntrances.readEntrances(rom)
         self.boss_mapping = patches.enemies.readBossMapping(rom)
+        self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
