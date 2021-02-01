@@ -4,7 +4,7 @@ from locations import *
 
 
 class World:
-    def __init__(self, options):
+    def __init__(self, options, world_setup):
         start_house = Location().add(StartItem())
         mabe_village = Location()
         Location().add(ShopItem(0)).connect(mabe_village, COUNT("RUPEES", 200))
@@ -51,7 +51,7 @@ class World:
             graveyard.add(OwlStatue(0x035))
         graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard, AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER))  # grave cave
         Location().add(Seashell(0x074)).connect(graveyard, AND(POWER_BRACELET, SHOVEL))  # next to grave cave, digging spot
-        Location().add(Chest(0x2E2)).connect(graveyard, SWORD)  # moblin cave, boss requires sword, contains Bowwow
+        Location().add(Chest(0x2E2)).connect(graveyard, AND(attack_hookshot_powder, miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
 
         # "Ukuku Prairie"
         # The center_area is the whole area right of the start town, up to the river, and the castle.

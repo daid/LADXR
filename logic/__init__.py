@@ -21,7 +21,7 @@ class Logic:
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options)
         else:
-            world = overworld.World(configuration_options)
+            world = overworld.World(configuration_options, world_setup)
 
         world.start.connect(world.start_locations[world_setup.start_house_index], None)
 
