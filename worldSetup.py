@@ -22,12 +22,18 @@ class WorldSetup:
             self.start_house_index = rnd.randint(0, 7)
         if options.dungeonshuffle:
             rnd.shuffle(self.dungeon_entrance_mapping)
-        if options.bossshuffle:
+        if options.boss != "default":
+            values = list(range(9))
             if options.heartcontainers:
                 # Color dungeon boss does not drop a heart container so we cannot shuffle him when we
                 # have heart container shuffling
-                self.boss_mapping = list(range(8))
-            rnd.shuffle(self.boss_mapping)
+                values.remove(8)
+            self.boss_mapping = []
+            for n in range(8 if options.heartcontainers else 9):
+                value = rnd.choice(values)
+                self.boss_mapping.append(value)
+                if value in (3, 6) or options.boss == "shuffle":
+                    values.remove(value)
             if options.heartcontainers:
                 self.boss_mapping += [8]
         if options.miniboss != "default":
