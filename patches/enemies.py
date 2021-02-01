@@ -257,7 +257,29 @@ def changeMiniBosses(rom, mapping):
         if name == "BLAINO":
             # BLAINO needs a warp object to hit you to the entrance of the dungeon.
             if len(re.getWarps()) < 1:
-                re.objects.append(ObjectWarp(1, 0, 0x117, 80, 80))
+                # Default to start house.
+                target = (0x10, 0x2A3, 0x50, 0x7c, 0x2A3)
+                if re.room >= 0x100 and re.room < 0x11D: #D1
+                    target = (0, 0x117, 80, 80)
+                elif re.room >= 0x11D and re.room < 0x140: #D2
+                    target = (1, 0x136, 80, 80)
+                elif re.room >= 0x140 and re.room < 0x15D: #D3
+                    target = (2, 0x152, 80, 80)
+                elif re.room >= 0x15D and re.room < 0x180: #D4
+                    target = (2, 0x174, 80, 80)
+                elif re.room >= 0x180 and re.room < 0x1AC: #D5
+                    target = (2, 0x1A1, 80, 80)
+                elif re.room >= 0x1B0 and re.room < 0x1DE: #D6
+                    target = (2, 0x1D4, 80, 80)
+                elif re.room >= 0x200 and re.room < 0x22D: #D7
+                    target = (6, 0x20E, 80, 80)
+                elif re.room >= 0x22D and re.room < 0x26C: #D8
+                    target = (7, 0x25D, 80, 80)
+                elif re.room >= 0x300: #D0
+                    target = (0xFF, 0x312, 80, 80)
+                elif re.room == 0x2E1: #Moblin cave
+                    target = (0x15, 0x2F0, 0x50, 0x7C)
+                re.objects.append(ObjectWarp(1, *target))
         re.store(rom)
 
         sprite_data = entityData.SPRITE_DATA[MINIBOSS_ENTITIES[name][0][2]]

@@ -51,6 +51,8 @@ def cleanup(rom):
     re.store(rom, 0x277)
     re.store(rom, 0x278)
     re.store(rom, 0x279)
+    re.store(rom, 0x1ED)
+    re.store(rom, 0x1FC)  # Beta room
 
     rom.texts[0x02B] = b'' # unused text
 
