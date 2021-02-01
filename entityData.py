@@ -444,7 +444,7 @@ SPRITE_DATA = {
     0xE1: (1, 0xDF), # WITCH_RAT
     0xE2: (3, 0xF4), # FLAME_SHOOTER
     0xE3: (3, 0x8C), # POKEY
-    0xE4: (1, 0x80), # MOBLIN_KING
+    0xE4: (1, 0x80, 3, 0xA5), # MOBLIN_KING
     0xE5: None,      # FLOATING_ITEM_2
     0xE6: (0, 0xe8, 1, 0xe9, 2, 0xea, 3, 0xeb), # FINAL_NIGHTMARE
     0xE7: None,      # KANALET_CASTLE_GATE_SWITCH

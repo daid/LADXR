@@ -47,6 +47,7 @@ MINIBOSS_ENTITIES = {
     "BLAINO":           [(5, 3, 0xbe)],
     "AVALAUNCH":        [(5, 1, 0xf4)],
     "GIANT_BUZZ_BLOB":  [(4, 2, 0xf8)],
+    "MOBLIN_KING":      [(5, 5, 0xe4)],
 }
 MINIBOSS_ROOMS = {
     0: 0x111, 1: 0x128, 2: 0x145, 3: 0x164, 4: 0x193, 5: 0x1C5, 6: 0x228, 7: 0x23F,
