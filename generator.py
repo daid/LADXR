@@ -165,6 +165,8 @@ def generateRom(options, seed, logic, multiworld=None):
 
     if options.goal == "raft":
         patches.goal.setRaftGoal(rom)
+    elif options.goal == "seashells":
+        patches.goal.setSeashellGoal(rom)
     elif options.goal != "random" and options.goal is not None:
         patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
 

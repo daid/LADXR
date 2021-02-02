@@ -79,7 +79,7 @@ def main(mainargs=None):
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
         help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
-    parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft'],
+    parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft', 'seashells'],
         help="Configure the instrument goal for this rom, anything between 0 and 8.")
     parser.add_argument('--accessibility', dest="accessibility_rule", choices=['all', 'goal'],
         help="Switches between making sure all locations are reachable or only the goal is reachable")

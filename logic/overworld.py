@@ -75,10 +75,11 @@ class World:
             prairie_plateau.add(OwlStatue(0x0A8))
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
         Location().add(MadBatter(0x1E0)).connect(center_area, AND(FEATHER, OR(SWORD, MAGIC_ROD, BOOMERANG), FLIPPERS, MAGIC_POWDER))  # you can use powder instead of sword/magic-rod to clear the bushes, but it is a bit of an advanced action
-        Location().add(SeashellMansion(0x2E9)).connect(center_area, COUNT(SEASHELL, 20))
-        
+        if options.goal != "seashells":
+            Location().add(SeashellMansion(0x2E9)).connect(center_area, COUNT(SEASHELL, 20))
+
         dungeon5_entrance = Location().connect(center_area, FLIPPERS)
-        
+
         # Richard
         richard_cave = Location().connect(center_area, COUNT(GOLD_LEAF, 5))
         if options.owlstatues == "both" or options.owlstatues == "overworld":

@@ -140,6 +140,9 @@ class ItemPool:
                     self.remove("STONE_BEAK%d" % (n + 1))
                     self.add("KEY%d" % (n +1))
 
+        if options.goal == "seashells":
+            self.remove(SWORD)
+
         if options.overworld == "dungeondive":
             self.remove(SWORD)
             self.remove(MAX_ARROWS_UPGRADE)

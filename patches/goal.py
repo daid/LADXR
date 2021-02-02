@@ -61,6 +61,117 @@ noinc:
         jp   $3BC0 ; jump to render code
     """), fill_nop=True)
 
+def setSeashellGoal(rom):
+    # Remove the seashell mansion handler (as it will take your seashells)
+    re = RoomEditor(rom, 0x2E9)
+    re.entities = []
+    re.store(rom)
+
+    rom.patch(0x19, 0x0ACB, 0x0C21, ASM("""
+        ldh  a, [$F8] ; room status
+        and  $10
+        ret  nz
+        ldh  a, [$F0] ; active entity state
+        rst  0
+        dw   state0, state1, state2, state3, state4
+
+state0:
+        ld   a, [$C124] ; room transition state
+        and  a
+        ret  nz
+        ldh  a, [$99]  ; link position Y
+        cp   $70
+        ret  nc
+        jp   $3B12  ; increase entity state
+
+state1:
+        call $0C05 ; get entity transition countdown
+        jr   nz, renderShells
+        ld   [hl], $10
+        call renderShells
+
+        ld   hl, $C2B0 ; private state 1 table
+        add  hl, bc
+        ld   a, [wSeashellsCount]
+        cp   [hl]
+        jp   z, $3B12  ; increase entity state
+        ld   a, [hl]   ; increase the amount of compared shells
+        inc  a
+        daa
+        ld   [hl], a
+        ld   hl, $C2C0 ; private state 2 table
+        add  hl, bc
+        inc  [hl] ; increase amount of displayed shells
+        ld   a, $2B
+        ldh  [$F4], a ; SFX
+        ret
+
+state2:
+        ld   a, [wSeashellsCount]
+        cp   $20
+        jr   c, renderShells
+        ; got enough shells
+        call $3B12 ; increase entity state
+        call $0C05 ; get entity transition countdown
+        ld   [hl], $40
+        jp   renderShells
+
+state3:
+        ld   a, $23
+        ldh  [$F2], a ; SFX: Dungeon opened
+        ld   hl, $D806 ; egg room status
+        set  4, [hl]
+        ld   a, [hl]
+        ldh  [$F8], a ; current room status
+        call $3B12 ; increase entity state
+
+        ld   a, $00
+        jp   $4C2E
+
+state4:
+        ret
+
+renderShells:
+        ld   hl, $C2C0 ; private state 2 table
+        add  hl, bc
+        ld   a, [hl]
+        cp   $14
+        jr   c, .noMax
+        ld   a, $14
+.noMax:
+        and  a
+        ret  z
+        ld   c, a
+        ld   hl, spriteRect
+        call $3CE6 ; RenderActiveEntitySpritesRect
+        ret
+
+spriteRect:
+        db $10, $1E, $1E, $0C
+        db $10, $2A, $1E, $0C
+        db $10, $36, $1E, $0C
+        db $10, $42, $1E, $0C
+        db $10, $4E, $1E, $0C
+
+        db $10, $5A, $1E, $0C
+        db $10, $66, $1E, $0C
+        db $10, $72, $1E, $0C
+        db $10, $7E, $1E, $0C
+        db $10, $8A, $1E, $0C
+
+        db $24, $1E, $1E, $0C
+        db $24, $2A, $1E, $0C
+        db $24, $36, $1E, $0C
+        db $24, $42, $1E, $0C
+        db $24, $4E, $1E, $0C
+
+        db $24, $5A, $1E, $0C
+        db $24, $66, $1E, $0C
+        db $24, $72, $1E, $0C
+        db $24, $7E, $1E, $0C
+        db $24, $8A, $1E, $0C
+    """, 0x4ACB), fill_nop=True)
+
 
 def setRaftGoal(rom):
     rom.texts[0x1A3] = formatText(b"Just sail away.")
