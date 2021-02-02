@@ -65,7 +65,7 @@ def main(mainargs=None):
         help="Place your starting house at a random location.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
         help="Enable dungeon shuffle, puts dungeons on different spots.")
-    parser.add_argument('--bossshuffle', dest="bossshuffle", action="store_true",
+    parser.add_argument('--boss', dest="boss", choices=["default", "shuffle", "random"], default="default",
         help="Enable boss shuffle, swaps around dungeon bosses.")
     parser.add_argument('--miniboss', dest="miniboss", choices=["default", "shuffle", "random"], default="default",
         help="Shuffle the minibosses or just randomize them.")
