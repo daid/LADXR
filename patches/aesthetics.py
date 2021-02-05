@@ -131,6 +131,7 @@ def allowColorDungeonSpritesEverywhere(rom):
     getNext:
         ld  hl, $C197
         inc [hl]
+        res 2, [hl]
         ld  a, [$C10D]
         cp  [hl]
         ret nz
