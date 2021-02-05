@@ -135,7 +135,122 @@ def addBank3F(rom):
         xor  a
         ldh  [$70], a
 
+        ; Check if we are running on a bad emulator
+        ldh  [$02], a
+        ldh  a, [$02]
+        and  $7c
+        cp   $7c
+        jr   nz, badEmu
+
         ret
+badEmu:
+        xor  a
+        ldh  [$40], a ; switch display off
+        ; Load some palette
+        ld   a, $80
+        ldh  [$68], a
+        xor  a
+        ldh  [$69], a
+        ldh  [$69], a
+        ldh  [$69], a
+        ldh  [$69], a
+
+        ; Load a different gfx tile for the first gfx
+        cpl
+        ld   hl, $8000
+        ld   c, $10
+.loop:
+        ldi  [hl], a
+        dec  c
+        jr   nz, .loop
+
+        ld   a, $01
+        ld   [$9800], a
+        ld   [$9820], a
+        ld   [$9840], a
+        ld   [$9860], a
+        ld   [$9880], a
+
+        ld   [$9801], a
+        ld   [$9841], a
+        ld   [$9881], a
+
+        ld   [$9822], a
+        ld   [$9862], a
+
+        ld   [$9824], a
+        ld   [$9844], a
+        ld   [$9864], a
+        ld   [$9884], a
+
+        ld   [$9805], a
+        ld   [$9845], a
+
+        ld   [$9826], a
+        ld   [$9846], a
+        ld   [$9866], a
+        ld   [$9886], a
+
+        ld   [$9808], a
+        ld   [$9828], a
+        ld   [$9848], a
+        ld   [$9868], a
+        ld   [$9888], a
+
+        ld   [$9809], a
+        ld   [$9889], a
+
+        ld   [$982A], a
+        ld   [$984A], a
+        ld   [$986A], a
+
+        ld   [$9900], a
+        ld   [$9920], a
+        ld   [$9940], a
+        ld   [$9960], a
+        ld   [$9980], a
+
+        ld   [$9901], a
+        ld   [$9941], a
+        ld   [$9981], a
+
+        ld   [$9903], a
+        ld   [$9923], a
+        ld   [$9943], a
+        ld   [$9963], a
+        ld   [$9983], a
+
+        ld   [$9904], a
+        ld   [$9925], a
+        ld   [$9906], a
+
+        ld   [$9907], a
+        ld   [$9927], a
+        ld   [$9947], a
+        ld   [$9967], a
+        ld   [$9987], a
+
+        ld   [$9909], a
+        ld   [$9929], a
+        ld   [$9949], a
+        ld   [$9969], a
+        ld   [$9989], a
+
+        ld   [$998A], a
+
+        ld   [$990B], a
+        ld   [$992B], a
+        ld   [$994B], a
+        ld   [$996B], a
+        ld   [$998B], a
+
+        ; lcd on
+        ld   a, $91
+        ldh  [$40], a
+blockBadEmu:
+        di
+        jr   blockBadEmu
+        
         """))
 
     # Copy all normal item graphics

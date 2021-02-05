@@ -11,11 +11,11 @@ def updateEndScreen(rom):
     """), ASM("""
         ld   a, $3F
         ld   [$2100], a
-        jp   $4100
+        jp   $4200
     """))
     rom.patch(0x17, 0x2FCE, "B170", "D070") # Ignore the final tile data load
     
-    rom.patch(0x3F, 0x0100, None, ASM("""
+    rom.patch(0x3F, 0x0200, None, ASM("""
     ; Disable LCD
     xor a
     ldh  [$40], a
