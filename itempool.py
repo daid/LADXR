@@ -141,7 +141,6 @@ class ItemPool:
                     self.add("KEY%d" % (n +1))
 
         if options.goal == "seashells":
-            self.remove(SWORD)
             for n in range(8):
                 self.remove("INSTRUMENT%d" % (n + 1))
             self.add(SEASHELL, 8)

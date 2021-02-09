@@ -64,9 +64,9 @@ noinc:
 def setSeashellGoal(rom, count):
     rom.texts[0x1A3] = formatText(b"You need %d seashells" % (count))
 
-    # Remove the seashell mansion handler (as it will take your seashells)
+    # Remove the seashell mansion handler (as it will take your seashells) but put a heartpiece instead
     re = RoomEditor(rom, 0x2E9)
-    re.entities = []
+    re.entities = [(4, 4, 0x35)]
     re.store(rom)
 
     rom.patch(0x19, 0x0ACB, 0x0C21, ASM("""
