@@ -57,7 +57,7 @@ def main(mainargs=None):
         help="Enables heartcontainer mode, which randomizes the heart containers dropped by bosses.")
     parser.add_argument('--instruments', dest="instruments", action="store_true",
         help="Shuffle the instruments in the item pool.")
-    parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'],
+    parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'], default='none',
         help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
     parser.add_argument('--keysanity', dest="keysanity", action="store_true",
         help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")

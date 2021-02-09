@@ -61,7 +61,9 @@ noinc:
         jp   $3BC0 ; jump to render code
     """), fill_nop=True)
 
-def setSeashellGoal(rom):
+def setSeashellGoal(rom, count):
+    rom.texts[0x1A3] = formatText(b"You need %d seashells" % (count))
+
     # Remove the seashell mansion handler (as it will take your seashells)
     re = RoomEditor(rom, 0x2E9)
     re.entities = []
@@ -108,7 +110,7 @@ state1:
 
 state2:
         ld   a, [wSeashellsCount]
-        cp   $20
+        cp   $%02d
         jr   c, renderShells
         ; got enough shells
         call $3B12 ; increase entity state
@@ -170,7 +172,7 @@ spriteRect:
         db $24, $72, $1E, $0C
         db $24, $7E, $1E, $0C
         db $24, $8A, $1E, $0C
-    """, 0x4ACB), fill_nop=True)
+    """ % (count), 0x4ACB), fill_nop=True)
 
 
 def setRaftGoal(rom):

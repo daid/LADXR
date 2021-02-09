@@ -142,6 +142,9 @@ class ItemPool:
 
         if options.goal == "seashells":
             self.remove(SWORD)
+            for n in range(8):
+                self.remove("INSTRUMENT%d" % (n + 1))
+            self.add(SEASHELL, 8)
 
         if options.overworld == "dungeondive":
             self.remove(SWORD)
