@@ -127,6 +127,24 @@ def getCleanBossRoom(rom, dungeon_nr):
 
 
 def changeBosses(rom, mapping):
+    # Fix the color dungeon not properly warping to room 0 with the boss.
+    rom.patch(0x14, 0x04E0, "0000000000000000" +
+                            "0000000000000000" +
+                            "0000000000000000" +
+                            "0000010000020300" +
+                            "0004050607080900" +
+                            "00000A0B0C0D0000" +
+                            "00000E0F10110000" +
+                            "0000121314150000",
+                            "FFFFFFFFFFFFFFFF" +
+                            "FFFFFFFFFFFFFFFF" +
+                            "FFFFFFFFFFFFFFFF" +
+                            "FF0001FFFF0203FF" +
+                            "FF040506070809FF" +
+                            "FFFF0A0B0C0DFFFF" +
+                            "FFFF0E0F1011FFFF" +
+                            "FFFF12131415FFFF")
+
     for dungeon_nr in range(9):
         target = mapping[dungeon_nr]
         if target == dungeon_nr:
