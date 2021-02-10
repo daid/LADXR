@@ -55,6 +55,11 @@ MINIBOSS_ROOMS = {
     "moblin_cave": 0x2E1,
 }
 
+def getBossRoomStatusFlagLocation(dungeon_nr):
+    if BOSS_ROOMS[dungeon_nr][0] >= 0x300:
+        return 0xDDE0 - 0x300 + BOSS_ROOMS[dungeon_nr][0]
+    return 0xD800 + BOSS_ROOMS[dungeon_nr][0]
+
 
 def getCleanBossRoom(rom, dungeon_nr):
     re = RoomEditor(rom, BOSS_ROOMS[dungeon_nr][0])
@@ -148,7 +153,7 @@ def changeBosses(rom, mapping):
                 rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x2A
 
                 # Patch the fish heart container to open up the right room.
-                rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (0xD800 + BOSS_ROOMS[dungeon_nr][0])))
+                rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
 
                 # Add the staircase to the boss, and fix the warp back.
                 re = getCleanBossRoom(rom, dungeon_nr)
@@ -164,7 +169,7 @@ def changeBosses(rom, mapping):
             rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x2A
 
             # Patch the eagle heart container to open up the right room.
-            rom.patch(0x03, 0x1A04, ASM("ld hl, $DA2E"), ASM("ld hl, $%04x" % (0xD800 + BOSS_ROOMS[dungeon_nr][0])))
+            rom.patch(0x03, 0x1A04, ASM("ld hl, $DA2E"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
             rom.patch(0x02, 0x1FC8, ASM("cp $06"), ASM("cp $%02x" % (dungeon_nr if dungeon_nr < 8 else 0xff)))
 
             # Add the staircase to the boss, and fix the warp back.
