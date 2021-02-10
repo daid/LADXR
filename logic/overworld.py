@@ -251,7 +251,6 @@ class World:
 class DungeonDiveOverworld:
     def __init__(self, options):
         start_house = Location().add(StartItem())
-        Location().add(ShopItem(2)).connect(start_house, COUNT("RUPEES", 10))
         Location().add(ShopItem(0)).connect(start_house, COUNT("RUPEES", 200))
         Location().add(ShopItem(1)).connect(start_house, COUNT("RUPEES", 980))
         Location().add(Song(0x0B1)).connect(start_house, OCARINA)  # Marins song
