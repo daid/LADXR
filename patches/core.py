@@ -1,6 +1,7 @@
 from assembler import ASM
 from roomEditor import RoomEditor
 from backgroundEditor import BackgroundEditor
+import utils
 
 
 def bugfixWrittingWrongRoomStatus(rom):
@@ -206,3 +207,135 @@ noWrapDown:
     ]
     for n in range(32):
         rom.banks[0x0F][0x08E0 + n] = sprite_data[n // 2]
+
+
+def addFrameCounter(rom):
+    # Patch marin giving the start the game to jump to a custom handler
+    rom.patch(0x05, 0x1299, ASM("ld a, $01\ncall $2385"), ASM("push hl\nld a, $0D\nrst 8\npop hl"), fill_nop=True)
+
+    # Replace the debug pause/free-walk code with an frame counter
+    rom.patch(0x00, 0x02FB, 0x032D, ASM("""
+        ld   a, [$DB95] ;Get the gameplay type
+        dec  a          ; and if it was 1
+        jr   z, done    ; we are at the credits and the counter should stop.
+
+        ; Check if the timer expired
+        ld   hl, $FF0F
+        bit  2, [hl]
+        jr   z, done
+        res  2, [hl]
+
+        ; Increase the "subsecond" counter, and continue if it "overflows"
+        call $27D0 ; Enable SRAM
+        ld   hl, $B000
+        ld   a, [hl]
+        inc  a
+        cp   $20
+        ld   [hl], a
+        jr   nz, done
+        xor  a
+        ldi  [hl], a
+
+        ; Increase the seconds counter
+        ld   a, [hl]
+        inc  a
+        daa
+        ld   [hl], a
+        cp   $60
+        jr   nz, done
+        xor  a
+        ldi  [hl], a
+
+        ; Increase the hours counter
+        ld   a, [hl]
+        inc  a
+        daa
+        ld   [hl], a
+done:
+
+    """), fill_nop=True)
+
+    # Upper line of credits roll into "TIME"
+    rom.patch(0x17, 0x069D, 0x0713, ASM("""
+        ld   hl, OAMData
+        ld   de, $C000 ; OAM Buffer
+        ld   bc, $0020
+        call $2914
+        ret
+OAMData:
+        db  $30, $18, $2D, $00, $38, $18, $3D, $00 ;T
+        db  $30, $20, $27, $00, $38, $20, $27, $40 ;I
+        db  $30, $28, $2A, $00, $38, $28, $3A, $00 ;M
+        db  $30, $30, $24, $00, $38, $30, $34, $00 ;E
+    """, 0x469D), fill_nop=True)
+    # Lower line of credits roll into XX XX XX
+    rom.patch(0x17, 0x0784, 0x082D, ASM("""
+        ld   hl, OAMData
+        ld   de, $C020 ; OAM Buffer
+        ld   bc, $0060
+        call $2914
+
+        call $27D0 ; Enable SRAM
+        ld   hl, $C022
+        ld   a, [$B003] ; hours
+        call updateOAM
+        ld   a, [$B002] ; minutes
+        call updateOAM
+        ld   a, [$B001] ; seconds
+        call updateOAM
+        ret
+
+updateOAM:
+        ld   de, $0004
+        ld   b, a
+        swap a
+        and  $0F
+        or   $40
+        ld   [hl], a
+        add  hl, de
+        or   $10
+        ld   [hl], a
+        add  hl, de
+
+        ld   a, b
+        and  $0F
+        or   $40
+        ld   [hl], a
+        add  hl, de
+        or   $10
+        ld   [hl], a
+        add  hl, de
+        ret
+OAMData:
+        db  $48, $18, $40, $00, $50, $18, $50, $00 ;0
+        db  $48, $20, $40, $00, $50, $20, $50, $00 ;0
+        db  $48, $30, $40, $00, $50, $30, $50, $00 ;0
+        db  $48, $38, $40, $00, $50, $38, $50, $00 ;0
+        db  $48, $48, $40, $00, $50, $48, $50, $00 ;0
+        db  $48, $50, $40, $00, $50, $50, $50, $00 ;0
+    """, 0x4784), fill_nop=True)
+
+    # Graphics change for the end
+    tile_graphics = """
+........ ........ ........ ........ ........ ........ ........ ........ ........ ........
+.111111. ..1111.. .111111. .111111. ..11111. 11111111 .111111. 11111111 .111111. .111111.
+11333311 .11331.. 11333311 11333311 .113331. 13333331 11333311 13333331 11333311 11333311
+13311331 113331.. 13311331 13311331 1133331. 13311111 13311331 11111331 13311331 13311331
+13311331 133331.. 13311331 11111331 1331331. 1331.... 13311331 ...11331 13311331 13311331
+13311331 133331.. 11111331 ....1331 1331331. 1331.... 13311111 ...13311 13311331 13311331
+13311331 111331.. ...13311 .1111331 1331331. 1331111. 1331.... ..11331. 13311331 13311331
+13311331 ..1331.. ..11331. .1333331 13313311 13333311 1331111. ..13311. 11333311 11333331
+13311331 ..1331.. ..13311. .1111331 13333331 13311331 13333311 .11331.. 13311331 .1111331
+13311331 ..1331.. .11331.. ....1331 11113311 11111331 13311331 .13311.. 13311331 ....1331
+13311331 ..1331.. .13311.. ....1331 ...1331. ....1331 13311331 11331... 13311331 ....1331
+13311331 ..1331.. 11331... 11111331 ...1331. 11111331 13311331 13311... 13311331 11111331
+13311331 ..1331.. 13311111 13311331 ...1331. 13311331 13311331 1331.... 13311331 13311331
+11333311 ..1331.. 13333331 11333311 ...1331. 11333311 11333311 1331.... 11333311 11333311
+.111111. ..1111.. 11111111 .111111. ...1111. .111111. .111111. 1111.... .111111. .111111.
+........ ........ ........ ........ ........ ........ ........ ........ ........ ........
+""".strip()
+    for n in range(10):
+        gfx_high = "\n".join([line.split(" ")[n] for line in tile_graphics.split("\n")[:8]])
+        gfx_low = "\n".join([line.split(" ")[n] for line in tile_graphics.split("\n")[8:]])
+        rom.banks[0x38][0x1400+n*0x10:0x1410+n*0x10] = utils.createTileData(gfx_high)
+        rom.banks[0x38][0x1500+n*0x10:0x1510+n*0x10] = utils.createTileData(gfx_low)

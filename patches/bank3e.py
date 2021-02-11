@@ -68,6 +68,22 @@ MainJumpTable:
         dw   ItemMessageMultiworld        ; A
         dw   GiveItemAndMessageForRoom    ; B
         dw   RenderItemForRoom            ; C
+        dw   StartGameMarinMessage        ; D
+
+StartGameMarinMessage:
+        ; Injection to reset our frame counter
+        call $27D0 ; Enable SRAM
+        ld   hl, $B000
+        xor  a
+        ldi  [hl], a ;subsecond counter
+        ld   a, $08  ;(We set the counter to 8 seconds, as it takes 8 seconds before link wakes up and marin talks to him)
+        ldi  [hl], a ;second counter
+        xor  a
+        ldi  [hl], a ;minute counter
+        ldi  [hl], a ;hour counter
+        ; Show the normal message
+        ld   a, $01
+        jp $2385
 
     """ + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()

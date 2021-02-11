@@ -142,6 +142,12 @@ def addBank3F(rom):
         cp   $7c
         jr   nz, badEmu
 
+        ; Enable the timer to run 32 times per second
+        xor  a
+        ldh  [$06], a
+        ld   a, $04
+        ldh  [$07], a
+
         ret
 badEmu:
         xor  a
