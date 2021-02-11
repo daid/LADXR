@@ -100,6 +100,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.softlock.fixAll(rom)
     patches.maptweaks.tweakMap(rom)
     patches.chest.fixChests(rom)
+    patches.chest.setMultiChest(rom, logic.world_setup.multichest)
     patches.shop.fixShop(rom)
     patches.trendy.fixTrendy(rom)
     patches.droppedKey.fixDroppedKey(rom)

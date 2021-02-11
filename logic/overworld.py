@@ -142,8 +142,6 @@ class World:
         bridge_seashell = Location().add(Seashell(0x00C)).connect(luigi_rooster_house, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
         bird_key = Location().add(BirdKey()).connect(luigi_rooster_house, COUNT(POWER_BRACELET, 2)) # assumes rooster to cross the pits before the statue?
         luigi_rooster_house.connect(right_mountains_1, None, one_way=True) # Drop down the hole at the bird key
-        # MultiChest is causing issues with the sanity checker when keysanity is disabled, so disabled it for now.
-        # Location().add(MultiChest(0x2F2), Chest(0x01D)).connect(right_mountains_2, BOMB)  # the multi-chest puzzle.
         Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # chest after multichest puzzle outside
         right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT)) # d7 area
 

@@ -1,5 +1,6 @@
 from assembler import ASM
 from utils import formatText
+from locations.constants import CHEST_ITEMS
 
 
 def fixChests(rom):
@@ -50,3 +51,9 @@ def fixChests(rom):
     rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "600A602A620A622A" "6008602862086228")
 
     rom.texts[0x9A] = formatText(b"You found 10 bombs!")
+
+
+def setMultiChest(rom, option):
+    room = 0x2F2
+    addr = room + 0x560
+    rom.banks[0x14][addr] = CHEST_ITEMS[option]

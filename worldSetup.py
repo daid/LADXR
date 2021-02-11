@@ -1,7 +1,11 @@
 import patches.enemies
 import patches.dungeonEntrances
 import patches.startLocation
+from locations.items import *
 
+
+MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
+MULTI_CHEST_WEIGHTS = [20,           20,   20,       50,        50,        20,         10,         5,          5,        20,  10,        10]
 
 class WorldSetup:
     def __init__(self):
@@ -16,6 +20,7 @@ class WorldSetup:
             # Overworld
             "moblin_cave": "MOBLIN_KING",
         }
+        self.multichest = RUPEES_20
 
     def randomize(self, options, rnd):
         if options.randomstartlocation:
@@ -42,6 +47,7 @@ class WorldSetup:
                 self.miniboss_mapping[key] = rnd.choice(values)
                 if options.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
+        self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
     def loadFromRom(self, rom):
         self.start_house_index = patches.startLocation.readStartLocation(rom)
