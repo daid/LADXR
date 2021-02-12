@@ -252,17 +252,46 @@ NAME = [
     "HARDHIT_BEETLE",
     "PHOTOGRAPHER",
 ]
+
+def _moblinSpriteData(room):
+    if room.room in (0x002, 0x013): # Tal tal heights exception
+        return (2, 0x9C)  # Hooded stalfos
+    if room.room < 0x100:
+        x = room.room & 0x0F
+        y = (room.room >> 4) & 0x0F
+        if x < 0x04: # Left side is woods and mountain moblins
+            return (2, 0x7C) # Moblin
+        if 0x08 <= x <= 0x0B and 4 <= y <= 0x07: # Castle
+            return (2, 0x92)  # Knight
+        # Everything else is pigs
+        return (2, 0x83) # Pig
+    elif room.room < 0x1DF: # Dungeons contain hooded stalfos
+        return (2, 0x9C)  # Hooded stalfos
+    elif room.room < 0x200: # Caves contain moblins
+        return (2, 0x7C)  # Moblin
+    elif room.room < 0x276: # Dungeons contain hooded stalfos
+        return (2, 0x9C)  # Hooded stalfos
+    elif room.room < 0x300: # Caves contain moblins
+        x = room.room & 0x0F
+        y = (room.room >> 4) & 0x0F
+        if 2 <= x <= 6 and 0x0C <= y <= 0x0D: # Castle indoors
+            return (2, 0x92)  # Knight
+        return (2, 0x7C)  # Moblin
+    else: # Dungeon contains hooded stalfos
+        return (2, 0x9C)  # Hooded stalfos
+
+
 # For each entity, which sprite slot is used and which value should be used.
 SPRITE_DATA = {
     0x09: (2, 0xE3), # OCTOROCK
-    0x0B: (2, 0x7c), # MOBLIN (or 0x92 0x9c 0x83 0x7c for different sprites depending on the location)
+    0x0B: _moblinSpriteData, # MOBLIN
     0x0D: (1, 0x87), # TEKTITE
     0x0E: (1, 0x81), # LEEVER
     0x0F: (2, 0x78), # ARMOS_STATUE
     0x10: (1, 0x42), # HIDING_GHINI
     0x11: (2, 0x8A), # GIANT_GHINI
     0x12: (1, 0x42), # GHINI
-    0x14: (2, 0x7c), # MOBLIN_SWORD (or 0x92 depending on the location)
+    0x14: _moblinSpriteData, # MOBLIN_SWORD
     0x15: (1, 0x91), # ANTI_FAIRY
     0x16: (1, {0x91, 0x65}), # SPARK_COUNTER_CLOCKWISE
     0x17: (1, {0x91, 0x65}), # SPARK_CLOCKWISE
@@ -276,12 +305,12 @@ SPRITE_DATA = {
     0x20: (0, 0x90), # HARDHAT_BEETLE
     0x21: (2, 0x95), # WIZROBE
     0x23: (3, 0x93), # LIKE_LIKE
-    0x24: (2, 0x94), # IRON_MASK and (3, 0x9f)
+    0x24: (2, 0x94, 3, 0x9F), # IRON_MASK
     0x27: (1, 0x91), # SPIKE_TRAP
     0x28: (2, 0x96), # MIMIC
     0x29: (3, 0x98), # MINI_MOLDORM
     0x2A: (3, 0x99), # LASER
-    0x2C: (3, 0x60), # SPIKED_BEETLE (or 0x9b?)
+    0x2C: (3, 0x9B), # SPIKED_BEETLE
     0x2D: None,      # DROPPABLE_HEART
     0x2E: None,      # DROPPABLE_RUPEE
     0x2F: None,      # DROPPABLE_FAIRY
@@ -319,13 +348,13 @@ SPRITE_DATA = {
     0x56: (3, 0x9d), # TIMER_BOMBITE
     0x57: (3, 0x9e), # PAIRODD
     0x59: (2, 0xb0, 3, 0xb1), # MOLDORM
-    0x5A: (2, 0xb2, 3, 0xb3), # FACADE
+    0x5A: (0, 0x66, 2, 0xb2, 3, 0xb3), # FACADE
     0x5B: (2, 0xb4, 3, 0xb5), # SLIME_EYE
     0x5C: (2, 0xb6, 3, 0xb7), # GENIE
     0x5D: (2, 0xb8, 3, 0xb9), # SLIME_EEL
     0x5E: (2, 0xa8), # GHOMA
     0x5F: (2, 0x62, 3, 0x63), # MASTER_STALFOS
-    0x60: (2, 0xaa), # DODONGO_SNAKE (TODO: or spot 3 for IndoorB)
+    0x60: lambda room: (3, 0xaa) if 0x230 <= room.room <= 0x26B else (2, 0xaa), # DODONGO_SNAKE
     0x61: None,      # WARP
     0x62: (2, 0xba, 3, 0xbb), # HOT_HEAD
     0x63: (0, 0xbc, 1, 0xbd, 2, 0xbe, 3, 0xbf), # EVIL_EAGLE
@@ -347,14 +376,14 @@ SPRITE_DATA = {
     0x77: (3, 0x46), # GRANDPA_ULRIRA
     0x78: (3, 0x48), # YIP_YIP
     0x79: (2, 0x47), # MADAM_MEOWMEOW
-    0x7A: (1, 0xC6), # CROW
+    0x7A: lambda room: (1, 0xC6) if room.room < 0x040 else (1, 0x42), # CROW
     0x7B: (2, 0x49), # CRAZY_TRACY
     0x7C: (3, 0x40), # GIANT_GOPONGA_FLOWER
     0x7E: (1, 0x4A), # GOPONGA_FLOWER
     0x7F: (3, 0x41), # TURTLE_ROCK_HEAD
     0x80: (1, 0x4C), # TELEPHONE
-    0x81: (2, 0xAB), # ROLLING_BONES (sometimes in slot 3?)
-    0x82: (2, 0xAB), # ROLLING_BONES_BAR (sometimes in slot 3?)
+    0x81: lambda room: (3, 0xAB) if 0x230 <= room.room <= 0x26B else (2, 0xAB), # ROLLING_BONES (sometimes in slot 3?)
+    0x82: lambda room: (3, 0xAB) if 0x230 <= room.room <= 0x26B else (2, 0xAB), # ROLLING_BONES_BAR (sometimes in slot 3?)
     0x83: (1, 0x8D), # DREAM_SHRINE_BED
     0x84: (1, 0x4D), # BIG_FAIRY
     0x85: (1, 0x4C), # MR_WRITES_BIRD

@@ -214,15 +214,21 @@ def allowColorDungeonSpritesEverywhere(rom):
 
 def updateSpriteData(rom):
     # For each room update the sprite load data based on which entities are in there.
+    # TODO: D8 rolling bones, dodogo's
     for room_nr in range(0x316):
         if room_nr == 0x2FF:
             continue
         values = [None, None, None, None]
+        if room_nr == 0x00E:
+            values[2] = 0xD6
+            values[3] = 0xD7
         r = RoomEditor(rom, room_nr)
         for x, y, entity in r.entities:
             sprite_data = entityData.SPRITE_DATA[entity]
             if sprite_data is None:
                 continue
+            if callable(sprite_data):
+                sprite_data = sprite_data(r)
             for m in range(0, len(sprite_data), 2):
                 idx, value = sprite_data[m:m+2]
                 if values[idx] is None:

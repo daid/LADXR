@@ -1,6 +1,5 @@
 from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
-import entityData
 
 
 BOSS_ROOMS = [
@@ -13,17 +12,6 @@ BOSS_ROOMS = [
     (0x223, ),
     (0x234, 0x23a),
     (0x300, 0x304),
-]
-SPRITE_DATA = [
-    b'\xff\xff\xb0\xb1',
-    b'\xff\xff\xb6\xb7',
-    b'\xff\xff\xb4\xb5',
-    None,
-    b'\xff\xff\xb8\xb9',  # (Needs $06 in IndoorsTilesetsTable boss room)
-    b'\xff\xff\xb2\xb3',  # (flying tiles are in first graphics set)
-    None,
-    b'\xff\xff\xba\xbb',
-    b'\x11\xff\x10\xff',
 ]
 BOSS_ENTITIES = [
     (3, 2, 0x59),
@@ -203,20 +191,12 @@ def changeBosses(rom, mapping):
             rom.banks[0x3E][0x3300 + 0x02E8] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
         else:
             rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x21
-            rom.room_sprite_data_indoor[BOSS_ROOMS[dungeon_nr][0] - 0x100] = SPRITE_DATA[target]
-            for room in BOSS_ROOMS[dungeon_nr][1:]:
-                rom.room_sprite_data_indoor[room - 0x100] = b'\xff\xff\xff\xff'
             re = getCleanBossRoom(rom, dungeon_nr)
             re.entities = [BOSS_ENTITIES[target]]
 
             if target == 4:
                 # For slime eel, we need to setup the right wall tiles.
                 rom.banks[0x20][0x2EB3 + BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x06
-            if target == 5:
-                # Patch facade so he doesn't use the spinning tiles, which is a problem for the sprites.
-                rom.patch(0x04, 0x121D, ASM("cp $14"), ASM("cp $00"))
-                rom.patch(0x04, 0x1226, ASM("cp $04"), ASM("cp $00"))
-                rom.patch(0x04, 0x127F, ASM("cp $14"), ASM("cp $00"))
             if target == 7:
                 pass
                 # For hot head, add some lava (causes graphical glitches)
@@ -310,10 +290,6 @@ def changeMiniBosses(rom, mapping):
                     target = (0x15, 0x2F0, 0x50, 0x7C)
                 re.objects.append(ObjectWarp(1, *target))
         re.store(rom)
-
-        sprite_data = entityData.SPRITE_DATA[MINIBOSS_ENTITIES[name][0][2]]
-        for n in range(0, len(sprite_data), 2):
-            rom.room_sprite_data_indoor[re.room - 0x100][sprite_data[n]] = sprite_data[n+1]
 
 
 def readMiniBossMapping(rom):

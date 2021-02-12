@@ -211,4 +211,5 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
     patches.endscreen.updateEndScreen(rom)
+    patches.aesthetics.updateSpriteData(rom)
     return rom
