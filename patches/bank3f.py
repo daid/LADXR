@@ -290,12 +290,19 @@ blockBadEmu:
     rom.banks[0x3F][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]
 
     # Zol sprites, so we can have zol anywhere from a chest
-    rom.banks[0x3F][0x3600:0x3640] = rom.banks[0x2E][0x1120:0x1160]
+    rom.banks[0x3F][0x3600:0x3660] = rom.banks[0x2E][0x1120:0x1180]
+    # Patch gel(zol) entity to load sprites from the 2nd bank
+    rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "600A602A620A622A" "6008602862086228")
+    rom.patch(0x07, 0x329B, "FFFFFFFF" "FFFFFFFF" "54005420" "52005220" "56005600",
+                            "FFFFFFFF" "FFFFFFFF" "62086228" "60086028" "64086408")
 
-    # Elephant statue
-    rom.banks[0x3F][0x3640:0x3680] = rom.banks[0x2E][0x2680:0x26C0]
+
     # Cucco
     rom.banks[0x3F][0x3680:0x3700] = rom.banks[0x32][0x2500:0x2580]
+    # Patch the cucco graphics to load from 2nd vram bank
+    rom.patch(0x05, 0x0514,
+              "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
+              "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
     # Song symbols
     rom.banks[0x3F][0x3700:0x3760] = utils.createTileData("""
 
@@ -348,8 +355,14 @@ blockBadEmu:
 
     # Instruments
     rom.banks[0x3F][0x3800:0x3A00] = rom.banks[0x31][0x1000:0x1200]
-
-    # Patch the cucco graphics to load from 2nd vram bank
-    rom.patch(0x05, 0x0514,
-              "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
-              "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
+    # Patch the egg song event to use the 2nd vram sprites
+    rom.patch(0x19, 0x0BAC,
+        "5006520654065606"
+        "58065A065C065E06"
+        "6006620664066606"
+        "68066A066C066E06",
+        "800E820E840E860E"
+        "880E8A0E8C0E8E0E"
+        "900E920E940E960E"
+        "980E9A0E9C0E9E0E"
+    )

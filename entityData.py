@@ -296,7 +296,7 @@ SPRITE_DATA = {
     0x3C: None,      # HIDING_SLIME_KEY
     0x3D: None,      # DROPPABLE_SECRET_SEASHELL
     0x3E: (2, 0xE6), # MARIN
-    0x3F: (1, 0x6C), # RACOON  ((1, 0x6c) indoors and (1, 0x6c) + (3, 0xc8) in the woods)
+    0x3F: (1, 0x6C, 3, 0xC8), # RACOON  (1, 0x8E, 3, 0x6A) indoor
     0x40: (2, 0xA3), # WITCH
     0x41: None,      # OWL_EVENT
     0x42: (1, 0x91), # OWL_STATUE
@@ -379,7 +379,7 @@ SPRITE_DATA = {
     0x9A: (0, 0xa6), # FLYING_TILES (or 0x66)
     0x9B: None,      # HIDING_GEL
     0x9C: (3, 0x60), # STAR
-    0x9D: (0, 0xa6), # LIFTABLE_STATUE (or was this patched to use 2nd vram bank?)
+    0x9D: (0, 0xa6), # LIFTABLE_STATUE
     0x9E: None,      # FIREBALL_SHOOTER
     0x9F: (0, 0x5f), # GOOMBA
     0xA0: (0, {0x5f, 0x68}), # PEAHAT
@@ -414,8 +414,8 @@ SPRITE_DATA = {
     0xBE: (2, 0xa7), # BLAINO
     0xBF: (2, 0x82), # ZOMBIE
     0xC0: None,      # MAZE_SIGNPOST
-    0xC1: (2, 0x8F), # MARIN_AT_THE_SHORE (could be something missing here)
-    0xC2: (2, 0x8F), # MARIN_AT_TAL_TAL_HEIGHTS
+    0xC1: (2, 0x8F), # MARIN_AT_THE_SHORE
+    0xC2: (1, 0x6C, 2, 0x8F), # MARIN_AT_TAL_TAL_HEIGHTS
     0xC3: (1, 0x7d, 2, 0x7e, 3, 0x7F), # MAMU_AND_FROGS
     0xC4: (2, 0x6E, 3, 0x6F), # WALRUS
     0xC5: (1, 0x81), # URCHIN

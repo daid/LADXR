@@ -91,7 +91,8 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.removeGhost(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    patches.core.addFrameCounter(rom)
+    if not options.romdebugmode:
+        patches.core.addFrameCounter(rom)
     if options.keysanity:
         patches.inventory.advancedInventorySubscreen(rom)
     if expanded_inventory:

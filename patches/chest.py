@@ -47,9 +47,6 @@ def fixChests(rom):
         ld   a, [hl]
     """), ASM("ld a, $01"), fill_nop=True)
 
-    # Patch gel(zol) entity to load sprites from the 2nd bank
-    rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "600A602A620A622A" "6008602862086228")
-
     rom.texts[0x9A] = formatText(b"You found 10 bombs!")
 
 
