@@ -337,12 +337,12 @@ SPRITE_DATA = {
     0x48: None,      # MOVING_BLOCK_BOTTOM_LEFT
     0x49: None,      # MOVING_BLOCK_BOTTOM_RIGHT
     0x4A: (1, 0xd5), # COLOR_DUNGEON_BOOK
-    0x4D: (2, 0x88), # SHOP_OWNER and (3, 0xc7)
-    0x4F: (2, 0x84), # TRENDY_GAME_OWNER and (3, 0x89)
+    0x4D: (2, 0x88, 3, 0xC7), # SHOP_OWNER
+    0x4F: (2, 0x84, 3, 0x89), # TRENDY_GAME_OWNER
     0x50: (2, 0x97), # BOO_BUDDY
     0x51: (2, 0x92), # KNIGHT
-    0x52: (3, {0x7b, 0xa6}), # (0, (0x7b, 0xa6)), # TRACTOR_DEVICE
-    0x53: (0, {0x7b, 0xa6}), # TRACTOR_DEVICE_REVERSE or (0, 0xa6)
+    0x52: lambda room: (3, {0x7b, 0xa6}) if 0x120 <= room.room <= 0x13F else (0, {0x7b, 0xa6}), # TRACTOR_DEVICE
+    0x53: lambda room: (3, {0x7b, 0xa6}) if 0x120 <= room.room <= 0x13F else (0, {0x7b, 0xa6}), # TRACTOR_DEVICE_REVERSE
     0x54: (3, 0x4e), # FISHERMAN_FISHING_GAME
     0x55: (3, 0x9d), # BOUNCING_BOMBITE
     0x56: (3, 0x9d), # TIMER_BOMBITE
@@ -468,7 +468,7 @@ SPRITE_DATA = {
     0xDB: (2, 0xDA), # GIANT_BUBBLE
     0xDC: None,      # FLYING_ROOSTER_EVENTS
     0xDD: (1, 0xD5), # BOOK
-    0xDE: None,      # EGG_SONG_EVENT (TODO: Instrument sprites from 2nd vram bank)
+    0xDE: None,      # EGG_SONG_EVENT
     0xE0: (3, 0xD4), # MONKEY
     0xE1: (1, 0xDF), # WITCH_RAT
     0xE2: (3, 0xF4), # FLAME_SHOOTER
