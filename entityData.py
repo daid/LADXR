@@ -467,7 +467,7 @@ SPRITE_DATA = {
     0xD9: (1, 0xD9), # THWOMP_RAMMABLE
     0xDA: (3, 0x64), # PODOBOO
     0xDB: (2, 0xDA), # GIANT_BUBBLE
-    0xDC: None,      # FLYING_ROOSTER_EVENTS
+    0xDC: lambda room: (0, 0xDD, 2, 0xDE) if room.room == 0x1E4 else (2, 0xD3, 3, 0xDD) if room.room == 0x29F else None,      # FLYING_ROOSTER_EVENTS
     0xDD: (1, 0xD5), # BOOK
     0xDE: None,      # EGG_SONG_EVENT
     0xE0: (3, 0xD4), # MONKEY

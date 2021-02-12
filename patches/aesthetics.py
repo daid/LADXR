@@ -225,10 +225,10 @@ def updateSpriteData(rom):
         r = RoomEditor(rom, room_nr)
         for x, y, entity in r.entities:
             sprite_data = entityData.SPRITE_DATA[entity]
-            if sprite_data is None:
-                continue
             if callable(sprite_data):
                 sprite_data = sprite_data(r)
+            if sprite_data is None:
+                continue
             for m in range(0, len(sprite_data), 2):
                 idx, value = sprite_data[m:m+2]
                 if values[idx] is None:
