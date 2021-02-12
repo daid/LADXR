@@ -324,8 +324,8 @@ SPRITE_DATA = {
     0x3B: None,      # DROPPABLE_MAGIC_POWDER
     0x3C: None,      # HIDING_SLIME_KEY
     0x3D: None,      # DROPPABLE_SECRET_SEASHELL
-    0x3E: (2, 0xE6), # MARIN
-    0x3F: (1, 0x6C, 3, 0xC8), # RACOON  (1, 0x8E, 3, 0x6A) indoor
+    0x3E: lambda room: (0, 0x8D, 2, 0x8F) if room.room == 0x2A3 else (2, 0xE6), # MARIN
+    0x3F: lambda room: (1, 0x8E, 3, 0x6A) if room.room == 0x2A3 else (1, 0x6C, 3, 0xC8), # RACOON
     0x40: (2, 0xA3), # WITCH
     0x41: None,      # OWL_EVENT
     0x42: (1, 0x91), # OWL_STATUE
