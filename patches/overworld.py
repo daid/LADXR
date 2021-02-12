@@ -43,14 +43,15 @@ def createDungeonOnlyOverworld(rom):
     rom.room_sprite_data_overworld[0xB1] = rom.room_sprite_data_overworld[0x92]
 
     instrument_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301]
+    path = os.path.dirname(__file__)
 
     # Start with clearing all the maps, because this just generates a bunch of room in the rom.
     for n in range(0x100):
         re = RoomEditor(rom, n)
         re.entities = []
         re.objects = []
-        if os.path.exists("patches/overworld/%02X.json" % (n)):
-            re.loadFromJson("patches/overworld/%02X.json" % (n))
+        if os.path.exists("%s/overworld/%02X.json" % (path, n)):
+            re.loadFromJson("%s/overworld/%02X.json" % (path, n))
         re.updateOverlay()
         entrances = list(filter(lambda obj: obj.type_id in (0xE1, 0xE2, 0xE3, 0xBA, 0xA8, 0xBE, 0xCB), re.objects))
         for obj in re.objects:

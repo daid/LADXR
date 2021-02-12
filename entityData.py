@@ -262,10 +262,10 @@ SPRITE_DATA = {
     0x10: (1, 0x42), # HIDING_GHINI
     0x11: (2, 0x8A), # GIANT_GHINI
     0x12: (1, 0x42), # GHINI
-    0x14: (2, 0x92), # MOBLIN_SWORD
+    0x14: (2, 0x7c), # MOBLIN_SWORD (or 0x92 depending on the location)
     0x15: (1, 0x91), # ANTI_FAIRY
-    0x16: (1, 0x91), # SPARK_COUNTER_CLOCKWISE (or (1, 0x65))
-    0x17: (1, 0x91), # SPARK_CLOCKWISE (or (1, 0x65))
+    0x16: (1, {0x91, 0x65}), # SPARK_COUNTER_CLOCKWISE
+    0x17: (1, {0x91, 0x65}), # SPARK_CLOCKWISE
     0x18: (3, 0x93), # POLS_VOICE
     0x19: (0, 0x90), # KEESE
     0x1A: (0, 0x90), # STALFOS_AGGRESSIVE
@@ -312,8 +312,8 @@ SPRITE_DATA = {
     0x4F: (2, 0x84), # TRENDY_GAME_OWNER and (3, 0x89)
     0x50: (2, 0x97), # BOO_BUDDY
     0x51: (2, 0x92), # KNIGHT
-    0x52: (0, 0x7b), # TRACTOR_DEVICE or (0, 0xa6)
-    0x53: (0, 0x7b), # TRACTOR_DEVICE_REVERSE or (0, 0xa6)
+    0x52: (3, {0x7b, 0xa6}), # (0, (0x7b, 0xa6)), # TRACTOR_DEVICE
+    0x53: (0, {0x7b, 0xa6}), # TRACTOR_DEVICE_REVERSE or (0, 0xa6)
     0x54: (3, 0x4e), # FISHERMAN_FISHING_GAME
     0x55: (3, 0x9d), # BOUNCING_BOMBITE
     0x56: (3, 0x9d), # TIMER_BOMBITE
@@ -335,7 +335,7 @@ SPRITE_DATA = {
     0x6A: (1, 0x87), # RAFT_RAFT_OWNER
     0x6C: None,      # CUCCU
     0x6D: None,      # BOW_WOW (TODO, BowWow can use sprites from 2nd VRAM bank)
-    0x6E: (1, 0xE5), # BUTTERFLY
+    0x6E: (1, {0xE5, 0xC4}), # BUTTERFLY
     0x6F: (1, 0xE5), # DOG
     0x70: (3, 0xE7), # KID_70
     0x71: (3, 0xE7), # KID_71
@@ -349,7 +349,7 @@ SPRITE_DATA = {
     0x79: (2, 0x47), # MADAM_MEOWMEOW
     0x7A: (1, 0xC6), # CROW
     0x7B: (2, 0x49), # CRAZY_TRACY
-    0x7C: (1, 0x40), # GIANT_GOPONGA_FLOWER
+    0x7C: (3, 0x40), # GIANT_GOPONGA_FLOWER
     0x7E: (1, 0x4A), # GOPONGA_FLOWER
     0x7F: (3, 0x41), # TURTLE_ROCK_HEAD
     0x80: (1, 0x4C), # TELEPHONE
@@ -382,8 +382,8 @@ SPRITE_DATA = {
     0x9D: (0, 0xa6), # LIFTABLE_STATUE (or was this patched to use 2nd vram bank?)
     0x9E: None,      # FIREBALL_SHOOTER
     0x9F: (0, 0x5f), # GOOMBA
-    0xA0: (0, 0x5f), # PEAHAT (or 0x68)
-    0xA1: (0, 0x7b), # SNAKE (or 0x5f)
+    0xA0: (0, {0x5f, 0x68}), # PEAHAT
+    0xA1: (0, {0x5f, 0x7b}), # SNAKE
     0xA2: (3, 0x64), # PIRANHA_PLANT
     0xA3: (1, 0x65), # SIDE_VIEW_PLATFORM_HORIZONTAL
     0xA4: (1, 0x65), # SIDE_VIEW_PLATFORM_VERTICAL
@@ -398,8 +398,8 @@ SPRITE_DATA = {
     0xAE: (1, 0xE3), # WINGED_OCTOROCK
     0xAF: None,      # TRADING_ITEM
     0xB0: (2, 0x8B), # PINCER
-    0xb1: (0, 0x7b), # HOLE_FILLER (or 0x77)
-    0xB2: (2, 0x8C), # BEETLE_SPAWNER
+    0xB1: (0, 0x7b), # HOLE_FILLER (or 0x77)
+    0xB2: (3, 0x8C), # BEETLE_SPAWNER
     0xB3: (3, 0x6B), # HONEYCOMB
     0xB4: (1, 0x6C), # TARIN
     0xB5: (3, 0x69), # BEAR

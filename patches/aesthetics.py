@@ -1,5 +1,7 @@
 from assembler import ASM
 from utils import formatText
+from roomEditor import RoomEditor
+import entityData
 
 
 def gfxMod(rom, filename):
@@ -208,3 +210,52 @@ def allowColorDungeonSpritesEverywhere(rom):
         ldh [$91], a ; set the primary update flag
         ret
     """), fill_nop=True)
+
+
+def updateSpriteData(rom):
+    def f(n):
+        if isinstance(n, set):
+            return [hex(m) for m in n]
+        return hex(n)
+
+    for room_nr in range(0x316):
+        if room_nr == 0x2FF:
+            continue
+        values = [None, None, None, None]
+        r = RoomEditor(rom, room_nr)
+        for x, y, entity in r.entities:
+            sprite_data = entityData.SPRITE_DATA[entity]
+            if sprite_data is None:
+                continue
+            for m in range(0, len(sprite_data), 2):
+                idx, value = sprite_data[m:m+2]
+                if values[idx] is None:
+                    values[idx] = value
+                elif isinstance(values[idx], set) and isinstance(value, set):
+                    values[idx] = values[idx].intersection(value)
+                    assert len(values[idx]) > 0
+                elif isinstance(values[idx], set) and value in values[idx]:
+                    values[idx] = value
+                elif isinstance(value, set) and values[idx] in value:
+                    pass
+                elif values[idx] == value:
+                    pass
+                else:
+                    assert False, "%03x: %02x" % (room_nr, entity)
+
+        data = bytearray()
+        for v in values:
+            if isinstance(v, set):
+                v = next(iter(v))
+            elif v is None:
+                v = 0xff
+            data.append(v)
+
+        if room_nr < 0x100:
+            rom.room_sprite_data_overworld[room_nr] = data
+        else:
+            rom.room_sprite_data_indoor[room_nr - 0x100] = data
+
+    import binascii
+    s = set([binascii.hexlify(data) for data in rom.room_sprite_data_indoor])
+    print(s)

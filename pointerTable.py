@@ -92,7 +92,7 @@ class PointerTable:
                         if st["end"] - st["start"] >= len(s) and st["bank"] == bank:
                             my_storage = st
                             break
-                    assert my_storage is not None, "Not enough room in storage... %s" % (storage)
+                    assert my_storage is not None, "Not enough room in storage... %d/%d %s" % (n, len(self.__data), storage)
 
                     pointer = my_storage["start"]
                     my_storage["start"] = pointer + len(s)
