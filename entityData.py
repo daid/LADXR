@@ -373,7 +373,7 @@ SPRITE_DATA = {
     0x73: (3, 0xE7), # KID_73
     0x74: (2, 0x45), # PAPAHLS_WIFE
     0x75: (2, 0x43), # GRANDMA_ULRIRA
-    0x76: (3, 0x4b), # MR_WRITE
+    0x76: lambda room: (3, 0x74) if room.room == 0x2D9 else (3, 0x4b), # MR_WRITE
     0x77: (3, 0x46), # GRANDPA_ULRIRA
     0x78: (3, 0x48), # YIP_YIP
     0x79: (2, 0x47), # MADAM_MEOWMEOW
@@ -387,7 +387,7 @@ SPRITE_DATA = {
     0x82: lambda room: (3, 0xAB) if 0x230 <= room.room <= 0x26B else (2, 0xAB), # ROLLING_BONES_BAR (sometimes in slot 3?)
     0x83: (1, 0x8D), # DREAM_SHRINE_BED
     0x84: (1, 0x4D), # BIG_FAIRY
-    0x85: (1, 0x4C), # MR_WRITES_BIRD
+    0x85: (2, 0x4C), # MR_WRITES_BIRD
     0x86: None,      # FLOATING_ITEM
     0x87: (3, 0x52), # DESERT_LANMOLA
     0x88: (3, 0x53), # ARMOS_KNIGHT
