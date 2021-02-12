@@ -213,11 +213,7 @@ def allowColorDungeonSpritesEverywhere(rom):
 
 
 def updateSpriteData(rom):
-    def f(n):
-        if isinstance(n, set):
-            return [hex(m) for m in n]
-        return hex(n)
-
+    # For each room update the sprite load data based on which entities are in there.
     for room_nr in range(0x316):
         if room_nr == 0x2FF:
             continue
@@ -255,7 +251,3 @@ def updateSpriteData(rom):
             rom.room_sprite_data_overworld[room_nr] = data
         else:
             rom.room_sprite_data_indoor[room_nr - 0x100] = data
-
-    import binascii
-    s = set([binascii.hexlify(data) for data in rom.room_sprite_data_indoor])
-    print(s)

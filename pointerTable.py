@@ -115,6 +115,7 @@ class PointerTable:
                 rom.banks[pointers_bank][pointers_addr+n*2+1] = ((pointer >> 8) & 0xff) | 0x40
 
         space_left = sum(map(lambda n: n["end"] - n["start"], storage))
+        return storage
         # print(self.__class__.__name__, "Space left:", space_left)
 
     def _readData(self, rom, bank_nr, pointer):
@@ -157,3 +158,13 @@ class PointerTable:
                     self.__storage.pop(m)
                     return True
         return False
+
+    def addStorage(self, extra_storage):
+        for data in extra_storage:
+            self._addStorage(data["bank"], data["start"], data["end"])
+        while self.__mergeStorage():
+            pass
+        self.__storage.sort(key=lambda n: n["start"])
+
+    def adjustDataStart(self, new_start):
+        self.__info["data_addr"] = new_start

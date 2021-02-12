@@ -334,7 +334,7 @@ SPRITE_DATA = {
     0x69: (0, 0x66), # MOVING_BLOCK_MOVER
     0x6A: (1, 0x87), # RAFT_RAFT_OWNER
     0x6C: None,      # CUCCU
-    0x6D: None,      # BOW_WOW (TODO, BowWow can use sprites from 2nd VRAM bank)
+    0x6D: (3, 0xA4), # BOW_WOW
     0x6E: (1, {0xE5, 0xC4}), # BUTTERFLY
     0x6F: (1, 0xE5), # DOG
     0x70: (3, 0xE7), # KID_70

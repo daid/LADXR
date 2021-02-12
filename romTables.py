@@ -1,5 +1,6 @@
 from rom import ROM
 from pointerTable import PointerTable
+from assembler import ASM
 
 
 class Texts(PointerTable):
@@ -197,7 +198,10 @@ class ROMWithTables(ROM):
         self.rooms_indoor_a.store(self)
         self.rooms_indoor_b.store(self)
         self.rooms_color_dungeon.store(self)
-        self.room_sprite_data_overworld.store(self)
+        leftover_storage = self.room_sprite_data_overworld.store(self)
+        self.room_sprite_data_indoor.addStorage(leftover_storage)
+        self.patch(0x00, 0x0DFA, ASM("ld hl, $763B"), ASM("ld hl, $%04x" % (leftover_storage[0]["start"] | 0x4000)))
+        self.room_sprite_data_indoor.adjustDataStart(leftover_storage[0]["start"])
         self.room_sprite_data_indoor.store(self)
         self.background_tiles.store(self)
         self.background_attributes.store(self)
