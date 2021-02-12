@@ -329,7 +329,7 @@ SPRITE_DATA = {
     0x3F: lambda room: (1, 0x8E, 3, 0x6A) if room.room == 0x2A3 else (1, 0x6C, 3, 0xC8), # RACOON
     0x40: (2, 0xA3), # WITCH
     0x41: None,      # OWL_EVENT
-    0x42: (1, 0x91), # OWL_STATUE
+    0x42: lambda room: (1, 0xD5) if room.room == 0x26F else (1, 0x91), # OWL_STATUE
     0x43: None,      # SEASHELL_MANSION_TREES
     0x44: None,      # YARNA_TALKING_BONES
     0x45: (1, 0x44), # BOULDERS
