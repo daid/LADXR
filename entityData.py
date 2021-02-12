@@ -394,7 +394,7 @@ SPRITE_DATA = {
     0x8A: None,      # TILE_GLINT_SHOWN
     0x8B: None,      # TILE_GLINT_HIDDEN
     0x8E: (2, 0x56), # CUE_BALL
-    0x8F: (2, 0x58), # MASKED_MIMIC_GORIYA (or 0x86 when it's GORIYA...)
+    0x8F: lambda room: (2, 0x86) if room.room == 0x1F5 else (2, 0x58), # MASKED_MIMIC_GORIYA
     0x90: (3, 0x59), # THREE_OF_A_KIND
     0x91: (2, 0x55), # ANTI_KIRBY
     0x92: (2, 0x57), # SMASHER
@@ -405,7 +405,7 @@ SPRITE_DATA = {
     0x97: None,      # DIVE_SPOT
     0x98: (2, 0x5e), # HORSE_PIECE
     0x99: (3, 0x60), # WATER_TEKTITE
-    0x9A: (0, 0xa6), # FLYING_TILES (or 0x66)
+    0x9A: lambda room: (0, 0x66) if 0x200 <= room.room <= 0x22F else (0, 0xa6), # FLYING_TILES
     0x9B: None,      # HIDING_GEL
     0x9C: (3, 0x60), # STAR
     0x9D: (0, 0xa6), # LIFTABLE_STATUE
