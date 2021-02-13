@@ -246,7 +246,7 @@ def updateSpriteData(rom):
                 elif values[idx] == value:
                     pass
                 else:
-                    assert False, "%03x: %02x" % (room_nr, entity)
+                    assert False, "%03x: %02x (%s %s)" % (room_nr, entity, values[idx], value)
 
         data = bytearray()
         for v in values:

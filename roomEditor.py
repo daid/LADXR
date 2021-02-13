@@ -3,6 +3,7 @@ import entityData
 
 
 WARP_TYPE_IDS = {0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6}
+ALT_ROOM_OVERLAYS = {"Alt06": 0x1040, "Alt0E": 0x1090, "Alt1B": 0x10E0, "Alt2B": 0x1130, "Alt79": 0x1180, "Alt8C": 0x11D0}
 
 
 class RoomEditor:
@@ -76,6 +77,8 @@ class RoomEditor:
             self.overlay = rom.banks[0x26][room * 80:room * 80+80]
         elif isinstance(room, int) and room < 0x100:
             self.overlay = rom.banks[0x27][(room - 0xCC) * 80:(room - 0xCC) * 80 + 80]
+        elif room in ALT_ROOM_OVERLAYS:
+            self.overlay = rom.banks[0x27][ALT_ROOM_OVERLAYS[room]:ALT_ROOM_OVERLAYS[room] + 80]
         else:
             self.overlay = None
 
@@ -126,6 +129,8 @@ class RoomEditor:
                 rom.banks[0x26][new_room_nr * 80:new_room_nr * 80 + 80] = self.overlay
             elif new_room_nr < 0x100:
                 rom.banks[0x27][(new_room_nr - 0xCC) * 80:(new_room_nr - 0xCC) * 80 + 80] = self.overlay
+        elif new_room_nr in ALT_ROOM_OVERLAYS:
+            rom.banks[0x27][ALT_ROOM_OVERLAYS[new_room_nr]:ALT_ROOM_OVERLAYS[new_room_nr] + 80] = self.overlay
 
     def addEntity(self, x, y, type_id):
         self.entities.append((x, y, type_id))
@@ -220,6 +225,19 @@ class RoomEditor:
                         self.addEntity(x, y, type_id)
                     elif obj["type"] == "hidden_tile":
                         self.objects.append(Object(x, y, int(obj["name"], 16)))
+        for n in range(80):
+            if self.overlay:
+                self.overlay[n] = tiles[n]
+
+            if tiles[n] in {0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+                            0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+                            0x48, 0x49, 0x4B, 0x4C, 0x4E,
+                            0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F}:
+                tiles[n] = 0x3A  # Solid tiles
+            if tiles[n] in {0x08, 0x09, 0x0C, 0x44,
+                            0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF}:
+                tiles[n] = 0x04  # Open tiles
+
         counts = {}
         for n in tiles:
             counts[n] = counts.get(n, 0) + 1
@@ -227,8 +245,6 @@ class RoomEditor:
         for y in range(8):
             for x in range(10):
                 obj = tiles[x + y * 10]
-                if self.overlay:
-                    self.overlay[x + y * 10] = obj
                 if obj == self.floor_object:
                     continue
                 w = 1
@@ -247,7 +263,6 @@ class RoomEditor:
                     self.objects.append(ObjectVertical(x, y, obj, h))
                 else:
                     self.objects.append(Object(x, y, obj))
-        self.updateOverlay()
         return data
 
 

@@ -370,7 +370,7 @@ SPRITE_DATA = {
     0x70: (3, 0xE7), # KID_70
     0x71: (3, 0xE7), # KID_71
     0x72: (3, 0xE7), # KID_72
-    0x73: (3, 0xE7), # KID_73
+    0x73: (3, 0xDC), # KID_73
     0x74: (2, 0x45), # PAPAHLS_WIFE
     0x75: (2, 0x43), # GRANDMA_ULRIRA
     0x76: lambda room: (3, 0x74) if room.room == 0x2D9 else (3, 0x4b), # MR_WRITE
@@ -467,7 +467,7 @@ SPRITE_DATA = {
     0xD9: (1, 0xD9), # THWOMP_RAMMABLE
     0xDA: (3, 0x64), # PODOBOO
     0xDB: (2, 0xDA), # GIANT_BUBBLE
-    0xDC: lambda room: (0, 0xDD, 2, 0xDE) if room.room == 0x1E4 else (2, 0xD3, 3, 0xDD) if room.room == 0x29F else None,      # FLYING_ROOSTER_EVENTS
+    0xDC: lambda room: (0, 0xDD, 2, 0xDE) if room.room == 0x1E4 else (2, 0xD3, 3, 0xDD) if room.room == 0x29F else (3, 0xDC),      # FLYING_ROOSTER_EVENTS
     0xDD: (1, 0xD5), # BOOK
     0xDE: None,      # EGG_SONG_EVENT
     0xE0: (3, 0xD4), # MONKEY
