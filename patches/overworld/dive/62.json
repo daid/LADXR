@@ -10,10 +10,10 @@
  "infinite":false,
  "layers":[
         {
-         "data":[2, 2, 2, 371, 373, 373, 373, 372, 2, 2, 2, 2, 2, 371, 374, 471, 375, 372, 2, 2, 2, 2, 30, 371, 373, 226, 373, 372, 94, 2, 2, 2, 56, 439, 373, 376, 373, 440, 57, 2, 2, 2, 56, 4, 4, 4, 4, 4, 57, 2, 2, 2, 56, 4, 4, 4, 4, 4, 57, 2, 2, 2, 47, 48, 73, 225, 74, 48, 79, 2, 2, 2, 63, 59, 59, 225, 59, 59, 64, 2],
+         "data":[2, 2, 2, 115, 117, 117, 117, 116, 2, 2, 2, 2, 2, 115, 118, 215, 119, 116, 2, 2, 2, 2, 30, 115, 117, 226, 117, 116, 94, 2, 2, 2, 56, 183, 117, 120, 117, 184, 57, 2, 2, 2, 56, 4, 4, 4, 4, 4, 57, 2, 2, 2, 56, 4, 4, 4, 4, 4, 57, 2, 2, 2, 47, 48, 73, 225, 74, 48, 79, 2, 2, 2, 63, 59, 59, 225, 59, 59, 64, 2],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -24,19 +24,18 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"EntityLayer",
          "objects":[
                 {
-                 "height":0,
+                 "height":8,
                  "id":1,
-                 "name":"06:0E:80:124",
-                 "point":true,
+                 "name":"1:06:20e:50:7c",
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
-                 "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
+                 "width":8,
+                 "x":0,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -44,14 +43,29 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":4,
+ "nextlayerid":1,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "properties":[
         {
-         "name":"pal",
+         "name":"animationset",
+         "type":"string",
+         "value":"00"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"27:1E40"
+        }, 
+        {
+         "name":"palette",
          "type":"string",
          "value":"16"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"30"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -60,24 +74,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_30_00_16_27_1e40.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_30.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"30",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

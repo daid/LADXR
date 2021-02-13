@@ -10,10 +10,10 @@
  "infinite":false,
  "layers":[
         {
-         "data":[1, 1, 1, 1, 262, 263, 264, 1, 1, 1, 381, 382, 1, 129, 356, 357, 358, 130, 381, 382, 752, 752, 752, 56, 370, 29, 384, 57, 752, 752, 230, 230, 286, 56, 426, 427, 448, 57, 350, 230, 230, 230, 56, 47, 73, 225, 74, 79, 57, 230, 230, 230, 56, 63, 59, 225, 59, 64, 57, 230, 230, 286, 47, 48, 73, 225, 74, 48, 79, 350, 230, 56, 63, 59, 59, 225, 59, 59, 64, 57],
+         "data":[1, 1, 1, 1, 6, 7, 8, 1, 1, 1, 125, 126, 1, 129, 100, 101, 102, 130, 125, 126, 240, 240, 240, 56, 114, 29, 128, 57, 240, 240, 230, 230, 30, 56, 170, 171, 192, 57, 94, 230, 230, 230, 56, 47, 73, 225, 74, 79, 57, 230, 230, 230, 56, 63, 59, 225, 59, 64, 57, 230, 230, 30, 47, 48, 73, 225, 74, 48, 79, 94, 230, 56, 63, 59, 59, 225, 59, 59, 64, 57],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -24,31 +24,40 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"EntityLayer",
          "objects":[
                 {
-                 "height":0,
-                 "id":4,
-                 "name":"DE",
-                 "point":true,
+                 "height":16,
+                 "id":1,
+                 "name":"EGG_SONG_EVENT",
                  "rotation":0,
-                 "type":"",
+                 "type":"entity",
                  "visible":true,
-                 "width":0,
-                 "x":7.33333333333333,
-                 "y":9.66666666666667
+                 "width":16,
+                 "x":0,
+                 "y":0
                 }, 
                 {
-                 "height":0,
-                 "id":5,
-                 "name":"08:70:80:124",
-                 "point":true,
+                 "height":8,
+                 "id":2,
+                 "name":"1:08:270:50:7c",
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
-                 "width":0,
-                 "x":9.66666666666666,
-                 "y":55.6666666666667
+                 "width":8,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "height":16,
+                 "id":3,
+                 "name":"E1",
+                 "rotation":0,
+                 "type":"hidden_tile",
+                 "visible":true,
+                 "width":16,
+                 "x":80,
+                 "y":48
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -56,14 +65,29 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":6,
+ "nextlayerid":1,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "properties":[
         {
-         "name":"pal",
+         "name":"animationset",
+         "type":"string",
+         "value":"0B"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"27:1620"
+        }, 
+        {
+         "name":"palette",
          "type":"string",
          "value":"13"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"3C"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -72,37 +96,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_3c_0b_13_27_1620.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_3c.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"3c",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":513,
-         "image":"metatiles_anim_0b.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"anim_0b",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

@@ -10,10 +10,10 @@
  "infinite":false,
  "layers":[
         {
-         "data":[381, 382, 1, 1, 1, 1, 1, 1, 1, 381, 29, 29, 382, 1, 1, 129, 78, 130, 381, 29, 752, 752, 752, 752, 752, 56, 4, 57, 752, 752, 2, 2, 30, 81, 81, 47, 48, 79, 94, 2, 2, 2, 56, 4, 4, 462, 226, 472, 57, 2, 379, 379, 379, 11, 4, 4, 4, 4, 57, 2, 2, 2, 56, 11, 11, 11, 11, 11, 57, 2, 2, 2, 47, 48, 48, 48, 48, 48, 79, 2],
+         "data":[125, 126, 1, 1, 1, 1, 1, 1, 1, 125, 29, 29, 126, 1, 1, 129, 78, 130, 125, 29, 240, 240, 240, 240, 240, 56, 4, 57, 240, 240, 2, 2, 30, 81, 81, 47, 48, 79, 94, 2, 2, 2, 56, 4, 4, 206, 226, 216, 57, 2, 123, 123, 123, 11, 4, 4, 4, 4, 57, 2, 2, 2, 56, 11, 11, 11, 11, 11, 57, 2, 2, 2, 47, 48, 48, 48, 48, 48, 79, 2],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -24,31 +24,29 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"EntityLayer",
          "objects":[
                 {
-                 "height":0,
+                 "height":16,
                  "id":1,
-                 "name":"07:3D:88:16",
-                 "point":true,
+                 "name":"CROW",
+                 "rotation":0,
+                 "type":"entity",
+                 "visible":true,
+                 "width":16,
+                 "x":32,
+                 "y":80
+                }, 
+                {
+                 "height":8,
+                 "id":2,
+                 "name":"1:07:23d:58:10",
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
-                 "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
-                }, 
-                {
-                 "height":0,
-                 "id":4,
-                 "name":"7A",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":40,
-                 "y":88.3333333333333
+                 "width":8,
+                 "x":0,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -56,19 +54,29 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":5,
+ "nextlayerid":1,
+ "nextobjectid":3,
  "orientation":"orthogonal",
  "properties":[
         {
-         "name":"pal",
+         "name":"animationset",
          "type":"string",
-         "value":"0f"
+         "value":"0B"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"25:3400"
+        }, 
+        {
+         "name":"palette",
+         "type":"string",
+         "value":"0F"
         }, 
         {
          "name":"tileset",
          "type":"string",
-         "value":"11c"
+         "value":"1C"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -77,37 +85,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_1c_0b_0f_25_3400.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_1c.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"1c",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":513,
-         "image":"metatiles_anim_0b.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"anim_0b",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

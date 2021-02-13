@@ -10,20 +10,52 @@
  "infinite":false,
  "layers":[
         {
-         "data":[56, 4, 4, 4, 4, 4, 4, 4, 4, 57, 56, 439, 440, 4, 4, 4, 4, 62, 48, 53, 56, 462, 463, 4, 4, 4, 4, 57, 439, 440, 56, 161, 93, 4, 4, 4, 4, 57, 462, 463, 56, 93, 93, 62, 73, 75, 74, 79, 439, 440, 56, 93, 4, 57, 59, 59, 59, 60, 462, 463, 47, 48, 48, 79, 543, 543, 543, 543, 543, 543, 58, 59, 59, 60, 544, 544, 544, 544, 544, 544],
+         "data":[56, 4, 4, 4, 4, 4, 4, 4, 4, 57, 56, 183, 184, 4, 4, 4, 4, 62, 48, 53, 56, 206, 207, 4, 4, 4, 4, 57, 183, 184, 56, 161, 93, 4, 4, 4, 4, 57, 206, 207, 56, 93, 93, 62, 73, 75, 74, 79, 183, 184, 56, 93, 4, 57, 59, 59, 59, 60, 206, 207, 47, 48, 48, 79, 31, 31, 31, 31, 31, 31, 58, 59, 59, 60, 32, 32, 32, 32, 32, 32],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
          "width":10,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":2,
+         "name":"EntityLayer",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":2,
+ "nextlayerid":1,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"animationset",
+         "type":"string",
+         "value":"02"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"22:1000"
+        }, 
+        {
+         "name":"palette",
+         "type":"string",
+         "value":"01"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"22"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -31,37 +63,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_22_02_01_22_1000.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_22.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"22",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":513,
-         "image":"metatiles_anim_02.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"anim_02",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,

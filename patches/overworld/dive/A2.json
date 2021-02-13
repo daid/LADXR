@@ -13,7 +13,7 @@
          "data":[43, 41, 5, 5, 5, 5, 5, 10, 10, 111, 41, 5, 5, 5, 5, 5, 5, 5, 5, 10, 5, 5, 38, 39, 93, 93, 93, 38, 39, 11, 10, 5, 40, 41, 83, 83, 83, 40, 41, 11, 10, 5, 11, 11, 92, 227, 92, 11, 11, 11, 5, 5, 11, 11, 11, 12, 11, 11, 11, 11, 5, 5, 5, 11, 12, 12, 5, 5, 5, 11, 61, 4, 4, 4, 12, 4, 4, 4, 4, 62],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -24,43 +24,40 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"EntityLayer",
          "objects":[
                 {
-                 "height":0,
+                 "height":16,
                  "id":1,
-                 "name":"10:a3:80:124",
-                 "point":true,
+                 "name":"BUTTERFLY",
+                 "rotation":0,
+                 "type":"entity",
+                 "visible":true,
+                 "width":16,
+                 "x":32,
+                 "y":48
+                }, 
+                {
+                 "height":16,
+                 "id":2,
+                 "name":"BUTTERFLY",
+                 "rotation":0,
+                 "type":"entity",
+                 "visible":true,
+                 "width":16,
+                 "x":112,
+                 "y":80
+                }, 
+                {
+                 "height":8,
+                 "id":3,
+                 "name":"1:10:2a3:50:7c",
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
-                 "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
-                }, 
-                {
-                 "height":0,
-                 "id":2,
-                 "name":"6E",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":40.3333333333333,
-                 "y":58.3333333333333
-                }, 
-                {
-                 "height":0,
-                 "id":3,
-                 "name":"6E",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":120,
-                 "y":94.3333333333333
+                 "width":8,
+                 "x":0,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -68,9 +65,30 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
+ "nextlayerid":1,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"animationset",
+         "type":"string",
+         "value":"00"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"22:0000"
+        }, 
+        {
+         "name":"palette",
+         "type":"string",
+         "value":"01"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"0F"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
  "tileheight":16,
@@ -78,7 +96,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_0f_00_01_22_0000.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,

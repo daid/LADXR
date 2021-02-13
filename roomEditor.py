@@ -1,6 +1,8 @@
 import json
+import entityData
 
-WARP_TYPE_IDS = (0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6)
+
+WARP_TYPE_IDS = {0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6}
 
 
 class RoomEditor:
@@ -14,6 +16,7 @@ class RoomEditor:
         self.objects = []
         self.tileset_index = None
         self.palette_index = None
+        self.attribset = None
 
         if room is not None:
             entities_raw = rom.entities[room]
@@ -100,12 +103,11 @@ class RoomEditor:
 
         if self.tileset_index is not None and new_room_nr < 0x100:
             rom.banks[0x3F][0x2f00 + new_room_nr] = self.tileset_index & 0xFF
+        if self.attribset is not None and new_room_nr < 0x100:
             # With a tileset, comes metatile gbc data that we need to store a proper bank+pointer.
-            BANK = {0x0F:   0x22, 0x22:   0x22, 0x38:   0x25, 0x24:   0x22, 0x36:   0x22, 0x2e:   0x22, 0x3c:   0x27, 0x34:   0x27, 0x1c:   0x25, 0x30:   0x27, 0x3a:   0x22, 0x2a:   0x25, 0x10F:   0x25, 0x11c:   0x25}
-            ADDR = {0x0F: 0x4000, 0x22: 0x5000, 0x38: 0x6800, 0x24: 0x4C00, 0x36: 0x7400, 0x2e: 0x5800, 0x3c: 0x5620, 0x34: 0x6640, 0x1c: 0x7400, 0x30: 0x5E40, 0x3a: 0x6400, 0x2a: 0x7C00, 0x10F: 0x4C00, 0x11c: 0x7400}
-            rom.banks[0x1A][0x2476 + new_room_nr] = BANK[self.tileset_index]
-            rom.banks[0x1A][0x1E76 + new_room_nr*2] = ADDR[self.tileset_index] & 0xFF
-            rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = ADDR[self.tileset_index] >> 8
+            rom.banks[0x1A][0x2476 + new_room_nr] = self.attribset[0]
+            rom.banks[0x1A][0x1E76 + new_room_nr*2] = self.attribset[1] & 0xFF
+            rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = self.attribset[1] >> 8
         if self.palette_index is not None and new_room_nr < 0x100:
             rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
 
@@ -185,16 +187,16 @@ class RoomEditor:
         
         data = json.load(open(filename))
         
-        for tileset in data["tilesets"]:
-            if tileset["name"].startswith("anim_"):
-                self.animation_id = int(tileset["name"][5:], 16)
-            elif len(tileset["name"]) == 2:
-                self.tileset_index = int(tileset["name"], 16)
         for prop in data.get("properties", []):
-            if prop["name"] == "pal":
+            if prop["name"] == "palette":
                 self.palette_index = int(prop["value"], 16)
-            if prop["name"] == "tileset":
+            elif prop["name"] == "tileset":
                 self.tileset_index = int(prop["value"], 16)
+            elif prop["name"] == "animationset":
+                self.animation_id = int(prop["value"], 16)
+            elif prop["name"] == "attribset":
+                bank, _, addr = prop["value"].partition(":")
+                self.attribset = (int(bank, 16), int(addr, 16) + 0x4000)
 
         tiles = [0] * 80
         for layer in data["layers"]:
@@ -204,14 +206,16 @@ class RoomEditor:
                         tiles[n] = (layer["data"][n] - 1) & 0xFF
             if "objects" in layer:
                 for obj in layer["objects"]:
+                    x = int((obj["x"] + obj["width"] / 2) // 16)
+                    y = int((obj["y"] + obj["height"] / 2) // 16)
                     if obj["type"] == "warp":
-                        map, room, x, y = obj["name"].split(":")
-                        if int(map, 16) < 0:
-                            self.objects.append(ObjectWarp(0, 0, int(room, 16), int(x), int(y)))
-                        else:
-                            self.objects.append(ObjectWarp(1, int(map, 16), int(room, 16), int(x), int(y)))
-                    else:
-                        self.addEntity(int(obj["x"] // 16), int(obj["y"] // 16), int(obj["name"], 16))
+                        warp_type, map_nr, room, x, y = obj["name"].split(":")
+                        self.objects.append(ObjectWarp(int(warp_type), int(map_nr, 16), int(room, 16) & 0xFF, int(x, 16), int(y, 16)))
+                    elif obj["type"] == "entity":
+                        type_id = entityData.NAME.index(obj["name"])
+                        self.addEntity(x, y, type_id)
+                    elif obj["type"] == "hidden_tile":
+                        self.objects.append(Object(x, y, int(obj["name"], 16)))
         counts = {}
         for n in tiles:
             counts[n] = counts.get(n, 0) + 1

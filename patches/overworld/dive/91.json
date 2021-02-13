@@ -10,10 +10,10 @@
  "infinite":false,
  "layers":[
         {
-         "data":[43, 42, 63, 59, 59, 59, 59, 59, 64, 42, 42, 43, 63, 59, 439, 472, 439, 59, 64, 40, 43, 41, 58, 439, 440, 226, 440, 439, 60, 11, 41, 338, 338, 540, 540, 540, 540, 338, 275, 5, 338, 540, 540, 540, 540, 540, 540, 283, 279, 5, 338, 338, 540, 540, 338, 338, 540, 275, 33, 5, 338, 338, 338, 540, 540, 540, 540, 275, 33, 5, 38, 39, 38, 39, 38, 39, 38, 39, 38, 39],
+         "data":[43, 42, 63, 59, 59, 59, 59, 59, 64, 42, 42, 43, 63, 59, 183, 216, 183, 59, 64, 40, 43, 41, 58, 183, 184, 226, 184, 183, 60, 11, 41, 82, 82, 28, 28, 28, 28, 82, 19, 5, 82, 28, 28, 28, 28, 28, 28, 27, 23, 5, 82, 82, 28, 28, 82, 82, 28, 19, 33, 5, 82, 82, 82, 28, 28, 28, 28, 19, 33, 5, 38, 39, 38, 39, 38, 39, 38, 39, 38, 39],
          "height":8,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"Tiles",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -24,19 +24,18 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"EntityLayer",
          "objects":[
                 {
-                 "height":0,
+                 "height":8,
                  "id":1,
-                 "name":"01:36:80:124",
-                 "point":true,
+                 "name":"1:01:136:50:7c",
                  "rotation":0,
                  "type":"warp",
                  "visible":true,
-                 "width":0,
-                 "x":12.9443319838057,
-                 "y":35.4123931623932
+                 "width":8,
+                 "x":0,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -44,14 +43,29 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":4,
+ "nextlayerid":1,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "properties":[
         {
-         "name":"pal",
+         "name":"animationset",
          "type":"string",
-         "value":"0e"
+         "value":"03"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"22:3400"
+        }, 
+        {
+         "name":"palette",
+         "type":"string",
+         "value":"0E"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"36"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -60,37 +74,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"metatiles_main.png",
+         "image":"tiles_36_03_0e_22_3400.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
          "name":"main",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":257,
-         "image":"metatiles_36.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"36",
-         "spacing":0,
-         "tilecount":256,
-         "tileheight":16,
-         "tilewidth":16
-        }, 
-        {
-         "columns":16,
-         "firstgid":513,
-         "image":"metatiles_anim_03.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"anim_03",
          "spacing":0,
          "tilecount":256,
          "tileheight":16,
