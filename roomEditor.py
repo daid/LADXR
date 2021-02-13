@@ -1,5 +1,7 @@
 import json
 
+WARP_TYPE_IDS = (0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6)
+
 
 class RoomEditor:
     def __init__(self, rom, room=None, *, bank_nr=None, address=None):

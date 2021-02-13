@@ -50,8 +50,8 @@ def createDungeonOnlyOverworld(rom):
         re = RoomEditor(rom, n)
         re.entities = []
         re.objects = []
-        if os.path.exists("%s/overworld/%02X.json" % (path, n)):
-            re.loadFromJson("%s/overworld/%02X.json" % (path, n))
+        if os.path.exists("%s/overworld/dive/%02X.json" % (path, n)):
+            re.loadFromJson("%s/overworld/dive/%02X.json" % (path, n))
         re.updateOverlay()
         entrances = list(filter(lambda obj: obj.type_id in (0xE1, 0xE2, 0xE3, 0xBA, 0xA8, 0xBE, 0xCB), re.objects))
         for obj in re.objects:

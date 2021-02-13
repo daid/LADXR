@@ -223,6 +223,9 @@ def updateSpriteData(rom):
             values[2] = 0xD6
             values[3] = 0xD7
         r = RoomEditor(rom, room_nr)
+        for obj in r.objects:
+            if obj.type_id == 0xC5 and room_nr < 0x100: # Pushable Gravestone
+                values[3] = 0x82
         for x, y, entity in r.entities:
             sprite_data = entityData.SPRITE_DATA[entity]
             if callable(sprite_data):
