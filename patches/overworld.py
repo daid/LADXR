@@ -81,8 +81,12 @@ def exportOverworld(rom):
     import PIL.Image
 
     path = os.path.dirname(__file__)
-    for room_nr in range(0x100):
-        room = RoomEditor(rom, room_nr)
+    for room_index in list(range(0x100)) + ["Alt06", "Alt0E", "Alt1B", "Alt2B", "Alt79", "Alt8C"]:
+        room = RoomEditor(rom, room_index)
+        if isinstance(room_index, int):
+            room_nr = room_index
+        else:
+            room_nr = int(room_index[3:], 16)
         tileset_index = rom.banks[0x3F][0x2f00 + room_nr]
         attributedata_bank = rom.banks[0x1A][0x2476 + room_nr]
         attributedata_addr = rom.banks[0x1A][0x1E76 + room_nr * 2]
@@ -105,6 +109,9 @@ def exportOverworld(rom):
             if obj.type_id == 0xC5 and room_nr < 0x100 and room.overlay[obj.x + obj.y * 10] == 0xC4:
                 # Pushable gravestones have the wrong overlay by default
                 room.overlay[obj.x + obj.y * 10] = 0xC5
+            if obj.type_id == 0xDC and room_nr < 0x100:
+                # Flowers above the rooster windmill need a different tile
+                hidden_warp_tiles.append(obj)
 
         image_filename = "tiles_%02x_%02x_%02x_%02x_%04x.png" % (tileset_index, room.animation_id, palette_index, attributedata_bank, attributedata_addr)
         data = {
@@ -140,7 +147,10 @@ def exportOverworld(rom):
                 {"name": "palette", "type": "string", "value": "%02X" % (palette_index)},
             ]
         }
-        json.dump(data, open("%s/overworld/export/%02X.json" % (path, room_nr), "wt"))
+        if isinstance(room_index, str):
+            json.dump(data, open("%s/overworld/export/%s.json" % (path, room_index), "wt"))
+        else:
+            json.dump(data, open("%s/overworld/export/%02X.json" % (path, room_index), "wt"))
 
         if not os.path.exists("%s/overworld/export/%s" % (path, image_filename)):
             tilemap = rom.banks[0x2F][tileset_index*0x100:tileset_index*0x100+0x200]

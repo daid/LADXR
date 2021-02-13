@@ -108,15 +108,16 @@ class RoomEditor:
         else:
             rom.rooms_color_dungeon[new_room_nr - 0x300] = objects_raw
 
-        if self.tileset_index is not None and new_room_nr < 0x100:
-            rom.banks[0x3F][0x2f00 + new_room_nr] = self.tileset_index & 0xFF
-        if self.attribset is not None and new_room_nr < 0x100:
-            # With a tileset, comes metatile gbc data that we need to store a proper bank+pointer.
-            rom.banks[0x1A][0x2476 + new_room_nr] = self.attribset[0]
-            rom.banks[0x1A][0x1E76 + new_room_nr*2] = self.attribset[1] & 0xFF
-            rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = self.attribset[1] >> 8
-        if self.palette_index is not None and new_room_nr < 0x100:
-            rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
+        if isinstance(new_room_nr, int) and new_room_nr < 0x100:
+            if self.tileset_index is not None:
+                rom.banks[0x3F][0x2f00 + new_room_nr] = self.tileset_index & 0xFF
+            if self.attribset is not None:
+                # With a tileset, comes metatile gbc data that we need to store a proper bank+pointer.
+                rom.banks[0x1A][0x2476 + new_room_nr] = self.attribset[0]
+                rom.banks[0x1A][0x1E76 + new_room_nr*2] = self.attribset[1] & 0xFF
+                rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = self.attribset[1] >> 8
+            if self.palette_index is not None:
+                rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
 
         if isinstance(new_room_nr, int):
             entities_raw = bytearray()
