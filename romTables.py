@@ -52,6 +52,13 @@ class RoomsOverworldTop(RoomsTable):
             "pointers_addr": 0x000,
             "pointers_bank": 0x09,
             "data_bank": 0x09,
+            "alt_pointers": {
+                "Alt06": (0x00, 0x31FD),
+                "Alt0E": (0x00, 0x31CD),
+                "Alt1B": (0x00, 0x320D),
+                "Alt2B": (0x00, 0x321D),
+                "Alt79": (0x00, 0x31ED),
+            }
         })
 
 
@@ -62,6 +69,9 @@ class RoomsOverworldBottom(RoomsTable):
             "pointers_addr": 0x100,
             "pointers_bank": 0x09,
             "data_bank": 0x1A,
+            "alt_pointers": {
+                "Alt8C": (0x00, 0x31DD),
+            }
         })
 
 

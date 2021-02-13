@@ -5,7 +5,7 @@ def changeEntrances(rom, mapping):
     dungeon_entrance_rooms = [0x117, 0x136, 0x152, 0x17a, 0x1a1, 0x1d4, 0x20e, 0x25d, 0x312]
     instrument_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301]
 
-    alt_rooms = {0x02B: (0x09, 0x109A), 0x08C: (0x1A, 0x034E), 0x00E: (0x09, 0x07EC)}
+    alt_rooms = {0x02B: "Alt2B", 0x08C: "Alt8C", 0x00E: "Alt0E"}
 
     world_entrance_rooms = []
     enter_warps = []
@@ -16,7 +16,7 @@ def changeEntrances(rom, mapping):
 
     for idx, room in enumerate(world_entrance_rooms):
         if alt_rooms.get(room, None) is not None:
-            re = RoomEditor(rom, bank_nr=alt_rooms[room][0], address=alt_rooms[room][1])
+            re = RoomEditor(rom, alt_rooms[room])
         else:
             re = RoomEditor(rom, room)
         warp = None
@@ -42,7 +42,7 @@ def changeEntrances(rom, mapping):
         re.changeWarpTarget(enter_warps[a].room, enter_warps[b].room, enter_warps[b].map_nr, enter_warps[b].target_x, enter_warps[b].target_y)
         re.store(rom)
         if alt_rooms.get(world_entrance_rooms[a], None) is not None:
-            re = RoomEditor(rom, bank_nr=alt_rooms[world_entrance_rooms[a]][0], address=alt_rooms[world_entrance_rooms[a]][1])
+            re = RoomEditor(rom, alt_rooms[world_entrance_rooms[a]])
             re.changeWarpTarget(enter_warps[a].room, enter_warps[b].room, enter_warps[b].map_nr, enter_warps[b].target_x, enter_warps[b].target_y)
             re.store(rom)
         re = RoomEditor(rom, enter_warps[b].room)
@@ -55,13 +55,10 @@ def changeEntrances(rom, mapping):
 
 def readEntrances(rom):
     result = []
-    entrance_rooms = [0x0D3, 0x024, 0x0B5, (0x09, 0x109A), 0x0D9, (0x1A, 0x034E), (0x09, 0x07EC), 0x010, 0x077]
+    entrance_rooms = [0x0D3, 0x024, 0x0B5, "Alt2B", 0x0D9, "Alt8C", "Alt0E", 0x010, 0x077]
 
     for idx, room in enumerate(entrance_rooms):
-        if isinstance(room, tuple):
-            re = RoomEditor(rom, bank_nr=room[0], address=room[1])
-        else:
-            re = RoomEditor(rom, room)
+        re = RoomEditor(rom, room)
         warp = None
         for obj in re.objects:
             if isinstance(obj, ObjectWarp) and (obj.map_nr < 9 or obj.map_nr == 0xff):

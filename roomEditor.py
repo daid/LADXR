@@ -6,19 +6,16 @@ WARP_TYPE_IDS = {0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6}
 
 
 class RoomEditor:
-    def __init__(self, rom, room=None, *, bank_nr=None, address=None):
-        assert room is not None or (bank_nr is not None and address is not None)
+    def __init__(self, rom, room=None):
+        assert room is not None
         self.room = room
-        self.bank_nr = bank_nr
-        self.address = address
-        self.length = None
         self.entities = []
         self.objects = []
         self.tileset_index = None
         self.palette_index = None
         self.attribset = None
 
-        if room is not None:
+        if isinstance(room, int):
             entities_raw = rom.entities[room]
             idx = 0
             while entities_raw[idx] != 0xFF:
@@ -29,7 +26,14 @@ class RoomEditor:
                 idx += 2
             assert idx == len(entities_raw) - 1
 
-        if room is not None:
+        if isinstance(room, str):
+            if room in rom.rooms_overworld_top:
+                objects_raw = rom.rooms_overworld_top[room]
+            elif room in rom.rooms_overworld_bottom:
+                objects_raw = rom.rooms_overworld_bottom[room]
+            else:
+                assert False, "Failed to find alt room: %s" % (room)
+        else:
             if room < 0x080:
                 objects_raw = rom.rooms_overworld_top[room]
             elif room < 0x100:
@@ -40,8 +44,6 @@ class RoomEditor:
                 objects_raw = rom.rooms_indoor_b[room - 0x200]
             else:
                 objects_raw = rom.rooms_color_dungeon[room - 0x300]
-        else:
-            objects_raw = rom.banks[bank_nr][address:]
 
         self.animation_id = objects_raw[0]
         self.floor_object = objects_raw[1]
@@ -69,12 +71,10 @@ class RoomEditor:
                 idx += 2
         if room is not None:
             assert idx == len(objects_raw) - 1
-        else:
-            self.length = idx + 1
 
-        if room is not None and room < 0x0CC:
+        if isinstance(room, int) and room < 0x0CC:
             self.overlay = rom.banks[0x26][room * 80:room * 80+80]
-        elif room is not None and room < 0x100:
+        elif isinstance(room, int) and room < 0x100:
             self.overlay = rom.banks[0x27][(room - 0xCC) * 80:(room - 0xCC) * 80 + 80]
         else:
             self.overlay = None
@@ -87,9 +87,13 @@ class RoomEditor:
             objects_raw += obj.export()
         objects_raw += bytearray([0xFE])
 
-        if new_room_nr is None:
-            assert len(objects_raw) <= self.length
-            rom.banks[self.bank_nr][self.address:self.address+len(objects_raw)] = objects_raw
+        if isinstance(new_room_nr, str):
+            if new_room_nr in rom.rooms_overworld_top:
+                rom.rooms_overworld_top[new_room_nr] = objects_raw
+            elif new_room_nr in rom.rooms_overworld_bottom:
+                rom.rooms_overworld_bottom[new_room_nr] = objects_raw
+            else:
+                assert False, "Failed to find alt room: %s" % (new_room_nr)
         elif new_room_nr < 0x080:
             rom.rooms_overworld_top[new_room_nr] = objects_raw
         elif new_room_nr < 0x100:
@@ -111,7 +115,7 @@ class RoomEditor:
         if self.palette_index is not None and new_room_nr < 0x100:
             rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
 
-        if new_room_nr is not None:
+        if isinstance(new_room_nr, int):
             entities_raw = bytearray()
             for entity in self.entities:
                 entities_raw += bytearray([entity[0] | entity[1] << 4, entity[2]])
