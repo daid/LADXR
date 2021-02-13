@@ -225,8 +225,22 @@ class RoomEditor:
                 obj = tiles[x + y * 10]
                 if obj == self.floor_object:
                     continue
-                #TODO: Horizontal/vertical strips
-                self.objects.append(Object(x, y, obj))
+                w = 1
+                h = 1
+                while x + w < 10 and tiles[x + w + y * 10] == obj:
+                    w += 1
+                while y + h < 8 and tiles[x + (y + h) * 10] == obj:
+                    h += 1
+                if w > h:
+                    for n in range(w):
+                        tiles[x + n + y * 10] = self.floor_object
+                    self.objects.append(ObjectHorizontal(x, y, obj, w))
+                elif h > 1:
+                    for n in range(h):
+                        tiles[x + (y + n) * 10] = self.floor_object
+                    self.objects.append(ObjectVertical(x, y, obj, h))
+                else:
+                    self.objects.append(Object(x, y, obj))
         self.updateOverlay()
         return data
 
