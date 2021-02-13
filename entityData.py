@@ -494,7 +494,7 @@ SPRITE_DATA = {
     0xF7: (0, 0x0E), # COLOR_GUARDIAN_BLUE
     0xF8: (0, 0x0B, 1, 0x0C, 3, 0x0D), # GIANT_BUZZ_BLOB
     0xF9: (0, 0x11, 2, 0x10), # HARDHIT_BEETLE
-    0xFA: None,      # PHOTOGRAPHER
+    0xFA: lambda room: (0, 0x44) if room.room == 0x2F5 else None, # PHOTOGRAPHER
 }
 
 assert len(NAME) == COUNT
