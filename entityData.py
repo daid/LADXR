@@ -303,7 +303,7 @@ SPRITE_DATA = {
     0x1C: (1, 0x91), # MINI_GEL
     0x1E: (0, 0x90), # STALFOS_EVASIVE
     0x1F: (3, 0x93), # GIBDO
-    0x20: (0, 0x90), # HARDHAT_BEETLE
+    0x20: lambda room: (2, 0x90) if room.room in _CAVES_B_ROOMS else (0, 0x90), # HARDHAT_BEETLE
     0x21: (2, 0x95), # WIZROBE
     0x23: (3, 0x93), # LIKE_LIKE
     0x24: (2, 0x94, 3, 0x9F), # IRON_MASK
