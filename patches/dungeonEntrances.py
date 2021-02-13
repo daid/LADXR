@@ -35,7 +35,7 @@ def changeEntrances(rom, mapping):
         re = RoomEditor(rom, instrument_rooms[idx])
         for obj in re.objects:
             if isinstance(obj, ObjectWarp):
-                assert obj.room == world_entrance_rooms[idx]
+                assert obj.room == world_entrance_rooms[idx], "D%d instrument room not warping to entrance %03x != %03x" % (idx + 1, obj.room, world_entrance_rooms[idx])
 
     for a, b in enumerate(mapping):
         re = RoomEditor(rom, world_entrance_rooms[a])

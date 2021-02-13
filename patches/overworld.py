@@ -49,7 +49,6 @@ def createDungeonOnlyOverworld(rom):
         re.objects = []
         if os.path.exists("%s/overworld/dive/%02X.json" % (path, n)):
             re.loadFromJson("%s/overworld/dive/%02X.json" % (path, n))
-        re.updateOverlay()
         entrances = list(filter(lambda obj: obj.type_id in WARP_TYPE_IDS, re.objects))
         for obj in re.objects:
             if isinstance(obj, ObjectWarp) and entrances:
@@ -67,7 +66,7 @@ def createDungeonOnlyOverworld(rom):
                     # Patch the boomang guy exit
                     rom.patch(0x0a, 0x3891, "E000F41820", "E000%02x%02x%02x" % (n, e.x * 16 + 8, e.y * 16 + 16))
 
-                if obj.warp_type == 1 and obj.map_nr < 8 or obj.map_nr == 0xFF:
+                if obj.warp_type == 1 and (obj.map_nr < 8 or obj.map_nr == 0xFF) and obj.room not in (0x1B0, 0x23A, 0x23D):
                     other = RoomEditor(rom, instrument_rooms[min(8, obj.map_nr)])
                     for o in other.objects:
                         if isinstance(o, ObjectWarp) and o.warp_type == 0:

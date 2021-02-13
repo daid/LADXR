@@ -223,6 +223,8 @@ class RoomEditor:
         for y in range(8):
             for x in range(10):
                 obj = tiles[x + y * 10]
+                if self.overlay:
+                    self.overlay[x + y * 10] = obj
                 if obj == self.floor_object:
                     continue
                 w = 1
