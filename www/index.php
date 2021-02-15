@@ -11,9 +11,9 @@ if (isset($_FILES["rom"]))
     {
         if (isset($_POST[$key]) && $_POST[$key] != "")
         {
-            if ($key == "gfxmod")
+            if ($key === "gfxmod")
                 $_POST[$key] = "gfx/" . $_POST[$key];
-            if ($option['type'] == 'check')
+            if ($option['type'] === 'check')
                 $command .= " ".$option['arg'];
             else
                 $command .= " ".$option['arg']." ".escapeshellarg($_POST[$key]);
@@ -31,7 +31,7 @@ if (isset($_FILES["rom"]))
     $output = []; $result = -1;
     exec($command, $output, $result);
 
-    if ($result == 0)
+    if ($result === 0)
     {
         $seed = "";
         foreach($output as $line)
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         {
             if (e.name != "" && e.name != "rom")
             {
-                if (e.type == 'checkbox')
+                if (e.type === 'checkbox')
                     data += "&" + encodeURIComponent(e.name) + "=" + (e.checked ? "1" : "0");
                 else
                     data += "&" + encodeURIComponent(e.name) + "=" + encodeURIComponent(e.value);
@@ -123,8 +123,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (kv.length > 1)
         {
             var e = document.getElementById(kv[0]);
-            if (e.type == 'checkbox')
-                e.checked = kv[1] == "1";
+            if (e.type === 'checkbox')
+                e.checked = kv[1] === "1";
             else
                 e.value = kv[1];
         }
@@ -302,15 +302,21 @@ foreach($options as $key => $option)
     echo('"><div class="col-sm-12 col-md-3">');
     echo("<label for='$key'>".$option['label'].":</label>");
     echo("</div><div class='col-sm-12 col-md'>");
-    if($option['type'] == "text")
+    if($option['type'] === "text")
         echo("<input type='text' id='$key' name='$key' placeholder='".$option['placeholder']."'/>");
-    if($option['type'] == "check")
+    if($option['type'] === "check")
         echo("<input type='checkbox' id='$key' name='$key' ".($option['default']?"checked=1":"")."'/>");
     if (is_array($option['type']))
     {
+        $default = '';
+        if (array_key_exists('default', $option))
+            $default = $option['default'];
         echo("<select id='$key' name='$key'>");
         foreach($option['type'] as $i=>$o)
-            echo("<option value='$i'>$o</option>");
+            if ($i === $default)
+                echo("<option value='$i' selected>$o</option>");
+            else
+                echo("<option value='$i'>$o</option>");
         echo("</select>");
     }
     echo("</div></div id=row>");
