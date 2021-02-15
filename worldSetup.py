@@ -44,7 +44,7 @@ class WorldSetup:
         if options.miniboss != "default":
             values = [name for name in self.miniboss_mapping.values()]
             for key in self.miniboss_mapping.keys():
-                self.miniboss_mapping[key] = rnd.choice(values)
+                self.miniboss_mapping[key] = "GIANT_BUZZ_BLOB" # rnd.choice(values)
                 if options.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]

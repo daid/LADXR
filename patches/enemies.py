@@ -248,6 +248,8 @@ def changeMiniBosses(rom, mapping):
         ld  [hl], b ; b is always zero here
         ret
     """), fill_nop=True)
+    # Remove the powder fairy from giant buzz blob
+    rom.patch(0x36, 0x14F7, ASM("jr nz, $05"), ASM("jr $05"))
 
     for target, name in mapping.items():
         re = RoomEditor(rom, MINIBOSS_ROOMS[target])
