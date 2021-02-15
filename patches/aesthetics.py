@@ -143,7 +143,6 @@ def allowColorDungeonSpritesEverywhere(rom):
         jp $0DAA
     """), fill_nop=True)
     # Disable color dungeon specific tile load hacks
-    rom.patch(0x00, 0x06A7, ASM("jr nz, $22"), ASM("jr $22"))
     rom.patch(0x00, 0x2E77, ASM("jr nz, $0B"), ASM("jr $0B"))
     
     # Finally fill in the sprite data for the color dungeon
@@ -200,6 +199,14 @@ def allowColorDungeonSpritesEverywhere(rom):
         ld  [$C10E], a
         ret
     """), fill_nop=True)
+    rom.patch(0x00, 0x0738, "00" * (0x073E - 0x0738), ASM("""
+        ; we get here by some color dungeon specific code jumping to this position
+        ; We still need that color dungeon specific code as it loads background tiles
+        xor a
+        ldh [$91], a
+        ldh [$93], a
+        ret
+    """))
     rom.patch(0x00, 0x073E, "00" * (0x07AF - 0x073E), ASM("""
         ;If we get here, only the 2nd flag is filled and the primary is not. So swap those around.
         ld  a, [$C10D] ;copy the index number
