@@ -302,7 +302,7 @@ SPRITE_DATA = {
     0x1B: None,      # GEL
     0x1C: (1, 0x91), # MINI_GEL
     0x1E: (0, 0x90), # STALFOS_EVASIVE
-    0x1F: (3, 0x93), # GIBDO
+    0x1F: lambda room: (0, 0x93) if 0x230 <= room.room <= 0x26B else (3, 0x93), # GIBDO
     0x20: lambda room: (2, 0x90) if room.room in _CAVES_B_ROOMS else (0, 0x90), # HARDHAT_BEETLE
     0x21: (2, 0x95), # WIZROBE
     0x23: (3, 0x93), # LIKE_LIKE
@@ -311,7 +311,7 @@ SPRITE_DATA = {
     0x28: (2, 0x96), # MIMIC
     0x29: (3, 0x98), # MINI_MOLDORM
     0x2A: (3, 0x99), # LASER
-    0x2C: (3, 0x9B), # SPIKED_BEETLE
+    0x2C: lambda room: (2, 0x9B) if 0x15E <= room.room <= 0x17F else (3, 0x9B), # SPIKED_BEETLE
     0x2D: None,      # DROPPABLE_HEART
     0x2E: None,      # DROPPABLE_RUPEE
     0x2F: None,      # DROPPABLE_FAIRY
