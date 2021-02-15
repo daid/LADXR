@@ -197,6 +197,11 @@ def changeBosses(rom, mapping):
             if target == 4:
                 # For slime eel, we need to setup the right wall tiles.
                 rom.banks[0x20][0x2EB3 + BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x06
+            if target == 5:
+                # Patch facade so he doesn't use the spinning tiles, which is a problem for the sprites.
+                rom.patch(0x04, 0x121D, ASM("cp $14"), ASM("cp $00"))
+                rom.patch(0x04, 0x1226, ASM("cp $04"), ASM("cp $00"))
+                rom.patch(0x04, 0x127F, ASM("cp $14"), ASM("cp $00"))
             if target == 7:
                 pass
                 # For hot head, add some lava (causes graphical glitches)
