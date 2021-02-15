@@ -246,6 +246,16 @@ def addFrameCounter(rom):
         xor  a
         ldi  [hl], a
 
+        ; Increase the minutes counter
+        ld   a, [hl]
+        inc  a
+        daa
+        ld   [hl], a
+        cp   $60
+        jr   nz, done
+        xor  a
+        ldi  [hl], a
+
         ; Increase the hours counter
         ld   a, [hl]
         inc  a
