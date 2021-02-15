@@ -236,7 +236,8 @@ def addFrameCounter(rom):
         xor  a
         ldi  [hl], a
 
-        ; Increase the seconds counter
+        ; Increase the seconds counter/minutes/hours counter
+increaseSecMinHours:
         ld   a, [hl]
         inc  a
         daa
@@ -245,22 +246,8 @@ def addFrameCounter(rom):
         jr   nz, done
         xor  a
         ldi  [hl], a
+        jr   increaseSecMinHours
 
-        ; Increase the minutes counter
-        ld   a, [hl]
-        inc  a
-        daa
-        ld   [hl], a
-        cp   $60
-        jr   nz, done
-        xor  a
-        ldi  [hl], a
-
-        ; Increase the hours counter
-        ld   a, [hl]
-        inc  a
-        daa
-        ld   [hl], a
 done:
 
     """), fill_nop=True)
