@@ -296,6 +296,9 @@ def changeMiniBosses(rom, mapping):
                 elif re.room == 0x2E1: #Moblin cave
                     target = (0x15, 0x2F0, 0x50, 0x7C)
                 re.objects.append(ObjectWarp(1, *target))
+        if name == "DODONGO":
+            # Remove breaking floor tiles from the room.
+            re.objects = [obj for obj in re.objects if obj.type_id != 0xDF]
         re.store(rom)
 
 
