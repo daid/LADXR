@@ -132,6 +132,8 @@ def changeBosses(rom, mapping):
                             "FFFF0A0B0C0DFFFF" +
                             "FFFF0E0F1011FFFF" +
                             "FFFF12131415FFFF")
+    # Fix the genie death not really liking pits/water.
+    rom.patch(0x04, 0x0521, ASM("ld [hl], $81"), ASM("ld [hl], $91"))
 
     for dungeon_nr in range(9):
         target = mapping[dungeon_nr]
