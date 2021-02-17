@@ -39,6 +39,7 @@ def gfxMod(rom, filename):
         for n in range(0x2C, min(bank_nr + 1, 0x34)):
             rom.banks[n - 0x2C + 0x0C] = rom.banks[n].copy()
 
+
 def createGfxImage(rom, filename):
     import PIL.Image
     bank_count = 8
@@ -64,6 +65,7 @@ def createGfxImage(rom, filename):
                             c |= 2
                         img.putpixel((tx*8+x, bank_nr * 32 * 8 + ty*16+y), c)
     img.save(filename)
+
 
 def noSwordMusic(rom):
     # Skip no-sword music override
@@ -98,8 +100,10 @@ def forceLinksPalette(rom, index):
             ASM("ld a, [$DC0F]\nand a\njr z, $03\ninc a"),
             ASM("ld a, $%02X" % (index)), fill_nop=True)
 
+
 def fastText(rom):
     rom.patch(0x00, 0x24CA, ASM("jp $2485"), ASM("call $2485"))
+
 
 def noText(rom):
     for idx in range(len(rom.texts)):
@@ -143,6 +147,7 @@ def allowColorDungeonSpritesEverywhere(rom):
         jp $0DAA
     """), fill_nop=True)
     # Disable color dungeon specific tile load hacks
+    rom.patch(0x00, 0x06A7, ASM("jr nz, $22"), ASM("jr $22"))
     rom.patch(0x00, 0x2E77, ASM("jr nz, $0B"), ASM("jr $0B"))
     
     # Finally fill in the sprite data for the color dungeon
@@ -220,8 +225,10 @@ def allowColorDungeonSpritesEverywhere(rom):
 
 
 def updateSpriteData(rom):
+    # Remove all the special sprite change exceptions.
+    rom.patch(0x00, 0x0DAD, 0x0DDB, ASM("jp $0DDB"), fill_nop=True)
+
     # For each room update the sprite load data based on which entities are in there.
-    # TODO: D8 rolling bones, dodogo's
     for room_nr in range(0x316):
         if room_nr == 0x2FF:
             continue
