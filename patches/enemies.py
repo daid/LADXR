@@ -160,9 +160,6 @@ def changeBosses(rom, mapping):
                 # Set the proper room event flags
                 rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x2A
 
-                # Patch the fish heart container to open up the right room.
-                rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
-
                 # Add the staircase to the boss, and fix the warp back.
                 re = getCleanBossRoom(rom, dungeon_nr)
                 re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 3, 0x1EF, 24, 16)]
@@ -170,6 +167,10 @@ def changeBosses(rom, mapping):
                 re = RoomEditor(rom, 0x1EF)
                 re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr][0], 72, 80)
                 re.store(rom)
+
+            # Patch the fish heart container to open up the right room.
+            rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
+
             # Patch the proper item towards the D4 boss
             rom.banks[0x3E][0x3800 + 0x01ff] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr][0]]
             rom.banks[0x3E][0x3300 + 0x01ff] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
