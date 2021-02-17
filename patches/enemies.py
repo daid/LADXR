@@ -154,7 +154,7 @@ def changeBosses(rom, mapping):
                         obj.target_y = 16
                 re.store(rom)
                 re = RoomEditor(rom, 0x1EF)
-                re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, 0x22E, 72, 80)
+                re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, 0x22E, 24, 16)
                 re.store(rom)
             else:
                 # Set the proper room event flags
