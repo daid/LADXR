@@ -33,15 +33,19 @@ def addBank3F(rom):
         """), ASM("""
         ; Check if we are a color gameboy, we require a color version now.
         cp $11
+        ld   a, $01
+        ld   [$6000], a
         jr nz, notGBC
 
         ; Switch to bank $3F to run our custom initializer
         ld   a, $3F
-        ld   [$2100], a
+        ;ld   [$2100], a
+        call $00A0
         call $4000
         ; Switch back to bank 0 after loading our own initializer
         ld   a, $01
-        ld   [$2100], a
+        ;ld   [$2100], a
+        call $00A0
         
         ; set a to 1 to indicate GBC
         ld   a, $01

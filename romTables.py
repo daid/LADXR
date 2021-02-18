@@ -218,4 +218,11 @@ class ROMWithTables(ROM):
         self.room_sprite_data_indoor.store(self)
         self.background_tiles.store(self)
         self.background_attributes.store(self)
+
+        self.banks.insert(0x20, self.banks[0].copy())
+        self.banks.insert(0x40, self.banks[0].copy())
+        while len(self.banks) < 0x80:
+            self.banks.append(b'\xff' * 0x4000)
+        print("MBC1 done", len(self.banks))
+
         super().save(filename, name=name)

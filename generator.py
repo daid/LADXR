@@ -43,6 +43,7 @@ import patches.instrument
 import patches.endscreen
 import patches.save
 import patches.multiworld
+import patches.mbc1
 import hints
 
 
@@ -245,4 +246,5 @@ def generateRom(options, seed, logic, multiworld=None):
         patches.enemies.doubleTrouble(rom)
     for pymod in pymods:
         pymod.postPatch(rom)
+    patches.mbc1.useMBC1(rom)
     return rom
