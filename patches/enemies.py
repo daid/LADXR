@@ -302,6 +302,9 @@ def changeMiniBosses(rom, mapping):
         if name == "DODONGO":
             # Remove breaking floor tiles from the room.
             re.objects = [obj for obj in re.objects if obj.type_id != 0xDF]
+        if name == "ROLLING_BONES" and target == 2:
+            # Make rolling bones pass trough walls so it does not get stuck here.
+            rom.patch(0x03, 0x02F1 + 0x81, "84", "95")
         re.store(rom)
 
 
