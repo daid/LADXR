@@ -30,7 +30,7 @@ MINIBOSS_ENTITIES = {
     "DODONGO":          [(3, 2, 0x60), (5, 2, 0x60)],
     "CUE_BALL":         [(1, 1, 0x8e)],
     "GHOMA":            [(2, 1, 0x5e), (2, 4, 0x5e)],
-    "SMASHER":          [(5, 3, 0x92)],
+    "SMASHER":          [(5, 2, 0x92)],
     "GRIM_CREEPER":     [(4, 0, 0xbc)],
     "BLAINO":           [(5, 3, 0xbe)],
     "AVALAUNCH":        [(5, 1, 0xf4)],
