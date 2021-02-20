@@ -102,7 +102,6 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.softlock.fixAll(rom)
     patches.maptweaks.tweakMap(rom)
     patches.chest.fixChests(rom)
-    patches.chest.setMultiChest(rom, logic.world_setup.multichest)
     patches.shop.fixShop(rom)
     patches.trendy.fixTrendy(rom)
     patches.droppedKey.fixDroppedKey(rom)
@@ -185,28 +184,25 @@ def generateRom(options, seed, logic, multiworld=None):
     if multiworld is None:
         hints.addHints(rom, random.Random(seed), logic.iteminfo_list)
 
-        # Patch the generated logic into the rom
-        patches.startLocation.setStartLocation(rom, logic.world_setup.start_house_index)
-        patches.dungeonEntrances.changeEntrances(rom, logic.world_setup.dungeon_entrance_mapping)
-        for spot in logic.iteminfo_list:
-            spot.patch(rom, spot.item)
-        patches.enemies.changeBosses(rom, logic.world_setup.boss_mapping)
-        patches.enemies.changeMiniBosses(rom, logic.world_setup.miniboss_mapping)
+        world_setup = logic.world_setup
+        item_list = logic.iteminfo_list
     else:
         # Set a unique ID in the rom for multiworld
         for n in range(4):
             rom.patch(0x00, 0x0051 + n, "00", "%02x" % (seed[n]))
         rom.patch(0x00, 0x0055, "00", "%02x" % (multiworld))
 
-        # Patch the generated logic into the rom
-        patches.startLocation.setStartLocation(rom, logic.worlds[multiworld].world_setup.start_house_index)
-        if logic.worlds[multiworld].world_setup.entrance_mapping:
-            patches.dungeonEntrances.changeEntrances(rom, logic.worlds[multiworld].world_setup.dungeon_entrance_mapping)
-        for spot in logic.iteminfo_list:
-            if spot.world == multiworld:
-                spot.patch(rom, spot.item)
-        patches.enemies.changeBosses(rom, logic.worlds[multiworld].world_setup.boss_mapping)
-        patches.enemies.changeMiniBosses(rom, logic.worlds[multiworld].world_setup.miniboss_mapping)
+        world_setup = logic.worlds[multiworld].world_setup
+        item_list = [spot for spot in logic.iteminfo_list if spot.world == multiworld]
+
+    # Patch the generated logic into the rom
+    patches.chest.setMultiChest(rom, world_setup.multichest)
+    patches.startLocation.setStartLocation(rom, world_setup.start_house_index)
+    patches.dungeonEntrances.changeEntrances(rom, world_setup.dungeon_entrance_mapping)
+    for spot in item_list:
+        spot.patch(rom, spot.item)
+    patches.enemies.changeBosses(rom, world_setup.boss_mapping)
+    patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
 
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
