@@ -233,9 +233,11 @@ def updateSpriteData(rom):
         if room_nr == 0x2FF:
             continue
         values = [None, None, None, None]
-        if room_nr == 0x00E:
+        if room_nr == 0x00E:  # D7 entrance opening
             values[2] = 0xD6
             values[3] = 0xD7
+        if 0x211 <= room_nr <= 0x21E:  # D7 throwing ball thing.
+            values[0] = 0x66
         r = RoomEditor(rom, room_nr)
         for obj in r.objects:
             if obj.type_id == 0xC5 and room_nr < 0x100: # Pushable Gravestone
