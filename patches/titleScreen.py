@@ -26,6 +26,12 @@ def setRomInfo(rom, seed, options):
     except:
         version = ""
 
+    try:
+        seednr = int(seed, 16)
+    except:
+        import hashlib
+        seednr = int(hashlib.md5(seed.encode('ascii', 'replace')).hexdigest(), 16)
+
     if options.race:
         seed = "Race"
         if isinstance(options.race, str):
@@ -36,11 +42,6 @@ def setRomInfo(rom, seed, options):
 
     line_1_hex = _encode(seed[:16])
     line_2_hex = _encode(seed[16:])
-    try:
-        seednr = int(seed, 16)
-    except:
-        import hashlib
-        seednr = int(hashlib.md5(seed.encode('ascii', 'replace')).hexdigest(), 16)
 
     for n in (3, 4):
         be = BackgroundEditor(rom, n)
