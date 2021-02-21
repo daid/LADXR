@@ -298,11 +298,11 @@ SPRITE_DATA = {
     0x17: (1, {0x91, 0x65}), # SPARK_CLOCKWISE
     0x18: (3, 0x93), # POLS_VOICE
     0x19: lambda room: (2, 0x90) if room.room in _CAVES_B_ROOMS else (0, 0x90), # KEESE
-    0x1A: (0, 0x90), # STALFOS_AGGRESSIVE
+    0x1A: (0, {0x90, 0x77}), # STALFOS_AGGRESSIVE
     0x1B: None,      # GEL
     0x1C: (1, 0x91), # MINI_GEL
-    0x1E: (0, 0x90), # STALFOS_EVASIVE
-    0x1F: lambda room: (0, 0x93) if 0x230 <= room.room <= 0x26B else (3, 0x93), # GIBDO
+    0x1E: (0, {0x90, 0x77}), # STALFOS_EVASIVE
+    0x1F: lambda room: (0, 0x77) if 0x230 <= room.room <= 0x26B else (0, 0x90, 3, 0x93), # GIBDO
     0x20: lambda room: (2, 0x90) if room.room in _CAVES_B_ROOMS else (0, 0x90), # HARDHAT_BEETLE
     0x21: (2, 0x95), # WIZROBE
     0x23: (3, 0x93), # LIKE_LIKE

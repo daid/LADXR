@@ -12,7 +12,7 @@ def gfxMod(rom, filename):
             if (0x0C + n // 0x4000) < 0x14:
                 rom.banks[0x0C + n // 0x4000][0:len(new_data)] = new_data
             rom.banks[0x2C + n // 0x4000][0:len(new_data)] = new_data
-    elif filename.lower().endswith(".png"):
+    elif filename.lower().endswith(".png") or filename.lower().endswith(".bmp"):
         import PIL.Image
         img = PIL.Image.open(filename)
         assert (img.size[0] % 8) == 0
