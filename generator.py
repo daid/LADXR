@@ -135,6 +135,8 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
+    if options.removeFlashingLights:
+        patches.aesthetics.removeFlashingLights(rom)
     if options.hardMode:
         patches.hardMode.enableHardMode(rom)
     if options.textmode == 'fast':

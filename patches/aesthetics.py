@@ -91,6 +91,13 @@ def slowLowHPBeep(rom):
     rom.patch(2, 0x2338, ASM("ld a, $30"), ASM("ld a, $60"))  # slow slow hp beep
 
 
+def removeFlashingLights(rom):
+    # Remove the switching between two backgrounds at mamu, always show the spotlights.
+    rom.patch(0x00, 0x01EB, ASM("ldh a, [$E7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
+    # Remove flashing colors from shopkeeper killing you after stealing and the mad batter giving items.
+    rom.patch(0x24, 0x3B77, ASM("push bc"), ASM("ret"))
+
+
 def forceLinksPalette(rom, index):
     # This forces the link sprite into a specific palette index ignoring the tunic options.
     rom.patch(0, 0x1D8C,

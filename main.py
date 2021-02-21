@@ -92,6 +92,8 @@ def main(mainargs=None):
     # Just aestetic flags
     parser.add_argument('--gfxmod', dest="gfxmod", action='append',
         help="Load graphical mods.")
+    parser.add_argument('--remove-flashing-lights', dest="removeFlashingLights", action="store_true",
+        help="Remove the flashing light effects from mamu, the shopkeeper and madbatter.")
     parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
     parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'none'], default='default',
