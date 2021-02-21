@@ -333,9 +333,17 @@ foreach($options as $key => $option)
             echo("<input type='checkbox' id='$pkey' name='$pkey' ".($option['default']?"checked=1":"")."'/>");
         if (is_array($option['type']))
         {
+            $default = '';
+            if (array_key_exists('default', $option))
+                $default = $option['default'];
             echo("<select id='$pkey' name='$pkey'>");
             foreach($option['type'] as $i=>$o)
-                echo("<option value='$i'>$o</option>");
+            {
+                if ($i === $default)
+                    echo("<option value='$i' selected>$o</option>");
+                else
+                    echo("<option value='$i'>$o</option>");
+            }
             echo("</select>");
         }
         echo("</div>");
