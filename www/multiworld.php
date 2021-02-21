@@ -1,7 +1,7 @@
 <?php
 include("options.php");
 
-$options['forwardfactor'] = ['label' => 'Item placement weight', 'type' => ['0.3' => '0.3', '0.5' => '0.5', '0.7' => '0.7', '0.9' => '0.9'], 'arg' => '--forwardfactor', 'default' => '0.5', 'tooltip' => 'Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5', 'multiworld' => False],
+$options['forwardfactor'] = ['label' => 'Item placement weight', 'type' => ['0.3' => '0.3', '0.5' => '0.5', '0.7' => '0.7', '0.9' => '0.9'], 'arg' => '--forwardfactor', 'default' => '0.5', 'tooltip' => 'Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5', 'multiworld' => False];
 
 if (isset($_FILES["rom"]))
 {
