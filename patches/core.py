@@ -213,16 +213,16 @@ def addFrameCounter(rom, check_count):
     # Patch marin giving the start the game to jump to a custom handler
     rom.patch(0x05, 0x1299, ASM("ld a, $01\ncall $2385"), ASM("push hl\nld a, $0D\nrst 8\npop hl"), fill_nop=True)
 
-    # Replace the debug pause/free-walk code with an frame counter
-    rom.patch(0x00, 0x02FB, 0x032D, ASM("""
+    # Add code that needs to be called every frame to tick our ingame time counter.
+    rom.patch(0x00, 0x0091, "00" * (0x100 - 0x91), ASM("""
         ld   a, [$DB95] ;Get the gameplay type
         dec  a          ; and if it was 1
-        jr   z, done    ; we are at the credits and the counter should stop.
+        ret  z          ; we are at the credits and the counter should stop.
 
         ; Check if the timer expired
         ld   hl, $FF0F
         bit  2, [hl]
-        jr   z, done
+        ret  z
         res  2, [hl]
 
         ; Increase the "subsecond" counter, and continue if it "overflows"
@@ -232,7 +232,7 @@ def addFrameCounter(rom, check_count):
         inc  a
         cp   $20
         ld   [hl], a
-        jr   nz, done
+        ret  nz
         xor  a
         ldi  [hl], a
 
@@ -243,14 +243,13 @@ increaseSecMinHours:
         daa
         ld   [hl], a
         cp   $60
-        jr   nz, done
+        ret  nz
         xor  a
         ldi  [hl], a
         jr   increaseSecMinHours
-
-done:
-
     """), fill_nop=True)
+    # Replace a cgb check with the call to our counter code.
+    rom.patch(0x00, 0x0367, ASM("ld a, $0C\ncall $0B0B"), ASM("call $0091\nld a, $2C"))
 
     # Do not switch to 8x8 sprite mode
     rom.patch(0x17, 0x2E9E, ASM("res 2, [hl]"), "", fill_nop=True)
