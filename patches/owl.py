@@ -23,7 +23,8 @@ def removeOwlEvents(rom):
 
 
     # Patch the owl entity to allow refill of powder/bombs
-    rom.texts[0xC0] = formatText(b"Hoot!\nRefill for a price?", ask=b"Okay No")
+    rom.texts[0xC0] = formatText(b"Hoot!\nHoot!\nOut of stock?", ask=b"Okay No")
+    rom.texts[0xC1] = formatText(b"Hoot!\nHoot! Hoot!\nHoot!\nHere are a few things for you.")
     rom.patch(0x06, 0x27F5, 0x2A77, ASM("""
     ; Render owl
     ld de, sprite
@@ -64,14 +65,24 @@ talking:
     ld   a, [$C177] ; get which option we selected
     and  a
     ret  nz
-    ; Kill link
-    ld   a, $ff
-    ld   [$DB94], a
-    ; Give powder and bombs
-    ld   a, [$DB76]
+
+    ; Give powder
+    ld   a, [$DB4C]
+    cp   $10
+    jr   nc, doNotGivePowder
+    ld   a, $10
     ld   [$DB4C], a
-    ld   a, [$DB77]
+doNotGivePowder:
+
+    ld   a, [$DB4D]
+    cp   $10
+    jr   nc, doNotGiveBombs
+    ld   a, $10
     ld   [$DB4D], a
+doNotGiveBombs:
+
+    ld   a, $C1
+    call $2385 ; open dialog
     ret
 
 sprite:
