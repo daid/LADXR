@@ -28,6 +28,7 @@ SendItemFromChestToOtherGameWait:
     call MainLoop.readLinkCable
 
 SendItemFromChestToOtherGame:
+    call IncreaseCheckCounter
     ld   a, [wLinkStatusBits]
     bit  1, a
     jp   nz, SendItemFromChestToOtherGameWait
@@ -59,6 +60,7 @@ GiveItemFromChestMultiworld:
     jr   nz, SendItemFromChestToOtherGame
 
 GiveItemFromChest:
+    call IncreaseCheckCounter
     ldh  a, [$F1] ; Load active sprite variant
 
     rst  0 ; JUMP TABLE
@@ -854,3 +856,27 @@ RenderItemForRoom:
     ld   a, [hl]
     ldh  [$F1], a
     jp   RenderChestItem
+
+; Increase the amount of checks we completed, unless we are on the multichest room.
+IncreaseCheckCounter:
+    ldh  a, [$F6] ; map room
+    cp   $F2
+    jr   nz, .noMultiChest
+    ld   a, [$DBA5] ; is indoor
+    and  a
+    jr   z, .noMultiChest
+    ldh  a, [$F7]   ; mapId
+    cp   $0A
+    ret  z
+
+.noMultiChest:
+    call $27D0 ; Enable SRAM
+    ld   hl, $B010
+.loop:
+    ld   a, [hl]
+    and  a ; clear carry flag
+    inc  a
+    daa
+    ldi  [hl], a
+    ret  nc
+    jr   .loop

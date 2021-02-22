@@ -78,6 +78,11 @@ StartGameMarinMessage:
         xor  a
         ldi  [hl], a ;minute counter
         ldi  [hl], a ;hour counter
+
+        ld   hl, $B010
+        ldi  [hl], a ;check counter low
+        ldi  [hl], a ;check counter high
+
         ; Show the normal message
         ld   a, $01
         jp $2385

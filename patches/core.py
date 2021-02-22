@@ -209,7 +209,7 @@ noWrapDown:
         rom.banks[0x0F][0x08E0 + n] = sprite_data[n // 2]
 
 
-def addFrameCounter(rom):
+def addFrameCounter(rom, check_count):
     # Patch marin giving the start the game to jump to a custom handler
     rom.patch(0x05, 0x1299, ASM("ld a, $01\ncall $2385"), ASM("push hl\nld a, $0D\nrst 8\npop hl"), fill_nop=True)
 
@@ -252,33 +252,95 @@ done:
 
     """), fill_nop=True)
 
+    # Do not switch to 8x8 sprite mode
+    rom.patch(0x17, 0x2E9E, ASM("res 2, [hl]"), "", fill_nop=True)
+    # We need to completely reorder link sitting on the raft to work with 16x8 sprites.
+    sprites = rom.banks[0x38][0x1600:0x1800]
+    sprites[0x1F0:0x200] = b'\x00' * 16
+    for index, position in enumerate(
+            (0, 0x1F,
+             1, 0x1F, 2, 0x1F,
+             7, 8,
+             3, 9, 4, 10, 5, 11, 6, 12,
+             3, 13, 4, 14, 5, 15, 6, 16,
+             3, 17, 4, 18, 5, 19, 6, 20,
+        )):
+        rom.banks[0x38][0x1600+index*0x10:0x1610+index*0x10] = sprites[position*0x10:0x10+position*0x10]
+    rom.patch(0x27, 0x376E, 0x3776, "00046601", fill_nop=True)
+    rom.patch(0x27, 0x384E, ASM("ld c, $08"), ASM("ld c, $04"))
+    rom.patch(0x27, 0x3776, 0x3826,
+          "FA046002"
+          "0208640402006204"
+          "0A106E030A086C030A006A030AF86803"
+
+          "FA046002"
+          "0208640402006204"
+          "0A1076030A0874030A0072030AF87003"
+
+          "FA046002"
+          "0208640402006204"
+          "0A107E030A087C030A007A030AF87803"
+    , fill_nop=True)
+    rom.patch(0x27, 0x382E, ASM("ld a, $6C"), ASM("ld a, $80")) # OAM start position
+    rom.patch(0x27, 0x384E, ASM("ld c, $08"), ASM("ld c, $04")) # Amount of overlay OAM data
+    rom.patch(0x27, 0x3826, 0x382E, ASM("dw $7776, $7792, $77AE, $7792")) # pointers to animation
+    rom.patch(0x27, 0x3846, ASM("ld c, $2C"), ASM("ld c, $1C")) # Amount of OAM data
+
     # Upper line of credits roll into "TIME"
     rom.patch(0x17, 0x069D, 0x0713, ASM("""
         ld   hl, OAMData
         ld   de, $C000 ; OAM Buffer
-        ld   bc, $0020
+        ld   bc, $0048
         call $2914
         ret
 OAMData:
-        db  $30, $18, $2D, $00, $38, $18, $3D, $00 ;T
-        db  $30, $20, $27, $00, $38, $20, $27, $40 ;I
-        db  $30, $28, $2A, $00, $38, $28, $3A, $00 ;M
-        db  $30, $30, $24, $00, $38, $30, $34, $00 ;E
-    """, 0x469D), fill_nop=True)
+        db  $20, $18, $34, $00 ;T
+        db  $20, $20, $20, $00 ;I
+        db  $20, $28, $28, $00 ;M
+        db  $20, $30, $18, $00 ;E
+        
+        db  $20, $70, $16, $00 ;D
+        db  $20, $78, $18, $00 ;E
+        db  $20, $80, $10, $00 ;A
+        db  $20, $88, $34, $00 ;T
+        db  $20, $90, $1E, $00 ;H
+
+        db  $50, $18, $14, $00 ;C
+        db  $50, $20, $1E, $00 ;H
+        db  $50, $28, $18, $00 ;E
+        db  $50, $30, $14, $00 ;C
+        db  $50, $38, $24, $00 ;K
+        db  $50, $40, $32, $00 ;S
+
+        db  $68, $38, $%02x, $00 ;0
+        db  $68, $40, $%02x, $00 ;0
+        db  $68, $48, $%02x, $00 ;0
+        
+    """ % ((check_count // 100) % 10 | 0x40, (check_count // 10) % 10 | 0x40, check_count % 10 | 0x40), 0x469D), fill_nop=True)
     # Lower line of credits roll into XX XX XX
     rom.patch(0x17, 0x0784, 0x082D, ASM("""
         ld   hl, OAMData
-        ld   de, $C020 ; OAM Buffer
-        ld   bc, $0060
+        ld   de, $C048 ; OAM Buffer
+        ld   bc, $0038
         call $2914
 
         call $27D0 ; Enable SRAM
-        ld   hl, $C022
+        ld   hl, $C04A
         ld   a, [$B003] ; hours
         call updateOAM
         ld   a, [$B002] ; minutes
         call updateOAM
         ld   a, [$B001] ; seconds
+        call updateOAM
+        
+        ld   a, [$DB58] ; death count high
+        call updateOAM
+        ld   a, [$DB57] ; death count low
+        call updateOAM
+
+        ld   a, [$B011] ; check count high
+        call updateOAM
+        ld   a, [$B010] ; death count low
         call updateOAM
         ret
 
@@ -287,32 +349,79 @@ updateOAM:
         ld   b, a
         swap a
         and  $0F
+        add  a, a
         or   $40
-        ld   [hl], a
-        add  hl, de
-        or   $10
         ld   [hl], a
         add  hl, de
 
         ld   a, b
         and  $0F
+        add  a, a
         or   $40
-        ld   [hl], a
-        add  hl, de
-        or   $10
         ld   [hl], a
         add  hl, de
         ret
 OAMData:
-        db  $48, $18, $40, $00, $50, $18, $50, $00 ;0
-        db  $48, $20, $40, $00, $50, $20, $50, $00 ;0
-        db  $48, $30, $40, $00, $50, $30, $50, $00 ;0
-        db  $48, $38, $40, $00, $50, $38, $50, $00 ;0
-        db  $48, $48, $40, $00, $50, $48, $50, $00 ;0
-        db  $48, $50, $40, $00, $50, $50, $50, $00 ;0
+        db  $38, $18, $40, $00 ;0 (10 hours)
+        db  $38, $20, $40, $00 ;0 (1 hours)
+        db  $38, $30, $40, $00 ;0 (10 minutes)
+        db  $38, $38, $40, $00 ;0 (1 minutes)
+        db  $38, $48, $40, $00 ;0 (10 seconds)
+        db  $38, $50, $40, $00 ;0 (1 seconds)
+
+        db  $00, $00, $40, $00 ;0 (1000 death)
+        db  $38, $80, $40, $00 ;0 (100 death)
+
+        db  $38, $88, $40, $00 ;0 (10 death)
+        db  $38, $90, $40, $00 ;0 (1 death)
+
+        ; checks
+        db  $00, $00, $40, $00 ;0
+        db  $68, $18, $40, $00 ;0
+        db  $68, $20, $40, $00 ;0
+        db  $68, $28, $40, $00 ;0
+        
     """, 0x4784), fill_nop=True)
 
-    # Graphics change for the end
+    # Grab the "mostly" complete A-Z font
+    sprites = rom.banks[0x38][0x1100:0x1400]
+    for index, position in enumerate((
+            0x10, 0x20,  # A
+            0x11, 0x21,  # B
+            0x12, 0x12 | 0x100,  # C
+            0x13, 0x23,  # D
+            0x14, 0x24,  # E
+            0x14, 0x25,  # F
+            0x12, 0x22,  # G
+            0x20 | 0x100, 0x26,  # H
+            0x17, 0x17 | 0x100,  # I
+            0x28, 0x28,  # J
+            0x19, 0x29,  # K
+            0x06, 0x07,  # L
+            0x1A, 0x2A,  # M
+            0x1B, 0x2B,  # N
+            0x00, 0x00,  # O?
+            0x00, 0x00,  # P?
+            #0x00, 0x00,  # Q?
+            0x11, 0x18,  # R
+            0x1C, 0x2C,  # S
+            0x1D, 0x2D,  # T
+            0x26, 0x10,  # U
+            0x00, 0x00,  # V?
+            0x1E, 0x2E,  # W
+            #0x00, 0x00,  # X?
+            #0x00, 0x00,  # Y?
+            0x27, 0x27,  # Z
+    )):
+        sprite = sprites[(position&0xFF)*0x10:0x10+(position&0xFF)*0x10]
+        if position & 0x100:
+            for n in range(4):
+                sprite[n * 2], sprite[14 - n * 2] = sprite[14 - n * 2], sprite[n * 2]
+                sprite[n * 2 + 1], sprite[15 - n * 2] = sprite[15 - n * 2], sprite[n * 2 + 1]
+        rom.banks[0x38][0x1100+index*0x10:0x1110+index*0x10] = sprite
+
+
+    # Number graphics change for the end
     tile_graphics = """
 ........ ........ ........ ........ ........ ........ ........ ........ ........ ........
 .111111. ..1111.. .111111. .111111. ..11111. 11111111 .111111. 11111111 .111111. .111111.
@@ -334,5 +443,5 @@ OAMData:
     for n in range(10):
         gfx_high = "\n".join([line.split(" ")[n] for line in tile_graphics.split("\n")[:8]])
         gfx_low = "\n".join([line.split(" ")[n] for line in tile_graphics.split("\n")[8:]])
-        rom.banks[0x38][0x1400+n*0x10:0x1410+n*0x10] = utils.createTileData(gfx_high)
-        rom.banks[0x38][0x1500+n*0x10:0x1510+n*0x10] = utils.createTileData(gfx_low)
+        rom.banks[0x38][0x1400+n*0x20:0x1410+n*0x20] = utils.createTileData(gfx_high)
+        rom.banks[0x38][0x1410+n*0x20:0x1420+n*0x20] = utils.createTileData(gfx_low)

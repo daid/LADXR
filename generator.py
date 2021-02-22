@@ -91,8 +91,6 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.removeGhost(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if not options.romdebugmode:
-        patches.core.addFrameCounter(rom)
     if options.keysanity:
         patches.inventory.advancedInventorySubscreen(rom)
     if expanded_inventory:
@@ -205,6 +203,9 @@ def generateRom(options, seed, logic, multiworld=None):
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
+
+    if not options.romdebugmode:
+        patches.core.addFrameCounter(rom, len(item_list))
 
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
