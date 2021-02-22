@@ -1,5 +1,6 @@
 from roomEditor import RoomEditor
 from assembler import ASM
+from utils import formatText
 
 
 def removeOwlEvents(rom):
@@ -12,13 +13,70 @@ def removeOwlEvents(rom):
     # Clear texts used by the owl. Potentially reused somewhere else.
     rom.texts[0x0D9] = b'\xff'  # used by boomerang
     # 1 Used by empty chest (master stalfos message)
-    # 9 used by keysanity items
+    # 8 unused (0x0C0-0x0C7)
     # 1 used by bowwow in chest
     # 1 used by item for other player message
     # 2 used by arrow chest messages
     # 2 used by tunics
     for idx in range(0x0BE, 0x0CE):
         rom.texts[idx] = b'\xff'
+
+
+    # Patch the owl entity to allow refill of powder/bombs
+    rom.texts[0xC0] = formatText(b"Hoot!\nRefill for a price?", ask=b"Okay No")
+    rom.patch(0x06, 0x27F5, 0x2A77, ASM("""
+    ; Render owl
+    ld de, sprite
+    call $3BC0
+
+    call $64C6 ; check if game is busy (pops this stack frame if busy)
+
+    ldh a, [$E7] ; frame counter
+    cp $F0
+    jr c, eyesOpen
+    ld a, $01
+    jr setSpriteVariant
+eyesOpen:
+    xor a
+setSpriteVariant:
+    call $3B0C ; set entity sprite variant
+    call $641A ; check collision
+    ldh  a, [$F0] ;entity state
+    rst 0
+    dw  waitForTalk
+    dw  talking
+
+waitForTalk:
+    call $645D ; check if talked to
+    ret  nc
+    ld   a, $C0
+    call $2385 ; open dialog
+    call $3B12 ; increase entity state
+    ret
+
+talking:
+    ; Check if we are still talking
+    ld   a, [$C19F]
+    and  a
+    ret  nz
+    call $3B12 ; increase entity state
+    ld   [hl], $00 ; set to state 0
+    ld   a, [$C177] ; get which option we selected
+    and  a
+    ret  nz
+    ; Kill link
+    ld   a, $ff
+    ld   [$DB94], a
+    ; Give powder and bombs
+    ld   a, [$DB76]
+    ld   [$DB4C], a
+    ld   a, [$DB77]
+    ld   [$DB4D], a
+    ret
+
+sprite:
+    db   $78, $01, $78, $21, $7A, $01, $7A, $21
+""", 0x67F5), fill_nop=True)
 
 
 def upgradeDungeonOwlStatues(rom):

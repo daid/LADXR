@@ -14,9 +14,6 @@ def addBank3E(rom, seed):
     rom.texts[0x89] = formatText(b"Found the bow!")
     rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
     rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
-    for idx in range(8):
-        rom.texts[0xBF + idx] = b""
-    rom.texts[0xC7] = b""
     rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
     rom.texts[0xC9] = 0xC0A0  # Custom message slot
     rom.texts[0xCA] = formatText(b"Found 10 arrows!")

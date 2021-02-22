@@ -3,11 +3,12 @@ from .constants import *
 from .droppedKey import DroppedKey
 from assembler import ASM
 from utils import formatText
+from roomEditor import RoomEditor
 
 
 class StartItem(DroppedKey):
     # We need to give something here that we can use to progress.
-    OPTIONS = [SWORD, SHIELD, POWER_BRACELET, OCARINA, FEATHER, BOOMERANG, MAGIC_ROD, TAIL_KEY, SHOVEL, HOOKSHOT, PEGASUS_BOOTS, MAGIC_POWDER]
+    OPTIONS = [SWORD, SHIELD, POWER_BRACELET, OCARINA, FEATHER, BOOMERANG, MAGIC_ROD, TAIL_KEY, SHOVEL, HOOKSHOT, PEGASUS_BOOTS, MAGIC_POWDER, BOMB]
     MULTIWORLD = False
 
     def __init__(self):
@@ -30,5 +31,10 @@ class StartItem(DroppedKey):
 
         if option != SHIELD:
             rom.patch(5, 0x0CDA, ASM("ld a, $22"), ASM("ld a, $00"))  # do not change links sprite into the one with a shield
+
+        if option in (MAGIC_POWDER, BOMB):
+            re = RoomEditor(rom, 0x0A2)
+            re.entities.append((1, 3, 0x41))
+            re.store(rom)
 
         super().patch(rom, option)
