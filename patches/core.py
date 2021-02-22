@@ -315,7 +315,7 @@ OAMData:
         db  $68, $40, $%02x, $00 ;0
         db  $68, $48, $%02x, $00 ;0
         
-    """ % ((check_count // 100) % 10 | 0x40, (check_count // 10) % 10 | 0x40, check_count % 10 | 0x40), 0x469D), fill_nop=True)
+    """ % ((((check_count // 100) % 10) * 2) | 0x40, (((check_count // 10) % 10) * 2) | 0x40, ((check_count % 10) * 2) | 0x40), 0x469D), fill_nop=True)
     # Lower line of credits roll into XX XX XX
     rom.patch(0x17, 0x0784, 0x082D, ASM("""
         ld   hl, OAMData

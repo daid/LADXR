@@ -205,7 +205,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
 
     if not options.romdebugmode:
-        patches.core.addFrameCounter(rom, len(item_list))
+        patches.core.addFrameCounter(rom, len([spot for spot in item_list if len(spot.getOptions()) > 1]))
 
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
