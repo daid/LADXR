@@ -4,6 +4,7 @@ import shlex
 import randomizer
 import logic
 import patches.dungeonEntrances
+import logic.requirements
 import explorer
 import spoilerLog
 
@@ -41,7 +42,7 @@ def main(mainargs=None):
         help="Read an item placement plan")
     parser.add_argument('--race', dest="race", nargs="?", default=False, const=True,
         help="Enable race mode. This generates a rom from which the spoiler log cannot be dumped and the seed cannot be extracted.")
-    parser.add_argument('--logic', dest="logic", choices=["normal", "hard", "glitched", "hell"],
+    parser.add_argument('--logic', dest="logic", choices=["casual", "normal", "hard", "glitched", "hell"],
         help="Which level of logic is required.")
     parser.add_argument('--multiworld', dest="multiworld", type=int, required=False,
         help="Generates multiple roms for a multiworld setup.")
@@ -132,7 +133,6 @@ def main(mainargs=None):
 
     if args.emptyplan:
         import locations.items
-        import logic
         f = open(args.emptyplan, "wt")
         f.write(";Plandomizer data\n;Items: %s\n" % (", ".join(map(lambda n: getattr(locations.items, n), filter(lambda n: not n.startswith("__"), dir(locations.items))))))
         f.write(";Modify the item pool:\n")
@@ -165,6 +165,8 @@ def main(mainargs=None):
             args.seed = binascii.unhexlify(args.seed)
         except binascii.Error:
             args.seed = args.seed.encode("ascii")
+
+    logic.requirements.adjustRequirementsForOptions(args)
 
     retry_count = 0
     while True:

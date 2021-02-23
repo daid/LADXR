@@ -8,6 +8,10 @@ class OR(list):
     def __repr__(self):
         return "or%s" % (super().__repr__())
 
+    def remove(self, item):
+        if item in self:
+            super().remove(item)
+
 
 class AND(list):
     def __init__(self, *args):
@@ -15,6 +19,10 @@ class AND(list):
 
     def __repr__(self):
         return "and%s" % (super().__repr__())
+
+    def remove(self, item):
+        if item in self:
+            super().remove(item)
 
 
 class COUNT:
@@ -82,7 +90,7 @@ boss_requirements = [
     SWORD,  # D1 boss
     AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
     AND(PEGASUS_BOOTS, SWORD),  # D3 boss
-    AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB)),  # D4 boss
+    AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW)),  # D4 boss
     AND(HOOKSHOT, SWORD),  # D5 boss
     BOMB,  # D6 boss
     AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
@@ -102,6 +110,22 @@ miniboss_requirements = {
     "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
     "MOBLIN_KING":      SWORD,
 }
+
+def adjustRequirementsForOptions(options):
+    global bush, attack, attack_hookshot, attack_hookshot_powder, attack_no_boomerang, attack_skeleton
+    if options.bowwow != 'normal':
+        # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword ca$            # Except for taking out bushes (and crystal pillars are removed)
+        bush.remove(SWORD)
+    if options.logic == "casual":
+        # In casual mode, remove the more complex kill methods
+        bush.remove(MAGIC_POWDER)
+        attack_hookshot_powder.remove(MAGIC_POWDER)
+        attack.remove(BOMB)
+        attack_hookshot.remove(BOMB)
+        attack_hookshot_powder.remove(BOMB)
+        attack_no_boomerang.remove(BOMB)
+        attack_skeleton.remove(BOMB)
+
 
 def flatten(req):
     result = set()

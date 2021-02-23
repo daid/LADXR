@@ -24,7 +24,7 @@ class World:
         elif options.boomerang == 'gift':
             Location().add(BoomerangGuy()).connect(sword_beach, BOMB)
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
-        ghost_hut = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET) 
+        ghost_hut = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET)
         Location().add(Seashell(0x1E3)).connect(ghost_hut, POWER_BRACELET)
 
         forest = Location().add(Toadstool()).connect(mabe_village, bush)  # forest stretches all the way from the start town to the witch hut
@@ -61,7 +61,7 @@ class World:
         center_area.add(Chest(0x2CD))  # cave next to town
         mamu = Location().add(Song(0x2FB)).connect(center_area, AND(FEATHER, PEGASUS_BOOTS, HOOKSHOT, POWER_BRACELET, OCARINA))
         Location().add(Chest(0x2F4), HeartPiece(0x2E5)).connect(center_area, AND(BOMB, PEGASUS_BOOTS))  # cave near honeycomb
-        dungeon3_entrance = Location().connect(center_area, OR(FEATHER, FLIPPERS)) 
+        dungeon3_entrance = Location().connect(center_area, OR(FEATHER, FLIPPERS))
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
         prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(center_area, AND(FLIPPERS, bush))  # next to lv3
         Location().add(Seashell(0x08B)).connect(center_area, bush)  # next to seashell house
@@ -102,7 +102,7 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_town.add(OwlStatue(0x0DA))
         Location().add(Seashell(0x0DA)).connect(animal_town, SHOVEL)  # owl statue at the water
-        desert = Location().connect(animal_town, bush)  # Note: We removed the walrus blocking the desert.
+        desert = Location().connect(animal_town, bush)  # Note: We moved the walrus blocking the desert.
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             desert.add(OwlStatue(0x0CF))
         Location().add(AnglerKey()).connect(desert, OR(BOW, SWORD, HOOKSHOT, MAGIC_ROD, BOOMERANG))

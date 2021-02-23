@@ -7,9 +7,9 @@ class Dungeon1:
     def __init__(self, options, world_setup):
         entrance = Location(1)
         entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))
-        Location(1).add(DroppedKey(0x116)).connect(entrance, OR(BOMB, push_hardhat)) # hardhat beetles (can kill with bomb)
+        Location(1).add(DroppedKey(0x116)).connect(entrance, push_hardhat) # hardhat beetles (can kill with bomb)
         Location(1).add(DungeonChest(0x10D)).connect(entrance, OR(attack_hookshot_powder, SHIELD)) # moldorm spawn chest
-        Location(1).add(DungeonChest(0x114)).connect(entrance, attack_hookshot_powder) # 2 stalfos 2 keese room, stalfos jump away when you press a button. 
+        Location(1).add(DungeonChest(0x114)).connect(entrance, attack_hookshot_powder) # 2 stalfos 2 keese room, stalfos jump away when you press a button.
         Location(1).add(DungeonChest(0x10C)).connect(entrance, BOMB) # hidden seashell room
         dungeon1_upper_left = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
