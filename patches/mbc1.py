@@ -62,3 +62,18 @@ higherBanks:
 
     rom.patch(0x00, 0x0147, "1B", "03")
     rom.patch(0x00, 0x0148, "05", "06")
+
+    rom.patch(0x00, 0x1D12, 0x1D18, ASM("push hl\npop de\ncall $00D0"), fill_nop=True)
+    rom.patch(0x00, 0x00D0, "00" * 0x20, ASM("""
+        ld  hl, $FF51
+        ld  [hl], b
+        inc hl
+        ld  [hl], c
+        inc hl
+        ld  [hl], d
+        inc hl
+        ld  [hl], e
+        inc hl
+        ld  [hl], $01
+        ret
+    """), fill_nop=True)
