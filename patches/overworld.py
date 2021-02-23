@@ -47,8 +47,75 @@ def createDungeonOnlyOverworld(rom):
         re = RoomEditor(rom, n)
         re.entities = []
         re.objects = []
-        if os.path.exists("%s/overworld/dive/%02X.json" % (path, n)):
-            re.loadFromJson("%s/overworld/dive/%02X.json" % (path, n))
+        if os.path.exists("%s/overworld/export/%02X.json" % (path, n)):
+            re.loadFromJson("%s/overworld/export/%02X.json" % (path, n))
+        entrances = list(filter(lambda obj: obj.type_id in WARP_TYPE_IDS, re.objects))
+        for obj in re.objects:
+            if isinstance(obj, ObjectWarp) and entrances:
+                e = entrances.pop(0)
+
+                other = RoomEditor(rom, obj.room)
+                for o in other.objects:
+                    if isinstance(o, ObjectWarp) and o.warp_type == 0:
+                        o.room = n
+                        o.target_x = e.x * 16 + 8
+                        o.target_y = e.y * 16 + 16
+                other.store(rom)
+
+                if obj.room == 0x1F5:
+                    # Patch the boomang guy exit
+                    rom.patch(0x0a, 0x3891, "E000F41820", "E000%02x%02x%02x" % (n, e.x * 16 + 8, e.y * 16 + 16))
+
+                if obj.warp_type == 1 and (obj.map_nr < 8 or obj.map_nr == 0xFF) and obj.room not in (0x1B0, 0x23A, 0x23D):
+                    other = RoomEditor(rom, instrument_rooms[min(8, obj.map_nr)])
+                    for o in other.objects:
+                        if isinstance(o, ObjectWarp) and o.warp_type == 0:
+                            o.room = n
+                            o.target_x = e.x * 16 + 8
+                            o.target_y = e.y * 16 + 16
+                    other.store(rom)
+        re.store(rom)
+
+def randomOverworld(rom):
+    import patches.overworldSections
+    import random
+    rnd = random.Random()
+    sections = patches.overworldSections.createAll()
+    sections.sort(key=lambda section: section.size[0] + section.size[1], reverse=True)
+    room_placement = [None] * 256
+    for section in sections:
+        print(section)
+        valid = False
+        x, y = 0, 0
+        try_count = 0
+        while not valid:
+            x = rnd.randint(0, 16 - section.size[0])
+            y = rnd.randint(0, 16 - section.size[1])
+            if section.size[1] > 1:
+                y &= 0x0E
+            valid = True
+            for ry in range(y, y + section.size[1]):
+                for rx in range(x, x+section.size[0]):
+                    if room_placement[rx+ry*16] is not None:
+                        valid = False
+            try_count += 1
+            if try_count > 1000:
+                assert False, "FAIL"
+        for ry in range(0, section.size[1]):
+            for rx in range(0, section.size[0]):
+                room_placement[x+rx+(y+ry)*16] = section.corner_room + rx + ry * 16
+        print(section, x, y, try_count)
+    for n in range(0x100):
+        assert n in room_placement, hex(n)
+
+    instrument_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301]
+    path = os.path.dirname(__file__)
+    for n in range(0x100):
+        re = RoomEditor(rom, n)
+        re.entities = []
+        re.objects = []
+        if os.path.exists("%s/overworld/pieces/%02X.json" % (path, room_placement[n])):
+            re.loadFromJson("%s/overworld/pieces/%02X.json" % (path, room_placement[n]))
         entrances = list(filter(lambda obj: obj.type_id in WARP_TYPE_IDS, re.objects))
         for obj in re.objects:
             if isinstance(obj, ObjectWarp) and entrances:
@@ -131,7 +198,11 @@ def exportOverworld(rom):
                 "width": 10, "height": 8,
                 "id": 1, "name": "Tiles", "type": "tilelayer", "visible": True, "opacity": 1, "x": 0, "y": 0,
             }, {
-                "id": 2, "name": "EntityLayer", "type": "objectgroup", "visible": True, "opacity": 1, "x": 0, "y": 0,
+                "data": [0] * 80,
+                "width": 10, "height": 8,
+                "id": 2, "name": "Mod", "type": "tilelayer", "visible": True, "opacity": 1, "x": 0, "y": 0,
+            }, {
+                "id": 3, "name": "EntityLayer", "type": "objectgroup", "visible": True, "opacity": 1, "x": 0, "y": 0,
                 "objects": [
                     {"width": 16, "height": 16, "x": entity[0] * 16, "y": entity[1] * 16, "name": entityData.NAME[entity[2]], "type": "entity"} for entity in room.entities
                 ] + [
@@ -200,10 +271,24 @@ def exportOverworld(rom):
                     drawTile(x * 16 + 8, y * 16 + 8, metatiles[3], attrtiles[3])
             img.save("%s/overworld/export/%s" % (path, image_filename))
 
+    import patches.overworldSections
+    maps = []
+    x_offset = 0
+    y_offset = 0
+    height_max = 0
+    for section in patches.overworldSections.createAll():
+        for y in range(section.size[1]):
+            for x in range(section.size[0]):
+                maps.append({"fileName": "%02X.json" % (section.corner_room + x + y * 16), "height": 128, "width": 160, "x": x_offset + x * 160, "y": y_offset + y * 128})
+        height_max = max(height_max, section.size[1])
+        x_offset += 160 * section.size[0] + 80
+        if x_offset > 2000:
+            x_offset = 0
+            y_offset += height_max * 128 + 80
+            height_max = 0
     world = {
         "maps": [
-            {"fileName": "%02X.json" % (n), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128}
-            for n in range(0x100)
+            {"fileName": "%02X.json" % (n), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128} for n in range(0x100)
         ],
         "onlyShowAdjacentMaps": False,
         "type": "world"

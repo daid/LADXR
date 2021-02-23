@@ -124,9 +124,10 @@ def generateRom(options, seed, logic, multiworld=None):
     if options.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
+    patches.overworld.patchOverworldTilesets(rom)
     if options.overworld == 'dungeondive':
-        patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
+    patches.overworld.randomOverworld(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
@@ -197,8 +198,8 @@ def generateRom(options, seed, logic, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    patches.startLocation.setStartLocation(rom, world_setup.start_house_index)
-    patches.dungeonEntrances.changeEntrances(rom, world_setup.dungeon_entrance_mapping)
+    # TODO patches.startLocation.setStartLocation(rom, world_setup.start_house_index)
+    # TODO patches.dungeonEntrances.changeEntrances(rom, world_setup.dungeon_entrance_mapping)
     for spot in item_list:
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
@@ -211,4 +212,5 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)
+    patches.overworld.exportOverworld(rom)
     return rom
