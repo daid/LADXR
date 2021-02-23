@@ -150,10 +150,13 @@ class World:
         mountain_bridge_staircase.connect(mountain_heartpiece, BOMB, one_way=True)  # in the connecting cave from right to left. one_way to prevent access to left_side_mountain via glitched logic
         left_side_mountain = Location().connect(mountain_bridge_staircase, HOOKSHOT) # pass through the underground passage to left side
         left_side_mountain.add(Chest(0x004)) # top of falling rocks hill
+        if options.logic != "casual":
+            left_side_mountain.connect(writes_hut, None, one_way=True)  # Jump down the ledge
         Location().add(MadBatter(0x1E2)).connect(left_side_mountain, AND(POWER_BRACELET, MAGIC_POWDER))
         dungeon8_phone = Location()
         left_side_mountain.connect(dungeon8_phone, AND(BOMB, COUNT(SHIELD, 2)), one_way=True)
-        dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
+        if options.logic != "casual":
+            dungeon8_phone.connect(writes_hut, None, one_way=True) # Jump down the ledge
         dungeon8_entrance = Location().connect(dungeon8_phone, AND(OCARINA, SONG3, SWORD))
 
         nightmare = Location()
