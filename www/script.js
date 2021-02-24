@@ -85,7 +85,9 @@ function randomGenerationString()
     {
         var items = ["Power bracelet", "Shield", "Bow", "Hookshot", "Magic Rod", "Pegasus Boots", "Ocarina", "Feather", "Shovel", "Magic Powder", "Bomb", "Sword", "Flippers", "Medicine", "Tail Key", "Angler Key", "Face Key", "Bird Key", "Slime Key", "Gold Leaf", "Rupees", "Seashell", "Message", "Gel", "Boomerang", "Heart Piece", "Bowwow", "Arrows", "Single Arrow", "Max Powder Upgrade", "Max Bombs Upgrade", "Max Arrows Upgrade", "Red Tunic", "Blue Tunic", "Heart Container", "Toadstool", "Small Key", "Nightmare Key", "Map", "Compass", "Stone Beak", "Instrument"];
         var item = items[Math.floor(Math.random() * items.length)];
-        ID("generatingtext").innerText = "Placing " + item;
+        var prefixes = ["Placing", "Considering", "Shuffling", "Moving", "Randomizing", "Hiding"];
+        var prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        ID("generatingtext").innerText = prefix + " " + item;
     } else {
         ID("generatingtext").innerText = "Shuffling D" + Math.floor(Math.random() * 8);
     }
