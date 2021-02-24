@@ -1,5 +1,5 @@
 <?php
-include("newoptions.php");
+include("options.php");
 
 $romInputPath = $_FILES["rom"]["tmp_name"];
 $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");

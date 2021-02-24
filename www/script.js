@@ -1,6 +1,6 @@
 "use strict";
 
-var spoilerContent;
+var spoilerContent = "";
 
 function ID(id) { return document.getElementById(id); }
 
@@ -65,8 +65,8 @@ function downloadRom(filename, blob)
 
 function downloadSpoilers()
 {
-    var seed = $("#seedSpan").html();
-    var fileExtension = $("#spoilerformat").val() === "text" ? ".txt" : ".json";
+    var seed = ID("seedSpan").innerText;
+    var fileExtension = ID("spoilerformat").value === "text" ? ".txt" : ".json";
 
     var element = document.createElement('a');
     element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(spoilerContent);
@@ -101,7 +101,7 @@ function seedComplete(data)
     {
         ID("seeddonedialog").checked = true;
 
-        blob = b64toBlob(data.rom, "application/octet-stream");
+        var blob = b64toBlob(data.rom, "application/octet-stream");
         downloadRom(data.romFilename, blob);
 
         ID("seedSpan").innerText = data.seed;
@@ -118,8 +118,10 @@ function seedComplete(data)
         ID("errordialog").checked = true;
         if (data.message)
             ID("failureMessage").innerText = data.message;
+        else if (typeof data === "string")
+            ID("failureMessage").innerText = data;
         else
-            ID("failureMessage").innerText = JSON.stringify(data);
+            ID("failureMessage").innerText = JSON.stringify(data, null, 4);
     }
 }
 
@@ -142,25 +144,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
             ID(kv[0]).value = kv[1];
     }
 
-    var gfxinfo = document.createElement("span");
     var gfximg = document.createElement("img");
-    ID("gfxmod").parentElement.appendChild(gfximg);
-    ID("gfxmod").parentElement.appendChild(gfxinfo);
+    ID("gfxmod").parentElement.insertBefore(gfximg, ID("gfxmod"));
+    var gfxtooltip = ID("gfxmod").parentElement.ariaLabel;
     ID("gfxmod").oninput = function()
     {
         if (ID("gfxmod").value != "")
+        {
             gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
+            gfximg.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value] + "\n" + gfxtooltip;
+        }
         else
+        {
             gfximg.src = "";
-        gfxinfo.innerHTML = gfxInfoMap[ID("gfxmod").value];
+            gfximg.parentElement.ariaLabel = gfxtooltip;
+        }
     }
-    var gfxInfoMap = {};
-    //TODO
-    //<?php foreach($gfx_info as $k => $v) { ?>
-    //    gfxInfoMap["<?=$k?>"] = "<?=$v?>";
-    //<?php } ?>
+    ID("gfxmod").oninput();
 
-    $("#form").submit(function(e) {
+    ID("form").onsubmit = function(e) {
         e.preventDefault();
         var form = e.target;
         var url = form.action;
@@ -177,5 +179,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
             seedComplete(response);
         });
         req.send(formData);
-    });
+    };
 });
