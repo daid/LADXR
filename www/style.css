@@ -1,0 +1,50 @@
+.container {
+    max-width: 1100px;
+    background: #FFF;
+    border: solid 1px #666;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+.inputcontainer {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    border: solid 1px #CCC;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+}
+.inputcontainer * {
+    margin: 0px;
+    box-sizing: border-box;
+}
+.inputcontainer *:last-child {
+    flex: 1 1 auto;
+    background: #DDD;
+    border: solid 1px #AAA;
+}
+.inputcontainerparent {
+    padding: 1px 5px;
+}
+.tooltip::after {
+    white-space: pre-wrap;
+    width: 90%;
+    pointer-events: none;
+}
+label {
+    padding-right: 20px;
+}
+h1 {
+    margin-bottom: 0px;
+}
+form {
+    background: initial;
+    border: initial;
+    color: initial;
+    margin: initial;
+    padding: initial;
+}
+.selectromwarning {
+    box-shadow: inset 0 0 0 2px red;
+}
