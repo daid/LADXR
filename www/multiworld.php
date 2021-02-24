@@ -11,35 +11,41 @@ if (isset($_FILES["rom"]))
     $command = "/usr/bin/python3 main.py --timeout 600 " . escapeshellarg($romInputPath) . " --spoilerfilename=$spoilerPath -o $romOutputPath";
     $player_count = (int)$_POST["player_count"];
     $command .= " --multiworld ${player_count}";
-    foreach($options as $key => $option)
+    foreach($options as $cat => $list)
     {
-        if(!isset($option['multiworld']) || $option['multiworld'] !== False)
-            continue;
-
-        $pkey = "${key}_0";
-        if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
+        foreach($list as $key => $option)
         {
-            if ($option['type'] == 'check')
-                $command .= " ".$option['arg'];
-            else
-                $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
+            if(!isset($option['multiworld']) || $option['multiworld'] !== False)
+                continue;
+
+            $pkey = "${key}_0";
+            if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
+            {
+                if ($option['type'] == 'check')
+                    $command .= " ".$option['arg'];
+                else
+                    $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
+            }
         }
     }
     for($player=0; $player<$player_count; $player++)
     {
         $command .= " --multiworld-config \"";
 
-        foreach($options as $key => $option)
+        foreach($options as $cat => $list)
         {
-            $pkey = "${key}_${player}";
-            if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
+            foreach($list as $key => $option)
             {
-                if ($pkey == "gfxmod")
-                    $_POST[$pkey] = "gfx/" . $_POST[$pkey];
-                if ($option['type'] == 'check')
-                    $command .= " ".$option['arg'];
-                else
-                    $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
+                $pkey = "${key}_${player}";
+                if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
+                {
+                    if ($pkey == "gfxmod")
+                        $_POST[$pkey] = "gfx/" . $_POST[$pkey];
+                    if ($option['type'] == 'check')
+                        $command .= " ".$option['arg'];
+                    else
+                        $command .= " ".$option['arg']." ".escapeshellarg($_POST[$pkey]);
+                }
             }
         }
         $command .= "\"";
@@ -309,46 +315,49 @@ div.failure {
 
 echo("<input type='hidden' name='player_count' value='$player_count'>");
 
-foreach($options as $key => $option)
+foreach($options as $cat => $list)
 {
-    echo('<div class="row"');
-
-    if(array_key_exists('tooltip', $option))
-         echo('title="'.$option['tooltip']);
-
-    echo('"><div class="col-sm-12 col-md-3">');
-    echo("<label for='$key'>".$option['label'].":</label>");
-    echo("</div>");
-
-    $count = $player_count;
-    if(isset($option['multiworld']) && $option['multiworld'] === False)
-        $count = 1;
-    for($player=0; $player<$count; $player++)
+    foreach($list as $key => $option)
     {
-        $pkey = "${key}_${player}";
-        echo("<div class='col-sm-12 col-md-2'>");
-        if($option['type'] == "text")
-            echo("<input type='text' id='$pkey' name='$pkey' placeholder='".$option['placeholder']."'/>");
-        if($option['type'] == "check")
-            echo("<input type='checkbox' id='$pkey' name='$pkey' ".($option['default']?"checked=1":"")."'/>");
-        if (is_array($option['type']))
-        {
-            $default = '';
-            if (array_key_exists('default', $option))
-                $default = $option['default'];
-            echo("<select id='$pkey' name='$pkey'>");
-            foreach($option['type'] as $i=>$o)
-            {
-                if ($i === $default)
-                    echo("<option value='$i' selected>$o</option>");
-                else
-                    echo("<option value='$i'>$o</option>");
-            }
-            echo("</select>");
-        }
+        echo('<div class="row"');
+
+        if(array_key_exists('tooltip', $option))
+             echo('title="'.$option['tooltip']);
+
+        echo('"><div class="col-sm-12 col-md-3">');
+        echo("<label for='$key'>".$option['label'].":</label>");
         echo("</div>");
+
+        $count = $player_count;
+        if(isset($option['multiworld']) && $option['multiworld'] === False)
+            $count = 1;
+        for($player=0; $player<$count; $player++)
+        {
+            $pkey = "${key}_${player}";
+            echo("<div class='col-sm-12 col-md-2'>");
+            if($option['type'] == "text")
+                echo("<input type='text' id='$pkey' name='$pkey' placeholder='".$option['placeholder']."'/>");
+            if($option['type'] == "check")
+                echo("<input type='checkbox' id='$pkey' name='$pkey' ".($option['default']?"checked=1":"")."'/>");
+            if (is_array($option['type']))
+            {
+                $default = '';
+                if (array_key_exists('default', $option))
+                    $default = $option['default'];
+                echo("<select id='$pkey' name='$pkey'>");
+                foreach($option['type'] as $i=>$o)
+                {
+                    if ($i === $default)
+                        echo("<option value='$i' selected>$o</option>");
+                    else
+                        echo("<option value='$i'>$o</option>");
+                }
+                echo("</select>");
+            }
+            echo("</div>");
+        }
+        echo("</div id=row>");
     }
-    echo("</div id=row>");
 }
 ?>
     </fieldset>
