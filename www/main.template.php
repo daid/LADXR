@@ -1,6 +1,3 @@
-<?php
-include("options.php");
-?>
 <html>
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
@@ -42,7 +39,7 @@ var gfxInfoMap = <?=json_encode($gfx_info)?>
         <a class="logo"><?=$title?></a>
     </header>
     <div class="container">
-        <form action="generate.php" method="post" enctype="multipart/form-data" id="form">
+        <form action="<?=action?>?<?=http_build_query($_GET)?>" method="post" enctype="multipart/form-data" id="form">
         <div class="row">
             <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
                 <input type="file" id="rom" name="rom" style="display:none"/>
@@ -52,6 +49,9 @@ var gfxInfoMap = <?=json_encode($gfx_info)?>
                 <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
             </div>
         </div>
+        <?php if (isset($info)) { ?>
+        <div class="row"><div class="col-sm-12"><?=$info?></div></div>
+        <?php } ?>
 <?php
 foreach($options as $cat => $list)
 {

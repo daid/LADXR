@@ -70,7 +70,7 @@ $options = [
         'quickswap' => ['label' => 'Quickswap', 'type' => ['none' => 'Disabled', 'a' => 'Swap A button', 'b' => 'Swap B button'], 'arg' => '--quickswap', 'default' => 'none',
             'tooltip' => 'Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.', 'aesthetic' => True],
         'textmode' => ['label' => 'Text mode', 'type' => ['fast' => 'Fast', 'default' => 'Normal', 'none' => 'No-text'], 'arg' => '--textmode', 'default' => 'fast',
-            'tooltip' => 'Fast makes text appear twice as fast, [No-Text] removes all text from the game', 'aesthetic' => True],
+            'tooltip' => 'Fast makes text appear twice as fast.|[No-Text] removes all text from the game', 'aesthetic' => True],
         'lowhpbeep' => ['label' => 'Low HP beeps', 'type' => ['none' => 'Disabled', 'slow' => 'Slow', 'default' => 'Normal'], 'arg' => '--lowhpbeep', 'default' => 'slow',
             'tooltip' => 'Slows or disables the low health beeping sound', 'aesthetic' => True],
         'no-flash' => ['label' => 'Remove flashing lights', 'type' => 'check', 'default' => '1', 'arg' => '--remove-flashing-lights',
