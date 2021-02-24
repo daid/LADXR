@@ -316,3 +316,84 @@ def readMiniBossMapping(rom):
             if me_data[-1][2] == r.entities[-1][2]:
                 mapping[key] = me_key
     return mapping
+
+
+def doubleTrouble(rom):
+    for n in range(0x316):
+        if n == 0x2FF:
+            continue
+        re = RoomEditor(rom, n)
+        # Bosses
+        if re.hasEntity(0x59):  # Moldorm (TODO; double heart container drop)
+            re.removeEntities(0x59)
+            re.entities += [(3, 2, 0x59), (4, 2, 0x59)]
+            re.store(rom)
+        if re.hasEntity(0x5C):  # Ghini
+            re.removeEntities(0x5C)
+            re.entities += [(3, 2, 0x5C), (4, 2, 0x5C)]
+            re.store(rom)
+        if re.hasEntity(0x5B):  # slime eye
+            re.removeEntities(0x5B)
+            re.entities += [(3, 2, 0x5B), (6, 2, 0x5B)]
+            re.store(rom)
+        if re.hasEntity(0x65):  # angler fish
+            re.removeEntities(0x65)
+            re.entities += [(6, 2, 0x65), (6, 5, 0x65)]
+            re.store(rom)
+        # Slime eel bugs out on death if duplicated.
+        # if re.hasEntity(0x5D):  # slime eel
+        #     re.removeEntities(0x5D)
+        #     re.entities += [(6, 2, 0x5D), (6, 5, 0x5D)]
+        #     re.store(rom)
+        if re.hasEntity(0x5A):  # facade (TODO: Drops two hearts, shared health?)
+            re.removeEntities(0x5A)
+            re.entities += [(2, 3, 0x5A), (6, 3, 0x5A)]
+            re.store(rom)
+        # Evil eagle causes a crash, and messes up the intro sequence
+        # if re.hasEntity(0x63):  # evil eagle
+        #     re.removeEntities(0x63)
+        #     re.entities += [(3, 4, 0x63), (2, 4, 0x63)]
+        #     re.store(rom)
+        if re.hasEntity(0x62):  # hot head (TODO: Drops thwo hearts)
+            re.removeEntities(0x62)
+            re.entities += [(2, 2, 0x62), (4, 4, 0x62)]
+            re.store(rom)
+        if re.hasEntity(0xF9):  # hardhit beetle
+            re.removeEntities(0xF9)
+            re.entities += [(2, 2, 0xF9), (5, 4, 0xF9)]
+            re.store(rom)
+        # Minibosses
+        if re.hasEntity(0x89):
+            re.removeEntities(0x89)
+            re.entities += [(2, 3, 0x89), (6, 3, 0x89)]
+            re.store(rom)
+        if re.hasEntity(0x81):
+            re.removeEntities(0x81)
+            re.entities += [(2, 3, 0x81), (6, 3, 0x81)]
+            re.store(rom)
+        if re.hasEntity(0x60):
+            dodongo = [e for e in re.entities if e[2] == 0x60]
+            x = (dodongo[0][0] + dodongo[1][0]) // 2
+            y = (dodongo[0][1] + dodongo[1][1]) // 2
+            re.entities += [(x, y, 0x60)]
+            re.store(rom)
+        if re.hasEntity(0x8e):
+            re.removeEntities(0x8e)
+            re.entities += [(1, 1, 0x8e), (7, 1, 0x8e)]
+            re.store(rom)
+        if re.hasEntity(0x92):
+            re.removeEntities(0x92)
+            re.entities += [(2, 3, 0x92), (4, 3, 0x92)]
+            re.store(rom)
+        if re.hasEntity(0xf4):
+            re.removeEntities(0xf4)
+            re.entities += [(2, 1, 0xf4), (6, 1, 0xf4)]
+            re.store(rom)
+        if re.hasEntity(0xf8):
+            re.removeEntities(0xf8)
+            re.entities += [(2, 2, 0xf8), (6, 2, 0xf8)]
+            re.store(rom)
+        if re.hasEntity(0xe4):
+            re.removeEntities(0xe4)
+            re.entities += [(5, 2, 0xe4), (5, 5, 0xe4)]
+            re.store(rom)
