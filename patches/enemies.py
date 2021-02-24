@@ -397,3 +397,12 @@ def doubleTrouble(rom):
             re.removeEntities(0xe4)
             re.entities += [(5, 2, 0xe4), (5, 5, 0xe4)]
             re.store(rom)
+
+        if re.hasEntity(0x88): # Armos knight (TODO: double item drop)
+            re.removeEntities(0x88)
+            re.entities += [(3, 3, 0x88), (6, 3, 0x88)]
+            re.store(rom)
+        if re.hasEntity(0x87): # Lanmola (TODO: killing one drops the item, and marks as done)
+            re.removeEntities(0x87)
+            re.entities += [(2, 2, 0x87), (1, 1, 0x87)]
+            re.store(rom)
