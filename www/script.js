@@ -27,7 +27,7 @@ function updateForm()
 
 function setValidRom(valid)
 {
-    ID("submitbutton").disabled = valid;
+    ID("submitbutton").disabled = !valid;
     if (valid)
         ID("romlabel").classList.remove("selectromwarning");
     else
