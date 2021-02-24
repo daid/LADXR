@@ -39,7 +39,7 @@ var gfxInfoMap = <?=json_encode($gfx_info)?>
         <a class="logo"><?=$title?></a>
     </header>
     <div class="container">
-        <form action="<?=action?>?<?=http_build_query($_GET)?>" method="post" enctype="multipart/form-data" id="form">
+        <form action="<?=$action?>?<?=http_build_query($_GET)?>" method="post" enctype="multipart/form-data" id="form">
         <div class="row">
             <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
                 <input type="file" id="rom" name="rom" style="display:none"/>
