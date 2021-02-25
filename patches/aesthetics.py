@@ -178,7 +178,7 @@ def reduceMessageLengths(rom):
     rom.texts[0xa5] = formatText("You've got the {BIRD_KEY}!")
     rom.texts[0xa6] = formatText("At last, you gota {MAP}! Press the START Button to look at it!")
     rom.texts[0xa8] = formatText("You found a {STONE_BEAK}! Let's find the owl statue that belongs to it.")
-    rom.texts[0xa9] = formatText("You've got the {NIGHTMARE_KEY}!Now you can open the door to the Nightmare's Lair!")
+    rom.texts[0xa9] = formatText("You've got the {NIGHTMARE_KEY}! Now you can open the door to the Nightmare's Lair!")
     rom.texts[0xaa] = formatText("You got a {KEY}! You can open a locked door.")
     rom.texts[0xab] = formatText("You got 20 {RUPEES}! JOY!", center=True)
     rom.texts[0xac] = formatText("You got 50 {RUPEES}! Very Nice!", center=True)
