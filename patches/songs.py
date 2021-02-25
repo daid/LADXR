@@ -10,6 +10,9 @@ def upgradeMarin(rom):
     rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
     # Show marin in the animal village
     rom.patch(0x03, 0x0A86, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x05, 0x3F2E, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)  # animal d0
+    rom.patch(0x15, 0x3F96, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)  # animal d1
+    rom.patch(0x18, 0x11B0, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)  # animal d2
 
     # Instead of checking if we have the ballad, check if we have a specific room flag set
     rom.patch(0x05, 0x0F89, ASM("""
