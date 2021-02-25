@@ -139,12 +139,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.location.hash = data;
     }
     updateForm();
-    for(var kv of document.location.hash.split("&"))
-    {
-        var kv = kv.split("=");
-        if (kv.length > 1)
-            ID(kv[0]).value = kv[1];
+    window.onhashchange = function() {
+        for(var kv of document.location.hash.split("&"))
+        {
+            var kv = kv.split("=");
+            if (kv.length > 1)
+                ID(kv[0]).value = kv[1];
+        }
     }
+    window.onhashchange();
 
     var gfximg = document.createElement("img");
     ID("gfxmod").parentElement.insertBefore(gfximg, ID("gfxmod"));
