@@ -285,6 +285,7 @@ increaseSecMinHours:
     rom.patch(0x27, 0x3826, 0x382E, ASM("dw $7776, $7792, $77AE, $7792")) # pointers to animation
     rom.patch(0x27, 0x3846, ASM("ld c, $2C"), ASM("ld c, $1C")) # Amount of OAM data
 
+    # TODO: fix flying windfish
     # Upper line of credits roll into "TIME"
     rom.patch(0x17, 0x069D, 0x0713, ASM("""
         ld   hl, OAMData

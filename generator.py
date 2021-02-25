@@ -8,6 +8,7 @@ import patches.startLocation
 import patches.enemies
 import patches.titleScreen
 import patches.aesthetics
+import patches.music
 import patches.core
 import patches.phone
 import patches.owl
@@ -133,6 +134,8 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
+    if options.music:
+        patches.music.randomizeMusic(rom)
     if options.removeFlashingLights:
         patches.aesthetics.removeFlashingLights(rom)
     if options.hardMode:

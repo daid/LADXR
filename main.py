@@ -105,6 +105,8 @@ def main(mainargs=None):
         help="Slows or disables the low health beeping sound")
     parser.add_argument('--linkspalette', dest="linkspalette", type=int, default=None,
         help="Force the palette of link")
+    parser.add_argument('--music', dest="music", action="store_true",
+        help="Randomizes the music")
 
     args = parser.parse_args(mainargs)
     if args.multiworld is not None:
