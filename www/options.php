@@ -81,8 +81,8 @@ $options = [
             'tooltip' => 'Generally affects at least Link\'s sprite, but can alter any graphics in the game', 'aesthetic' => True],
         'linkspalette' => ['label' => "Link's color", 'type' => ['' => 'Normal', '0' => 'Green', '1' => 'Yellow', '2' => 'Red', '3' => 'Blue', '4' => '?? A', '5' => '?? B', '6' => '?? C', '7' => '?? D'], 'arg' => '--linkspalette', 'default' => '', 'aesthetic' => True,
             'tooltip' => 'Allows you to force a certain color on link.|[Normal] color of link depends on the tunic.|[Green/Yellow/Red|Blue] forces link into one of these colors.|[?? A/B/C/D] colors of link are usually inverted and color depends on the area you are in.'],
-        'music' => ['label' => 'Randomize music', 'type' => 'check', 'default' => '', 'arg' => '--music',
-            'tooltip' => 'Randomizes overworld and dungeon music', 'aesthetic' => True],
+        'music' => ['label' => 'Music', 'type' => ['' => 'Default', 'random' => 'Random', 'off' => 'Disable'], 'default' => '', 'arg' => '--music',
+            'tooltip' => '[Random] Randomizes overworld and dungeon music|[Disable] no music in the whole game', 'aesthetic' => True],
     ]
 ];
 ?>

@@ -1,4 +1,5 @@
 import random
+from assembler import ASM
 
 
 _LOOPING_MUSIC = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -20,3 +21,8 @@ def randomizeMusic(rom):
     # Random music in dungeons/caves
     for n in range(0x20):
         rom.banks[0x02][0x100 + n] = random.choice(_LOOPING_MUSIC)
+
+
+def noMusic(rom):
+    rom.patch(0x1B, 0x001E, ASM("ld hl, $D368\nldi a, [hl]"), ASM("xor a"), fill_nop=True)
+    rom.patch(0x1E, 0x001E, ASM("ld hl, $D368\nldi a, [hl]"), ASM("xor a"), fill_nop=True)
