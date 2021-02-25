@@ -47,7 +47,7 @@ def fixChests(rom):
         ld   a, [hl]
     """), ASM("ld a, $01"), fill_nop=True)
 
-    rom.texts[0x9A] = formatText(b"You found 10 bombs!")
+    rom.texts[0x9A] = formatText("You found 10 {BOMB}!")
 
 
 def setMultiChest(rom, option):

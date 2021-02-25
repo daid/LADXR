@@ -27,7 +27,7 @@ class StartItem(DroppedKey):
 
         if self.give_bowwow:
             option = BOWWOW
-            rom.texts[0xC8] = formatText(b"Got BowWow!")
+            rom.texts[0xC8] = formatText("Got BowWow!")
 
         if option != SHIELD:
             rom.patch(5, 0x0CDA, ASM("ld a, $22"), ASM("ld a, $00"))  # do not change links sprite into the one with a shield

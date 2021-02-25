@@ -28,10 +28,10 @@ class ShopItem(ItemInfo):
         assert multiworld is None
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "08", "%02X" % (CHEST_ITEMS[option]))
-            rom.texts[0x030] = formatText(b"Deluxe %s 200 Rupees!" % (INVENTORY_NAME[option]), ask=b"Buy  No Way")
+            rom.texts[0x030] = formatText("Deluxe {%s} 200 {RUPEES}!" % (option), ask="Buy  No Way")
         elif self.__index == 1:
             rom.patch(0x04, 0x37C6, "02", "%02X" % (CHEST_ITEMS[option]))
-            rom.texts[0x02C] = formatText(b"%s Only 980 Rupees!" % (INVENTORY_NAME[option]), ask=b"Buy  No Way")
+            rom.texts[0x02C] = formatText("{%s} Only 980 {RUPEES}!" % (option), ask="Buy  No Way")
 
     def read(self, rom):
         value = rom.banks[0x04][0x37C5 + self.__index]

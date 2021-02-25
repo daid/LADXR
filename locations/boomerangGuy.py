@@ -45,13 +45,13 @@ class BoomerangGuy(ItemInfo):
             # Put the boomerang ID in the inventory of the boomerang guy (aka, traded back)
             rom.patch(0x19, 0x0710, ASM("ld a, $0D"), ASM("ld a, $%s" % (inv)))
 
-            rom.texts[0x222] = formatText(b"Okay, let's do it!")
-            rom.texts[0x224] = formatText(b"You got the %s in exchange for the item you had." % (INVENTORY_NAME[option]))
-            rom.texts[0x225] = formatText(b"Give me back my %s, I beg you! I'll return the item you gave me" % (INVENTORY_NAME[option]), ask=b"Okay Not Now")
-            rom.texts[0x226] = formatText(b"The item came back to you. You returned the other item.")
+            rom.texts[0x222] = formatText("Okay, let's do it!")
+            rom.texts[0x224] = formatText("You got the {%s} in exchange for the item you had." % (option))
+            rom.texts[0x225] = formatText("Give me back my {%s}, I beg you! I'll return the item you gave me" % (option), ask="Okay Not Now")
+            rom.texts[0x226] = formatText("The item came back to you. You returned the other item.")
         else:
             # Patch the inventory trade to give an specific item instead
-            rom.texts[0x221] = formatText(b"I found a good item washed up on the beach... Want to have it?", ask=b"Okay No")
+            rom.texts[0x221] = formatText("I found a good item washed up on the beach... Want to have it?", ask="Okay No")
             rom.patch(0x19, 0x069C, 0x06C6, ASM("""
                 ; Mark trade as done
                 ld a, $06
@@ -81,7 +81,7 @@ class BoomerangGuy(ItemInfo):
             rom.patch(0x19, 0x072B, "00", "%02X" % (CHEST_ITEMS[option]))
 
             # Ignore the trade back.
-            rom.texts[0x225] = formatText(b"It's a secret to everybody.")
+            rom.texts[0x225] = formatText("It's a secret to everybody.")
             rom.patch(0x19, 0x0668, ASM("ld a, [$DB7D]"), ASM("ret"), fill_nop=True)
 
     def read(self, rom):

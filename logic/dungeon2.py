@@ -1,6 +1,6 @@
 from .requirements import *
 from .location import Location
-from locations import *
+from locations.all import *
 
 
 class Dungeon2:

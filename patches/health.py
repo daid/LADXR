@@ -9,8 +9,8 @@ def setStartHealth(rom, amount):
 
 def upgradeHealthContainers(rom):
     # Reuse 2 unused shop messages for the heart containers.
-    rom.texts[0x2A] = formatText(b"You found an extra heart!")
-    rom.texts[0x2B] = formatText(b"You lost a heart!")
+    rom.texts[0x2A] = formatText("You found an {HEART_CONTAINER}!")
+    rom.texts[0x2B] = formatText("You lost a heart!")
 
     rom.patch(0x03, 0x19DC, ASM("""
         ld   de, $59D8

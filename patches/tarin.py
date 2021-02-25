@@ -8,7 +8,7 @@ def updateTarin(rom):
         ld   d, $04
         call $5321
         ld   a, $01
-        ld   [$DB44], a 
+        ld   [$DB44], a
     """), "", fill_nop=True)
 
     # Instead of showing the usual "your shield back" message, give the proper message and give the item.
@@ -48,4 +48,4 @@ def updateTarin(rom):
     rom.patch(0x05, 0x0CB0, ASM("ld hl, $DC88"), ASM("ld hl, $DC80"))
 
     # Patch the text that Tarin uses to give your shield back.
-    rom.texts[0x54] = formatText(b"#####, it is dangerous to go alone!\nTake this!")
+    rom.texts[0x54] = formatText("#####, it is dangerous to go alone!\nTake this!")

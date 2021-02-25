@@ -12,7 +12,7 @@ def setRequiredInstrumentCount(rom, count):
         count = 0
 
     # TODO: Music bugs out at the end, unless you have all instruments.
-    rom.texts[0x1A3] = formatText(b"You need %d instruments" % (count))
+    rom.texts[0x1A3] = formatText("You need %d instruments" % (count))
     rom.patch(0x19, 0x0B79, None, "0000")  # always spawn all instruments, we need the last one as that handles opening the egg.
     rom.patch(0x19, 0x0BF4, ASM("jp $3BC0"), ASM("jp $7FE0")) # instead of rendering the instrument, jump to the code below.
     rom.patch(0x19, 0x0BFE, ASM("""
@@ -62,7 +62,7 @@ noinc:
     """), fill_nop=True)
 
 def setSeashellGoal(rom, count):
-    rom.texts[0x1A3] = formatText(b"You need %d seashells" % (count))
+    rom.texts[0x1A3] = formatText("You need %d seashells" % (count))
 
     # Remove the seashell mansion handler (as it will take your seashells) but put a heartpiece instead
     re = RoomEditor(rom, 0x2E9)
@@ -176,7 +176,7 @@ spriteRect:
 
 
 def setRaftGoal(rom):
-    rom.texts[0x1A3] = formatText(b"Just sail away.")
+    rom.texts[0x1A3] = formatText("Just sail away.")
 
     # Remove the egg and egg event handler.
     re = RoomEditor(rom, 0x006)

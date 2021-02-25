@@ -3,9 +3,9 @@ from assembler import ASM
 
 
 def upgradeTunicFairy(rom):
-    rom.texts[0x268] = formatText(b"Welcome, #####. I admire you for coming this far.")
-    rom.texts[0x0CC] = formatText(b"Got the Red Tunic! You can change Tunics at the phone booths.")
-    rom.texts[0x0CD] = formatText(b"Got the Blue Tunic! You can change Tunics at the phone booths.")
+    rom.texts[0x268] = formatText("Welcome, #####. I admire you for coming this far.")
+    rom.texts[0x0CC] = formatText("Got the {RED_TUNIC}! You can change Tunics at the phone booths.")
+    rom.texts[0x0CD] = formatText("Got the {BLUE_TUNIC}! You can change Tunics at the phone booths.")
 
     rom.patch(0x36, 0x111C, 0x1133, ASM("""
         call $3B12

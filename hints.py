@@ -1,5 +1,4 @@
 from locations.items import *
-from locations.constants import INVENTORY_NAME
 from utils import formatText
 
 
@@ -58,10 +57,10 @@ def addHints(rom, rnd, spots):
         if len(spots) > 0:
             spot_index = rnd.randint(0, len(spots) - 1)
             spot = spots.pop(spot_index)
-            hint = rnd.choice(hints).format(INVENTORY_NAME[spot.item].decode("ascii"), spot.metadata.area)
+            hint = rnd.choice(hints).format("{%s}" % (spot.item), spot.metadata.area)
         else:
             hint = rnd.choice(hints).format(*rnd.choice(useless_hint))
-        rom.texts[text_id] = formatText(hint.encode("ascii"))
+        rom.texts[text_id] = formatText(hint)
 
     for text_id in range(0x200, 0x20C, 2):
-        rom.texts[text_id] = formatText(b"Read this book?", ask=b"YES  NO")
+        rom.texts[text_id] = formatText("Read this book?", ask="YES  NO")

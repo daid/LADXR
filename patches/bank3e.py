@@ -11,13 +11,13 @@ def hasBank3E(rom):
 #   Mainly for new chest and dropped items handling.
 def addBank3E(rom, seed):
     # No default text for getting the bow, so use an unused slot.
-    rom.texts[0x89] = formatText(b"Found the bow!")
-    rom.texts[0xD9] = formatText(b"Found the boomerang!")  # owl text slot reuse
+    rom.texts[0x89] = formatText("Found the {BOW}!")
+    rom.texts[0xD9] = formatText("Found the {BOOMERANG}!")  # owl text slot reuse
     rom.texts[0xBE] = rom.texts[0x111]  # owl text slot reuse to get the master skull message in the first dialog group
-    rom.texts[0xC8] = formatText(b"Found BowWow! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
+    rom.texts[0xC8] = formatText("Found {BOWWOW}! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.")
     rom.texts[0xC9] = 0xC0A0  # Custom message slot
-    rom.texts[0xCA] = formatText(b"Found 10 arrows!")
-    rom.texts[0xCB] = formatText(b"Found a single arrow... joy?")
+    rom.texts[0xCA] = formatText("Found {ARROWS_10}!")
+    rom.texts[0xCB] = formatText("Found a {SINGLE_ARROW}... joy?")
 
     # Create a trampoline to bank 0x3E in bank 0x00.
     # There is very little room in bank 0, so we set this up as a single trampoline for multiple possible usages.

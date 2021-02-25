@@ -431,7 +431,7 @@ class Assembler:
                 if param.startswith("\"") and param.endswith("\""):
                     self.__result += param[1:-1].encode("ascii")
                 elif param.startswith("m\"") and param.endswith("\""):
-                    self.__result += utils.formatText(param[2:-1].encode("ascii"))
+                    self.__result += utils.formatText(param[2:-1])
                 else:
                     self.__result.append(self.toByte(param.strip()))
         elif mnemonic == "DW":

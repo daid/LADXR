@@ -23,8 +23,8 @@ def removeOwlEvents(rom):
 
 
     # Patch the owl entity to allow refill of powder/bombs
-    rom.texts[0xC0] = formatText(b"Hoot!\nHoot!\nOut of stock?", ask=b"Okay No")
-    rom.texts[0xC1] = formatText(b"Hoot!\nHoot! Hoot!\nHoot!\nHere are a few things for you.")
+    rom.texts[0xC0] = formatText("Hoot!\nHoot!\nOut of stock?", ask="Okay No")
+    rom.texts[0xC1] = formatText("Hoot!\nHoot! Hoot!\nHoot!\nHere are a few things for you.")
     rom.patch(0x06, 0x27F5, 0x2A77, ASM("""
     ; Render owl
     ld de, sprite
