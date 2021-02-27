@@ -142,7 +142,8 @@ def main(mainargs=None):
         f.write(";Modify the item pool:\n")
         f.write(";Pool:SWORD:+5\n")
         f.write(";Pool:RUPEES_50:-5\n")
-        iteminfo_list = logic.Logic(args, start_house_index=0, entranceMapping=list(range(9)), bossMapping=list(range(9))).iteminfo_list
+        import worldSetup
+        iteminfo_list = logic.Logic(args, world_setup=worldSetup.WorldSetup()).iteminfo_list
         for ii in sorted(iteminfo_list, key=lambda n: (n.location.dungeon if n.location.dungeon else -1, repr(n.metadata))):
             if len(ii.OPTIONS) > 1:
                 f.write(";%r\n" % (ii.metadata))
