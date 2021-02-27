@@ -216,4 +216,6 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)
+    if options.doubletrouble:
+        patches.enemies.doubleTrouble(rom)
     return rom
