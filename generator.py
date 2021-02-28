@@ -205,6 +205,8 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.startLocation.setStartLocation(rom, world_setup.start_house_index)
     patches.dungeonEntrances.changeEntrances(rom, world_setup.dungeon_entrance_mapping)
     for spot in item_list:
+        if spot.item.startswith("*"):
+            spot.item = spot.item[1:]
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
