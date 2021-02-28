@@ -393,7 +393,7 @@ ItemNameRedTunic:
 ItemNameBlueTunic:
     db m"Got the {BLUE_TUNIC}", $ff
 ItemNameHeartContainer:
-    db m"Got the {HEART_CONTAINER}", $ff
+    db m"Got a {HEART_CONTAINER}", $ff
 ItemNameBadHeartContainer:
     db m"Got the {BAD_HEART_CONTAINER}", $ff
 ItemNameSong1:
