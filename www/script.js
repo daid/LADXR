@@ -110,7 +110,7 @@ function seedComplete(data)
 
         spoilerContent = data.spoiler
 
-        if (ID("spoilerformat").value !== "none")
+        if (spoilerContent)
             ID("spoilerButton").style.display = '';
         else
             ID("spoilerButton").style.display = 'none';
