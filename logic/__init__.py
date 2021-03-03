@@ -187,6 +187,10 @@ class MultiworldItemInfoWrapper:
         else:
             self.target.patch(rom, option, multiworld=world)
 
+    @property
+    def location(self):
+        return self.target.location
+
     def __repr__(self):
         return "W%d:%s" % (self.world, repr(self.target))
 

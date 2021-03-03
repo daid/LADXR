@@ -223,7 +223,7 @@ class RandomItemPlacer:
                 return False
 
         # Check if we can still place all our items
-        if not self.canStillPlaceItemPool(verbose):
+        if not self.canStillPlaceItemPool():
             if verbose:
                 print("Can no longer place our item pool")
             return False
@@ -246,29 +246,31 @@ class RandomItemPlacer:
                 return False
         return True
 
-    def canStillPlaceItemPool(self, verbose=False):
-        # For each item in the pool, find which spots are available.
-        # Then, from the hardest to place item to the easy stuff strip the availability pool
-        item_spots = {}
-        for spots in self.__spots:
-            for spot in spots:
-                for option in spot.getOptions():
-                    if option not in item_spots:
-                        item_spots[option] = set()
-                    item_spots[option].add(spot)
-        for item in sorted(self.__item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
-            spots = item_spots.get(item, set())
-            for n in range(self.__item_pool.get(item, 0)):
-                if verbose:
-                    print(n, item, spots)
-                if not spots:
-                    if verbose:
-                        print(item_spots)
-                    return False
-                spot = next(iter(spots))
-                for spot_set in item_spots.values():
-                    if spot in spot_set:
-                        spot_set.remove(spot)
+    def canStillPlaceItemPool(self):
+        item_pool = self.__item_pool.copy()
+        spots = []
+        for spot_list in self.__spots:
+            spots += spot_list
+        def scoreSpot(s):
+            if s.location.dungeon:
+                return 0, s.nameId
+            return len(s.getOptions()), s.nameId
+        item_spot_count = {}
+        spots.sort(key=scoreSpot)
+        for spot in spots:
+            for option in spot.getOptions():
+                item_spot_count[option] = item_spot_count.get(option, 0) + 1
+        for spot in spots:
+            done = False
+            for option in sorted(spot.getOptions(), key=lambda opt: (item_spot_count[opt], opt)):
+                if option in item_pool:
+                    item_pool[option] -= 1
+                    if item_pool[option] == 0:
+                        del item_pool[option]
+                    done = True
+                    break
+            if not done:
+                return False
         return True
 
 
@@ -303,7 +305,7 @@ class ForwardItemPlacer:
         self.__spots.remove(spot)
 
     def run(self, rnd):
-        assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool(True))
+        assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool())
         if sum(self.__item_pool.values()) != len(self.__spots):
             for k, v in sorted(self.__item_pool.items()):
                 print(k, v)
@@ -369,26 +371,27 @@ class ForwardItemPlacer:
                     return True
         return False
 
-    def canStillPlaceItemPool(self, verbose=False):
-        # For each item in the pool, find which spots are available.
-        # Then, from the hardest to place item to the easy stuff strip the availability pool
-        item_spots = {}
-        for spot in self.__spots:
+    def canStillPlaceItemPool(self):
+        item_pool = self.__item_pool.copy()
+        spots = self.__spots.copy()
+        def scoreSpot(s):
+            if s.location.dungeon:
+                return 0, s.nameId
+            return len(s.getOptions()), s.nameId
+        item_spot_count = {}
+        spots.sort(key=scoreSpot)
+        for spot in spots:
             for option in spot.getOptions():
-                if option not in item_spots:
-                    item_spots[option] = set()
-                item_spots[option].add(spot)
-        for item in sorted(self.__item_pool.keys(), key=lambda item: len(item_spots.get(item, set()))):
-            spots = item_spots.get(item, set())
-            for n in range(self.__item_pool.get(item, 0)):
-                if verbose:
-                    print(n, item, spots)
-                if not spots:
-                    if verbose:
-                        print(item_spots)
-                    return False
-                spot = next(iter(spots))
-                for spot_set in item_spots.values():
-                    if spot in spot_set:
-                        spot_set.remove(spot)
+                item_spot_count[option] = item_spot_count.get(option, 0) + 1
+        for spot in spots:
+            done = False
+            for option in sorted(spot.getOptions(), key=lambda opt: (item_spot_count[opt], opt)):
+                if option in item_pool:
+                    item_pool[option] -= 1
+                    if item_pool[option] == 0:
+                        del item_pool[option]
+                    done = True
+                    break
+            if not done:
+                return False
         return True
