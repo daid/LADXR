@@ -14,16 +14,19 @@ if (isset($_FILES["rom"]))
     $romInputPath = $_FILES["rom"]["tmp_name"];
     $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");
     $command = "/usr/bin/python3 main.py " . escapeshellarg($romInputPath) . " -o $romOutputPath";
-    foreach($options as $key => $option)
+    foreach($options as $cat => $list)
     {
-        if (isset($_POST[$key]) && $_POST[$key] != "" && isset($option['aesthetic']) && $option['aesthetic'])
+        foreach($list as $key => $option)
         {
-            if ($key == "gfxmod")
-                $_POST[$key] = "gfx/" . $_POST[$key];
-            if ($option['type'] == 'check')
-                $command .= " ".$option['arg'];
-            else
-                $command .= " ".$option['arg']." ".escapeshellarg($_POST[$key]);
+            if (isset($_POST[$key]) && $_POST[$key] != "" && isset($option['aesthetic']) && $option['aesthetic'])
+            {
+                if ($key == "gfxmod")
+                    $_POST[$key] = "gfx/" . $_POST[$key];
+                if ($option['type'] == 'check')
+                    $command .= " ".$option['arg'];
+                else
+                    $command .= " ".$option['arg']." ".escapeshellarg($_POST[$key]);
+            }
         }
     }
     $command .= " --race $this_month-$this_year";
