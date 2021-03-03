@@ -127,7 +127,7 @@ class MultiworldLogic:
             for loc in world.location_list:
                 loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
                 loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
-                loc.items = [MultiworldItemInfoWrapper(n, configuration_options.multiworld, ii) for ii in loc.items]
+                loc.items = [MultiworldItemInfoWrapper(n, configuration_options, ii) for ii in loc.items]
                 self.iteminfo_list += loc.items
 
             self.worlds.append(world)
@@ -141,10 +141,11 @@ class MultiworldLogic:
 
 
 class MultiworldItemInfoWrapper:
-    def __init__(self, world, world_count, target):
+    def __init__(self, world, configuration_options, target):
         self.world = world
-        self.world_count = world_count
+        self.world_count = configuration_options.multiworld
         self.target = target
+        self.keysanity = configuration_options.keysanity
         self.MULTIWORLD_OPTIONS = None
 
     @property
@@ -172,7 +173,7 @@ class MultiworldItemInfoWrapper:
             if self.target.MULTIWORLD and len(options) > 1:
                 self.MULTIWORLD_OPTIONS = []
                 for n in range(self.world_count):
-                    self.MULTIWORLD_OPTIONS += ["%s_W%d" % (t, n) for t in options]
+                    self.MULTIWORLD_OPTIONS += ["%s_W%d" % (t, n) for t in options if n == self.world or self.canMultiworld(t)]
             else:
                 self.MULTIWORLD_OPTIONS = ["%s_W%d" % (t, self.world) for t in options]
         return self.MULTIWORLD_OPTIONS
@@ -186,6 +187,22 @@ class MultiworldItemInfoWrapper:
             self.target.patch(rom, option)
         else:
             self.target.patch(rom, option, multiworld=world)
+
+    # Return true if the item is allowed to be placed in any world, or false if it is
+    # world specific for this check.
+    def canMultiworld(self, option):
+        if not self.keysanity:
+            if option.startswith("KEY"):
+                return False
+            if option.startswith("MAP"):
+                return False
+            if option.startswith("COMPASS"):
+                return False
+            if option.startswith("NIGHTMARE_KEY"):
+                return False
+            if option.startswith("STONE_BEAK"):
+                return False
+        return True
 
     @property
     def location(self):
