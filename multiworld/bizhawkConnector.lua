@@ -20,8 +20,13 @@ wLinkSendItemTarget = 0xDDFC --RO
 wLinkSendItemItem = 0xDDFD --RO
 
 function stateInitialize()
-    if memory.readbyte(wGameplayType) <= 6 then
+    local gameplayType = memory.readbyte(wGameplayType)
+    if gameplayType <= 6 then
         gui.drawText(0, 0, "Waiting for savegame", 0xFF000000)
+        return
+    end
+    if gameplayType > 0x1A then
+        print(string.format("Unknown gameplay type? %02x", gameplayType))
         return
     end
 
@@ -42,6 +47,7 @@ function stateTryToConnect()
     else
         socket:settimeout(0)
         sendAll(string.char(0x20, memory.readbyte(ROMGameID), memory.readbyte(ROMGameID + 1), memory.readbyte(ROMGameID + 2), memory.readbyte(ROMGameID + 3), memory.readbyte(ROMWorldID)))
+        print(string.format("Connected as game: %02x%02x%02x%02x:%02x", memory.readbyte(ROMGameID), memory.readbyte(ROMGameID + 1), memory.readbyte(ROMGameID + 2), memory.readbyte(ROMGameID + 3), memory.readbyte(ROMWorldID)))
         connection_state = stateIdle
     end
 end
@@ -58,7 +64,12 @@ function stateIdle()
     end
     
     if bit.band(memory.readbyte(wLinkStatusBits), 0x02) == 0x02 then
-        sendAll(string.char(0x10, memory.readbyte(wLinkSendItemRoomHigh), memory.readbyte(wLinkSendItemRoomLow), memory.readbyte(wLinkSendItemTarget), memory.readbyte(wLinkSendItemItem)))
+        local room_h = memory.readbyte(wLinkSendItemRoomHigh)
+        local room_l = memory.readbyte(wLinkSendItemRoomLow)
+        local target = memory.readbyte(wLinkSendItemTarget)
+        local item = memory.readbyte(wLinkSendItemItem)
+        sendAll(string.char(0x10, room_h, room_l, target, item))
+        print(string.format("Sending item: %01x%02x:%02x to %d", room_h, room_l, item, target))
         --TODO: We should wait till we have a confirm from the server that the item is handled by the server
         memory.writebyte(wLinkStatusBits, bit.band(memory.readbyte(wLinkStatusBits), 0xFD))
     end
@@ -75,7 +86,9 @@ function stateIdle()
         if result:byte(1, 1) == 0x01 then
             result, err = socket:receive(2)
             item_id, source = result:byte(1, 2)
-            
+
+            print(string.format("Go item: %02x from %d", item_id, source))
+
             memory.writebyte(wLinkGiveItem, item_id)
             memory.writebyte(wLinkGiveItemFrom, source)
             memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
