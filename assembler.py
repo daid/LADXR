@@ -431,7 +431,7 @@ class Assembler:
                 if param.startswith("\"") and param.endswith("\""):
                     self.__result += param[1:-1].encode("ascii")
                 elif param.startswith("m\"") and param.endswith("\""):
-                    self.__result += utils.formatText(param[2:-1])
+                    self.__result += utils.formatText(param[2:-1].replace("|", "\n"))
                 else:
                     self.__result.append(self.toByte(param.strip()))
         elif mnemonic == "DW":
@@ -454,6 +454,9 @@ class Assembler:
     def getResult(self):
         return self.__result
 
+    def getLabels(self):
+        return self.__label.items()
+
 
 def const(name, address):
     name = name.upper()
@@ -465,7 +468,7 @@ def resetConsts():
     CONST_MAP.clear()
 
 
-def ASM(code, base_address=None):
+def ASM(code, base_address=None, labels_result=None):
     asm = Assembler(base_address)
     conditional_stack = [True]
     for line in code.split("\n"):
@@ -480,6 +483,9 @@ def ASM(code, base_address=None):
         elif conditional_stack[-1]:
             asm.assemble(line)
     asm.link()
+    if labels_result is not None:
+        for label, offset in asm.getLabels():
+            labels_result[label] = base_address + offset
     return binascii.hexlify(asm.getResult())
 
 

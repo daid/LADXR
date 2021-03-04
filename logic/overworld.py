@@ -140,7 +140,7 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             right_mountains_2.add(OwlStatue(0x1E)) # owl statue below d7
         bridge_seashell = Location().add(Seashell(0x00C)).connect(luigi_rooster_house, AND(FEATHER, POWER_BRACELET)) # seashell right of rooster house, there is a hole in the bridge
-        bird_key = Location().add(BirdKey()).connect(luigi_rooster_house, COUNT(POWER_BRACELET, 2)) # assumes rooster to cross the pits before the statue?
+        bird_key = Location().add(BirdKey()).connect(luigi_rooster_house, AND(FEATHER, COUNT(POWER_BRACELET, 2)))
         luigi_rooster_house.connect(right_mountains_1, None, one_way=True) # Drop down the hole at the bird key
         Location().add(Chest(0x01D)).connect(right_mountains_2, BOMB)  # chest after multichest puzzle outside
         right_mountains_3 = Location().connect(right_mountains_2, AND(FEATHER, HOOKSHOT)) # d7 area
