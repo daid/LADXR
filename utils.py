@@ -46,7 +46,7 @@ _NAMES = {
     MAP: "Dungeon Map",
     MAP1: "Map for Tail Cave",
     MAP2: "Map for Bottle Grotto",
-    MAP3: "Map for Map Cavern",
+    MAP3: "Map for Key Cavern",
     MAP4: "Map for Angler's Tunnel",
     MAP5: "Map for Catfish's Maw",
     MAP6: "Map for Face Shrine",
