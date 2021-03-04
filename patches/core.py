@@ -142,7 +142,7 @@ noWrapDown:
 
         ld   a, [$C509] ; Check if we have an item in the shop
         and  a
-        jp   z, $40BE ; return to normal "return to game" handling
+        jp   nz, $40BE ; return to normal "return to game" handling
 
         ld   a, $0B
         ld   [$DB95], a
