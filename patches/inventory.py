@@ -9,6 +9,47 @@ def selectToSwitchSongs(rom):
     rom.patch(0x20, 0x21A9, ASM("and $01"), ASM("and $40"))
     rom.patch(0x20, 0x21C7, ASM("and $02"), ASM("and $00"))
 
+def songSelectAfterOcarinaSelect(rom):
+    rom.patch(0x20, 0x2002, ASM("ld [$DB00], a"), ASM("call $5F96"))
+    rom.patch(0x20, 0x1FE0, ASM("ld [$DB01], a"), ASM("call $5F9B"))
+    # Remove the code that opens the ocerina on cursor movement, but use it to insert code
+    # for opening the menu on item select
+    rom.patch(0x20, 0x1F93, 0x1FB2, ASM("""
+        jp $5FB2
+    itemToB:
+        ld  [$DB00], a
+        jr checkForOcarina
+    itemToA:
+        ld  [$DB01], a
+    checkForOcarina:
+        cp  $09
+        jp  nz, $6010
+        ld  a, [$DB49]
+        and a
+        ret z
+        ld  a, $08
+        ldh [$90], a ; load ocarina song select graphics
+        ;ld  a, $10
+        ;ld  [$C1B8], a ; shows the opening animation
+        ld  a, $01
+        ld  [$C1B5], a
+        ret
+    """), fill_nop=True)
+    # More code that opens the menu, use this to close the menu
+    rom.patch(0x20, 0x200D, 0x2027, ASM("""
+        jp $6027
+    closeOcarinaMenu:
+        ld  a, [$C1B5]
+        and a
+        ret z
+        xor a
+        ld  [$C1B5], a
+        ld  a, $10
+        ld  [$C1B9], a ; shows the closing animation
+        ret
+    """), fill_nop=True)
+    rom.patch(0x20, 0x2027, 0x2036, "", fill_nop=True) # Code that closes the ocarina menu on item select
+
 def moreSlots(rom):
     #Move flippers, medicine, trade item and seashells to DB3E+
     rom.patch(0x02, 0x292B, ASM("ld a, [$DB0C]"), ASM("ld a, [$DB3E]"))

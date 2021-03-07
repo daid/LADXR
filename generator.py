@@ -177,7 +177,7 @@ def generateRom(options, seed, logic, multiworld=None):
     elif options.goal != "random" and options.goal is not None:
         patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
 
-    patches.inventory.selectToSwitchSongs(rom)
+    patches.inventory.songSelectAfterOcarinaSelect(rom)
     if options.quickswap == 'a':
         patches.core.quickswap(rom, 1)
     elif options.quickswap == 'b':
