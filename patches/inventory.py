@@ -50,6 +50,21 @@ def songSelectAfterOcarinaSelect(rom):
     """), fill_nop=True)
     rom.patch(0x20, 0x2027, 0x2036, "", fill_nop=True) # Code that closes the ocarina menu on item select
 
+    rom.patch(0x20, 0x22A2, ASM("""
+        ld  a, [$C159]
+        inc a
+        ld  [$C159], a
+        and $10
+        jr  nz, $30
+    """), ASM("""
+        ld  a, [$C1B5]
+        and a
+        ret nz
+        ldh a, [$E7] ; frame counter
+        and $10
+        ret nz 
+    """), fill_nop=True)
+
 def moreSlots(rom):
     #Move flippers, medicine, trade item and seashells to DB3E+
     rom.patch(0x02, 0x292B, ASM("ld a, [$DB0C]"), ASM("ld a, [$DB3E]"))
