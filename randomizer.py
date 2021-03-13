@@ -2,6 +2,7 @@ import random
 import zipfile
 import os
 import binascii
+from datetime import datetime
 
 import explorer
 import logic
@@ -69,11 +70,16 @@ class Randomizer:
                     handle.close()
                 else:
                     rom.save(fname, name="LADXR")
-                if options.spoilerformat != "none" and not options.race:
-                    extension = "json" if options.spoilerformat == "json" else "txt"
-                    sfname = "LADXR_Multiworld_%d_%d.%s" % (options.multiworld, n + 1, extension)
+                if (options.spoilerformat != "none" or options.log_directory) and not options.race:
                     log = spoilerLog.SpoilerLog(options, rom)
-                    log.output(sfname, z)
+                    if options.log_directory:
+                        filename = "LADXR_Multiworld_%d_%d_%s_%s.json" % (options.multiworld, n + 1, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
+                        log_path = os.path.join(options.log_directory, filename)
+                        log.outputJson(log_path)
+                    if options.spoilerformat != "none":
+                        extension = "json" if options.spoilerformat == "json" else "txt"
+                        sfname = "LADXR_Multiworld_%d_%d.%s" % (options.multiworld, n + 1, extension)
+                        log.output(sfname, z)
         else:
             rom = generator.generateRom(options, self.seed, self.__logic)
             filename = options.output_filename
@@ -81,9 +87,14 @@ class Randomizer:
                 filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
             rom.save(filename, name="LADXR")
 
-            if options.spoilerformat != "none" and not options.race:
+            if (options.spoilerformat != "none" or options.log_directory) and not options.race:
                 log = spoilerLog.SpoilerLog(options, rom)
-                log.output(options.spoiler_filename)
+                if options.log_directory:
+                    filename = "LADXR_%s_%s.json" % (datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
+                    log_path = os.path.join(options.log_directory, filename)
+                    log.outputJson(log_path)
+                if options.spoilerformat != "none":
+                    log.output(options.spoiler_filename)
 
     def readItemPool(self, options, item_placer):
         item_pool = {}

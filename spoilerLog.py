@@ -49,6 +49,7 @@ class SpoilerLog:
         self.accessibleItems = []
         self.inaccessibleItems = None
         self.outputFormat = args.spoilerformat
+        self.args = vars(args)
 
         # Assume the broadest settings if we're dumping a seed we didn't just create
         if args.dump:
