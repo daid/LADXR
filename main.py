@@ -115,7 +115,8 @@ def main(mainargs=None):
         args.multiworld_options = [args] * args.multiworld
         if args.multiworld_config is not None:
             for index, settings_string in enumerate(args.multiworld_config):
-                args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string))
+                args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string),
+                                                                   namespace=argparse.Namespace(**vars(args)))
 
     if args.timeout is not None:
         import threading

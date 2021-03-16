@@ -119,7 +119,7 @@ class MultiworldLogic:
 
         for n in range(configuration_options.multiworld):
             world_setup = WorldSetup()
-            world_setup.randomize(configuration_options, rnd)
+            world_setup.randomize(configuration_options.multiworld_options[n], rnd)
             world = Logic(configuration_options.multiworld_options[n], world_setup=world_setup)
             for ii in world.iteminfo_list:
                 ii.world = n
@@ -127,7 +127,7 @@ class MultiworldLogic:
             for loc in world.location_list:
                 loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
                 loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
-                loc.items = [MultiworldItemInfoWrapper(n, configuration_options, ii) for ii in loc.items]
+                loc.items = [MultiworldItemInfoWrapper(n, configuration_options.multiworld_options[n], ii) for ii in loc.items]
                 self.iteminfo_list += loc.items
 
             self.worlds.append(world)
