@@ -36,6 +36,8 @@ def main(mainargs=None):
         help="Write an unfilled plan file")
     parser.add_argument('--timeout', type=float, required=False,
         help="Timeout generating the seed after the specified number of seconds")
+    parser.add_argument('--logdirectory', dest="log_directory", type=str, required=False,
+        help="Directory to write the JSON log file. Generated independently from the spoiler log and omitted by default.")
 
     # Flags that effect gameplay
     parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
