@@ -11,7 +11,9 @@ ROMGameID = 0x0051 -- 4 bytes
 ROMWorldID = 0x0055
 wGameplayType = 0xDB95 -- RO: We should only act if this is higher then 6, as it indicates that the game is running normally
 wLinkSyncSequenceNumber = 0xDDF6 --RO: Starts at 0, increases every time an item is received from the server and processed
-wLinkStatusBits = 0xDDF7 -- RW: Bit0: wLinkGive* contains valid data, set from script cleared from rom. Bit1: wLinkSendItem* contains valid data, set from ROM cleared from lua
+wLinkStatusBits = 0xDDF7 -- RW:
+    -- Bit0: wLinkGive* contains valid data, set from script cleared from ROM.
+    -- Bit1: wLinkSendItem* contains valid data, set from ROM cleared from lua
 wLinkGiveItem = 0xDDF8 --RW
 wLinkGiveItemFrom = 0xDDF9 --RW
 wLinkSendItemRoomHigh = 0xDDFA --RO

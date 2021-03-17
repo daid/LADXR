@@ -25,15 +25,15 @@ RenderChestItem:
     ret
 
 SendItemFromChestToOtherGameWait:
-    call MainLoop.readLinkCable
+    halt ; Wait a frame until we might have room to send
+    jr SendItemFromChestToOtherGame.retry
 
 SendItemFromChestToOtherGame:
     call IncreaseCheckCounter
-    ld   a, [wLinkStatusBits]
-    bit  1, a
+.retry:
+    ld   hl, wLinkStatusBits
+    bit  1, [hl]
     jp   nz, SendItemFromChestToOtherGameWait
-    set  1, a
-    ld   [wLinkStatusBits], a
 
     ; Store send item data
     ld   hl, $0000
@@ -48,6 +48,10 @@ SendItemFromChestToOtherGame:
     ld   [wLinkSendItemTarget], a
     ldh  a, [$F1] ; Load active sprite variant
     ld   [wLinkSendItemItem], a
+
+    ; Finally set the status bit to indicate there is an item to send
+    ld   hl, wLinkStatusBits
+    set  1, [hl]
     ret
 
 GiveItemFromChestMultiworld:
@@ -654,8 +658,13 @@ ItemMessage:
     jp   $2385 ; Opendialog in $000-$0FF range
 
 ItemMessageForOtherPlayer:
+    push af
     call BuildItemMessage
     call MessageAddTargetPlayer
+    dec  de
+    pop  af
+    add  a, $31 ; '1'
+    ld   [de], a
     ld   a, $C9
     jp   $2385 ; Opendialog in $000-$0FF range
 

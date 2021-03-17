@@ -13,9 +13,9 @@ BuildItemMessage:
     jp   MessageCopyString
 
 FoundItemForOtherPlayerPostfix:
-    db m" for another    player", $ff
+    db m" for player X", $ff
 GotItemFromOtherPlayerPostfix:
-    db m" from another   player", $ff
+    db m" from player X", $ff
 
 MessagePad:
     jr .start
