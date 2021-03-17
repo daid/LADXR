@@ -39,6 +39,7 @@ import patches.tunicFairy
 import patches.seashell
 import patches.instrument
 import patches.endscreen
+import patches.multiworld
 import hints
 
 
@@ -78,6 +79,10 @@ def generateRom(options, seed, logic, multiworld=None):
     assembler.const("wLinkSendItemRoomLow", 0xDDFB)
     assembler.const("wLinkSendItemTarget", 0xDDFC)
     assembler.const("wLinkSendItemItem", 0xDDFD)
+
+    assembler.const("wZolSpawnCount", 0xDE10)
+    assembler.const("wCuccoSpawnCount", 0xDE11)
+
     assembler.const("HARD_MODE", 1 if options.hardMode else 0)
 
     patches.core.cleanup(rom)
@@ -191,6 +196,8 @@ def generateRom(options, seed, logic, multiworld=None):
         world_setup = logic.world_setup
         item_list = logic.iteminfo_list
     else:
+        patches.multiworld.addMultiworldShop(rom, multiworld, options.multiworld)
+
         # Set a unique ID in the rom for multiworld
         for n in range(4):
             rom.patch(0x00, 0x0051 + n, "00", "%02x" % (seed[n]))

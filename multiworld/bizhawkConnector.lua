@@ -14,12 +14,15 @@ wLinkSyncSequenceNumber = 0xDDF6 --RO: Starts at 0, increases every time an item
 wLinkStatusBits = 0xDDF7 -- RW:
     -- Bit0: wLinkGive* contains valid data, set from script cleared from ROM.
     -- Bit1: wLinkSendItem* contains valid data, set from ROM cleared from lua
+    -- Bit2: wLinkSendShop* contains valid data, set from ROM cleared from lua
 wLinkGiveItem = 0xDDF8 --RW
 wLinkGiveItemFrom = 0xDDF9 --RW
 wLinkSendItemRoomHigh = 0xDDFA --RO
 wLinkSendItemRoomLow = 0xDDFB --RO
 wLinkSendItemTarget = 0xDDFC --RO
 wLinkSendItemItem = 0xDDFD --RO
+wLinkSendShopItem = 0xDDFE --RO, which item to send (1 based, order of the shop items)
+wLinkSendShopTarget = 0xDDFF --RO, which player to send to, but it's just the X position of the NPC used, so 0x18 is player 0
 
 function stateInitialize()
     local gameplayType = memory.readbyte(wGameplayType)
@@ -75,6 +78,25 @@ function stateIdle()
         --TODO: We should wait till we have a confirm from the server that the item is handled by the server
         memory.writebyte(wLinkStatusBits, bit.band(memory.readbyte(wLinkStatusBits), 0xFD))
     end
+    if bit.band(memory.readbyte(wLinkStatusBits), 0x04) == 0x04 then
+        local target = (memory.readbyte(wLinkSendShopTarget) - 0x18) / 0x10
+        local item = memory.readbyte(wLinkSendShopItem)
+
+        -- Translate item from shop item to giving item
+        if item == 1 then item = 0xF0 -- zolstorm
+        elseif item == 2 then item = 0xF1 -- cucco
+        elseif item == 3 then item = 0xF2 -- piece of power
+        elseif item == 4 then item = 0x0A -- bomb
+        elseif item == 5 then item = 0x1D -- 100 rupees
+        elseif item == 6 then item = 0x10 -- medicine
+        elseif item == 7 then item = 0xF3 -- health
+        else item = 0x1B end
+        
+        sendAll(string.char(0x11, target, item))
+        print(string.format("Sending shop: %02x to %d", item, target))
+        --TODO: We should wait till we have a confirm from the server that the item is handled by the server
+        memory.writebyte(wLinkStatusBits, bit.band(memory.readbyte(wLinkStatusBits), 0xFB))
+    end
     
     while true do
         local result, err = socket:receive(1)
@@ -95,6 +117,16 @@ function stateIdle()
             memory.writebyte(wLinkGiveItemFrom, source)
             memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
             memory.writebyte(wLinkSyncSequenceNumber, memory.readbyte(wLinkSyncSequenceNumber) + 1)
+        end
+        if result:byte(1, 1) == 0x02 then
+            result, err = socket:receive(2)
+            item_id, source = result:byte(1, 2)
+
+            print(string.format("Go shop item: %02x from %d", item_id, source))
+
+            memory.writebyte(wLinkGiveItem, item_id)
+            memory.writebyte(wLinkGiveItemFrom, source)
+            memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
         end
     end
 end

@@ -19,7 +19,11 @@ class Connection(socketserver.StreamRequestHandler):
                 if player_info.getItemCount() > sync_nr:
                     self.wfile.write(bytes([0x01, player_info.getItem(sync_nr), player_info.getItemSource(sync_nr)]))
                 else:
-                    self.wfile.write(bytes([0x00]))
+                    shop_item = player_info.getShopItem()
+                    if shop_item:
+                        self.wfile.write(bytes([0x01, shop_item[0], shop_item[1]]))
+                    else:
+                        self.wfile.write(bytes([0x00]))
             elif command == 0x10:
                 data = self.rfile.read(4)
                 room_nr = (data[0] << 8) | data[1]
@@ -27,6 +31,12 @@ class Connection(socketserver.StreamRequestHandler):
                 item_id = data[3]
 
                 self.server.getGame(self.game_id).gotItem(self.player_id, target_player_id, room_nr, item_id)
+            elif command == 0x11:
+                data = self.rfile.read(2)
+                target_player_id = data[0]
+                item_id = data[1]
+
+                self.server.getGame(self.game_id).gotShopItem(self.player_id, target_player_id, item_id)
             elif command == 0x20:
                 self.game_id = self.rfile.read(4)
                 self.player_id = self.rfile.read(1)[0]
@@ -58,11 +68,14 @@ class Game:
             f.write("%d:%d:%d:%d\n" % (source_player_id, target_player_id, room, item))
             f.close()
 
+    def gotShopItem(self, source_player_id, target_player_id, item):
+        self.getPlayer(target_player_id).addShopItem(item, source_player_id)
 
 class PlayerInfo:
     def __init__(self, game):
         self.__game = game
         self.__items = []
+        self.__shop_items = []
         self.__done_rooms = set()
 
     def getItemCount(self):
@@ -70,12 +83,20 @@ class PlayerInfo:
 
     def getItem(self, index):
         return self.__items[index][0]
+    
+    def getShopItem(self):
+        if self.__shop_items:
+            return self.__shop_items.pop()
+        return None
 
     def getItemSource(self, index):
         return self.__items[index][1]
 
     def addItem(self, item, source):
         self.__items.append((item, source))
+
+    def addShopItem(self, item, source):
+        self.__shop_items.append((item, source))
 
     def markRoomDone(self, room):
         if room in self.__done_rooms:

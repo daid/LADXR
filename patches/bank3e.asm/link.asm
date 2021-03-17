@@ -26,6 +26,13 @@ MainLoop:
     and  a
     ret  nz
 
+    ld   a, [wZolSpawnCount]
+    and  a
+    call nz, LinkSpawnSlime
+    ld   a, [wCuccoSpawnCount]
+    and  a
+    call nz, LinkSpawnCucco
+
     ; Have an item to give?
     ld   hl, wLinkStatusBits
     bit  0, [hl]
@@ -34,7 +41,9 @@ MainLoop:
     ; Give an item to the player
     ld   a, [wLinkGiveItem]
     cp   $22 ; zol item
-    jp   z, LinkSpawnSlime
+    jr   z, LinkGiveSlime
+    cp   $F0
+    jr   nc, HandleSpecialItem
     ldh  [$F1], a
     call GiveItemFromChest
     call BuildItemMessage
@@ -47,6 +56,51 @@ MainLoop:
     ld   hl, wLinkStatusBits
     res  0, [hl]
     jp   $2385 ; Opendialog in $000-$0FF range
+
+LinkGiveSlime:
+    ld   a, $05
+    ld   [wZolSpawnCount], a
+    ld   hl, wLinkStatusBits
+    res  0, [hl]
+    ret
+
+HandleSpecialItem:
+    ld   hl, wLinkStatusBits
+    res  0, [hl]
+
+    and  $0F
+    jr   z, SpecialSlimeStorm
+    dec  a
+    jr   z, SpecialCuccoParty
+    dec  a
+    jr   z, SpecialPieceOfPower
+    dec  a
+    jr   z, SpecialHealth
+    ret
+
+SpecialSlimeStorm:
+    ld   a, $20
+    ld   [wZolSpawnCount], a
+    ret
+SpecialCuccoParty:
+    ld   a, $20
+    ld   [wCuccoSpawnCount], a
+    ret
+SpecialPieceOfPower:
+    ; Give the piece of power and the music
+    ld   a, $01
+    ld   [$D47C], a
+    ld   a, $27
+    ld   [$D368], a
+    ld   a, $49
+    ldh  [$BD], a
+    ldh  [$BF], a
+    ret
+SpecialHealth:
+    ; Regen all health
+    ld   hl, $DB93
+    ld   [hl], $FF
+    ret
 
 LinkSpawnSlime:
     ld   a, $1B
@@ -71,6 +125,8 @@ LinkSpawnSlime:
     add  hl, de
     ld   [hl], $7F
 
+    ld   hl, wZolSpawnCount
+    dec  [hl]
     ret
 
 LinkSpawnCucco:
@@ -88,5 +144,8 @@ LinkSpawnCucco:
     add  hl, de
     ldh  a, [$99]
     ld   [hl], a
+
+    ld   hl, wCuccoSpawnCount
+    dec  [hl]
 
     ret

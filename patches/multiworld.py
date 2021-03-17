@@ -1,25 +1,38 @@
 from assembler import ASM
-from roomEditor import RoomEditor
+from roomEditor import RoomEditor, ObjectHorizontal, ObjectVertical, Object
 import entityData
 
 
-def addMultiworldShop(rom):
+def addMultiworldShop(rom, this_player, player_count):
     # Make a copy of the shop into GrandpaUlrira house
-    shop_room = RoomEditor(rom, 0x2A1)
     re = RoomEditor(rom, 0x2A9)
-    re.objects = [obj for obj in shop_room.objects if obj.x is not None and obj.type_id != 0xCE] + re.getWarps()
-    re.entities = [(1, 6, 0x77), (2, 6, 0x77)]
-    re.animation_id = shop_room.animation_id
-    re.floor_object = shop_room.floor_object
+    re.objects = [
+        ObjectHorizontal(1,1, 0x00, 8),
+        ObjectHorizontal(1,2, 0x00, 8),
+        ObjectHorizontal(1,3, 0xCD, 8),
+        Object(2, 0, 0xC7),
+        Object(7, 0, 0xC7),
+        Object(7, 7, 0xFD),
+    ] + re.getWarps()
+    re.entities = [(0, 6, 0x77)]
+    for n in range(player_count):
+        if n != this_player:
+            re.entities.append((n + 1, 6, 0x77))
+    re.animation_id = 0x04
+    re.floor_object = 0x0D
     re.store(rom)
     # Fix the tileset
     rom.banks[0x20][0x2EB3 + 0x2A9 - 0x100] = rom.banks[0x20][0x2EB3 + 0x2A1 - 0x100]
+
+    re = RoomEditor(rom, 0x0B1)
+    re.getWarps()[0].target_x = 128
+    re.store(rom)
 
     # Load the shopkeeper sprites instead of Grandpa sprites
     entityData.SPRITE_DATA[0x77] = entityData.SPRITE_DATA[0x4D]
 
     labels = {}
-    rom.patch(0x06, 0x2860, "00" * 0x215, ASM("""
+    rom.patch(0x06, 0x2860, "00" * 0x217, ASM("""
 shopItemsHandler:
 ; Render the shop items
     ld   h, $00
@@ -229,7 +242,16 @@ TalkResultHandler:
     ld  c, a ; b=0
     add hl, bc
     ld  a, [hl]
-    ld  [$DB92], a
+    ld  [$DB92], a ; set substract buffer
+    
+    ; Set the item to send
+    ld  hl, $DDFE
+    ld  a, [$C509] ; currently picked up item 
+    ldi [hl], a
+    ldh a, [$EE]   ; X position of NPC
+    ldi [hl], a
+    ld  hl, $DDF7
+    set 2, [hl]
 
     ; No longer picked up item
     xor a
@@ -248,6 +270,11 @@ ItemPriceTableDEC:
     ld   a, $01
     ld   [$C50A], a ; this stops link from using items
 
+    ldh  a, [$EE] ; X
+    cp   $08
+    ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
+    jp   z, ${SHOPITEMSHANDLER:04x}
+
 ;Draw shopkeeper
     ld   de, OwnerSpriteData
     call $3BC0 ; render sprite pair
@@ -263,13 +290,7 @@ ItemPriceTableDEC:
     call $641A ; prevent link from moving into the sprite
     call $645D ; check if talking to NPC
     call c, ${TALKHANDLER:04x} ; talk handling
-
-    ldh  a, [$EE] ; X
-    cp   $18
-    ret  nz
-
-    ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
-    jp   ${SHOPITEMSHANDLER:04x}
+    ret
 
 checkTalkingResult:
     ld   a, [$C19F]
