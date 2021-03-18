@@ -115,6 +115,7 @@ class PlayerInfo:
 class Server(socketserver.ThreadingTCPServer):
     block_on_close = False
     daemon_threads = True
+    allow_reuse_address = True
 
     def __init__(self, port):
         super().__init__(("0.0.0.0", port), Connection)
