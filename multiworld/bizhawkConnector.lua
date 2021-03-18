@@ -6,9 +6,13 @@ local connection_state = nil
 console.clear()
 print("Start")
 
+-- Connector version
+VERSION = 0x01
+
 -- Memory locations of LADXR
 ROMGameID = 0x0051 -- 4 bytes
 ROMWorldID = 0x0055
+ROMConnectorVersion = 0x0056
 wGameplayType = 0xDB95 -- RO: We should only act if this is higher then 6, as it indicates that the game is running normally
 wLinkSyncSequenceNumber = 0xDDF6 --RO: Starts at 0, increases every time an item is received from the server and processed
 wLinkStatusBits = 0xDDF7 -- RW:
@@ -34,6 +38,10 @@ function stateInitialize()
         print(string.format("Unknown gameplay type? %02x", gameplayType))
         return
     end
+    if memory.readbyte(ROMConnectorVersion) != VERSION then
+        gui.drawText(0, 0, "Wrong ROM/Connector version", 0xFF000000)
+        return
+    end
 
     gui.drawText(0, 0, "Connecting...", 0xFF000000)
     connection_state = stateTryToConnect
@@ -51,7 +59,7 @@ function stateTryToConnect()
         connection_state = stateError
     else
         socket:settimeout(0)
-        sendAll(string.char(0x20, memory.readbyte(ROMGameID), memory.readbyte(ROMGameID + 1), memory.readbyte(ROMGameID + 2), memory.readbyte(ROMGameID + 3), memory.readbyte(ROMWorldID)))
+        sendAll(string.char(0x21, VERSION, memory.readbyte(ROMGameID), memory.readbyte(ROMGameID + 1), memory.readbyte(ROMGameID + 2), memory.readbyte(ROMGameID + 3), memory.readbyte(ROMWorldID)))
         print(string.format("Connected as game: %02x%02x%02x%02x:%02x", memory.readbyte(ROMGameID), memory.readbyte(ROMGameID + 1), memory.readbyte(ROMGameID + 2), memory.readbyte(ROMGameID + 3), memory.readbyte(ROMWorldID)))
         connection_state = stateIdle
     end
@@ -108,15 +116,23 @@ function stateIdle()
         if result == nil then return end
         
         if result:byte(1, 1) == 0x01 then
-            result, err = socket:receive(2)
-            item_id, source = result:byte(1, 2)
+            result, err = socket:receive(3)
+            seq_nr, item_id, source = result:byte(1, 2, 3)
 
-            print(string.format("Go item: %02x from %d", item_id, source))
+            print(string.format("Go item: %02x from %d (%d)", item_id, source, seq_nr))
 
-            memory.writebyte(wLinkGiveItem, item_id)
-            memory.writebyte(wLinkGiveItemFrom, source)
-            memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
-            memory.writebyte(wLinkSyncSequenceNumber, memory.readbyte(wLinkSyncSequenceNumber) + 1)
+            if memory.readbyte(wLinkSyncSequenceNumber) != seq_nr then
+                print("Wrong seq number for item, ignoring.")
+            else
+                if bit.band(memory.readbyte(wLinkStatusBits), 0x01) == 0x01 then
+                    print("Got item while previous was not yet handled by the game!")
+                else
+                    memory.writebyte(wLinkGiveItem, item_id)
+                    memory.writebyte(wLinkGiveItemFrom, source)
+                    memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
+                    memory.writebyte(wLinkSyncSequenceNumber, memory.readbyte(wLinkSyncSequenceNumber) + 1)
+                end
+            end
         end
         if result:byte(1, 1) == 0x02 then
             result, err = socket:receive(2)
@@ -124,9 +140,13 @@ function stateIdle()
 
             print(string.format("Go shop item: %02x from %d", item_id, source))
 
-            memory.writebyte(wLinkGiveItem, item_id)
-            memory.writebyte(wLinkGiveItemFrom, source)
-            memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
+            if bit.band(memory.readbyte(wLinkStatusBits), 0x01) == 0x01 then
+                print("Cannot give shop item, as there is still an item waiting, dropping it. Sorry.")
+            else
+                memory.writebyte(wLinkGiveItem, item_id)
+                memory.writebyte(wLinkGiveItemFrom, source)
+                memory.writebyte(wLinkStatusBits, bit.bor(memory.readbyte(wLinkStatusBits), 0x01))
+            end
         end
     end
 end

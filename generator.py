@@ -202,6 +202,7 @@ def generateRom(options, seed, logic, multiworld=None):
         for n in range(4):
             rom.patch(0x00, 0x0051 + n, "00", "%02x" % (seed[n]))
         rom.patch(0x00, 0x0055, "00", "%02x" % (multiworld))
+        rom.patch(0x00, 0x0056, "00", "01") # Set the Bizhawk connector version.
 
         world_setup = logic.worlds[multiworld].world_setup
         item_list = [spot for spot in logic.iteminfo_list if spot.world == multiworld]

@@ -3,6 +3,8 @@ import argparse
 import sys
 import binascii
 
+VERSION = 0x01
+
 
 class Connection(socketserver.StreamRequestHandler):
     def handle(self):
@@ -14,14 +16,14 @@ class Connection(socketserver.StreamRequestHandler):
             command = data[0]
             if command == 0x00:
                 sync_nr = self.rfile.read(1)[0]
-                
+
                 player_info = self.server.getGame(self.game_id).getPlayer(self.player_id)
                 if player_info.getItemCount() > sync_nr:
-                    self.wfile.write(bytes([0x01, player_info.getItem(sync_nr), player_info.getItemSource(sync_nr)]))
+                    self.wfile.write(bytes([0x01, sync_nr, player_info.getItem(sync_nr), player_info.getItemSource(sync_nr)]))
                 else:
                     shop_item = player_info.getShopItem()
                     if shop_item:
-                        self.wfile.write(bytes([0x01, shop_item[0], shop_item[1]]))
+                        self.wfile.write(bytes([0x02, shop_item[0], shop_item[1]]))
                     else:
                         self.wfile.write(bytes([0x00]))
             elif command == 0x10:
@@ -37,10 +39,15 @@ class Connection(socketserver.StreamRequestHandler):
                 item_id = data[1]
 
                 self.server.getGame(self.game_id).gotShopItem(self.player_id, target_player_id, item_id)
-            elif command == 0x20:
+            elif command == 0x21:
+                version = self.rfile.read(1)[0]
                 self.game_id = self.rfile.read(4)
                 self.player_id = self.rfile.read(1)[0]
                 print("Player connected: %d (%s)" % (self.player_id, binascii.hexlify(self.game_id)))
+                global VERSION
+                if version != VERSION:
+                    print("Player is using wrong version: %d != %d" % (version, VERSION))
+                    break
         print("Close", self)
 
 

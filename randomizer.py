@@ -61,6 +61,8 @@ class Randomizer:
             z = None
             if options.output_filename is not None:
                 z = zipfile.ZipFile(options.output_filename, "w")
+                z.write(os.path.join(os.path.dirname(__file__), "multiworld/bizhawkConnector.lua"), "bizhawkConnector.lua")
+                z.write(os.path.join(os.path.dirname(__file__), "multiworld/socket.dll"), "socket.dll")
             for n in range(options.multiworld):
                 rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
                 fname = "LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1)
