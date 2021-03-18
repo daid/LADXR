@@ -67,6 +67,11 @@ end
 connection_state = stateInitialize
 
 function stateIdle()
+    local gameplayType = memory.readbyte(wGameplayType)
+    if gameplayType <= 6 then
+        return
+    end
+
     poll_counter = poll_counter + 1
     if poll_counter == 60 then
         poll_counter = 0
@@ -117,9 +122,8 @@ function stateIdle()
         
         if result:byte(1, 1) == 0x01 then
             result, err = socket:receive(3)
-            seq_nr, item_id, source = result:byte(1, 2, 3)
-
-            print(string.format("Go item: %02x from %d (%d)", item_id, source, seq_nr))
+            seq_nr, item_id, source = result:byte(1, 3)
+            print(string.format("Got item: %02x from %d (%d)", item_id, source, seq_nr))
 
             if memory.readbyte(wLinkSyncSequenceNumber) ~= seq_nr then
                 print("Wrong seq number for item, ignoring.")
@@ -163,6 +167,7 @@ end
 event.unregisterbyname("LADXR")
 event.unregisterbyname("LADXR")
 event.onframeend(function()
+    gui.drawText(0, 0, "", 0xFF000000)
     connection_state()
 end, "LADXR")
 
