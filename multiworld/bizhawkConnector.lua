@@ -38,7 +38,7 @@ function stateInitialize()
         print(string.format("Unknown gameplay type? %02x", gameplayType))
         return
     end
-    if memory.readbyte(ROMConnectorVersion) != VERSION then
+    if memory.readbyte(ROMConnectorVersion) ~= VERSION then
         gui.drawText(0, 0, "Wrong ROM/Connector version", 0xFF000000)
         return
     end
@@ -121,7 +121,7 @@ function stateIdle()
 
             print(string.format("Go item: %02x from %d (%d)", item_id, source, seq_nr))
 
-            if memory.readbyte(wLinkSyncSequenceNumber) != seq_nr then
+            if memory.readbyte(wLinkSyncSequenceNumber) ~= seq_nr then
                 print("Wrong seq number for item, ignoring.")
             else
                 if bit.band(memory.readbyte(wLinkStatusBits), 0x01) == 0x01 then
