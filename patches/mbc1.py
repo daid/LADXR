@@ -6,8 +6,6 @@ def useMBC1(rom):
         push af
         cp   $20
         jr   c, lowerBanks
-        cp   $3F
-        jr   nc, higherBanks
         inc  a
         ld   [$2100], a
         ld   a, $01
@@ -17,13 +15,6 @@ def useMBC1(rom):
 lowerBanks:
         ld   [$2100], a
         xor  a
-        ld   [$4000], a
-        pop  af
-        ret
-higherBanks:
-        add  a, $02
-        ld   [$2100], a
-        ld   a, $02
         ld   [$4000], a
         pop  af
         ret

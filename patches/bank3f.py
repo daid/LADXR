@@ -1,4 +1,4 @@
-from assembler import ASM
+from assembler import ASM, getConst
 import utils
 
 
@@ -38,7 +38,7 @@ def addBank3F(rom):
         jr nz, notGBC
 
         ; Switch to bank $3F to run our custom initializer
-        ld   a, $3F
+        ld   a, INIT_BANK
         ;ld   [$2100], a
         call $00A0
         call $4000
@@ -55,7 +55,8 @@ def addBank3F(rom):
     Init:
         """), fill_nop=True)
 
-    rom.patch(0x3F, 0x0000, None, ASM("""
+    bank_nr = getConst("INIT_BANK")
+    rom.patch(bank_nr, 0x0000, None, ASM("""
         ; switch speed
         ld   a, $30
         ldh  [$00], a
@@ -156,6 +157,7 @@ def addBank3F(rom):
         ld   a, $FF
         ldh  [$01], a
         ret
+
 badEmu:
         xor  a
         ldh  [$40], a ; switch display off
@@ -267,16 +269,16 @@ blockBadEmu:
         """))
 
     # Copy all normal item graphics
-    rom.banks[0x3F][0x3000:0x3300] = rom.banks[0x2C][0x0800:0x0B00]  # main items
-    rom.banks[0x3F][0x3300:0x3400] = rom.banks[0x2C][0x0C00:0x0D00]  # overworld key items
-    rom.banks[0x3F][0x3400:0x3500] = rom.banks[0x32][0x3D00:0x3E00]  # dungeon key items
+    rom.banks[bank_nr][0x3000:0x3300] = rom.banks[0x2C][0x0800:0x0B00]  # main items
+    rom.banks[bank_nr][0x3300:0x3400] = rom.banks[0x2C][0x0C00:0x0D00]  # overworld key items
+    rom.banks[bank_nr][0x3400:0x3500] = rom.banks[0x32][0x3D00:0x3E00]  # dungeon key items
     # Create ruppee for palettes 0-3
-    rom.banks[0x3F][0x3380:0x33A0] = rom.banks[0x3F][0x3260:0x3280]
+    rom.banks[bank_nr][0x3380:0x33A0] = rom.banks[bank_nr][0x3260:0x3280]
     for n in range(0x3380, 0x33A0, 2):
-        rom.banks[0x3F][n+1] ^= rom.banks[0x3F][n]
+        rom.banks[bank_nr][n+1] ^= rom.banks[bank_nr][n]
 
     # Create capacity upgrade arrows
-    rom.banks[0x3F][0x3230:0x3240] = utils.createTileData("""
+    rom.banks[bank_nr][0x3230:0x3240] = utils.createTileData("""
    33
   3113
  311113
@@ -284,20 +286,20 @@ blockBadEmu:
   3113
   3333
 """)
-    rom.banks[0x3F][0x3220:0x3230] = rom.banks[0x3F][0x3230:0x3240]
+    rom.banks[bank_nr][0x3220:0x3230] = rom.banks[bank_nr][0x3230:0x3240]
     for n in range(0x3220, 0x3240, 2):
-        rom.banks[0x3F][n] |= rom.banks[0x3F][n + 1]
+        rom.banks[bank_nr][n] |= rom.banks[bank_nr][n + 1]
 
     # Add the slime key and mushroom which are not in the above sets
-    rom.banks[0x3F][0x34C0:0x3500] = rom.banks[0x2C][0x28C0:0x2900]
+    rom.banks[bank_nr][0x34C0:0x3500] = rom.banks[0x2C][0x28C0:0x2900]
     # Add tunic sprites as well.
-    rom.banks[0x3F][0x3480:0x34A0] = rom.banks[0x35][0x0F00:0x0F20]
+    rom.banks[bank_nr][0x3480:0x34A0] = rom.banks[0x35][0x0F00:0x0F20]
 
     # Add the bowwow sprites
-    rom.banks[0x3F][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]
+    rom.banks[bank_nr][0x3500:0x3600] = rom.banks[0x2E][0x2400:0x2500]
 
     # Zol sprites, so we can have zol anywhere from a chest
-    rom.banks[0x3F][0x3600:0x3660] = rom.banks[0x2E][0x1120:0x1180]
+    rom.banks[bank_nr][0x3600:0x3660] = rom.banks[0x2E][0x1120:0x1180]
     # Patch gel(zol) entity to load sprites from the 2nd bank
     rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "600A602A620A622A" "6008602862086228")
     rom.patch(0x07, 0x329B, "FFFFFFFF" "FFFFFFFF" "54005420" "52005220" "56005600",
@@ -306,13 +308,13 @@ blockBadEmu:
 
 
     # Cucco
-    rom.banks[0x3F][0x3680:0x3700] = rom.banks[0x32][0x2500:0x2580]
+    rom.banks[bank_nr][0x3680:0x3700] = rom.banks[0x32][0x2500:0x2580]
     # Patch the cucco graphics to load from 2nd vram bank
     rom.patch(0x05, 0x0514,
               "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
               "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
     # Song symbols
-    rom.banks[0x3F][0x3700:0x3760] = utils.createTileData("""
+    rom.banks[bank_nr][0x3700:0x3760] = utils.createTileData("""
 
 
      ...
@@ -362,7 +364,7 @@ blockBadEmu:
    .....""", " .23")
 
     # Instruments
-    rom.banks[0x3F][0x3800:0x3A00] = rom.banks[0x31][0x1000:0x1200]
+    rom.banks[bank_nr][0x3800:0x3A00] = rom.banks[0x31][0x1000:0x1200]
     # Patch the egg song event to use the 2nd vram sprites
     rom.patch(0x19, 0x0BAC,
         "5006520654065606"

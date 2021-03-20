@@ -220,9 +220,15 @@ class ROMWithTables(ROM):
         self.background_attributes.store(self)
 
         self.banks.insert(0x20, self.banks[0].copy())
-        self.banks.insert(0x40, self.banks[0].copy())
-        while len(self.banks) < 0x80:
+        assert self.banks[0x40] == b'\x00' * 0x4000
+        assert len(self.banks) == 0x41
+        self.banks.pop(0x40)
+        while len(self.banks) < 0x40:
             self.banks.append(b'\xff' * 0x4000)
         print("MBC1 done", len(self.banks))
+
+        pokered = open("pokered.gbc", "rb").read()
+        for n in range(0x40):
+            self.banks.append(pokered[n*0x4000:(n+1)*0x4000])
 
         super().save(filename, name=name)

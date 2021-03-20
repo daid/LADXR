@@ -722,6 +722,10 @@ def resetConsts():
     CONST_MAP.clear()
 
 
+def getConst(name):
+    return CONST_MAP[name][0] | (CONST_MAP[name][1] << 8)
+
+
 def ASM(code, base_address=None, labels_result=None):
     asm = Assembler(base_address)
     asm.process(code)

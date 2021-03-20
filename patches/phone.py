@@ -31,6 +31,9 @@ def patchPhone(rom):
     rom.texts[0x247] = b""
     rom.texts[0x248] = b""
     rom.patch(0x06, 0x2A8F, 0x2BBC, ASM("""
+        ld  a, $0E
+        rst 8
+    
         ; We use $DB6D to store which tunics we have. This is normally the Dungeon9 instrument, which does not exist.
         ld  a, [$DC0F]
         ld  hl, wCollectedTunics

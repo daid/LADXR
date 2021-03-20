@@ -66,6 +66,7 @@ MainJumpTable:
         dw   GiveItemAndMessageForRoom    ; B
         dw   RenderItemForRoom            ; C
         dw   StartGameMarinMessage        ; D
+        dw   SwitchROM                    ; E
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter
@@ -86,6 +87,26 @@ StartGameMarinMessage:
         ; Show the normal message
         ld   a, $01
         jp $2385
+
+    SwitchROM:
+        ld   de, switchRomCode
+        ld   hl, wSwitchRomCode
+        ld   c, $10
+.loop:
+        ld   a, [de]
+        inc  de
+        ldi  [hl], a
+        dec  c
+        jr   nz, .loop
+        jp   wSwitchRomCode
+
+switchRomCode:
+        ld   a, $00
+        ld   [$2000], a
+        ld   a, $02
+        ld   [$4000], a
+        ld   a, $11
+        jp   $0100
 
     """ + open(os.path.join(my_path, "bank3e.asm/multiworld.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
