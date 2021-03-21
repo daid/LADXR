@@ -145,7 +145,7 @@ class MultiworldItemInfoWrapper:
         self.world = world
         self.world_count = configuration_options.multiworld
         self.target = target
-        self.keysanity = configuration_options.keysanity
+        self.dungeon_items = configuration_options.dungeon_items
         self.MULTIWORLD_OPTIONS = None
 
     @property
@@ -191,16 +191,18 @@ class MultiworldItemInfoWrapper:
     # Return true if the item is allowed to be placed in any world, or false if it is
     # world specific for this check.
     def canMultiworld(self, option):
-        if not self.keysanity:
-            if option.startswith("KEY"):
-                return False
+        if self.dungeon_items == 'standard':
             if option.startswith("MAP"):
                 return False
             if option.startswith("COMPASS"):
                 return False
-            if option.startswith("NIGHTMARE_KEY"):
-                return False
             if option.startswith("STONE_BEAK"):
+                return False
+        if self.dungeon_items in ('standard', 'localkeys'):
+            if option.startswith("KEY"):
+                return False
+        if self.dungeon_items in ('standard', 'localkeys', 'localnightmarekey'):
+            if option.startswith("NIGHTMARE_KEY"):
                 return False
         return True
 

@@ -5,24 +5,17 @@ from assembler import ASM
 
 
 class ShopItem(ItemInfo):
-    OPTIONS = [BOMB]
+    OPTIONS = [SWORD, POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS,
+                    OCARINA, FEATHER, SHOVEL, BOOMERANG,
+                    FLIPPERS, SLIME_KEY, TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF,
+                    RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL,
+                    HEART_PIECE, BOWWOW,
+                    MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
+                    HEART_CONTAINER, BAD_HEART_CONTAINER]
 
     def __init__(self, index):
         self.__index = index
         super().__init__(0x2A1)
-
-    def configure(self, options):
-        self.OPTIONS = [SWORD, POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS,
-                        OCARINA, FEATHER, SHOVEL, BOOMERANG,
-                        FLIPPERS, SLIME_KEY, TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF,
-                        RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL,
-                        HEART_PIECE, BOWWOW,
-                        MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
-                        HEART_CONTAINER, BAD_HEART_CONTAINER]
-        if options.keysanity:
-            for n in range(10):
-                self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n),
-                                 "NIGHTMARE_KEY%d" % (n)]
 
     def patch(self, rom, option, *, multiworld=None):
         assert multiworld is None

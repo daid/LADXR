@@ -13,15 +13,6 @@ class DroppedKey(ItemInfo):
         INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8]
     MULTIWORLD = True
 
-    def configure(self, options):
-        if options.keysanity:
-            self.OPTIONS = DroppedKey.OPTIONS.copy()
-            for n in range(10):
-                self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
-        elif self._location.dungeon is not None:
-            d = self._location.dungeon
-            self.OPTIONS = DroppedKey.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
-
     def patch(self, rom, option, *, multiworld=None):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
             if self._location.dungeon == int(option[-1]) and multiworld is None:

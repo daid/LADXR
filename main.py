@@ -62,8 +62,8 @@ def main(mainargs=None):
         help="Shuffle the instruments in the item pool.")
     parser.add_argument('--owlstatues', dest="owlstatues", choices=['none', 'dungeon', 'overworld', 'both'], default='none',
         help="Give the owl statues in dungeons or on the overworld items as well, instead of showing the normal hints")
-    parser.add_argument('--keysanity', dest="keysanity", action="store_true",
-        help="Enables keysanity mode, which shuffles all dungeon items outside dungeons as well.")
+    parser.add_argument('--dungeon-items', dest="dungeon_items", choices=['standard', 'localkeys', 'localnightmarekey', 'keysanity'], default='standard',
+        help="Sets what gets done with dungeon items, if they are in their own dungeon or not.")
     parser.add_argument('--randomstartlocation', dest="randomstartlocation", action="store_true",
         help="Place your starting house at a random location.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",

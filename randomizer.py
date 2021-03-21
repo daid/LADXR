@@ -48,7 +48,7 @@ class Randomizer:
                 else:
                     ii.forced_item = item
 
-        if not options.keysanity or options.forwardfactor:
+        if options.dungeon_items in ('standard', 'localkeys') or options.forwardfactor:
             item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)
         else:
             item_placer = RandomItemPlacer(self.__logic, options.accessibility_rule)

@@ -18,12 +18,6 @@ class Chest(ItemInfo):
         super().__init__(room)
         self.addr = room + 0x560
 
-    def configure(self, options):
-        if options.keysanity:
-            self.OPTIONS = Chest.OPTIONS.copy()
-            for n in range(10):
-                self.OPTIONS += ["KEY%d" % (n), "MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n), "NIGHTMARE_KEY%d" % (n)]
-
     def patch(self, rom, option, *, multiworld=None):
         rom.banks[0x14][self.addr] = CHEST_ITEMS[option]
 
@@ -47,13 +41,6 @@ class Chest(ItemInfo):
 
 
 class DungeonChest(Chest):
-    def configure(self, options):
-        if options.keysanity:
-            super().configure(options)
-        else:
-            d = self._location.dungeon
-            self.OPTIONS = Chest.OPTIONS + ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d), "NIGHTMARE_KEY%d" % (d), "KEY%d" % (d)]
-
     def patch(self, rom, option, *, multiworld=None):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
             if self._location.dungeon == int(option[-1]) and multiworld is None:

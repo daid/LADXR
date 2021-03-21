@@ -96,7 +96,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.core.removeGhost(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if options.keysanity:
+    if options.dungeon_items in ('localnightmarekey', 'keysanity'):
         patches.inventory.advancedInventorySubscreen(rom)
     if expanded_inventory:
         patches.inventory.moreSlots(rom)

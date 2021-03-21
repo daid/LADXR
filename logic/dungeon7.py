@@ -30,7 +30,7 @@ class Dungeon7:
         beamos_horseheads = Location(7).add(DungeonChest(0x220)).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
         boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, boss_requirements[world_setup.boss_mapping[6]])
 
-        if not options.keysanity:
+        if options.dungeon_items not in ('localnightmarekey', 'keysanity'):
             first_key.items[0].forced_item = KEY7
             
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
