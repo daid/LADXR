@@ -723,7 +723,7 @@ def resetConsts():
 
 
 def getConst(name):
-    return CONST_MAP[name][0] | (CONST_MAP[name][1] << 8)
+    return CONST_MAP[name]
 
 
 def ASM(code, base_address=None, labels_result=None):
