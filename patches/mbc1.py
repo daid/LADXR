@@ -53,6 +53,7 @@ lowerBanks:
 
     rom.patch(0x00, 0x0147, "1B", "03")
     rom.patch(0x00, 0x0148, "05", "06")
+    rom.patch(0x00, 0x0149, "03", "02")
 
     rom.patch(0x00, 0x1D12, 0x1D18, ASM("push hl\npop de\ncall $00D0"), fill_nop=True)
     rom.patch(0x00, 0x00D0, "00" * 0x20, ASM("""
@@ -68,3 +69,7 @@ lowerBanks:
         ld  [hl], $01
         ret
     """), fill_nop=True)
+
+    # Do not whipe the 2/3 save slots (other data is here)
+    rom.patch(0x01, 0x06B3, ASM("call $4794"), "", fill_nop=True)
+    rom.patch(0x01, 0x06B9, ASM("call $4794"), "", fill_nop=True)
