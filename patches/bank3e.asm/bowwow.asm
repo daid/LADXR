@@ -101,7 +101,7 @@ BowwowHurtEnemy:
     ; Hurt enemy with damage type zero (sword)
     ld   a, $00
     ld   [$C19E], a
-    rst  18
+    rst  $18
     ; Play SFX
     ld   a, $03
     ldh  [$F2], a
