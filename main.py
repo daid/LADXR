@@ -7,6 +7,31 @@ import patches.dungeonEntrances
 import logic.requirements
 import explorer
 import spoilerLog
+import re
+from argparse import ArgumentParser, ArgumentTypeError
+
+
+def goal(goal):
+    if goal == "random":
+        goal = "-1-8"
+    elif goal in [ "seashells", "raft" ]:
+        return goal
+    m = re.match(r'^(-?\d|open)(?:-(\d))?$', goal)
+    if not m:
+        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (open, 0, 1, 2 ... 8), a range (open-6, 1-4, 5-8, ...) or 'seashells' / 'raft'.")
+    start = m.group(1)
+    if start == "open":
+        start = "-1"
+    start = int(start, 10)
+    end = m.group(2) or start
+    end = int(end, 10)
+    if start < -1 or start > 8 or end < -1 or end > 8:
+        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
+    if end == start:
+        return start
+    elif end < start:
+        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
+    return range(start, end+1)
 
 
 def main(mainargs=None):
@@ -84,8 +109,8 @@ def main(mainargs=None):
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
         help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
-    parser.add_argument('--goal', dest="goal", choices=['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'random', 'raft', 'seashells'], default='8',
-        help="Configure the instrument goal for this rom, anything between 0 and 8.")
+    parser.add_argument('--goal', dest="goal", type=goal, default='8',
+        help="Configure the instrument goal for this rom: any number between -1 (open egg) and 8, a range (e.g. 4-7), 'random', or 'raft' / 'seashells' for special goals.")
     parser.add_argument('--accessibility', dest="accessibility_rule", choices=['all', 'goal'],
         help="Switches between making sure all locations are reachable or only the goal is reachable")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',
