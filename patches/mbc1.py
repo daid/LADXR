@@ -7,15 +7,15 @@ def useMBC1(rom):
         cp   $20
         jr   c, lowerBanks
         inc  a
-        ld   [$2100], a
+        ld   [$2001], a
         ld   a, $01
-        ld   [$4000], a
+        ld   [$4001], a
         pop  af
         ret
 lowerBanks:
-        ld   [$2100], a
+        ld   [$2001], a
         xor  a
-        ld   [$4000], a
+        ld   [$4001], a
         pop  af
         ret
     """), fill_nop=True)
@@ -50,6 +50,10 @@ lowerBanks:
             rst  30
             pop  af
         """ % (bank)))
+
+    # Do not switch SRAM bank, as this screw up the MBC1 selected ROM bank.
+    for addr in (0x27D1,):
+        rom.patch(0x00, addr, ASM("ld hl, $4000\nld [hl], $00"), "", fill_nop=True)
 
     rom.patch(0x00, 0x0147, "1B", "03")
     rom.patch(0x00, 0x0148, "05", "06")
