@@ -39,6 +39,7 @@ import patches.tunicFairy
 import patches.seashell
 import patches.instrument
 import patches.endscreen
+import patches.save
 import patches.multiworld
 import hints
 
@@ -86,6 +87,8 @@ def generateRom(options, seed, logic, multiworld=None):
     assembler.const("HARD_MODE", 1 if options.hardMode else 0)
 
     patches.core.cleanup(rom)
+    if multiworld:
+        patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
     patches.core.bugfixWrittingWrongRoomStatus(rom)
     patches.core.bugfixBossroomTopPush(rom)
