@@ -91,7 +91,7 @@ StartGameMarinMessage:
     SwitchROM:
         ld   de, switchRomCode
         ld   hl, wSwitchRomCode
-        ld   c, $10
+        ld   c, $20
 .loop:
         ld   a, [de]
         inc  de
@@ -101,12 +101,17 @@ StartGameMarinMessage:
         jp   wSwitchRomCode
 
 switchRomCode:
+        ld   a, $01
+        ld   [$DBAF], a
+        call $00A0 
+        call $5DE6 ; Save game
         ld   a, $00
         ld   [$2000], a
         ld   a, $02
         ld   [$4000], a
         ld   a, $11
         jp   $0100
+.end:
 
     """ + open(os.path.join(my_path, "bank3e.asm/multiworld.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()

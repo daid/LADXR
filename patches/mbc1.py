@@ -73,7 +73,3 @@ lowerBanks:
         ld  [hl], $01
         ret
     """), fill_nop=True)
-
-    # Do not whipe the 2/3 save slots (other data is here)
-    rom.patch(0x01, 0x06B3, ASM("call $4794"), "", fill_nop=True)
-    rom.patch(0x01, 0x06B9, ASM("call $4794"), "", fill_nop=True)
