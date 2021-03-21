@@ -51,5 +51,4 @@ skip:
     be = BackgroundEditor(rom, 0x06)
     del be.tiles[0x9924]
     del be.tiles[0x9984]
-    be.dump()
     be.store(rom)
