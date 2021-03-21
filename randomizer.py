@@ -27,8 +27,8 @@ class Randomizer:
         self.rnd = random.Random(self.seed)
         if options.race:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
-        if options.goal == "random":
-            options.goal = self.rnd.randint(-1, 8)
+        if isinstance(options.goal, range):
+            options.goal = self.rnd.randint(min(options.goal), max(options.goal))
         if options.plan:
             assert options.multiworld is None
             self.plan = Plan(options.plan)
