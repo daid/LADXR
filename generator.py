@@ -249,4 +249,5 @@ def generateRom(options, seed, logic, multiworld=None):
     for pymod in pymods:
         pymod.postPatch(rom)
     patches.mbc1.useMBC1(rom)
+    patches.save.singleSaveSlot(rom)
     return rom
