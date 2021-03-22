@@ -46,6 +46,43 @@ class REF(ExprBase):
             return REGS8['[HL]']
         return None
 
+    def __repr__(self):
+        return "[%s]" % (self.expr)
+
+
+class OP(ExprBase):
+    def __init__(self, op, left, right=None):
+        self.op = op
+        self.left = left
+        self.right = right
+
+    def __repr__(self):
+        return "%s %s %s" % (self.left, self.op, self.right)
+
+    @staticmethod
+    def make(op, left, right=None):
+        if left.isA('NUMBER') and right.isA('NUMBER'):
+            if op == '+':
+                left.value += right.value
+                return left
+            if op == '-':
+                left.value -= right.value
+                return left
+            if op == '*':
+                left.value *= right.value
+                return left
+            if op == '/':
+                left.value //= right.value
+                return left
+        if left.isA('NUMBER') and right is None:
+            if op == '+':
+                return left
+            if op == '-':
+                left.value = -left.value
+                return left
+        return OP(op, left, right)
+
+
 class Tokenizer:
     TOKEN_REGEX = re.compile('|'.join('(?P<%s>%s)' % pair for pair in [
         ('NUMBER', r'\d+(\.\d*)?'),
@@ -56,7 +93,7 @@ class Tokenizer:
         ('DIRECTIVE', r'#[A-Za-z_]+'),
         ('STRING', '[a-zA-Z]?"[^"]*"'),
         ('ID', r'\.?[A-Za-z_][A-Za-z0-9_\.]*'),
-        ('OP', r'[+\-*/,]'),
+        ('OP', r'[+\-*/,\(\)]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
         ('NEWLINE', r'\n'),
@@ -126,10 +163,13 @@ class Assembler:
     }
 
     LINK_REL8 = 0
-    LINK_ABS16 = 1
+    LINK_ABS8 = 1
+    LINK_ABS16 = 2
 
     def __init__(self, base_address=None):
         self.__base_address = base_address
+        if base_address is None:
+            self.__base_address = -1
         self.__result = bytearray()
         self.__label = {}
         self.__link = {}
@@ -281,37 +321,27 @@ class Assembler:
 
     def insert8(self, expr):
         if expr.isA('NUMBER'):
-            self.__result.append(expr.value)
-        elif expr.isA('ID') and expr.value in CONST_MAP:
-            self.__result.append(CONST_MAP[expr.value])
+            value = expr.value
         else:
-            self.__result.append(0x00)
+            self.__link[len(self.__result)] = (Assembler.LINK_ABS8, expr)
+            value = 0
+        assert 0 <= value < 256
+        self.__result.append(value)
 
     def insertRel8(self, expr):
         if expr.isA('NUMBER'):
             self.__result.append(expr.value)
-        elif expr.isA('ID'):
-            label = expr.value
-            if label.startswith('.'):
-                label = self.__scope + label
-            self.__link[len(self.__result)] = (Assembler.LINK_REL8, label)
-            self.__result.append(0x00)
         else:
-            raise SyntaxError
+            self.__link[len(self.__result)] = (Assembler.LINK_REL8, expr)
+            self.__result.append(0x00)
 
     def insert16(self, expr):
         if expr.isA('NUMBER'):
             value = expr.value
-        elif expr.isA('ID') and expr.value in CONST_MAP:
-            value = CONST_MAP[expr.value]
-        elif expr.isA('ID'):
-            label = expr.value
-            if label.startswith('.'):
-                label = self.__scope + label
-            self.__link[len(self.__result)] = (Assembler.LINK_ABS16, label)
-            value = 0
         else:
-            raise SyntaxError
+            self.__link[len(self.__result)] = (Assembler.LINK_ABS16, expr)
+            value = 0
+        assert 0 <= value <= 0xFFFF
         self.__result.append(value & 0xFF)
         self.__result.append(value >> 8)
 
@@ -610,21 +640,70 @@ class Assembler:
         return self.parseExpression()
 
     def parseExpression(self):
+        t = self.parseAddSub()
+        return t
+
+    def parseAddSub(self):
+        t = self.parseFactor()
+        p = self.__tok.peek()
+        if p.isA('OP', '+') or p.isA('OP', '-'):
+            self.__tok.pop()
+            return OP.make(p.value, t, self.parseAddSub())
+        return t
+
+    def parseFactor(self):
+        t = self.parseUnary()
+        p = self.__tok.peek()
+        if p.isA('OP', '*') or p.isA('OP', '/'):
+            self.__tok.pop()
+            return OP.make(p.value, t, self.parseFactor())
+        return t
+
+    def parseUnary(self):
         t = self.__tok.pop()
+        if t.isA('OP', '-') or t.isA('OP', '+'):
+            return OP.make(t.value, self.parseUnary())
+        elif t.isA('OP', '('):
+            t = self.parseExpression()
+            self.__tok.expect('OP', ')')
+            return t
         if t.kind not in ('ID', 'NUMBER', 'STRING'):
             raise SyntaxError
+        if t.isA('ID') and t.value in CONST_MAP:
+            t.kind = 'NUMBER'
+            t.value = CONST_MAP[t.value]
+        elif t.isA('ID') and t.value.startswith("."):
+            t.value = self.__scope + t.value
         return t
 
     def link(self):
-        for offset, target in self.__link.items():
-            link_type, label = target
+        for offset, (link_type, expr) in self.__link.items():
+            expr = self.resolveExpr(expr)
+            assert expr.isA('NUMBER'), expr
+            value = expr.value
             if link_type == Assembler.LINK_REL8:
-                byte = self.__label[label] - offset - 1
+                byte = (value - self.__base_address) - offset - 1
                 assert -128 <= byte <= 127, label
                 self.__result[offset] = byte & 0xFF
+            elif link_type == Assembler.LINK_ABS8:
+                assert 0 <= value <= 0xFF
+                self.__result[offset] = value & 0xFF
             elif link_type == Assembler.LINK_ABS16:
-                self.__result[offset] = (self.__label[label] + self.__base_address) & 0xFF
-                self.__result[offset + 1] = (self.__label[label] + self.__base_address) >> 8
+                assert self.__base_address >= 0, "Cannot place absolute values in a relocatable code piece"
+                assert 0 <= value <= 0xFFFF
+                self.__result[offset] = value & 0xFF
+                self.__result[offset + 1] = value >> 8
+            else:
+                raise RuntimeError
+
+    def resolveExpr(self, expr):
+        if expr is None:
+            return None
+        elif isinstance(expr, OP):
+            return OP.make(expr.op, self.resolveExpr(expr.left), self.resolveExpr(expr.right))
+        elif expr.isA('ID') and expr.value in self.__label:
+            return Token('NUMBER', self.__label[expr.value] + self.__base_address, expr.line_nr)
+        return expr
 
     def getResult(self):
         return self.__result
@@ -653,7 +732,7 @@ def ASM(code, base_address=None, labels_result=None):
     return binascii.hexlify(asm.getResult())
 
 
-if __name__ == "__main__":
+def allOpcodesTest():
     import json
     opcodes = json.load(open("Opcodes.json", "rt"))
     for label in (False, True):
@@ -698,3 +777,24 @@ if __name__ == "__main__":
                 except Exception as e:
                     print("%s\t\t|%r|\t%s" % (code, e, num))
                     print(op)
+
+if __name__ == "__main__":
+    #allOpcodesTest()
+    const("CONST1", 1)
+    const("CONST2", 2)
+    ASM("""
+    ld a, (123)
+    ld hl, $1234 + 456
+    ld hl, $1234 + CONST1
+    ld hl, label
+    ld hl, label.end - label
+    ld c, label.end - label
+label:
+    nop
+.end:
+    """, 0)
+    ASM("""
+    jr label
+label:
+    """)
+    assert ASM("db 1 + 2 * 3") == b'07'
