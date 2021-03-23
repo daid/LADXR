@@ -8,7 +8,7 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
-from .requirements import AND, OR, COUNT, FOUND, boss_requirements
+from .requirements import AND, OR, COUNT, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from worldSetup import WorldSetup
@@ -17,24 +17,25 @@ from worldSetup import WorldSetup
 class Logic:
     def __init__(self, configuration_options, *, world_setup):
         self.world_setup = world_setup
+        r = RequirementsSettings(configuration_options)
 
         if configuration_options.overworld == "dungeondive":
-            world = overworld.DungeonDiveOverworld(configuration_options)
+            world = overworld.DungeonDiveOverworld(configuration_options, r)
         else:
-            world = overworld.World(configuration_options, world_setup)
+            world = overworld.World(configuration_options, world_setup, r)
 
         world.start.connect(world.start_locations[world_setup.start_house_index], None)
 
         dungeons = [
-            dungeon1.Dungeon1(configuration_options, world_setup),
-            dungeon2.Dungeon2(configuration_options, world_setup),
-            dungeon3.Dungeon3(configuration_options, world_setup),
-            dungeon4.Dungeon4(configuration_options, world_setup),
-            dungeon5.Dungeon5(configuration_options, world_setup),
-            dungeon6.Dungeon6(configuration_options, world_setup),
-            dungeon7.Dungeon7(configuration_options, world_setup),
-            dungeon8.Dungeon8(configuration_options, world_setup),
-            dungeonColor.DungeonColor(configuration_options, world_setup)
+            dungeon1.Dungeon1(configuration_options, world_setup, r),
+            dungeon2.Dungeon2(configuration_options, world_setup, r),
+            dungeon3.Dungeon3(configuration_options, world_setup, r),
+            dungeon4.Dungeon4(configuration_options, world_setup, r),
+            dungeon5.Dungeon5(configuration_options, world_setup, r),
+            dungeon6.Dungeon6(configuration_options, world_setup, r),
+            dungeon7.Dungeon7(configuration_options, world_setup, r),
+            dungeon8.Dungeon8(configuration_options, world_setup, r),
+            dungeonColor.DungeonColor(configuration_options, world_setup, r)
         ]
 
         dungeons[world_setup.dungeon_entrance_mapping[0]].entrance.connect(world.dungeon1_entrance, None)

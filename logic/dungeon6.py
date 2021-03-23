@@ -4,7 +4,7 @@ from locations.all import *
 
 
 class Dungeon6:
-    def __init__(self, options, world_setup):
+    def __init__(self, options, world_setup, r):
         entrance = Location(6)
         Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
         Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
@@ -23,7 +23,7 @@ class Dungeon6:
 
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)
-        miniboss = Location(6).connect(to_miniboss, AND(BOMB, miniboss_requirements[world_setup.miniboss_mapping[5]]))
+        miniboss = Location(6).connect(to_miniboss, AND(BOMB, r.miniboss_requirements[world_setup.miniboss_mapping[5]]))
         lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(OR(BOMB, BOW, MAGIC_ROD), COUNT(POWER_BRACELET, 2))) # waterway key
         medicine_chest = Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) # ledge chest medicine
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -35,7 +35,7 @@ class Dungeon6:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, boss_requirements[world_setup.boss_mapping[5]]))
+        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, r.boss_requirements[world_setup.boss_mapping[5]]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders

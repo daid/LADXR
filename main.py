@@ -4,7 +4,6 @@ import shlex
 import randomizer
 import logic
 import patches.dungeonEntrances
-import logic.requirements
 import explorer
 import spoilerLog
 import re
@@ -198,8 +197,6 @@ def main(mainargs=None):
             args.seed = binascii.unhexlify(args.seed)
         except binascii.Error:
             args.seed = args.seed.encode("ascii")
-
-    logic.requirements.adjustRequirementsForOptions(args)
 
     retry_count = 0
     while True:

@@ -4,11 +4,11 @@ from locations.all import *
 
 
 class Dungeon4:
-    def __init__(self, options, world_setup):
+    def __init__(self, options, world_setup, r):
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
-        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, attack_hookshot)) # 2 zol 1 spike enemy
+        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot)) # 2 zol 1 spike enemy
         Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, SWORD) # room with key chest
         rightside_crossroads = Location(4).connect(entrance, AND(FEATHER, PEGASUS_BOOTS))  # 2 key chests on the right.
         pushable_block_chest = Location(4).add(DungeonChest(0x171)).connect(rightside_crossroads, BOMB) # lower chest
@@ -20,18 +20,18 @@ class Dungeon4:
         before_miniboss = Location(4).connect(north_crossroads, AND(KEY4, FOUND(KEY4, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
-        sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, AND(attack_hookshot_powder, FLIPPERS))  # key that drops in the hole and needs swim to get
+        sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, AND(r.attack_hookshot_powder, FLIPPERS))  # key that drops in the hole and needs swim to get
         Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
         before_miniboss.add(DungeonChest(0x16D))  # gel chest
         before_miniboss.add(DungeonChest(0x168))  # key chest near the puzzle
-        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, FOUND(KEY4, 5), POWER_BRACELET, miniboss_requirements[world_setup.miniboss_mapping[3]]))) # flippers to move around miniboss through 5 tile room
+        miniboss = Location(4).connect(before_miniboss, OR(FLIPPERS, AND(KEY4, FOUND(KEY4, 5), POWER_BRACELET, r.miniboss_requirements[world_setup.miniboss_mapping[3]]))) # flippers to move around miniboss through 5 tile room
         miniboss.add(DungeonChest(0x160))  # flippers chest
 
         to_the_nightmare_key = Location(4).connect(before_miniboss, AND(FEATHER, OR(FLIPPERS, PEGASUS_BOOTS)))  # 5 symbol puzzle (does not need flippers with boots + feather)
         to_the_nightmare_key.add(DungeonChest(0x176))
 
-        before_boss = Location(4).connect(before_miniboss, AND(attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
-        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, boss_requirements[world_setup.boss_mapping[3]]))
+        before_boss = Location(4).connect(before_miniboss, AND(r.attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
+        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, r.boss_requirements[world_setup.boss_mapping[3]]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG)) # grab the key jumping over the water and boomerang downwards
@@ -46,7 +46,7 @@ class Dungeon4:
             
         if options.logic == 'glitched' or options.logic == 'hell':    
             pushable_block_chest.connect(rightside_crossroads, FLIPPERS) # sideways block push to skip bombs
-            sidescroller_key.connect(before_miniboss, AND(FEATHER, OR(attack_hookshot_powder, POWER_BRACELET))) # superjump into the hole to grab the key while falling into the water
+            sidescroller_key.connect(before_miniboss, AND(FEATHER, OR(r.attack_hookshot_powder, POWER_BRACELET))) # superjump into the hole to grab the key while falling into the water
             miniboss.connect(before_miniboss, FEATHER) # use jesus jump to transition over the water left of miniboss
         
         if options.logic == 'hell':
