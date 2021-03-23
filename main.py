@@ -22,9 +22,9 @@ def goal(goal):
     start = m.group(1)
     if start == "open":
         start = "-1"
-    start = int(start, 10)
+    start = int(start)
     end = m.group(2) or start
-    end = int(end, 10)
+    end = int(end)
     if start < -1 or start > 8 or end < -1 or end > 8:
         raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
     if end == start:
