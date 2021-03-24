@@ -71,7 +71,7 @@ MainJumpTable:
 StartGameMarinMessage:
         ; Injection to reset our frame counter
         call $27D0 ; Enable SRAM
-        ld   hl, $B000
+        ld   hl, $BF00
         xor  a
         ldi  [hl], a ;subsecond counter
         ld   a, $08  ;(We set the counter to 8 seconds, as it takes 8 seconds before link wakes up and marin talks to him)
@@ -80,7 +80,7 @@ StartGameMarinMessage:
         ldi  [hl], a ;minute counter
         ldi  [hl], a ;hour counter
 
-        ld   hl, $B010
+        ld   hl, $BF10
         ldi  [hl], a ;check counter low
         ldi  [hl], a ;check counter high
 

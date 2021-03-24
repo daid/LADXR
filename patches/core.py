@@ -231,7 +231,7 @@ def addFrameCounter(rom, check_count):
 
         ; Increase the "subsecond" counter, and continue if it "overflows"
         call $27D0 ; Enable SRAM
-        ld   hl, $B000
+        ld   hl, $BF00
         ld   a, [hl]
         inc  a
         cp   $20
@@ -330,11 +330,11 @@ OAMData:
 
         call $27D0 ; Enable SRAM
         ld   hl, $C04A
-        ld   a, [$B003] ; hours
+        ld   a, [$BF03] ; hours
         call updateOAM
-        ld   a, [$B002] ; minutes
+        ld   a, [$BF02] ; minutes
         call updateOAM
-        ld   a, [$B001] ; seconds
+        ld   a, [$BF01] ; seconds
         call updateOAM
         
         ld   a, [$DB58] ; death count high
@@ -342,9 +342,9 @@ OAMData:
         ld   a, [$DB57] ; death count low
         call updateOAM
 
-        ld   a, [$B011] ; check count high
+        ld   a, [$BF11] ; check count high
         call updateOAM
-        ld   a, [$B010] ; death count low
+        ld   a, [$BF10] ; death count low
         call updateOAM
         ret
 

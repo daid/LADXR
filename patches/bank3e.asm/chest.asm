@@ -880,7 +880,7 @@ IncreaseCheckCounter:
 
 .noMultiChest:
     call $27D0 ; Enable SRAM
-    ld   hl, $B010
+    ld   hl, $BF10
 .loop:
     ld   a, [hl]
     and  a ; clear carry flag
