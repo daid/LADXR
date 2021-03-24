@@ -188,7 +188,7 @@ class Assembler:
                 elif start.kind == 'DIRECTIVE':
                     if start.value == '#IF':
                         t = self.parseExpression()
-                        conditional_stack.append(conditional_stack[-1] and CONST_MAP.get(t.value, 0) != 0)
+                        conditional_stack.append(conditional_stack[-1] and t.value != 0)
                         self.__tok.expect('NEWLINE')
                     elif start.value == '#ELSE':
                         conditional_stack[-1] = not conditional_stack[-1] and conditional_stack[-2]
