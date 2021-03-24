@@ -88,6 +88,7 @@ StartGameMarinMessage:
         jp $2385
 
     """ + open(os.path.join(my_path, "bank3e.asm/multiworld.asm"), "rt").read()
+        + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/bowwow.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/message.asm"), "rt").read()

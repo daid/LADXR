@@ -1,6 +1,9 @@
 ; Handle the multiworld link
 
 MainLoop:
+#IF HARDWARE_LINK
+    call handleSerialLink
+#ENDIF
     ; Check if the gameplay is world
     ld   a, [$DB95]
     cp   $0B

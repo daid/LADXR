@@ -148,6 +148,9 @@ def addBank3F(rom):
         ld   a, $04
         ldh  [$07], a
 
+        ; Set SB to $FF to indicate we have no data from hardware
+        ld   a, $FF
+        ldh  [$01], a
         ret
 badEmu:
         xor  a
