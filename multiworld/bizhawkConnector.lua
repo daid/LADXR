@@ -134,7 +134,7 @@ function stateInitialize()
     local version = memread(ROMConnectorVersion)
     if version ~= VERSION then
         drawtext(string.format("Wrong ROM/Connector version: %02x != %02x", version, VERSION))
-        --return
+        return
     end
 
     drawtext("Connecting...")
