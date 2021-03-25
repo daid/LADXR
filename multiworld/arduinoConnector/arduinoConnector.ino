@@ -129,28 +129,28 @@ void loop() {
   switch(Serial.read())
   {
   case '!':
-    Serial.println('!');
+    Serial.print('!');
     break;
   case '?':
     if (waitForSync())
-      Serial.println('K');
+      Serial.print('K');
     else
-      Serial.println('E');
+      Serial.print('E');
     break;
   case 'R':
     while(Serial.available() < 2) {}
     addr = Serial.read() << 8;
     addr |= Serial.read();
-    Serial.println(readMem(addr), HEX);
+    Serial.print(readMem(addr), HEX);
     break;
   case 'W':
     while(Serial.available() < 3) {}
     addr = Serial.read() << 8;
     addr |= Serial.read();
     if (writeMem(addr, Serial.read())) {
-      Serial.println('K');
+      Serial.print('K');
     } else {
-      Serial.println('E');
+      Serial.print('E');
     }
     break;
   case 'O':
@@ -158,9 +158,9 @@ void loop() {
     addr = Serial.read() << 8;
     addr |= Serial.read();
     if (orMem(addr, Serial.read())) {
-      Serial.println('K');
+      Serial.print('K');
     } else {
-      Serial.println('E');
+      Serial.print('E');
     }
     break;
   }
