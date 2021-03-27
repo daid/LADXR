@@ -75,7 +75,7 @@ else
     end
 
     function memread(addr)
-        serial:write("R" .. string.char(addr >> 8, addr & 0xFF))
+        serial:write("R" .. string.char(bit.rshift(addr, 8), bit.band(addr, 0xFF)))
         local res = serial:read(128)
         if res == nil then res = serial:read(128) end
         res = tonumber(res, 16)
@@ -83,13 +83,13 @@ else
         return res
     end
     function memwrite(addr, data)
-        serial:write("W" .. string.char(addr >> 8, addr & 0xFF, data))
+        serial:write("W" .. string.char(bit.rshift(addr, 8), bit.band(addr, 0xFF), data))
         local res = serial:read(128)
         if res == nil then res = serial:read(128) end
         if res == "E" then return memwrite(addr, data) end
     end
     function memwriteOR(addr, data)
-        serial:write("O" .. string.char(addr >> 8, addr & 0xFF, data))
+        serial:write("O" .. string.char(bit.rshift(addr, 8), bit.band(addr, 0xFF), data))
         local res = serial:read(128)
         if res == nil then res = serial:read(128) end
         if res == "E" then return memwrite(addr, data) end
@@ -113,11 +113,13 @@ else
     POLL_SPEED = 5
 end
 if bit == nil then
-    -- no bit library, we need it for bizhawk compatibility
-    bit = {
+    -- no bit library, we need it for bizhawk compatibility, as lua5.1 cannot parse the file otherwise
+    bit = load([[return {
         band=function(a, b) return a & b end,
         bor=function(a, b) return a | b end,
-    }
+        rshift=function(a, b) return a >> b end,
+        lshift=function(a, b) return a << b end,
+    }]])()
 end
 print("Start")
 
