@@ -36,9 +36,12 @@ class Randomizer:
         if options.multiworld:
             self.__logic = logic.MultiworldLogic(options, self.rnd)
         else:
-            world_setup = WorldSetup()
-            world_setup.randomize(options, self.rnd)
-            self.__logic = logic.Logic(options, world_setup=world_setup)
+            for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
+                world_setup = WorldSetup()
+                world_setup.randomize(options, self.rnd)
+                self.__logic = logic.Logic(options, world_setup=world_setup)
+                if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(options, self.rnd).toDict().values()):
+                    break
 
         if self.plan:
             for ii in self.__logic.iteminfo_list:

@@ -24,29 +24,25 @@ class Logic:
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
-        world.start.connect(world.start_locations[world_setup.start_house_index], None)
+        world.updateIndoorLocation("d1", dungeon1.Dungeon1(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d2", dungeon2.Dungeon2(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d3", dungeon3.Dungeon3(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d4", dungeon4.Dungeon4(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d5", dungeon5.Dungeon5(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d6", dungeon6.Dungeon6(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d7", dungeon7.Dungeon7(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
+        world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
 
-        dungeons = [
-            dungeon1.Dungeon1(configuration_options, world_setup, r),
-            dungeon2.Dungeon2(configuration_options, world_setup, r),
-            dungeon3.Dungeon3(configuration_options, world_setup, r),
-            dungeon4.Dungeon4(configuration_options, world_setup, r),
-            dungeon5.Dungeon5(configuration_options, world_setup, r),
-            dungeon6.Dungeon6(configuration_options, world_setup, r),
-            dungeon7.Dungeon7(configuration_options, world_setup, r),
-            dungeon8.Dungeon8(configuration_options, world_setup, r),
-            dungeonColor.DungeonColor(configuration_options, world_setup, r)
-        ]
+        for k in world.overworld_entrance.keys():
+            assert k in world_setup.entrance_mapping, k
+        for k in world_setup.entrance_mapping.keys():
+            assert k in world.overworld_entrance, k
 
-        dungeons[world_setup.dungeon_entrance_mapping[0]].entrance.connect(world.dungeon1_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[1]].entrance.connect(world.dungeon2_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[2]].entrance.connect(world.dungeon3_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[3]].entrance.connect(world.dungeon4_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[4]].entrance.connect(world.dungeon5_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[5]].entrance.connect(world.dungeon6_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[6]].entrance.connect(world.dungeon7_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[7]].entrance.connect(world.dungeon8_entrance, None)
-        dungeons[world_setup.dungeon_entrance_mapping[8]].entrance.connect(world.dungeon9_entrance, None)
+        for entrance, indoor in world_setup.entrance_mapping.items():
+            location, requirement = world.overworld_entrance[entrance]
+            if world.indoor_location[indoor] is not None:
+                location.connect(world.indoor_location[indoor], requirement)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':

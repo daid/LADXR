@@ -3,9 +3,6 @@ import json
 import logic
 import explorer
 import patches.witch
-import patches.startLocation
-import patches.dungeonEntrances
-import patches.enemies
 from worldSetup import WorldSetup
 
 
@@ -148,8 +145,11 @@ class SpoilerLog:
         print("Saved: %s" % filename)
 
     def __repr__(self):
+        lines = []
         if not self.testOnly:
-            lines = ["Dungeon order:" + ", ".join(map(lambda n: "D%d:%d" % (n[0] + 1, n[1] + 1), enumerate(self.world_setup.dungeon_entrance_mapping)))]
+            for entrance, target in self.world_setup.entrance_mapping.items():
+                if entrance != target:
+                    lines.append("Entrance: %s -> %s" % (entrance, target))
             lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.sphere if x.sphere is not None else sys.maxsize, x.area, x.locationName))]
 
         if self.inaccessibleItems:

@@ -1,10 +1,12 @@
 import random
 import binascii
+import importlib.util
+import importlib.machinery
+
 from romTables import ROMWithTables
 import assembler
 import patches.overworld
-import patches.dungeonEntrances
-import patches.startLocation
+import patches.entrances
 import patches.enemies
 import patches.titleScreen
 import patches.aesthetics
@@ -48,6 +50,16 @@ import hints
 def generateRom(options, seed, logic, multiworld=None):
     print("Loading: %s" % (options.input_filename))
     rom = ROMWithTables(options.input_filename)
+
+    pymods = []
+    if options.pymod:
+        for pymod in options.pymod:
+            spec = importlib.util.spec_from_loader(pymod, importlib.machinery.SourceFileLoader(pymod, pymod))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            pymods.append(module)
+    for pymod in pymods:
+        pymod.prePatch(rom)
 
     if options.gfxmod:
         for gfx in options.gfxmod:
@@ -213,8 +225,8 @@ def generateRom(options, seed, logic, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    patches.startLocation.setStartLocation(rom, world_setup.start_house_index)
-    patches.dungeonEntrances.changeEntrances(rom, world_setup.dungeon_entrance_mapping)
+    if options.overworld != "dungeondive":
+        patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item.startswith("*"):
             spot.item = spot.item[1:]
@@ -231,4 +243,6 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.aesthetics.updateSpriteData(rom)
     if options.doubletrouble:
         patches.enemies.doubleTrouble(rom)
+    for pymod in pymods:
+        pymod.postPatch(rom)
     return rom

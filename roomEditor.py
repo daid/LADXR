@@ -164,13 +164,10 @@ class RoomEditor:
     def getWarps(self):
         return list(filter(lambda obj: isinstance(obj, ObjectWarp), self.objects))
 
-    def changeWarpTarget(self, from_room, to_room, new_map, target_x, target_y):
-        for obj in self.objects:
-            if isinstance(obj, ObjectWarp) and obj.room == from_room:
-                obj.room = to_room
-                obj.map_nr = new_map
-                obj.target_x = target_x
-                obj.target_y = target_y
+    def changeWarp(self, current_room, new_warp):
+        for idx, obj in enumerate(self.objects):
+            if isinstance(obj, ObjectWarp) and obj.room == current_room:
+                self.objects[idx] = new_warp.copy()
 
     def updateOverlay(self, preserve_floor=False):
         if self.overlay is None:
@@ -323,6 +320,9 @@ class ObjectWarp(Object):
 
     def export(self):
         return bytearray([0xE0 | self.warp_type, self.map_nr, self.room & 0xFF, self.target_x, self.target_y])
+
+    def copy(self):
+        return ObjectWarp(self.warp_type, self.map_nr, self.room & 0xFF, self.target_x, self.target_y)
 
     def __repr__(self):
         return "%s:%d:%03x:%02x:%d,%d" % (self.__class__.__name__, self.warp_type, self.room, self.map_nr, self.target_x, self.target_y)

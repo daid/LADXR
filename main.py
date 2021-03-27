@@ -3,8 +3,6 @@ from romTables import ROMWithTables
 import shlex
 import randomizer
 import logic
-import patches.dungeonEntrances
-import explorer
 import spoilerLog
 import re
 from argparse import ArgumentParser, ArgumentTypeError
@@ -92,6 +90,8 @@ def main(mainargs=None):
         help="Place your starting house at a random location.")
     parser.add_argument('--dungeonshuffle', dest="dungeonshuffle", action="store_true",
         help="Enable dungeon shuffle, puts dungeons on different spots.")
+    parser.add_argument('--entranceshuffle', dest="entranceshuffle", choices=["none", "simple", "advanced", "expert", "insanity"], default="none",
+        help="Enable entrance shuffle, shuffles around overworld entrances.")
     parser.add_argument('--boss', dest="boss", choices=["default", "shuffle", "random"], default="default",
         help="Enable boss shuffle, swaps around dungeon bosses.")
     parser.add_argument('--miniboss', dest="miniboss", choices=["default", "shuffle", "random"], default="default",
@@ -116,7 +116,10 @@ def main(mainargs=None):
         help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
     parser.add_argument('--pool', dest="itempool", choices=['normal', 'casual', 'pain', 'keyup'], default='normal',
         help="Sets up different item pools, for easier or harder gameplay.")
-    parser.add_argument('--overworld', dest="overworld", choices=['normal', 'dungeondive'], default='normal')
+    parser.add_argument('--overworld', dest="overworld", choices=['normal', 'dungeondive'], default='normal',
+        help="Allows switching to the dungeondive overworld, where there are only dungeons.")
+    parser.add_argument('--pymod', dest="pymod", action='append',
+        help="Load python code mods.")
 
     # Just aestetic flags
     parser.add_argument('--gfxmod', dest="gfxmod", action='append',
