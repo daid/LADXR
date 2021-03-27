@@ -117,7 +117,7 @@ ENTRANCE_INFO = {
     "armos_temple":                 EntranceInfo(0xAC, target=0x28f, type="single"),
     # Beach area
     "d1":                           EntranceInfo(0xD3, target=0x117, dungeon=1, instrument_room=0x102),
-    "boomerang_cave":               EntranceInfo(0xF4, target=0x1f5, type="single"),
+    "boomerang_cave":               EntranceInfo(0xF4, target=0x1f5, type="single", instrument_room="Alt1F5"),  # instrument_room is to configure the exit on the alt room layout
     "banana_seller":                EntranceInfo(0xE3, target=0x2fe, type="dummy"),
     "ghost_house":                  EntranceInfo(0xF6, target=0x1e3, type="single"),
 

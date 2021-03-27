@@ -64,7 +64,11 @@ def createDungeonOnlyOverworld(rom):
 
                 if obj.room == 0x1F5:
                     # Patch the boomang guy exit
-                    rom.patch(0x0a, 0x3891, "E000F41820", "E000%02x%02x%02x" % (n, e.x * 16 + 8, e.y * 16 + 16))
+                    other = RoomEditor(rom, "Alt1F5")
+                    other.getWarps()[0].room = n
+                    other.getWarps()[0].target_x = e.x * 16 + 8
+                    other.getWarps()[0].target_y = e.y * 16 + 16
+                    other.store(rom)
 
                 if obj.warp_type == 1 and (obj.map_nr < 8 or obj.map_nr == 0xFF) and obj.room not in (0x1B0, 0x23A, 0x23D):
                     other = RoomEditor(rom, instrument_rooms[min(8, obj.map_nr)])

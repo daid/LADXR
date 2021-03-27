@@ -32,6 +32,8 @@ class RoomEditor:
                 objects_raw = rom.rooms_overworld_top[room]
             elif room in rom.rooms_overworld_bottom:
                 objects_raw = rom.rooms_overworld_bottom[room]
+            elif room in rom.rooms_indoor_a:
+                objects_raw = rom.rooms_indoor_a[room]
             else:
                 assert False, "Failed to find alt room: %s" % (room)
         else:
@@ -95,6 +97,8 @@ class RoomEditor:
                 rom.rooms_overworld_top[new_room_nr] = objects_raw
             elif new_room_nr in rom.rooms_overworld_bottom:
                 rom.rooms_overworld_bottom[new_room_nr] = objects_raw
+            elif new_room_nr in rom.rooms_indoor_a:
+                rom.rooms_indoor_a[new_room_nr] = objects_raw
             else:
                 assert False, "Failed to find alt room: %s" % (new_room_nr)
         elif new_room_nr < 0x080:

@@ -83,6 +83,9 @@ class RoomsIndoorA(RoomsTable):
             "pointers_addr": 0x000,
             "pointers_bank": 0x0A,
             "data_bank": 0x0A,
+            "alt_pointers": {
+                "Alt1F5": (0x00, 0x31A1),
+            }
         })
 
 
