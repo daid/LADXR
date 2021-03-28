@@ -61,8 +61,9 @@ noinc:
         jp   $3BC0 ; jump to render code
     """), fill_nop=True)
 
+
 def setSeashellGoal(rom, count):
-    rom.texts[0x1A3] = formatText("You need %d seashells" % (count))
+    rom.texts[0x1A3] = formatText("You need %d {SEASHELL}s" % (count))
 
     # Remove the seashell mansion handler (as it will take your seashells) but put a heartpiece instead
     re = RoomEditor(rom, 0x2E9)

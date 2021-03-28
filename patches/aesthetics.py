@@ -5,6 +5,44 @@ import entityData
 import os
 
 
+def imageTo2bpp(filename):
+    import PIL.Image
+    img = PIL.Image.open(filename)
+    assert (img.size[0] % 8) == 0
+    tileheight = 8 if img.size[1] == 8 else 16
+    assert (img.size[1] % tileheight) == 0
+
+    cols = img.size[0] // 8
+    rows = img.size[1] // tileheight
+    result = bytearray(rows * cols * tileheight * 2)
+    index = 0
+    for ty in range(rows):
+        for tx in range(cols):
+            for y in range(tileheight):
+                a = 0
+                b = 0
+                for x in range(8):
+                    c = img.getpixel((tx * 8 + x, ty * 16 + y))
+                    if c & 1:
+                        a |= 0x80 >> x
+                    if c & 2:
+                        b |= 0x80 >> x
+                result[index] = a
+                result[index+1] = b
+                index += 2
+    return result
+
+
+def updateGraphics(rom, bank, offset, data):
+    if offset + len(data) > 0x4000:
+        updateGraphics(rom, bank, offset, data[:0x4000-offset])
+        updateGraphics(rom, bank + 1, 0, data[0x4000 - offset:])
+    else:
+        rom.banks[bank][offset:offset+len(data)] = data
+        if bank < 0x34:
+            rom.banks[bank-0x20][offset:offset + len(data)] = data
+
+
 def gfxMod(rom, filename):
     if os.path.exists(filename + ".names"):
         for line in open(filename + ".names", "rt"):
@@ -12,39 +50,20 @@ def gfxMod(rom, filename):
                 k, v = line.strip().split(":", 1)
                 setReplacementName(k, v)
 
-    if filename.lower().endswith(".bin"):
-        data = open(filename, "rb").read()
-        for n in range(0, len(data), 0x4000):
-            new_data = data[n:n+0x4000]
-            if (0x0C + n // 0x4000) < 0x14:
-                rom.banks[0x0C + n // 0x4000][0:len(new_data)] = new_data
-            rom.banks[0x2C + n // 0x4000][0:len(new_data)] = new_data
-    elif filename.lower().endswith(".png") or filename.lower().endswith(".bmp"):
-        import PIL.Image
-        img = PIL.Image.open(filename)
-        assert (img.size[0] % 8) == 0
-        assert (img.size[1] % 16) == 0
-        bank_nr = 0x2C
-        offset = 0
-        for ty in range(img.size[1] // 16):
-            for tx in range(img.size[0] // 8):
-                for y in range(16):
-                    a = 0
-                    b = 0
-                    for x in range(8):
-                        c = img.getpixel((tx*8+x, ty*16+y))
-                        if c & 1:
-                            a |= 0x80 >> x
-                        if c & 2:
-                            b |= 0x80 >> x
-                    rom.banks[bank_nr][offset+0] = a
-                    rom.banks[bank_nr][offset+1] = b
-                    offset += 2
-                    if offset == 0x4000:
-                        offset = 0
-                        bank_nr += 1
-        for n in range(0x2C, min(bank_nr + 1, 0x34)):
-            rom.banks[n - 0x2C + 0x0C] = rom.banks[n].copy()
+    ext = os.path.splitext(filename)[1].lower()
+    if ext == ".bin":
+        updateGraphics(rom, 0x2C, 0, open(filename, "rb").read())
+    elif ext in (".png", ".bmp"):
+        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename))
+    elif ext == ".json":
+        import json
+        data = json.load(open(filename, "rt"))
+
+        for patch in data:
+            if "gfx" in patch:
+                updateGraphics(rom, int(patch["bank"], 16), int(patch["offset"], 16), imageTo2bpp(os.path.join(os.path.dirname(filename), patch["gfx"])))
+            if "name" in patch:
+                setReplacementName(patch["item"], patch["name"])
 
 
 def createGfxImage(rom, filename):
