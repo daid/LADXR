@@ -205,7 +205,7 @@ class World:
         Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_hookshot_powder))  # bird on tree, can kill with second rock
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
-        Location().add(GoldLeaf(0x2C6)).connect(castle_top_inside, OR(BOOMERANG, AND(POWER_BRACELET, r.attack_hookshot)))  # in the castle, spinning spikeball enemy
+        Location().add(GoldLeaf(0x2C6)).connect(castle_top_inside, AND(POWER_BRACELET, r.attack_hookshot))  # in the castle, spinning spikeball enemy
 
         animal_village = Location()
         self._addEntrance("animal_phone", animal_village, None, None)
