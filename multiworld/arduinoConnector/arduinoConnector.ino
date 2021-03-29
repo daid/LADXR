@@ -11,10 +11,13 @@
  * (colors of wires in cable will vary)
  * 
  * Connect the following Arduino pins to an Gameboy link cable pins:
- * MISO -> [2]
- * MOSI -> [4]
- * SCK  -> [3]
- * GND  -> [6]
+ * Arduino (Nano pin)    Link cable (Name on breakout board)
+ * MISO (D12)         -> [2] (SI)
+ * MOSI (D11)         -> [4] (SO)
+ * SCK  (D13)         -> [3] (SC)
+ * SS   (D10)         -> GND
+ * GND                -> [6] (GND)
+ * Do not connect the other link cable pins.
  */
 
 
