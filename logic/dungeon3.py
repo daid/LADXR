@@ -36,7 +36,8 @@ class Dungeon3:
         dungeon3_post_dodongo_chest = Location(3).add(DungeonChest(0x146)).connect(area_right, r.miniboss_requirements[world_setup.miniboss_mapping[2]])  # boots after the miniboss
         compass_chest = Location(3).add(DungeonChest(0x142)).connect(area_right, OR(SWORD, BOMB, AND(SHIELD, r.attack_hookshot_powder))) # bomb only activates with sword, bomb or shield
         dungeon3_3_bombite_room = Location(3).add(DroppedKey(0x141)).connect(compass_chest, BOMB) # 3 bombite room
-        dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
+        if options.logic != "casual":
+            dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
         Location(3).add(DroppedKey(0x148)).connect(area_right, r.attack_no_boomerang) # 2 zol 2 owl drop key
         Location(3).add(DungeonChest(0x144)).connect(area_right, r.attack_skeleton)  # map chest
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
