@@ -36,8 +36,6 @@ class Dungeon3:
         dungeon3_post_dodongo_chest = Location(3).add(DungeonChest(0x146)).connect(area_right, r.miniboss_requirements[world_setup.miniboss_mapping[2]])  # boots after the miniboss
         compass_chest = Location(3).add(DungeonChest(0x142)).connect(area_right, OR(SWORD, BOMB, AND(SHIELD, r.attack_hookshot_powder))) # bomb only activates with sword, bomb or shield
         dungeon3_3_bombite_room = Location(3).add(DroppedKey(0x141)).connect(compass_chest, BOMB) # 3 bombite room
-        if options.logic != "casual":
-            dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
         Location(3).add(DroppedKey(0x148)).connect(area_right, r.attack_no_boomerang) # 2 zol 2 owl drop key
         Location(3).add(DungeonChest(0x144)).connect(area_right, r.attack_skeleton)  # map chest
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -64,10 +62,11 @@ class Dungeon3:
             dungeon3_south_key_drop.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
+            dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
             dungeon3_reverse_eye.connect(entrance, HOOKSHOT) # hookshot the chest to get to the right side
             dungeon3_north_key_drop.connect(area_up, POWER_BRACELET) # use pots to kill the enemies
             dungeon3_south_key_drop.connect(area_down, POWER_BRACELET) # use pots to kill enemies
-        
+
         if options.logic == 'glitched' or options.logic == 'hell':
             area3.connect(dungeon3_raised_blocks_east, FEATHER, one_way=True) # use superjump to get over the bottom left block
             area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, FEATHER), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks
