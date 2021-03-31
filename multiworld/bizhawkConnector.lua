@@ -204,7 +204,7 @@ function stateIdle()
         sendAll(string.char(0x11, target, item))
         print(string.format("Sending shop: %02x to %d", item, target))
         --TODO: We should wait till we have a confirm from the server that the item is handled by the server
-        memwrite(wLinkStatusBits, 0xFB)
+        memwriteAND(wLinkStatusBits, 0xFB)
     end
     
     while true do
