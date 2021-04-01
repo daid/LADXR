@@ -2,16 +2,17 @@ from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
 
 
+# Room containing the boss
 BOSS_ROOMS = [
-    (0x106, 0x10b),
-    (0x12b, 0x12d),
-    (0x15a, 0x15b),
-    (0x166, 0x16c),
-    (0x185, 0x18b),
-    (0x1bc, 0x1c4),
-    (0x223, ),
-    (0x234, 0x23a),
-    (0x300, 0x304),
+    0x106,
+    0x12b,
+    0x15a,
+    0x166,
+    0x185,
+    0x1bc,
+    0x223,  # Note: unused room normally
+    0x234,
+    0x300,
 ]
 BOSS_ENTITIES = [
     (3, 2, 0x59),
@@ -43,14 +44,15 @@ MINIBOSS_ROOMS = {
     "moblin_cave": 0x2E1,
 }
 
+
 def getBossRoomStatusFlagLocation(dungeon_nr):
-    if BOSS_ROOMS[dungeon_nr][0] >= 0x300:
-        return 0xDDE0 - 0x300 + BOSS_ROOMS[dungeon_nr][0]
-    return 0xD800 + BOSS_ROOMS[dungeon_nr][0]
+    if BOSS_ROOMS[dungeon_nr] >= 0x300:
+        return 0xDDE0 - 0x300 + BOSS_ROOMS[dungeon_nr]
+    return 0xD800 + BOSS_ROOMS[dungeon_nr]
 
 
 def getCleanBossRoom(rom, dungeon_nr):
-    re = RoomEditor(rom, BOSS_ROOMS[dungeon_nr][0])
+    re = RoomEditor(rom, BOSS_ROOMS[dungeon_nr])
     new_objects = []
     for obj in re.objects:
         if isinstance(obj, ObjectWarp):
@@ -158,24 +160,27 @@ def changeBosses(rom, mapping):
                 re.store(rom)
             else:
                 # Set the proper room event flags
-                rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x2A
+                rom.banks[0x14][BOSS_ROOMS[dungeon_nr] - 0x100] = 0x2A
 
                 # Add the staircase to the boss, and fix the warp back.
                 re = getCleanBossRoom(rom, dungeon_nr)
                 re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 3, 0x1EF, 24, 16)]
                 re.store(rom)
                 re = RoomEditor(rom, 0x1EF)
-                re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr][0], 72, 80)
+                re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr], 72, 80)
                 re.store(rom)
 
             # Patch the fish heart container to open up the right room.
-            rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
+            if dungeon_nr == 6:
+                rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (0xD800 + 0x22E)))
+            else:
+                rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
 
             # Patch the proper item towards the D4 boss
-            rom.banks[0x3E][0x3800 + 0x01ff] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr][0]]
-            rom.banks[0x3E][0x3300 + 0x01ff] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
+            rom.banks[0x3E][0x3800 + 0x01ff] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]]
+            rom.banks[0x3E][0x3300 + 0x01ff] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]]
         elif target == 6:  # Evil eagle
-            rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x2A
+            rom.banks[0x14][BOSS_ROOMS[dungeon_nr] - 0x100] = 0x2A
 
             # Patch the eagle heart container to open up the right room.
             rom.patch(0x03, 0x1A04, ASM("ld hl, $DA2E"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
@@ -186,20 +191,20 @@ def changeBosses(rom, mapping):
             re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 6, 0x2F8, 72, 80)]
             re.store(rom)
             re = RoomEditor(rom, 0x2F8)
-            re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr][0], 72, 80)
+            re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr], 72, 80)
             re.store(rom)
 
             # Patch the proper item towards the D7 boss
-            rom.banks[0x3E][0x3800 + 0x02E8] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr][0]]
-            rom.banks[0x3E][0x3300 + 0x02E8] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr][0]]
+            rom.banks[0x3E][0x3800 + 0x02E8] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]]
+            rom.banks[0x3E][0x3300 + 0x02E8] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]]
         else:
-            rom.banks[0x14][BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x21
+            rom.banks[0x14][BOSS_ROOMS[dungeon_nr] - 0x100] = 0x21
             re = getCleanBossRoom(rom, dungeon_nr)
             re.entities = [BOSS_ENTITIES[target]]
 
             if target == 4:
                 # For slime eel, we need to setup the right wall tiles.
-                rom.banks[0x20][0x2EB3 + BOSS_ROOMS[dungeon_nr][0] - 0x100] = 0x06
+                rom.banks[0x20][0x2EB3 + BOSS_ROOMS[dungeon_nr] - 0x100] = 0x06
             if target == 5:
                 # Patch facade so he doesn't use the spinning tiles, which is a problem for the sprites.
                 rom.patch(0x04, 0x121D, ASM("cp $14"), ASM("cp $00"))
@@ -222,7 +227,7 @@ def changeBosses(rom, mapping):
 def readBossMapping(rom):
     mapping = []
     for dungeon_nr in range(9):
-        r = RoomEditor(rom, BOSS_ROOMS[dungeon_nr][0])
+        r = RoomEditor(rom, BOSS_ROOMS[dungeon_nr])
         if r.entities:
             mapping.append(BOSS_ENTITIES.index(r.entities[0]))
         elif isinstance(r.objects[-1], ObjectWarp) and r.objects[-1].room == 0x1ef:
