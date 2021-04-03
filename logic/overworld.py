@@ -281,7 +281,7 @@ class World:
         below_right_taltal.connect(bay_water, FLIPPERS)
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
 
-        heartpiece_swim_cave = Location().add(HeartPiece(0x1F2))
+        heartpiece_swim_cave = Location().connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
         self._addEntrance("heartpiece_swim_cave", below_right_taltal, heartpiece_swim_cave, FLIPPERS)  # cave next to level 4
         d4_entrance = Location().connect(below_right_taltal, FLIPPERS)
         lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
@@ -398,7 +398,7 @@ class World:
             fire_cave_top.connect(fire_cave_bottom, PEGASUS_BOOTS) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':
-        #     #dream_hut.connect(mabe_village, FEATHER) # flock clip TODO: require nag messages
+            #dream_hut.connect(mabe_village, FEATHER) # flock clip TODO: require nag messages
             dream_hut_right.connect(dream_hut_left, FEATHER)  # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest.connect(forest_heartpiece, BOMB, one_way=True) # bomb trigger heartpiece
@@ -408,9 +408,9 @@ class World:
         #     graveyard_heartpiece.connect(graveyard, r.bush) # sideways block push. added bush requirement since a requirement is necessary
             prairie_island_seashell.connect(left_bay_area, AND(FEATHER, r.bush)) # jesus jump from right side
         #     prairie_3gap_stairs.connect(center_area, FEATHER) # 1 pit buffer to clip bottom wall and jump across
-        #     tiny_island.connect(center_area, AND(FEATHER, r.bush)) # jesus jump around
+            tiny_island.connect(left_bay_area, AND(FEATHER, r.bush)) # jesus jump around
         #     richard_cave.connect(center_area, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)) # break bushes on north side of the maze, and 1 pit buffer into the maze
-        #     animal_town.connect(center_area, FEATHER) # jesus jump
+            animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
         #     animal_town_bombcave.connect(desert, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
         #     center_area.connect(dungeon6_entrance, FEATHER, one_way=True) # jesus jump (3 screen)
         #     face_shrine.connect(raft_game, FEATHER, one_way=True) # jesus jump (2-ish screen)
@@ -423,7 +423,7 @@ class World:
         #     right_mountains_3.connect(right_mountains_2, r.bush) # 2 seperate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
         #     into_to_mountains.connect(mountain_heartpiece, BOMB, one_way=True) # bomb trigger from boots crystal cave
         #     dungeon8_entrance.connect(dungeon8_phone, OR(BOMB, OCARINA)) # bomb trigger the head and walk trough, or play the ocarina song 3 and walk through
-        #
+
         if options.logic == 'hell':
             swamp.connect(forest, None) # damage boost from toadstool area across the pit.
             forest_heartpiece.connect(forest, PEGASUS_BOOTS, one_way=True) # boots bonk across the pits
