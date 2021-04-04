@@ -217,15 +217,24 @@ def moreSlots(rom):
     rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C35"))
     rom.patch(0x20, 0x1C30, "7F7F", "0A0B")
 
-    # Allow usage of the toadstool
-    rom.patch(0x00, 0x12CC, ASM("jp z, $148d"), ASM("jp $3FEF"))
-    rom.patch(0x00, 0x3FEF, "00" * 17, ASM("""
-        jr z, UseMagicPowder
-        cp $0E
-        jp nz, $12CF
-        jp $1498
-UseMagicPowder:
-        jp $14A7
+    # Allow usage of the toadstool (replace the whole manual jump table with an rst 0 jumptable
+    rom.patch(0x00, 0x129D, 0x12D8, ASM("""
+        rst 0 ; jump table
+        dw $12ED ; no item
+        dw $1528 ; Sword
+        dw $135A ; Bomb
+        dw $1382 ; Bracelet
+        dw $12EE ; Shield
+        dw $13BD ; Bow
+        dw $1319 ; Hookshot
+        dw $12D8 ; Magic rod
+        dw $12ED ; Boots (no action)
+        dw $41FC ; Ocarina
+        dw $14CB ; Feather
+        dw $12F8 ; Shovel
+        dw $148D ; Magic powder
+        dw $1383 ; Boomerang
+        dw $1498 ; Toadstool
     """), fill_nop=True)
     # Fix the graphics of the toadstool hold over your head
     rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $4C"))
