@@ -379,17 +379,17 @@ class World:
             d8_entrance.connect(writes_hut_outside, None, one_way=True) # Jump down the ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
         self._addEntrance("phone_d8", d8_entrance, None, None)
-        self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3))
+        self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
 
         nightmare = Location()
         windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-        #     dream_hut.connect(mabe_village, HOOKSHOT) # clip past the rocks in front of dream hut
-        #     hookshot_cave.connect(forest, HOOKSHOT) # clip past the rocks in front of log cave
-        #     hookshot_cave.connect(forest, AND(POWER_BRACELET, FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
+            self._addEntranceRequirement("dream_hut", HOOKSHOT) # clip past the rocks in front of dream hut
+            self._addEntranceRequirement("hookshot_cave", HOOKSHOT) # clip past the rocks in front of hookshot cave
+            hookshot_cave.connect(hookshot_cave_chest, AND(FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
             swamp_chest.connect(swamp, None)  # Clip past the flower
-        #     dungeon2_entrance.connect(swamp, POWER_BRACELET) # clip the top wall to walk between the goponga flower and the wall
+            self._addEntranceRequirement("d2", POWER_BRACELET) # clip the top wall to walk between the goponga flower and the wall
             writes_hut_outside.connect(swamp, HOOKSHOT) # hookshot the sign in front of writes hut
         #     graveyard_heartpiece.connect(graveyard, FEATHER) # jump to the bottom right tile around the blocks
         #     graveyard_heartpiece.connect(graveyard, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
@@ -403,8 +403,8 @@ class World:
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest.connect(forest_heartpiece, BOMB, one_way=True) # bomb trigger heartpiece
             graveyard.connect(forest_heartpiece, None, one_way=True) # villa buffer from top.
-        #     log_cave_heartpiece.connect(forest, FEATHER) # super jump
-        #     log_cave_heartpiece.connect(forest, BOMB) # bomb trigger
+            log_cave_heartpiece.connect(forest_cave, FEATHER) # super jump
+            log_cave_heartpiece.connect(forest_cave, BOMB) # bomb trigger
         #     graveyard_heartpiece.connect(graveyard, r.bush) # sideways block push. added bush requirement since a requirement is necessary
             prairie_island_seashell.connect(left_bay_area, AND(FEATHER, r.bush)) # jesus jump from right side
         #     prairie_3gap_stairs.connect(center_area, FEATHER) # 1 pit buffer to clip bottom wall and jump across
@@ -422,14 +422,14 @@ class World:
             bird_key.connect(bird_cave, AND(FEATHER, HOOKSHOT))  # hookshot jump across the big pits room
         #     right_mountains_3.connect(right_mountains_2, r.bush) # 2 seperate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
         #     into_to_mountains.connect(mountain_heartpiece, BOMB, one_way=True) # bomb trigger from boots crystal cave
-        #     dungeon8_entrance.connect(dungeon8_phone, OR(BOMB, OCARINA)) # bomb trigger the head and walk trough, or play the ocarina song 3 and walk through
+            self._addEntranceRequirement("d8", OR(BOMB, AND(OCARINA, SONG3))) # bomb trigger the head and walk trough, or play the ocarina song 3 and walk through
 
         if options.logic == 'hell':
             swamp.connect(forest, None) # damage boost from toadstool area across the pit.
             forest_heartpiece.connect(forest, PEGASUS_BOOTS, one_way=True) # boots bonk across the pits
-        #     log_cave_heartpiece.connect(forest, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
+            log_cave_heartpiece.connect(forest_cave, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             writes_hut_outside.connect(swamp, PEGASUS_BOOTS) # boots bonk telephone booth
-        #     writes_cave_left_chest.connect(writes_hut, r.bush) # damage boost off the zol to get across the pit. added bush since a requirement is necessary
+        #     writes_cave_left_chest.connect(writes_hut, None) # damage boost off the zol to get across the pit. added bush since a requirement is necessary
             graveyard.connect(forest, OR(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk witches hut, or hookshot spam across the pit
             dungeon3_entrance.connect(ukuku_prairie, PEGASUS_BOOTS) # boots bonk + water buffer across bottom wall all the way to the entrance
         #     prairie_3gap_stairs.connect(center_area, PEGASUS_BOOTS) # pit buffer to clip bottom wall and boots bonk across
@@ -442,7 +442,7 @@ class World:
         #     bridge_seashell.connect(right_mountains_2, AND(PEGASUS_BOOTS, POWER_BRACELET)) # boots bonk
             bird_key.connect(bird_cave, AND(FEATHER, PEGASUS_BOOTS)) # boots jump above wall, use multiple pit buffers to get across
         #     mountain_bridge_staircase.connect(luigi_rooster_house, AND(OR(PEGASUS_BOOTS, FEATHER), OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
-        #     #right_mountains_2.connect(right_mountains_1, AND(ANGLER_KEY, PEGASUS_BOOTS)) # boots bonk across bottom wall, dodge waterfalls because of LADXR hacks
+            #right_mountains_2.connect(right_mountains_1, AND(ANGLER_KEY, PEGASUS_BOOTS)) # boots bonk across bottom wall, dodge waterfalls because of LADXR hacks
         #     left_side_mountain.connect(mountain_bridge_staircase, AND(PEGASUS_BOOTS, FEATHER)) # boots jump to bottom left corner of pits, pit buffer and jump to left
             
         self.start = start_house
@@ -455,6 +455,11 @@ class World:
         assert name in ENTRANCE_INFO
         self.overworld_entrance[name] = (outside, requirement)
         self.indoor_location[name] = inside
+
+    def _addEntranceRequirement(self, name, requirement):
+        assert name in self.overworld_entrance
+        outside, old_requirement = self.overworld_entrance[name]
+        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement))
 
     def updateIndoorLocation(self, name, location):
         assert name in self.indoor_location
