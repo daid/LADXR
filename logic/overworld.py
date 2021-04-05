@@ -35,7 +35,9 @@ class World:
         self._addEntrance("shop", mabe_village, shop, None)
 
         dream_hut = Location()
-        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER))
+        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD)
+        if options.logic != "casual":
+            dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER))
         dream_hut_left = Location().add(Chest(0x2BE)).connect(dream_hut, PEGASUS_BOOTS)
         self._addEntrance("dream_hut", mabe_village, dream_hut, POWER_BRACELET)
 
