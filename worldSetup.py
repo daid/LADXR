@@ -56,7 +56,7 @@ ENTRANCE_INFO = {
     "moblin_cave":                  EntranceInfo(0x35, target=0x2f0, type="single"),
     "photo_house":                  EntranceInfo(0x37, target=0x2b5, type="dummy"),
     "mambo":                        EntranceInfo(0x2A, target=0x2fd, type="single"),
-    "d4":                           EntranceInfo(0x2B, "Alt2B", target=0x17a, dungeon=4, index=0, instrument_room=0x182),
+    "d4":                           EntranceInfo(0x2B, "Alt2B", target=0x17a, dungeon=4, index=0, instrument_room=0x162),
     # TODO
     #  "d4_connector":                 EntranceInfo(0x2B, "Alt2B", index=1),
     #  "d4_connector_exit":            EntranceInfo(0x2D),
