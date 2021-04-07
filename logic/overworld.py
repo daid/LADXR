@@ -387,12 +387,12 @@ class World:
         windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            self._addEntranceRequirement("dream_hut", HOOKSHOT) # clip past the rocks in front of dream hut
-            self._addEntranceRequirement("hookshot_cave", HOOKSHOT) # clip past the rocks in front of hookshot cave
+            self._addEntranceRequirementEnter("dream_hut", HOOKSHOT) # clip past the rocks in front of dream hut
+            self._addEntranceRequirementEnter("hookshot_cave", HOOKSHOT) # clip past the rocks in front of hookshot cave
             hookshot_cave.connect(hookshot_cave_chest, AND(FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
             swamp_chest.connect(swamp, None)  # Clip past the flower
             self._addEntranceRequirement("d2", POWER_BRACELET) # clip the top wall to walk between the goponga flower and the wall
-            writes_hut_outside.connect(swamp, HOOKSHOT) # hookshot the sign in front of writes hut
+            swamp.connect(writes_hut_outside, HOOKSHOT, one_way=True) # hookshot the sign in front of writes hut
         #     graveyard_heartpiece.connect(graveyard, FEATHER) # jump to the bottom right tile around the blocks
         #     graveyard_heartpiece.connect(graveyard, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
         #     animal_town_bombcave.connect(desert, AND(BOMB, PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
@@ -455,13 +455,31 @@ class World:
     def _addEntrance(self, name, outside, inside, requirement):
         assert name not in self.overworld_entrance, "Duplicate entrance: %s" % name
         assert name in ENTRANCE_INFO
-        self.overworld_entrance[name] = (outside, requirement)
+        self.overworld_entrance[name] = (outside, requirement, None, None)
         self.indoor_location[name] = inside
 
     def _addEntranceRequirement(self, name, requirement):
         assert name in self.overworld_entrance
-        outside, old_requirement = self.overworld_entrance[name]
-        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement))
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement), one_way_enter_requirement, one_way_exit_requirement)
+
+    def _addEntranceRequirementEnter(self, name, requirement):
+        assert name in self.overworld_entrance
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        if one_way_enter_requirement is None:
+            one_way_enter_requirement = requirement
+        else:
+            one_way_enter_requirement = OR(one_way_enter_requirement, requirement)
+        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
+
+    def _addEntranceRequirementExit(self, name, requirement):
+        assert name in self.overworld_entrance
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        if one_way_exit_requirement is None:
+            one_way_exit_requirement = requirement
+        else:
+            one_way_exit_requirement = OR(one_way_exit_requirement, requirement)
+        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
 
     def updateIndoorLocation(self, name, location):
         assert name in self.indoor_location
@@ -491,15 +509,15 @@ class DungeonDiveOverworld:
 
         self.start = start_house
         self.overworld_entrance = {
-            "d1": (start_house, None),
-            "d2": (start_house, None),
-            "d3": (start_house, None),
-            "d4": (start_house, None),
-            "d5": (start_house, FLIPPERS),
-            "d6": (start_house, None),
-            "d7": (start_house, None),
-            "d8": (start_house, None),
-            "d0": (start_house, None),
+            "d1": (start_house, None, None, None),
+            "d2": (start_house, None, None, None),
+            "d3": (start_house, None, None, None),
+            "d4": (start_house, None, None, None),
+            "d5": (start_house, FLIPPERS, None, None),
+            "d6": (start_house, None, None, None),
+            "d7": (start_house, None, None, None),
+            "d8": (start_house, None, None, None),
+            "d0": (start_house, None, None, None),
         }
         self.egg = egg
         self.nightmare = nightmare
