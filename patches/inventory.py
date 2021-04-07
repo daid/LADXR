@@ -164,16 +164,15 @@ def moreSlots(rom):
         "9D219D25"
         "9D619D65"
         "9DA19DA5"
-        "9DE19DE5")
-    rom.patch(0x20, 0x1CC7, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
-    rom.patch(0x20, 0x1BCC, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
-    rom.patch(0x20, 0x1CF0, ASM("ld hl, $5C84"), ASM("ld hl, $7E53"))
+        "9DE19DE5")  # New table with tile addresses for all slots
+    rom.patch(0x20, 0x1CC7, ASM("ld hl, $5C84"), ASM("ld hl, $7E53")) # use the new table
+    rom.patch(0x20, 0x1BCC, ASM("ld hl, $5C84"), ASM("ld hl, $7E53")) # use the new table
+    rom.patch(0x20, 0x1CF0, ASM("ld hl, $5C84"), ASM("ld hl, $7E53")) # use the new table
 
-    rom.patch(0x20, 0x1C8C,
-        "9CC19CC59D219D259D819D859DE19DE5",
-        "28283838484858586868787888889898")
+    # sprite positions for inventory cursor, new table, placed in the hole left by the inventory tile positions table.
+    rom.patch(0x20, 0x1C8C, 0x1C9C, "28283838484858586868787888889898")
     rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C8C"))
-    rom.patch(0x20, 0x2298, "28284040", "08280828")
+    rom.patch(0x20, 0x2298, "28284040", "08280828")  # Extend the sprite X positions for the inventory table
 
     # Piece of power overlay positions
     rom.patch(0x20, 0x233A,
@@ -209,13 +208,13 @@ def moreSlots(rom):
     rom.patch(0x20, 0x235C, ASM("ld d, $0C"), ASM("ld d, $10"))
     rom.patch(0x36, 0x31B8, ASM("ld e, $0C"), ASM("ld e, $10"))
 
-
-    # Patch the toadstool as a different item
-    rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")
+    ##  Patch the toadstool as a different item
+    rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")  # Which tiles are used for the toadstool
+    # Move the inventory tile numbers to a higher address, so there is space for the table above it.
     rom.banks[0x20][0x1C32:0x1C8C] = rom.banks[0x20][0x1C30:0x1C8A]
     rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C32"))
     rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C35"))
-    rom.patch(0x20, 0x1C30, "7F7F", "0A0B")
+    rom.patch(0x20, 0x1C30, "7F7F", "0A0B")  # Toadstool tile attributes
 
     # Allow usage of the toadstool (replace the whole manual jump table with an rst 0 jumptable
     rom.patch(0x00, 0x129D, 0x12D8, ASM("""
