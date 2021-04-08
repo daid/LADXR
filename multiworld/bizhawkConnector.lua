@@ -59,21 +59,24 @@ else
     -- We do this differently under windows and unix-based systems because of a limiation in the lua-serial library:
     -- https://github.com/javalikescript/luaserial/blob/master/luaserial_linux.c#L224
     -- No support for setTimeout in Linux, which is necessary for the rest of the logic to function properly.
-    local BinaryFormat = package.cpath:match("%p[\\|/]?%p(%a+)")
-    if BinaryFormat == "dll" then -- dlls, we are in windows
-        local seriallib = require "serial"
-        serial = io.open("\\\\.\\COM27", "w+")
-        serial:setvbuf("no")
-        seriallib.flush(serial)
-        seriallib.setSerial(serial, 115200, 8, 1, 0)
-        seriallib.setTimeout(serial, 100, 0)
-    else -- linux, mac os
+    local separatorFormat = package.config:sub(1,1)
+    if separatorFormat == '/' then -- linux, mac os
+        -- http://www.lua.org/manual/5.3/manual.html#pdf-package.config
+        -- The first line is the directory separator string. Default is '\' for Windows and '/' for all other systems.
+        --
         -- Time is in tenth of seconds
         -- Use dmesg to ensure the arduino is actually /dev/ttyUSB0.
         -- Accessing ttyUSB0 requires setting up permissions under linux (i.e. adding your user to the dialout group).
         os.execute("stty -F /dev/ttyUSB0 115200 raw min 0 time 1 -echo -echoe -echok -echoctl -echoke")
         serial = io.open("/dev/ttyUSB0", "w+")
         os.execute("sleep 5")
+    else -- windows
+        local seriallib = require "serial"
+        serial = io.open("\\\\.\\COM27", "w+")
+        serial:setvbuf("no")
+        seriallib.flush(serial)
+        seriallib.setSerial(serial, 115200, 8, 1, 0)
+        seriallib.setTimeout(serial, 100, 0)
     end
 
 
