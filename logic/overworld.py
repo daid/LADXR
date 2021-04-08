@@ -389,12 +389,12 @@ class World:
         windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            self._addEntranceRequirement("dream_hut", HOOKSHOT) # clip past the rocks in front of dream hut
-            self._addEntranceRequirement("hookshot_cave", HOOKSHOT) # clip past the rocks in front of hookshot cave
+            self._addEntranceRequirementEnter("dream_hut", HOOKSHOT) # clip past the rocks in front of dream hut
+            self._addEntranceRequirementEnter("hookshot_cave", HOOKSHOT) # clip past the rocks in front of hookshot cave
             hookshot_cave.connect(hookshot_cave_chest, AND(FEATHER, PEGASUS_BOOTS)) # boots jump the gap to the chest
             swamp_chest.connect(swamp, None)  # Clip past the flower
             self._addEntranceRequirement("d2", POWER_BRACELET) # clip the top wall to walk between the goponga flower and the wall
-            writes_hut_outside.connect(swamp, HOOKSHOT) # hookshot the sign in front of writes hut
+            swamp.connect(writes_hut_outside, HOOKSHOT, one_way=True) # hookshot the sign in front of writes hut
             graveyard_heartpiece.connect(graveyard_cave_right, FEATHER) # jump to the bottom right tile around the blocks
             graveyard_heartpiece.connect(graveyard_cave_right, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
@@ -441,7 +441,7 @@ class World:
             self._addEntranceRequirement("castle_jump_cave", PEGASUS_BOOTS) # 1 pit buffer to clip bottom wall and jump across.
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, HOOKSHOT)) # hookshot spam across pits
             prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, PEGASUS_BOOTS), one_way=True) # boots bonk across pits, can only go one way because of pits at bomb wall
-            ukuku_prairie.connect(d5_entrance, FEATHER) # jesus jump into d5 entrance (wall clip or fast fall), wall clip to get out
+            ukuku_prairie.connect(d5_entrance, FEATHER, one_way=True) # jesus jump into d5 entrance (wall clip or fast fall), wall clip to get out
             richard_cave_chest.connect(richard_cave, PEGASUS_BOOTS) # boots bonk inside over the hole in front of chest
             #castle.connect(center_area, AND(PEGASUS_BOOTS, MEDICINE, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))) # medicine iframe abuse to get across spikes
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
@@ -460,13 +460,31 @@ class World:
     def _addEntrance(self, name, outside, inside, requirement):
         assert name not in self.overworld_entrance, "Duplicate entrance: %s" % name
         assert name in ENTRANCE_INFO
-        self.overworld_entrance[name] = (outside, requirement)
+        self.overworld_entrance[name] = (outside, requirement, None, None)
         self.indoor_location[name] = inside
 
     def _addEntranceRequirement(self, name, requirement):
         assert name in self.overworld_entrance
-        outside, old_requirement = self.overworld_entrance[name]
-        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement))
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement), one_way_enter_requirement, one_way_exit_requirement)
+
+    def _addEntranceRequirementEnter(self, name, requirement):
+        assert name in self.overworld_entrance
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        if one_way_enter_requirement is None:
+            one_way_enter_requirement = requirement
+        else:
+            one_way_enter_requirement = OR(one_way_enter_requirement, requirement)
+        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
+
+    def _addEntranceRequirementExit(self, name, requirement):
+        assert name in self.overworld_entrance
+        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
+        if one_way_exit_requirement is None:
+            one_way_exit_requirement = requirement
+        else:
+            one_way_exit_requirement = OR(one_way_exit_requirement, requirement)
+        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
 
     def updateIndoorLocation(self, name, location):
         assert name in self.indoor_location
@@ -496,15 +514,15 @@ class DungeonDiveOverworld:
 
         self.start = start_house
         self.overworld_entrance = {
-            "d1": (start_house, None),
-            "d2": (start_house, None),
-            "d3": (start_house, None),
-            "d4": (start_house, None),
-            "d5": (start_house, FLIPPERS),
-            "d6": (start_house, None),
-            "d7": (start_house, None),
-            "d8": (start_house, None),
-            "d0": (start_house, None),
+            "d1": (start_house, None, None, None),
+            "d2": (start_house, None, None, None),
+            "d3": (start_house, None, None, None),
+            "d4": (start_house, None, None, None),
+            "d5": (start_house, FLIPPERS, None, None),
+            "d6": (start_house, None, None, None),
+            "d7": (start_house, None, None, None),
+            "d8": (start_house, None, None, None),
+            "d0": (start_house, None, None, None),
         }
         self.egg = egg
         self.nightmare = nightmare
