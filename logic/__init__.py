@@ -12,6 +12,7 @@ from .requirements import AND, OR, COUNT, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from worldSetup import WorldSetup
+import itempool
 
 
 class Logic:
@@ -119,16 +120,21 @@ class MultiworldLogic:
         self.iteminfo_list = []
 
         for n in range(configuration_options.multiworld):
-            world_setup = WorldSetup()
-            world_setup.randomize(configuration_options.multiworld_options[n], rnd)
-            world = Logic(configuration_options.multiworld_options[n], world_setup=world_setup)
+            options = configuration_options.multiworld_options[n]
+            for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
+                world_setup = WorldSetup()
+                world_setup.randomize(options, rnd)
+                world = Logic(options, world_setup=world_setup)
+                if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(world.iteminfo_list) == sum(itempool.ItemPool(options, rnd).toDict().values()):
+                    break
+
             for ii in world.iteminfo_list:
                 ii.world = n
 
             for loc in world.location_list:
                 loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
                 loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
-                loc.items = [MultiworldItemInfoWrapper(n, configuration_options.multiworld_options[n], ii) for ii in loc.items]
+                loc.items = [MultiworldItemInfoWrapper(n, options, ii) for ii in loc.items]
                 self.iteminfo_list += loc.items
 
             self.worlds.append(world)
