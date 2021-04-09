@@ -69,7 +69,6 @@ else
         -- Accessing ttyUSB0 requires setting up permissions under linux (i.e. adding your user to the dialout group).
         os.execute("stty -F /dev/ttyUSB0 115200 raw min 0 time 1 -echo -echoe -echok -echoctl -echoke")
         serial = io.open("/dev/ttyUSB0", "w+")
-        os.execute("sleep 5")
     else -- windows
         local seriallib = require "serial"
         serial = io.open("\\\\.\\COM27", "w+")
@@ -85,7 +84,7 @@ else
         serial:write("!")
         local res = serial:read(128)
         if res == "!" then break end
-        socket.sleep(100)
+        socketlib.sleep(5) -- seconds
     end
     print("Waiting for gameboy connection...")
     while true do
