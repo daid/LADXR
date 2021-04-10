@@ -43,6 +43,8 @@ $options = [
             'tooltip' => 'Randomize where your starting house is located'],
         'dungeonshuffle' => ['label' => 'Dungeon shuffle', 'type' => 'check', 'default' => '', 'arg' => '--dungeonshuffle',
             'tooltip' => 'Randomizes the dungeon that each dungeon entrance leads to'],
+        'entranceshuffle' => ['label' => 'Entrance randomizer', 'type' => ["none" => "Default", "simple" => "Simple", "advanced" => "Advanced", "expert" => "Expert", "insanity" => "Insanity"], 'default' => 'None', 'arg' => '--entranceshuffle',
+            'tooltip' => 'Randomizes where overworld entrances lead to.|[Simple] single entrance caves that contain items are randomized|[Advanced] Connector caves are also randomized|[Expert] Caves/houses without items are also randomized|[Insanity] A few very annoying entrances will be randomized as well.|If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.'],
         'boss' => ['label' => 'Boss shuffle', 'type' => ['default' => 'Normal', 'shuffle' => 'Shuffle', 'random' => 'Randomize'], 'arg' => '--boss', 'default' => 'default',
             'tooltip' => 'Randomizes the dungeon bosses that each dungeon has'],
         'miniboss' => ['label' => 'Miniboss shuffle', 'type' => ['default' => 'Normal', 'shuffle' => 'Shuffle', 'random' => 'Randomize'], 'arg' => '--miniboss', 'default' => 'default',
