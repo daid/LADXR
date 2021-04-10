@@ -100,6 +100,7 @@ ENTRANCE_INFO = {
     "prairie_left_cave1":           EntranceInfo(0x84, target=0x2cd, type="single"),
     "prairie_left_cave2":           EntranceInfo(0x86, target=0x2f4, type="single"),
     "prairie_left_fairy":           EntranceInfo(0x87, target=0x1f3, type="dummy"),
+    "mamu":                         EntranceInfo(0xD4, target=0x2fb, type="insanity"),
     "d3":                           EntranceInfo(0xB5, target=0x152, dungeon=3, instrument_room=0x159),
     "prairie_right_phone":          EntranceInfo(0x88, target=0x29c, type="dummy"),
     "seashell_mansion":             EntranceInfo(0x8A, target=0x2e9, type="single"),
