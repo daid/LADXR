@@ -113,7 +113,8 @@ class Logic:
 
 
 class MultiworldLogic:
-    def __init__(self, configuration_options, rnd):
+    def __init__(self, configuration_options, rnd=None, *, world_setups=None):
+        assert rnd or world_setups
         self.worlds = []
         self.start = Location()
         self.location_list = [self.start]
@@ -121,12 +122,16 @@ class MultiworldLogic:
 
         for n in range(configuration_options.multiworld):
             options = configuration_options.multiworld_options[n]
-            for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                world_setup = WorldSetup()
-                world_setup.randomize(options, rnd)
-                world = Logic(options, world_setup=world_setup)
-                if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(world.iteminfo_list) == sum(itempool.ItemPool(options, rnd).toDict().values()):
-                    break
+            world = None
+            if world_setups:
+                world = Logic(options, world_setup=world_setups[n])
+            else:
+                for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
+                    world_setup = WorldSetup()
+                    world_setup.randomize(options, rnd)
+                    world = Logic(options, world_setup=world_setup)
+                    if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(world.iteminfo_list) == sum(itempool.ItemPool(options, rnd).toDict().values()):
+                        break
 
             for ii in world.iteminfo_list:
                 ii.world = n
@@ -147,6 +152,28 @@ class MultiworldLogic:
         self.entranceMapping = None
 
 
+class MultiworldMetadataWrapper:
+    def __init__(self, world, metadata):
+        self.world = world
+        self.metadata = metadata
+
+    @property
+    def name(self):
+        return self.metadata.name
+
+    @property
+    def area(self):
+        return "P%d %s" % (self.world + 1, self.metadata.area)
+
+    @property
+    def sphere(self):
+        return self.metadata.sphere
+
+    @sphere.setter
+    def sphere(self, value):
+        self.metadata.sphere = value
+
+
 class MultiworldItemInfoWrapper:
     def __init__(self, world, configuration_options, target):
         self.world = world
@@ -154,6 +181,7 @@ class MultiworldItemInfoWrapper:
         self.target = target
         self.dungeon_items = configuration_options.dungeon_items
         self.MULTIWORLD_OPTIONS = None
+        self.item = None
 
     @property
     def nameId(self):
@@ -171,8 +199,21 @@ class MultiworldItemInfoWrapper:
             return self.target.forced_item
         return "%s_W%d" % (self.target.forced_item, self.world)
 
+    @property
+    def room(self):
+        return self.target.room
+
+    @property
+    def metadata(self):
+        return MultiworldMetadataWrapper(self.world, self.target.metadata)
+
+    @property
+    def MULTIWORLD(self):
+        return self.target.MULTIWORLD
+
     def read(self, rom):
-        return "%s_W%d" % (self.target.read(rom), self.world)
+        world = rom.banks[0x3E][0x3300 + self.target.room] if self.target.MULTIWORLD else self.world
+        return "%s_W%d" % (self.target.read(rom), world)
 
     def getOptions(self):
         if self.MULTIWORLD_OPTIONS is None:

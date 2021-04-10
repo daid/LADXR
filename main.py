@@ -40,7 +40,7 @@ def main(mainargs=None):
         help="Rom file to use as input.")
     parser.add_argument('-o', '--output', dest="output_filename", metavar='output rom', type=str, required=False,
         help="Output filename to use. If not specified [seed].gbc is used.")
-    parser.add_argument('--dump', dest="dump", action="store_true",
+    parser.add_argument('--dump', dest="dump", type=str, nargs="*",
         help="Dump the logic of the given rom (spoilers!)")
     parser.add_argument('--spoilerformat', dest="spoilerformat", choices=["none", "console", "text", "json"], default="none",
         help="Sets the output format for the generated seed's spoiler log")
@@ -180,15 +180,15 @@ def main(mainargs=None):
                 f.write("Location:%s: \n" % (ii.nameId))
         sys.exit(0)
 
-    if args.dump or args.test:
+    if args.dump is not None or args.test:
         print("Loading: %s" % (args.input_filename))
-        rom = ROMWithTables(args.input_filename)
+        roms = [ROMWithTables(f) for f in [args.input_filename] + args.dump]
 
         if args.spoilerformat == "none":
             args.spoilerformat = "console"
 
         try:
-            log = spoilerLog.SpoilerLog(args, rom)
+            log = spoilerLog.SpoilerLog(args, roms)
             log.output(args.spoiler_filename)
             sys.exit(0)
         except spoilerLog.RaceRomException:
