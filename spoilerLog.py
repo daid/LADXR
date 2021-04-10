@@ -19,8 +19,11 @@ class SpoilerItemInfo:
         self.itemName = str(ii.read(rom))
         self.player = None
 
-        if multiworld:
-            self.player = rom.banks[0x3E][0x3300 + ii.room] + 1
+        if multiworld and ii.room is not None:
+            if ii.MULTIWORLD:
+                self.player = rom.banks[0x3E][0x3300 + ii.room] + 1
+            else:
+                self.player = rom.banks[0x00][0x0055] + 1
     
     def __repr__(self):
         itemName = self.itemName
