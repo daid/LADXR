@@ -150,7 +150,7 @@ class SpoilerLog:
     def __repr__(self):
         lines = []
         if not self.testOnly:
-            for entrance, target in self.world_setup.entrance_mapping.items():
+            for entrance, target in sorted(self.world_setup.entrance_mapping.items()):
                 if entrance != target:
                     lines.append("Entrance: %s -> %s" % (entrance, target))
             lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.sphere if x.sphere is not None else sys.maxsize, x.area, x.locationName))]
