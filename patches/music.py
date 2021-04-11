@@ -1,4 +1,3 @@
-import random
 from assembler import ASM
 
 
@@ -8,19 +7,19 @@ _LOOPING_MUSIC = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x11,
                   0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x61)
 
 
-def randomizeMusic(rom):
+def randomizeMusic(rom, rnd):
     # Randomize overworld
     for x in range(0, 16, 2):
         for y in range(0, 16, 2):
             idx = x + y * 16
-            result = random.choice(_LOOPING_MUSIC)
+            result = rnd.choice(_LOOPING_MUSIC)
             rom.banks[0x02][idx] = result
             rom.banks[0x02][idx+1] = result
             rom.banks[0x02][idx+16] = result
             rom.banks[0x02][idx+17] = result
     # Random music in dungeons/caves
     for n in range(0x20):
-        rom.banks[0x02][0x100 + n] = random.choice(_LOOPING_MUSIC)
+        rom.banks[0x02][0x100 + n] = rnd.choice(_LOOPING_MUSIC)
 
 
 def noMusic(rom):

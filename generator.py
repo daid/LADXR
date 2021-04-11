@@ -47,7 +47,7 @@ import hints
 
 
 # Function to generate a final rom, this patches the rom with all required patches
-def generateRom(options, seed, logic, multiworld=None):
+def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     print("Loading: %s" % (options.input_filename))
     rom = ROMWithTables(options.input_filename)
 
@@ -155,7 +155,7 @@ def generateRom(options, seed, logic, multiworld=None):
     patches.aesthetics.reduceMessageLengths(rom)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
     if options.music == 'random':
-        patches.music.randomizeMusic(rom)
+        patches.music.randomizeMusic(rom, rnd)
     elif options.music == 'off':
         patches.music.noMusic(rom)
     if options.removeFlashingLights:
@@ -207,7 +207,7 @@ def generateRom(options, seed, logic, multiworld=None):
     rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
 
     if multiworld is None:
-        hints.addHints(rom, random.Random(seed), logic.iteminfo_list)
+        hints.addHints(rom, rnd, logic.iteminfo_list)
 
         world_setup = logic.world_setup
         item_list = logic.iteminfo_list

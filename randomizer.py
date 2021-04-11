@@ -68,7 +68,7 @@ class Randomizer:
                 z.write(os.path.join(os.path.dirname(__file__), "multiworld/socket.dll"), "socket.dll")
             roms = []
             for n in range(options.multiworld):
-                rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, multiworld=n)
+                rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, rnd=self.rnd, multiworld=n)
                 fname = "LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1)
                 if z:
                     handle = z.open(fname, "w")
@@ -88,7 +88,7 @@ class Randomizer:
                     sfname = "LADXR_Multiworld_%d.%s" % (options.multiworld, extension)
                     log.output(sfname, z)
         else:
-            rom = generator.generateRom(options, self.seed, self.__logic)
+            rom = generator.generateRom(options, self.seed, self.__logic, rnd=self.rnd)
             filename = options.output_filename
             if filename is None:
                 filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
