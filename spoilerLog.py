@@ -77,8 +77,10 @@ class SpoilerLog:
 
         if len(world_setups) == 1:
             my_logic = logic.Logic(args, world_setup=world_setups[0])
+            self.world_setup = my_logic.world_setup
         else:
             my_logic = logic.MultiworldLogic(args, world_setups=world_setups)
+            self.worlds = my_logic.worlds
 
         self._loadItems(args, my_logic, roms)
     
@@ -165,12 +167,14 @@ class SpoilerLog:
     def __repr__(self):
         lines = []
         if not self.testOnly:
-            if isinstance(self.logic, logic.Logic):
-                for entrance, target in sorted(self.logic.world_setup.entrance_mapping.items()):
+            # use self.world_setup and self.worlds to distinguish normal vs multiworld
+            # cannot use a logic.Logic reference directly to avoid circular dependency
+            if self.world_setup is not None:
+                for entrance, target in sorted(self.world_setup.entrance_mapping.items()):
                     if entrance != target:
                         lines.append("Entrance: %s -> %s" % (entrance, target))
-            elif isinstance(self.logic, logic.MultiworldLogic):
-                for index, world in enumerate(self.logic.worlds):
+            elif self.worlds is not None:
+                for index, world in enumerate(self.worlds):
                     for entrance, target in sorted(world.world_setup.entrance_mapping.items()):
                         if entrance != target:
                             lines.append("P%d Entrance: %s -> %s" % (index + 1, entrance, target))
