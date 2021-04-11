@@ -10,7 +10,7 @@ def removeOwlEvents(rom):
         if re.hasEntity(0x41):
             re.removeEntities(0x41)
             re.store(rom)
-    # Clear texts used by the owl. Potentially reused somewhere else.
+    # Clear texts used by the owl. Potentially reused somewhere o else.
     rom.texts[0x0D9] = b'\xff'  # used by boomerang
     # 1 Used by empty chest (master stalfos message)
     # 8 unused (0x0C0-0x0C7)
@@ -22,24 +22,35 @@ def removeOwlEvents(rom):
         rom.texts[idx] = b'\xff'
 
 
-    # Patch the owl entity to allow refill of powder/bombs
-    rom.texts[0xC0] = formatText("Hoot!\nHoot!\nOut of stock?", ask="Okay No")
-    rom.texts[0xC1] = formatText("Hoot!\nHoot! Hoot!\nHoot!\nHere are a few things for you.")
+    # Patch the owl entity into a ghost to allow refill of powder/bombs/arrows
+    rom.texts[0xC0] = formatText("Everybody hates me, so I give away free things in the hope people will love me. Want something?", ask="Okay No")
+    rom.texts[0xC1] = formatText("Good for you.")
     rom.patch(0x06, 0x27F5, 0x2A77, ASM("""
-    ; Render owl
+    ; Check if we have powder or bombs.
+    ld   e, INV_SIZE
+    ld   hl, $DB00
+loop:
+    ldi  a, [hl]
+    cp   $02 ; bombs
+    jr   z, hasProperItem
+    cp   $0C ; powder
+    jr   z, hasProperItem
+    cp   $05 ; bow
+    jr   z, hasProperItem
+    dec  e
+    jr   nz, loop
+    ret
+hasProperItem:
+    
+    ; Render ghost
     ld de, sprite
     call $3BC0
 
     call $64C6 ; check if game is busy (pops this stack frame if busy)
 
     ldh a, [$E7] ; frame counter
-    cp $F0
-    jr c, eyesOpen
-    ld a, $01
-    jr setSpriteVariant
-eyesOpen:
-    xor a
-setSpriteVariant:
+    swap a
+    and  $01
     call $3B0C ; set entity sprite variant
     call $641A ; check collision
     ldh  a, [$F0] ;entity state
@@ -81,13 +92,25 @@ doNotGivePowder:
     ld   [$DB4D], a
 doNotGiveBombs:
 
+    ld   a, [$DB45]
+    cp   $10
+    jr   nc, doNotGiveArrows
+    ld   a, $10
+    ld   [$DB45], a
+doNotGiveArrows:
+
     ld   a, $C1
     call $2385 ; open dialog
     ret
 
 sprite:
-    db   $78, $01, $78, $21, $7A, $01, $7A, $21
+    db   $78, $09, $7A, $09, $7C, $09, $7E, $09
 """, 0x67F5), fill_nop=True)
+    rom.patch(0x20, 0x0322 + 0x41 * 2, "734A", "564B")  # Remove the owl init handler
+
+    re = RoomEditor(rom, 0x2A3)
+    re.entities.append((7, 6, 0x41))
+    re.store(rom)
 
 
 def upgradeDungeonOwlStatues(rom):

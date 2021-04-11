@@ -32,9 +32,4 @@ class StartItem(DroppedKey):
         if option != SHIELD:
             rom.patch(5, 0x0CDA, ASM("ld a, $22"), ASM("ld a, $00"))  # do not change links sprite into the one with a shield
 
-        if option in (MAGIC_POWDER, BOMB):
-            re = RoomEditor(rom, 0x0A2)
-            re.entities.append((1, 3, 0x41))
-            re.store(rom)
-
         super().patch(rom, option)

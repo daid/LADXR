@@ -128,7 +128,7 @@ class World:
         Location().add(HeartPiece(0x2E5)).connect(prairie_left_cave2, AND(BOMB, PEGASUS_BOOTS))
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
 
-        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
+        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(FEATHER, PEGASUS_BOOTS, HOOKSHOT, POWER_BRACELET))
 
         dungeon3_entrance = Location().connect(ukuku_prairie, OR(FEATHER, FLIPPERS))

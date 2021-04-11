@@ -357,6 +357,9 @@ blockBadEmu:
   .23333
    .....""", " .23")
 
+    # Ghost
+    rom.banks[0x3F][0x3780:0x3800] = rom.banks[0x32][0x1800:0x1880]
+
     # Instruments
     rom.banks[0x3F][0x3800:0x3A00] = rom.banks[0x31][0x1000:0x1200]
     # Patch the egg song event to use the 2nd vram sprites
