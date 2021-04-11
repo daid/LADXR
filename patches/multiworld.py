@@ -209,7 +209,7 @@ itemChicken:
 itemPieceOfPower:
     db  m"Piece of Power|50 {RUPEES}", $00
 itemBombs:
-    db  m"20 Bombs|50 {RUPEES}", $00
+    db  m"10 Bombs|50 {RUPEES}", $00
 itemRupees:
     db  m"100 {RUPEES}|200 {RUPEES}", $00
 itemMedicine:
