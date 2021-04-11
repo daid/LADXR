@@ -128,7 +128,7 @@ class World:
         Location().add(HeartPiece(0x2E5)).connect(prairie_left_cave2, AND(BOMB, PEGASUS_BOOTS))
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
 
-        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA))
+        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(FEATHER, PEGASUS_BOOTS, HOOKSHOT, POWER_BRACELET))
 
         dungeon3_entrance = Location().connect(ukuku_prairie, OR(FEATHER, FLIPPERS))
@@ -296,7 +296,7 @@ class World:
 
         # Raft game.
         raft_house = Location()
-        Location().add(KeyLocation("RAFT")).connect(raft_house, COUNT("RUPEES", 200))
+        Location().add(KeyLocation("RAFT")).connect(raft_house, COUNT("RUPEES", 100))
         raft_return_upper = Location()
         raft_return_lower = Location().connect(raft_return_upper, None, one_way=True)
         outside_raft_house = Location().connect(below_right_taltal, OR(FLIPPERS, HOOKSHOT))

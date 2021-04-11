@@ -175,7 +175,7 @@ class ItemPool:
         rupee_item = []
         rupee_item_count = []
         for k, v in self.__pool.items():
-            if k.startswith("RUPEES_") and v > 0:
+            if k in {RUPEES_20, RUPEES_50} and v > 0:
                 rupee_item.append(k)
                 rupee_item_count.append(v)
         rupee_chests = sum(v for k, v in self.__pool.items() if k.startswith("RUPEES_"))

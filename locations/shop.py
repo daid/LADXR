@@ -36,3 +36,6 @@ class ShopItem(ItemInfo):
     @property
     def nameId(self):
         return "0x%03X-%s" % (self.room, self.__index)
+
+    def __repr__(self):
+        return "%s(%d)" % (self.__class__.__name__, self.__index)
