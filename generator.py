@@ -152,7 +152,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
     patches.aesthetics.noSwordMusic(rom)
-    patches.aesthetics.reduceMessageLengths(rom)
+    patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
     if options.music == 'random':
         patches.music.randomizeMusic(rom, rnd)

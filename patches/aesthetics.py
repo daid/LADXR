@@ -144,9 +144,23 @@ def noText(rom):
             rom.texts[idx] = rom.texts[idx][-1:]
 
 
-def reduceMessageLengths(rom):
+def reduceMessageLengths(rom, rnd):
     # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
-    rom.texts[0x01] = formatText("Let's a go!")
+    rom.texts[0x01] = formatText(rnd.choice([
+        "Let's a go!",
+        "Remember, sword goes on A!",
+        "Avoid the heart piece of shame!",
+        "Marin? No, this is Zelda. Welcome to Hyrule",
+        "Why are you in my bed?",
+        "This is not a Mario game!",
+        "MuffinJets was here...",
+        "Remember, there are no bugs in LADX",
+        "#####, #####, you got to wake up!\nDinner is ready.",
+        "Go find the stepladder",
+        "Pizza power!",
+        "Eastmost penninsula is the secret",
+        "There is no cow level",
+    ]))
 
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText("You've got a Guardian Acorn!")
