@@ -76,19 +76,19 @@ class SpoilerLog:
             world_setups.append(world_setup)
 
         if len(world_setups) == 1:
-            self.logic = logic.Logic(args, world_setup=world_setups[0])
+            my_logic = logic.Logic(args, world_setup=world_setups[0])
         else:
-            self.logic = logic.MultiworldLogic(args, world_setups=world_setups)
+            my_logic = logic.MultiworldLogic(args, world_setups=world_setups)
 
-        self._loadItems(args, roms)
+        self._loadItems(args, my_logic, roms)
     
-    def _loadItems(self, args, roms):
-        remainingItems = set(self.logic.iteminfo_list)
+    def _loadItems(self, args, my_logic, roms):
+        remainingItems = set(my_logic.iteminfo_list)
 
         currentSphere = 0
         lastAccessibleLocations = set()
         itemContents = {}
-        for ii in self.logic.iteminfo_list:
+        for ii in my_logic.iteminfo_list:
             if not hasattr(ii, "world"):
                 ii.world = 0
             itemContents[ii] = ii.read(roms[ii.world])
@@ -96,7 +96,7 @@ class SpoilerLog:
         # Feed the logic items one sphere at a time
         while remainingItems:
             e = explorer.Explorer()
-            e.visit(self.logic.start)
+            e.visit(my_logic.start)
 
             newLocations = e.getAccessableLocations() - lastAccessibleLocations
 
@@ -121,9 +121,9 @@ class SpoilerLog:
             for ii in location.items:
                 self.accessibleItems.append(SpoilerItemInfo(ii, roms[ii.world], args.multiworld))
 
-        if len(e.getAccessableLocations()) != len(self.logic.location_list):
+        if len(e.getAccessableLocations()) != len(my_logic.location_list):
             self.inaccessibleItems = []
-            for loc in self.logic.location_list:
+            for loc in my_logic.location_list:
                 if loc not in e.getAccessableLocations():
                     for ii in loc.items:
                         self.inaccessibleItems.append(SpoilerItemInfo(ii, roms[ii.world], args.multiworld))
@@ -152,7 +152,7 @@ class SpoilerLog:
         if not filename:
             filename = "LADXR_%s.json" % self.seed
 
-        jsonContent = json.dumps(self, default=lambda x: x.__dict__)
+        jsonContent = json.dumps(self, default=lambda x: x.__dict__, indent="  ")
 
         if zipFile:
             zipFile.writestr(filename, jsonContent)
