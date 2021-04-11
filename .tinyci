@@ -5,7 +5,12 @@ enabled = True
 directory = _test
 commands =
     python3 ../main.py ../input.gbc --timeout 120 --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --dungeon-items keysanity --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --logic glitched --dungeon-items keysanity --heartpiece --seashells --heartcontainers --owlstatues both --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --dungeon-items keysanity --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --logic glitched --dungeon-items keysanity --heartpiece --seashells --heartcontainers --instruments --owlstatues both --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 --textmode none --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 --overworld dungeondive --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle simple --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle advanced --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle insanity --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --spoilerformat text --spoilerfilename /dev/null --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --spoilerformat json --spoilerfilename /dev/null --output /dev/null
