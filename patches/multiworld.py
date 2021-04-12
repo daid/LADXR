@@ -14,10 +14,10 @@ def addMultiworldShop(rom, this_player, player_count):
         Object(7, 0, 0xC7),
         Object(7, 7, 0xFD),
     ] + re.getWarps()
-    re.entities = [(0, 6, 0x77)]
+    re.entities = [(0, 6, 0xD4)]
     for n in range(player_count):
         if n != this_player:
-            re.entities.append((n + 1, 6, 0x77))
+            re.entities.append((n + 1, 6, 0xD4))
     re.animation_id = 0x04
     re.floor_object = 0x0D
     re.store(rom)
@@ -28,11 +28,54 @@ def addMultiworldShop(rom, this_player, player_count):
     re.getWarps()[0].target_x = 128
     re.store(rom)
 
-    # Load the shopkeeper sprites instead of Grandpa sprites
-    entityData.SPRITE_DATA[0x77] = entityData.SPRITE_DATA[0x4D]
+    # Load the shopkeeper sprites
+    entityData.SPRITE_DATA[0xD4] = entityData.SPRITE_DATA[0x4D]
+    rom.patch(0x03, 0x01CF, "00", "98") # Fix the hitbox of the ghost to be 16x16
 
-    labels = {}
-    rom.patch(0x06, 0x2860, "00" * 0x217, ASM("""
+    # Patch Ghost to work as a multiworld shop
+    rom.patch(0x19, 0x1E18, 0x20B0, ASM("""
+    ld   a, $01
+    ld   [$C50A], a ; this stops link from using items
+
+    ldh  a, [$EE] ; X
+    cp   $08
+    ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
+    jp   z, shopItemsHandler
+
+;Draw shopkeeper
+    ld   de, OwnerSpriteData
+    call $3BC0 ; render sprite pair
+    ldh  a, [$E7] ; frame counter
+    swap a
+    and  $01
+    call $3B0C ; set sprite variant
+
+    ldh  a, [$F0]
+    and  a
+    jr   nz, checkTalkingResult
+
+    call $7CA2 ; prevent link from moving into the sprite
+    call $7CF0 ; check if talking to NPC
+    call c, talkHandler ; talk handling
+    ret
+
+checkTalkingResult:
+    ld   a, [$C19F]
+    and  a
+    ret  nz ; still taking
+    call $3B12 ; increase entity state
+    ld   [hl], $00
+    ld   a, [$C177] ; dialog selection
+    and  a
+    ret  nz
+    jp TalkResultHandler
+
+OwnerSpriteData:
+    ;db   $60, $03, $62, $03, $62, $23, $60, $23 ; down
+    db   $64, $03, $66, $03, $66, $23, $64, $23 ; up
+    ;db   $68, $03, $6A, $03, $6C, $03, $6E, $03 ; left
+    ;db   $6A, $23, $68, $23, $6E, $23, $6C, $23 ; right
+
 shopItemsHandler:
 ; Render the shop items
     ld   h, $00
@@ -262,51 +305,4 @@ ItemPriceTableBCD:
     dw $0100, $0050, $0050, $0050, $0200, $0100, $0010
 ItemPriceTableDEC:
     db $64, $32, $32, $32, $C8, $64, $0A
-
-""", 0x6860, labels), fill_nop=True)
-
-    # Patch GrandpaUlrira to work as a multiworld shop
-    rom.patch(0x06, 0x1C0E, 0x1C89, ASM("""
-    ld   a, $01
-    ld   [$C50A], a ; this stops link from using items
-
-    ldh  a, [$EE] ; X
-    cp   $08
-    ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
-    jp   z, ${SHOPITEMSHANDLER:04x}
-
-;Draw shopkeeper
-    ld   de, OwnerSpriteData
-    call $3BC0 ; render sprite pair
-    ldh  a, [$E7] ; frame counter
-    swap a
-    and  $01
-    call $3B0C ; set sprite variant
-
-    ldh  a, [$F0]
-    and  a
-    jr   nz, checkTalkingResult
-
-    call $641A ; prevent link from moving into the sprite
-    call $645D ; check if talking to NPC
-    call c, ${TALKHANDLER:04x} ; talk handling
-    ret
-
-checkTalkingResult:
-    ld   a, [$C19F]
-    and  a
-    ret  nz ; still taking
-    call $3B12 ; increase entity state
-    ld   [hl], $00
-    ld   a, [$C177] ; dialog selection
-    and  a
-    ret  nz
-    jp ${TALKRESULTHANDLER:04x}
-
-OwnerSpriteData:
-    ;db   $60, $03, $62, $03, $62, $23, $60, $23 ; down
-    db   $64, $03, $66, $03, $66, $23, $64, $23 ; up
-    ;db   $68, $03, $6A, $03, $6C, $03, $6E, $03 ; left
-    ;db   $6A, $23, $68, $23, $6E, $23, $6C, $23 ; right
-    """.format(**labels), 0x5C0E), fill_nop=True)
-
+    """, 0x5E18), fill_nop=True)
