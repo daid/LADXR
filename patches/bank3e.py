@@ -101,3 +101,6 @@ StartGameMarinMessage:
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
 
     rom.patch(0x3E, 0x2F00, "00" * len(seed), binascii.hexlify(seed))
+
+    # Prevent the photo album from crashing due to serial interrupts
+    rom.patch(0x28, 0x40D2, ASM("ld a, $09"), ASM("ld a, $01"))
