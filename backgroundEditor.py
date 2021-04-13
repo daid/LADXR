@@ -43,15 +43,25 @@ class BackgroundEditor:
             if low not in self.tiles:
                 low += 1
                 continue
-            count = 1
-            while low + count in self.tiles and count < 255:
-                count += 1
-            result.append(low >> 8)
-            result.append(low & 0xFF)
-            result.append(count - 1)
-            for n in range(count):
-                result.append(self.tiles[low + n])
-            low += count
+            different_count = 1
+            while low + different_count in self.tiles and different_count < 0x40:
+                different_count += 1
+            same_count = 1
+            while low + same_count in self.tiles and self.tiles[low] == self.tiles[low + same_count] and same_count < 0x40:
+                same_count += 1
+            if same_count > different_count - 4 and same_count > 2:
+                result.append(low >> 8)
+                result.append(low & 0xFF)
+                result.append((same_count - 1) | 0x40)
+                result.append(self.tiles[low])
+                low += same_count
+            else:
+                result.append(low >> 8)
+                result.append(low & 0xFF)
+                result.append(different_count - 1)
+                for n in range(different_count):
+                    result.append(self.tiles[low + n])
+                low += different_count
         result.append(0x00)
         if self.__is_attributes:
             rom.background_attributes[self.__index] = result
