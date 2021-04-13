@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         {
             var kv = kv.split("=");
             if (kv.length > 1)
-                ID(kv[0]).value = kv[1];
+                ID(kv[0]).value = decodeURI(kv[1]);
         }
     }
     window.onhashchange();

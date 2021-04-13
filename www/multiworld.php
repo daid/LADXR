@@ -235,7 +235,10 @@ function seedComplete(data)
     {
         $('#successCard').attr('style', 'display: none;');
         $('#failureCard').attr('style', '');
-        $('#failureMessage').html(data.message);
+        if (data.message)
+            $('#failureMessage').html(data.message);
+        else
+            $('#failureMessage').text(data);
     }
 }
 </script>
