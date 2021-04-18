@@ -84,7 +84,7 @@ class World:
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, HOOKSHOT)
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
-        swamp = Location().connect(forest, OR(MAGIC_POWDER, FEATHER))
+        swamp = Location().connect(forest, AND(OR(MAGIC_POWDER, FEATHER), r.bush))
         swamp_chest = Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
