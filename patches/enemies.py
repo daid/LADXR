@@ -259,6 +259,19 @@ def changeMiniBosses(rom, mapping):
     # Remove the powder fairy from giant buzz blob
     rom.patch(0x36, 0x14F7, ASM("jr nz, $05"), ASM("jr $05"))
 
+    # Do not allow the force barrier in D3 dodongo room
+    rom.patch(0x14, 0x14AC, 0x14B5, ASM("jp $7FF0"), fill_nop=True)
+    rom.patch(0x14, 0x3FF0, "00" * 0x10, ASM("""
+        ld  a, [$C124] ; room transition
+        ld  hl, $C17B
+        or  [hl]
+        ret nz
+        ldh a, [$F6] ; room
+        cp  $45 ; check for D3 dodogo room
+        ret z
+        jp  $54B5
+    """), fill_nop=True)
+
     for target, name in mapping.items():
         re = RoomEditor(rom, MINIBOSS_ROOMS[target])
         re.entities = [e for e in re.entities if e[2] == 0x61]  # Only keep warp, if available
@@ -310,8 +323,6 @@ def changeMiniBosses(rom, mapping):
         if name == "ROLLING_BONES" and target == 2:
             # Make rolling bones pass trough walls so it does not get stuck here.
             rom.patch(0x03, 0x02F1 + 0x81, "84", "95")
-        if name == "MOBLIN_KING" and target == 2: # Remove force push into room from moblin king, to prevent D3 softlock
-            rom.patch(0x15, 0x06E1, ASM("call $394D"), "", fill_nop=True)
         re.store(rom)
 
 
