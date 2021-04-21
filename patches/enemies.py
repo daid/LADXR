@@ -310,6 +310,8 @@ def changeMiniBosses(rom, mapping):
         if name == "ROLLING_BONES" and target == 2:
             # Make rolling bones pass trough walls so it does not get stuck here.
             rom.patch(0x03, 0x02F1 + 0x81, "84", "95")
+        if name == "MOBLIN_KING" and target == 2: # Remove force push into room from moblin king, to prevent D3 softlock
+            rom.patch(0x15, 0x06E1, ASM("call $394D"), "", fill_nop=True)
         re.store(rom)
 
 
