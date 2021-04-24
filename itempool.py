@@ -117,7 +117,8 @@ class ItemPool:
             self.add(PEGASUS_BOOTS)
             self.add(POWER_BRACELET)
             self.add(SHOVEL)
-            self.removeRupees(11)
+            self.add(RUPEES_200, 2)
+            self.removeRupees(13)
 
             for n in range(9):
                 self.remove("MAP%d" % (n + 1))
