@@ -1,5 +1,5 @@
 from assembler import ASM
-from roomEditor import RoomEditor
+from roomEditor import RoomEditor, ObjectWarp, ObjectHorizontal
 from backgroundEditor import BackgroundEditor
 import utils
 
@@ -8,6 +8,16 @@ def bugfixWrittingWrongRoomStatus(rom):
     # The normal rom contains a pretty nasty bug where door closing triggers in D7/D8 can effect doors in
     # dungeons D1-D6. This fix should prevent this.
     rom.patch(0x02, 0x1D21, 0x1D3C, ASM("call $5B9F"), fill_nop=True)
+
+def fixWrongWarp(rom):
+    rom.patch(0x00, 0x18CE, ASM("cp $04"), ASM("cp $03"))
+    re = RoomEditor(rom, 0x2b)
+    for x in range(10):
+        re.removeObject(x, 7)
+    re.objects.append(ObjectHorizontal(0, 7, 0x2C, 10))
+    while len(re.getWarps()) < 4:
+        re.objects.append(ObjectWarp(1, 3, 0x7a, 80, 124))
+    re.store(rom)
 
 def bugfixBossroomTopPush(rom):
     rom.patch(0x14, 0x14D9, ASM("""

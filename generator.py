@@ -110,6 +110,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.bank3e.addBank3E(rom, seed)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
+    patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
     if options.dungeon_items in ('localnightmarekey', 'keysanity'):
