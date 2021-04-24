@@ -47,6 +47,9 @@ def fixChests(rom):
         ld   a, [hl]
     """), ASM("ld a, $01"), fill_nop=True)
 
+    # Always spawn seashells even if you have the L2 sword
+    rom.patch(0x14, 0x192F, ASM("ld a, $1C"), ASM("ld a, $20"))
+
     rom.texts[0x9A] = formatText("You found 10 {BOMB}!")
 
 
