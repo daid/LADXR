@@ -67,6 +67,13 @@ def cleanup(rom):
 
     rom.texts[0x02B] = b'' # unused text
 
+
+def disablePhotoPrint(rom):
+    rom.patch(0x28, 0x07CC, ASM("ldh [$01], a\nldh [$02], a"), "", fill_nop=True) # do not reset the serial link
+    rom.patch(0x28, 0x0483, ASM("ld a, $13"), ASM("jr $EA", 0x4483)) # Do not print on A press, but jump to cancel
+    rom.patch(0x28, 0x0492, ASM("ld hl, $4439"), ASM("ret"), fill_nop=True) # Do not show the print/cancel overlay
+
+
 def quickswap(rom, button):
     rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
     rom.patch(0x00, 0x10BC,  # Patch the open minimap code to swap the your items instead
