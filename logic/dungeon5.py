@@ -2,8 +2,6 @@ from .requirements import *
 from .location import Location
 from locations.all import *
 
-#TODO: In this dungeon you can waste a key by going to the miniboss, which is useless and can be bypassed.
-#       Logic does not account for you wasting this key (maybe remove the keyblock?)
 
 class Dungeon5:
     def __init__(self, options, world_setup, r):
