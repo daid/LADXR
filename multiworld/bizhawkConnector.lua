@@ -237,35 +237,42 @@ function stateIdle()
         
         if result:byte(1, 1) == 0x01 then
             result, err = socket:receive(3)
-            seq_nr, item_id, source = result:byte(1, 3)
-            print(string.format("Got item: %02x from %d (%d)", item_id, source, seq_nr))
+            if err == nil then
+                seq_nr, item_id, source = result:byte(1, 3)
+                print(string.format("Got item: %02x from %d (%d)", item_id, source, seq_nr))
 
-            if memread(wLinkSyncSequenceNumber) ~= seq_nr then
-                print("Wrong seq number for item, ignoring.")
-            else
-                if bit.band(memread(wLinkStatusBits), 0x01) == 0x01 then
-                    print("Got item while previous was not yet handled by the game!")
+                if memread(wLinkSyncSequenceNumber) ~= seq_nr then
+                    print("Wrong seq number for item, ignoring.")
                 else
-                    memwrite(wLinkGiveItem, item_id)
-                    memwrite(wLinkGiveItemFrom, source)
-                    memwrite(wLinkSyncSequenceNumber, memread(wLinkSyncSequenceNumber) + 1)
-                    memwriteOR(wLinkStatusBits, 0x01)
+                    if bit.band(memread(wLinkStatusBits), 0x01) == 0x01 then
+                        print("Got item while previous was not yet handled by the game!")
+                    else
+                        memwrite(wLinkGiveItem, item_id)
+                        memwrite(wLinkGiveItemFrom, source)
+                        memwrite(wLinkSyncSequenceNumber, memread(wLinkSyncSequenceNumber) + 1)
+                        memwriteOR(wLinkStatusBits, 0x01)
+                    end
                 end
-            end
-        end
-        if result:byte(1, 1) == 0x02 then
-            result, err = socket:receive(2)
-            item_id, source = result:byte(1, 2)
-
-            print(string.format("Go shop item: %02x from %d", item_id, source))
-
-            if bit.band(memread(wLinkStatusBits), 0x01) == 0x01 then
-                print("Cannot give shop item, as there is still an item waiting, dropping it. Sorry.")
             else
-                memwrite(wLinkGiveItem, item_id)
-                memwrite(wLinkGiveItemFrom, source)
-                memwriteOR(wLinkStatusBits, 0x01)
+                print(err)
             end
+        elseif result:byte(1, 1) == 0x02 then
+           result, err = socket:receive(2)
+           if err == nil then
+               item_id, source = result:byte(1, 2)
+
+               print(string.format("Go shop item: %02x from %d", item_id, source))
+
+               if bit.band(memread(wLinkStatusBits), 0x01) == 0x01 then
+                   print("Cannot give shop item, as there is still an item waiting, dropping it. Sorry.")
+               else
+                   memwrite(wLinkGiveItem, item_id)
+                   memwrite(wLinkGiveItemFrom, source)
+                   memwriteOR(wLinkStatusBits, 0x01)
+               end
+           else
+               print(err)
+           end
         end
     end
 end
