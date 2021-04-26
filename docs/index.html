@@ -13,25 +13,25 @@
 <p>It ensures the game is still beatable, by checking if all locations can still be reached. But no guarantee that you progress from Dungeon to Dungeon, you will have to find your own path.</p>
 <p>The goal of this randomizer is to create a new experience, which does not show any glitches or bugs (except when you use a bug/glitch yourself). Normal gameplay should not introduce any bugs, and it can be experienced like the normal game.</p>
 <p>Feature list:
-<ul>
-<li>Chest contents all chests is shuffled</li>
-<li>Your starting shield is randomized to be a different item (or the shield)</li>
-<li>Dungeon related items are kept in dungeons by default, keysanity option puts these items everywhere.</li>
-<li>Seashells, golden leaves, dungeon keys, and heart pieces are shuffled with items from the chests</li>
-<li>Trading sequence nor taking Marin on a date is needed to beat the game.</li>
+<li>All contents in chests are shuffled.</li>
+<li>The shield given by Tarin is shuffled.</li>
+<li>Heart Pieces and seashells not found in chests can be shuffled optionally.</li>
+<li>Small Keys, Nightmare Keys, Maps, Compasses, and Stone Beaks are shuffled within their respective dungeons. Keysanity will allow them to be shuffled anywhere in the game.</li>
+<li>Dungeon keys (Tail Key, Angler Key, Face Key, Bird Key and Slime Key) and the Golden Leaves are also shuffled into the pool of items.</li>
+<li>The trading sequence is not needed to beat the game. (The book that tells you the path through the Wind Fish's Egg is readable without the Magnifying Lens) This also means that taking Marin on a date isn't required, either.</li>
 </ul>
 <p>Important notes/tips/hints/changes:
 <ul>
 <li>Bowwow is put in a chest and can be anywhere. Once you find him, he will only follow you in the swamp. The cave with the Moblins contains a chest with any item, and do not require Dungeon 1 to be completed to be available.</li>
-<li>The ghost that follows you after Dungeon 4 is removed. Nobody likes that guy. The seashell in his house is always available.</li>
-<li>Golden leaves are decoupled from the slime key, the glitch where the slime key works as a way to open richard no longer works. As the golden leaves can be anywhere, and the slimekey can be anywhere.</li>
-<li>Marin is not needed to enter the desert, the walrus is already gone.</li>
-<li>Rooster is currently not available, a Elephant statue is at the bird key location to allow access to that spot.</li>
+<li>The ghost that follows you after Dungeon 4 has been given a new purpose: He can now be found in Marin's house.  If you run out of ammunition (bombs, powder, arrows) he will gladly give you some more so that you don't get stuck.</li>
+<li>Golden Leaves are decoupled from the Slime Key.  This means that Richard will be holding an item in his house and in the Pothole Field.  This also means that glitches involving their relationship will no longer work.</li>
+<li>Marin is not needed to enter the desert, the walrus has been moved over to let you through.</li>
+<li>Rooster is currently not available, a Elephant statue (requiring the L-2 Power Bracelet) is at the Bird Key location to allow access to that spot.</li>
 <li>Stealing from the shop is not required, there will always be enough rupees from chests before the item from the shop is needed.</li>
-<li>The rafting game can be accessed with just the hookshot, and not flippers, there are 2 chests in there.</li>
-<li>There is a "return to house" in the save and quit menu. To faster get around, and prevent soft locking yourself in rare situations (normal gameplay should not require it, but using glitches makes it easy to softlock yourself)</li>
-<li>The color dungeon is randomized as well, and the two tunics are in the item randomization pool. If you have found multiple tunics, you can switch between them at any phonebooth.</li>
-<li>You might be required to use alternative kill methods on enemies, like powder on bats, or even luring Stalfos that run away from you into pits in Dungeon 1 map chest room.</li>
+<li>The Raft Minigame no longer hard-requires the flippers and will not glitch out if you go down the waterfall without them.</li>
+<li>There is a new "Return Home" option in the save and quit menu.  This is not only convienient for getting around quickly, but also fixes any sticky situations you might get into.</li>
+<li>The items in the Color Dungeon are shuffled as well, and the two tunics are in the item randomization pool. If you have found multiple tunics, you can switch between them at any phonebooth.</li>
+<li>You might be required to use alternative kill methods on enemies, like powder on bats, or even luring enemies into pits.</li>
 </ul>
 
 </p>
@@ -44,14 +44,18 @@
 <p><a href="http://ladxr.daid.eu/v07/"><strong>V0.7: </strong>Current stable version, few small logic bugs.</a></p>
 <p><a href="http://ladxr.daid.eu/v06/"><strong>V0.6: </strong>Whole bunch of small bugs, softlocking due to bad key logic is possible, many newer features not available.</a></p>
 <p><a href="http://ladxr.daid.eu/v05/"><strong>V0.5: </strong>Contains a few logic bugs, newer versions are recommended.</a></p>
-<p>(Older versions are too unstable to be useful, as seed generation was not stable)</p>
+<p>(Older versions are too unstable to be useful and are not recommended, as seed generation was not stable)</p>
 
 <h2>Community</h2>
 
-<p>Drop by on <a href="https://discord.gg/XTw7X2G">discord</a> for a chat!</p>
+<p>Drop by on <a href="https://discord.gg/XTw7X2G">discord</a> for a chat, or to join in on races!</p>
 <p>Report issues/bugs on <a href="https://discord.gg/XTw7X2G">discord</a>, or at <a href="https://github.com/daid/LADXR/issues">github issue tracker</a></p>
-<p>Visit <a href="https://sites.google.com/view/z4randomizer">here</a> for another Links Awakening Randomizer, which has a different focus and gives different playstyle options. Both are cool! We use the same discord server.</p>
-
+<p>Visit <a href="https://sites.google.com/view/z4randomizer">here</a> for another Links Awakening Randomizer called Z4R, which has a different focus and gives different playstyle options. Both are cool! We use the same discord server.</p>
+<p>New to the game?  We recommend using a tracker!</p>
+<ul>
+    <li><a href="https://emotracker.net/download">EmoTracker</a> (When installed, find the LADX Randomizers pack in the Package Manager)</li>
+    <li><a href="https://windfish.io">Windfish.io</a></li>
+</ul>
 <h2>Development</h2>
 
 <p>Source code is available at: <a href="https://github.com/daid/LADXR/">Source code</a>. If you want to contribute, that can be done in many ways, including updating documentation, logic. Or even just bug reports!</p>
@@ -66,16 +70,31 @@
         <li><strong>On the overworld</strong> - Owl statues on the overworld give an item just by talking to them.</li>
         <li><strong>Both</strong> - Owl statues both in dungeons and on the overworld give items.</li>
     </ul>
-    <li><strong>Boomerang trade</strong> - Affects how the boomerang guy in the beach cave is handled.</li>
+    <li><strong>Boomerang trade</strong> - Affects how the boomerang salesman in the beach cave is handled.</li>
     <ul>
-        <li><strong>Default</strong> - Boomerang guy requires the magnifying glass and will always trade you the boomerang.</li>
-        <li><strong>Trade</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying glass, and can trade you either the boomerang, the hookshot, the magic rod, the boots, the feather, or the shovel.</li>
-        <li><strong>Gift</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying glass, and simply gives you his item.  Also enables the expanded inventory patch.</li>
+        <li><strong>Default</strong> - The boomerang salesman requires the magnifying lens and will always trade you the boomerang.</li>
+        <li><strong>Trade</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying lens, and can trade you either the boomerang, the hookshot, the magic rod, the boots, the feather, or the shovel.</li>
+        <li><strong>Gift</strong> - The boomerang is shuffled into the main item pool, boomerang guy is visible without the magnifying lens, and simply gives you his item.  Also enables the expanded inventory patch.</li>
+    </ul>
+    <li><strong>Dungeon shuffle</strong> - Shuffles the dungeon entrances among themselves. For example, the entirety of D1 could be locked behind the face key.</li>
+    <li><strong>Entrance randomizer</strong> - Doorways are shuffled.  Where will you end up?  Each setting is cumulative, meaning selecting Expert will shuffle everything in Advanced and Simple as well. When selecting Dungeon Shuffle and/or Random Start Location, those entrances will also be randomized.</li>
+    <ul>
+        <li><strong>Default</strong></li> - All of the entrances lead to their original destinations.
+        <li><strong>Simple</strong></li> - 23 single-entrance caves with an item are shuffled amongst themseleves.  All other entrances are kept vanilla.
+        <li><strong>Advanced</strong></li> - 43 connector caves with 2 or 3 entrances will be randomized as well.
+        <li><strong>Expert</strong></li> - 26 "dummy" caves with nothing will be randomized as well.
+        <li><strong>Insanity</strong></li> - Expert, but the Raft Minigame and Signpost Maze are added into the pool of entrances.  When you give the Raft Minigame guy his 100 rupees, you must navigate to the raft without saving and quitting!
+    </ul>
+    <li><strong>Boss/Miniboss Shuffle</strong> - Note that these settings are the same but will not mix boss and miniboss shuffle pools.  You will never fight a boss in a miniboss arena and vice versa.</li>
+    <ul>
+        <li><strong>Normal</strong> - Bosses/Minibosses will be in their normal places.</li>
+        <li><strong>Shuffle</strong> - Bosses/Minibosses will be shuffled amongst themselves.</li>
+        <li><strong>Random</strong> - Bosses/Minibosses will be completely randomized, with no limit to how many of each there are.  You might get 8 HotHeads with this setting.</li>
     </ul>
     <li><strong>Dungeon shuffle</strong> - Randomizes the dungeon that each dungeon entrance leads to.  For example, the entirety of D1 could be locked behind the face key.</li>
     <li><strong>Good boy mode</strong> - Affects how BowWow is handled.</li>
     <ul>
-        <li><strong>Disabled</strong> - BowWow's location is randomized, but he only appears in the swamp.</li>
+        <li><strong>Disabled</strong> - BowWow's location is randomized, but he's only used in the swamp.</li>
         <li><strong>Enabled</strong> - You start with BowWow, he can come with you to every screen and can damage bosses and more enemies.</li>
         <li><strong>Enabled (swordless)</strong> - Same as above, but the sword is removed from the item pool and crystals that usually require the sword are removed.</li>
     </ul>
@@ -86,10 +105,29 @@
         <li><strong>Inverted</strong> - Link starts with 9 hearts and heart containers reduce health.  Works in combination with heart container randomization.  Collecting pieces of heart increases health as normal.</li>
         <li><strong>Start with 1 heart</strong> - Link starts with 1 heart container, but otherwise health behaves normally.</li>
     </ul>
-    <li><strong>Instruments needed to open egg</strong> - Sets the number of instruments required to open the egg.  Unless set to "Egg already open", the Ballad of the Wind Fish is still required to open the egg.</li>
-    <li><strong>Keysanity</strong> - All dungeon items (maps, compasses, small keys and nightmare keys) can be found anywhere, even in other dungeons.</li>
-    <li><strong>Link's color</strong> - Forces Link's sprite to use a specific palette.</li>
-    <li><strong>Logic</strong> - Affects the things the player is expected to be able to do to reach items.  
+    <li><strong>Goal</strong> - Changes what you need to open the Wind Fish's Egg.  Unless the Egg starts open or in a Seashell Hunt, the Ballad of the Wind Fish and the Ocarina is still required to open the egg.</li>
+    <ul>
+        <li><strong>X Instruments</strong> - You will need X amount of instruments to open the Egg, where X is any value between 0-8.</li>
+        <li><strong>Egg already Open</strong> - The egg starts open.  Go in and wake the Wind Fish!</li>
+        <li><strong>Random Amount</strong> - You don't know how many instruments you need starting the seed.  You can check the amount by reading the sign on Mt. Tamaranch.</li>
+        <li><strong>Seashell Hunt</strong> - Collect 20 Seashells to open the egg!  The Seashell Mansion will give you it's item at any point.</li>
+        <!-- <li><strong>Raft</strong> - Collect 100 Rupees, and ride the Raft off the island!</li> -->
+
+    </ul>
+    <li><strong>Dungeon Items</strong> - Change how the in-dungeon items are shuffled.</li>
+    <ul>
+        <li><strong>Standard</strong> - In-dungeon items will be shuffled inside their respective dungeons.</li>
+        <li><strong>Maps/Compasses/Beaks</strong> - Maps, Compasses, and Beaks can be found outside of their respective dungeons!  This gives more incentive to do dungeons as there will be more valuable checks there.</li>
+        <li><strong>MCB + Small Keys</strong> - Maps, Compasses, Beaks, and Small Keys can be found outside their dungeons.</li>
+        <li><strong>Keysanity</strong> - All dungeon items and keys can be found anywhere in the game.</li>
+    </ul>
+    <li><strong>Alternate Overworld</strong></li>
+    <ul>
+        <li><strong>Normal</strong> - The overworld will be laid out like the vanilla game.</li>
+        <li><strong>Dungeon Dive</strong> - The overworld ahas been completely redone! Sprint back and forth between dungeons, see how fast you can get!</li>
+    </ul>
+    <li><strong>Link's color</strong> - Forces Link's sprite to use a specific palette.  To see if you're wearing a colored tunic, press Select on the pause menu.</li>
+    <li><strong>Logic</strong> - Affects the things the player is expected to be able to do to reach items.
         See the <a href="https://docs.google.com/spreadsheets/d/1YscJA-N8xudeOB9LtpxLJF4QSToVXdgSKNMkdV2QjcA/edit#gid=0">full requirements</a>, 
         <a href="https://docs.google.com/document/d/1PiXq9eE6FUjnWcioXxZECHO1AnyHpLZWB9UPfYrTEf8/edit#heading=h.9g504gia4vh8">GIF demonstrations</a>, and 
         <a href="https://docs.google.com/document/d/1OQ81MLbJRlcIgvcSc0oR__dg6MODRUGcQXb_kbovaoo/edit#heading=h.75hi9vfn554y">detailed trick guide</a> for more information.</li>
@@ -98,7 +136,7 @@
         <li><strong>Normal</strong> - Items are placed such that they can all be reached with the techniques the vanilla game expects you to use.  Somewhat lesser known things such as destroying bushes with powder may be required.</li>
         <li><strong>Hard</strong> - More advanced techniques may be required, but glitches are not.  Examples include tricky jumps, killing enemies with only pots and skipping keys with smart routing.</li>
         <li><strong>Glitched</strong> - Advanced glitches and techniques may be required, but extremely difficult or tedious tricks are not required.  Examples include Bomb Triggers, Super Jumps and Jesus Jumps.</li>
-        <li><strong>Hell</strong> - Obscure and hard techniques may be required. Examples include featherless jumping with boots and/or hookshot, sequential pit buffers and unclipped superjumps.</li>
+        <li><strong>Hell</strong> - Obscure and hard techniques may be required. Examples include featherless jumping with boots and/or hookshot, sequential pit buffers and unclipped superjumps.  Not for the faint of heart.</li>
     </ul>
     <li><strong>Low HP beeps</strong> - Affects the low health beeping sound.</li>
     <ul>
@@ -111,6 +149,7 @@
     <li><strong>Randomize heart containers</strong> - Includes heart containers dropped from bosses in the randomization process.  Items dropped by bosses will have the correct graphic, and must be collected to access the instrument.</li>
     <li><strong>Randomize heart pieces</strong> - Includes heart pieces in the randomization process.  Items placed in locations that were originally heart pieces will have the correct graphic, and can be collected the same way a heart piece can (e.g. with the hookshot).  The fishing minigame's heart piece is not randomized.</li>
     <li><strong>Randomize hidden seashells</strong> - Includes secret seashells found via digging or bonking in the randomization process.  Seashells found in chests are always randomized.  Items placed in locations that were originally seashells will have the correct graphic and behave like a seashell.</li>
+    <li><strong>Randomize Instruments</strong> - The 8 Instruments of the Sirens are shuffled into the item pool and can be found anywhere.</li>
     <li><strong>Randomize item given by the witch</strong> - Includes both the toadstool and the reward for giving the toadstool to the witch in the randomization process.  Also enables the expanded inventory, to allow for both the toadstool and powder to exist at the same time.</li>
     <li><strong>Seed</strong> - Used to manually set the seed used for random number generation.  Leave this blank to get a randomly selected seed.</li>
     <li><strong>Show nag messages</strong> - Enables the nag messages normally shown when touching stones and crystals.</li>
@@ -134,4 +173,5 @@
     </ul>
 </ul>
 </body>
+</html>
 </html>
