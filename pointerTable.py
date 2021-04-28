@@ -27,7 +27,7 @@ class PointerTable:
         if "data_addr" in info:
             pointers_raw = []
             for n in range(count):
-                pointers_raw.append(info["data_addr"] + pointers_bank[addr + n] * info["data_size"])
+                pointers_raw.append(info["data_addr"] + 0x4000 + pointers_bank[addr + n] * info["data_size"])
         else:
             pointers_raw = struct.unpack("<" + "H" * count, pointers_bank[addr:addr+count*2])
         if "data_bank" in info:
@@ -38,14 +38,18 @@ class PointerTable:
 
         if "alt_pointers" in self.__info:
             for key, (bank, addr) in self.__info["alt_pointers"].items():
-                pointer = struct.unpack("<H", rom.banks[bank][addr:addr+2])[0] & 0x3FFF
-                self.__alt_data[key] = self._readData(rom, self.__info["data_bank"], pointer)
+                pointer = struct.unpack("<H", rom.banks[bank][addr:addr+2])[0]
+                assert 0x4000 <= pointer < 0x8000
+                self.__alt_data[key] = self._readData(rom, self.__info["data_bank"], pointer & 0x3FFF)
 
         for n in range(count):
             bank = banks[n] & 0x3f
             pointer = pointers_raw[n]
-            pointer &= 0x3fff
-            self.__data.append(self._readData(rom, bank, pointer))
+            if 0x4000 <= pointer < 0x8000:
+                pointer &= 0x3fff
+                self.__data.append(self._readData(rom, bank, pointer))
+            else:
+                self.__data.append(pointer)
             self.__banks.append(bank)
 
         while self.__mergeStorage():

@@ -114,10 +114,6 @@ class RoomsColorDungeon(RoomsTable):
 
 class BackgroundTable(PointerTable):
     def _readData(self, rom, bank_nr, pointer):
-        # Ignore 2 invalid pointers.
-        if pointer in (0, 0x1651):
-            return bytearray()
-
         bank = rom.banks[bank_nr]
         start = pointer
         while bank[pointer] != 0x00:
