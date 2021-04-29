@@ -140,7 +140,7 @@ def fastText(rom):
 
 def noText(rom):
     for idx in range(len(rom.texts)):
-        if not isinstance(rom.texts[idx], int):
+        if not isinstance(rom.texts[idx], int) and (idx < 0x217 or idx > 0x21A):
             rom.texts[idx] = rom.texts[idx][-1:]
 
 
