@@ -57,7 +57,7 @@ _NAMES = {
     COMPASS: "Dungeon Compass",
     COMPASS1: "Compass for Tail Cave",
     COMPASS2: "Compass for Bottle Grotto",
-    COMPASS3: "Compass for Compass Cavern",
+    COMPASS3: "Compass for Key Cavern",
     COMPASS4: "Compass for Angler's Tunnel",
     COMPASS5: "Compass for Catfish's Maw",
     COMPASS6: "Compass for Face Shrine",
