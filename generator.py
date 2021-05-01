@@ -106,6 +106,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.core.bugfixWrittingWrongRoomStatus(rom)
     patches.core.bugfixBossroomTopPush(rom)
     patches.core.bugfixPowderBagSprite(rom)
+    patches.core.fixEggDeathClearingItems(rom)
     patches.core.disablePhotoPrint(rom)
     patches.owl.removeOwlEvents(rom)
     patches.bank3e.addBank3E(rom, seed)
