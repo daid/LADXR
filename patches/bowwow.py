@@ -52,6 +52,9 @@ def fixBowwow(rom, everywhere=False):
     rom.patch(0x05, 0x0423, ASM("ld de, $D106"), ASM("ld de, $D186"))
     rom.patch(0x05, 0x0426, ASM("ld hl, $D105"), ASM("ld hl, $D185"))
 
+    rom.patch(0x19, 0x3A4E, ASM("ld hl, $D100"), ASM("ld hl, $D180"))
+    rom.patch(0x19, 0x3A5A, ASM("ld hl, $D110"), ASM("ld hl, $D190"))
+
     rom.patch(0x05, 0x00D9, ASM("ld hl, $D110"), ASM("ld hl, $D190"))
     rom.patch(0x05, 0x026E, ASM("ld hl, $D110"), ASM("ld hl, $D190"))
     rom.patch(0x05, 0x03BA, ASM("ld [$D110], a"), ASM("ld [$D190], a"))
