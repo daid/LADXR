@@ -213,3 +213,7 @@ def exportOverworld(rom):
         "type": "world"
     }
     json.dump(world, open("%s/overworld/export/world.world" % (path), "wt"))
+
+
+def isNormalOverworld(rom):
+    return len(RoomEditor(rom, 0x010).getWarps()) > 0

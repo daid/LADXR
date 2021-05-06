@@ -224,7 +224,11 @@ class WorldSetup:
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
     def loadFromRom(self, rom):
-        import patches.entrances
-        self.entrance_mapping = patches.entrances.readEntrances(rom)
-        self.boss_mapping = patches.enemies.readBossMapping(rom)
-        self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
+        import patches.overworld
+        if patches.overworld.isNormalOverworld(rom):
+            import patches.entrances
+            self.entrance_mapping = patches.entrances.readEntrances(rom)
+            self.boss_mapping = patches.enemies.readBossMapping(rom)
+            self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
+        else:
+            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
