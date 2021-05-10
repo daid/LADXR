@@ -281,7 +281,7 @@ class World:
         self._addEntrance("papahl_exit", papahl, papahl_cave, None)
 
         # D4 entrance and related things
-        below_right_taltal = Location().connect(graveyard, POWER_BRACELET)
+        below_right_taltal = Location().connect(windfish_egg, POWER_BRACELET)
         below_right_taltal.add(KeyLocation("ANGLER_KEYHOLE"))
         below_right_taltal.connect(bay_water, FLIPPERS)
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
@@ -304,10 +304,12 @@ class World:
         raft_game.connect(outside_raft_house, "RAFT")
         raft_game.add(Chest(0x05C), Chest(0x05D)) # Chests in the rafting game
         raft_exit = Location()
-        raft_game.connect(raft_exit, None, one_way=True)
+        if options.logic != "casual":  # use raft to reach north armos maze entrances without flippers
+            raft_game.connect(raft_exit, None, one_way=True)
+            raft_game.connect(armos_fairy_entrance, None, one_way=True)
         self._addEntrance("raft_return_exit", outside_raft_house, raft_return_upper, None)
         self._addEntrance("raft_return_enter", raft_exit, raft_return_lower, None)
-        raft_exit.connect(bay_water, FLIPPERS)
+        raft_exit.connect(armos_fairy_entrance, FLIPPERS)
         self._addEntrance("raft_house", outside_raft_house, raft_house, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             raft_game.add(OwlStatue(0x5D))
@@ -382,6 +384,7 @@ class World:
         d8_entrance = Location()
         if options.logic != "casual":
             d8_entrance.connect(writes_hut_outside, None, one_way=True) # Jump down the ledge
+            d8_entrance.connect(outside_fire_cave, None, one_way=True) # Jump down the other ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
         self._addEntrance("phone_d8", d8_entrance, None, None)
         self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
