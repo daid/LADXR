@@ -401,6 +401,7 @@ class World:
             graveyard_cave_left.connect(graveyard_cave_right, HOOKSHOT, one_way=True) # hookshot the block behind the stairs while over the pit
             swamp_chest.connect(swamp, None)  # Clip past the flower
             self._addEntranceRequirement("d2", POWER_BRACELET) # clip the top wall to walk between the goponga flower and the wall
+            self._addEntranceRequirement("d2", COUNT(SWORD, 2)) # use l2 sword spin to kill goponga flowers
             swamp.connect(writes_hut_outside, HOOKSHOT, one_way=True) # hookshot the sign in front of writes hut
             graveyard_heartpiece.connect(graveyard_cave_right, FEATHER) # jump to the bottom right tile around the blocks
             graveyard_heartpiece.connect(graveyard_cave_right, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
