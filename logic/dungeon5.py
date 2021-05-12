@@ -43,6 +43,7 @@ class Dungeon5:
             after_stalfos.connect(after_keyblock_boss, AND(FEATHER, r.attack_hookshot_powder)) # circumvent stalfos by going past gohma and backwards from boss door
             if butterfly_owl:
                 butterfly_owl.connect(after_stalfos, AND(PEGASUS_BOOTS, STONE_BEAK5)) # boots charge + bonk to cross 2d bridge
+            after_stalfos.connect(staircase_before_boss, AND(PEGASUS_BOOTS, r.attack_hookshot_powder), one_way=True) # pathway from stalfos to staircase: boots charge + bonk to cross bridge, past butterfly room and push the block
             staircase_before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk in 2d section to skip feather
             north_of_crossroads.connect(after_stalfos, HOOKSHOT) # hookshot to the right block to cross pits
             first_bridge_chest.connect(north_of_crossroads, FEATHER) # tight jump from bottom wall clipped to make it over the pits

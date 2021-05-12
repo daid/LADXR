@@ -31,9 +31,11 @@ class Dungeon2:
         dungeon2_ghosts_chest = Location(2).add(DungeonChest(0x120)).connect(dungeon2_ghosts_room, OR(r.fire, BOW))  # bracelet chest
         dungeon2_r6 = Location(2).add(DungeonChest(0x122)).connect(miniboss, POWER_BRACELET)
         dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, AND(r.attack_hookshot_powder, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1), POWER_BRACELET)))
-        dungeon2_pre_boss = Location(2).connect(dungeon2_r6, AND(POWER_BRACELET, FEATHER, KEY2, FOUND(KEY2, 5)))
+        dungeon2_pre_stairs_boss = Location(2).connect(dungeon2_r6, AND(POWER_BRACELET, KEY2, FOUND(KEY2, 5)))
+        dungeon2_post_stairs_boss = Location(2).connect(dungeon2_pre_stairs_boss, POWER_BRACELET)
+        dungeon2_pre_boss = Location(2).connect(dungeon2_post_stairs_boss, FEATHER)
         # If we can get here, we have everything for the boss. So this is also the goal room.
-        dungeon2_boss = Location(2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, r.boss_requirements[world_setup.boss_mapping[1]], FEATHER))
+        dungeon2_boss = Location(2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, r.boss_requirements[world_setup.boss_mapping[1]]))
         
         if options.logic == 'glitched' or options.logic == 'hell':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
@@ -44,8 +46,8 @@ class Dungeon2:
             dungeon2_r4.connect(dungeon2_r3, OR(PEGASUS_BOOTS, HOOKSHOT)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             dungeon2_r4.connect(shyguy_key_drop, r.rear_attack_range, one_way=True) # adjust for alternate requirements for dungeon2_r4
             miniboss.connect(dungeon2_r5, AND(PEGASUS_BOOTS, r.miniboss_requirements[world_setup.miniboss_mapping[1]])) # use boots to dash over the spikes in the 2d section
-            dungeon2_pre_stairs_boss = Location(2).connect(dungeon2_r6, AND(HOOKSHOT, KEY2, FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
-            dungeon2_post_stairs_boss = Location(2).connect(dungeon2_pre_stairs_boss, OR(BOMB, AND(PEGASUS_BOOTS, FEATHER))) # use a bomb to lower the last platform, or boots + feather to cross over top
+            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(HOOKSHOT, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)), KEY2, FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
+            dungeon2_post_stairs_boss.connect(dungeon2_pre_stairs_boss, OR(BOMB, AND(PEGASUS_BOOTS, FEATHER))) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
         self.entrance = entrance
