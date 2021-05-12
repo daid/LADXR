@@ -38,7 +38,7 @@ class Dungeon5:
         m_stalfos_drop = Location(5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB)) # can reach fourth arena from entrance with feather and sword
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            blade_trap_chest.connect(area2, AND(FEATHER, r.attack_hookshot_powder))
+            blade_trap_chest.connect(area2, AND(FEATHER, r.attack_hookshot_powder)) # jump past the blade traps
             boss_key.connect(after_stalfos, AND(FLIPPERS, FEATHER, PEGASUS_BOOTS)) # boots jump across
             after_stalfos.connect(after_keyblock_boss, AND(FEATHER, r.attack_hookshot_powder)) # circumvent stalfos by going past gohma and backwards from boss door
             if butterfly_owl:
@@ -59,6 +59,7 @@ class Dungeon5:
         if  options.logic == 'hell':
             start_hookshot_chest.connect(entrance, PEGASUS_BOOTS) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             fourth_stalfos_area.connect(compass, AND(PEGASUS_BOOTS, SWORD)) # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
+            blade_trap_chest.connect(area2, AND(PEGASUS_BOOTS, r.attack_hookshot_powder)) # boots bonk + pit buffer past the blade traps
             north_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # get to first chest via the north chest with pit buffering
             east_bridge_chest.connect(first_bridge_chest, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering

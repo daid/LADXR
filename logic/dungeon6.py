@@ -48,6 +48,7 @@ class Dungeon6:
             boss_key.connect(lower_right_side, FEATHER) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
         if options.logic == 'hell':
+            entrance.connect(left_side, AND(POWER_BRACELET, PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # can boots superhop off the top right corner in 3 wizrobe raised blocks room
             medicine_chest.connect(lower_right_side, AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW))) # can boots superhop off the top wall with bow or magic rod
             
         self.entrance = entrance

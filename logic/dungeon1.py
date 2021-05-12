@@ -14,7 +14,7 @@ class Dungeon1:
         dungeon1_upper_left = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(1).add(OwlStatue(0x103), OwlStatue(0x104)).connect(dungeon1_upper_left, STONE_BEAK1)
-        Location(1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, SHIELD)  # feather location, behind spike enemies. can shield bump into pit (only shield works)
+        feather_chest = Location(1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, SHIELD)  # feather location, behind spike enemies. can shield bump into pit (only shield works)
         boss_key = Location(1).add(DungeonChest(0x108)).connect(entrance, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # boss key
         dungeon1_right_side = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -29,9 +29,10 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, FEATHER)  # super jump
-            dungeon1_miniboss.connect(dungeon1_right_side, r.attack_hookshot) # damage boost or buffer pause over the pit to cross or mushroom
+            dungeon1_miniboss.connect(dungeon1_right_side, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # damage boost or buffer pause over the pit to cross or mushroom
         
         if options.logic == 'hell':
+            feather_chest.connect(dungeon1_upper_left, SWORD)  # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             boss_key.connect(entrance, AND(KEY1, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
             
         self.entrance = entrance

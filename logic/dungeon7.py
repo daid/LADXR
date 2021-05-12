@@ -36,11 +36,12 @@ class Dungeon7:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             if world_setup.boss_mapping[6] == 6:
                 boss.connect(pre_boss, OR(MAGIC_ROD, AND(BOMB, BOW))) # magic rod and bomb arrows allow a 3 cycle which avoids the feather wind attack
-                boss.connect(pre_boss, AND(BOW, SHIELD)) # limited arrow amount is rough
+                boss.connect(pre_boss, AND(BOW, COUNT(SHIELD, 2))) # limited arrow amount is rough
             
         if options.logic == 'glitched' or options.logic == 'hell':
             topright_pillar_area.connect(entrance, AND(FEATHER, SWORD)) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down. center superjump has to be low so sword added
             toprightF1_chest.connect(topright_pillar_area, FEATHER) # superjump from F1 switch room
+            topright_pillar_area.connect(bottomleftF2_area, FEATHER) # superjump in top left pillar room over the blocks from right to left
             final_pillar_area.connect(bottomleftF2_area, r.attack_hookshot) # sideways block push to get to the chest and pillar
             if options.owlstatues == "both" or options.owlstatues == "dungeon":
                 bottomleft_owl.connect(bottomleftF2_area, AND(r.attack_hookshot, STONE_BEAK7)) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
