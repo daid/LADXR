@@ -24,16 +24,16 @@ class Dungeon3:
         area_up.connect(dungeon3_raised_blocks_east, r.attack_hookshot, one_way=True) # hit switch to reach east chest
         
         area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
-        area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, r.attack_no_boomerang) # west key drop (no longer requires feather to get across hole)
+        area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, r.attack_hookshot) # west key drop (no longer requires feather to get across hole), can use boomerang to knock owls into pit
 
         area_down = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
-        dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, r.attack_no_boomerang) # south keydrop
+        dungeon3_south_key_drop = Location(3).add(DroppedKey(0x158)).connect(area_down, r.attack_hookshot) # south keydrop, can use boomerang to knock owls into pit
 
         area_right = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
         Location(3).add(DroppedKey(0x14D)).connect(area_right, r.attack_hookshot_powder)  # key after the stairs.
 
         dungeon3_nightmare_key_chest = Location(3).add(DungeonChest(0x147)).connect(area_right, AND(BOMB, FEATHER, PEGASUS_BOOTS))  # nightmare key chest
-        dungeon3_post_dodongo_chest = Location(3).add(DungeonChest(0x146)).connect(area_right, r.miniboss_requirements[world_setup.miniboss_mapping[2]])  # boots after the miniboss
+        dungeon3_post_dodongo_chest = Location(3).add(DungeonChest(0x146)).connect(area_right, AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping[2]]))  # boots after the miniboss
         compass_chest = Location(3).add(DungeonChest(0x142)).connect(area_right, OR(SWORD, BOMB, AND(SHIELD, r.attack_hookshot_powder))) # bomb only activates with sword, bomb or shield
         dungeon3_3_bombite_room = Location(3).add(DroppedKey(0x141)).connect(compass_chest, BOMB) # 3 bombite room
         Location(3).add(DroppedKey(0x148)).connect(area_right, r.attack_no_boomerang) # 2 zol 2 owl drop key

@@ -8,7 +8,7 @@ class Dungeon4:
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
-        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot)) # 2 zol 1 spike enemy
+        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot_powder)) # 1 zol 2 spike beetles 1 spark chest
         Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, AND(SHIELD, SWORD)) # room with key chest
         rightside_crossroads = Location(4).connect(entrance, AND(FEATHER, PEGASUS_BOOTS))  # 2 key chests on the right.
         pushable_block_chest = Location(4).add(DungeonChest(0x171)).connect(rightside_crossroads, BOMB) # lower chest

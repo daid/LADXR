@@ -164,6 +164,7 @@ class World:
         bay_madbatter_connector_outside = Location()
         bay_madbatter = Location().connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
         self._addEntrance("prairie_madbatter_connector_entrance", left_bay_area, bay_madbatter_connector_entrance, AND(FEATHER, OR(SWORD, MAGIC_ROD, BOOMERANG)))
+        self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(FEATHER, r.bush)) # if exiting, you can pick up the bushes by normal means
         self._addEntrance("prairie_madbatter_connector_exit", bay_madbatter_connector_outside, bay_madbatter_connector_exit, None)
         self._addEntrance("prairie_madbatter", bay_madbatter_connector_outside, bay_madbatter, None)
 
@@ -206,7 +207,7 @@ class World:
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
         Location().add(GoldLeaf(0x05A)).connect(castle_outside, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
-        Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_hookshot_powder))  # bird on tree, can kill with second rock
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
         Location().add(GoldLeaf(0x2C6)).connect(castle_top_inside, AND(POWER_BRACELET, r.attack_hookshot))  # in the castle, spinning spikeball enemy
@@ -267,6 +268,7 @@ class World:
 
         obstacle_cave_entrance = Location()
         obstacle_cave_inside = Location().connect(obstacle_cave_entrance, SWORD)
+        obstacle_cave_inside.connect(obstacle_cave_entrance, FEATHER, one_way=True) # can get past the rock room from right to left pushing blocks and jumping over the pit
         obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, HOOKSHOT)  # chest at obstacles
         obstacle_cave_exit = Location().connect(obstacle_cave_inside, PEGASUS_BOOTS)
 

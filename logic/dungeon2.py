@@ -20,20 +20,24 @@ class Dungeon2:
             shyguy_key_drop = Location(2).add(DroppedKey(0x134)).connect(dungeon2_r3, AND(FEATHER, OR(r.rear_attack, r.rear_attack_range)))  # shyguy drop key
         else:
             shyguy_key_drop = Location(2).add(DroppedKey(0x134)).connect(dungeon2_r3, OR(r.rear_attack, AND(FEATHER, r.rear_attack_range)))  # shyguy drop key
-        dungeon2_r5 = Location(2).add(DungeonChest(0x126)).add(DungeonChest(0x121)).connect(dungeon2_r4, AND(KEY2, FOUND(KEY2, 3), r.miniboss_requirements[world_setup.miniboss_mapping[1]]))  # post hinox
+        dungeon2_r5 = Location(2).connect(dungeon2_r4, AND(KEY2, FOUND(KEY2, 3)))  # push two blocks together room with owl statue
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(2).add(OwlStatue(0x129), OwlStatue(0x12F)).connect(dungeon2_r5, STONE_BEAK2)
-        dungeon2_ghosts_room = Location(2).connect(dungeon2_r5, AND(KEY2, FOUND(KEY2, 4)))
+            Location(2).add(OwlStatue(0x12F)).connect(dungeon2_r5, STONE_BEAK2)  # owl statue is before miniboss
+        miniboss = Location(2).add(DungeonChest(0x126)).add(DungeonChest(0x121)).connect(dungeon2_r5, AND(FEATHER, r.miniboss_requirements[world_setup.miniboss_mapping[1]]))  # post hinox
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(2).add(OwlStatue(0x129)).connect(miniboss, STONE_BEAK2)  # owl statue after the miniboss
+
+        dungeon2_ghosts_room = Location(2).connect(miniboss, AND(KEY2, FOUND(KEY2, 4)))
         dungeon2_ghosts_chest = Location(2).add(DungeonChest(0x120)).connect(dungeon2_ghosts_room, OR(r.fire, BOW))  # bracelet chest
-        dungeon2_r6 = Location(2).add(DungeonChest(0x122)).connect(dungeon2_r5, POWER_BRACELET)
-        dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, OR(BOW, BOMB, MAGIC_ROD, OCARINA, POWER_BRACELET)) # TODO: song 1
+        dungeon2_r6 = Location(2).add(DungeonChest(0x122)).connect(miniboss, POWER_BRACELET)
+        dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, AND(r.attack_hookshot_powder, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1), POWER_BRACELET)))
         dungeon2_pre_boss = Location(2).connect(dungeon2_r6, AND(POWER_BRACELET, FEATHER, KEY2, FOUND(KEY2, 5)))
         # If we can get here, we have everything for the boss. So this is also the goal room.
         dungeon2_boss = Location(2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(dungeon2_pre_boss, AND(NIGHTMARE_KEY2, r.boss_requirements[world_setup.boss_mapping[1]], FEATHER))
         
         if options.logic == 'glitched' or options.logic == 'hell':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
-            dungeon2_r6.connect(dungeon2_r5, FEATHER) # superjump to staircase next to hinox. 
+            dungeon2_r6.connect(miniboss, FEATHER) # superjump to staircase next to hinox. 
             
         if options.logic == 'hell':    
             dungeon2_map_chest.connect(dungeon2_l2, AND(r.attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
