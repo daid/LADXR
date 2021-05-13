@@ -67,7 +67,9 @@ class World:
         witch_hut = Location().connect(Location().add(Witch()), TOADSTOOL)
         self._addEntrance("witch", forest, witch_hut, None)
         crazy_tracy_hut = Location().connect(forest, POWER_BRACELET)
-        self._addEntrance("crazy_tracy", crazy_tracy_hut, None, None)
+        crazy_tracy_hut_inside = Location()
+        Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, COUNT("RUPEES", 28))
+        self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
 
         forest_madbatter = Location()
         Location().add(MadBatter(0x1E1)).connect(forest_madbatter, MAGIC_POWDER)
@@ -479,7 +481,7 @@ class World:
             self._addEntranceRequirement("castle_jump_cave", PEGASUS_BOOTS) # pit buffer to clip bottom wall and boots bonk across
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, OR(PEGASUS_BOOTS, HOOKSHOT))) # hookshot spam or boots bonk across pits can go from left to right by pit buffering on top of the bottom wall then boots bonk across
             richard_cave_chest.connect(richard_cave, PEGASUS_BOOTS) # boots bonk inside over the hole in front of chest
-            #castle.connect(center_area, AND(PEGASUS_BOOTS, MEDICINE, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))) # medicine iframe abuse to get across spikes
+            castle_secret_entrance_right.connect(castle_secret_entrance_left, AND(PEGASUS_BOOTS, "MEDICINE2")) # medicine iframe abuse to get across spikes with a boots bonk
             left_bay_area.connect(ghost_hut_outside, PEGASUS_BOOTS) # multiple pit buffers to bonk across the bottom wall
             tiny_island.connect(left_bay_area, AND(PEGASUS_BOOTS, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(PEGASUS_BOOTS, OR(MAGIC_POWDER, BOMB, SWORD, MAGIC_ROD, BOOMERANG))) # Boots bonk across the bottom wall, then remove one of the bushes to get on land

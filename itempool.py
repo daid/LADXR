@@ -48,7 +48,7 @@ DEFAULT_ITEM_POOL = {
     
     INSTRUMENT1: 1, INSTRUMENT2: 1, INSTRUMENT3: 1, INSTRUMENT4: 1, INSTRUMENT5: 1, INSTRUMENT6: 1, INSTRUMENT7: 1, INSTRUMENT8: 1,
 
-    "RAFT": 1, "ANGLER_KEYHOLE": 1,
+    "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1,
 }
 
 
@@ -168,6 +168,7 @@ class ItemPool:
             self.remove(MESSAGE)
             self.remove(BOWWOW)
             self.remove(GEL, 2)
+            self.remove("MEDICINE2")
             self.remove("RAFT")
             self.remove("ANGLER_KEYHOLE")
 

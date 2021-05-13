@@ -83,6 +83,6 @@ class Dungeon3:
             dungeon3_nightmare_key_chest.connect(area_right, AND(BOMB, PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the pits with pit buffering and hookshot to the chest
             compass_chest.connect(dungeon3_3_bombite_room, OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs
             pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
-            #pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, PEGASUS_BOOTS, MEDICINE)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
+            pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, PEGASUS_BOOTS, "MEDICINE2")) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             
         self.entrance = entrance
