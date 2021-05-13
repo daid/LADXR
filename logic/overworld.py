@@ -445,6 +445,7 @@ class World:
             below_right_taltal.connect(ukuku_prairie, FEATHER) # jesus jump (north of kanalet castle phonebooth)
             animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # flock clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
+            animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  FEATHER) # villa buffer across the pits
 
             d6_entrance.connect(ukuku_prairie, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance bottom ledge to ukuku prairie
             d6_entrance.connect(armos_fairy_entrance, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance top ledge to armos fairy entrance

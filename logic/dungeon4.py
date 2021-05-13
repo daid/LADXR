@@ -51,7 +51,7 @@ class Dungeon4:
             dungeon4_puddle_before_crossroads.connect(after_double_lock, FEATHER) # With a tight jump feather is enough to cross the puddle without flippers
             center_puddle_chest.connect(before_miniboss, FEATHER) # With a tight jump feather is enough to cross the puddle without flippers
             miniboss = Location(4).connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
-            to_the_nightmare_key.connect(left_water_area, OR(FEATHER, AND(FLIPPERS, PEGASUS_BOOTS))) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
+            to_the_nightmare_key.connect(left_water_area, FEATHER) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
             before_boss.connect(left_water_area, FEATHER) # jump to the bottom right corner of boss door room
             
         if options.logic == 'glitched' or options.logic == 'hell':    
@@ -66,6 +66,7 @@ class Dungeon4:
             north_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
             after_double_lock.connect(entrance, PEGASUS_BOOTS) # boots bonk + pit buffer to the bottom
             dungeon4_puddle_before_crossroads.connect(after_double_lock, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the water bottom wall to the bottom left corner, then hookshot up
+            to_the_nightmare_key.connect(left_water_area, AND(FLIPPERS, PEGASUS_BOOTS)) #  Use flippers for puzzle and boots bonk to get through 2d section
             before_boss.connect(left_water_area, PEGASUS_BOOTS) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance
