@@ -431,6 +431,7 @@ class World:
             graveyard.connect(forest_heartpiece, None, one_way=True) # villa buffer from top.
             log_cave_heartpiece.connect(forest_cave, FEATHER) # super jump
             log_cave_heartpiece.connect(forest_cave, BOMB) # bomb trigger
+            graveyard_cave_left.connect(graveyard_heartpiece, BOMB, one_way=True) # bomb trigger the heartpiece from the left side
             graveyard_heartpiece.connect(graveyard_cave_right, None) # sideways block push from the right staircase.
 
             prairie_island_seashell.connect(ukuku_prairie, AND(FEATHER, r.bush)) # jesus jump from right side, screen transition on top of the water to reach the island
@@ -504,7 +505,7 @@ class World:
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump a long way
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
-                below_right_taltal.connect(raft_game, FEATHER, one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests
+                below_right_taltal.connect(raft_game, AND(FEATHER, attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
             bridge_seashell.connect(outside_rooster_house, AND(PEGASUS_BOOTS, POWER_BRACELET)) # boots bonk
             bird_key.connect(bird_cave, AND(FEATHER, PEGASUS_BOOTS)) # boots jump above wall, use multiple pit buffers to get across
             mountain_bridge_staircase.connect(outside_rooster_house, OR(PEGASUS_BOOTS, FEATHER)) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
