@@ -8,7 +8,7 @@ class Dungeon4:
         entrance = Location(4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
-        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot)) # 2 zol 1 spike enemy
+        right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot_powder)) # 1 zol 2 spike beetles 1 spark chest
         Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, AND(SHIELD, SWORD)) # room with key chest
         rightside_crossroads = Location(4).connect(entrance, AND(FEATHER, PEGASUS_BOOTS))  # 2 key chests on the right.
         pushable_block_chest = Location(4).add(DungeonChest(0x171)).connect(rightside_crossroads, BOMB) # lower chest
@@ -51,7 +51,7 @@ class Dungeon4:
             dungeon4_puddle_before_crossroads.connect(after_double_lock, FEATHER) # With a tight jump feather is enough to cross the puddle without flippers
             center_puddle_chest.connect(before_miniboss, FEATHER) # With a tight jump feather is enough to cross the puddle without flippers
             miniboss = Location(4).connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
-            to_the_nightmare_key.connect(left_water_area, OR(FEATHER, AND(FLIPPERS, PEGASUS_BOOTS))) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
+            to_the_nightmare_key.connect(left_water_area, FEATHER) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
             before_boss.connect(left_water_area, FEATHER) # jump to the bottom right corner of boss door room
             
         if options.logic == 'glitched' or options.logic == 'hell':    
@@ -62,9 +62,11 @@ class Dungeon4:
         if options.logic == 'hell':
             rightside_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into the wall of the first pit, then boots bonk across the center, hookshot to get to the rightmost pit to a second villa buffer on the rightmost pit
             pushable_block_chest.connect(rightside_crossroads, OR(PEGASUS_BOOTS, FEATHER)) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
+            after_double_lock.connect(double_locked_room, AND(KEY4, FOUND(KEY4, 4), PEGASUS_BOOTS), one_way=True) # use boots bonks to cross the water gaps
             north_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
             after_double_lock.connect(entrance, PEGASUS_BOOTS) # boots bonk + pit buffer to the bottom
             dungeon4_puddle_before_crossroads.connect(after_double_lock, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the water bottom wall to the bottom left corner, then hookshot up
+            to_the_nightmare_key.connect(left_water_area, AND(FLIPPERS, PEGASUS_BOOTS)) #  Use flippers for puzzle and boots bonk to get through 2d section
             before_boss.connect(left_water_area, PEGASUS_BOOTS) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance

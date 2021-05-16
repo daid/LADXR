@@ -80,7 +80,7 @@ class RequirementsSettings:
         self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
         self.attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
         self.attack_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # ?
-        self.attack_hookshot_no_bomb = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
+        self.attack_hookshot_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
         self.attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
         self.rear_attack = OR(SWORD, BOMB) # mimic
@@ -126,6 +126,16 @@ class RequirementsSettings:
             self.attack_hookshot_powder.remove(BOMB)
             self.attack_no_boomerang.remove(BOMB)
             self.attack_skeleton.remove(BOMB)
+        if options.logic == "hard":
+            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), COUNT(SHIELD, 2)))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
+        if options.logic == "glitch":
+            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT), COUNT(SHIELD, 2)))  # evil eagle off screen kill or 3 cycle with bombs
+        if options.logic == "hell":
+            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT), COUNT(SHIELD, 2)))  # evil eagle off screen kill or 3 cycle with bombs
+            self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
 
 
 def flatten(req):

@@ -33,22 +33,15 @@ class Dungeon7:
         if options.dungeon_items not in ('localnightmarekey', 'keysanity'):
             first_key.items[0].forced_item = KEY7
             
-        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            if world_setup.boss_mapping[6] == 6:
-                boss.connect(pre_boss, OR(MAGIC_ROD, AND(BOMB, BOW))) # magic rod and bomb arrows allow a 3 cycle which avoids the feather wind attack
-                boss.connect(pre_boss, AND(BOW, SHIELD)) # limited arrow amount is rough
-            
         if options.logic == 'glitched' or options.logic == 'hell':
             topright_pillar_area.connect(entrance, AND(FEATHER, SWORD)) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down. center superjump has to be low so sword added
             toprightF1_chest.connect(topright_pillar_area, FEATHER) # superjump from F1 switch room
+            topright_pillar_area.connect(bottomleftF2_area, FEATHER) # superjump in top left pillar room over the blocks from right to left
             final_pillar_area.connect(bottomleftF2_area, r.attack_hookshot) # sideways block push to get to the chest and pillar
             if options.owlstatues == "both" or options.owlstatues == "dungeon":
                 bottomleft_owl.connect(bottomleftF2_area, AND(r.attack_hookshot, STONE_BEAK7)) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
             final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
             pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
-            if world_setup.boss_mapping[6] == 6:
-                boss.connect(pre_boss, OR(BOMB, BOW, HOOKSHOT, MAGIC_ROD)) # use bombs while on staircase to time when evil eagle flies by. Or hit the boss straight above staircase, then use ranged (bow/hookshot/magic rod (l2sword??)) straight down to kill evil eagle offscreen
-            
             
         if options.logic == 'hell':
             topright_pillar_area.connect(entrance, FEATHER) # superjump in the center to get on raised blocks, has to be low
