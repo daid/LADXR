@@ -27,7 +27,7 @@ class Dungeon2:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(2).add(OwlStatue(0x129)).connect(miniboss, STONE_BEAK2)  # owl statue after the miniboss
 
-        dungeon2_ghosts_room = Location(2).connect(miniboss, AND(KEY2, FOUND(KEY2, 4)))
+        dungeon2_ghosts_room = Location(2).connect(miniboss, AND(KEY2, FOUND(KEY2, 5)))
         dungeon2_ghosts_chest = Location(2).add(DungeonChest(0x120)).connect(dungeon2_ghosts_room, OR(r.fire, BOW))  # bracelet chest
         dungeon2_r6 = Location(2).add(DungeonChest(0x122)).connect(miniboss, POWER_BRACELET)
         dungeon2_boss_key = Location(2).add(DungeonChest(0x127)).connect(dungeon2_r6, AND(r.attack_hookshot_powder, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1), POWER_BRACELET)))
