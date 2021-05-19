@@ -25,23 +25,23 @@ class ItemInfo:
         return self.OPTIONS
 
     def configure(self, options):
-        if options.dungeon_items in ('localkeys', 'localnightmarekey', 'keysanity'):
+        if options.dungeon_items in {'localkeys', 'localnightmarekey', 'keysanity'}:
             # Add items that can be anywhere due to dungeon items setting
             self.OPTIONS = self.OPTIONS.copy()
             for n in range(10):
                 self.OPTIONS += ["MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n)]
-                if options.dungeon_items in ('localnightmarekey', 'keysanity'):
+                if options.dungeon_items in {'localnightmarekey', 'keysanity'}:
                     self.OPTIONS += ["KEY%d" % (n)]
                 if options.dungeon_items == 'keysanity':
                     self.OPTIONS += ["NIGHTMARE_KEY%d" % (n)]
 
-        if self._location.dungeon is not None and options.dungeon_items in ('standard', 'localkeys', 'localnightmarekey'):
+        if self._location.dungeon is not None and options.dungeon_items in {'standard', 'localkeys', 'localnightmarekey', 'keysy'}:
             # Add items specific to this dungeon
             self.OPTIONS = self.OPTIONS.copy()
             d = self._location.dungeon
-            if options.dungeon_items == 'standard':
+            if options.dungeon_items in {'standard', 'keysy'}:
                 self.OPTIONS += ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d)]
-            if options.dungeon_items in ('standard', 'localkeys'):
+            if options.dungeon_items in {'standard', 'localkeys'}:
                 self.OPTIONS += ["KEY%d" % (d)]
             self.OPTIONS += ["NIGHTMARE_KEY%d" % (d)]
 

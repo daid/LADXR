@@ -11,6 +11,7 @@ from . import dungeonColor
 from .requirements import AND, OR, COUNT, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
+from locations.keyLocation import KeyLocation
 from worldSetup import WorldSetup
 import itempool
 
@@ -67,6 +68,12 @@ class Logic:
                 world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
             else:
                 world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], goal)))
+
+        if configuration_options.dungeon_items == 'keysy':
+            for n in range(9):
+                for count in range(9):
+                    world.start.add(KeyLocation("KEY%d" % (n + 1)))
+                world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n + 1)))
 
         self.start = world.start
         self.windfish = world.windfish
@@ -246,10 +253,10 @@ class MultiworldItemInfoWrapper:
                 return False
             if option.startswith("STONE_BEAK"):
                 return False
-        if self.dungeon_items in ('standard', 'localkeys'):
+        if self.dungeon_items in {'standard', 'localkeys'}:
             if option.startswith("KEY"):
                 return False
-        if self.dungeon_items in ('standard', 'localkeys', 'localnightmarekey'):
+        if self.dungeon_items in {'standard', 'localkeys', 'localnightmarekey'}:
             if option.startswith("NIGHTMARE_KEY"):
                 return False
         return True

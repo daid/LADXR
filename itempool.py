@@ -123,7 +123,7 @@ class ItemPool:
             for n in range(9):
                 self.remove("MAP%d" % (n + 1))
                 self.remove("COMPASS%d" % (n + 1))
-                self.add("KEY%d" % (n +1))
+                self.add("KEY%d" % (n + 1))
                 self.add("NIGHTMARE_KEY%d" % (n +1))
         elif options.itempool == 'pain':
             self.add(BAD_HEART_CONTAINER, 12)
@@ -141,6 +141,15 @@ class ItemPool:
                 for n in range(9):
                     self.remove("STONE_BEAK%d" % (n + 1))
                     self.add("KEY%d" % (n +1))
+
+        if options.dungeon_items == 'keysy':
+            for n in range(9):
+                for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
+                    item_name = "%s%d" % (item_name, n + 1)
+                    if item_name in self.__pool:
+                        self.add(RUPEES_20, self.__pool[item_name])
+                        self.remove(item_name, self.__pool[item_name])
+                    self.add(item_name, amount)
 
         if options.goal == "seashells":
             for n in range(8):

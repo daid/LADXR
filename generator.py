@@ -6,6 +6,7 @@ import importlib.machinery
 from romTables import ROMWithTables
 import assembler
 import patches.overworld
+import patches.dungeon
 import patches.entrances
 import patches.enemies
 import patches.titleScreen
@@ -151,6 +152,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     if options.overworld == 'dungeondive':
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
+    if options.dungeon_items == 'keysy':
+        patches.dungeon.removeKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
