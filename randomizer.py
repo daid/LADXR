@@ -167,6 +167,15 @@ class ItemPlacer:
     def run(self, rnd):
         raise NotImplementedError()
 
+    def hasNewPlacesToExplore(self):
+        e = explorer.Explorer()
+        e.visit(self._logic.start)
+        for loc in e.getAccessableLocations():
+            for spot in loc.items:
+                if spot.item is None:
+                    return True
+        return False
+
     def canStillPlaceItemPool(self):
         item_pool = self._item_pool.copy()
         spots = self._spots.copy()
@@ -233,14 +242,7 @@ class RandomItemPlacer(ItemPlacer):
     def logicStillValid(self, verbose=False):
         # Check if we still have new places to explore
         if self._spots:
-            e = explorer.Explorer()
-            e.visit(self._logic.start)
-            valid = False
-            for loc in e.getAccessableLocations():
-                for ii in loc.items:
-                    if ii in self._spots:
-                        valid = True
-            if not valid:
+            if not self.hasNewPlacesToExplore():
                 if verbose:
                     print("Can no longer find new locations to explore")
                 return False
@@ -340,12 +342,3 @@ class ForwardItemPlacer(ItemPlacer):
         for spot in spots:
             spot.weight *= self.__forwardfactor
         return True
-
-    def hasNewPlacesToExplore(self):
-        e = explorer.Explorer()
-        e.visit(self._logic.start)
-        for loc in e.getAccessableLocations():
-            for spot in loc.items:
-                if spot.item is None:
-                    return True
-        return False
