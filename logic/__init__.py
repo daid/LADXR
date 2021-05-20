@@ -195,10 +195,6 @@ class MultiworldItemInfoWrapper:
         return self.target.nameId
 
     @property
-    def priority(self):
-        return self.target.priority
-
-    @property
     def forced_item(self):
         if self.target.forced_item is None:
             return None

@@ -144,131 +144,32 @@ class Randomizer:
 
 
 class ItemPlacer:
-    def __init__(self):
-        pass
-
-    def addItem(self, item, count=1):
-        raise NotImplementedError()
-
-    def removeItem(self, item):
-        raise NotImplementedError()
-
-    def addSpot(self, spot):
-        raise NotImplementedError()
-
-    def removeSpot(self, spot):
-        raise NotImplementedError()
-
-    def run(self):
-        raise NotImplementedError()
-
-
-class RandomItemPlacer:
     def __init__(self, logic, accessibility_rule):
-        self.__logic = logic
-        self.__item_pool = {}
-        self.__spots = []
-        self.__accessibility_rule = accessibility_rule
+        self._logic = logic
+        self._item_pool = {}
+        self._spots = []
+        self._accessibility_rule = accessibility_rule
 
     def addItem(self, item, count=1):
-        self.__item_pool[item] = self.__item_pool.get(item, 0) + count
+        self._item_pool[item] = self._item_pool.get(item, 0) + count
 
     def removeItem(self, item):
-        self.__item_pool[item] -= 1
-        if self.__item_pool[item] == 0:
-            del self.__item_pool[item]
+        self._item_pool[item] -= 1
+        if self._item_pool[item] == 0:
+            del self._item_pool[item]
 
     def addSpot(self, spot):
-        while len(self.__spots) <= spot.priority:
-            self.__spots.append([])
-        self.__spots[spot.priority].append(spot)
+        self._spots.append(spot)
 
     def removeSpot(self, spot):
-        self.__spots[spot.priority].remove(spot)
-        while len(self.__spots) > 0 and len(self.__spots[-1]) == 0:
-            self.__spots.pop()
+        self._spots.remove(spot)
 
     def run(self, rnd):
-        assert sum(self.__item_pool.values()) == sum([len(spots) for spots in self.__spots]), "%d != %d" % (sum(self.__item_pool.values()), sum([len(spots) for spots in self.__spots]))
-        assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
-
-        bail_counter = 0
-        while self.__item_pool:
-            assert sum(self.__item_pool.values()) == sum(map(lambda n: len(n), self.__spots))
-            if not self.__placeItem(rnd):
-                bail_counter += 1
-                if bail_counter > 10:
-                    raise Error("Failed to place an item for a bunch of retries")
-            else:
-                bail_counter = 0
-
-    def __placeItem(self, rnd):
-        # Random placement
-        spot = rnd.choice(self.__spots[-1])
-        options = list(filter(lambda i: i in self.__item_pool, spot.getOptions()))
-
-        if not options:
-            return False
-        item = rnd.choice(sorted(options))
-
-        spot.item = item
-        self.removeItem(item)
-        self.removeSpot(spot)
-
-        if not self.logicStillValid():
-            spot.item = None
-            self.addItem(item)
-            self.addSpot(spot)
-            #print("Failed to place:", item)
-            return False
-        #print("Placed:", item)
-        return True
-
-    def logicStillValid(self, verbose=False):
-        # Check if we still have new places to explore
-        if self.__spots:
-            e = explorer.Explorer()
-            e.visit(self.__logic.start)
-            valid = False
-            for loc in e.getAccessableLocations():
-                for ii in loc.items:
-                    for spots in self.__spots:
-                        if ii in spots:
-                            valid = True
-            if not valid:
-                if verbose:
-                    print("Can no longer find new locations to explore")
-                return False
-
-        # Check if we can still place all our items
-        if not self.canStillPlaceItemPool():
-            if verbose:
-                print("Can no longer place our item pool")
-            return False
-
-        # Finally, check if the logic still makes everything accessible when we have all the items.
-        e = explorer.Explorer()
-        for item_pool_item, count in self.__item_pool.items():
-            e.addItem(item_pool_item, count)
-        e.visit(self.__logic.start)
-
-        if self.__accessibility_rule == "goal":
-            return self.__logic.windfish in e.getAccessableLocations()
-        else:
-            if len(e.getAccessableLocations()) != len(self.__logic.location_list):
-                if verbose:
-                    for loc in self.__logic.location_list:
-                        if loc not in e.getAccessableLocations():
-                            print("Cannot access: ", loc.items)
-                    print("Not all locations are accessible anymore with the full item pool")
-                return False
-        return True
+        raise NotImplementedError()
 
     def canStillPlaceItemPool(self):
-        item_pool = self.__item_pool.copy()
-        spots = []
-        for spot_list in self.__spots:
-            spots += spot_list
+        item_pool = self._item_pool.copy()
+        spots = self._spots.copy()
         def scoreSpot(s):
             if s.location.dungeon:
                 return 0, s.nameId
@@ -292,7 +193,84 @@ class RandomItemPlacer:
         return True
 
 
-class ForwardItemPlacer:
+class RandomItemPlacer(ItemPlacer):
+    def run(self, rnd):
+        assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
+        assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
+
+        bail_counter = 0
+        while self._item_pool:
+            assert sum(self._item_pool.values()) == len(self._spots)
+            if not self.__placeItem(rnd):
+                bail_counter += 1
+                if bail_counter > 10:
+                    raise Error("Failed to place an item for a bunch of retries")
+            else:
+                bail_counter = 0
+
+    def __placeItem(self, rnd):
+        # Random placement
+        spot = rnd.choice(self._spots)
+        options = [i for i in spot.getOptions() if i in self._item_pool]
+
+        if not options:
+            return False
+        item = rnd.choice(options)
+
+        spot.item = item
+        self.removeItem(item)
+        self.removeSpot(spot)
+
+        if not self.logicStillValid():
+            spot.item = None
+            self.addItem(item)
+            self.addSpot(spot)
+            #print("Failed to place:", item)
+            return False
+        #print("Placed:", item)
+        return True
+
+    def logicStillValid(self, verbose=False):
+        # Check if we still have new places to explore
+        if self._spots:
+            e = explorer.Explorer()
+            e.visit(self._logic.start)
+            valid = False
+            for loc in e.getAccessableLocations():
+                for ii in loc.items:
+                    if ii in self._spots:
+                        valid = True
+            if not valid:
+                if verbose:
+                    print("Can no longer find new locations to explore")
+                return False
+
+        # Check if we can still place all our items
+        if not self.canStillPlaceItemPool():
+            if verbose:
+                print("Can no longer place our item pool")
+            return False
+
+        # Finally, check if the logic still makes everything accessible when we have all the items.
+        e = explorer.Explorer()
+        for item_pool_item, count in self._item_pool.items():
+            e.addItem(item_pool_item, count)
+        e.visit(self._logic.start)
+
+        if self._accessibility_rule == "goal":
+            return self._logic.windfish in e.getAccessableLocations()
+        else:
+            if len(e.getAccessableLocations()) != len(self._logic.location_list):
+                if verbose:
+                    for loc in self._logic.location_list:
+                        if loc not in e.getAccessableLocations():
+                            print("Cannot access: ", loc.items)
+                    print("Not all locations are accessible anymore with the full item pool")
+                return False
+        return True
+
+
+class ForwardItemPlacer(ItemPlacer):
     DUNGEON_ITEMS = [
         COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS9,
         MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP9,
@@ -300,36 +278,19 @@ class ForwardItemPlacer:
     ]
 
     def __init__(self, logic, forwardfactor, accessibility_rule):
-        self.__logic = logic
-        self.__item_pool = {}
-        self.__spots = []
+        super().__init__(logic, accessibility_rule)
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
         self.__forwardfactor = forwardfactor if forwardfactor else 0.5
-        self.__accessibility_rule = accessibility_rule
-
-    def addItem(self, item, count=1):
-        self.__item_pool[item] = self.__item_pool.get(item, 0) + count
-
-    def removeItem(self, item):
-        self.__item_pool[item] -= 1
-        if self.__item_pool[item] == 0:
-            del self.__item_pool[item]
-
-    def addSpot(self, spot):
-        self.__spots.append(spot)
-
-    def removeSpot(self, spot):
-        self.__spots.remove(spot)
 
     def run(self, rnd):
         assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool())
-        if sum(self.__item_pool.values()) != len(self.__spots):
-            for k, v in sorted(self.__item_pool.items()):
+        if sum(self._item_pool.values()) != len(self._spots):
+            for k, v in sorted(self._item_pool.items()):
                 print(k, v)
-        assert sum(self.__item_pool.values()) == len(self.__spots), "%d != %d" % (sum(self.__item_pool.values()), len(self.__spots))
+        assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
         bail_counter = 0
-        while self.__item_pool:
+        while self._item_pool:
             if not self.__placeItem(rnd):
                 bail_counter += 1
                 if bail_counter > 100:
@@ -339,23 +300,23 @@ class ForwardItemPlacer:
 
     def __placeItem(self, rnd):
         e = explorer.Explorer()
-        e.visit(self.__logic.start)
-        if self.__accessibility_rule == "goal" and self.__logic.windfish in e.getAccessableLocations():
-            spots = self.__spots
+        e.visit(self._logic.start)
+        if self._accessibility_rule == "goal" and self._logic.windfish in e.getAccessableLocations():
+            spots = self._spots
             req_items = []
         else:
             spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-            req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self.__item_pool]
+            req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self._item_pool]
         if not req_items:
             for di in self.DUNGEON_ITEMS:
-                if di in self.__item_pool:
-                    req_items = [item for item in self.DUNGEON_ITEMS if item in self.__item_pool]
+                if di in self._item_pool:
+                    req_items = [item for item in self.DUNGEON_ITEMS if item in self._item_pool]
                     break
         if req_items:
             if "RUPEES" in req_items:
                 req_items += [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]
         else:
-            req_items = [item for item in sorted(self.__item_pool.keys())]
+            req_items = [item for item in sorted(self._item_pool.keys())]
 
         item = rnd.choice(req_items)
         spots = list(sorted([spot for spot in spots if item in spot.getOptions()], key=lambda spot: spot.nameId))
@@ -364,7 +325,7 @@ class ForwardItemPlacer:
         spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
 
         spot.item = item
-        if self.__accessibility_rule != "goal" or self.__logic.windfish not in e.getAccessableLocations():
+        if self._accessibility_rule != "goal" or self._logic.windfish not in e.getAccessableLocations():
             if e.getRequiredItemsForNextLocations() and not self.hasNewPlacesToExplore():
                 spot.item = None
                 return False
@@ -382,34 +343,9 @@ class ForwardItemPlacer:
 
     def hasNewPlacesToExplore(self):
         e = explorer.Explorer()
-        e.visit(self.__logic.start)
+        e.visit(self._logic.start)
         for loc in e.getAccessableLocations():
             for spot in loc.items:
                 if spot.item is None:
                     return True
         return False
-
-    def canStillPlaceItemPool(self):
-        item_pool = self.__item_pool.copy()
-        spots = self.__spots.copy()
-        def scoreSpot(s):
-            if s.location.dungeon:
-                return 0, s.nameId
-            return len(s.getOptions()), s.nameId
-        item_spot_count = {}
-        spots.sort(key=scoreSpot)
-        for spot in spots:
-            for option in spot.getOptions():
-                item_spot_count[option] = item_spot_count.get(option, 0) + 1
-        for spot in spots:
-            done = False
-            for option in sorted(spot.getOptions(), key=lambda opt: (item_spot_count[opt], opt)):
-                if option in item_pool:
-                    item_pool[option] -= 1
-                    if item_pool[option] == 0:
-                        del item_pool[option]
-                    done = True
-                    break
-            if not done:
-                return False
-        return True

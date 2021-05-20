@@ -11,7 +11,6 @@ class ItemInfo:
         self._location = None
         self.room = room
         self.metadata = checkMetadataTable.get(self.nameId, checkMetadataTable["None"])
-        self.priority = 0
         self.forced_item = None
 
     @property
