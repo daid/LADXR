@@ -289,11 +289,13 @@ class ForwardItemPlacer(ItemPlacer):
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
     ]
 
-    def __init__(self, logic, forwardfactor, accessibility_rule):
+    def __init__(self, logic, forwardfactor, accessibility_rule, *, verbose=False):
         super().__init__(logic, accessibility_rule)
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
         self.__forwardfactor = forwardfactor if forwardfactor else 0.5
+        self.__start_spots_filled = False
+        self.__verbose = verbose
 
     def run(self, rnd):
         assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool())
@@ -317,7 +319,12 @@ class ForwardItemPlacer(ItemPlacer):
             spots = self._spots
             req_items = []
         else:
-            spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
+            if not self.__start_spots_filled:
+                spots = [spot for spot in self._spots if "StartItem" in str(spot)]
+                if not spots:
+                    self.__start_spots_filled = True
+            else:
+                spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
             req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool]
             req_items.sort()
         if not req_items:
@@ -330,6 +337,9 @@ class ForwardItemPlacer(ItemPlacer):
                 req_items += [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]
         else:
             req_items = [item for item in sorted(self._item_pool.keys())]
+
+        if self.__verbose:
+            print("Locations left:%4d Considering now:%4d Progression items:%3d" % (len(self._spots), len(spots), len(req_items)))
 
         item = rnd.choice(req_items)
         spots = [spot for spot in spots if item in spot.getOptions()]
