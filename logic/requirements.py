@@ -57,10 +57,8 @@ class OR:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
-    def modifyItemNames(self, f):
-        self.__items = [f(item) for item in self.__items]
-        for child in self.__children:
-            child.modifyItemNames(f)
+    def copyWithModifiedItemNames(self, f):
+        return OR(*(f(item) for item in self.__items), *(child.copyWithModifiedItemNames(f) for child in self.__children))
 
 
 class AND:
@@ -115,10 +113,8 @@ class AND:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
-    def modifyItemNames(self, f):
-        self.__items = [f(item) for item in self.__items]
-        for child in self.__children:
-            child.modifyItemNames(f)
+    def copyWithModifiedItemNames(self, f):
+        return AND(*(f(item) for item in self.__items), *(child.copyWithModifiedItemNames(f) for child in self.__children))
 
 
 class COUNT:
@@ -151,8 +147,8 @@ class COUNT:
             return
         target_set.add(self.__item)
 
-    def modifyItemNames(self, f):
-        self.__item = f(self.__item)
+    def copyWithModifiedItemNames(self, f):
+        return COUNT(f(self.__item), self.__amount)
 
 
 class COUNTS:
@@ -192,8 +188,8 @@ class COUNTS:
         for item in self.__items:
             target_set.add(item)
 
-    def modifyItemNames(self, f):
-        self.__items = [f(item) for item in self.__items]
+    def copyWithModifiedItemNames(self, f):
+        return COUNTS([f(item) for item in self.__items], self.__amount)
 
 
 class FOUND:
@@ -220,8 +216,8 @@ class FOUND:
             return
         target_set.add(self.__item)
 
-    def modifyItemNames(self, f):
-        self.__item = f(self.__item)
+    def copyWithModifiedItemNames(self, f):
+        return FOUND(f(self.__item), self.__amount)
 
 
 def hasConsumableRequirement(requirements):

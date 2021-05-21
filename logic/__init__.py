@@ -143,9 +143,10 @@ class MultiworldLogic:
             for ii in world.iteminfo_list:
                 ii.world = n
 
+            req_done_set = set()
             for loc in world.location_list:
-                loc.simple_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.simple_connections]
-                loc.gated_connections = [(target, addWorldIdToRequirements(n, req)) for target, req in loc.gated_connections]
+                loc.simple_connections = [(target, addWorldIdToRequirements(req_done_set, n, req)) for target, req in loc.simple_connections]
+                loc.gated_connections = [(target, addWorldIdToRequirements(req_done_set, n, req)) for target, req in loc.gated_connections]
                 loc.items = [MultiworldItemInfoWrapper(n, options, ii) for ii in loc.items]
                 self.iteminfo_list += loc.items
 
@@ -265,10 +266,11 @@ class MultiworldItemInfoWrapper:
         return "W%d:%s" % (self.world, repr(self.target))
 
 
-def addWorldIdToRequirements(world, req):
+def addWorldIdToRequirements(req_done_set, world, req):
     if req is None:
         return None
     if isinstance(req, str):
         return "%s_W%d" % (req, world)
-    req.modifyItemNames(lambda item: "%s_W%d" % (item, world))
-    return req
+    if req in req_done_set:
+        return req
+    return req.copyWithModifiedItemNames(lambda item: "%s_W%d" % (item, world))
