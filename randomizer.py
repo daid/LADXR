@@ -183,18 +183,28 @@ class ItemPlacer:
             if s.location.dungeon:
                 return 0, s.nameId
             return len(s.getOptions()), s.nameId
-        item_spot_count = {}
         spots.sort(key=scoreSpot)
+
+        item_spot_count = {}
         for spot in spots:
             for option in spot.getOptions():
                 item_spot_count[option] = item_spot_count.get(option, 0) + 1
+
+        item_priority_order = [item for item in item_pool.keys()]
+        item_priority_order.sort(key=lambda item: item_spot_count.get(item, 0))
+
         for spot in spots:
+            options = set(spot.getOptions())
             done = False
-            for option in sorted(spot.getOptions(), key=lambda opt: (item_spot_count[opt], opt)):
-                if option in item_pool:
-                    item_pool[option] -= 1
-                    if item_pool[option] == 0:
-                        del item_pool[option]
+            for item in item_priority_order:
+                if item in options:
+                    item_pool[item] -= 1
+                    if item_pool[item] == 0:
+                        del item_pool[item]
+                        item_priority_order.remove(item)
+                        # Check if we can stop because all remaining items can be placed everywhere. (performance optimization)
+                        if item_priority_order and item_spot_count.get(item_priority_order[0], 0) == len(spots):
+                            return True
                     done = True
                     break
             if not done:
