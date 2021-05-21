@@ -8,7 +8,7 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
-from .requirements import AND, OR, COUNT, FOUND, RequirementsSettings
+from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from locations.keyLocation import KeyLocation
@@ -67,7 +67,7 @@ class Logic:
             elif goal == 8:
                 world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
             else:
-                world.nightmare.connect(world.egg, AND(egg_trigger, COUNT([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], goal)))
+                world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], goal)))
 
         if configuration_options.dungeon_items == 'keysy':
             for n in range(9):
@@ -270,14 +270,5 @@ def addWorldIdToRequirements(world, req):
         return None
     if isinstance(req, str):
         return "%s_W%d" % (req, world)
-    if isinstance(req, COUNT):
-        if isinstance(req.item, list):
-            return COUNT([addWorldIdToRequirements(world, item) for item in req.item], req.amount)
-        return COUNT(addWorldIdToRequirements(world, req.item), req.amount)
-    if isinstance(req, FOUND):
-        return FOUND(addWorldIdToRequirements(world, req.item), req.amount)
-    if isinstance(req, AND):
-        return AND(*(addWorldIdToRequirements(world, r) for r in req))
-    if isinstance(req, OR):
-        return OR(*(addWorldIdToRequirements(world, r) for r in req))
-    raise RuntimeError("Unknown requirement type: %s" % (req))
+    req.modifyItemNames(lambda item: "%s_W%d" % (item, world))
+    return req

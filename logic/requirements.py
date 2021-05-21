@@ -57,6 +57,11 @@ class OR:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
+    def modifyItemNames(self, f):
+        self.__items = [f(item) for item in self.__items]
+        for child in self.__children:
+            child.modifyItemNames(f)
+
 
 class AND:
     __slots__ = ('__items', '__children')
@@ -110,6 +115,11 @@ class AND:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
+    def modifyItemNames(self, f):
+        self.__items = [f(item) for item in self.__items]
+        for child in self.__children:
+            child.modifyItemNames(f)
+
 
 class COUNT:
     __slots__ = ('__item', '__amount')
@@ -140,6 +150,9 @@ class COUNT:
         if self.test(inventory):
             return
         target_set.add(self.__item)
+
+    def modifyItemNames(self, f):
+        self.__item = f(self.__item)
 
 
 class COUNTS:
@@ -179,6 +192,9 @@ class COUNTS:
         for item in self.__items:
             target_set.add(item)
 
+    def modifyItemNames(self, f):
+        self.__items = [f(item) for item in self.__items]
+
 
 class FOUND:
     __slots__ = ('__item', '__amount')
@@ -203,6 +219,9 @@ class FOUND:
         if self.test(inventory):
             return
         target_set.add(self.__item)
+
+    def modifyItemNames(self, f):
+        self.__item = f(self.__item)
 
 
 def hasConsumableRequirement(requirements):
