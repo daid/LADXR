@@ -52,20 +52,21 @@ def addBank3E(rom, seed):
 
 MainJumpTable:
         rst  0 ; JUMP TABLE
-        dw   MainLoop                     ; 0
-        dw   RenderChestItem              ; 1
-        dw   GiveItemFromChest            ; 2
-        dw   ItemMessage                  ; 3
-        dw   RenderDroppedKey             ; 4
-        dw   RenderHeartPiece             ; 5
-        dw   GiveItemFromChestMultiworld  ; 6
-        dw   CheckIfLoadBowWow            ; 7
-        dw   BowwowEat                    ; 8
-        dw   HandleOwlStatue              ; 9
-        dw   ItemMessageMultiworld        ; A
-        dw   GiveItemAndMessageForRoom    ; B
-        dw   RenderItemForRoom            ; C
-        dw   StartGameMarinMessage        ; D
+        dw   MainLoop                             ; 0
+        dw   RenderChestItem                      ; 1
+        dw   GiveItemFromChest                    ; 2
+        dw   ItemMessage                          ; 3
+        dw   RenderDroppedKey                     ; 4
+        dw   RenderHeartPiece                     ; 5
+        dw   GiveItemFromChestMultiworld          ; 6
+        dw   CheckIfLoadBowWow                    ; 7
+        dw   BowwowEat                            ; 8
+        dw   HandleOwlStatue                      ; 9
+        dw   ItemMessageMultiworld                ; A
+        dw   GiveItemAndMessageForRoom            ; B
+        dw   RenderItemForRoom                    ; C
+        dw   StartGameMarinMessage                ; D
+        dw   GiveItemAndMessageForRoomMultiworld  ; E
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter

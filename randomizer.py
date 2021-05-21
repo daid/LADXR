@@ -303,6 +303,7 @@ class ForwardItemPlacer(ItemPlacer):
         assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
         bail_counter = 0
         while self._item_pool:
+            print(len(self._spots))
             if not self.__placeItem(rnd):
                 bail_counter += 1
                 if bail_counter > 100:
@@ -332,7 +333,8 @@ class ForwardItemPlacer(ItemPlacer):
             req_items = [item for item in sorted(self._item_pool.keys())]
 
         item = rnd.choice(req_items)
-        spots = list(sorted([spot for spot in spots if item in spot.getOptions()], key=lambda spot: spot.nameId))
+        spots = [spot for spot in spots if item in spot.getOptions()]
+        spots.sort(key=lambda spot: spot.nameId)
         if not spots:
             return False
         spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
