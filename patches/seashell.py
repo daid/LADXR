@@ -48,7 +48,7 @@ def upgradeMansion(rom):
         ld   a, $02
         ld   [$DB4E], a
     """), ASM("""
-        ld   a, $0B ; give item and message for current room
+        ld   a, $0E ; give item and message for current room multiworld
         rst  8
     """), fill_nop=True)
     rom.patch(0x19, 0x36E6, ASM("""

@@ -11,4 +11,4 @@ class Seashell(DroppedKey):
 
 
 class SeashellMansion(DroppedKey):
-    MULTIWORLD = False
+    pass

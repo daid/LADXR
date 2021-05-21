@@ -4,7 +4,7 @@ from roomEditor import RoomEditor
 
 def updateFinishingMinigame(rom):
     rom.patch(0x04, 0x26BE, 0x26DF, ASM("""
-        ld   a, $0B ; GiveItemAndMessageForRoom
+        ld   a, $0E ; GiveItemAndMessageForRoomMultiworld
         rst  8
         
         ; Mark selection as stopping minigame, as we are not asking a question.
