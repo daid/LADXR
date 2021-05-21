@@ -6,7 +6,6 @@ from checkMetadata import checkMetadataTable
 class Explorer:
     def __init__(self):
         self.__inventory = {}
-        self.__inventory_found = {}
         self.__visited = set()
         self.__todo_simple = []
         self.__todo_gated = []
@@ -16,37 +15,16 @@ class Explorer:
 
     def getRequiredItemsForNextLocations(self):
         items = set()
-        def parse(req):
-            if isinstance(req, str):
-                if req not in self.__inventory:
-                    items.add(req)
-            elif isinstance(req, COUNT):
-                if isinstance(req.item, list):
-                    count = 0
-                    for item in req.item:
-                        count += self.__inventory.get(item, 0)
-                    if count >= req.amount:
-                        return
-                    for item in req.item:
-                        items.add(item)
-                else:
-                    if self.__inventory.get(req.item, 0) >= req.amount:
-                        return
-                    items.add(req.item)
-            elif isinstance(req, FOUND):
-                if self.__inventory_found.get(req.item, 0) >= req.amount:
-                    return
-                items.add(req.item)
-            else:
-                if isinstance(req, OR):
-                    if self.testRequirements(req):
-                        return
-                for r in req:
-                    parse(r)
         for loc, req in self.__todo_simple:
-            parse(req)
+            if isinstance(req, str):
+                items.add(req)
+            else:
+                req.getItems(self.__inventory, items)
         for loc, req in self.__todo_gated:
-            parse(req)
+            if isinstance(req, str):
+                items.add(req)
+            else:
+                req.getItems(self.__inventory, items)
         return items
 
     def getInventory(self):
@@ -86,7 +64,7 @@ class Explorer:
         if len(options) > 0:
             # TODO: Test all possible variations, as right now we just take the first option.
             #       this will most likely branch into many different paths.
-            assert self.consumeRequirements(options[0][1])
+            self.consumeRequirements(options[0][1])
             self._visit(options[0][0])
             return True
         return False
@@ -111,7 +89,6 @@ class Explorer:
                 self.__inventory["RUPEES"] = self.__inventory.get("RUPEES", 0) + int(item[7:]) * count
         else:
             self.__inventory[item] = self.__inventory.get(item, 0) + count
-            self.__inventory_found[item] = self.__inventory_found.get(item, 0) + count
 
     def consumeItem(self, item, amount=1):
         if item not in self.__inventory:
@@ -123,41 +100,22 @@ class Explorer:
         return True
 
     def testRequirements(self, req):
-        if self._processRequirement(req, lambda n: n in self.__inventory):
+        if isinstance(req, str):
+            return req in self.__inventory
+        if req is None:
+            return True
+        if req.test(self.__inventory):
             return True
         return False
 
     def consumeRequirements(self, req):
-        if self._processRequirement(req, self.consumeItem):
-            return True
-        return False
-
-    def _processRequirement(self, req, func):
         if isinstance(req, str):
-            return func(req)
-        elif isinstance(req, AND):
-            if all(map(lambda r: self._processRequirement(r, func), req)):
-                return True
-        elif isinstance(req, OR):
-            if any(map(lambda r: self._processRequirement(r, func), req)):
-                return True
-        elif isinstance(req, COUNT):
-            if isinstance(req.item, list):
-                count = 0
-                for item in req.item:
-                    count += self.__inventory.get(item, 0)
-                return count >= req.amount
-            else:
-                if func == self.consumeItem:
-                    return self.consumeItem(req.item, req.amount)
-                return self.__inventory.get(req.item, 0) >= req.amount
-        elif isinstance(req, FOUND):
-            return self.__inventory_found.get(req.item, 0) >= req.amount
-        elif req is None:
-            return True
-        else:
-            raise RuntimeError("Unknown connection requirement: %s" % (req, ))
-        return False
+            self.__inventory[req] -= 1
+            if self.__inventory[req] == 0:
+                del self.__inventory[req]
+            self.__inventory["%s_USED" % req] = self.__inventory.get("%s_USED" % req, 0) + 1
+        elif req is not None:
+            req.consume(self.__inventory)
 
     def dump(self, logic):
         failed = 0
@@ -171,6 +129,6 @@ class Explorer:
             for target, req in loc.gated_connections:
                 if target not in self.__visited:
                     print("Missing:", req)
-        for item, amount in sorted(self.__inventory_found.items()):
-            print("%s: %d (%d)" % (item, self.__inventory.get(item, 0), amount))
+        for item, amount in sorted(self.__inventory.items()):
+            print("%s: %d" % (item, amount))
         print("Cannot reach: %d locations" % (failed))

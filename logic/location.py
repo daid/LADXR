@@ -23,11 +23,17 @@ class Location:
         if other in self.__connected_to:
             for idx, data in enumerate(self.gated_connections):
                 if data[0] == other:
-                    self.gated_connections[idx] = (other, OR(req, data[1]))
+                    if req is None or data[1] is None:
+                        self.gated_connections[idx] = (other, None)
+                    else:
+                        self.gated_connections[idx] = (other, OR(req, data[1]))
                     break
             for idx, data in enumerate(self.simple_connections):
                 if data[0] == other:
-                    self.simple_connections[idx] = (other, OR(req, data[1]))
+                    if req is None or data[1] is None:
+                        self.simple_connections[idx] = (other, None)
+                    else:
+                        self.simple_connections[idx] = (other, OR(req, data[1]))
                     break
         else:
             self.__connected_to.add(other)

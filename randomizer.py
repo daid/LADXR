@@ -318,7 +318,8 @@ class ForwardItemPlacer(ItemPlacer):
             req_items = []
         else:
             spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-            req_items = [item for item in sorted(e.getRequiredItemsForNextLocations()) if item in self._item_pool]
+            req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool]
+            req_items.sort()
         if not req_items:
             for di in self.DUNGEON_ITEMS:
                 if di in self._item_pool:

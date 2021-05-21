@@ -1,66 +1,216 @@
 from locations.items import *
 
 
-class OR(list):
+class OR:
+    __slots__ = ('__items', '__children')
+
     def __init__(self, *args):
-        super().__init__(args)
+        self.__items = [item for item in args if isinstance(item, str)]
+        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
+        assert self.__items or self.__children, args
 
     def __repr__(self):
-        return "or%s" % (super().__repr__())
+        return "or%s" % (self.__items+self.__children)
 
     def remove(self, item):
         if item in self:
-            super().remove(item)
+            self.__items.remove(item)
+
+    def hasConsumableRequirement(self):
+        for item in self.__items:
+            if isConsumable(item):
+                print("Consumable OR requirement? %r" % self)
+                return True
+        for child in self.__children:
+            if child.hasConsumableRequirement():
+                print("Consumable OR requirement? %r" % self)
+                return True
+        return False
+
+    def test(self, inventory):
+        for item in self.__items:
+            if item in inventory:
+                return True
+        for child in self.__children:
+            if child.test(inventory):
+                return True
+        return False
+
+    def consume(self, inventory):
+        for item in self.__items:
+            if isConsumable(item) and item in inventory:
+                inventory[item] -= 1
+                if inventory[item] == 0:
+                    del inventory[item]
+                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
+                return True
+        for child in self.__children:
+            if child.consume(inventory):
+                return True
+        return False
+
+    def getItems(self, inventory, target_set):
+        if self.test(inventory):
+            return
+        for item in self.__items:
+            target_set.add(item)
+        for child in self.__children:
+            child.getItems(inventory, target_set)
 
 
-class AND(list):
+class AND:
+    __slots__ = ('__items', '__children')
+
     def __init__(self, *args):
-        super().__init__(args)
+        self.__items = [item for item in args if isinstance(item, str)]
+        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
 
     def __repr__(self):
-        return "and%s" % (super().__repr__())
+        return "and%s" % (self.__items+self.__children)
 
     def remove(self, item):
         if item in self:
-            super().remove(item)
+            self.__items.remove(item)
+
+    def hasConsumableRequirement(self):
+        for item in self.__items:
+            if isConsumable(item):
+                return True
+        for child in self.__children:
+            if child.hasConsumableRequirement():
+                return True
+        return False
+
+    def test(self, inventory):
+        for item in self.__items:
+            if item not in inventory:
+                return False
+        for child in self.__children:
+            if not child.test(inventory):
+                return False
+        return True
+
+    def consume(self, inventory):
+        for item in self.__items:
+            if isConsumable(item):
+                inventory[item] -= 1
+                if inventory[item] == 0:
+                    del inventory[item]
+                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
+        for child in self.__children:
+            if not child.consume(inventory):
+                return False
+        return True
+
+    def getItems(self, inventory, target_set):
+        if self.test(inventory):
+            return
+        for item in self.__items:
+            target_set.add(item)
+        for child in self.__children:
+            child.getItems(inventory, target_set)
 
 
 class COUNT:
+    __slots__ = ('__item', '__amount')
+
     def __init__(self, item, amount):
-        self.item = item
-        self.amount = amount
-
-    def __eq__(self, other):
-        return other.item == self.item and other.amount == self.amount
-
-    def __hash__(self):
-        return hash((self.item, self.amount))
+        self.__item = item
+        self.__amount = amount
 
     def __repr__(self):
-        return "<%dx%s>" % (self.amount, self.item)
+        return "<%dx%s>" % (self.__amount, self.__item)
+
+    def hasConsumableRequirement(self):
+        if isConsumable(self.__item):
+            return True
+        return False
+
+    def test(self, inventory):
+        return inventory.get(self.__item, 0) >= self.__amount
+
+    def consume(self, inventory):
+        if isConsumable(self.__item):
+            inventory[self.__item] -= self.__amount
+            if inventory[self.__item] == 0:
+                del inventory[self.__item]
+            inventory["%s_USED" % self.__item] = inventory.get("%s_USED" % self.__item, 0) + self.__amount
+
+    def getItems(self, inventory, target_set):
+        if self.test(inventory):
+            return
+        target_set.add(self.__item)
+
+
+class COUNTS:
+    __slots__ = ('__items', '__amount')
+
+    def __init__(self, items, amount):
+        self.__items = items
+        self.__amount = amount
+
+    def __repr__(self):
+        return "<%dx%s>" % (self.__amount, self.__items)
+
+    def hasConsumableRequirement(self):
+        for item in self.__items:
+            if isConsumable(item):
+                print("Consumable COUNTS requirement? %r" % (self))
+                return True
+        return False
+
+    def test(self, inventory):
+        count = 0
+        for item in self.__items:
+            count += inventory.get(item, 0)
+        return count >= self.__amount
+
+    def consume(self, inventory):
+        for item in self.__items:
+            if isConsumable(item):
+                inventory[item] -= self.__amount
+                if inventory[item] == 0:
+                    del inventory[item]
+                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + self.__amount
+
+    def getItems(self, inventory, target_set):
+        if self.test(inventory):
+            return
+        for item in self.__items:
+            target_set.add(item)
 
 
 class FOUND:
+    __slots__ = ('__item', '__amount')
+
     def __init__(self, item, amount):
-        self.item = item
-        self.amount = amount
-
-    def __eq__(self, other):
-        return other.item == self.item and other.amount == self.amount
-
-    def __hash__(self):
-        return hash((self.item, self.amount))
+        self.__item = item
+        self.__amount = amount
 
     def __repr__(self):
-        return "<%dx%s>" % (self.amount, self.item)
+        return "{%dx%s}" % (self.__amount, self.__item)
+
+    def hasConsumableRequirement(self):
+        return False
+
+    def test(self, inventory):
+        return inventory.get(self.__item, 0) + inventory.get("%s_USED" % self.__item, 0) >= self.__amount
+
+    def consume(self, inventory):
+        pass
+
+    def getItems(self, inventory, target_set):
+        if self.test(inventory):
+            return
+        target_set.add(self.__item)
 
 
 def hasConsumableRequirement(requirements):
-    if isinstance(requirements, list) or isinstance(requirements, tuple):
-        return any(map(hasConsumableRequirement, requirements))
-    if isinstance(requirements, COUNT):
-        return hasConsumableRequirement(requirements.item)
-    return isConsumable(requirements)
+    if isinstance(requirements, str):
+        return isConsumable(requirements)
+    if requirements is None:
+        return False
+    return requirements.hasConsumableRequirement()
 
 
 def isConsumable(item):
@@ -136,40 +286,3 @@ class RequirementsSettings:
             self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT), COUNT(SHIELD, 2)))  # evil eagle off screen kill or 3 cycle with bombs
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
-
-
-def flatten(req):
-    result = set()
-    if isinstance(req, OR):
-        for r in req:
-            for res in flatten(r):
-                result.add(res)
-    elif isinstance(req, AND):
-        sets = []
-        for r in req:
-            sets.append(flatten(r))
-
-        def _buildAND(target, r, idx):
-            for s in sets[idx]:
-                if idx < len(sets) - 1:
-                    _buildAND(target, r.union(s), idx + 1)
-                else:
-                    target.add(frozenset(r.union(s)))
-        _buildAND(result, set(), 0)
-    else:
-        result.add(frozenset((req,)))
-    return result
-
-
-def mergeFlat(req1, req2):
-    result = req1.union(req2)
-    result = set(filter(lambda s: all(map(lambda s2: not (s > s2), result)), result))
-    return result
-
-
-if __name__ == "__main__":
-    req = AND("A", "B", "C")
-    req = OR(req, "A")
-    req = OR(req, "B")
-    for res in mergeFlat(flatten(req), set()):
-        print(">", res)
