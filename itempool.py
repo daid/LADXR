@@ -181,6 +181,16 @@ class ItemPool:
             self.remove("RAFT")
             self.remove("ANGLER_KEYHOLE")
 
+        # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
+        #   As we cheat and can place rupees for the wrong player.
+        if options.multiworld:
+            rupees20 = self.__pool.get(RUPEES_20, 0)
+            self.add(RUPEES_50, rupees20 // 2)
+            self.remove(RUPEES_20, rupees20 // 2)
+            rupees50 = self.__pool.get(RUPEES_50, 0)
+            self.add(RUPEES_200, rupees50 // 5)
+            self.remove(RUPEES_50, rupees50 // 5)
+
     def __randomizeRupees(self, options, rnd):
         # Remove rupees from the item pool and replace them with other items to create more variety
         rupee_item = []

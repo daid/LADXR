@@ -68,7 +68,7 @@ class World:
         self._addEntrance("witch", forest, witch_hut, None)
         crazy_tracy_hut = Location().connect(forest, POWER_BRACELET)
         crazy_tracy_hut_inside = Location()
-        Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, COUNT("RUPEES", 28))
+        Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
 
         forest_madbatter = Location()

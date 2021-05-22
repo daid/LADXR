@@ -51,7 +51,9 @@ class Randomizer:
                 else:
                     ii.forced_item = item
 
-        if options.dungeon_items in ('standard', 'localkeys') or options.forwardfactor:
+        if options.multiworld:
+            item_placer = MultiworldItemPlacer(self.__logic, options.forwardfactor if options.forwardfactor else 0.5, options.accessibility_rule, options.multiworld)
+        elif options.dungeon_items in ('standard', 'localkeys') or options.forwardfactor:
             item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)
         else:
             item_placer = RandomItemPlacer(self.__logic, options.accessibility_rule)
@@ -305,14 +307,14 @@ class ForwardItemPlacer(ItemPlacer):
         assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
         bail_counter = 0
         while self._item_pool:
-            if not self.__placeItem(rnd):
+            if not self._placeItem(rnd):
                 bail_counter += 1
                 if bail_counter > 100:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
 
-    def __placeItem(self, rnd):
+    def _placeItem(self, rnd):
         e = explorer.Explorer()
         e.visit(self._logic.start)
         if self._accessibility_rule == "goal" and self._logic.windfish in e.getAccessableLocations():
@@ -339,7 +341,7 @@ class ForwardItemPlacer(ItemPlacer):
             req_items = [item for item in sorted(self._item_pool.keys())]
 
         if self.__verbose:
-            print("Locations left:%4d Considering now:%4d Progression items:%3d" % (len(self._spots), len(spots), len(req_items)))
+            print("Locations left: %d Considering now %d for %d items" % (len(self._spots), len(spots), len(req_items)))
 
         item = rnd.choice(req_items)
         spots = [spot for spot in spots if item in spot.getOptions()]
@@ -363,4 +365,39 @@ class ForwardItemPlacer(ItemPlacer):
         # For each item placed, make all accessible locations less likely to be picked
         for spot in spots:
             spot.weight *= self.__forwardfactor
+        return True
+
+
+class MultiworldItemPlacer(ForwardItemPlacer):
+    def __init__(self, logic, forwardfactor, accessibility_rule, world_count):
+        super().__init__(logic, forwardfactor, accessibility_rule, verbose=True)
+        self.__world_count = world_count
+        self.__initial_spot_count = 0
+
+    def run(self, rnd):
+        self.__initial_spot_count = len(self._spots)
+        super().run(rnd)
+
+    def _placeItem(self, rnd):
+        result = super()._placeItem(rnd)
+        if result:
+            return True
+        if len(self._spots) < self.__initial_spot_count / 10:
+            # At this point we assume the failure is because we can no longer place items across worlds.
+            # And that the items are not really important, so cheat, and change which players the items belong to.
+            spot_options = set()
+            for spot in self._spots:
+                for item in spot.getOptions():
+                    spot_options.add(item)
+            new_item_pool = {}
+            for item, amount in self._item_pool.items():
+                for n in range(self.__world_count):
+                    new_item = "%s%d" % (item[:-1], n)
+                    if new_item in spot_options:
+                        new_item_pool[new_item] = amount
+            print("Deploying cheat: %s -> %s" % (self._item_pool, new_item_pool))
+            self._item_pool = new_item_pool
+        return False
+
+    def canStillPlaceItemPool(self):
         return True
