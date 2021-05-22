@@ -21,6 +21,7 @@ class BoomerangGuy(ItemInfo):
                 SEASHELL, BOOMERANG, HEART_PIECE, BOWWOW, ARROWS_10, SINGLE_ARROW,
                 MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
                 HEART_CONTAINER, BAD_HEART_CONTAINER, TOADSTOOL]
+            self.MULTIWORLD = True
 
     # Cannot trade:
     # SWORD, BOMB, SHIELD, POWER_BRACELET, OCARINA, MAGIC_POWDER, BOW
@@ -28,8 +29,6 @@ class BoomerangGuy(ItemInfo):
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
     # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
     def patch(self, rom, option, *, multiworld=None):
-        assert multiworld is None
-
         # Always have the boomerang trade guy enabled (normally you need the magnifier)
         rom.patch(0x19, 0x05EC, ASM("ld a, [wTradeSequenceItem]\ncp $0E"), ASM("ld a, $0E\ncp $0E"), fill_nop=True)  # show the guy
         rom.patch(0x00, 0x3199, ASM("ld a, [wTradeSequenceItem]\ncp $0E"), ASM("ld a, $0E\ncp $0E"), fill_nop=True)  # load the proper room layout
@@ -59,7 +58,7 @@ class BoomerangGuy(ItemInfo):
 
                 ld a, [$472B]
                 ldh [$F1], a
-                ld a, $02
+                ld a, $06
                 rst 8
                 
                 ld a, $0D
@@ -75,7 +74,7 @@ class BoomerangGuy(ItemInfo):
             rom.patch(0x19, 0x075A, 0x076A, ASM("""
                 ld a, [$472B]
                 ldh [$F1], a
-                ld a, $03
+                ld a, $0A
                 rst 8
             """), fill_nop=True)
             rom.patch(0x19, 0x072B, "00", "%02X" % (CHEST_ITEMS[option]))
@@ -83,6 +82,9 @@ class BoomerangGuy(ItemInfo):
             # Ignore the trade back.
             rom.texts[0x225] = formatText("It's a secret to everybody.")
             rom.patch(0x19, 0x0668, ASM("ld a, [$DB7D]"), ASM("ret"), fill_nop=True)
+
+            if multiworld is not None:
+                rom.banks[0x3E][0x3300 + self.room] = multiworld
 
     def read(self, rom):
         if rom.banks[0x19][0x06C5] == 0x00:
