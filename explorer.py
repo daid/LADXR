@@ -55,18 +55,14 @@ class Explorer:
         while self.__simpleExpand():
             pass
 
-        options = []
         self.__todo_gated = list(filter(lambda n: n[0] not in self.__visited, self.__todo_gated))
         for target, req in self.__todo_gated:
             if target not in self.__visited and self.testRequirements(req):
-                options.append((target, req))
-
-        if len(options) > 0:
-            # TODO: Test all possible variations, as right now we just take the first option.
-            #       this will most likely branch into many different paths.
-            self.consumeRequirements(options[0][1])
-            self._visit(options[0][0])
-            return True
+                # TODO: Test all possible variations, as right now we just take the first option.
+                #       this will most likely branch into many different paths.
+                self.consumeRequirements(req)
+                self._visit(target)
+                return True
         return False
 
     def __simpleExpand(self):
