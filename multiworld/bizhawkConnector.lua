@@ -283,7 +283,7 @@ function stateError()
         socket = nil
     end
 
-    drawText("Disconnected")
+    drawtext("Disconnected")
 end
 
 function sendAll(data)
