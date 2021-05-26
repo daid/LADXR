@@ -55,10 +55,8 @@ class Dungeon3:
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
             area_left.connect(area3, KEY3)
-            dungeon3_north_key_drop.items[0].forced_item = KEY3
-            area_down.connect(area3, KEY3)
             area_left_key_drop.items[0].forced_item = KEY3
-            area_up.connect(area3, KEY3)
+            area_down.connect(area3, KEY3)
             dungeon3_south_key_drop.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
