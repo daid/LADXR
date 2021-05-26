@@ -30,6 +30,11 @@ POLL_SPEED = 60
 if memory ~= nil and gui ~= nil then
     -- Running in bizhawk
     console.clear()
+    if gameinfo.getromname() == "Null" then
+        print("ROM must be loaded before executing script.\nExiting.")
+        return
+    end
+    
     function memread(addr)
         return memory.readbyte(addr)
     end
