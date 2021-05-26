@@ -168,11 +168,6 @@ class RoomEditor:
     def getWarps(self):
         return list(filter(lambda obj: isinstance(obj, ObjectWarp), self.objects))
 
-    def changeWarp(self, current_room, new_warp):
-        for idx, obj in enumerate(self.objects):
-            if isinstance(obj, ObjectWarp) and obj.room == current_room:
-                self.objects[idx] = new_warp.copy()
-
     def updateOverlay(self, preserve_floor=False):
         if self.overlay is None:
             return
