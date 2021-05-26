@@ -38,11 +38,12 @@ class OR:
 
     def consume(self, inventory):
         for item in self.__items:
-            if isConsumable(item) and item in inventory:
-                inventory[item] -= 1
-                if inventory[item] == 0:
-                    del inventory[item]
-                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
+            if item in inventory:
+                if isConsumable(item):
+                    inventory[item] -= 1
+                    if inventory[item] == 0:
+                        del inventory[item]
+                    inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
                 return True
         for child in self.__children:
             if child.consume(inventory):
