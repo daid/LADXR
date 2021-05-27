@@ -13,7 +13,7 @@ class OR:
         return "or%s" % (self.__items+self.__children)
 
     def remove(self, item):
-        if item in self:
+        if item in self.__items:
             self.__items.remove(item)
 
     def hasConsumableRequirement(self):
@@ -73,7 +73,7 @@ class AND:
         return "and%s" % (self.__items+self.__children)
 
     def remove(self, item):
-        if item in self:
+        if item in self.__items:
             self.__items.remove(item)
 
     def hasConsumableRequirement(self):
