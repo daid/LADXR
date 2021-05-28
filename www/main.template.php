@@ -60,7 +60,7 @@ foreach($options as $cat => $list)
     {
         $type = $option['type'];
         if($type === "check")
-            $type = ['1' => "Yes", '' => "No"];
+            $type = array("1" => "Yes", '' => "No");
 
         ?><div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">
             <div class="inputcontainer tooltip bottom" aria-label="<?=str_replace("|", "&#10;", $option['tooltip'])?>"><?php
@@ -73,7 +73,7 @@ foreach($options as $cat => $list)
             $default = $option['default'];
             ?><select id='<?=$key?>' name='<?=$key?>'><?php
             foreach($type as $i=>$o) {
-                if ($i === $default) {
+                if ($i == $default) {
                     ?><option value='<?=$i?>' selected><?=$o?></option><?php
                 } else {
                     ?><option value='<?=$i?>'><?=$o?></option><?php

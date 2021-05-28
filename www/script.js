@@ -127,6 +127,13 @@ function seedComplete(data)
     }
 }
 
+function onDefault(e)
+{
+    if (e.options)
+        return e.selectedOptions[0].defaultSelected;
+    return e.value == e.defaultValue;
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     ID("rom").onchange = function(event) {
         updateForm();
@@ -134,7 +141,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     ID("form").oninput = function() {
         var data = "";
         for(var e of ID("form").elements)
-           if (e.name != "" && e.name != "rom")
+           if (e.name != "" && e.name != "rom" && !onDefault(e))
                 data += "&" + encodeURIComponent(e.name) + "=" + encodeURIComponent(e.value);
         document.location.hash = data;
     }
