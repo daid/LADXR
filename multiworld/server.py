@@ -48,6 +48,8 @@ class Connection(socketserver.StreamRequestHandler):
                 if version != VERSION:
                     print("Player is using wrong version: %d != %d" % (version, VERSION))
                     break
+            else:
+                print("Unknown command from client: %02x" % (command))
         print("Close", self)
 
 

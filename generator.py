@@ -179,7 +179,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         patches.aesthetics.slowLowHPBeep(rom)
     if options.lowhpbeep == 'none':
         patches.aesthetics.removeLowHPBeep(rom)
-    if options.linkspalette is not None:
+    if options.linkspalette is not None and options.linkspalette >= 0:
         patches.aesthetics.forceLinksPalette(rom, options.linkspalette)
     if options.romdebugmode:
         # The default rom has this build in, just need to set a flag and we get this save.
