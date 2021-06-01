@@ -373,6 +373,7 @@ class MultiworldItemPlacer(ForwardItemPlacer):
         super().__init__(logic, forwardfactor, accessibility_rule, verbose=True)
         self.__world_count = world_count
         self.__initial_spot_count = 0
+        self.DUNGEON_ITEMS = ["%s_W%d" % (item, w) for item in self.DUNGEON_ITEMS for w in range(world_count)]
 
     def run(self, rnd):
         self.__initial_spot_count = len(self._spots)
