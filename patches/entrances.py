@@ -44,6 +44,7 @@ def changeEntrances(rom, mapping):
         for idx, obj in enumerate(re.objects):
             if isinstance(obj, ObjectWarp) and obj.room in changes:
                 re.objects[idx] = changes[obj.room].copy()
+        re.store(rom)
 
 
 def readEntrances(rom):
