@@ -33,6 +33,6 @@ class Dungeon1:
         
         if options.logic == 'hell':
             feather_chest.connect(dungeon1_upper_left, SWORD)  # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
-            boss_key.connect(entrance, AND(KEY1, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
+            boss_key.connect(entrance, FOUND(KEY1,3)) # damage boost off the hardhat to cross the pit
             
         self.entrance = entrance
