@@ -39,7 +39,7 @@ class Dungeon7:
             topright_pillar_area.connect(bottomleftF2_area, FEATHER) # superjump in top left pillar room over the blocks from right to left
             final_pillar_area.connect(bottomleftF2_area, r.attack_hookshot) # sideways block push to get to the chest and pillar
             if options.owlstatues == "both" or options.owlstatues == "dungeon":
-                bottomleft_owl.connect(bottomleftF2_area, AND(r.attack_hookshot, STONE_BEAK7)) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
+                bottomleft_owl.connect(bottomleftF2_area, STONE_BEAK7) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
             final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
             pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
             

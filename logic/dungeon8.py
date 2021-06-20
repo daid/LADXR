@@ -87,7 +87,7 @@ class Dungeon8:
             medicine_chest.connect(upper_center, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss.connect(miniboss_entrance, AND(PEGASUS_BOOTS, r.miniboss_requirements[world_setup.miniboss_mapping[7]])) # get through 2d section with boots bonks
             top_left_stairs.connect(map_chest, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
-            nightmare_key.connect(top_left_stairs, AND(PEGASUS_BOOTS, SWORD, KEY8, FOUND(KEY8, 6))) # use a boots bonk to cross the 2d section + the lava in cueball room
+            nightmare_key.connect(top_left_stairs, AND(PEGASUS_BOOTS, SWORD, FOUND(KEY8, 6))) # use a boots bonk to cross the 2d section + the lava in cueball room
             bottom_right.connect(entrance_up, AND(POWER_BRACELET, PEGASUS_BOOTS), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
             bossdoor.connect(entrance_up, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk through 2d section
             

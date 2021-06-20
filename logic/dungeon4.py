@@ -62,7 +62,7 @@ class Dungeon4:
         if options.logic == 'hell':
             rightside_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into the wall of the first pit, then boots bonk across the center, hookshot to get to the rightmost pit to a second villa buffer on the rightmost pit
             pushable_block_chest.connect(rightside_crossroads, OR(PEGASUS_BOOTS, FEATHER)) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
-            after_double_lock.connect(double_locked_room, AND(KEY4, FOUND(KEY4, 4), PEGASUS_BOOTS), one_way=True) # use boots bonks to cross the water gaps
+            after_double_lock.connect(double_locked_room, AND(FOUND(KEY4, 4), PEGASUS_BOOTS), one_way=True) # use boots bonks to cross the water gaps
             north_crossroads.connect(entrance, AND(PEGASUS_BOOTS, HOOKSHOT)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
             after_double_lock.connect(entrance, PEGASUS_BOOTS) # boots bonk + pit buffer to the bottom
             dungeon4_puddle_before_crossroads.connect(after_double_lock, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the water bottom wall to the bottom left corner, then hookshot up
