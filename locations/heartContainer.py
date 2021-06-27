@@ -9,5 +9,7 @@ class HeartContainer(DroppedKey):
             super().configure(options)
         elif options.hpmode == 'inverted':
             self.OPTIONS = [BAD_HEART_CONTAINER]
+        elif options.hpmode == 'low':
+            self.OPTIONS = [HEART_PIECE]
         else:
             self.OPTIONS = [HEART_CONTAINER]

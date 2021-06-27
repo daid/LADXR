@@ -104,6 +104,9 @@ class ItemPool:
         if options.hpmode == 'inverted':
             self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+        elif options.hpmode == 'low':
+            self.add(HEART_PIECE, self.get(HEART_CONTAINER))
+            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
 
         if options.itempool == 'casual':
             self.add(FLIPPERS)
