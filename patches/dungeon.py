@@ -20,7 +20,7 @@ def removeKeyDoors(rom):
                 obj.type_id = KEY_DOORS[obj.type_id]
                 update = True
             if obj.type_id == 0xDE: # Keyblocks
-                obj.type_id = re.floor_object
+                obj.type_id = re.floor_object & 0x0F
                 update = True
         if update:
             re.store(rom)
