@@ -173,14 +173,6 @@ class MultiworldMetadataWrapper:
     def area(self):
         return "P%d %s" % (self.world + 1, self.metadata.area)
 
-    @property
-    def sphere(self):
-        return self.metadata.sphere
-
-    @sphere.setter
-    def sphere(self, value):
-        self.metadata.sphere = value
-
 
 class MultiworldItemInfoWrapper:
     def __init__(self, world, configuration_options, target):

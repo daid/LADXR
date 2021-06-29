@@ -1,14 +1,13 @@
 class CheckMetadata:
+    __slots__ = "name", "area"
     def __init__(self, name, area):
         self.name = name
         self.area = area
-        self.sphere = None
-    
+
     def __repr__(self):
         result = "%s - %s" % (self.area, self.name)
-        if self.sphere is not None:
-            result += " (Sphere %d)" % self.sphere
         return result
+
 
 checkMetadataTable = {
     "None": CheckMetadata("Unset Room", "None"),
