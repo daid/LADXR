@@ -343,7 +343,7 @@ class ForwardItemPlacer(ItemPlacer):
         if self.__verbose:
             print("Locations left: %d Considering now %d for %d items" % (len(self._spots), len(spots), len(req_items)))
 
-        item = rnd.choice(req_items)
+        item = self._chooseItem(rnd, req_items)
         spots = [spot for spot in spots if item in spot.getOptions()]
         spots.sort(key=lambda spot: spot.nameId)
         if not spots:
@@ -366,6 +366,9 @@ class ForwardItemPlacer(ItemPlacer):
         for spot in spots:
             spot.weight *= self.__forwardfactor
         return True
+
+    def _chooseItem(self, rnd, req_items):
+        return rnd.choice(req_items)
 
 
 class MultiworldItemPlacer(ForwardItemPlacer):
@@ -402,3 +405,19 @@ class MultiworldItemPlacer(ForwardItemPlacer):
 
     def canStillPlaceItemPool(self):
         return True
+
+    def _chooseItem(self, rnd, req_items):
+        per_world = {}
+        worlds = []
+        for item in req_items:
+            world = int(item[item.rfind("_W")+2:])
+            per_world[world] = per_world.get(world, 0) + 1
+            worlds.append(world)
+        if len(per_world) == 1:
+            return rnd.choice(req_items)
+
+        total = len(req_items)
+        weights = []
+        for item, world in zip(req_items, worlds):
+            weights.append(total / per_world[world])
+        return rnd.choices(req_items, weights)[0]
