@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     gfxcustomfile.type = "file";
     gfxcustomfile.name = "customgfx";
     gfxcustomfile.style.display = "None";
-    ID("gfxmod").appendChild(gfxcustomfile);
+    ID("gfxmod").parentElement.appendChild(gfxcustomfile);
 
     var gfximglink = document.createElement("a");
     var gfximg = document.createElement("img");
