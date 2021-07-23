@@ -1,1 +1,4 @@
-<a href='https://twitter.com/BenjaminMaksym'>Linker</a>
+{
+    "name": "Linker",
+    "url": "https://twitter.com/BenjaminMaksym"
+}

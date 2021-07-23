@@ -6,7 +6,7 @@ foreach(scandir("LADXR/gfx") as $gfx)
     if (substr($gfx, -4) == ".bin")
     {
         $gfx_options[$gfx] = substr($gfx, 0, -4);
-        $gfx_info[$gfx] = trim(@file_get_contents("LADXR/gfx/".$gfx.".txt"));
+        $gfx_info[$gfx] = json_decode(@file_get_contents("LADXR/gfx/".$gfx.".txt"));
     }
 }
 $options = [

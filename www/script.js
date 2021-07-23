@@ -156,19 +156,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
     window.onhashchange();
 
+    var gfximglink = document.createElement("a");
     var gfximg = document.createElement("img");
-    ID("gfxmod").parentElement.insertBefore(gfximg, ID("gfxmod"));
+    gfximglink.appendChild(gfximg);
+    ID("gfxmod").parentElement.insertBefore(gfximglink, ID("gfxmod"));
     var gfxtooltip = ID("gfxmod").parentElement.ariaLabel;
     ID("gfxmod").oninput = function()
     {
         if (ID("gfxmod").value != "")
         {
             gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
-            gfximg.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value] + "\n" + gfxtooltip;
+            gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;
+            gfximg.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
         }
         else
         {
             gfximg.src = "";
+            gfximglink.href = "";
             gfximg.parentElement.ariaLabel = gfxtooltip;
         }
     }
