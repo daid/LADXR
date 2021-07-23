@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     gfxcustomfile.type = "file";
     gfxcustomfile.name = "customgfx";
     gfxcustomfile.style.display = "None";
-    ID("gfxmod").parentElement.appendChild(gfxcustomfile);
+    ID("gfxmod").parentElement.insertBefore(gfxcustomfile, ID("gfxmod"));
 
     var gfximglink = document.createElement("a");
     var gfximg = document.createElement("img");
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             gfximg.src = "";
             gfximglink.href = "";
             gfximglink.parentElement.ariaLabel = gfxtooltip;
-            gfxcustomfile.trigger("click");
+            gfxcustomfile.click();
         }
         else if (ID("gfxmod").value != "")
         {
