@@ -13,6 +13,8 @@ foreach($options as $sec => $list)
         {
             if ($key === "gfxmod")
                 $_POST[$key] = "gfx/" . $_POST[$key];
+            if ($key === "gfxmod" && $_FILES["customgfx"]["size"] > 0)
+                continue;
             if ($option['type'] === 'check')
                 $command .= " ".$option['arg'];
             else
@@ -20,6 +22,12 @@ foreach($options as $sec => $list)
         }
     }
 }
+
+if ($_FILES["customgfx"]["size"] > 0)
+{
+    $command .= " --gfxmod " . $_FILES["customgfx"]["tmp_name"];
+}
+
 $command .= " 2>&1";
 
 if (false)
