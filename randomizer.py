@@ -395,6 +395,8 @@ class MultiworldItemPlacer(ForwardItemPlacer):
                     spot_options.add(item)
             new_item_pool = {}
             for item, amount in self._item_pool.items():
+                if item.startswith(BAD_HEART_CONTAINER):
+                    item = RUPEES_50 + item[item.rfind("_"):]
                 for n in range(self.__world_count):
                     new_item = "%s%d" % (item[:-1], n)
                     if new_item in spot_options:
