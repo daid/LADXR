@@ -156,6 +156,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
     window.onhashchange();
 
+    var gfxcustomfile = document.createElement("input");
+    gfxcustomfile.type = "file";
+    gfxcustomfile.name = "customgfx";
+    gfxcustomfile.style.display = "None";
+    ID("gfxmod").appendChild(gfxcustomfile);
+
     var gfximglink = document.createElement("a");
     var gfximg = document.createElement("img");
     gfximglink.appendChild(gfximg);
@@ -163,7 +169,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var gfxtooltip = ID("gfxmod").parentElement.ariaLabel;
     ID("gfxmod").oninput = function()
     {
-        if (ID("gfxmod").value != "")
+        if (ID("gfxmod").value == "custom")
+        {
+            gfximg.src = "";
+            gfximglink.href = "";
+            gfximglink.parentElement.ariaLabel = gfxtooltip;
+            gfxcustomfile.trigger("click");
+        }
+        else if (ID("gfxmod").value != "")
         {
             gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
             gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;

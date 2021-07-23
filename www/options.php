@@ -9,6 +9,7 @@ foreach(scandir("LADXR/gfx") as $gfx)
         $gfx_info[$gfx] = json_decode(@file_get_contents("LADXR/gfx/".$gfx.".txt"));
     }
 }
+$gfx_options['custom' => 'Custom...'];
 $options = [
     'Main' => [
         'seed' => ['label' => 'Seed', 'type' => 'text', 'placeholder' => 'Leave empty for random seed', 'arg' => '--seed', 'multiworld' => False,
