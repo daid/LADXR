@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     ID("form").oninput = function() {
         var data = "";
         for(var e of ID("form").elements)
-           if (e.name != "" && e.name != "rom" && !onDefault(e))
+           if (e.name != "" && e.name != "rom" && e.name != "customgfx" && !onDefault(e))
                 data += "&" + encodeURIComponent(e.name) + "=" + encodeURIComponent(e.value);
         document.location.hash = data;
     }
@@ -181,12 +181,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
             gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;
             gfximglink.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
+            gfxcustomfile.value = "";
         }
         else
         {
             gfximg.src = "";
             gfximglink.href = "";
             gfximglink.parentElement.ariaLabel = gfxtooltip;
+            gfxcustomfile.value = "";
         }
     }
     ID("gfxmod").oninput();
