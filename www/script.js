@@ -167,13 +167,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         {
             gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
             gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;
-            gfximg.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
+            gfximglink.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
         }
         else
         {
             gfximg.src = "";
             gfximglink.href = "";
-            gfximg.parentElement.ariaLabel = gfxtooltip;
+            gfximglink.parentElement.ariaLabel = gfxtooltip;
         }
     }
     ID("gfxmod").oninput();
