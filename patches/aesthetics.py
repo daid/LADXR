@@ -64,6 +64,8 @@ def gfxMod(rom, filename):
                 updateGraphics(rom, int(patch["bank"], 16), int(patch["offset"], 16), imageTo2bpp(os.path.join(os.path.dirname(filename), patch["gfx"])))
             if "name" in patch:
                 setReplacementName(patch["item"], patch["name"])
+    else:
+        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename))
 
 
 def createGfxImage(rom, filename):
