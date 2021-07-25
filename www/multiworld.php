@@ -39,7 +39,7 @@ if (isset($_FILES["rom"]))
                 $pkey = "${key}_${player}";
                 if (isset($_POST[$pkey]) && $_POST[$pkey] != "")
                 {
-                    if ($pkey == "gfxmod")
+                    if ($key == "gfxmod")
                         $_POST[$pkey] = "gfx/" . $_POST[$pkey];
                     if ($option['type'] == 'check')
                         $command .= " ".$option['arg'];
