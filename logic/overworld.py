@@ -212,7 +212,8 @@ class World:
         crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
-        kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6)).connect(castle_top_inside, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)  # in the castle, spinning spikeball enemy
+        kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
+        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)
 
         animal_village = Location()
         self._addEntrance("animal_phone", animal_village, None, None)
