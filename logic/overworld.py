@@ -349,6 +349,8 @@ class World:
         right_taltal_connector_outside2 = Location()
         right_taltal_connector4 = Location()
         d7_platau = Location()
+        d7_tower = Location()
+        d7_platau.connect(d7_tower, AND(POWER_BRACELET, BIRD_KEY), one_way=True)
         self._addEntrance("right_taltal_connector1", water_cave_hole, right_taltal_connector1, None)
         self._addEntrance("right_taltal_connector2", right_taltal_connector_outside1, right_taltal_connector1, None)
         self._addEntrance("right_taltal_connector3", right_taltal_connector_outside1, right_taltal_connector2, None)
@@ -356,7 +358,7 @@ class World:
         self._addEntrance("right_taltal_connector5", right_taltal_connector_outside2, right_taltal_connector4, None)
         self._addEntrance("right_taltal_connector6", d7_platau, right_taltal_connector4, None)
         self._addEntrance("right_fairy", right_taltal_connector_outside2, None, BOMB)
-        self._addEntrance("d7", d7_platau, None, AND(POWER_BRACELET, BIRD_KEY))
+        self._addEntrance("d7", d7_tower, None, None)
         if options.logic != "casual": # D7 area ledge drops
             d7_platau.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
             d7_platau.connect(right_taltal_connector_outside1, None, one_way=True)
