@@ -249,7 +249,7 @@ class World:
 
         armos_maze = Location().connect(animal_village, POWER_BRACELET)
         armos_temple = Location()
-        Location().add(FaceKey()).connect(armos_temple, OR(BOW, MAGIC_ROD, SWORD))
+        Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]])
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
         self._addEntrance("armos_maze_cave", armos_maze, Location().add(Chest(0x2FC)), None)

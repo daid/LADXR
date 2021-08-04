@@ -37,12 +37,23 @@ MINIBOSS_ENTITIES = {
     "AVALAUNCH":        [(5, 1, 0xf4)],
     "GIANT_BUZZ_BLOB":  [(4, 2, 0xf8)],
     "MOBLIN_KING":      [(5, 5, 0xe4)],
+    "ARMOS_KNIGHT":     [(4, 3, 0x88)],
 }
 MINIBOSS_ROOMS = {
     0: 0x111, 1: 0x128, 2: 0x145, 3: 0x164, 4: 0x193, 5: 0x1C5, 6: 0x228, 7: 0x23F,
     "c1": 0x30C, "c2": 0x303,
     "moblin_cave": 0x2E1,
+    "armos_temple": 0x27F,
 }
+
+
+def fixArmosKnightAsMiniboss(rom):
+    # Make the armos temple room with armos knight drop a ceiling key on kill.
+    # This makes the door always open, but that's fine.
+    rom.patch(0x14, 0x017F, "21", "81")
+
+    # Do not change the drop from Armos knight into a ceiling key.
+    rom.patch(0x06, 0x12E8, ASM("ld [hl], $30"), "", fill_nop=True)
 
 
 def getBossRoomStatusFlagLocation(dungeon_nr):
@@ -295,7 +306,7 @@ def changeMiniBosses(rom, mapping):
             # BLAINO needs a warp object to hit you to the entrance of the dungeon.
             if len(re.getWarps()) < 1:
                 # Default to start house.
-                target = (0x10, 0x2A3, 0x50, 0x7c, 0x2A3)
+                target = (0x10, 0x2A3, 0x50, 0x7c)
                 if 0x100 <= re.room < 0x11D: #D1
                     target = (0, 0x117, 80, 80)
                 elif 0x11D <= re.room < 0x140: #D2
@@ -316,6 +327,8 @@ def changeMiniBosses(rom, mapping):
                     target = (0xFF, 0x312, 80, 80)
                 elif re.room == 0x2E1: #Moblin cave
                     target = (0x15, 0x2F0, 0x50, 0x7C)
+                elif re.room == 0x27F: #Armos temple
+                    target = (0x16, 0x28F, 0x50, 0x7C)
                 re.objects.append(ObjectWarp(1, *target))
         if name == "DODONGO":
             # Remove breaking floor tiles from the room.

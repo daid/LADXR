@@ -277,6 +277,7 @@ class RequirementsSettings:
             "AVALAUNCH":        self.attack_hookshot,
             "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
             "MOBLIN_KING":      SWORD,
+            "ARMOS_KNIGHT":     OR(BOW, MAGIC_ROD, SWORD),
         }
 
         # Adjust for options

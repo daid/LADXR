@@ -18,6 +18,7 @@ class WorldSetup:
             "c1": "AVALAUNCH", "c2": "GIANT_BUZZ_BLOB",
             # Overworld
             "moblin_cave": "MOBLIN_KING",
+            "armos_temple": "ARMOS_KNIGHT",
         }
         self.multichest = RUPEES_20
 

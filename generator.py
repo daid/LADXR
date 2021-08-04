@@ -110,6 +110,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixEggDeathClearingItems(rom)
     patches.core.disablePhotoPrint(rom)
     patches.owl.removeOwlEvents(rom)
+    patches.enemies.fixArmosKnightAsMiniboss(rom)
     patches.bank3e.addBank3E(rom, seed)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
