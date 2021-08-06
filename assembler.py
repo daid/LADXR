@@ -172,6 +172,7 @@ class Assembler:
             self.__base_address = -1
         self.__result = bytearray()
         self.__label = {}
+        self.__constant = {}
         self.__link = {}
         self.__scope = None
 
@@ -311,6 +312,12 @@ class Assembler:
                     elif self.__tok.peek().kind == 'LABEL':
                         self.__tok.pop()
                         self.addLabel(start.value)
+                    elif self.__tok.peek().kind == 'ASSIGN':
+                        self.__tok.pop()
+                        value = self.__tok.pop()
+                        if value.kind != 'NUMBER':
+                            raise SyntaxError(start)
+                        self.addConstant(start.value, value.value)
                     else:
                         raise SyntaxError(start)
                 else:
@@ -628,7 +635,13 @@ class Assembler:
             assert "." not in label, label
             self.__scope = label
         assert label not in self.__label, "Duplicate label: %s" % (label)
+        assert label not in self.__constant, "Duplicate label: %s" % (label)
         self.__label[label] = len(self.__result)
+
+    def addConstant(self, name, value):
+        assert name not in self.__constant, "Duplicate constant: %s" % (name)
+        assert name not in self.__label, "Duplicate constant: %s" % (name)
+        self.__constant[name] = value
 
     def parseParam(self):
         t = self.__tok.peek()
@@ -672,6 +685,9 @@ class Assembler:
         if t.isA('ID') and t.value in CONST_MAP:
             t.kind = 'NUMBER'
             t.value = CONST_MAP[t.value]
+        elif t.isA('ID') and t.value in self.__constant:
+            t.kind = 'NUMBER'
+            t.value = self.__constant[t.value]
         elif t.isA('ID') and t.value.startswith("."):
             t.value = self.__scope + t.value
         return t
