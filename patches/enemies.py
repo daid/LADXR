@@ -267,18 +267,25 @@ def changeMiniBosses(rom, mapping):
         ld  [hl], b ; b is always zero here
         ret
     """), fill_nop=True)
+    # Fix avalaunch waiting until the room event is done (and not all rooms have a room event on enter)
+    rom.patch(0x36, 0x1C14, ASM("ret z"), "", fill_nop=True)
+    # Fix giant buzz blob waiting until the room event is done (and not all rooms have a room event on enter)
+    rom.patch(0x36, 0x153B, ASM("ret z"), "", fill_nop=True)
+
     # Remove the powder fairy from giant buzz blob
     rom.patch(0x36, 0x14F7, ASM("jr nz, $05"), ASM("jr $05"))
 
     # Do not allow the force barrier in D3 dodongo room
-    rom.patch(0x14, 0x14AC, 0x14B5, ASM("jp $7FF0"), fill_nop=True)
-    rom.patch(0x14, 0x3FF0, "00" * 0x10, ASM("""
+    rom.patch(0x14, 0x14AC, 0x14B5, ASM("jp $7FE0"), fill_nop=True)
+    rom.patch(0x14, 0x3FE0, "00" * 0x20, ASM("""
         ld  a, [$C124] ; room transition
         ld  hl, $C17B
         or  [hl]
         ret nz
         ldh a, [$F6] ; room
         cp  $45 ; check for D3 dodogo room
+        ret z
+        cp  $7F ; check for armos temple room
         ret z
         jp  $54B5
     """), fill_nop=True)
