@@ -14,6 +14,7 @@ import patches.aesthetics
 import patches.music
 import patches.core
 import patches.phone
+import patches.photographer
 import patches.owl
 import patches.bank3e
 import patches.bank3f
@@ -104,6 +105,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     if multiworld is not None:
         patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
+    patches.photographer.fixPhotographer(rom)
     patches.core.bugfixWrittingWrongRoomStatus(rom)
     patches.core.bugfixBossroomTopPush(rom)
     patches.core.bugfixPowderBagSprite(rom)
