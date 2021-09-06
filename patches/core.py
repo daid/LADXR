@@ -76,6 +76,13 @@ def disablePhotoPrint(rom):
     rom.patch(0x28, 0x0483, ASM("ld a, $13"), ASM("jr $EA", 0x4483)) # Do not print on A press, but jump to cancel
     rom.patch(0x28, 0x0492, ASM("ld hl, $4439"), ASM("ret"), fill_nop=True) # Do not show the print/cancel overlay
 
+def fixMarinFollower(rom):
+    # Allow opening of D0 with marin
+    rom.patch(0x02, 0x3402, ASM("ld a, [$DB73]"), ASM("xor a"), fill_nop=True)
+    # Instead of uselessly checking for sidescroller rooms for follower spawns, check for color dungeon instead
+    rom.patch(0x01, 0x1FCB, 0x1FD3, ASM("cp $FF\nret z"), fill_nop=True)
+    # Do not load marin graphics in color dungeon
+    rom.patch(0x00, 0x2EA6, 0x2EB0, ASM("cp $FF\njp $2ED3"), fill_nop=True)
 
 def quickswap(rom, button):
     rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
