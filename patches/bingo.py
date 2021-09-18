@@ -21,12 +21,13 @@ def getUnusedBitFlag():
 
 
 class Goal:
-    def __init__(self, description, code, tile_info, *, kill_code=None, group=None):
+    def __init__(self, description, code, tile_info, *, kill_code=None, group=None, extra_patches=None):
         self.description = description
         self.code = code
         self.tile_info = tile_info
         self.kill_code = kill_code
         self.group = group
+        self.extra_patches = extra_patches or []
 
 
 class TileInfo:
@@ -212,6 +213,31 @@ def KillGoal(description, entity_id, tile_info):
     """ % (entity_id, entity_id, set_code, entity_id))
 
 
+def MonkeyGoal(description, tile_info):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, extra_patches=[
+        (0x15, 0x36EC, 0x36EF, ASM("jp $7FCE")),
+        (0x15, 0x3FCE, "00" * 8, ASM("""
+            ld   [hl], $FA
+            %s
+            ret
+        """ % (set_code)))
+    ])
+
+
+def BuzzBlobTalkGoal(description, tile_info):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, extra_patches=[
+        (0x18, 0x37C9, ASM("call $237C"), ASM("call $7FDE")),
+        (0x18, 0x3FDE, "00" * 11, ASM("""
+            call $237C
+            ld   [hl], $FA
+            %s
+            ret
+        """ % (set_code)))
+    ])
+
+
 BINGO_GOALS = [
     InventoryGoal(BOOMERANG),
     InventoryGoal(HOOKSHOT),
@@ -237,7 +263,7 @@ BINGO_GOALS = [
     Goal("Find the {BIRD_KEY}", checkMemoryNotZero("$DB14"), TileInfo(0xC6, shift4=True)),
     # {"description": "Marin's Cucco Killing Text"},
     # {"description": "Pick up Crane Game Owner"},
-    # {"description": "Talk to a Buzz Blob"},
+    BuzzBlobTalkGoal("Talk to a buzz blob", TileInfo(0x179C, colormap=[2, 3, 1, 0])),
     # {"description": "Moblin King"},
     Goal("Turtle Rock Entrance Boss", checkMemoryMask("$D810", "$20"),
          TileInfo(0x1413, flipH=True, colormap=[2, 3, 1, 0])),
@@ -291,7 +317,7 @@ BINGO_GOALS = [
     Goal("Give the banana to Kiki", checkMemoryMask("$D87B", "$20"), TileInfo(0x1670, colormap=[2, 3, 1, 0])),
     Goal("Have 99 or less rupees", checkMemoryEqualCode("$DB5D", "0"), TileInfo(0xA6, 0xA7, shift4=True), group="rupees"),
     Goal("Have 900 or more rupees", checkMemoryEqualGreater("$DB5D", "9"), TileInfo(0xA6, 0xA7, 0xA6, 0xA7), group="rupees"),
-    # {"description": "Bonk the Beach Monkey"},
+    MonkeyGoal("Bonk the Beach Monkey", TileInfo(0x1946, colormap=[2, 3, 1, 0])),
     # {"description": "Kill an enemy after transforming"},
 
     Goal("Got the Red Tunic", checkMemoryMask("wCollectedTunics", "1"),
@@ -379,6 +405,10 @@ def randomizeGoals(rnd, options):
 
 def setBingoGoal(rom, goals):
     assert len(goals) == 25
+
+    for goal in goals:
+        for bank, addr, current, target in goal.extra_patches:
+            rom.patch(bank, addr, current, target)
 
     # Setup the bingo card visuals
     be = BackgroundEditor(rom, 0x15)
