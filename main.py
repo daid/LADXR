@@ -46,6 +46,8 @@ def validateOptions(options):
         req("overworld", "normal", "Bingo goal does not work with dungeondive")
         req("accessibility_rule", "all", "Bingo goal needs 'all' accessibility")
         dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
+        dis("boss", "random", "shuffle", "With bingo goal, bosses need to be on normal or shuffle")
+        dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
 
 
 def main(mainargs=None):
