@@ -245,6 +245,13 @@ def KillDethlGoal(description, tile_info):
     ])
 
 
+def FishDaPondGoal(description, tile_info):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, extra_patches=[
+        (0x04, 0x21F7, 0x21FC, ASM(set_code)),
+    ])
+
+
 BINGO_GOALS = [
     InventoryGoal(BOOMERANG),
     InventoryGoal(HOOKSHOT),
@@ -379,7 +386,7 @@ BINGO_GOALS = [
     Goal("Kill the Ball and Chain Trooper", checkMemoryMask("$DAC6", "$10"), TileInfo(0x09A4, colormap=[2, 3, 1, 0])),
     Goal("Destroy all Pillars with the Ball", checkMemoryMask(("$DA14", "$DA15", "$DA18", "$DA19"), "$20"),
          TileInfo(0x166C, flipH=True)),
-    # Fish da pond
+    FishDaPondGoal("Fish the pond empty", TileInfo(0x0A00, colormap=[2, 3, 1, 0])),
     KillGoal("Kill the Anti-Kirby", 0x91, TileInfo(0x1550, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a Rolling Bones", 0x81, TileInfo(0x0AB6, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a Hinox", 0x89, TileInfo(0x1542, colormap=[2, 3, 1, 0])),
