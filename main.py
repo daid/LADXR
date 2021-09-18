@@ -11,7 +11,7 @@ from argparse import ArgumentParser, ArgumentTypeError
 def goal(goal):
     if goal == "random":
         goal = "-1-8"
-    elif goal in [ "seashells", "raft" ]:
+    elif goal in ["seashells", "raft", "bingo"]:
         return goal
     m = re.match(r'^(-?\d|open)(?:-(\d))?$', goal)
     if not m:
@@ -29,6 +29,23 @@ def goal(goal):
     elif end < start:
         raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
     return range(start, end+1)
+
+
+# Check if the current mix of options is valid, and fix incompatible selected options
+def validateOptions(options):
+    def req(setting, value, message):
+        if getattr(options, setting) != value:
+            print(message)
+            setattr(options, setting, value)
+    def dis(setting, value, new_value, message):
+        if getattr(options, setting) == value:
+            print(message)
+            setattr(options, setting, new_value)
+
+    if options.goal == "bingo":
+        req("overworld", "normal", "Bingo goal does not work with dungeondive")
+        req("accessibility_rule", "all", "Bingo goal needs 'all' accessibility")
+        dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
 
 
 def main(mainargs=None):
@@ -97,7 +114,7 @@ def main(mainargs=None):
     parser.add_argument('--miniboss', dest="miniboss", choices=["default", "shuffle", "random"], default="default",
         help="Shuffle the minibosses or just randomize them.")
     parser.add_argument('--doubletrouble', dest="doubletrouble", action="store_true",
-        help="...")
+        help="Warning, bugged in various ways")
     parser.add_argument('--witch', dest="witch", action="store_true",
         help="Enables witch and toadstool in the item pool.")
     parser.add_argument('--hpmode', dest="hpmode", choices=['default', 'inverted', '1', 'low'], default='default',
@@ -109,7 +126,7 @@ def main(mainargs=None):
     parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
         help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
     parser.add_argument('--goal', dest="goal", type=goal, default='8',
-        help="Configure the instrument goal for this rom: any number between -1 (open egg) and 8, a range (e.g. 4-7), 'random', or 'raft' / 'seashells' for special goals.")
+        help="Configure the instrument goal for this rom: any number between -1 (open egg) and 8, a range (e.g. 4-7), 'random', or 'raft' / 'seashells' / 'bingo' for special goals.")
     parser.add_argument('--accessibility', dest="accessibility_rule", choices=['all', 'goal'],
         help="Switches between making sure all locations are reachable or only the goal is reachable")
     parser.add_argument('--bowwow', dest="bowwow", choices=['normal', 'always', 'swordless'], default='normal',

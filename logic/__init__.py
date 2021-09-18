@@ -56,7 +56,7 @@ class Logic:
 
         if configuration_options.goal == "seashells":
             world.nightmare.connect(world.egg, COUNT(SEASHELL, 20))
-        elif configuration_options.goal == "raft":
+        elif configuration_options.goal in ("raft", "bingo"):
             world.nightmare.connect(world.egg, egg_trigger)
         else:
             goal = int(configuration_options.goal)

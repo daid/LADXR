@@ -1,6 +1,7 @@
 import patches.enemies
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
+from patches import bingo
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -20,6 +21,7 @@ class WorldSetup:
             "moblin_cave": "MOBLIN_KING",
             "armos_temple": "ARMOS_KNIGHT",
         }
+        self.bingo_goals = None
         self.multichest = RUPEES_20
 
     def randomize(self, options, rnd):
@@ -86,6 +88,8 @@ class WorldSetup:
                 self.miniboss_mapping[key] = rnd.choice(values)
                 if options.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
+        if options.goal == "bingo":
+            self.bingo_goals = bingo.randomizeGoals(rnd, options)
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
     def loadFromRom(self, rom):

@@ -44,6 +44,7 @@ import patches.seashell
 import patches.instrument
 import patches.endscreen
 import patches.save
+import patches.bingo
 import patches.multiworld
 import hints
 
@@ -200,13 +201,6 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     elif options.hpmode == '1':
         patches.health.setStartHealth(rom, 1)
 
-    if options.goal == "raft":
-        patches.goal.setRaftGoal(rom)
-    elif options.goal == "seashells":
-        patches.goal.setSeashellGoal(rom, 20)
-    elif options.goal != "random" and options.goal is not None:
-        patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
-
     patches.inventory.songSelectAfterOcarinaSelect(rom)
     if options.quickswap == 'a':
         patches.core.quickswap(rom, 1)
@@ -232,6 +226,15 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
 
         world_setup = logic.worlds[multiworld].world_setup
         item_list = [spot for spot in logic.iteminfo_list if spot.world == multiworld]
+
+    if options.goal == "raft":
+        patches.goal.setRaftGoal(rom)
+    elif options.goal == "bingo":
+        patches.bingo.setBingoGoal(rom, world_setup.bingo_goals)
+    elif options.goal == "seashells":
+        patches.goal.setSeashellGoal(rom, 20)
+    elif options.goal != "random" and options.goal is not None:
+        patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
