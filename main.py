@@ -11,7 +11,7 @@ from argparse import ArgumentParser, ArgumentTypeError
 def goal(goal):
     if goal == "random":
         goal = "-1-8"
-    elif goal in ["seashells", "raft", "bingo"]:
+    elif goal in ["seashells", "raft", "bingo", "bingo-full"]:
         return goal
     m = re.match(r'^(-?\d|open)(?:-(\d))?$', goal)
     if not m:
@@ -42,7 +42,7 @@ def validateOptions(options):
             print(message)
             setattr(options, setting, new_value)
 
-    if options.goal == "bingo":
+    if options.goal in ("bingo", "bingo-full"):
         req("overworld", "normal", "Bingo goal does not work with dungeondive")
         req("accessibility_rule", "all", "Bingo goal needs 'all' accessibility")
         dis("steal", "never", "default", "With bingo goal, stealing should be allowed")

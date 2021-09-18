@@ -88,7 +88,7 @@ class WorldSetup:
                 self.miniboss_mapping[key] = rnd.choice(values)
                 if options.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
-        if options.goal == "bingo":
+        if options.goal in ("bingo", "bingo-full"):
             self.bingo_goals = bingo.randomizeGoals(rnd, options)
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 

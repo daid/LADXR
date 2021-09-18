@@ -416,7 +416,7 @@ def randomizeGoals(rnd, options):
     return goals[:25]
 
 
-def setBingoGoal(rom, goals):
+def setBingoGoal(rom, goals, mode):
     assert len(goals) == 25
 
     for goal in goals:
@@ -719,6 +719,58 @@ setZ:
     ret
 
 checkAnyGoal:
+#IF {mode}
+    call goalcheck_0
+    ret  nz
+    call goalcheck_1
+    ret  nz
+    call goalcheck_2
+    ret  nz
+    call goalcheck_3
+    ret  nz
+    call goalcheck_4
+    ret  nz
+    call goalcheck_5
+    ret  nz
+    call goalcheck_6
+    ret  nz
+    call goalcheck_7
+    ret  nz
+    call goalcheck_8
+    ret  nz
+    call goalcheck_9
+    ret  nz
+    call goalcheck_10
+    ret  nz
+    call goalcheck_11
+    ret  nz
+    call goalcheck_12
+    ret  nz
+    call goalcheck_13
+    ret  nz
+    call goalcheck_14
+    ret  nz
+    call goalcheck_15
+    ret  nz
+    call goalcheck_16
+    ret  nz
+    call goalcheck_17
+    ret  nz
+    call goalcheck_18
+    ret  nz
+    call goalcheck_19
+    ret  nz
+    call goalcheck_20
+    ret  nz
+    call goalcheck_21
+    ret  nz
+    call goalcheck_22
+    ret  nz
+    call goalcheck_23
+    ret  nz
+    call goalcheck_24
+    ret
+#ELSE
     call checkGoalRow1
     ret  z
     call checkGoalRow2
@@ -887,9 +939,10 @@ checkGoalDiagonal1:
     ret  nz
     call goalcheck_20
     ret
+#ENDIF
 
 messageTable:
-""" +
+""".format(mode=1 if mode == "bingo-full" else 0) +
     "\n".join(["dw message_%d" % (n) for n in range(25)]) + "\n" +
     "\n".join(["message_%d:\n  db m\"%s\"" % (n, goal.description) for n, goal in
                enumerate(goals)]) + "\n" +

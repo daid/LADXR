@@ -229,8 +229,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
 
     if options.goal == "raft":
         patches.goal.setRaftGoal(rom)
-    elif options.goal == "bingo":
-        patches.bingo.setBingoGoal(rom, world_setup.bingo_goals)
+    elif options.goal in ("bingo", "bingo-full"):
+        patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, options.goal)
     elif options.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
     elif options.goal != "random" and options.goal is not None:
