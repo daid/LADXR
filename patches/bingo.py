@@ -289,7 +289,7 @@ BINGO_GOALS = [
     Goal("Arrow upgrade", checkMemoryEqualCode("$DB78", "$60"), TileInfo(0x88, 0x89, 0x06, 0xA3)),
     Goal("{MAGIC_POWDER} upgrade", checkMemoryEqualCode("$DB76", "$40"), TileInfo(0x8E, 0x8F, 0x06, 0xA3)),
     # {"description": "Steal From Shop 5 Times"},
-    # {"description": "Giant Ghini"},
+    KillGoal("Kill the giant ghini", 0x11, TileInfo(0x08A6, colormap=[2, 3, 1, 0]))
     Goal("Got the Ballad of the Wind Fish", checkMemoryMask("$DB49", "4"),
          TileInfo(0x298, flipH=True, colormap=[2, 3, 1, 0])),
     Goal("Got the Manbo's Mambo", checkMemoryMask("$DB49", "2"), TileInfo(0x29A, flipH=True, colormap=[2, 3, 1, 0])),
