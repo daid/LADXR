@@ -1,5 +1,5 @@
 from backgroundEditor import BackgroundEditor
-from roomEditor import RoomEditor
+from roomEditor import RoomEditor, ObjectWarp
 from assembler import ASM
 from locations.constants import *
 from utils import formatText
@@ -238,6 +238,13 @@ def BuzzBlobTalkGoal(description, tile_info):
     ])
 
 
+def KillDethlGoal(description, tile_info):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, extra_patches=[
+        (0x15, 0x0606, 0x060B, ASM(set_code)),
+    ])
+
+
 BINGO_GOALS = [
     InventoryGoal(BOOMERANG),
     InventoryGoal(HOOKSHOT),
@@ -268,11 +275,10 @@ BINGO_GOALS = [
     Goal("Turtle Rock Entrance Boss", checkMemoryMask("$D810", "$20"),
          TileInfo(0x1413, flipH=True, colormap=[2, 3, 1, 0])),
     Goal("Kill Master Stalfos", checkMemoryMask("$D980", "$20"), TileInfo(0x1622, colormap=[2, 3, 1, 0])),
-    # {"description": "Kill Master Stalfos at least once"},
     # {"description": "Gohma"},
     # {"description": "Grim Creeper"},
     # {"description": "Blaino"},
-    # {"description": "Dethyl"},
+    KillDethlGoal("Kill Dethl", TileInfo(0x1B38, colormap=[2, 3, 1, 0])),
     # {"description": "Rooster"},
     # {"description": "Marin"},
     # {"description": "Bow-wow"},
@@ -482,6 +488,7 @@ mainHandler:
     dw   checkGoalDone
     dw   chooseSquare
     dw   waitDialogDone
+    dw   finishGame
 
 init:
     xor  a
@@ -553,10 +560,8 @@ checkGoalDone:
     call checkAnyGoal
     ret  nz
 
-; Goal done, give a message and open the egg
-    ld   hl, $D806
-    set  4, [hl]
-    ld   a, $03
+    ; Goal done, give a message and goto state to finish the game
+    ld   a, $04
     ld   [wState], a
     ld   a, $E7 
     call $2385 ; open dialog 
@@ -665,6 +670,22 @@ waitDialogDone:
     ret  nz
     ld   a, $02 ; choose square
     ld   [wState], a
+    ret
+
+finishGame:
+    ld   a, [$C19F] ; dialog state
+    and  a
+    ret  nz
+    
+    ldh  a, [$CC] ; button presses
+    and  a
+    ret  z
+    
+    ; Goto "credits"
+    xor  a
+    ld   [$DB96], a 
+    inc  a
+    ld   [$DB95], a
     ret
 
 exitMural:
@@ -872,7 +893,7 @@ messageTable:
     "\n".join(["dw goalcheck_%d" % (n) for n in range(25)]) + "\n" +
     "\n".join(["goalcheck_%d:\n  %s\n" % (n, goal.code) for n, goal in
                enumerate(goals)]) + "\n", 0x4000), fill_nop=True)
-    rom.texts[0xE7] = formatText("BINGO! Time to go for the egg!")
+    rom.texts[0xE7] = formatText("BINGO!\nPress any button to finish.")
 
     # Patch the game to call a bit of our code when an enemy is killed by patching into the drop item handling
     rom.patch(0x00, 0x3F50, ASM("ld a, $03\nld [$C113], a\nld [$2100], a\ncall $55CF"), ASM("""
@@ -890,6 +911,22 @@ done:   ; Return to normal item drop handler
         push hl
         jp   $080F ; switch bank
     """, 0x7000), fill_nop=True)
+
+    # Patch Dethl to warp you outside
+    rom.patch(0x15, 0x0682, 0x069B, ASM("""
+        ld   a, $0B
+        ld   [$DB95], a
+        call $0C7D
+
+        ld   a, $07
+        ld   [$DB96], a
+    """), fill_nop=True)
+    re = RoomEditor(rom, 0x274)
+    re.objects += [ObjectWarp(0, 0, 0x06, 0x58, 0x40)] * 4
+    re.store(rom)
+    # Patch the egg to be always open
+    rom.patch(0x00, 0x31f5, ASM("ld a, [$D806]\nand $10\njr z, $25"), ASM(""), fill_nop=True)
+    rom.patch(0x20, 0x2dea, ASM("ld a, [$D806]\nand $10\njr z, $29"), ASM(""), fill_nop=True)
 
     # Patch unused entity 4C into our bingo board.
     rom.patch(0x03, 0x004C, "41", "82")
