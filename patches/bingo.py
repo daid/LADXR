@@ -964,3 +964,19 @@ done:   ; Return to normal item drop handler
     re = RoomEditor(rom, 0x006)
     re.entities = []
     re.store(rom)
+
+    rom.texts[0xCF] = formatText("""
+        Bingo!
+        Young lad, I mean... #####, the hero!
+        You have bingo!
+        You have proven your wisdom, courage and power!
+        ... ... ... ...
+        As part of the Wind Fish's spirit, I am the guardian of his dream world...
+        But one day, we decided to have a bingo game.
+        Then you, #####, came to win the bingo...
+        Thank you, #####...
+        My work is done...
+        The Wind Fish will wake soon.
+        Good bye...Bingo!
+    """)
+    rom.texts[0xCE] = rom.texts[0xCF]
