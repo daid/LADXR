@@ -21,11 +21,12 @@ def getUnusedBitFlag():
 
 
 class Goal:
-    def __init__(self, description, code, tile_info, *, kill_code=None):
+    def __init__(self, description, code, tile_info, *, kill_code=None, group=None):
         self.description = description
         self.code = code
         self.tile_info = tile_info
         self.kill_code = kill_code
+        self.group = group
 
 
 class TileInfo:
@@ -288,8 +289,8 @@ BINGO_GOALS = [
     Goal("Get the Yoshi Doll", checkMemoryMask("$DAA0", "$20"), TileInfo(0x9A)),
     # {"description": "Save Papahl on the mountain"},
     Goal("Give the banana to Kiki", checkMemoryMask("$D87B", "$20"), TileInfo(0x1670, colormap=[2, 3, 1, 0])),
-    # {"description": "End with <10 rupees"},
-    # {"description": "End with 999 rupees"},
+    Goal("Have 99 or less rupees", checkMemoryEqualCode("$DB5D", "0"), TileInfo(0xA6, 0xA7, shift4=True), group="rupees"),
+    Goal("Have 900 or more rupees", checkMemoryEqualGreater("$DB5D", "9"), TileInfo(0xA6, 0xA7, 0xA6, 0xA7), group="rupees"),
     # {"description": "Bonk the Beach Monkey"},
     # {"description": "Kill an enemy after transforming"},
 
@@ -319,9 +320,9 @@ BINGO_GOALS = [
     # {"description": "3 Followers at the same time", "group": "multifollower"},
     Goal("Visit the 4 Fountain Fairies", checkMemoryMask(("$D853", "$D9AC", "$D9F3", "$D9FB"), "$80"),
          TileInfo(0x20, shift4=True, colormap=[2, 3, 1, 0])),
-    Goal("Have at least 8 Heart Containers", checkMemoryEqualGreater("$DB5B", "8"), TileInfo(0xAA, flipH=True)),
-    # {"description": "9+ Heart Containers", "group": "hps"},
-    # {"description": "10+ Heart Containers", "group": "hps"},
+    Goal("Have at least 8 Heart Containers", checkMemoryEqualGreater("$DB5B", "8"), TileInfo(0xAA, flipH=True), group="Health"),
+    Goal("Have at least 9 Heart Containers", checkMemoryEqualGreater("$DB5B", "9"), TileInfo(0xAA, flipH=True), group="Health"),
+    Goal("Have at least 10 Heart Containers", checkMemoryEqualGreater("$DB5B", "10"), TileInfo(0xAA, flipH=True), group="Health"),
     Goal("Got photo 1: Here Stands A Brave Man", checkMemoryMask("$DC0C", "$01"), TileInfo(0x3008, 0x0D0F, colormap=[2, 3, 1, 0])),
     Goal("Got photo 2: Looking over the sea with Marin", checkMemoryMask("$DC0C", "$02"), TileInfo(0x08F0, 0x0D0F, colormap=[2, 3, 1, 0])),
     Goal("Got photo 3: Heads up!", checkMemoryMask("$DC0C", "$04"), TileInfo(0x0E6A, 0x0D0F, 0x0E6B, 0x0E7B)),
@@ -365,6 +366,14 @@ BINGO_GOALS = [
 def randomizeGoals(rnd, options):
     goals = BINGO_GOALS.copy()
     rnd.shuffle(goals)
+    has_group = set()
+    for n in range(len(goals)):
+        if goals[n].group:
+            if goals[n].group in has_group:
+                goals[n] = None
+            else:
+                has_group.add(goals[n].group)
+    goals = [goal for goal in goals if goal is not None]
     return goals[:25]
 
 
