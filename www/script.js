@@ -4,34 +4,52 @@ var spoilerContent = "";
 
 function ID(id) { return document.getElementById(id); }
 
-
 function updateForm()
 {
     var rom = ID("rom");
 
     if (rom.files.length < 1)
+    {
         setValidRom(false);
+    }
     else if (rom.files[0].size != 1024 * 1024)
-        setValidRom(false);
+    {
+        var ext = rom.files[0].name.substr(rom.files[0].name.lastIndexOf(".")).toUpperCase();
+        if (ext == ".ZIP")
+            setValidRom(false, "Rom needs to be unzipped.");
+        else
+            setValidRom(false, "Invalid ROM size, needs to be 1048576 bytes.");
+    }
     else
     {
         rom.files[0].arrayBuffer().then(function(buffer) {
-            var a = new Int8Array(buffer);
+            var a = new Uint8Array(buffer);
             if (a[0x14D] != 60) // check the header checksum, simplest check for 1.0 version
+            {
+                var checksum = 0;
+                for(var b of a) { checksum += b; }
+                console.log("Checksum: " + checksum);
                 setValidRom(false);
+            }
             else
+            {
                 setValidRom(true);
+            }
         });
     }
 }
 
-function setValidRom(valid)
+function setValidRom(valid, msg)
 {
     ID("submitbutton").disabled = !valid;
     if (valid)
         ID("romlabel").classList.remove("selectromwarning");
     else
         ID("romlabel").classList.add("selectromwarning");
+    if (msg)
+        ID("romlabel").innerHTML = msg;
+    else
+        ID("romlabel").innerHTML = "Select input ROM";
 }
 
 function b64toBlob(b64Data, contentType='', sliceSize=512)
