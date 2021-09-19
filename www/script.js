@@ -24,12 +24,25 @@ function updateForm()
     {
         rom.files[0].arrayBuffer().then(function(buffer) {
             var a = new Uint8Array(buffer);
-            if (a[0x14D] != 60) // check the header checksum, simplest check for 1.0 version
+            var checksum = 0;
+            for(var b of a) { checksum += b; }
+            console.log("Checksum: " + rom.files[0].name + ": " + checksum);
+            if (checksum != 89122269)
             {
-                var checksum = 0;
-                for(var b of a) { checksum += b; }
-                console.log("Checksum: " + checksum);
-                setValidRom(false);
+                if (checksum == 89139089)
+                    setValidRom(false, "Supplied English 1.1 instead of 1.0");
+                else if (checksum == 89653611)
+                    setValidRom(false, "Supplied English 1.2 instead of 1.0");
+                else if (checksum == 89199617 || checksum == 89757956)
+                    setValidRom(false, "Supplied French instead of English version");
+                else if (checksum == 89992511 || checksum == 90082342)
+                    setValidRom(false, "Supplied German instead of English version");
+                else if (checksum == 89992511 || checksum == 90082342)
+                    setValidRom(false, "Supplied German instead of English version");
+                else if (checksum == 87464316 || checksum == 87479931 || checksum == 87503721)
+                    setValidRom(false, "Supplied Japanese instead of English version");
+                else
+                    setValidRom(false, "Invalid ROM");
             }
             else
             {
