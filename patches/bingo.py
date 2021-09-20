@@ -281,7 +281,7 @@ BINGO_GOALS = [
     # {"description": "Moblin King"},
     Goal("Turtle Rock Entrance Boss", checkMemoryMask("$D810", "$20"),
          TileInfo(0x1413, flipH=True, colormap=[2, 3, 1, 0])),
-    Goal("Kill Master Stalfos", checkMemoryMask("$D980", "$20"), TileInfo(0x1622, colormap=[2, 3, 1, 0])),
+    Goal("Kill Master Stalfos", checkMemoryMask("$D980", "$10"), TileInfo(0x1622, colormap=[2, 3, 1, 0])),
     # {"description": "Gohma"},
     # {"description": "Grim Creeper"},
     # {"description": "Blaino"},
