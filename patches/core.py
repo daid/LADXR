@@ -47,6 +47,11 @@ up:
 def bugfixPowderBagSprite(rom):
     rom.patch(0x03, 0x2055, "8E16", "0E1E")
 
+def easyColorDungeonAccess(rom):
+    re = RoomEditor(rom, 0x312)
+    re.entities = [(3, 1, 246), (6, 1, 247)]
+    re.store(rom)
+
 def removeGhost(rom):
     ## Ghost patch
     # Do not have the ghost follow you after dungeon 4
