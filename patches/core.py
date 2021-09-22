@@ -83,6 +83,14 @@ def fixMarinFollower(rom):
     rom.patch(0x01, 0x1FCB, 0x1FD3, ASM("cp $FF\nret z"), fill_nop=True)
     # Do not load marin graphics in color dungeon
     rom.patch(0x00, 0x2EA6, 0x2EB0, ASM("cp $FF\njp $2ED3"), fill_nop=True)
+    # Fix marin on taltal bridge causing a lockup if you have marin with you
+    # This changes the location where the index to the marin entity is stored from it's normal location
+    # To the memory normal reserved for progress on the egg maze (which is reset to 0 on a warp)
+    rom.patch(0x18, 0x1EF7, ASM("ld [$C50F], a"), ASM("ld [$C5AA], a"))
+    rom.patch(0x18, 0x2126, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
+    rom.patch(0x18, 0x2139, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
+    rom.patch(0x18, 0x214F, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
+    rom.patch(0x18, 0x2166, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
 
 def quickswap(rom, button):
     rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
