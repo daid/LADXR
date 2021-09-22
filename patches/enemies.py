@@ -290,6 +290,9 @@ def changeMiniBosses(rom, mapping):
         jp  $54B5
     """), fill_nop=True)
 
+    # Patch smasher to spawn the ball closer, so it doesn't spawn on the wall in the armos temple
+    rom.patch(0x06, 0x0533, ASM("add a, $30"), ASM("add a, $20"))
+
     for target, name in mapping.items():
         re = RoomEditor(rom, MINIBOSS_ROOMS[target])
         re.entities = [e for e in re.entities if e[2] == 0x61]  # Only keep warp, if available
