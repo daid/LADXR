@@ -37,8 +37,6 @@ function updateForm()
                     setValidRom(false, "Supplied French instead of English version");
                 else if (checksum == 89992511 || checksum == 90082342)
                     setValidRom(false, "Supplied German instead of English version");
-                else if (checksum == 89992511 || checksum == 90082342)
-                    setValidRom(false, "Supplied German instead of English version");
                 else if (checksum == 87464316 || checksum == 87479931 || checksum == 87503721)
                     setValidRom(false, "Supplied Japanese instead of English version");
                 else
