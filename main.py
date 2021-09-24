@@ -35,11 +35,11 @@ def goal(goal):
 def validateOptions(options):
     def req(setting, value, message):
         if getattr(options, setting) != value:
-            print(message)
+            print("Warning: %s (setting adjusted automatically)" % message)
             setattr(options, setting, value)
     def dis(setting, value, new_value, message):
         if getattr(options, setting) == value:
-            print(message)
+            print("Warning: %s (setting adjusted automatically)" % message)
             setattr(options, setting, new_value)
 
     if options.goal in ("bingo", "bingo-full"):
@@ -159,12 +159,14 @@ def main(mainargs=None):
         help="Randomizes or disable the music")
 
     args = parser.parse_args(mainargs)
+    validateOptions(args)
     if args.multiworld is not None:
         args.multiworld_options = [args] * args.multiworld
         if args.multiworld_config is not None:
             for index, settings_string in enumerate(args.multiworld_config):
                 args.multiworld_options[index] = parser.parse_args([args.input_filename] + shlex.split(settings_string),
                                                                    namespace=argparse.Namespace(**vars(args)))
+                validateOptions(args.multiworld_options[index])
 
     if args.timeout is not None:
         import threading
