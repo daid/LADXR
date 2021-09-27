@@ -263,7 +263,7 @@ class RequirementsSettings:
             BOMB,  # D6 boss
             AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
             MAGIC_ROD,  # D8 boss
-            self.attack_no_bomb,  # D9 boss
+            self.attack_hookshot_no_bomb,  # D9 boss
         ]
         self.miniboss_requirements = {
             "ROLLING_BONES":    self.attack_hookshot,
@@ -272,7 +272,7 @@ class RequirementsSettings:
             "CUE_BALL":         SWORD,
             "GHOMA":            OR(BOW, HOOKSHOT),
             "SMASHER":          POWER_BRACELET,
-            "GRIM_CREEPER":     self.attack_no_bomb,
+            "GRIM_CREEPER":     self.attack_hookshot_no_bomb,
             "BLAINO":           SWORD,
             "AVALAUNCH":        self.attack_hookshot,
             "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
