@@ -26,8 +26,9 @@ class Dungeon7:
         final_pillar_area = Location(7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar
         final_pillar = Location(7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
-        pre_boss = Location(7).connect(final_pillar, NIGHTMARE_KEY7) 
-        beamos_horseheads = Location(7).add(DungeonChest(0x220)).connect(pre_boss, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
+        beamos_horseheads_area = Location(7).connect(final_pillar, NIGHTMARE_KEY7) # area behind boss door
+        beamos_horseheads = Location(7).add(DungeonChest(0x220)).connect(beamos_horseheads_area, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
+        pre_boss = Location(7).connect(beamos_horseheads_area, HOOKSHOT) # raised plateau before boss staircase
         boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, r.boss_requirements[world_setup.boss_mapping[6]])
 
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy'}:
@@ -42,8 +43,12 @@ class Dungeon7:
                 bottomleft_owl.connect(bottomleftF2_area, STONE_BEAK7) # sideways block push to get to the owl statue (attack_hookshot is already implied from bottomleftF2_area)
             final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
             pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
+            pre_boss.connect(beamos_horseheads_area, None, one_way=True) # can drop down from raised plateau to beamos horseheads area
             
         if options.logic == 'hell':
             topright_pillar_area.connect(entrance, FEATHER) # superjump in the center to get on raised blocks, has to be low
+            topright_pillar_area.connect(entrance, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop in the center to get on raised blocks
+            toprightF1_chest.connect(topright_pillar_area, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop from F1 switch room
+            pre_boss.connect(final_pillar, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop on top of goomba to extend superhop to boss door plateau
         
         self.entrance = entrance

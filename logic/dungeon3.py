@@ -66,15 +66,16 @@ class Dungeon3:
             dungeon3_south_key_drop.connect(area_down, POWER_BRACELET) # use pots to kill enemies
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            area3.connect(dungeon3_raised_blocks_east, FEATHER, one_way=True) # use superjump to get over the bottom left block
+            area2.connect(dungeon3_raised_blocks_east, AND(r.attack_hookshot_powder, FEATHER), one_way=True) # use superjump to get over the bottom left block
             area3.connect(dungeon3_raised_blocks_north, AND(OR(PEGASUS_BOOTS, HOOKSHOT), FEATHER), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks. Instead of boots can also get to that area with a hookshot clip past the movable block
             area3.connect(dungeon3_zol_stalfos, HOOKSHOT, one_way=True) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
             dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, FOUND(KEY3, 5))) # superjump from keyblock path. use 1 key to open first block + text clip 2nd block
         
         if options.logic == 'hell':
-            area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, BOW), one_way=True) # use boots superjump off top wall
-            dungeon3_zol_stalfos.connect(area_up, AND(FEATHER, SWORD)) # use superjump near top blocks chest to get to zol without boots. TODO: Nag messages removes sword req
+            area2.connect(dungeon3_raised_blocks_east, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # use boots superhop to get over the bottom left block
+            area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # use boots superhop off top wall or left wall to get on raised blocks
+            area_up.connect(dungeon3_zol_stalfos, AND(FEATHER, OR(BOW, MAGIC_ROD, SWORD)), one_way=True) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
             area_left_key_drop.connect(area_left, SHIELD) # knock everything into the pit including the teleporting owls
             dungeon3_south_key_drop.connect(area_down, SHIELD) # knock everything into the pit including the teleporting owls
             dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, SHIELD)) # superjump into jumping stalfos and shield bump to right ledge
