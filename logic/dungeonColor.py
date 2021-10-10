@@ -17,17 +17,24 @@ class DungeonColor:
         room2_lights.add(DroppedKey(0x308))
 
         Location(9).connect(room2, AND(KEY9, FOUND(KEY9, 3), r.miniboss_requirements[world_setup.miniboss_mapping["c2"]])).add(DungeonChest(0x302))  # nightmare key after slime mini boss
-        room3 = Location(9).connect(room2_weapon, AND(KEY9, FOUND(KEY9, 2), r.miniboss_requirements[world_setup.miniboss_mapping["c1"]])) # After the miniboss
+        room3 = Location(9).connect(room2, AND(KEY9, FOUND(KEY9, 2), r.miniboss_requirements[world_setup.miniboss_mapping["c1"]])) # After the miniboss
         room4 = Location(9).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
         room4.add(DungeonChest(0x306))  # map
-        room4.add(DroppedKey(0x307))
+        room4karakoro = Location(9).add(DroppedKey(0x307)).connect(room4, r.attack_hookshot)  # require item to knock Karakoro enemies into shell
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(9).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK9)
-        room5 = Location(9).connect(room4, AND(KEY9, FOUND(KEY9, 3)))  # before the boss
-        boss = Location(9).connect(room5, AND(NIGHTMARE_KEY9, r.boss_requirements[world_setup.boss_mapping[8]]))
+        room5 = Location(9).connect(room4, OR(r.attack_hookshot, SHIELD)) # lights room
+        room6 = Location(9).connect(room5, AND(KEY9, FOUND(KEY9, 3))) # room with switch and nightmare door
+        pre_boss = Location(9).connect(room6, OR(r.attack_hookshot, AND(PEGASUS_BOOTS, FEATHER)))  # before the boss, require item to hit switch or jump past raised blocks
+        boss = Location(9).connect(pre_boss, AND(NIGHTMARE_KEY9, r.boss_requirements[world_setup.boss_mapping[8]]))
         boss.add(TunicFairy(0), TunicFairy(1))
 
-        if options.logic == 'hard' or options.logic == 'glitched':
+        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             room2.connect(entrance, POWER_BRACELET) # throw pots at enemies
+            pre_boss.connect(room6, FEATHER)  # before the boss, jump past raised blocks without boots
 
+        if options.logic == 'hell':
+            room2_weapon.connect(room2, SHIELD) # shield bump karakoro into the holes
+            room4karakoro.connect(room4, SHIELD) # shield bump karakoro into the holes
+            
         self.entrance = entrance

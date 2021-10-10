@@ -25,6 +25,7 @@ class World:
         self._addEntrance("library", mabe_village, None, None)
         self._addEntrance("trendy_shop", mabe_village, None, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_KEY)
+        self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
 
         start_house = Location().add(StartItem())
         self._addEntrance("start_house", mabe_village, start_house, None)
@@ -135,7 +136,9 @@ class World:
 
         dungeon3_entrance = Location().connect(ukuku_prairie, OR(FEATHER, FLIPPERS))
         self._addEntrance("d3", dungeon3_entrance, None, SLIME_KEY)
+        self._addEntranceRequirementExit("d3", None) # if exiting, you do not need to open the door
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
+        dungeon3_entrance.connect(ukuku_prairie, None, one_way=True) # jump down ledge back to ukuku_prairie
 
         prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.bush))  # next to lv3
         Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)  # next to seashell house
@@ -209,7 +212,7 @@ class World:
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
         Location().add(GoldLeaf(0x05A)).connect(castle_outside, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
-        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_hookshot_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
@@ -265,6 +268,7 @@ class World:
         self._addEntrance("d6_connector_entrance", d6_armos_island, d6_connector_right, None)
         self._addEntrance("d6_connector_exit", d6_entrance, d6_connector_left, None)
         self._addEntrance("d6", d6_entrance, None, FACE_KEY)
+        self._addEntranceRequirementExit("d6", None) # if exiting, you do not need to open the dungeon
 
         windfish_egg = Location().connect(swamp, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
         windfish_egg.connect(graveyard, None, one_way=True) # Ledge jump
@@ -296,6 +300,7 @@ class World:
         d4_entrance = Location().connect(below_right_taltal, FLIPPERS)
         lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
         self._addEntrance("d4", d4_entrance, None, ANGLER_KEY)
+        self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
         mambo = Location().connect(Location().add(Song(0x2FD)), AND(OCARINA, FLIPPERS))  # Manbo's Mambo
         self._addEntrance("mambo", d4_entrance, mambo, FLIPPERS) 
 
@@ -498,7 +503,7 @@ class World:
             ukuku_prairie.connect(bay_water, FEATHER, one_way=True) # jesus jump
             bay_water.connect(d5_entrance, FEATHER) # jesus jump into d5 entrance (wall clip), wall clip + jesus jump to get out
             
-            crow_gold_leaf.connect(castle_outside, AND(BOMB, OR(r.attack_no_bomb, POWER_BRACELET))) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off.
+            crow_gold_leaf.connect(castle_outside, AND(BOMB, OR(r.attack_hookshot_no_bomb, POWER_BRACELET))) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off.
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, PEGASUS_BOOTS) # boots bonk across bottom wall (both at entrance and in item room)
 
             d6_armos_island.connect(ukuku_prairie, FEATHER) # jesus jump (3 screen) from seashell mansion to armos island

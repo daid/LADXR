@@ -61,7 +61,7 @@ class Dungeon8:
         middle_center_2.connect(up_left, AND(BOMB, FEATHER), one_way=True) # does this even skip a key? both middle_center_2 and up_left come from upper_center with 1 extra key
 
         bossdoor = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD))
-        boss = Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(entrance_up, AND(NIGHTMARE_KEY8, r.boss_requirements[world_setup.boss_mapping[7]]))
+        boss = Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(bossdoor, AND(NIGHTMARE_KEY8, r.boss_requirements[world_setup.boss_mapping[7]]))
         
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
