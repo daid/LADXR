@@ -425,7 +425,7 @@ class World:
             fire_cave_bottom.connect(fire_cave_top, PEGASUS_BOOTS, one_way=True) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            #self._addEntranceRequirement("dream_hut", FEATHER) # flock clip TODO: require nag messages
+            #self._addEntranceRequirement("dream_hut", FEATHER) # text clip TODO: require nag messages
             dream_hut_right.connect(dream_hut_left, FEATHER) # super jump
             forest.connect(swamp, BOMB)  # bomb trigger tarin
             forest.connect(forest_heartpiece, BOMB, one_way=True) # bomb trigger heartpiece
@@ -447,7 +447,7 @@ class World:
             ukuku_prairie.connect(richard_maze, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(ukuku_prairie, FEATHER) # jesus jump (north of kanalet castle phonebooth)
-            animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # flock clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
+            animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  FEATHER) # villa buffer across the pits
 
