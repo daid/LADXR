@@ -68,6 +68,8 @@ $options = [
             'tooltip' => 'Switching to dungeon dive will create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.'],
         'owlstatues' => ['label' => 'Owl statues', 'type' => ['' => 'Never', 'dungeon' => 'In dungeons', 'overworld' => 'On the overworld', 'both' => 'Dungeons and Overworld'], 'arg' => '--owlstatues', 'default' => '',
             'tooltip' => 'Replaces the hints from owl statues with additional randomized items'],
+        'superweapons' => ['label' => 'Enable super weapons', 'type' => 'check', 'default' => '', 'arg' => '--superweapons',
+            'tooltip' => 'All items will be more powerful, faster, harder, bigger stronger. You name it.'],
     ],
     'User options' => [
         'quickswap' => ['label' => 'Quickswap', 'type' => ['none' => 'Disabled', 'a' => 'Swap A button', 'b' => 'Swap B button'], 'arg' => '--quickswap', 'default' => 'none',

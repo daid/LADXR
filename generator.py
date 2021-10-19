@@ -30,6 +30,7 @@ import patches.shop
 import patches.trendy
 import patches.goal
 import patches.hardMode
+import patches.weapons
 import patches.health
 import patches.heartPiece
 import patches.droppedKey
@@ -174,6 +175,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         patches.aesthetics.removeFlashingLights(rom)
     if options.hardMode:
         patches.hardMode.enableHardMode(rom)
+    if options.superweapons:
+        patches.weapons.patchSuperWeapons(rom)
     if options.textmode == 'fast':
         patches.aesthetics.fastText(rom)
     if options.textmode == 'none':

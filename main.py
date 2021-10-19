@@ -127,6 +127,8 @@ def main(mainargs=None):
         help="Configure when to allow stealing from the shop.")
     parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
         help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
+    parser.add_argument('--superweapons', dest="superweapons", action="store_true",
+        help="Make all weapons/inventory more powerful.")
     parser.add_argument('--goal', dest="goal", type=goal, default='8',
         help="Configure the instrument goal for this rom: any number between -1 (open egg) and 8, a range (e.g. 4-7), 'random', or 'raft' / 'seashells' / 'bingo' for special goals.")
     parser.add_argument('--accessibility', dest="accessibility_rule", choices=['all', 'goal'],
