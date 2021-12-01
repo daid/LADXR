@@ -48,6 +48,8 @@ def validateOptions(options):
         dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
         dis("boss", "random", "shuffle", "With bingo goal, bosses need to be on normal or shuffle")
         dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
+    if options.overworld == "dungeondive":
+        dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
 
 
 def main(mainargs=None):
