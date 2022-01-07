@@ -177,7 +177,7 @@ def checkMemoryEqualGreater(location, count):
     """ % (location, count)
 
 
-def InventoryGoal(item, *, memory_location=None, memory_value=None):
+def InventoryGoal(item, *, memory_location=None, msg=None):
     if memory_location is not None:
         code = checkMemoryNotZero(memory_location)
     elif item in INVENTORY_MAP:
@@ -199,7 +199,9 @@ def InventoryGoal(item, *, memory_location=None, memory_value=None):
             rra ; clear z flag
             ret
         """
-    return Goal("Find the {%s}" % (item), code, ITEM_TILES[item])
+    if msg is None:
+        msg = "Find the {%s}" % (item)
+    return Goal(msg, code, ITEM_TILES[item])
 
 
 def KillGoal(description, entity_id, tile_info):
@@ -262,11 +264,11 @@ BINGO_GOALS = [
     Goal("Find the L2 {POWER_BRACELET}", checkMemoryEqualCode("$DB43", "2"), TileInfo(0x82, 0x83, 0x06, 0xB2)),
     InventoryGoal(FLIPPERS, memory_location="wHasFlippers"),
     InventoryGoal(OCARINA),
-    InventoryGoal(MEDICINE, memory_location="wHasMedicine"),
+    InventoryGoal(MEDICINE, memory_location="wHasMedicine", msg="Have the {MEDICINE}"),
     InventoryGoal(BOW),
     InventoryGoal(SHOVEL),
     # InventoryGoal(MAGIC_POWDER),
-    InventoryGoal(TOADSTOOL),
+    InventoryGoal(TOADSTOOL, msg="Have the {TOADSTOOL}"),
     Goal("Find the L2 {SHIELD}", checkMemoryEqualCode("$DB44", "2"), TileInfo(0x86, 0x87, 0x06, 0xB2)),
     Goal("Find 10 Secret Seashells", checkForSeashellsCode(10), ITEM_TILES[SEASHELL]),
     Goal("Find the L2 {SWORD}", checkMemoryEqualCode("$DB4E", "2"), TileInfo(0x84, 0x85, 0x06, 0xB2)),
