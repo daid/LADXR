@@ -364,7 +364,8 @@ class ForwardItemPlacer(ItemPlacer):
             return False
         # For each item placed, make all accessible locations less likely to be picked
         for spot in spots:
-            spot.weight *= self.__forwardfactor
+            if spot.weight > 0.001:
+                spot.weight *= self.__forwardfactor
         return True
 
     def _chooseItem(self, rnd, req_items):
