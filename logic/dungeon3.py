@@ -52,7 +52,7 @@ class Dungeon3:
 
         boss = Location(3).add(HeartContainer(0x15A), Instrument(0x159)).connect(pre_boss, AND(NIGHTMARE_KEY3, r.boss_requirements[world_setup.boss_mapping[2]]))
 
-        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy'}:
+        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
             area_left.connect(area3, KEY3)
             area_left_key_drop.items[0].forced_item = KEY3

@@ -235,7 +235,7 @@ class MultiworldItemInfoWrapper:
     # Return true if the item is allowed to be placed in any world, or false if it is
     # world specific for this check.
     def canMultiworld(self, option):
-        if self.dungeon_items == 'standard':
+        if self.dungeon_items in {'standard', 'smallkeys'}:
             if option.startswith("MAP"):
                 return False
             if option.startswith("COMPASS"):
@@ -245,7 +245,7 @@ class MultiworldItemInfoWrapper:
         if self.dungeon_items in {'standard', 'localkeys'}:
             if option.startswith("KEY"):
                 return False
-        if self.dungeon_items in {'standard', 'localkeys', 'localnightmarekey'}:
+        if self.dungeon_items in {'standard', 'localkeys', 'localnightmarekey', 'smallkeys'}:
             if option.startswith("NIGHTMARE_KEY"):
                 return False
         return True

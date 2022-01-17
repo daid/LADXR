@@ -31,7 +31,7 @@ class Dungeon7:
         pre_boss = Location(7).connect(beamos_horseheads_area, HOOKSHOT) # raised plateau before boss staircase
         boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(pre_boss, r.boss_requirements[world_setup.boss_mapping[6]])
 
-        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy'}:
+        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             first_key.items[0].forced_item = KEY7
             
         if options.logic == 'glitched' or options.logic == 'hell':

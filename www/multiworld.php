@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (kv.length > 1)
         {
             var e = document.getElementById(kv[0]);
+            if (e === null) continue;
             if (e.type == 'checkbox')
                 e.checked = kv[1] == "1";
             else

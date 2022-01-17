@@ -38,7 +38,7 @@ $options = [
             'tooltip' => '[Normal], requires magnifier to get the boomerang.|[Trade], allows to trade an inventory item for a random other inventory item boomerang is shuffled.|[Gift], You get a random gift of any item, and the boomerang is shuffled.'],
     ],
     'Gameplay' => [
-        'dungeonitems' => ['label' => 'Dungeon items', 'type' => ['standard' => 'Standard', 'localkeys' => 'Map/Compass/Beaks', 'localnightmarekey' => 'MCB + SmallKeys', 'keysanity' => 'Keysanity', 'keysy' =>' Keysy'], 'default' => 'standard', 'arg' => '--dungeon-items',
+        'dungeonitems' => ['label' => 'Dungeon items', 'type' => ['standard' => 'Standard', 'smallkeys' => 'Small keys', 'localkeys' => 'Map/Compass/Beaks', 'localnightmarekey' => 'MCB + SmallKeys', 'keysanity' => 'Keysanity', 'keysy' =>' Keysy'], 'default' => 'standard', 'arg' => '--dungeon-items',
             'tooltip' => 'Sets if dungeon items can only be in their respective dungeon, or everywhere.|[Standard] dungeon items are only in their dungeon.|[Maps/.../..] specified items can be anywhere|[Keysanity] all dungeon items can be anywhere.|[Keysy] no keys, key doors are already open.'],
         'randomstart' => ['label' => 'Random start location', 'type' => 'check', 'default' => '', 'arg' => '--randomstartlocation',
             'tooltip' => 'Randomize where your starting house is located'],

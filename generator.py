@@ -123,7 +123,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if options.dungeon_items in ('localnightmarekey', 'keysanity'):
+    if options.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
         patches.inventory.advancedInventorySubscreen(rom)
     if expanded_inventory:
         patches.inventory.moreSlots(rom)
