@@ -101,7 +101,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("wCuccoSpawnCount", 0xDE11)
 
     #assembler.const("HARDWARE_LINK", 1)
-    assembler.const("HARD_MODE", 1 if options.hardMode else 0)
+    assembler.const("HARD_MODE", 1 if options.hardMode != "none" else 0)
 
     patches.core.cleanup(rom)
     if multiworld is not None:
@@ -173,8 +173,12 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         patches.music.noMusic(rom)
     if options.removeFlashingLights:
         patches.aesthetics.removeFlashingLights(rom)
-    if options.hardMode:
-        patches.hardMode.enableHardMode(rom)
+    if options.hardMode == "oracle":
+        patches.hardMode.oracleMode(rom)
+    elif options.hardMode == "hero":
+        patches.hardMode.heroMode(rom)
+    elif options.hardMode == "ohko":
+        patches.hardMode.oneHitKO(rom)
     if options.superweapons:
         patches.weapons.patchSuperWeapons(rom)
     if options.textmode == 'fast':

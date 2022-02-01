@@ -1,7 +1,7 @@
 from assembler import ASM
 
 
-def enableHardMode(rom):
+def oracleMode(rom):
     # Reduce iframes
     rom.patch(0x03, 0x2DB2, ASM("ld a, $50"), ASM("ld a, $20"))
 
@@ -30,3 +30,30 @@ def enableHardMode(rom):
 
     # Make dropping in water without flippers damage you.
     rom.patch(0x02, 0x3722, ASM("ldh a, [$AF]"), ASM("ld a, $06"))
+
+
+def heroMode(rom):
+    # Don't randomly drop fairies and hearts from enemies, drop a rupee instead
+    rom.patch(0x03, 0x15C7,
+              "2E2D382F2E2D3837",
+              "2E2E382E2E2E3837")
+    # Double damage
+    rom.patch(0x03, 0x2DAB,
+              ASM("ld a, [$DB94]\nadd a, e\nld [$DB94], a"),
+              ASM("ld hl, $DB94\nld a, [hl]\nadd a, e\nadd a, e\nld [hl], a"))
+    rom.patch(0x02, 0x11B2, ASM("add a, $04"), ASM("add a, $08"))
+    rom.patch(0x02, 0x127E, ASM("add a, $04"), ASM("add a, $08"))
+    rom.patch(0x02, 0x291C, ASM("add a, $04"), ASM("add a, $08"))
+    rom.patch(0x02, 0x362B, ASM("add a, $04"), ASM("add a, $08"))
+    rom.patch(0x06, 0x041C, ASM("ld a, $02"), ASM("ld a, $04"))
+    rom.patch(0x15, 0x09B8, ASM("add a, $08"), ASM("add a, $10"))
+    rom.patch(0x15, 0x32FD, ASM("ld a, $08"), ASM("ld a, $10"))
+    rom.patch(0x18, 0x370E, ASM("ld a, $08"), ASM("ld a, $10"))
+    rom.patch(0x07, 0x3103, ASM("ld a, $08"), ASM("ld a, $10"))
+    rom.patch(0x06, 0x1166, ASM("ld a, $08"), ASM("ld a, $10"))
+
+
+
+
+def oneHitKO(rom):
+    rom.patch(0x02, 0x238C, ASM("ld [$DB94], a"), "", fill_nop=True)

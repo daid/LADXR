@@ -127,8 +127,8 @@ def main(mainargs=None):
         help="Put the boomerang and the trade with the boomerang in the item pool")
     parser.add_argument('--steal', dest="steal", choices=['never', 'always', 'default'], default='always',
         help="Configure when to allow stealing from the shop.")
-    parser.add_argument('--hard-mode', dest="hardMode", action="store_true",
-        help="Make the game a bit harder, less health from drops, bombs damage yourself, and less iframes.")
+    parser.add_argument('--hard-mode', dest="hardMode", choices=["none", "oracle", "hero", "ohko"], default="none",
+        help="Make the game a bit harder. [oracle] less health from drops, bombs damage yourself, and less iframes. [hero] Double damage, no heart/fairy drops. [ohko] One hit KO.")
     parser.add_argument('--superweapons', dest="superweapons", action="store_true",
         help="Make all weapons/inventory more powerful.")
     parser.add_argument('--goal', dest="goal", type=goal, default='8',
