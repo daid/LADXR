@@ -211,6 +211,7 @@ ItemNamePointers:
     dw ItemInstrument6
     dw ItemInstrument7
     dw ItemInstrument8
+    dw ItemRooster
 
 ItemNameNone:
     db m"NONE", $ff
@@ -419,3 +420,6 @@ ItemInstrument7:
     db m"You've got the {INSTRUMENT7}", $ff
 ItemInstrument8:
     db m"You've got the {INSTRUMENT8}", $ff
+
+ItemRooster:
+    db m"You've got the {ROOSTER}", $ff

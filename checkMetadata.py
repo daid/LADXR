@@ -251,4 +251,5 @@ checkMetadataTable = {
     "0x092": CheckMetadata("Ballad of the Wind Fish", "Mabe Village"),
     "0x2FD": CheckMetadata("Manbo's Mambo", "Tal Tal Heights"),
     "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
+    "0x1E4": CheckMetadata("Rooster", "Mabe Village"),
 }

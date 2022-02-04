@@ -373,3 +373,9 @@ blockBadEmu:
         "900E920E940E960E"
         "980E9A0E9C0E9E0E"
     )
+
+    # Rooster
+    rom.banks[0x3F][0x3A00:0x3B00] = rom.banks[0x32][0x1D00:0x1E00]
+    rom.patch(0x19, 0x19BC,
+              "42234023" "46234423" "40034203" "44034603" "4C034C23" "4E034E23" "48034823" "4A034A23",
+              "A22BA02B" "A62BA42B" "A00BA20B" "A40BA60B" "AC0BAC2B" "AE0BAE2B" "A80BA82B" "AA0BAA2B")

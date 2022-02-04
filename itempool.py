@@ -14,7 +14,7 @@ DEFAULT_ITEM_POOL = {
     POWER_BRACELET: 2,
     SHIELD: 2,
     SHOVEL: 1,
-
+    ROOSTER: 1,
     TOADSTOOL: 1,
 
     TAIL_KEY: 1, SLIME_KEY: 1, ANGLER_KEY: 1, FACE_KEY: 1, BIRD_KEY: 1,
@@ -182,6 +182,7 @@ class ItemPool:
             self.remove(MEDICINE, 3)
             self.remove(MESSAGE)
             self.remove(BOWWOW)
+            self.remove(ROOSTER)
             self.remove(GEL, 2)
             self.remove("MEDICINE2")
             self.remove("RAFT")

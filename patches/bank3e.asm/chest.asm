@@ -218,6 +218,7 @@ GiveItemFromChest:
     dw GiveInstrument
     dw GiveInstrument
     dw GiveInstrument
+    dw GiveRooster
 
 NoItem:
     ret
@@ -617,6 +618,23 @@ GiveInstrument:
     set  1, [hl]
     ret
 
+GiveRooster:
+    ld   a, $01
+    ld   [$DB7B], a ; has rooster
+
+    ld   a, $D5 ; ENTITY_ROOSTER
+    call $3B86 ; SpawnNewEntity_trampoline
+    ldh  a, [$98] ; LinkX
+    ld   hl, $C200 ; wEntitiesPosXTable
+    add  hl, de
+    ld   [hl], a
+    ldh  a, [$99] ; LinkY
+    ld   hl, $C210 ; wEntitiesPosYTable
+    add  hl, de
+    ld   [hl], a
+
+    ret
+
 ItemMessageMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
@@ -774,6 +792,7 @@ LargeItemSpriteTable:
     db $94, $0E, $96, $0E ; Instrument6
     db $98, $0E, $9A, $0E ; Instrument7
     db $9C, $0E, $9E, $0E ; Instrument8
+    db $A6, $2B, $A4, $2B ; Rooster
 
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -787,7 +806,7 @@ ItemMessageTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80
     db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B, $C9, $C9, $C9, $C9, $C9
-    db $C9, $C9, $C9, $C9, $C9, $C9
+    db $C9, $C9, $C9, $C9, $C9, $C9, $B8
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

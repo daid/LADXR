@@ -21,6 +21,3 @@ class BirdKey(DroppedKey):
         re.moveObject(2, 5, 3, 6)
         re.addEntity(3, 5, 0x9D)
         re.store(rom)
-
-        # Do not give the rooster
-        rom.patch(0x19, 0x0E9D, ASM("ld [$DB7B], a"), "", fill_nop=True)
