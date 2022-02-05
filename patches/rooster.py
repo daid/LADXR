@@ -20,3 +20,9 @@ def patchRooster(rom):
 
     # Always allow rooster pickup with A button
     rom.patch(0x19, 0x1ABE, ASM("ret nz"), "", fill_nop=True)
+
+    # Do not take away the rooster after D7
+    rom.patch(0x03, 0x1E25, ASM("ld [$DB7B], a"), "", fill_nop=True)
+
+    # Patch the color dungeon entrance not to check for rooster
+    rom.patch(0x02, 0x3409, ASM("ld hl, $DB7B\nor [hl]"), "", fill_nop=True)
