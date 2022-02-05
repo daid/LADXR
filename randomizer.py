@@ -48,7 +48,7 @@ class Randomizer:
                 item = self.plan.forced_items.get(ii.nameId.upper(), None)
                 if isinstance(item, list):
                     ii.OPTIONS = item
-                else:
+                elif item is not None:
                     ii.forced_item = item
 
         if options.multiworld:
