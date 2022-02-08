@@ -35,7 +35,7 @@ hints = [
     "If you want {0} start looking in {1}",
     "{1} holds {0}",
     "They say that {0} is at {1}",
-    "You might to look in {1} for a secret",
+    "You might want to look in {1} for a secret",
 ]
 useless_hint = [
     ("Egg", "Mt. Tamaranch"),
