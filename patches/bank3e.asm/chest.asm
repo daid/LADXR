@@ -621,6 +621,9 @@ GiveInstrument:
 GiveRooster:
     ld   a, $01
     ld   [$DB7B], a ; has rooster
+    ldh  a, [$F9] ; do not spawn rooster in sidescroller
+    and  a
+    ret  z
 
     ld   a, $D5 ; ENTITY_ROOSTER
     call $3B86 ; SpawnNewEntity_trampoline
