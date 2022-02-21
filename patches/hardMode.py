@@ -34,9 +34,14 @@ def oracleMode(rom):
 
 def heroMode(rom):
     # Don't randomly drop fairies and hearts from enemies, drop a rupee instead
+    rom.patch(0x03, 0x159D,
+                "2E2E2D2D372DFFFF2F37382E2F2F",
+                "2E2EFFFF37FFFFFFFF37382EFFFF")
     rom.patch(0x03, 0x15C7,
               "2E2D382F2E2D3837",
               "2E2E382E2E2E3837")
+    rom.patch(0x00, 0x168F, ASM("ld a, $2D"), "", fill_nop=True)
+    rom.patch(0x02, 0x0CDB, ASM("ld a, $2D"), "", fill_nop=True)
     # Double damage
     rom.patch(0x03, 0x2DAB,
               ASM("ld a, [$DB94]\nadd a, e\nld [$DB94], a"),

@@ -1,5 +1,6 @@
 from assembler import ASM
 
+
 def fixPhotographer(rom):
     # Allow richard photo without slime key
     rom.patch(0x36, 0x3234, ASM("jr nz, $52"), "", fill_nop=True)
