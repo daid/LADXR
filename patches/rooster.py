@@ -26,3 +26,6 @@ def patchRooster(rom):
 
     # Patch the color dungeon entrance not to check for rooster
     rom.patch(0x02, 0x3409, ASM("ld hl, $DB7B\nor [hl]"), "", fill_nop=True)
+
+    # Spawn marin at taltal even with rooster
+    rom.patch(0x18, 0x5EE3, ASM("jp nz, $7F08"), "", fill_nop=True)
