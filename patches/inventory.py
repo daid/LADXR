@@ -169,9 +169,9 @@ def moreSlots(rom):
     rom.patch(0x20, 0x1BCC, ASM("ld hl, $5C84"), ASM("ld hl, $7E53")) # use the new table
     rom.patch(0x20, 0x1CF0, ASM("ld hl, $5C84"), ASM("ld hl, $7E53")) # use the new table
 
-    # sprite positions for inventory cursor, new table, placed in the hole left by the inventory tile positions table.
-    rom.patch(0x20, 0x1C8C, 0x1C9C, "28283838484858586868787888889898")
-    rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $5C8C"))
+    # sprite positions for inventory cursor, new table, placed at the end of the bank
+    rom.patch(0x20, 0x3E90, "00" * 16, "28283838484858586868787888889898")
+    rom.patch(0x20, 0x22b3, ASM("ld hl, $6298"), ASM("ld hl, $7E90"))
     rom.patch(0x20, 0x2298, "28284040", "08280828")  # Extend the sprite X positions for the inventory table
 
     # Piece of power overlay positions
@@ -210,11 +210,18 @@ def moreSlots(rom):
 
     ##  Patch the toadstool as a different item
     rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")  # Which tiles are used for the toadstool
+    rom.patch(0x20, 0x1C8A, "9C659C" "C19CC5", "90927F" "91937F")  # Which tiles are used for the rooster
+    rom.patch(0x20, 0x1C6C, "927F7F" "937F7F", "127F7F" "137F7F")  # Which tiles are used for the feather (to make space for rooster)
+    rom.patch(0x20, 0x1C66, "907F7F" "917F7F", "107F7F" "117F7F")  # Which tiles are used for the ocarina (to make space for rooster)
+
     # Move the inventory tile numbers to a higher address, so there is space for the table above it.
-    rom.banks[0x20][0x1C32:0x1C8C] = rom.banks[0x20][0x1C30:0x1C8A]
-    rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C32"))
-    rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C35"))
+    rom.banks[0x20][0x1C34:0x1C94] = rom.banks[0x20][0x1C30:0x1C90]
+    rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C34"))
+    rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C37"))
     rom.patch(0x20, 0x1C30, "7F7F", "0A0B")  # Toadstool tile attributes
+    rom.patch(0x20, 0x1C32, "7F7F", "0101")  # Rooster tile attributes
+    rom.patch(0x20, 0x1C28, "0303", "0B0B")  # Feather tile attributes (due to rooster)
+    rom.patch(0x20, 0x1C26, "0202", "0A0A")  # Ocarina tile attributes (due to rooster)
 
     # Allow usage of the toadstool (replace the whole manual jump table with an rst 0 jumptable
     rom.patch(0x00, 0x129D, 0x12D8, ASM("""
@@ -234,6 +241,7 @@ def moreSlots(rom):
         dw $148D ; Magic powder
         dw $1383 ; Boomerang
         dw $1498 ; Toadstool
+        dw $12ED ; Rooster
     """), fill_nop=True)
     # Fix the graphics of the toadstool hold over your head
     rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $4C"))
@@ -256,7 +264,7 @@ def moreSlots(rom):
     """), fill_nop=True)
 
     # Patch the debug save game so it does not give a bunch of swords
-    rom.patch(0x01, 0x0673, "01010100", "0D0E0000")
+    rom.patch(0x01, 0x0673, "01010100", "0D0E0F00")
 
     # Patch the witch to use the new toadstool instead of the old flag
     rom.patch(0x05, 0x081A, ASM("ld a, [$DB4B]"), ASM("ld a, $01"), fill_nop=True)

@@ -174,7 +174,7 @@ def tileDataToString(data, key=" 123"):
             else:
                 result += key[0]
         result += "\n"
-    return result
+    return result.rstrip("\n")
 
 def createTileData(data, key=" 123"):
     result = []

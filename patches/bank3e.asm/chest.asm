@@ -619,6 +619,9 @@ GiveInstrument:
     ret
 
 GiveRooster:
+    ld   d, $0F
+    call $3E6B ; Give Inventory (rooster item)
+
     ld   a, $01
     ld   [$DB7B], a ; has rooster
     ldh  a, [$F9] ; do not spawn rooster in sidescroller
@@ -696,8 +699,8 @@ ItemSpriteTable:
     db $8A, $14        ; CHEST_HOOKSHOT
     db $8C, $14        ; CHEST_MAGIC_ROD
     db $98, $16        ; CHEST_PEGASUS_BOOTS
-    db $90, $17        ; CHEST_OCARINA
-    db $92, $15        ; CHEST_FEATHER
+    db $10, $1F        ; CHEST_OCARINA
+    db $12, $1D        ; CHEST_FEATHER
     db $96, $17        ; CHEST_SHOVEL
     db $0E, $1C        ; CHEST_MAGIC_POWDER_BAG
     db $80, $15        ; CHEST_BOMB

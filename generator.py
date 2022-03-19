@@ -70,20 +70,12 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         for gfx in options.gfxmod:
             patches.aesthetics.gfxMod(rom, gfx)
 
-    expanded_inventory = options.witch or options.boomerang == 'gift'
     assembler.resetConsts()
-    if expanded_inventory:
-        assembler.const("INV_SIZE", 16)
-        assembler.const("wHasFlippers", 0xDB3E)
-        assembler.const("wHasMedicine", 0xDB3F)
-        assembler.const("wTradeSequenceItem", 0xDB40)
-        assembler.const("wSeashellsCount", 0xDB41)
-    else:
-        assembler.const("INV_SIZE", 12)
-        assembler.const("wHasFlippers", 0xDB0C)
-        assembler.const("wHasMedicine", 0xDB0D)
-        assembler.const("wTradeSequenceItem", 0xDB0E)
-        assembler.const("wSeashellsCount", 0xDB0F)
+    assembler.const("INV_SIZE", 16)
+    assembler.const("wHasFlippers", 0xDB3E)
+    assembler.const("wHasMedicine", 0xDB3F)
+    assembler.const("wTradeSequenceItem", 0xDB40)
+    assembler.const("wSeashellsCount", 0xDB41)
     assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
     assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
     assembler.const("wCustomMessage", 0xC0A0)
@@ -126,8 +118,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.core.injectMainLoop(rom)
     if options.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
         patches.inventory.advancedInventorySubscreen(rom)
-    if expanded_inventory:
-        patches.inventory.moreSlots(rom)
+    patches.inventory.moreSlots(rom)
     if options.witch:
         patches.witch.updateWitch(rom)
     patches.softlock.fixAll(rom)

@@ -16,10 +16,11 @@ def patchRooster(rom):
     rom.patch(0x19, 0x0E69, ASM("ld a, $6D\ncall $2373"), ASM("ld a, $0E\nrst $08"), fill_nop=True)
 
     # Reuse unused evil eagle text slot for rooster message
-    rom.texts[0x0B8] = formatText("Got the {ROOSTER}, pick him up with the A button!")
+    rom.texts[0x0B8] = formatText("Got the {ROOSTER}!")
 
-    # Always allow rooster pickup with A button
-    rom.patch(0x19, 0x1ABE, ASM("ret nz"), "", fill_nop=True)
+    # Allow rooster pickup with special rooster item
+    rom.patch(0x19, 0x1ABC, ASM("cp $03"), ASM("cp $0F"))
+    rom.patch(0x19, 0x1AAE, ASM("cp $03"), ASM("cp $0F"))
 
     # Do not take away the rooster after D7
     rom.patch(0x03, 0x1E25, ASM("ld [$DB7B], a"), "", fill_nop=True)
