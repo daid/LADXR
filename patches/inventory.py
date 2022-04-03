@@ -241,8 +241,15 @@ def moreSlots(rom):
         dw $148D ; Magic powder
         dw $1383 ; Boomerang
         dw $1498 ; Toadstool
-        dw $12ED ; Rooster
-    """), fill_nop=True)
+        dw RoosterUse ; Rooster
+RoosterUse:
+    ld   a, $01
+    ld   [$DB7B], a ; has rooster
+    call $3958 ; spawn followers
+    xor  a
+    ld   [$DB7B], a ; has rooster
+    ret
+    """, 0x129D), fill_nop=True)
     # Fix the graphics of the toadstool hold over your head
     rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $4C"))
     rom.patch(0x02, 0x1241, ASM("ld a, $14"), ASM("ld a, $1C"))

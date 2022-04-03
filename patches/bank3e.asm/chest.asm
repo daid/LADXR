@@ -622,8 +622,8 @@ GiveRooster:
     ld   d, $0F
     call $3E6B ; Give Inventory (rooster item)
 
-    ld   a, $01
-    ld   [$DB7B], a ; has rooster
+    ;ld   a, $01
+    ;ld   [$DB7B], a ; has rooster
     ldh  a, [$F9] ; do not spawn rooster in sidescroller
     and  a
     ret  z

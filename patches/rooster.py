@@ -22,6 +22,14 @@ def patchRooster(rom):
     rom.patch(0x19, 0x1ABC, ASM("cp $03"), ASM("cp $0F"))
     rom.patch(0x19, 0x1AAE, ASM("cp $03"), ASM("cp $0F"))
 
+    # Ignore the has-rooster flag in the rooster entity (do not despawn)
+    rom.patch(0x19, 0x19E0, ASM("jp z, $7E61"), "", fill_nop=True)
+
+    # If we are spawning the rooster, and the rooster is already existing, do not do anything, instead of despawning the rooster.
+    rom.patch(0x01, 0x1FEF, ASM("ld [hl], d"), ASM("ret"))
+    # Allow rooster to unload when changing rooms
+    rom.patch(0x19, 0x19E9, ASM("ld [hl], a"), "", fill_nop=True)
+
     # Do not take away the rooster after D7
     rom.patch(0x03, 0x1E25, ASM("ld [$DB7B], a"), "", fill_nop=True)
 
