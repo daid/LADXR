@@ -156,13 +156,27 @@ I guess this is why you see address `$2100` being used for bank switching. It sw
 
 Final problem before we can start putting this all together. LADX is running in GBC mode. FFA normally runs in classic mode. If we run FFA in GBC mode we get...
 
-~insert image~
+![image](https://user-images.githubusercontent.com/964186/162275000-7fc0cca6-dd0a-424a-bea8-b06fe855e912.png)
 
 Which makes perfect sense. With GBC support enabled, we need to load colors. And the default colors for the background are all white, while those for sprites are undefined and random. So lets load some default palette, there is a bit of free room in FFA before the interrupt vectors. So we use that to store some code, jump to it from the start and then jump to the actual start of the rom.
 
 ```asm
-~insert new startup code~
+PreInit:
+    ld  a, $80
+    ldh [rBCPS], a
+    ldh [rOCPS], a
+    ld  hl, Pal
+    ld  c, $08
+:   ld  a, [hl+]
+    ldh [rBCPD], a
+    ldh [rOCPD], a
+    dec c
+    jr  nz, :-
+    jp  Init
+Pal:
+    dw $7fff, $3def, $1ce7, $0000
 ```
+![image](https://user-images.githubusercontent.com/964186/162277109-91d08967-879d-42a7-9814-f761d4c95cc2.png)
 
-~insert image~
+That is a lot better.
 
