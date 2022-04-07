@@ -181,3 +181,62 @@ Pal:
 That is a lot better, but far from perfect. There are a few obvious problems. Sprites are darker then then expected, and various animation effects don't work. For example screen transitions:
 
 ![animation](https://user-images.githubusercontent.com/964186/162278393-9ca53b83-faf1-4a72-ab63-b6b663f07939.gif)
+
+The reason for this is simple. FFA is updating the [rBGP](https://gbdev.io/pandocs/Palettes.html) and [rOBPx](https://gbdev.io/pandocs/Palettes.html) registers to get the gray scales it wants, and also to black or white out the screen.
+As bonus, it's updating this while the frame is drawing so it does not black out the status bar, while it does black out the rest of the screen.
+
+So, new plan. Depending on the value of `rBGP` and `rOBP0` update the CGB palette data at each VBLANK or LCDC interrupt (End of frame, or special interrupt on a specific line)
+We need a bit more code in this case:
+```asm
+PaletteData:
+MACRO RGB
+    dw (\1) | (\2) << 5 | (\3) << 10
+ENDM
+    RGB 29, 31, 25
+    RGB 21, 26, 18
+    RGB 10, 17, 14
+    RGB 2, 5, 7
+
+updatePal:
+    xor a
+    ld  h, a
+    ld  l, a
+    ld  a, $80
+    ldh [rBCPS], a
+    ldh [rOCPS], a
+    ld c, LOW(rBCPD)
+    ld a, [rBGP]
+    call updatePalFunc
+    ld c, LOW(rOCPD)
+    ld a, [rOBP0]
+    call updatePalFunc
+    ret
+
+updatePalFunc:
+    ld e, a
+    ld b, 4
+:
+    ld a, e
+    rr e
+    rr e
+    and $03
+    add a, a
+    ld  l, a
+    ld  a, [hl+]
+    ldh [c], a
+    ld  a, [hl+]
+    ldh [c], a
+    dec b
+    jr  nz, :-
+    ret
+ ```
+
+![animation](https://user-images.githubusercontent.com/964186/162280644-c89fc948-0361-4053-a31d-ee3c9a820952.gif)
+
+ Well, that works for some effects. But it doesn't work for some others. At this point, I'm not sure why. But it's 22:00, friday, and I always host these specials starting on saturday. So, screw it. Don't let perfect be the enemy of good enough in this case.
+ 
+ Biggest issue is that the boss doesn't flash when you hit it. I traced this later to "why", the boss uses `rBGP1` instead of `rBGP0`, and the game just inverts `rBGP1` when the boss is hit. Small change to use `rBGP1` instead of `rBGP0` in the palette update code confirms this, as now all sprites flash when you hit the boss. This is most certainly something that can be fixed/improved, but it requires a lot more work.
+ 
+ ## Problem four, putting it all together.
+ 
+ 
