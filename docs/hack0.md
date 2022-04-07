@@ -130,7 +130,13 @@ It's switching to RAM bank `$00`, but for MBC1, this also switches out the high 
 
 Lucky for us, it's only doing this for classic gameboy (DMG) support, where it uses the other SRAM bank. But on the GBC, it doesn't use other SRAM banks, it uses WRAM banks instead. Doesn't make sense? No idea. But it does. Don't worry about it. Only thing you need to know, we can just remove those instructions and be happy.
 
-Game boots, doesn't crash, and I can start a... damn it. Links sprite is corrupt.
+Game boots, doesn't crash, and I can start a... damn it. Links sprite is corrupt. What why? The game otherwise runs perfectly, except for occasional corruption of link.
+
+Why does that happen? Well, remember replacing one instruction with a call to a whole bunch? That affects timing. And timing is a thing. Especially for updating graphics. The gameboy has a limited amount of time available to update graphics memory. If you try to access that memory while rendering is happening, you cannot, and writes will fail silently. Which is what was happening. Updating links sprite was too late now, and only partially happening.
+
+How to fix this? Well, this code that updates links sprite needs to copy 64 bytes to update link, and it does so in two steps of 32bytes. The [copy loop](https://github.com/zladx/LADX-Disassembly/blob/91e2ebb9b81982dc7404114442506811122b7cf9/src/code/home/animated_tiles.asm#L422) that does this is realtively small, but not very efficient. It takes 10 cycles per byte.
+
+Luckily for us, we only target the GBC, and that has DMA. It can copy 16 bytes in 32 cycles, which is a lot faster. So updating this code to use DMA fixes that issue. DMA has some limitations, it can only copy from/to addresses that are 16 byte aligned and only blocks that are multiple of 16, but that all isn't an issue here.
 
 ## Problem two... more banking
 
