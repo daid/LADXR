@@ -239,4 +239,77 @@ updatePalFunc:
  
  ## Problem four, putting it all together.
  
- 
+ Now. As this is just a "quick" hack (quick is relative...), I can cheat in a whole bunch of ways:
+ * I don't care that people cannot finish LADX
+ * I only want to go from LADX to FFA
+ * I shorten the game of FFA to a "gimic", as requiring people to finish a whole game that they don't even know would be brutal especially...
+ * Saving in FFA will corrupt the LADX save, and the other way around.
+
+So, the plan is simple:
+* Start with the LADX rom
+* Append the customized FFA rom
+* Use the MBC1 higher rom bits to switch to FFA at some point, and start that game from scratch
+
+The whole switch code isn't that complex:
+* I need to clear some GBC VRAM, because, well, else some things are messed up, as FFA doesn't touch it.
+* Load some code into ram, so we can safely switch games
+* Jump to that code to switch games, and that code will start up FFA from the entry point at `$0100`
+```
+    ; Disable interrupts, as that can mess up things quite quick
+    xor a
+    di
+    ldh [$FF], a
+    ldh [$0F], a
+    ldh [$40], a ;LCD off
+; Clear 2nd vram bank
+clearVRAM:
+    ld  a, $01
+    ldh [$4F], a
+    ld  hl, $8000
+    ld  bc, $2000
+    xor a
+.loop:
+    ldi [hl], a
+    dec c
+    jr  nz, .loop
+    dec b
+    jr  nz, .loop
+    ldh [$4F], a    
+    
+    ld  a, $91
+    ldh [$40], a ;LCD on
+    
+SwitchROM:
+    ; Load code into RAM and jump to RAM
+    ld   de, switchRomCode
+    ld   hl, $C000
+    ld   c, $20
+.loop:
+    ld   a, [de]
+    inc  de
+    ldi  [hl], a
+    dec  c
+    jr   nz, .loop
+    jp   $C000
+switchRomCode:
+    ld   a, $00
+    ld   [$2000], a
+    ld   a, $02
+    ld   [$4000], a
+    ld   a, $11
+    jp   $0100
+.end:
+```
+
+# Succes... AH FUCK.
+
+Yay, that all worked. I called this code from the code that handles getting an instrument, and all seemed good...
+
+It's now 23:50. I upload my patch, setup the generator for the race. And download a generated rom to see if everything goes right.
+Generator worked fine. I playtest a bit and.... crash. Bombing a bombable wall crashes the whole game in LADX. Shit. Somewhere it's writting to the `$6XXX` area.
+
+I did the only thing I could at that point, and just remove that specific instruction, and left the comment `(hope this doesn't break the game)`.
+
+Next morning. Yes. That did break the game. Key doors would now open only one side of the door in dungeons. Pretty heavy bug, as you can waste keys and get locked out of areas that way.
+
+# And for my next magic trick.
