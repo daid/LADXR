@@ -88,7 +88,7 @@ done:
 
 We cannot jam this many instruction in the spot for normally two instructions. So, what I did was place the above code somewhere in the bank $00, so it is always accessible. (there is quite some space here in LADX)
 
-After that, I replaced every `ld [$2100], a` with `call $00C0` ($00C0 is where I could place this new code). And when I say, all of them. I mean.. ALL OF THEM.
+After that, I replaced every `ld [$2100], a` with `call $00C0` ($00C0 is where I could place this new code). And when I say, all of them. I mean.. ALL OF THEM. There are so many of these, it's a bit insane.
 ```py
 for addr in (0x080F, 0x0819, 0x0821, 0x082B, 0x08E2, 0x0919, 0x0939, 0x0974, 0x098D, 0x0A13, 0x0A2E, 0x0A35, 0x0A62, 0x0B1C, 0x0B2B, 0x0B58, 0x0B5D, 0x0B65, 0x0B6A, 0x0B92, 0x0BC8, 0x0BD3, 0x0BDA, 0x0BE3, 0x0BF2, 0x0C2F, 0x0C3C, 0x0C47, 0x0D20, 0x0EEF, 0x0EFE, 0x0F07, 0x1298, 0x1356, 0x137E, 0x1399, 0x14BF, 0x1824, 0x1833, 0x19A6, 0x1A35, 0x1A4C, 0x1E38, 0x1E65, 0x1E6E, 0x1E98, 0x1EAC, 0x1EC4, 0x1EDD, 0x1F43, 0x2050, 0x220B, 0x223E, 0x22BA, 0x22E7, 0x27DF, 0x2A03, 0x2A14, 0x2A32, 0x2A3C, 0x2A6B, 0x2A7F, 0x2A93, 0x2AB3, 0x2AC7, 0x2ADB, 0x2B06, 0x2B17, 0x2B39, 0x2B52, 0x2B63, 0x2B95, 0x2BA6, 0x2C3B, 0x2C79, 0x2C9F, 0x2CB3, 0x2CCE, 0x2CDD, 0x2D5D, 0x2E26, 0x2EF2, 0x2F21, 0x2F77, 0x2F91, 0x2FB2, 0x3058, 0x3084, 0x311B, 0x3126, 0x317E, 0x31B5, 0x3237, 0x3547, 0x3808, 0x38E6, 0x38ED, 0x38F8, 0x3911, 0x3F95, 0x3FAB, 0x3FCB, 0x3FDA, 0x3FEB, 0x1AD6, 0x1B2C, 0x1C0D, 0x1C62, 0x1C6C, 0x1C74, 0x1C7E, 0x1D0F, 0x1D1A, 0x1D2B, 0x1DF5, 0x1E25, 0x2908, 0x2910, 0x24B9, 0x24CF, 0x252B, 0x2573, 0x260D, 0x263E, 0x26C5, 0x3927, 0x3985, 0x39D7, 0x39E8, 0x3A14, 0x3A32, 0x3A59, 0x3A64, 0x3A89, 0x3A8F, 0x3AA6, 0x3B89, 0x3B9B, 0x3CDB, 0x3F55, 0x0414, 0x044F, 0x045A, 0x0566, 0x05B7, 0x05F3, 0x062A, 0x065B, 0x06F7, 0x07EF, 0x027E, 0x02B9): # 0x0764
     # replace ld [MBC], a
@@ -101,6 +101,39 @@ for addr in (0x2319, 0x30EC, 0x3915, 0x391D, 0x1BC5, 0x236B, 0x23CA, 0x247D, 0x2
     rom.patch(0x00, addr + 2, ASM("ld [$2100], a"), ASM("call $00C0"))
 ```
 
+Next! problem... there is also this:
+```asm
+ld hl, $2100
+ld [hl], $XX ; XX=Bank number
+```
+It's done like that the preserve A. So we have to call the above code, and preserve A. And all that in 5 bytes (first instruction is 3 bytes, second is 2 bytes). Seems impossible? Saving A is two bytes, calling the function is 3. That's our 5 instruction budget gone. Project dead? No. As there is a lot more text after this.
+
+We have the `rst` instruction it's a function call of only 1 byte. And it's our save in this case:
+```asm
+push af
+ld   a, $XX
+rst  $30
+pop  af
+```
+Fits within the 5 byte limit. And at $0030 we have a tiny bit of room to add `jp $00C0` (there isn't enough room to put our normal function there)
+
+Yay, we can switch banks properly.
+
+### LADX problem three, LADX fights back.
+
+Game seems to boot, run, and then crash. What's happening? Did I miss a bank switch? No. I missed something else. I missed:
+```asm
+ld hl, $4000
+ld [hl], $00
+```
+It's switching to RAM bank `$00`, but for MBC1, this also switches out the high bank bit. Suddenly switching rom banks pretty much brings down the house.
+
+Lucky for us, it's only doing this for classic gameboy (DMG) support, where it uses the other SRAM bank. But on the GBC, it doesn't use other SRAM banks, it uses WRAM banks instead. Doesn't make sense? No idea. But it does. Don't worry about it. Only thing you need to know, we can just remove those instructions and be happy.
+
+Game boots, doesn't crash, and I can start a... damn it. Links sprite is corrupt.
+
 ## Problem two... more banking
+
+
 
 ## Problem three... CGB
