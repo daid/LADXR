@@ -32,6 +32,8 @@ Now. I had the crazy idea. [Super Metroid + A link to the past](https://samus.li
 
 Cool idea. But is it actually workable?
 
+![image](https://user-images.githubusercontent.com/964186/162227436-747aff94-0249-45ed-b5c8-0f064e74294e.png)
+
 ## Problem one... banking
 
 Just append rom one rom to the other right? Simple. Done. Next!
