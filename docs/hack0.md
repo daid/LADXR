@@ -178,5 +178,6 @@ Pal:
 ```
 ![image](https://user-images.githubusercontent.com/964186/162277109-91d08967-879d-42a7-9814-f761d4c95cc2.png)
 
-That is a lot better.
+That is a lot better, but far from perfect. There are a few obvious problems. Sprites are darker then then expected, and various animation effects don't work. For example screen transitions:
 
+![animation](https://user-images.githubusercontent.com/964186/162278393-9ca53b83-faf1-4a72-ab63-b6b663f07939.gif)
