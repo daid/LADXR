@@ -138,8 +138,29 @@ How to fix this? Well, this code that updates links sprite needs to copy 64 byte
 
 Luckily for us, we only target the GBC, and that has DMA. It can copy 16 bytes in 32 cycles, which is a lot faster. So updating this code to use DMA fixes that issue. DMA has some limitations, it can only copy from/to addresses that are 16 byte aligned and only blocks that are multiple of 16, but that all isn't an issue here.
 
-## Problem two... more banking
+So now the game runs, with MBC1.
 
+### Or, wait, remember this thing?
 
+Remember that we dropped of the last bank from LADX, as we didn't "need" it. Guess who needs it. I do for LADXR. I use it to store some extra code. So while the base game runs, I broke the randomizer. I moved this code from bank `$3F` to `$0C`. `$0C`? Yes. `$0C`. It's a bank with graphics, graphics for the classic gameboy variant. And as we are GBC only anyhow with the patches we already have, it's safe to abuse that bank for our code.
+
+## Problem two... FFA?
+
+Now, running FFA with MBC1. FFA is using [MBC2](https://gbdev.io/pandocs/MBC2.html), which has a different control scheme for banking. But, luck shines on us. FFA is written in a way that also works with MBC1. We can just switch to a different MBC and it works. We could use some luck in this project for once.
+
+I guess this is why you see address `$2100` being used for bank switching. It switches banks on all MBCs.
 
 ## Problem three... CGB
+
+Final problem before we can start putting this all together. LADX is running in GBC mode. FFA normally runs in classic mode. If we run FFA in GBC mode we get...
+
+~insert image~
+
+Which makes perfect sense. With GBC support enabled, we need to load colors. And the default colors for the background are all white, while those for sprites are undefined and random. So lets load some default palette, there is a bit of free room in FFA before the interrupt vectors. So we use that to store some code, jump to it from the start and then jump to the actual start of the rom.
+
+```asm
+~insert new startup code~
+```
+
+~insert image~
+
