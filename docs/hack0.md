@@ -30,9 +30,10 @@ As a side project, I've been reverse engineering the gameboy game Final Fantasy 
 
 Now. I had the crazy idea. [Super Metroid + A link to the past](https://samus.link/) randomizer is a thing. Which combines two super nintendo games into one. Could I do the same for Links Awakening?
 
-<div class="mermaid">
-  graph TD 
-    A[Client] --> B[Load Balancer] 
-    B --> C[Server1] 
-    B --> D[Server2]
-</div>
+Cool idea. But is it actually workable?
+
+## Problem one... banking
+
+## Problem two... more banking
+
+## Problem three... CGB
