@@ -152,6 +152,8 @@ Now, running FFA with MBC1. FFA is using [MBC2](https://gbdev.io/pandocs/MBC2.ht
 
 I guess this is why you see address `$2100` being used for bank switching. It switches banks on all MBCs.
 
+As I didn't want people to play the whole game of FFA (as it's too long for something like this) I patched the script where you exit after defeating the first boss twice. Normally you jump out of the castle. Instead, I just made it jump to the ending credits instead. This was relatively straightforward.
+
 ## Problem three... CGB
 
 Final problem before we can start putting this all together. LADX is running in GBC mode. FFA normally runs in classic mode. If we run FFA in GBC mode we get...
@@ -308,8 +310,37 @@ Yay, that all worked. I called this code from the code that handles getting an i
 It's now 23:50. I upload my patch, setup the generator for the race. And download a generated rom to see if everything goes right.
 Generator worked fine. I playtest a bit and.... crash. Bombing a bombable wall crashes the whole game in LADX. Shit. Somewhere it's writting to the `$6XXX` area.
 
-I did the only thing I could at that point, and just remove that specific instruction, and left the comment `(hope this doesn't break the game)`.
+I did the only thing I could at that point, and just remove that specific instruction, and left the comment `(hope this doesn't break the game)`. As I was tired, it was late, and, well, what's the worst that could happen.
 
 Next morning. Yes. That did break the game. Key doors would now open only one side of the door in dungeons. Pretty heavy bug, as you can waste keys and get locked out of areas that way.
 
 # And for my next magic trick.
+
+```asm
+ld a, [bc]
+or [hl]
+ld [bc], a
+```
+This was the offending code. `bc` would point at the "room status" in WRAM in case you are in a dungeon, but it would point in ROM outside of dungeons. So, this simply becomes a call to:
+```asm
+ld a, b
+and $E0
+cp $C0
+ld a, [bc]
+ret nz
+or [hl]
+ld [bc], a
+ret
+```
+First, we check if we are pointing at RAM or not, and if not, then we return from this function early. We had some free space in this bank, so all is well now.
+
+
+In total, I have about 200 lines of python code that patches LADX. And the whole thing feels a big fragile.
+
+Reactions on it however, where... [GREAT](https://clips.twitch.tv/NeighborlyMoldyDaikonPJSalt-cnVVx5sMrgDAXT9_)
+
+## Hindsight 2020
+
+In hindsight, I should have made the credits warp after you drop down the waterfall, that would have shown off FFA a tiny bit more. I also shouldn't have been trying to put this together in the last hour. It's kinda lucky that not more bugs happened.
+
+What's next? Not sure yet. I'm still working on reverse engineering more of FFA. But not sure if it makes for a decent game for a randomizer, unless I make quite a few modifications to make that work.
