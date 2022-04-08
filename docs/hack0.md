@@ -256,6 +256,7 @@ The whole switch code isn't that complex:
 * I need to clear some GBC VRAM, because, well, else some things are messed up, as FFA doesn't touch it.
 * Load some code into ram, so we can safely switch games
 * Jump to that code to switch games, and that code will start up FFA from the entry point at `$0100`
+
 ```
     ; Disable interrupts, as that can mess up things quite quick
     xor a
