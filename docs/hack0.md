@@ -239,7 +239,7 @@ updatePalFunc:
  
  Biggest issue is that the boss doesn't flash when you hit it. I traced this later to "why", the boss uses `rBGP1` instead of `rBGP0`, and the game just inverts `rBGP1` when the boss is hit. Small change to use `rBGP1` instead of `rBGP0` in the palette update code confirms this, as now all sprites flash when you hit the boss. This is most certainly something that can be fixed/improved, but it requires a lot more work.
  
- ## Problem four, putting it all together.
+## Problem four, putting it all together.
  
  Now. As this is just a "quick" hack (quick is relative...), I can cheat in a whole bunch of ways:
  * I don't care that people cannot finish LADX
