@@ -93,13 +93,13 @@ checkMetadataTable = {
     "0x19E": CheckMetadata("Spark, Two Iron Mask Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019E.GIF
     "0x181": CheckMetadata("Crystal Key", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0181.GIF
     "0x19A-Owl": CheckMetadata("Crystal Owl", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019A.GIF
-    "0x19B": CheckMetadata("Flying Bomb Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019B.GIF
+    "0x19B": CheckMetadata("Flying Bomb Chest South", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/019B.GIF
     "0x197": CheckMetadata("Three Iron Mask Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0197.GIF
     "0x196": CheckMetadata("Hookshot Note Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0196.GIF
     "0x18A-Owl": CheckMetadata("Star Owl", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/018A.GIF
     "0x18E": CheckMetadata("Two Stalfos, Star Pit Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/018E.GIF
     "0x188": CheckMetadata("Swort Stalfos, Star, Bridge Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0188.GIF
-    "0x18F": CheckMetadata("Flying Bomb Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/018F.GIF
+    "0x18F": CheckMetadata("Flying Bomb Chest East", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/018F.GIF
     "0x180": CheckMetadata("Master Stalfos Item", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0180.GIF
     "0x183": CheckMetadata("Three Stalfos Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0183.GIF
     "0x186": CheckMetadata("Nightmare Key/Torch Cross Chest", "Catfish's Maw"), #http://artemis251.fobby.net/zelda/maps/underworld1/0186.GIF
