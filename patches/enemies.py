@@ -1,5 +1,6 @@
 from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
+from locations import constants
 
 
 # Room containing the boss
@@ -60,6 +61,20 @@ def getBossRoomStatusFlagLocation(dungeon_nr):
     if BOSS_ROOMS[dungeon_nr] >= 0x300:
         return 0xDDE0 - 0x300 + BOSS_ROOMS[dungeon_nr]
     return 0xD800 + BOSS_ROOMS[dungeon_nr]
+
+
+def fixDungeonItem(item_chest_id, dungeon_nr):
+    if item_chest_id == constants.CHEST_ITEMS[constants.MAP]:
+        return constants.CHEST_ITEMS["MAP%d" % (dungeon_nr + 1)]
+    if item_chest_id == constants.CHEST_ITEMS[constants.COMPASS]:
+        return constants.CHEST_ITEMS["COMPASS%d" % (dungeon_nr + 1)]
+    if item_chest_id == constants.CHEST_ITEMS[constants.KEY]:
+        return constants.CHEST_ITEMS["KEY%d" % (dungeon_nr + 1)]
+    if item_chest_id == constants.CHEST_ITEMS[constants.NIGHTMARE_KEY]:
+        return constants.CHEST_ITEMS["NIGHTMARE_KEY%d" % (dungeon_nr + 1)]
+    if item_chest_id == constants.CHEST_ITEMS[constants.STONE_BEAK]:
+        return constants.CHEST_ITEMS["STONE_BEAK%d" % (dungeon_nr + 1)]
+    return item_chest_id
 
 
 def getCleanBossRoom(rom, dungeon_nr):
@@ -188,8 +203,8 @@ def changeBosses(rom, mapping):
                 rom.patch(0x03, 0x1A0F, ASM("ld hl, $D966"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
 
             # Patch the proper item towards the D4 boss
-            rom.banks[0x3E][0x3800 + 0x01ff] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]]
-            rom.banks[0x3E][0x3300 + 0x01ff] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]]
+            rom.banks[0x3E][0x3800 + 0x01ff] = fixDungeonItem(rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]], dungeon_nr)
+            rom.banks[0x3E][0x3300 + 0x01ff] = fixDungeonItem(rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]], dungeon_nr)
         elif target == 6:  # Evil eagle
             rom.banks[0x14][BOSS_ROOMS[dungeon_nr] - 0x100] = 0x2A
 
@@ -206,8 +221,8 @@ def changeBosses(rom, mapping):
             re.store(rom)
 
             # Patch the proper item towards the D7 boss
-            rom.banks[0x3E][0x3800 + 0x02E8] = rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]]
-            rom.banks[0x3E][0x3300 + 0x02E8] = rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]]
+            rom.banks[0x3E][0x3800 + 0x02E8] = fixDungeonItem(rom.banks[0x3E][0x3800 + BOSS_ROOMS[dungeon_nr]], dungeon_nr)
+            rom.banks[0x3E][0x3300 + 0x02E8] = fixDungeonItem(rom.banks[0x3E][0x3300 + BOSS_ROOMS[dungeon_nr]], dungeon_nr)
         else:
             rom.banks[0x14][BOSS_ROOMS[dungeon_nr] - 0x100] = 0x21
             re = getCleanBossRoom(rom, dungeon_nr)
