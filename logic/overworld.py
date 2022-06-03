@@ -18,14 +18,20 @@ class World:
         rooster_cave = Location()
         Location().add(DroppedKey(0x1E4)).connect(rooster_cave, AND(OCARINA, SONG3))
 
-        self._addEntrance("papahl_house_left", mabe_village, None, None)
-        self._addEntrance("papahl_house_right", mabe_village, None, None)
+        papahl_house = Location()
+        papahl_house.connect(Location().add(TradeSequenceItem(0x2A6, TRADING_ITEM_RIBBON)), TRADING_ITEM_YOSHI_DOLL)
+
+        trendy_shop = Location()
+        trendy_shop.connect(Location().add(TradeSequenceItem(0x2A0, TRADING_ITEM_YOSHI_DOLL)), FOUND("RUPEES", 50))
+
+        self._addEntrance("papahl_house_left", mabe_village, papahl_house, None)
+        self._addEntrance("papahl_house_right", mabe_village, papahl_house, None)
         self._addEntrance("rooster_grave", mabe_village, rooster_cave, COUNT(POWER_BRACELET, 2))
         self._addEntrance("madambowwow", mabe_village, None, None)
         self._addEntrance("ulrira", mabe_village, None, None)
         self._addEntrance("mabe_phone", mabe_village, None, None)
         self._addEntrance("library", mabe_village, None, None)
-        self._addEntrance("trendy_shop", mabe_village, None, r.bush)
+        self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_KEY)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
 
@@ -45,10 +51,13 @@ class World:
         self._addEntrance("dream_hut", mabe_village, dream_hut, POWER_BRACELET)
 
         kennel = Location().connect(Location().add(Seashell(0x2B2)), SHOVEL)  # in the kennel
+        kennel.connect(Location().add(TradeSequenceItem(0x2B2, TRADING_ITEM_DOG_FOOD)), TRADING_ITEM_RIBBON)
         self._addEntrance("kennel", mabe_village, kennel, None)
 
         sword_beach = Location().add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.attack_hookshot))
-        self._addEntrance("banana_seller", sword_beach, None, r.bush)
+        banana_seller = Location()
+        banana_seller.connect(Location().add(TradeSequenceItem(0x2FE, TRADING_ITEM_BANANAS)), TRADING_ITEM_DOG_FOOD)
+        self._addEntrance("banana_seller", sword_beach, banana_seller, r.bush)
         boomerang_cave = Location()
         if options.boomerang == 'trade':
             Location().add(BoomerangGuy()).connect(boomerang_cave, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL))
@@ -96,7 +105,9 @@ class World:
         self._addEntrance("writes_phone", swamp, None, None)
 
         writes_hut_outside = Location().connect(swamp, OR(FEATHER, ROOSTER))  # includes the cave behind the hut
-        self._addEntrance("writes_house", writes_hut_outside, None, None)
+        writes_house = Location()
+        writes_house.connect(Location().add(TradeSequenceItem(0x2a8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
+        self._addEntrance("writes_house", writes_hut_outside, writes_house, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             writes_hut_outside.add(OwlStatue(0x11))
         writes_cave = Location()
@@ -123,6 +134,8 @@ class World:
 
         # "Ukuku Prairie"
         ukuku_prairie = Location().connect(mabe_village, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
+        ukuku_prairie.connect(Location().add(TradeSequenceItem(0x07B, TRADING_ITEM_STICK)), TRADING_ITEM_BANANAS)
+        ukuku_prairie.connect(Location().add(TradeSequenceItem(0x087, TRADING_ITEM_HONEYCOMB)), TRADING_ITEM_STICK)
         self._addEntrance("prairie_left_phone", ukuku_prairie, None, None)
         self._addEntrance("prairie_right_phone", ukuku_prairie, None, None)
         self._addEntrance("prairie_left_cave1", ukuku_prairie, Location().add(Chest(0x2CD)), None) # cave next to town
@@ -185,6 +198,10 @@ class World:
         bay_water = Location()
         bay_water.connect(ukuku_prairie, FLIPPERS)
         bay_water.connect(left_bay_area, FLIPPERS)
+        fisher_under_bridge = Location()
+        fisher_under_bridge.connect(bay_water, FLIPPERS)
+        fisher_under_bridge.connect(Location().add(TradeSequenceItem(0x2F5, TRADING_ITEM_NECKLACE)), AND(TRADING_ITEM_FISHING_HOOK, FEATHER))
+        bay_water.connect(Location().add(TradeSequenceItem(0x0C9, TRADING_ITEM_SCALE)), TRADING_ITEM_NECKLACE)
         d5_entrance = Location().connect(bay_water, FLIPPERS)
         self._addEntrance("d5", d5_entrance, None, None)
 
@@ -199,17 +216,20 @@ class World:
             Location().add(OwlStatue(0x0C6)).connect(richard_maze, r.bush)
         Location().add(SlimeKey()).connect(richard_maze, AND(r.bush, SHOVEL))
 
+        next_to_castle = Location()
+        next_to_castle.connect(ukuku_prairie, TRADING_ITEM_BANANAS if options.tradequest else None)
+        next_to_castle.connect(ukuku_prairie, FLIPPERS)
+        self._addEntrance("castle_phone", next_to_castle, None, None)
         castle_secret_entrance_left = Location()
         castle_secret_entrance_right = Location().connect(castle_secret_entrance_left, FEATHER)
         castle_outside = Location()
-        self._addEntrance("castle_secret_entrance", ukuku_prairie, castle_secret_entrance_right, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
+        self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
         self._addEntrance("castle_secret_exit", castle_outside, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
         castle_inside = Location()
         castle_top_outside = Location()
         castle_top_inside = Location()
-        self._addEntrance("castle_phone", ukuku_prairie, None, None)
         self._addEntrance("castle_main_entrance", castle_outside, castle_inside, r.bush)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
@@ -221,12 +241,20 @@ class World:
         castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)
 
         animal_village = Location()
+        animal_village.connect(Location().add(TradeSequenceItem(0x0CD, TRADING_ITEM_FISHING_HOOK)), TRADING_ITEM_BROOM)
+        cookhouse = Location()
+        cookhouse.connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HONEYCOMB)
+        goathouse = Location()
+        goathouse.connect(Location().add(TradeSequenceItem(0x2D9, TRADING_ITEM_LETTER)), TRADING_ITEM_HIBISCUS)
+        mermaid_statue = Location()
+        mermaid_statue.connect(animal_village, TRADING_ITEM_SCALE)
+        mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFIYING_GLASS))
         self._addEntrance("animal_phone", animal_village, None, None)
         self._addEntrance("animal_house1", animal_village, None, None)
         self._addEntrance("animal_house2", animal_village, None, None)
-        self._addEntrance("animal_house3", animal_village, None, None)
+        self._addEntrance("animal_house3", animal_village, goathouse, None)
         self._addEntrance("animal_house4", animal_village, None, None)
-        self._addEntrance("animal_house5", animal_village, None, None)
+        self._addEntrance("animal_house5", animal_village, cookhouse, None)
         animal_village.connect(bay_water, FLIPPERS)
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
         animal_village_connector_left = Location()
@@ -288,6 +316,7 @@ class World:
 
         papahl_cave = Location().add(Chest(0x28A))
         papahl = Location().connect(lower_right_taltal, None, one_way=True)
+        papahl.connect(Location().add(TradeSequenceItem(0x019, TRADING_ITEM_HIBISCUS)), TRADING_ITEM_PINEAPPLE)
         self._addEntrance("papahl_entrance", lower_right_taltal, papahl_cave, None)
         self._addEntrance("papahl_exit", papahl, papahl_cave, None)
 

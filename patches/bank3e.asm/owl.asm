@@ -43,3 +43,11 @@ GetRoomStatusAddressInHL:
 .notIndoorB:
     add  hl, de
     ret
+
+
+RenderOwlStatueItem:
+    ld   hl, $7B16
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ldh  [$F1], a
+    jp   RenderChestItem

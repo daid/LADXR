@@ -48,6 +48,21 @@ DEFAULT_ITEM_POOL = {
     
     INSTRUMENT1: 1, INSTRUMENT2: 1, INSTRUMENT3: 1, INSTRUMENT4: 1, INSTRUMENT5: 1, INSTRUMENT6: 1, INSTRUMENT7: 1, INSTRUMENT8: 1,
 
+    TRADING_ITEM_YOSHI_DOLL: 1,
+    TRADING_ITEM_RIBBON: 1,
+    TRADING_ITEM_DOG_FOOD: 1,
+    TRADING_ITEM_BANANAS: 1,
+    TRADING_ITEM_STICK: 1,
+    TRADING_ITEM_HONEYCOMB: 1,
+    TRADING_ITEM_PINEAPPLE: 1,
+    TRADING_ITEM_HIBISCUS: 1,
+    TRADING_ITEM_LETTER: 1,
+    TRADING_ITEM_BROOM: 1,
+    TRADING_ITEM_FISHING_HOOK: 1,
+    TRADING_ITEM_NECKLACE: 1,
+    TRADING_ITEM_SCALE: 1,
+    TRADING_ITEM_MAGNIFIYING_GLASS: 1,
+
     "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1,
 }
 
@@ -187,6 +202,20 @@ class ItemPool:
             self.remove("MEDICINE2")
             self.remove("RAFT")
             self.remove("ANGLER_KEYHOLE")
+            self.remove(TRADING_ITEM_YOSHI_DOLL)
+            self.remove(TRADING_ITEM_RIBBON)
+            self.remove(TRADING_ITEM_DOG_FOOD)
+            self.remove(TRADING_ITEM_BANANAS)
+            self.remove(TRADING_ITEM_STICK)
+            self.remove(TRADING_ITEM_HONEYCOMB)
+            self.remove(TRADING_ITEM_PINEAPPLE)
+            self.remove(TRADING_ITEM_HIBISCUS)
+            self.remove(TRADING_ITEM_LETTER)
+            self.remove(TRADING_ITEM_BROOM)
+            self.remove(TRADING_ITEM_FISHING_HOOK)
+            self.remove(TRADING_ITEM_NECKLACE)
+            self.remove(TRADING_ITEM_SCALE)
+            self.remove(TRADING_ITEM_MAGNIFIYING_GLASS)
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.

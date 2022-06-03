@@ -21,5 +21,6 @@ from .song import Song
 from .instrument import Instrument
 from .fishingMinigame import FishingMinigame
 from .keyLocation import KeyLocation
+from .tradeSequence import TradeSequenceItem
 
 from .items import *

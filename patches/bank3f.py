@@ -381,3 +381,6 @@ blockBadEmu:
               "A22BA02B" "A62BA42B" "A00BA20B" "A40BA60B" "AC0BAC2B" "AE0BAE2B" "A80BA82B" "AA0BAA2B")
     # Replace some main item graphics with the rooster
     rom.banks[0x2C][0x0900:0x0940] = utils.createTileData(utils.tileDataToString(rom.banks[0x32][0x1D00:0x1D40]), " 321")
+
+    # Trade sequence items
+    rom.banks[0x3F][0x3B00:0x3E40] = rom.banks[0x2C][0x0400:0x0740]

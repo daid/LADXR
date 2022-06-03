@@ -16,6 +16,8 @@ RenderChestItem:
     ldh  a, [$F1]
     cp   $8E
     ret  c
+    cp   $96
+    ret  nc
     ; Call the color cycling code
     xor  a
     ld   [$DC82], a
@@ -219,6 +221,20 @@ GiveItemFromChest:
     dw GiveInstrument
     dw GiveInstrument
     dw GiveRooster
+    dw GiveTradeItem1
+    dw GiveTradeItem2
+    dw GiveTradeItem3
+    dw GiveTradeItem4
+    dw GiveTradeItem5
+    dw GiveTradeItem6
+    dw GiveTradeItem7
+    dw GiveTradeItem8
+    dw GiveTradeItem9
+    dw GiveTradeItem10
+    dw GiveTradeItem11
+    dw GiveTradeItem12
+    dw GiveTradeItem13
+    dw GiveTradeItem14
 
 NoItem:
     ret
@@ -641,6 +657,63 @@ GiveRooster:
 
     ret
 
+GiveTradeItem1:
+    ld   hl, wTradeSequenceItem
+    set  0, [hl]
+    ret
+GiveTradeItem2:
+    ld   hl, wTradeSequenceItem
+    set  1, [hl]
+    ret
+GiveTradeItem3:
+    ld   hl, wTradeSequenceItem
+    set  2, [hl]
+    ret
+GiveTradeItem4:
+    ld   hl, wTradeSequenceItem
+    set  3, [hl]
+    ret
+GiveTradeItem5:
+    ld   hl, wTradeSequenceItem
+    set  4, [hl]
+    ret
+GiveTradeItem6:
+    ld   hl, wTradeSequenceItem
+    set  5, [hl]
+    ret
+GiveTradeItem7:
+    ld   hl, wTradeSequenceItem
+    set  6, [hl]
+    ret
+GiveTradeItem8:
+    ld   hl, wTradeSequenceItem
+    set  7, [hl]
+    ret
+GiveTradeItem9:
+    ld   hl, wTradeSequenceItem2
+    set  0, [hl]
+    ret
+GiveTradeItem10:
+    ld   hl, wTradeSequenceItem2
+    set  1, [hl]
+    ret
+GiveTradeItem11:
+    ld   hl, wTradeSequenceItem2
+    set  2, [hl]
+    ret
+GiveTradeItem12:
+    ld   hl, wTradeSequenceItem2
+    set  3, [hl]
+    ret
+GiveTradeItem13:
+    ld   hl, wTradeSequenceItem2
+    set  4, [hl]
+    ret
+GiveTradeItem14:
+    ld   hl, wTradeSequenceItem2
+    set  5, [hl]
+    ret
+
 ItemMessageMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
@@ -799,6 +872,20 @@ LargeItemSpriteTable:
     db $98, $0E, $9A, $0E ; Instrument7
     db $9C, $0E, $9E, $0E ; Instrument8
     db $A6, $2B, $A4, $2B ; Rooster
+    db $1A, $0E, $1C, $0E ; TradeItem1
+    db $B0, $0C, $B2, $0C ; TradeItem2
+    db $B4, $0C, $B6, $0C ; TradeItem3
+    db $B8, $0C, $BA, $0C ; TradeItem4
+    db $BC, $0C, $BE, $0C ; TradeItem5
+    db $C0, $0C, $C2, $0C ; TradeItem6
+    db $C4, $0C, $C6, $0C ; TradeItem7
+    db $C8, $0C, $CA, $0C ; TradeItem8
+    db $CC, $0C, $CE, $0C ; TradeItem9
+    db $D0, $0C, $D2, $0C ; TradeItem10
+    db $D4, $0D, $D6, $0D ; TradeItem11
+    db $D8, $0D, $DA, $0D ; TradeItem12
+    db $DC, $0D, $DE, $0D ; TradeItem13
+    db $E0, $0D, $E2, $0D ; TradeItem14
 
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -812,7 +899,8 @@ ItemMessageTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80
     db $4F, $C8, $CA, $CB, $E2, $E3, $E4, $CC, $CD, $2A, $2B, $C9, $C9, $C9, $C9, $C9
-    db $C9, $C9, $C9, $C9, $C9, $C9, $B8
+    db $C9, $C9, $C9, $C9, $C9, $C9, $B8, $44, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
+    db $C9, $C9, $C9, $C9, $9D
 
 RenderDroppedKey:
     ;TODO: See EntityInitKeyDropPoint for a few special cases to unload.

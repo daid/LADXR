@@ -48,6 +48,7 @@ import patches.endscreen
 import patches.save
 import patches.bingo
 import patches.multiworld
+import patches.tradeSequence
 import hints
 
 
@@ -74,7 +75,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("INV_SIZE", 16)
     assembler.const("wHasFlippers", 0xDB3E)
     assembler.const("wHasMedicine", 0xDB3F)
-    assembler.const("wTradeSequenceItem", 0xDB40)
+    assembler.const("wTradeSequenceItem", 0xDB40)  # we use it to store flags of which trade items we have
+    assembler.const("wTradeSequenceItem2", 0xDB7F)  # Normally used to store that we have exchanged the trade item, we use it to store flags of which trade items we have
     assembler.const("wSeashellsCount", 0xDB41)
     assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
     assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
@@ -145,6 +147,11 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
+    if options.tradequest:
+        patches.tradeSequence.patchTradeSequence(rom)
+    else:
+        # Monkey bridge patch, always have the bridge there.
+        rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
     patches.bowwow.fixBowwow(rom, everywhere=options.bowwow != 'normal')
     if options.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
@@ -207,9 +214,6 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         patches.core.quickswap(rom, 1)
     elif options.quickswap == 'b':
         patches.core.quickswap(rom, 0)
-
-    # Monkey bridge patch, always have the bridge there.
-    rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
 
     if multiworld is None:
         hints.addHints(rom, rnd, logic.iteminfo_list)

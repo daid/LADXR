@@ -212,6 +212,20 @@ ItemNamePointers:
     dw ItemInstrument7
     dw ItemInstrument8
     dw ItemRooster
+    dw ItemTradeQuest1
+    dw ItemTradeQuest2
+    dw ItemTradeQuest3
+    dw ItemTradeQuest4
+    dw ItemTradeQuest5
+    dw ItemTradeQuest6
+    dw ItemTradeQuest7
+    dw ItemTradeQuest8
+    dw ItemTradeQuest9
+    dw ItemTradeQuest10
+    dw ItemTradeQuest11
+    dw ItemTradeQuest12
+    dw ItemTradeQuest13
+    dw ItemTradeQuest14
 
 ItemNameNone:
     db m"NONE", $ff
@@ -423,3 +437,32 @@ ItemInstrument8:
 
 ItemRooster:
     db m"You've got the {ROOSTER}", $ff
+
+ItemTradeQuest1:
+    db m"You've got the Yoshi Doll", $ff
+ItemTradeQuest2:
+    db m"You've got the Ribbon", $ff
+ItemTradeQuest3:
+    db m"You've got the Dog Food", $ff
+ItemTradeQuest4:
+    db m"You've got the Bananas", $ff
+ItemTradeQuest5:
+    db m"You've got the Stick", $ff
+ItemTradeQuest6:
+    db m"You've got the Honeycomb", $ff
+ItemTradeQuest7:
+    db m"You've got the Pineapple", $ff
+ItemTradeQuest8:
+    db m"You've got the Hibiscus", $ff
+ItemTradeQuest9:
+    db m"You've got the Letter", $ff
+ItemTradeQuest10:
+    db m"You've got the Broom", $ff
+ItemTradeQuest11:
+    db m"You've got the Fishing Hook", $ff
+ItemTradeQuest12:
+    db m"You've got the Neckless", $ff
+ItemTradeQuest13:
+    db m"You've got the Scale", $ff
+ItemTradeQuest14:
+    db m"You've got the Magnifying Lens", $ff

@@ -59,6 +59,7 @@ def removeGhost(rom):
 
 def alwaysAllowSecretBook(rom):
     rom.patch(0x15, 0x3F23, ASM("ld a, [$DB0E]\ncp $0E"), ASM("xor a\ncp $00"), fill_nop=True)
+    rom.patch(0x15, 0x3F2A, 0x3F30, "", fill_nop=True)
 
 def cleanup(rom):
     # Remove unused rooms to make some space in the rom

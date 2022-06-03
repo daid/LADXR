@@ -67,6 +67,8 @@ MainJumpTable:
         dw   RenderItemForRoom                    ; C
         dw   StartGameMarinMessage                ; D
         dw   GiveItemAndMessageForRoomMultiworld  ; E
+        dw   RenderOwlStatueItem                  ; F
+        dw   UpdateInventoryMenu                  ; 10
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter
@@ -88,6 +90,107 @@ StartGameMarinMessage:
         ld   a, $01
         jp $2385
 
+TradeSequenceItemData:
+    ; tile attributes
+    db $0D, $0A, $0D, $0D, $0E, $0E, $0D, $0D, $0D, $0E, $09, $0A, $0A, $0D
+    ; tile index
+    db $1A, $B0, $B4, $B8, $BC, $C0, $C4, $C8, $CC, $D0, $D4, $D8, $DC, $E0
+
+UpdateInventoryMenu:
+        ld   a, [wTradeSequenceItem]
+        ld   hl, wTradeSequenceItem2
+        or   [hl]
+        ret  z
+        
+        ld   hl, TradeSequenceItemData
+        ld   a, [$C109]
+        ld   e, a
+        ld   d, $00
+        add  hl, de
+
+        ; Check if we need to increase the counter
+        ldh  a, [$E7] ; frame counter
+        and  $0F
+        jr   nz, .noInc
+        ld   a, e
+        inc  a
+        cp   14
+        jr   nz, .noWrap
+        xor  a
+.noWrap:
+        ld   [$C109], a
+.noInc:
+
+        ; Check if we have the item
+        ld   b, e
+        inc  b
+        ld   a, $01
+
+        ld   de, wTradeSequenceItem
+.shiftLoop:
+        dec  b
+        jr   z, .shiftLoopDone
+        sla  a
+        jr   nz, .shiftLoop
+        ; switching to second byte
+        ld   de, wTradeSequenceItem2
+        ld   a, $01
+        jr   .shiftLoop
+.shiftLoopDone:
+        ld   b, a
+        ld   a, [de]
+        and  b
+        ret  z ; skip this item
+
+        ld   b, [hl]
+        push hl
+
+        ; Write the tile attribute data
+        ld   a, $01
+        ldh  [$4F], a
+
+        ld   hl, $9C6E
+        call WriteToVRAM
+        inc  hl  
+        call WriteToVRAM
+        ld   de, $001F
+        add  hl, de
+        call WriteToVRAM
+        inc  hl  
+        call WriteToVRAM
+
+        ; Write the tile data
+        xor  a
+        ldh  [$4F], a
+        
+        pop  hl
+        ld   de, 14
+        add  hl, de
+        ld   b, [hl]
+        
+        ld   hl, $9C6E
+        call WriteToVRAM
+        inc  b
+        inc  b
+        inc  hl  
+        call WriteToVRAM
+        ld   de, $001F
+        add  hl, de
+        dec  b
+        call WriteToVRAM
+        inc  hl  
+        inc  b
+        inc  b
+        call WriteToVRAM
+        ret
+
+WriteToVRAM:
+        ldh  a, [$41]
+        and  $02
+        jr   nz, WriteToVRAM
+        ld   [hl], b
+        ret
+
     """ + open(os.path.join(my_path, "bank3e.asm/multiworld.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/link.asm"), "rt").read()
         + open(os.path.join(my_path, "bank3e.asm/chest.asm"), "rt").read()
@@ -96,7 +199,7 @@ StartGameMarinMessage:
         + open(os.path.join(my_path, "bank3e.asm/owl.asm"), "rt").read(), 0x4000), fill_nop=True)
     # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
     # 3E:3800-3B16: DroppedKey item types
-    # 3E:3B16-3E2C: Owl statue items
+    # 3E:3B16-3E2C: Owl statue or trade quest items
 
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)

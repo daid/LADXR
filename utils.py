@@ -118,6 +118,21 @@ _NAMES = {
     INSTRUMENT6: "Coral Triangle",
     INSTRUMENT7: "Organ of Evening Calm",
     INSTRUMENT8: "Thunder Drum",
+
+    TRADING_ITEM_YOSHI_DOLL: "Yoshi Doll",
+    TRADING_ITEM_RIBBON: "Ribbon",
+    TRADING_ITEM_DOG_FOOD: "Dog Food",
+    TRADING_ITEM_BANANAS: "Bananas",
+    TRADING_ITEM_STICK: "Stick",
+    TRADING_ITEM_HONEYCOMB: "Honeycomb",
+    TRADING_ITEM_PINEAPPLE: "Pineapple",
+    TRADING_ITEM_HIBISCUS: "Hibiscus",
+    TRADING_ITEM_LETTER: "Letter",
+    TRADING_ITEM_BROOM: "Broom",
+    TRADING_ITEM_FISHING_HOOK: "Fishing Hook",
+    TRADING_ITEM_NECKLACE: "Necklace",
+    TRADING_ITEM_SCALE: "Scale",
+    TRADING_ITEM_MAGNIFIYING_GLASS: "Magnifying Lens",
 }
 
 
