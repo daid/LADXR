@@ -249,7 +249,7 @@ def patchMermaid(rom):
     # Check for the right trade item
     rom.patch(0x07, 0x0797, 0x079E, ASM("""
         ld   a, [wTradeSequenceItem2]
-        and  $08 ; neckless
+        and  $08 ; necklace
         jr   z, $0B
     """))
     rom.patch(0x07, 0x0854, 0x085B, ASM("ld hl, wTradeSequenceItem2\nres 3, [hl]"), fill_nop=True)  # Take the trade item

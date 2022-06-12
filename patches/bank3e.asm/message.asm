@@ -461,7 +461,7 @@ ItemTradeQuest10:
 ItemTradeQuest11:
     db m"You've got the Fishing Hook", $ff
 ItemTradeQuest12:
-    db m"You've got the Neckless", $ff
+    db m"You've got the Necklace", $ff
 ItemTradeQuest13:
     db m"You've got the Scale", $ff
 ItemTradeQuest14:
