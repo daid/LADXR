@@ -247,7 +247,7 @@ class World:
         goathouse = Location()
         goathouse.connect(Location().add(TradeSequenceItem(0x2D9, TRADING_ITEM_LETTER)), TRADING_ITEM_HIBISCUS)
         mermaid_statue = Location()
-        mermaid_statue.connect(animal_village, TRADING_ITEM_SCALE)
+        mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, HOOKSHOT))
         mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFIYING_GLASS))
         self._addEntrance("animal_phone", animal_village, None, None)
         self._addEntrance("animal_house1", animal_village, None, None)
