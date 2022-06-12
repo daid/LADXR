@@ -1,7 +1,7 @@
 from assembler import ASM
 
 
-def patchTradeSequence(rom):
+def patchTradeSequence(rom, boomerang_option):
     patchTrendy(rom)
     patchPapahlsWife(rom)
     patchYipYip(rom)
@@ -16,7 +16,7 @@ def patchTradeSequence(rom):
     patchMermaid(rom)
     patchMermaidStatue(rom)
     patchSharedCode(rom)
-    patchVarious(rom)
+    patchVarious(rom, boomerang_option)
     patchInventoryMenu(rom)
 
 
@@ -295,7 +295,7 @@ notSideScroll:
     rom.patch(0x07, 0x3F7F, "00" * 7, ASM("ldh a, [$F8]\nor $20\nldh [$F8], a\nret"))
 
 
-def patchVarious(rom):
+def patchVarious(rom, boomerang_option):
     # Make the zora photo work with the magnifier
     rom.patch(0x18, 0x09F3, 0x0A02, ASM("""
         ld   a, [wTradeSequenceItem2]
@@ -320,7 +320,7 @@ def patchVarious(rom):
     # Something with the photographer
     rom.patch(0x36, 0x0948, 0x0950, "", fill_nop=True)
 
-    if rom.banks[0x00][0x3199] == 0xFA: # Boomerang cave is not patched, so adjust it
+    if boomerang_option not in {'trade', 'gift'}:  # Boomerang cave is not patched, so adjust it
         rom.patch(0x19, 0x05EC, ASM("ld a, [wTradeSequenceItem]\ncp $0E\njp nz, $7E61"), ASM("ld a, [wTradeSequenceItem2]\nand $20\njp z, $7E61"))  # show the guy
         rom.patch(0x00, 0x3199, ASM("ld a, [wTradeSequenceItem]\ncp $0E\njr nz, $06"), ASM("ld a, [wTradeSequenceItem2]\nand $20\njr z, $06"))  # load the proper room layout
         rom.patch(0x19, 0x05F4, 0x05FB, "", fill_nop=True)

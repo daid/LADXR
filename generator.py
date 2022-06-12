@@ -148,7 +148,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
     if options.tradequest:
-        patches.tradeSequence.patchTradeSequence(rom)
+        patches.tradeSequence.patchTradeSequence(rom, options.boomerang)
     else:
         # Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
