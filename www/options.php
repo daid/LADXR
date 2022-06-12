@@ -32,6 +32,8 @@ $options = [
             'tooltip' => 'Includes boss heart container drops in the item pool'],
         'instruments' => ['label' => 'Randomize instruments', 'type' => 'check', 'default' => '', 'arg' => '--instruments',
             'tooltip' => 'Instruments are placed on random locations, dungeon goal will just contain a random item.'],
+        'tradequest' => ['label' => 'Randomize trade quest', 'type' => 'check', 'default' => '1', 'arg' => '--tradequest',
+            'tooltip' => 'Trade quest items are randomized, each NPC takes its normal trade quest item, but gives a random item'],
         'witch' => ['label' => 'Randomize item given by the witch', 'type' => 'check', 'default' => '1', 'arg' => '--witch',
             'tooltip' => 'Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool'],
         'boomerang' => ['label' => 'Boomerang trade', 'type' => ['default' => 'Normal', 'trade' => 'Trade', 'gift' => 'Gift'], 'default' => 'gift', 'arg' => '--boomerang',
