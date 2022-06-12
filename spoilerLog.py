@@ -161,7 +161,8 @@ class SpoilerLog:
                 {entrance: target for entrance, target in self.logic.world_setup.entrance_mapping.items() if entrance != target}
                 if isinstance(self.logic, logic.Logic) else [
                     {entrance: target for entrance, target in world.world_setup.entrance_mapping.items() if entrance != target} for world in self.logic.worlds
-                ]
+                ],
+            "seed": self.seed
         }, indent="  ")
 
         if zipFile:

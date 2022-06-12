@@ -222,20 +222,21 @@ def main(mainargs=None):
             print("Cannot read spoiler log for race rom")
             sys.exit(1)
 
+    userSeed = None
     if args.seed:
         try:
-            args.seed = binascii.unhexlify(args.seed)
+            userSeed = binascii.unhexlify(args.seed)
         except binascii.Error:
-            args.seed = args.seed.encode("ascii")
+            userSeed = args.seed.encode("ascii")
 
     retry_count = 0
     while True:
         try:
-            r = randomizer.Randomizer(args, seed=args.seed)
+            r = randomizer.Randomizer(args, seed=userSeed)
             seed = binascii.hexlify(r.seed).decode("ascii").upper()
             break
         except randomizer.Error:
-            if args.seed is not None:
+            if userSeed is not None:
                 print("Specified seed does not produce a valid result.")
                 sys.exit(1)
             retry_count += 1
