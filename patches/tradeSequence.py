@@ -146,6 +146,7 @@ def patchBear(rom):
         and  $20 ; check for honeycomb
         jr   z, $0E
     """))
+    rom.patch(0x07, 0x0C21, ASM("jr nz, $22"), "", fill_nop=True)
     rom.patch(0x07, 0x0C23, 0x0C2A, ASM("""
         ld   a, [wTradeSequenceItem]
         and  $20 ; check for honeycomb
