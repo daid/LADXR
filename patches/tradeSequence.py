@@ -213,6 +213,7 @@ def patchGoatMrWrite(rom): # The goat and mrwrite are the same entity
 
 
 def patchGrandmaUlrira(rom):
+    rom.patch(0x18, 0x0D2C, ASM("jr z, $02"), "", fill_nop=True)  # Always show up in animal village
     rom.patch(0x18, 0x0D3C, 0x0D51, ASM("""
         ldh  a, [$F8]
         and  $20
