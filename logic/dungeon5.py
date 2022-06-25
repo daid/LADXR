@@ -61,14 +61,16 @@ class Dungeon5:
             start_hookshot_chest.connect(entrance, PEGASUS_BOOTS) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             fourth_stalfos_area.connect(compass, AND(PEGASUS_BOOTS, SWORD)) # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
             blade_trap_chest.connect(area2, AND(PEGASUS_BOOTS, r.attack_hookshot_powder)) # boots bonk + pit buffer past the blade traps
-            after_stalfos.connect(area2, COUNT(SWORD, 2)) # use sword beams to kill master stalfos
+            after_stalfos.connect(area2, SWORD) # knock master stalfos down 255 times (about 23 minutes)
             north_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # get to first chest via the north chest with pit buffering
             east_bridge_chest.connect(first_bridge_chest, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
-            m_stalfos_drop.connect(third_arena, AND(FEATHER, COUNT(SWORD, 2))) # beat master stalfos with l2 sword beams
-            m_stalfos_drop.connect(third_arena, AND(PEGASUS_BOOTS, SWORD, OR(BOMB, COUNT(SWORD, 2)))) # can reach fourth arena from entrance with pegasus boots and sword
+            third_arena.connect(north_of_crossroads, SWORD) # can beat 3rd m.stalfos with 255 sword spins
+            m_stalfos_drop.connect(third_arena, AND(FEATHER, SWORD)) # beat master stalfos by knocking it down 255 times x 4 (takes about 1.5h total)
+            m_stalfos_drop.connect(third_arena, AND(PEGASUS_BOOTS, SWORD)) # can reach fourth arena from entrance with pegasus boots and sword
             boss_key.connect(after_stalfos, FLIPPERS) # pit buffer across
             if butterfly_owl:
                 after_keyblock_boss.connect(butterfly_owl, STONE_BEAK5, one_way=True) # pit buffer from top right to bottom in right pits room
+            before_boss.connect(after_stalfos, AND(FEATHER, SWORD)) # cross pits room from bottom left to top left by unclipped superjump on bottom wall on top of side wall, then jump across            
 
         self.entrance = entrance
