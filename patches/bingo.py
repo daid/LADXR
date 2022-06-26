@@ -996,9 +996,9 @@ done:   ; Return to normal item drop handler
     rom.patch(0x20, 0x00e4, "000000", ASM("dw $5e1b\ndb $18"))
 
     # Add graphics for our bingo board to 2nd WRAM bank.
-    rom.banks[0x3F][0x3F00:0x3F80] = rom.banks[0x32][0x1500:0x1580]
-    rom.banks[0x3F][0x3F28:0x3F3A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
-    rom.banks[0x3F][0x3F48:0x3F5A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+    rom.banks[0x3F][0x3700:0x3780] = rom.banks[0x32][0x1500:0x1580]
+    rom.banks[0x3F][0x3728:0x373A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+    rom.banks[0x3F][0x3748:0x375A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
     rom.patch(0x18, 0x1E0B,
               "00F85003" + "00005203" + "00085403" + "00105603",
               "00F8F00B" + "0000F20B" + "0008F40B" + "0010F60B")
