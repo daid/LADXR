@@ -42,6 +42,12 @@ def patchNoDungeons(rom):
         re.removeObject(9, n)
     re.objects += [Object(4, 0, 0xf0)]
     re.store(rom)
+    re = RoomEditor(rom, 0x11A)
+    re.getWarps()[0].room = 0x117
+    re.store(rom)
+    re = RoomEditor(rom, 0x11B)
+    re.getWarps()[0].room = 0x117
+    re.store(rom)
 
     #D2
     setMinimap(1, 2, 6, 0x2B)
