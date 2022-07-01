@@ -92,3 +92,12 @@ class Dungeon8:
             bossdoor.connect(entrance_up, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk through 2d section
             
         self.entrance = entrance
+
+
+class NoDungeon8:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(8)
+        Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[7]])
+
+        self.entrance = entrance

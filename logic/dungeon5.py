@@ -74,3 +74,12 @@ class Dungeon5:
             before_boss.connect(after_stalfos, AND(FEATHER, SWORD)) # cross pits room from bottom left to top left by unclipped superjump on bottom wall on top of side wall, then jump across            
 
         self.entrance = entrance
+
+
+class NoDungeon5:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(5)
+        Location(5).add(HeartContainer(0x185), Instrument(0x182)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[4]])
+
+        self.entrance = entrance

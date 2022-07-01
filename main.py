@@ -50,6 +50,8 @@ def validateOptions(options):
         dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
     if options.overworld == "dungeondive":
         dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
+    if options.overworld == "nodungeons":
+        dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
 
 
 def main(mainargs=None):
@@ -141,7 +143,7 @@ def main(mainargs=None):
         help="Enables 'good boy mode', where BowWow is allowed on all screens and can damage bosses and more enemies.")
     parser.add_argument('--pool', dest="itempool", choices=['normal', 'casual', 'pain', 'keyup'], default='normal',
         help="Sets up different item pools, for easier or harder gameplay.")
-    parser.add_argument('--overworld', dest="overworld", choices=['normal', 'dungeondive'], default='normal',
+    parser.add_argument('--overworld', dest="overworld", choices=['normal', 'dungeondive', 'nodungeons'], default='normal',
         help="Allows switching to the dungeondive overworld, where there are only dungeons.")
     parser.add_argument('--pymod', dest="pymod", action='append',
         help="Load python code mods.")

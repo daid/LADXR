@@ -38,3 +38,12 @@ class DungeonColor:
             room4karakoro.connect(room4, SHIELD) # shield bump karakoro into the holes
             
         self.entrance = entrance
+
+
+class NoDungeonColor:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(9)
+        boss = Location(9).connect(entrance, r.boss_requirements[world_setup.boss_mapping[8]])
+        boss.add(TunicFairy(0), TunicFairy(1))
+
+        self.entrance = entrance

@@ -51,3 +51,12 @@ class Dungeon2:
             dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
         self.entrance = entrance
+
+
+class NoDungeon2:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(2)
+        Location(2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
+        Location(2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[1]])
+        self.entrance = entrance

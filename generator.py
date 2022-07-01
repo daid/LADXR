@@ -159,6 +159,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     if options.overworld == 'dungeondive':
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
+    elif options.overworld == 'nodungeons':
+        patches.dungeon.patchNoDungeons(rom)
     if options.dungeon_items == 'keysy':
         patches.dungeon.removeKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)

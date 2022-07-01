@@ -217,6 +217,22 @@ class ItemPool:
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFIYING_GLASS)
 
+        if options.overworld == "nodungeons":
+            for n in range(9):
+                for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
+                    self.remove(f"{item_name}{n+1}", self.get(f"{item_name}{n+1}"))
+            self.remove(BLUE_TUNIC)
+            self.remove(RED_TUNIC)
+            self.remove(SEASHELL, 2)
+            self.remove(RUPEES_20, 6)
+            self.remove(RUPEES_50, 17)
+            self.remove(MEDICINE, 3)
+            self.remove(GEL, 4)
+            self.remove(MESSAGE, 1)
+            self.remove(BOMB, 1)
+            self.remove(RUPEES_100, 3)
+            self.add(RUPEES_500, 3)
+
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.
         if options.multiworld:

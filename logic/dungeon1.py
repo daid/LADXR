@@ -36,3 +36,11 @@ class Dungeon1:
             boss_key.connect(entrance, FOUND(KEY1,3)) # damage boost off the hardhat to cross the pit
             
         self.entrance = entrance
+
+
+class NoDungeon1:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(1)
+        Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[0]])
+        self.entrance = entrance

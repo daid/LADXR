@@ -52,3 +52,11 @@ class Dungeon6:
             medicine_chest.connect(lower_right_side, AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW))) # can boots superhop off the top wall with bow or magic rod
             
         self.entrance = entrance
+
+
+class NoDungeon6:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(6)
+        Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[5]])
+        self.entrance = entrance

@@ -144,22 +144,9 @@ def getCleanBossRoom(rom, dungeon_nr):
 
 def changeBosses(rom, mapping):
     # Fix the color dungeon not properly warping to room 0 with the boss.
-    rom.patch(0x14, 0x04E0, "0000000000000000" +
-                            "0000000000000000" +
-                            "0000000000000000" +
-                            "0000010000020300" +
-                            "0004050607080900" +
-                            "00000A0B0C0D0000" +
-                            "00000E0F10110000" +
-                            "0000121314150000",
-                            "FFFFFFFFFFFFFFFF" +
-                            "FFFFFFFFFFFFFFFF" +
-                            "FFFFFFFFFFFFFFFF" +
-                            "FF0001FFFF0203FF" +
-                            "FF040506070809FF" +
-                            "FFFF0A0B0C0DFFFF" +
-                            "FFFF0E0F1011FFFF" +
-                            "FFFF12131415FFFF")
+    for addr in range(0x04E0, 0x04E0 + 64):
+        if rom.banks[0x14][addr] == 0x00 and addr not in {0x04E0 + 1 + 3 * 8, 0x04E0 + 2 + 6 * 8}:
+            rom.banks[0x14][addr] = 0xFF
     # Fix the genie death not really liking pits/water.
     rom.patch(0x04, 0x0521, ASM("ld [hl], $81"), ASM("ld [hl], $91"))
 

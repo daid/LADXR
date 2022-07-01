@@ -52,3 +52,12 @@ class Dungeon7:
             pre_boss.connect(final_pillar, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop on top of goomba to extend superhop to boss door plateau
         
         self.entrance = entrance
+
+
+class NoDungeon7:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(7)
+        boss = Location(7).add(HeartContainer(0x223), Instrument(0x22c)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[6]])
+
+        self.entrance = entrance

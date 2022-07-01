@@ -85,3 +85,12 @@ class Dungeon3:
             pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, PEGASUS_BOOTS, "MEDICINE2")) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             
         self.entrance = entrance
+
+
+class NoDungeon3:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(3)
+        Location(3).add(HeartContainer(0x15A), Instrument(0x159)).connect(entrance, AND(POWER_BRACELET, r.boss_requirements[
+            world_setup.boss_mapping[2]]))
+
+        self.entrance = entrance

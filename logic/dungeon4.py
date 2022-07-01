@@ -71,3 +71,11 @@ class Dungeon4:
             
         self.entrance = entrance
 
+
+class NoDungeon4:
+    def __init__(self, options, world_setup, r):
+        entrance = Location(4)
+        Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(entrance, r.boss_requirements[
+            world_setup.boss_mapping[3]])
+
+        self.entrance = entrance
