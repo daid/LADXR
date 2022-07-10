@@ -66,8 +66,8 @@ $options = [
     'Special' => [
         'bowwow' => ['label' => 'Good boy mode', 'type' => ['normal' => 'Disabled', 'always' => 'Enabled', 'swordless' => 'Enabled (swordless)'], 'arg' => '--bowwow', 'default' => 'normal',
             'tooltip' => 'Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'],
-        'overworld' => ['label' => 'Overworld', 'type' => ['normal' => 'Normal', 'dungeondive' => 'Dungeon dive'], 'arg' => '--overworld', 'default' => 'normal',
-            'tooltip' => 'Switching to dungeon dive will create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.'],
+        'overworld' => ['label' => 'Overworld', 'type' => ['normal' => 'Normal', 'dungeondive' => 'Dungeon dive', 'nodungeons' => 'No dungeons'], 'arg' => '--overworld', 'default' => 'normal',
+            'tooltip' => '[Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.|[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.'],
         'owlstatues' => ['label' => 'Owl statues', 'type' => ['' => 'Never', 'dungeon' => 'In dungeons', 'overworld' => 'On the overworld', 'both' => 'Dungeons and Overworld'], 'arg' => '--owlstatues', 'default' => '',
             'tooltip' => 'Replaces the hints from owl statues with additional randomized items'],
         'superweapons' => ['label' => 'Enable super weapons', 'type' => 'check', 'default' => '', 'arg' => '--superweapons',
