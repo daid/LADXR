@@ -216,6 +216,9 @@ class ItemPool:
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFIYING_GLASS)
+        elif not options.rooster:
+            self.remove(ROOSTER)
+            self.add(RUPEES_50)
 
         if options.overworld == "nodungeons":
             for n in range(9):

@@ -36,6 +36,8 @@ $options = [
             'tooltip' => 'Trade quest items are randomized, each NPC takes its normal trade quest item, but gives a random item'],
         'witch' => ['label' => 'Randomize item given by the witch', 'type' => 'check', 'default' => '1', 'arg' => '--witch',
             'tooltip' => 'Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool'],
+        'rooster' => ['label' => 'Add the rooster', 'type' => 'check', 'default' => '1', 'arg' => '--rooster',
+            'tooltip' => 'Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. Any rooster spot is accessible without rooster by other means.'],
         'boomerang' => ['label' => 'Boomerang trade', 'type' => ['default' => 'Normal', 'trade' => 'Trade', 'gift' => 'Gift'], 'default' => 'gift', 'arg' => '--boomerang',
             'tooltip' => '[Normal], requires magnifier to get the boomerang.|[Trade], allows to trade an inventory item for a random other inventory item boomerang is shuffled.|[Gift], You get a random gift of any item, and the boomerang is shuffled.'],
     ],
