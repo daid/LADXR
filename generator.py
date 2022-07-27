@@ -248,7 +248,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     if options.overworld != "dungeondive":
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
-        if spot.item.startswith("*"):
+        if spot.item and spot.item.startswith("*"):
             spot.item = spot.item[1:]
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
