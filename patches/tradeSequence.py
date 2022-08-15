@@ -301,12 +301,12 @@ def patchVarious(rom, boomerang_option):
     # Make the zora photo work with the magnifier
     rom.patch(0x18, 0x09F3, 0x0A02, ASM("""
         ld   a, [wTradeSequenceItem2]
-        and  $20 ; MAGNIFIYING_GLASS
+        and  $20 ; MAGNIFYING_GLASS
         jp   z, $7F08 ; ClearEntityStatusBank18 
     """), fill_nop=True)
     rom.patch(0x03, 0x0B6D, 0x0B75, ASM("""
         ld   a, [wTradeSequenceItem2]
-        and  $20 ; MAGNIFIYING_GLASS
+        and  $20 ; MAGNIFYING_GLASS
         jp   z, $3F8D ; UnloadEntity 
     """), fill_nop=True)
     # Mimic invisibility
