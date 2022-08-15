@@ -132,7 +132,7 @@ _NAMES = {
     TRADING_ITEM_FISHING_HOOK: "Fishing Hook",
     TRADING_ITEM_NECKLACE: "Necklace",
     TRADING_ITEM_SCALE: "Scale",
-    TRADING_ITEM_MAGNIFIYING_GLASS: "Magnifying Lens",
+    TRADING_ITEM_MAGNIFYING_GLASS: "Magnifying Lens",
 }
 
 
