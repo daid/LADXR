@@ -135,14 +135,17 @@ function seedComplete(data)
         var blob = b64toBlob(data.rom, "application/octet-stream");
         downloadRom(data.romFilename, blob);
 
-        ID("seedSpan").innerText = data.seed;
+        if (ID("seedSpan"))
+            ID("seedSpan").innerText = data.seed;
 
         spoilerContent = data.spoiler
 
-        if (spoilerContent)
-            ID("spoilerButton").style.display = '';
-        else
-            ID("spoilerButton").style.display = 'none';
+        if (ID("spoilerButton")) {
+            if (spoilerContent)
+                ID("spoilerButton").style.display = '';
+            else
+                ID("spoilerButton").style.display = 'none';
+        }
     }
     else
     {
