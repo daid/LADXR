@@ -185,42 +185,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
     window.onhashchange();
 
-    var gfxcustomfile = document.createElement("input");
-    gfxcustomfile.type = "file";
-    gfxcustomfile.name = "customgfx";
-    gfxcustomfile.style.display = "None";
-    ID("gfxmod").parentElement.insertBefore(gfxcustomfile, ID("gfxmod"));
+    if (ID("gfxmod")) {
+        var gfxcustomfile = document.createElement("input");
+        gfxcustomfile.type = "file";
+        gfxcustomfile.name = "customgfx";
+        gfxcustomfile.style.display = "None";
+        ID("gfxmod").parentElement.insertBefore(gfxcustomfile, ID("gfxmod"));
 
-    var gfximglink = document.createElement("a");
-    var gfximg = document.createElement("img");
-    gfximglink.appendChild(gfximg);
-    ID("gfxmod").parentElement.insertBefore(gfximglink, ID("gfxmod"));
-    var gfxtooltip = ID("gfxmod").parentElement.ariaLabel;
-    ID("gfxmod").oninput = function()
-    {
-        if (ID("gfxmod").value == "custom")
+        var gfximglink = document.createElement("a");
+        var gfximg = document.createElement("img");
+        gfximglink.appendChild(gfximg);
+        ID("gfxmod").parentElement.insertBefore(gfximglink, ID("gfxmod"));
+        var gfxtooltip = ID("gfxmod").parentElement.ariaLabel;
+        ID("gfxmod").oninput = function()
         {
-            gfximg.src = "";
-            gfximglink.href = "";
-            gfximglink.parentElement.ariaLabel = gfxtooltip;
-            gfxcustomfile.click();
+            if (ID("gfxmod").value == "custom")
+            {
+                gfximg.src = "";
+                gfximglink.href = "";
+                gfximglink.parentElement.ariaLabel = gfxtooltip;
+                gfxcustomfile.click();
+            }
+            else if (ID("gfxmod").value != "")
+            {
+                gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
+                gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;
+                gfximglink.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
+                gfxcustomfile.value = "";
+            }
+            else
+            {
+                gfximg.src = "";
+                gfximglink.href = "";
+                gfximglink.parentElement.ariaLabel = gfxtooltip;
+                gfxcustomfile.value = "";
+            }
         }
-        else if (ID("gfxmod").value != "")
-        {
-            gfximg.src = "LADXR/gfx/" + ID("gfxmod").value + ".png";
-            gfximglink.href = gfxInfoMap[ID("gfxmod").value].url;
-            gfximglink.parentElement.ariaLabel = "Graphics by " + gfxInfoMap[ID("gfxmod").value].name + "\n" + gfxtooltip;
-            gfxcustomfile.value = "";
-        }
-        else
-        {
-            gfximg.src = "";
-            gfximglink.href = "";
-            gfximglink.parentElement.ariaLabel = gfxtooltip;
-            gfxcustomfile.value = "";
-        }
+        ID("gfxmod").oninput();
     }
-    ID("gfxmod").oninput();
 
     ID("form").onsubmit = function(e) {
         e.preventDefault();
