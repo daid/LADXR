@@ -5,11 +5,18 @@ if (isset($_FILES["rom"]))
     $romInputPath = $_FILES["rom"]["tmp_name"];
     $romOutputPath = @tempnam(sys_get_temp_dir(), "rom");
     $password = strtolower(preg_replace("/[^A-Za-z0-9]/", '', $_POST["password"]));
-    $patchFile = "LADXR-Secret/challenge/" . $password;
+    $patchFile = "LADXR-Secret/challenge/" . $password . ".patch";
     $command = "/usr/bin/python3 LADXR-Secret/challenge/patcher.py " . escapeshellarg($romInputPath) . " --patch --target $romOutputPath --patchfile " . escapeshellarg($patchFile);
     $command .= " 2>&1";
 
     chdir("LADXR");
+    if (!file_exists($patchFile)) {
+        $message = "WRONG PASSWORD!";
+        $json = ['success' => false, 'message' => $message];
+        header('Content-Type: application/json');
+        print(json_encode($json));
+        exit();
+    }
 
     $output = []; $result = -1;
     exec($command, $output, $result);
