@@ -198,8 +198,8 @@ checkMetadataTable = {
     "0x074": CheckMetadata("Ghost Grave Dig", "Koholint Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/0074.GIF
     "0x2E2": CheckMetadata("Moblin Cave", "Tal Tal Heights"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E2.GIF
     "0x2CD": CheckMetadata("Cave East of Mabe", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/underworld2/02CD.GIF
-    "0x2F4": CheckMetadata("Boots 'n' Bomb Cave Bombable Wall", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/underworld2/02F4.GIF
-    "0x2E5": CheckMetadata("Boots 'n' Bomb Cave Chest", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E5.GIF
+    "0x2F4": CheckMetadata("Boots 'n' Bomb Cave Chest", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/underworld2/02F4.GIF
+    "0x2E5": CheckMetadata("Boots 'n' Bomb Cave Bombable Wall", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/underworld2/02E5.GIF
     "0x0A5": CheckMetadata("Outside D3 Ledge Dig", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/00A5.GIF
     "0x0A6": CheckMetadata("Outside D3 Island Bush", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/00A6.GIF
     "0x08B": CheckMetadata("East of Seashell Mansion Bush", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/008B.GIF

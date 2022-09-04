@@ -294,12 +294,12 @@ class RequirementsSettings:
             self.attack_no_boomerang.remove(BOMB)
             self.attack_skeleton.remove(BOMB)
         if options.logic == "hard":
-            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), COUNT(SHIELD, 2)))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
         if options.logic == "glitch":
-            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT), COUNT(SHIELD, 2)))  # evil eagle off screen kill or 3 cycle with bombs
         if options.logic == "hell":
-            self.boss_requirements[4] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT), COUNT(SHIELD, 2)))  # evil eagle off screen kill or 3 cycle with bombs
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams

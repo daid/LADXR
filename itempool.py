@@ -61,7 +61,7 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_FISHING_HOOK: 1,
     TRADING_ITEM_NECKLACE: 1,
     TRADING_ITEM_SCALE: 1,
-    TRADING_ITEM_MAGNIFIYING_GLASS: 1,
+    TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
     "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1,
 }
@@ -215,7 +215,7 @@ class ItemPool:
             self.remove(TRADING_ITEM_FISHING_HOOK)
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
-            self.remove(TRADING_ITEM_MAGNIFIYING_GLASS)
+            self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
         elif not options.rooster:
             self.remove(ROOSTER)
             self.add(RUPEES_50)
