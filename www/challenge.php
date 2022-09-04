@@ -24,7 +24,7 @@ if (isset($_FILES["rom"]))
     {
         $romContents = base64_encode(file_get_contents($romOutputPath));
 
-        $json = ['success' => true, 'romFilename' => 'LADXR_Challenge-$password.gbc', 'rom' => $romContents];
+        $json = ['success' => true, 'romFilename' => 'LADXR_Challenge-'.$password.'.gbc', 'rom' => $romContents];
 
         header('Content-Type: application/json');
         print(json_encode($json));
