@@ -9,14 +9,14 @@ class OR:
         self.__children = [item for item in args if not isinstance(item, str) and item is not None]
         assert self.__items or self.__children, args
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "or%s" % (self.__items+self.__children)
 
-    def remove(self, item):
+    def remove(self, item) -> None:
         if item in self.__items:
             self.__items.remove(item)
 
-    def hasConsumableRequirement(self):
+    def hasConsumableRequirement(self) -> bool:
         for item in self.__items:
             if isConsumable(item):
                 print("Consumable OR requirement? %r" % self)
@@ -27,7 +27,7 @@ class OR:
                 return True
         return False
 
-    def test(self, inventory):
+    def test(self, inventory) -> bool:
         for item in self.__items:
             if item in inventory:
                 return True
@@ -36,7 +36,7 @@ class OR:
                 return True
         return False
 
-    def consume(self, inventory):
+    def consume(self, inventory) -> bool:
         for item in self.__items:
             if item in inventory:
                 if isConsumable(item):
@@ -50,7 +50,7 @@ class OR:
                 return True
         return False
 
-    def getItems(self, inventory, target_set):
+    def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
             return
         for item in self.__items:
@@ -58,7 +58,7 @@ class OR:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
-    def copyWithModifiedItemNames(self, f):
+    def copyWithModifiedItemNames(self, f) -> "OR":
         return OR(*(f(item) for item in self.__items), *(child.copyWithModifiedItemNames(f) for child in self.__children))
 
 
@@ -69,14 +69,14 @@ class AND:
         self.__items = [item for item in args if isinstance(item, str)]
         self.__children = [item for item in args if not isinstance(item, str) and item is not None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "and%s" % (self.__items+self.__children)
 
-    def remove(self, item):
+    def remove(self, item) -> None:
         if item in self.__items:
             self.__items.remove(item)
 
-    def hasConsumableRequirement(self):
+    def hasConsumableRequirement(self) -> bool:
         for item in self.__items:
             if isConsumable(item):
                 return True
@@ -85,7 +85,7 @@ class AND:
                 return True
         return False
 
-    def test(self, inventory):
+    def test(self, inventory) -> bool:
         for item in self.__items:
             if item not in inventory:
                 return False
@@ -94,7 +94,7 @@ class AND:
                 return False
         return True
 
-    def consume(self, inventory):
+    def consume(self, inventory) -> bool:
         for item in self.__items:
             if isConsumable(item):
                 inventory[item] -= 1
@@ -106,7 +106,7 @@ class AND:
                 return False
         return True
 
-    def getItems(self, inventory, target_set):
+    def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
             return
         for item in self.__items:
@@ -114,41 +114,41 @@ class AND:
         for child in self.__children:
             child.getItems(inventory, target_set)
 
-    def copyWithModifiedItemNames(self, f):
+    def copyWithModifiedItemNames(self, f) -> "AND":
         return AND(*(f(item) for item in self.__items), *(child.copyWithModifiedItemNames(f) for child in self.__children))
 
 
 class COUNT:
     __slots__ = ('__item', '__amount')
 
-    def __init__(self, item, amount):
+    def __init__(self, item: str, amount: int) -> None:
         self.__item = item
         self.__amount = amount
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<%dx%s>" % (self.__amount, self.__item)
 
-    def hasConsumableRequirement(self):
+    def hasConsumableRequirement(self) -> bool:
         if isConsumable(self.__item):
             return True
         return False
 
-    def test(self, inventory):
+    def test(self, inventory) -> bool:
         return inventory.get(self.__item, 0) >= self.__amount
 
-    def consume(self, inventory):
+    def consume(self, inventory) -> None:
         if isConsumable(self.__item):
             inventory[self.__item] -= self.__amount
             if inventory[self.__item] == 0:
                 del inventory[self.__item]
             inventory["%s_USED" % self.__item] = inventory.get("%s_USED" % self.__item, 0) + self.__amount
 
-    def getItems(self, inventory, target_set):
+    def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
             return
         target_set.add(self.__item)
 
-    def copyWithModifiedItemNames(self, f):
+    def copyWithModifiedItemNames(self, f) -> "COUNT":
         return COUNT(f(self.__item), self.__amount)
 
 
@@ -159,23 +159,23 @@ class COUNTS:
         self.__items = items
         self.__amount = amount
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<%dx%s>" % (self.__amount, self.__items)
 
-    def hasConsumableRequirement(self):
+    def hasConsumableRequirement(self) -> bool:
         for item in self.__items:
             if isConsumable(item):
                 print("Consumable COUNTS requirement? %r" % (self))
                 return True
         return False
 
-    def test(self, inventory):
+    def test(self, inventory) -> bool:
         count = 0
         for item in self.__items:
             count += inventory.get(item, 0)
         return count >= self.__amount
 
-    def consume(self, inventory):
+    def consume(self, inventory) -> None:
         for item in self.__items:
             if isConsumable(item):
                 inventory[item] -= self.__amount
@@ -183,45 +183,45 @@ class COUNTS:
                     del inventory[item]
                 inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + self.__amount
 
-    def getItems(self, inventory, target_set):
+    def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
             return
         for item in self.__items:
             target_set.add(item)
 
-    def copyWithModifiedItemNames(self, f):
+    def copyWithModifiedItemNames(self, f) -> "COUNTS":
         return COUNTS([f(item) for item in self.__items], self.__amount)
 
 
 class FOUND:
     __slots__ = ('__item', '__amount')
 
-    def __init__(self, item, amount):
+    def __init__(self, item: str, amount: int) -> None:
         self.__item = item
         self.__amount = amount
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{%dx%s}" % (self.__amount, self.__item)
 
-    def hasConsumableRequirement(self):
+    def hasConsumableRequirement(self) -> bool:
         return False
 
-    def test(self, inventory):
+    def test(self, inventory) -> bool:
         return inventory.get(self.__item, 0) + inventory.get("%s_USED" % self.__item, 0) >= self.__amount
 
-    def consume(self, inventory):
+    def consume(self, inventory) -> None:
         pass
 
-    def getItems(self, inventory, target_set):
+    def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
             return
         target_set.add(self.__item)
 
-    def copyWithModifiedItemNames(self, f):
+    def copyWithModifiedItemNames(self, f) -> "FOUND":
         return FOUND(f(self.__item), self.__amount)
 
 
-def hasConsumableRequirement(requirements):
+def hasConsumableRequirement(requirements) -> bool:
     if isinstance(requirements, str):
         return isConsumable(requirements)
     if requirements is None:
@@ -229,7 +229,7 @@ def hasConsumableRequirement(requirements):
     return requirements.hasConsumableRequirement()
 
 
-def isConsumable(item):
+def isConsumable(item) -> bool:
     if item is None:
         return False
     if item.startswith("RUPEES_") or item == "RUPEES":

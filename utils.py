@@ -1,3 +1,5 @@
+from typing import Optional
+
 from locations.items import *
 
 _NAMES = {
@@ -136,19 +138,19 @@ _NAMES = {
 }
 
 
-def setReplacementName(key, value):
+def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
 
 
-def formatText(s, *, center=False, ask=None):
-    s = s.format(**_NAMES)
-    s = s.encode("ascii")
+def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
+    instr = instr.format(**_NAMES)
+    s = instr.encode("ascii")
     s = s.replace(b"'", b"^")
 
-    def padLine(line):
+    def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
     if center:
-        def padLine(line):
+        def padLine(line: bytes) -> bytes:
             padding = (16 - len(line))
             return b' ' * (padding // 2) + line + b' ' * (padding - padding // 2)
 
@@ -165,15 +167,15 @@ def formatText(s, *, center=False, ask=None):
         if result_line:
             result += padLine(result_line)
     if ask is not None:
-        ask = ask.encode("ascii")
+        askbytes = ask.encode("ascii")
         result = result.rstrip()
         while len(result) % 32 != 16:
             result += b' '
-        return result + b'    ' + ask + b'\xfe'
+        return result + b'    ' + askbytes + b'\xfe'
     return result.rstrip() + b'\xff'
 
 
-def tileDataToString(data, key=" 123"):
+def tileDataToString(data: bytes, key: str = " 123") -> str:
     result = ""
     for n in range(0, len(data), 2):
         a = data[n]
@@ -191,7 +193,8 @@ def tileDataToString(data, key=" 123"):
         result += "\n"
     return result.rstrip("\n")
 
-def createTileData(data, key=" 123"):
+
+def createTileData(data: str, key: str = " 123") -> bytes:
     result = []
     for line in data.split("\n"):
         line = line + "        "
@@ -209,6 +212,7 @@ def createTileData(data, key=" 123"):
         result.append(b)
     assert (len(result) % 16) == 0, len(result)
     return bytes(result)
+
 
 if __name__ == "__main__":
     data = formatText("It is dangurous to go alone.\nTake\nthis\na\nline.")

@@ -5,17 +5,18 @@ import randomizer
 import logic
 import spoilerLog
 import re
-from argparse import ArgumentParser, ArgumentTypeError
+import argparse
+from typing import Optional, List, Union
 
 
-def goal(goal):
+def goal(goal: str) -> Union[str, int, range]:
     if goal == "random":
         goal = "-1-8"
     elif goal in ["seashells", "raft", "bingo", "bingo-full"]:
         return goal
     m = re.match(r'^(-?\d|open)(?:-(\d))?$', goal)
     if not m:
-        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (open, 0, 1, 2 ... 8), a range (open-6, 1-4, 5-8, ...) or 'seashells' / 'raft'.")
+        raise argparse.ArgumentTypeError("'" + goal + "' is not valid: expected a number (open, 0, 1, 2 ... 8), a range (open-6, 1-4, 5-8, ...) or 'seashells' / 'raft'.")
     start = m.group(1)
     if start == "open":
         start = "-1"
@@ -23,21 +24,21 @@ def goal(goal):
     end = m.group(2) or start
     end = int(end)
     if start < -1 or start > 8 or end < -1 or end > 8:
-        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
+        raise argparse.ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
     if end == start:
         return start
     elif end < start:
-        raise ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
+        raise argparse.ArgumentTypeError("'" + goal + "' is not valid: expected a number (-1, 0, 1, 2 ... 8), a range (1-4, 5-8, ...) or 'seashells' / 'raft'.")
     return range(start, end+1)
 
 
 # Check if the current mix of options is valid, and fix incompatible selected options
-def validateOptions(options):
-    def req(setting, value, message):
+def validateOptions(options: argparse.Namespace) -> None:
+    def req(setting: str, value: str, message: str) -> None:
         if getattr(options, setting) != value:
             print("Warning: %s (setting adjusted automatically)" % message)
             setattr(options, setting, value)
-    def dis(setting, value, new_value, message):
+    def dis(setting: str, value: str, new_value: str, message: str) -> None:
         if getattr(options, setting) == value:
             print("Warning: %s (setting adjusted automatically)" % message)
             setattr(options, setting, new_value)
@@ -54,8 +55,7 @@ def validateOptions(options):
         dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
 
 
-def main(mainargs=None):
-    import argparse
+def main(mainargs: Optional[List[str]] = None) -> None:
     import sys
 
     parser = argparse.ArgumentParser(description='Randomize!')
@@ -182,7 +182,7 @@ def main(mainargs=None):
         import threading
         import time
         import os
-        def timeoutFunction():
+        def timeoutFunction() -> None:
             time.sleep(args.timeout)
             print("TIMEOUT")
             sys.stdout.flush()
@@ -191,7 +191,7 @@ def main(mainargs=None):
 
     if args.exportmap:
         import mapexport
-        print("Loading: %s" % (args.input_filename))
+        print(f"Loading: {args.input_filename}")
         rom = ROMWithTables(args.input_filename)
         mapexport.MapExport(rom)
         sys.exit(0)

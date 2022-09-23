@@ -1,10 +1,13 @@
+import argparse
 import random
 import zipfile
 import os
 import binascii
 from datetime import datetime
+from typing import Optional, List, Dict, Tuple
 
 import explorer
+import locations.itemInfo
 import logic
 from locations.items import *
 import generator
@@ -19,7 +22,7 @@ class Error(Exception):
 
 
 class Randomizer:
-    def __init__(self, options, *, seed=None):
+    def __init__(self, options: argparse.Namespace, *, seed: Optional[bytes] = None) -> None:
         self.seed = seed
         self.plan = None
         if self.seed is None:
@@ -105,7 +108,7 @@ class Randomizer:
                 if options.spoilerformat != "none":
                     log.output(options.spoiler_filename)
 
-    def readItemPool(self, options, item_placer):
+    def readItemPool(self, options: argparse.Namespace, item_placer: "ItemPlacer") -> Dict[str, int]:
         item_pool = {}
         # Collect the item pool from the rom to see which items we can randomize.
         if options.multiworld is None:
@@ -146,30 +149,30 @@ class Randomizer:
 
 
 class ItemPlacer:
-    def __init__(self, logic, accessibility_rule):
+    def __init__(self, logic: logic.Logic, accessibility_rule: str) -> None:
         self._logic = logic
-        self._item_pool = {}
-        self._spots = []
-        self._accessibility_rule = accessibility_rule
+        self._item_pool: Dict[str, int] = {}
+        self._spots: List[locations.itemInfo.ItemInfo] = []
+        self._accessibility_rule: str = accessibility_rule
 
-    def addItem(self, item, count=1):
+    def addItem(self, item: str, count: int = 1) -> None:
         self._item_pool[item] = self._item_pool.get(item, 0) + count
 
-    def removeItem(self, item):
+    def removeItem(self, item: str) -> None:
         self._item_pool[item] -= 1
         if self._item_pool[item] == 0:
             del self._item_pool[item]
 
-    def addSpot(self, spot):
+    def addSpot(self, spot: locations.itemInfo.ItemInfo) -> None:
         self._spots.append(spot)
 
-    def removeSpot(self, spot):
+    def removeSpot(self, spot: locations.itemInfo.ItemInfo) -> None:
         self._spots.remove(spot)
 
-    def run(self, rnd):
+    def run(self, rnd: random.Random) -> None:
         raise NotImplementedError()
 
-    def hasNewPlacesToExplore(self):
+    def hasNewPlacesToExplore(self) -> bool:
         e = explorer.Explorer()
         e.visit(self._logic.start)
         for loc in e.getAccessableLocations():
@@ -178,16 +181,16 @@ class ItemPlacer:
                     return True
         return False
 
-    def canStillPlaceItemPool(self):
+    def canStillPlaceItemPool(self) -> bool:
         item_pool = self._item_pool.copy()
         spots = self._spots.copy()
-        def scoreSpot(s):
+        def scoreSpot(s: locations.itemInfo.ItemInfo) -> Tuple[int, str]:
             if s.location.dungeon:
                 return 0, s.nameId
             return len(s.getOptions()), s.nameId
         spots.sort(key=scoreSpot)
 
-        item_spot_count = {}
+        item_spot_count: Dict[str, int] = {}
         for spot in spots:
             for option in spot.getOptions():
                 item_spot_count[option] = item_spot_count.get(option, 0) + 1
@@ -215,7 +218,7 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
-    def run(self, rnd):
+    def run(self, rnd: random.Random) -> None:
         assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
         assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
 
@@ -229,7 +232,7 @@ class RandomItemPlacer(ItemPlacer):
             else:
                 bail_counter = 0
 
-    def __placeItem(self, rnd):
+    def __placeItem(self, rnd: random.Random) -> bool:
         # Random placement
         spot = rnd.choice(self._spots)
         options = [i for i in spot.getOptions() if i in self._item_pool]
@@ -251,7 +254,7 @@ class RandomItemPlacer(ItemPlacer):
         #print("Placed:", item)
         return True
 
-    def logicStillValid(self, verbose=False):
+    def logicStillValid(self, verbose: bool = False) -> bool:
         # Check if we still have new places to explore
         if self._spots:
             if not self.hasNewPlacesToExplore():
@@ -291,7 +294,7 @@ class ForwardItemPlacer(ItemPlacer):
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
     ]
 
-    def __init__(self, logic, forwardfactor, accessibility_rule, *, verbose=False):
+    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility_rule: str, *, verbose: bool = False) -> None:
         super().__init__(logic, accessibility_rule)
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
@@ -299,7 +302,7 @@ class ForwardItemPlacer(ItemPlacer):
         self.__start_spots_filled = False
         self.__verbose = verbose
 
-    def run(self, rnd):
+    def run(self, rnd: random.Random) -> None:
         assert self.canStillPlaceItemPool(), "Sanity check failed %s" % (self.canStillPlaceItemPool())
         if sum(self._item_pool.values()) != len(self._spots):
             for k, v in sorted(self._item_pool.items()):
@@ -314,7 +317,7 @@ class ForwardItemPlacer(ItemPlacer):
             else:
                 bail_counter = 0
 
-    def _placeItem(self, rnd):
+    def _placeItem(self, rnd: random.Random) -> bool:
         e = explorer.Explorer()
         e.visit(self._logic.start)
         if self._accessibility_rule == "goal" and self._logic.windfish in e.getAccessableLocations():
@@ -368,22 +371,22 @@ class ForwardItemPlacer(ItemPlacer):
                 spot.weight *= self.__forwardfactor
         return True
 
-    def _chooseItem(self, rnd, req_items):
+    def _chooseItem(self, rnd: random.Random, req_items: List[str]) -> str:
         return rnd.choice(req_items)
 
 
 class MultiworldItemPlacer(ForwardItemPlacer):
-    def __init__(self, logic, forwardfactor, accessibility_rule, world_count):
+    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility_rule: str, world_count: int) -> None:
         super().__init__(logic, forwardfactor, accessibility_rule, verbose=True)
         self.__world_count = world_count
         self.__initial_spot_count = 0
         self.DUNGEON_ITEMS = ["%s_W%d" % (item, w) for item in self.DUNGEON_ITEMS for w in range(world_count)]
 
-    def run(self, rnd):
+    def run(self, rnd: random.Random) -> None:
         self.__initial_spot_count = len(self._spots)
         super().run(rnd)
 
-    def _placeItem(self, rnd):
+    def _placeItem(self, rnd: random.Random) -> bool:
         result = super()._placeItem(rnd)
         if result:
             return True
@@ -406,11 +409,11 @@ class MultiworldItemPlacer(ForwardItemPlacer):
             self._item_pool = new_item_pool
         return False
 
-    def canStillPlaceItemPool(self):
+    def canStillPlaceItemPool(self) -> bool:
         return True
 
-    def _chooseItem(self, rnd, req_items):
-        per_world = {}
+    def _chooseItem(self, rnd: random.Random, req_items: List[str]) -> str:
+        per_world: Dict[int, int] = {}
         worlds = []
         for item in req_items:
             world = int(item[item.rfind("_W")+2:])

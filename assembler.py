@@ -1,4 +1,6 @@
 import binascii
+from typing import Optional, Dict, ItemsView, List, Union, Tuple
+
 import utils
 import re
 
@@ -8,60 +10,62 @@ REGS16A = {"BC": 0, "DE": 1, "HL": 2, "SP": 3}
 REGS16B = {"BC": 0, "DE": 1, "HL": 2, "AF": 3}
 FLAGS = {"NZ": 0x00, "Z": 0x08, "NC": 0x10, "C": 0x18}
 
-CONST_MAP = {}
+CONST_MAP: Dict[str, int] = {}
 
 
 class ExprBase:
-    def asReg8(self):
+    def asReg8(self) -> Optional[int]:
         return None
 
-    def isA(self, kind, value=None):
+    def isA(self, kind: str, value: Optional[str] = None) -> bool:
         return False
 
 
 class Token(ExprBase):
-    def __init__(self, kind, value, line_nr):
+    def __init__(self, kind: str, value: Union[str, int], line_nr: int) -> None:
         self.kind = kind
         self.value = value
         self.line_nr = line_nr
 
-    def isA(self, kind, value=None):
+    def isA(self, kind: str, value: Optional[str] = None) -> bool:
         return self.kind == kind and (value is None or value == self.value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "[%s:%s:%d]" % (self.kind, self.value, self.line_nr)
 
-    def asReg8(self):
+    def asReg8(self) -> Optional[int]:
         if self.kind == 'ID':
-            return REGS8.get(self.value, None)
+            return REGS8.get(str(self.value), None)
         return None
 
 
 class REF(ExprBase):
-    def __init__(self, expr):
+    def __init__(self, expr: ExprBase) -> None:
         self.expr = expr
 
-    def asReg8(self):
+    def asReg8(self) -> Optional[int]:
         if self.expr.isA('ID', 'HL'):
             return REGS8['[HL]']
         return None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "[%s]" % (self.expr)
 
 
 class OP(ExprBase):
-    def __init__(self, op, left, right=None):
+    def __init__(self, op: str, left: ExprBase, right: Optional[ExprBase] = None):
         self.op = op
         self.left = left
         self.right = right
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "%s %s %s" % (self.left, self.op, self.right)
 
     @staticmethod
-    def make(op, left, right=None):
-        if left.isA('NUMBER') and right.isA('NUMBER'):
+    def make(op: str, left: ExprBase, right: Optional[ExprBase] = None) -> ExprBase:
+        if left.isA('NUMBER') and right is not None and right.isA('NUMBER'):
+            assert isinstance(right, Token) and isinstance(right.value, int)
+            assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
                 left.value += right.value
                 return left
@@ -75,6 +79,7 @@ class OP(ExprBase):
                 left.value //= right.value
                 return left
         if left.isA('NUMBER') and right is None:
+            assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
                 return left
             if op == '-':
@@ -101,12 +106,13 @@ class Tokenizer:
         ('MISMATCH', r'.'),
     ]))
 
-    def __init__(self, code):
-        self.__tokens = []
+    def __init__(self, code: str) -> None:
+        self.__tokens: List[Token] = []
         line_num = 1
         for mo in self.TOKEN_REGEX.finditer(code):
             kind = mo.lastgroup
-            value = mo.group()
+            assert kind is not None
+            value: Union[str, int] = mo.group()
             if kind == 'MISMATCH':
                 print(code.split("\n")[line_num-1])
                 raise RuntimeError("Syntax error on line: %d: %s\n%s", line_num, value)
@@ -118,29 +124,29 @@ class Tokenizer:
                 if kind == 'NUMBER':
                     value = int(value)
                 elif kind == 'HEX':
-                    value = int(value[1:], 16)
+                    value = int(str(value)[1:], 16)
                     kind = 'NUMBER'
                 elif kind == 'ID':
-                    value = value.upper()
+                    value = str(value).upper()
                 self.__tokens.append(Token(kind, value, line_num))
                 if kind == 'NEWLINE':
                     line_num += 1
         self.__tokens.append(Token('NEWLINE', '\n', line_num))
 
-    def peek(self):
+    def peek(self) -> Token:
         return self.__tokens[0]
 
-    def pop(self):
+    def pop(self) -> Token:
         return self.__tokens.pop(0)
 
-    def expect(self, kind, value=None):
+    def expect(self, kind: str, value: Optional[str] = None) -> None:
         pop = self.pop()
         if not pop.isA(kind, value):
             if value is not None:
                 raise SyntaxError("%s != %s:%s" % (pop, kind, value))
             raise SyntaxError("%s != %s" % (pop, kind))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.__tokens)
 
 
@@ -166,19 +172,17 @@ class Assembler:
     LINK_ABS8 = 1
     LINK_ABS16 = 2
 
-    def __init__(self, base_address=None):
-        self.__base_address = base_address
-        if base_address is None:
-            self.__base_address = -1
+    def __init__(self, base_address: Optional[int] = None) -> None:
+        self.__base_address = base_address or -1
         self.__result = bytearray()
-        self.__label = {}
-        self.__constant = {}
-        self.__link = {}
-        self.__scope = None
+        self.__label: Dict[str, int] = {}
+        self.__constant: Dict[str, int] = {}
+        self.__link: Dict[int, Tuple[int, ExprBase]] = {}
+        self.__scope: Optional[str] = None
 
-        self.__tok = None
+        self.__tok = Tokenizer("")
 
-    def process(self, code):
+    def process(self, code: str) -> None:
         conditional_stack = [True]
         self.__tok = Tokenizer(code)
         try:
@@ -189,6 +193,7 @@ class Assembler:
                 elif start.kind == 'DIRECTIVE':
                     if start.value == '#IF':
                         t = self.parseExpression()
+                        assert isinstance(t, Token)
                         conditional_stack.append(conditional_stack[-1] and t.value != 0)
                         self.__tok.expect('NEWLINE')
                     elif start.value == '#ELSE':
@@ -307,17 +312,17 @@ class Assembler:
                         self.instrPUSHPOP(0xC1)
                         self.__tok.expect('NEWLINE')
                     elif start.value in self.SIMPLE_INSTR:
-                        self.__result.append(self.SIMPLE_INSTR[start.value])
+                        self.__result.append(self.SIMPLE_INSTR[str(start.value)])
                         self.__tok.expect('NEWLINE')
                     elif self.__tok.peek().kind == 'LABEL':
                         self.__tok.pop()
-                        self.addLabel(start.value)
+                        self.addLabel(str(start.value))
                     elif self.__tok.peek().kind == 'ASSIGN':
                         self.__tok.pop()
                         value = self.__tok.pop()
                         if value.kind != 'NUMBER':
                             raise SyntaxError(start)
-                        self.addConstant(start.value, value.value)
+                        self.addConstant(str(start.value), int(value.value))
                     else:
                         raise SyntaxError(start)
                 else:
@@ -326,25 +331,28 @@ class Assembler:
             print("Syntax error on line: %s" % code.split("\n")[self.__tok.peek().line_nr-1])
             raise
 
-    def insert8(self, expr):
+    def insert8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
-            value = expr.value
+            assert isinstance(expr, Token)
+            value = int(expr.value)
         else:
             self.__link[len(self.__result)] = (Assembler.LINK_ABS8, expr)
             value = 0
         assert 0 <= value < 256
         self.__result.append(value)
 
-    def insertRel8(self, expr):
+    def insertRel8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
-            self.__result.append(expr.value)
+            assert isinstance(expr, Token)
+            self.__result.append(int(expr.value))
         else:
             self.__link[len(self.__result)] = (Assembler.LINK_REL8, expr)
             self.__result.append(0x00)
 
-    def insert16(self, expr):
+    def insert16(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
-            value = expr.value
+            assert isinstance(expr, Token)
+            value = int(expr.value)
         else:
             self.__link[len(self.__result)] = (Assembler.LINK_ABS16, expr)
             value = 0
@@ -352,7 +360,7 @@ class Assembler:
         self.__result.append(value & 0xFF)
         self.__result.append(value >> 8)
 
-    def insertString(self, string):
+    def insertString(self, string: str) -> None:
         if string.startswith('"') and string.endswith('"'):
             self.__result += string[1:-1].encode("ascii")
         elif string.startswith("m\"") and string.endswith("\""):
@@ -360,12 +368,14 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrLD(self):
+    def instrLD(self) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
-        if left_param.asReg8() is not None and right_param.asReg8() is not None:
-            self.__result.append(0x40 | (left_param.asReg8() << 3) | right_param.asReg8())
+        lr8 = left_param.asReg8()
+        rr8 = right_param.asReg8()
+        if lr8 is not None and rr8 is not None:
+            self.__result.append(0x40 | (lr8 << 3) | rr8)
         elif left_param.isA('ID', 'A') and isinstance(right_param, REF):
             if right_param.expr.isA('ID', 'BC'):
                 self.__result.append(0x0A)
@@ -412,13 +422,13 @@ class Assembler:
         elif right_param.isA('ID', 'SP') and isinstance(left_param, REF):
             self.__result.append(0x08)
             self.insert16(left_param.expr)
-        elif left_param.asReg8() is not None:
-            self.__result.append(0x06 | (left_param.asReg8() << 3))
+        elif lr8 is not None:
+            self.__result.append(0x06 | (lr8 << 3))
             self.insert8(right_param)
         else:
             raise SyntaxError
 
-    def instrLDH(self):
+    def instrLDH(self) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
@@ -437,7 +447,7 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrLDI(self):
+    def instrLDI(self) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
@@ -448,7 +458,7 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrLDD(self):
+    def instrLDD(self) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
@@ -459,10 +469,11 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrINC(self):
+    def instrINC(self) -> None:
         param = self.parseParam()
-        if param.asReg8() is not None:
-            self.__result.append(0x04 | (param.asReg8() << 3))
+        r8 = param.asReg8()
+        if r8 is not None:
+            self.__result.append(0x04 | (r8 << 3))
         elif param.isA('ID', 'BC'):
             self.__result.append(0x03)
         elif param.isA('ID', 'DE'):
@@ -474,10 +485,11 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrDEC(self):
+    def instrDEC(self) -> None:
         param = self.parseParam()
-        if param.asReg8() is not None:
-            self.__result.append(0x05 | (param.asReg8() << 3))
+        r8 = param.asReg8()
+        if r8 is not None:
+            self.__result.append(0x05 | (r8 << 3))
         elif param.isA('ID', 'BC'):
             self.__result.append(0x0B)
         elif param.isA('ID', 'DE'):
@@ -489,114 +501,118 @@ class Assembler:
         else:
             raise SyntaxError
 
-    def instrADD(self):
+    def instrADD(self) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
 
         if left_param.isA('ID', 'A'):
-            if right_param.asReg8() is not None:
-                self.__result.append(0x80 | right_param.asReg8())
+            rr8 = right_param.asReg8()
+            if rr8 is not None:
+                self.__result.append(0x80 | rr8)
             else:
                 self.__result.append(0xC6)
                 self.insert8(right_param)
-        elif left_param.isA('ID', 'HL') and right_param.isA('ID') and right_param.value in REGS16A:
-            self.__result.append(0x09 | REGS16A[right_param.value] << 4)
+        elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value in REGS16A:
+            self.__result.append(0x09 | REGS16A[str(right_param.value)] << 4)
         elif left_param.isA('ID', 'SP'):
             self.__result.append(0xE8)
             self.insert8(right_param)
         else:
             raise SyntaxError
 
-    def instrALU(self, code_value):
+    def instrALU(self, code_value: int) -> None:
         param = self.parseParam()
         if param.isA('ID', 'A') and self.__tok.peek().isA('OP', ','):
             self.__tok.pop()
             param = self.parseParam()
-        if param.asReg8() is not None:
-            self.__result.append(code_value | param.asReg8())
+        r8 = param.asReg8()
+        if r8 is not None:
+            self.__result.append(code_value | r8)
         else:
             self.__result.append(code_value | 0x46)
             self.insert8(param)
 
-    def instrRST(self):
+    def instrRST(self) -> None:
         param = self.parseParam()
-        if param.isA('NUMBER') and (param.value & ~0x38) == 0:
-            self.__result.append(0xC7 | param.value)
+        if param.isA('NUMBER') and isinstance(param, Token) and (int(param.value) & ~0x38) == 0:
+            self.__result.append(0xC7 | int(param.value))
         else:
             raise SyntaxError
 
-    def instrPUSHPOP(self, code_value):
+    def instrPUSHPOP(self, code_value: int) -> None:
         param = self.parseParam()
-        if param.isA('ID') and param.value in REGS16B:
-            self.__result.append(code_value | (REGS16B[param.value] << 4))
+        if param.isA('ID') and isinstance(param, Token) and str(param.value) in REGS16B:
+            self.__result.append(code_value | (REGS16B[str(param.value)] << 4))
         else:
             raise SyntaxError
 
-    def instrJR(self):
+    def instrJR(self) -> None:
         param = self.parseParam()
         if self.__tok.peek().isA('OP', ','):
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and condition.value in FLAGS:
-                self.__result.append(0x20 | FLAGS[condition.value])
+            if condition.isA('ID') and isinstance(condition, Token) and str(condition.value) in FLAGS:
+                self.__result.append(0x20 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
             self.__result.append(0x18)
         self.insertRel8(param)
 
-    def instrCB(self, code_value):
+    def instrCB(self, code_value: int) -> None:
         param = self.parseParam()
-        if param.asReg8() is not None:
+        r8 = param.asReg8()
+        if r8 is not None:
             self.__result.append(0xCB)
-            self.__result.append(code_value | param.asReg8())
+            self.__result.append(code_value | r8)
         else:
             raise SyntaxError
 
-    def instrBIT(self, code_value):
+    def instrBIT(self, code_value: int) -> None:
         left_param = self.parseParam()
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
-        if left_param.isA('NUMBER') and right_param.asReg8() is not None:
+        rr8 = right_param.asReg8()
+        if left_param.isA('NUMBER') and isinstance(left_param, Token) and rr8 is not None:
             self.__result.append(0xCB)
-            self.__result.append(code_value | (left_param.value << 3) | right_param.asReg8())
+            self.__result.append(code_value | (int(left_param.value) << 3) | rr8)
         else:
             raise SyntaxError
 
-    def instrRET(self):
+    def instrRET(self) -> None:
         if self.__tok.peek().isA('ID'):
             condition = self.__tok.pop()
             if condition.isA('ID') and condition.value in FLAGS:
-                self.__result.append(0xC0 | FLAGS[condition.value])
+                self.__result.append(0xC0 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
             self.__result.append(0xC9)
 
-    def instrCALL(self):
+    def instrCALL(self) -> None:
         param = self.parseParam()
         if self.__tok.peek().isA('OP', ','):
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and condition.value in FLAGS:
-                self.__result.append(0xC4 | FLAGS[condition.value])
+            if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
+                self.__result.append(0xC4 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
             self.__result.append(0xCD)
         self.insert16(param)
 
-    def instrJP(self):
+    def instrJP(self) -> None:
         param = self.parseParam()
         if self.__tok.peek().isA('OP', ','):
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and condition.value in FLAGS:
-                self.__result.append(0xC2 | FLAGS[condition.value])
+            if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
+                self.__result.append(0xC2 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         elif param.isA('ID', 'HL'):
@@ -606,7 +622,7 @@ class Assembler:
             self.__result.append(0xC3)
         self.insert16(param)
 
-    def instrDW(self):
+    def instrDW(self) -> None:
         param = self.parseExpression()
         self.insert16(param)
         while self.__tok.peek().isA('OP', ','):
@@ -614,22 +630,25 @@ class Assembler:
             param = self.parseExpression()
             self.insert16(param)
 
-    def instrDB(self):
+    def instrDB(self) -> None:
         param = self.parseExpression()
         if param.isA('STRING'):
-            self.insertString(param.value)
+            assert isinstance(param, Token)
+            self.insertString(str(param.value))
         else:
             self.insert8(param)
         while self.__tok.peek().isA('OP', ','):
             self.__tok.pop()
             param = self.parseExpression()
             if param.isA('STRING'):
-                self.insertString(param.value)
+                assert isinstance(param, Token)
+                self.insertString(str(param.value))
             else:
                 self.insert8(param)
 
-    def addLabel(self, label):
+    def addLabel(self, label: str) -> None:
         if label.startswith("."):
+            assert self.__scope is not None
             label = self.__scope + label
         else:
             assert "." not in label, label
@@ -638,12 +657,12 @@ class Assembler:
         assert label not in self.__constant, "Duplicate label: %s" % (label)
         self.__label[label] = len(self.__result)
 
-    def addConstant(self, name, value):
+    def addConstant(self, name: str, value: int) -> None:
         assert name not in self.__constant, "Duplicate constant: %s" % (name)
         assert name not in self.__label, "Duplicate constant: %s" % (name)
         self.__constant[name] = value
 
-    def parseParam(self):
+    def parseParam(self) -> ExprBase:
         t = self.__tok.peek()
         if t.kind == 'REFOPEN':
             self.__tok.pop()
@@ -652,54 +671,57 @@ class Assembler:
             return REF(expr)
         return self.parseExpression()
 
-    def parseExpression(self):
+    def parseExpression(self) -> ExprBase:
         t = self.parseAddSub()
         return t
 
-    def parseAddSub(self):
+    def parseAddSub(self) -> ExprBase:
         t = self.parseFactor()
         p = self.__tok.peek()
         if p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
-            return OP.make(p.value, t, self.parseAddSub())
+            return OP.make(str(p.value), t, self.parseAddSub())
         return t
 
-    def parseFactor(self):
+    def parseFactor(self) -> ExprBase:
         t = self.parseUnary()
         p = self.__tok.peek()
         if p.isA('OP', '*') or p.isA('OP', '/'):
             self.__tok.pop()
-            return OP.make(p.value, t, self.parseFactor())
+            return OP.make(str(p.value), t, self.parseFactor())
         return t
 
-    def parseUnary(self):
+    def parseUnary(self) -> ExprBase:
         t = self.__tok.pop()
         if t.isA('OP', '-') or t.isA('OP', '+'):
-            return OP.make(t.value, self.parseUnary())
+            return OP.make(str(t.value), self.parseUnary())
         elif t.isA('OP', '('):
-            t = self.parseExpression()
+            result = self.parseExpression()
             self.__tok.expect('OP', ')')
-            return t
+            return result
         if t.kind not in ('ID', 'NUMBER', 'STRING'):
             raise SyntaxError
         if t.isA('ID') and t.value in CONST_MAP:
             t.kind = 'NUMBER'
-            t.value = CONST_MAP[t.value]
+            t.value = CONST_MAP[str(t.value)]
         elif t.isA('ID') and t.value in self.__constant:
             t.kind = 'NUMBER'
-            t.value = self.__constant[t.value]
-        elif t.isA('ID') and t.value.startswith("."):
-            t.value = self.__scope + t.value
+            t.value = self.__constant[str(t.value)]
+        elif t.isA('ID') and str(t.value).startswith("."):
+            assert self.__scope is not None
+            t.value = self.__scope + str(t.value)
         return t
 
-    def link(self):
-        for offset, (link_type, expr) in self.__link.items():
-            expr = self.resolveExpr(expr)
+    def link(self) -> None:
+        for offset, (link_type, link_expr) in self.__link.items():
+            expr = self.resolveExpr(link_expr)
+            assert expr is not None
             assert expr.isA('NUMBER'), expr
-            value = expr.value
+            assert isinstance(expr, Token)
+            value = int(expr.value)
             if link_type == Assembler.LINK_REL8:
                 byte = (value - self.__base_address) - offset - 1
-                assert -128 <= byte <= 127, label
+                assert -128 <= byte <= 127, expr
                 self.__result[offset] = byte & 0xFF
             elif link_type == Assembler.LINK_ABS8:
                 assert 0 <= value <= 0xFF
@@ -712,43 +734,46 @@ class Assembler:
             else:
                 raise RuntimeError
 
-    def resolveExpr(self, expr):
+    def resolveExpr(self, expr: Optional[ExprBase]) -> Optional[ExprBase]:
         if expr is None:
             return None
         elif isinstance(expr, OP):
-            return OP.make(expr.op, self.resolveExpr(expr.left), self.resolveExpr(expr.right))
-        elif expr.isA('ID') and expr.value in self.__label:
-            return Token('NUMBER', self.__label[expr.value] + self.__base_address, expr.line_nr)
+            left = self.resolveExpr(expr.left)
+            assert left is not None
+            return OP.make(expr.op, left, self.resolveExpr(expr.right))
+        elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
+            return Token('NUMBER', self.__label[str(expr.value)] + self.__base_address, expr.line_nr)
         return expr
 
-    def getResult(self):
+    def getResult(self) -> bytearray:
         return self.__result
 
-    def getLabels(self):
+    def getLabels(self) -> ItemsView[str, int]:
         return self.__label.items()
 
 
-def const(name, value):
+def const(name: str, value: int) -> None:
     name = name.upper()
     assert name not in CONST_MAP
     CONST_MAP[name] = value
 
 
-def resetConsts():
+def resetConsts() -> None:
     CONST_MAP.clear()
 
 
-def ASM(code, base_address=None, labels_result=None):
+def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[Dict[str, int]] = None) -> bytes:
     asm = Assembler(base_address)
     asm.process(code)
     asm.link()
     if labels_result is not None:
+        assert base_address is not None
         for label, offset in asm.getLabels():
             labels_result[label] = base_address + offset
     return binascii.hexlify(asm.getResult())
 
 
-def allOpcodesTest():
+def allOpcodesTest() -> None:
     import json
     opcodes = json.load(open("Opcodes.json", "rt"))
     for label in (False, True):
@@ -793,6 +818,7 @@ def allOpcodesTest():
                 except Exception as e:
                     print("%s\t\t|%r|\t%s" % (code, e, num))
                     print(op)
+
 
 if __name__ == "__main__":
     #allOpcodesTest()
