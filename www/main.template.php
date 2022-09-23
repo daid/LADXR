@@ -7,7 +7,11 @@
 <script>
 var gfxInfoMap = <?=json_encode($gfx_info)?>
 </script>
+<?if(isset($_GET["wasm"])){?>
+<script src="wasmscript.js"></script>
+<?}else{?>
 <script src="script.js"></script>
+<?}?>
 </head>
 <body>
     <input type="checkbox" id="generatingdialog" class="modal">
@@ -67,11 +71,11 @@ foreach($options as $cat => $list)
         ?><label for='<?=$key?>'><?=$option['label']?>:</label><?php
         if($type === "text")
         {
-            ?><input type='text' id='<?=$key?>' name='<?=$key?>' placeholder='<?=$option['placeholder']?>'/><?php
+            ?><input type='text' id='<?=$key?>' name='<?=$key?>' placeholder='<?=$option['placeholder']?>' arg='<?=$option["arg"]?>'/><?php
         }
         if (is_array($type)) {
             $default = $option['default'];
-            ?><select id='<?=$key?>' name='<?=$key?>'><?php
+            ?><select id='<?=$key?>' name='<?=$key?>' arg='<?=$option["arg"]?>'><?php
             foreach($type as $i=>$o) {
                 if ($i == $default) {
                     ?><option value='<?=$i?>' selected><?=$o?></option><?php
