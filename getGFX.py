@@ -6,6 +6,7 @@ url = "https://raw.githubusercontent.com/CrystalSaver/Z4RandomizerBeta2/master/"
 
 for k, v in requests.get(url + "asset-manifest.json").json()['files'].items():
     m = re.match("static/media/Graphics(.+)\\.bin", k)
+    assert m is not None
     if not k.startswith("static/media/Graphics") or not k.endswith(".bin"):
         continue
     name = m.group(1)
@@ -29,6 +30,7 @@ for k, v in requests.get(url + "asset-manifest.json").json()['files'].items():
         x = (idx % 16) * 8
         icon.paste(tile, (x, 0))
     pal = icon.getpalette()
+    assert pal is not None
     pal[0:3] = [150, 150, 255]
     pal[3:6] = [0, 0, 0]
     pal[6:9] = [59, 180, 112]
