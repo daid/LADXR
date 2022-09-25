@@ -21,13 +21,14 @@ class WorldSetup:
             "moblin_cave": "MOBLIN_KING",
             "armos_temple": "ARMOS_KNIGHT",
         }
+        self.goal = None
         self.bingo_goals = None
         self.multichest = RUPEES_20
 
-    def randomize(self, options, rnd):
-        if options.overworld == "dungeondive":
+    def randomize(self, settings, rnd):
+        if settings.overworld == "dungeondive":
             self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
-        if options.randomstartlocation and options.entranceshuffle == "none":
+        if settings.randomstartlocation and settings.entranceshuffle == "none":
             # List of all the possible locations where we can place our starting house
             start_locations = [
                 "phone_d8",
@@ -45,51 +46,66 @@ class WorldSetup:
             if start_location != "start_house":
                 self.entrance_mapping[start_location] = "start_house"
                 self.entrance_mapping["start_house"] = start_location
-        if options.dungeonshuffle and options.entranceshuffle == "none":
+        if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
             for entrance in entrances.copy():
                 self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
-        if options.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
+        if settings.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
             types = {"single"}
-            if options.entranceshuffle in ("expert", "insanity"):
+            if settings.entranceshuffle in ("expert", "insanity"):
                 types.add("dummy")
-            if options.entranceshuffle in ("insanity",):
+            if settings.entranceshuffle in ("insanity",):
                 types.add("insanity")
-            if options.randomstartlocation:
+            if settings.randomstartlocation:
                 types.add("start")
-            if options.dungeonshuffle:
+            if settings.dungeonshuffle:
                 types.add("dungeon")
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type in types]
             for entrance in entrances.copy():
                 self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
 
-        if options.entranceshuffle in ("advanced", "expert", "insanity"):
+        if settings.entranceshuffle in ("advanced", "expert", "insanity"):
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "connector"]
             for entrance in entrances.copy():
                 self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
 
-        if options.boss != "default":
+        if settings.boss != "default":
             values = list(range(9))
-            if options.heartcontainers:
+            if settings.heartcontainers:
                 # Color dungeon boss does not drop a heart container so we cannot shuffle him when we
                 # have heart container shuffling
                 values.remove(8)
             self.boss_mapping = []
-            for n in range(8 if options.heartcontainers else 9):
+            for n in range(8 if settings.heartcontainers else 9):
                 value = rnd.choice(values)
                 self.boss_mapping.append(value)
-                if value in (3, 6) or options.boss == "shuffle":
+                if value in (3, 6) or settings.boss == "shuffle":
                     values.remove(value)
-            if options.heartcontainers:
+            if settings.heartcontainers:
                 self.boss_mapping += [8]
-        if options.miniboss != "default":
+        if settings.miniboss != "default":
             values = [name for name in self.miniboss_mapping.values()]
             for key in self.miniboss_mapping.keys():
                 self.miniboss_mapping[key] = rnd.choice(values)
-                if options.miniboss == 'shuffle':
+                if settings.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
-        if options.goal in ("bingo", "bingo-full"):
-            self.bingo_goals = bingo.randomizeGoals(rnd, options)
+
+        if settings.goal == 'random':
+            self.goal = rnd.randint(-1, 8)
+        elif settings.goal == 'open':
+            self.goal = -1
+        elif settings.goal in {"seashells", "bingo", "bingo-full"}:
+            self.goal = settings.goal
+        elif "-" in settings.goal:
+            a, b = settings.goal.split("-")
+            if a == "open":
+                a = -1
+            self.goal = rnd.randint(int(a), int(b))
+        else:
+            self.goal = int(settings.goal)
+        if self.goal in {"bingo", "bingo-full"}:
+            self.bingo_goals = bingo.randomizeGoals(rnd, settings)
+
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
     def loadFromRom(self, rom):

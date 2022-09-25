@@ -35,13 +35,13 @@ class ItemInfo:
                 if options.dungeon_items == 'keysanity':
                     self.OPTIONS += ["NIGHTMARE_KEY%d" % (n)]
 
-        if self._location.dungeon is not None and options.dungeon_items in {'standard', 'localkeys', 'localnightmarekey', 'keysy', 'smallkeys'}:
+        if self._location.dungeon is not None and options.dungeon_items in {'', 'localkeys', 'localnightmarekey', 'keysy', 'smallkeys'}:
             # Add items specific to this dungeon
             self.OPTIONS = self.OPTIONS.copy()
             d = self._location.dungeon
-            if options.dungeon_items in {'standard', 'keysy', 'smallkeys'}:
+            if options.dungeon_items in {'', 'keysy', 'smallkeys'}:
                 self.OPTIONS += ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d)]
-            if options.dungeon_items in {'standard', 'localkeys'}:
+            if options.dungeon_items in {'', 'localkeys'}:
                 self.OPTIONS += ["KEY%d" % (d)]
             self.OPTIONS += ["NIGHTMARE_KEY%d" % (d)]
 

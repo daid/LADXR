@@ -68,10 +68,10 @@ DEFAULT_ITEM_POOL = {
 
 
 class ItemPool:
-    def __init__(self, options, rnd):
+    def __init__(self, settings, rnd):
         self.__pool = {}
-        self.__setup(options)
-        self.__randomizeRupees(options, rnd)
+        self.__setup(settings)
+        self.__randomizeRupees(settings, rnd)
 
     def add(self, item, count=1):
         self.__pool[item] = self.__pool.get(item, 0) + count
@@ -95,38 +95,38 @@ class ItemPool:
                 return
         raise RuntimeError("Wanted to remove more rupees from the pool then we have")
 
-    def __setup(self, options):
+    def __setup(self, settings):
         for item, count in DEFAULT_ITEM_POOL.items():
             self.add(item, count)
-        if options.boomerang != 'default':
+        if settings.boomerang != 'default':
             self.add(BOOMERANG)
-        if options.owlstatues == 'both':
+        if settings.owlstatues == 'both':
             self.add(RUPEES_20, 9 + 24)
-        elif options.owlstatues == 'dungeon':
+        elif settings.owlstatues == 'dungeon':
             self.add(RUPEES_20, 24)
-        elif options.owlstatues == 'overworld':
+        elif settings.owlstatues == 'overworld':
             self.add(RUPEES_20, 9)
 
-        if options.bowwow == 'always':
+        if settings.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
             self.add(SWORD)
             self.remove(BOWWOW)
-        elif options.bowwow == 'swordless':
+        elif settings.bowwow == 'swordless':
             # Bowwow mode takes a sword from the pool to give as bowwow, we need to remove all swords and Bowwow except for 1
             self.add(RUPEES_20, self.get(BOWWOW) + self.get(SWORD) - 1)
             self.remove(SWORD, self.get(SWORD) - 1)
             self.remove(BOWWOW, self.get(BOWWOW))
-        if options.hpmode == 'inverted':
+        if settings.hpmode == 'inverted':
             self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-        elif options.hpmode == 'low':
+        elif settings.hpmode == 'low':
             self.add(HEART_PIECE, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-        elif options.hpmode == 'extralow':
+        elif settings.hpmode == 'extralow':
             self.add(RUPEES_20, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
 
-        if options.itempool == 'casual':
+        if settings.itempool == 'casual':
             self.add(FLIPPERS)
             self.add(FEATHER)
             self.add(HOOKSHOT)
@@ -146,24 +146,24 @@ class ItemPool:
                 self.remove("COMPASS%d" % (n + 1))
                 self.add("KEY%d" % (n + 1))
                 self.add("NIGHTMARE_KEY%d" % (n +1))
-        elif options.itempool == 'pain':
+        elif settings.itempool == 'pain':
             self.add(BAD_HEART_CONTAINER, 12)
             self.remove(BLUE_TUNIC)
             self.remove(MEDICINE, 2)
             self.remove(HEART_PIECE, 4)
             self.removeRupees(5)
-        elif options.itempool == 'keyup':
+        elif settings.itempool == 'keyup':
             for n in range(9):
                 self.remove("MAP%d" % (n + 1))
                 self.remove("COMPASS%d" % (n + 1))
                 self.add("KEY%d" % (n +1))
                 self.add("NIGHTMARE_KEY%d" % (n +1))
-            if options.owlstatues in ("none", "overworld"):
+            if settings.owlstatues in ("none", "overworld"):
                 for n in range(9):
                     self.remove("STONE_BEAK%d" % (n + 1))
                     self.add("KEY%d" % (n +1))
 
-        if options.dungeon_items == 'keysy':
+        if settings.dungeon_items == 'keysy':
             for n in range(9):
                 for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
                     item_name = "%s%d" % (item_name, n + 1)
@@ -172,12 +172,12 @@ class ItemPool:
                         self.remove(item_name, self.__pool[item_name])
                     self.add(item_name, amount)
 
-        if options.goal == "seashells":
+        if settings.goal == "seashells":
             for n in range(8):
                 self.remove("INSTRUMENT%d" % (n + 1))
             self.add(SEASHELL, 8)
 
-        if options.overworld == "dungeondive":
+        if settings.overworld == "dungeondive":
             self.remove(SWORD)
             self.remove(MAX_ARROWS_UPGRADE)
             self.remove(MAX_BOMBS_UPGRADE)
@@ -216,11 +216,11 @@ class ItemPool:
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
-        elif not options.rooster:
+        elif not settings.rooster:
             self.remove(ROOSTER)
             self.add(RUPEES_50)
 
-        if options.overworld == "nodungeons":
+        if settings.overworld == "nodungeons":
             for n in range(9):
                 for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
                     self.remove(f"{item_name}{n+1}", self.get(f"{item_name}{n+1}"))
@@ -238,7 +238,7 @@ class ItemPool:
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.
-        if options.multiworld:
+        if settings.multiworld:
             rupees20 = self.__pool.get(RUPEES_20, 0)
             self.add(RUPEES_50, rupees20 // 2)
             self.remove(RUPEES_20, rupees20 // 2)

@@ -53,13 +53,13 @@ import hints
 
 
 # Function to generate a final rom, this patches the rom with all required patches
-def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
-    print("Loading: %s" % (options.input_filename))
-    rom = ROMWithTables(options.input_filename)
+def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
+    print("Loading: %s" % (args.input_filename))
+    rom = ROMWithTables(args.input_filename)
 
     pymods = []
-    if options.pymod:
-        for pymod in options.pymod:
+    if args.pymod:
+        for pymod in args.pymod:
             spec = importlib.util.spec_from_loader(pymod, importlib.machinery.SourceFileLoader(pymod, pymod))
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
@@ -67,8 +67,8 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     for pymod in pymods:
         pymod.prePatch(rom)
 
-    if options.gfxmod:
-        for gfx in options.gfxmod:
+    if settings.gfxmod:
+        for gfx in settings.gfxmod:
             patches.aesthetics.gfxMod(rom, gfx)
 
     assembler.resetConsts()
@@ -96,7 +96,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("wCuccoSpawnCount", 0xDE11)
 
     #assembler.const("HARDWARE_LINK", 1)
-    assembler.const("HARD_MODE", 1 if options.hardMode != "none" else 0)
+    assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
 
     patches.core.cleanup(rom)
     if multiworld is not None:
@@ -118,10 +118,10 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if options.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
+    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
         patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
-    if options.witch:
+    if settings.witch:
         patches.witch.updateWitch(rom)
     patches.softlock.fixAll(rom)
     patches.maptweaks.tweakMap(rom)
@@ -135,9 +135,9 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.tarin.updateTarin(rom)
     patches.fishingMinigame.updateFinishingMinigame(rom)
     patches.health.upgradeHealthContainers(rom)
-    if options.owlstatues in ("dungeon", "both"):
+    if settings.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)
-    if options.owlstatues in ("overworld", "both"):
+    if settings.owlstatues in ("overworld", "both"):
         patches.owl.upgradeOverworldOwlStatues(rom)
     patches.goldenLeaf.fixGoldenLeaf(rom)
     patches.heartPiece.fixHeartPiece(rom)
@@ -147,21 +147,21 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
-    if options.tradequest:
-        patches.tradeSequence.patchTradeSequence(rom, options.boomerang)
+    if settings.tradequest:
+        patches.tradeSequence.patchTradeSequence(rom, settings.boomerang)
     else:
         # Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-    patches.bowwow.fixBowwow(rom, everywhere=options.bowwow != 'normal')
-    if options.bowwow != 'normal':
+    patches.bowwow.fixBowwow(rom, everywhere=settings.bowwow != 'normal')
+    if settings.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
-    if options.overworld == 'dungeondive':
+    if settings.overworld == 'dungeondive':
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
-    elif options.overworld == 'nodungeons':
+    elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
-    if options.dungeon_items == 'keysy':
+    if settings.dungeon_items == 'keysy':
         patches.dungeon.removeKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
@@ -169,52 +169,52 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
-    if options.music == 'random':
+    if settings.music == 'random':
         patches.music.randomizeMusic(rom, rnd)
-    elif options.music == 'off':
+    elif settings.music == 'off':
         patches.music.noMusic(rom)
-    if options.removeFlashingLights:
+    if settings.noflash:
         patches.aesthetics.removeFlashingLights(rom)
-    if options.hardMode == "oracle":
+    if settings.hardmode == "oracle":
         patches.hardMode.oracleMode(rom)
-    elif options.hardMode == "hero":
+    elif settings.hardmode == "hero":
         patches.hardMode.heroMode(rom)
-    elif options.hardMode == "ohko":
+    elif settings.hardmode == "ohko":
         patches.hardMode.oneHitKO(rom)
-    if options.superweapons:
+    if settings.superweapons:
         patches.weapons.patchSuperWeapons(rom)
-    if options.textmode == 'fast':
+    if settings.textmode == 'fast':
         patches.aesthetics.fastText(rom)
-    if options.textmode == 'none':
+    if settings.textmode == 'none':
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
-    if options.removeNagMessages:
+    if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
-    if options.lowhpbeep == 'slow':
+    if settings.lowhpbeep == 'slow':
         patches.aesthetics.slowLowHPBeep(rom)
-    if options.lowhpbeep == 'none':
+    if settings.lowhpbeep == 'none':
         patches.aesthetics.removeLowHPBeep(rom)
-    if options.linkspalette is not None and options.linkspalette >= 0:
-        patches.aesthetics.forceLinksPalette(rom, options.linkspalette)
-    if options.romdebugmode:
+    if 0 <= int(settings.linkspalette):
+        patches.aesthetics.forceLinksPalette(rom, int(settings.linkspalette))
+    if args.romdebugmode:
         # The default rom has this build in, just need to set a flag and we get this save.
         rom.patch(0, 0x0003, "00", "01")
 
     # Patch the sword check on the shopkeeper turning around.
-    if options.steal == 'never':
+    if settings.steal == 'never':
         rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
-    elif options.steal == 'always':
+    elif settings.steal == 'always':
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
 
-    if options.hpmode == 'inverted':
+    if settings.hpmode == 'inverted':
         patches.health.setStartHealth(rom, 9)
-    elif options.hpmode == '1':
+    elif settings.hpmode == '1':
         patches.health.setStartHealth(rom, 1)
 
     patches.inventory.songSelectAfterOcarinaSelect(rom)
-    if options.quickswap == 'a':
+    if settings.quickswap == 'a':
         patches.core.quickswap(rom, 1)
-    elif options.quickswap == 'b':
+    elif settings.quickswap == 'b':
         patches.core.quickswap(rom, 0)
 
     if multiworld is None:
@@ -223,7 +223,7 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         world_setup = logic.world_setup
         item_list = logic.iteminfo_list
     else:
-        patches.multiworld.addMultiworldShop(rom, multiworld, options.multiworld)
+        patches.multiworld.addMultiworldShop(rom, multiworld, settings.multiworld)
 
         # Set a unique ID in the rom for multiworld
         for n in range(4):
@@ -234,18 +234,18 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         world_setup = logic.worlds[multiworld].world_setup
         item_list = [spot for spot in logic.iteminfo_list if spot.world == multiworld]
 
-    if options.goal == "raft":
+    if world_setup.goal == "raft":
         patches.goal.setRaftGoal(rom)
-    elif options.goal in ("bingo", "bingo-full"):
-        patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, options.goal)
-    elif options.goal == "seashells":
+    elif world_setup.goal in ("bingo", "bingo-full"):
+        patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, world_setup.goal)
+    elif world_setup.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
-    elif options.goal != "random" and options.goal is not None:
-        patches.goal.setRequiredInstrumentCount(rom, int(options.goal))
+    else:
+        patches.goal.setRequiredInstrumentCount(rom, world_setup.goal)
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if options.overworld != "dungeondive":
+    if settings.overworld != "dungeondive":
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):
@@ -254,14 +254,14 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
 
-    if not options.romdebugmode:
+    if not args.romdebugmode:
         patches.core.addFrameCounter(rom, len(item_list))
 
     patches.core.warpHome(rom)  # Needs to be done after setting the start location.
-    patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), options)
+    patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), settings)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)
-    if options.doubletrouble:
+    if args.doubletrouble:
         patches.enemies.doubleTrouble(rom)
     for pymod in pymods:
         pymod.postPatch(rom)

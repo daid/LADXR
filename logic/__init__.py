@@ -131,15 +131,15 @@ class Logic:
 
 
 class MultiworldLogic:
-    def __init__(self, configuration_options, rnd=None, *, world_setups=None):
+    def __init__(self, settings, rnd=None, *, world_setups=None):
         assert rnd or world_setups
         self.worlds = []
         self.start = Location()
         self.location_list = [self.start]
         self.iteminfo_list = []
 
-        for n in range(configuration_options.multiworld):
-            options = configuration_options.multiworld_options[n]
+        for n in range(settings.multiworld):
+            options = settings.multiworld_settings[n]
             world = None
             if world_setups:
                 world = Logic(options, world_setup=world_setups[n])
@@ -246,17 +246,17 @@ class MultiworldItemInfoWrapper:
     # Return true if the item is allowed to be placed in any world, or false if it is
     # world specific for this check.
     def canMultiworld(self, option):
-        if self.dungeon_items in {'standard', 'smallkeys'}:
+        if self.dungeon_items in {'', 'smallkeys'}:
             if option.startswith("MAP"):
                 return False
             if option.startswith("COMPASS"):
                 return False
             if option.startswith("STONE_BEAK"):
                 return False
-        if self.dungeon_items in {'standard', 'localkeys'}:
+        if self.dungeon_items in {'', 'localkeys'}:
             if option.startswith("KEY"):
                 return False
-        if self.dungeon_items in {'standard', 'localkeys', 'localnightmarekey', 'smallkeys'}:
+        if self.dungeon_items in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
             if option.startswith("NIGHTMARE_KEY"):
                 return False
         return True

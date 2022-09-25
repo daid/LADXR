@@ -15,6 +15,7 @@ import spoilerLog
 import itempool
 from plan import Plan
 from worldSetup import WorldSetup
+from settings import Settings
 
 
 class Error(Exception):
@@ -22,28 +23,26 @@ class Error(Exception):
 
 
 class Randomizer:
-    def __init__(self, options: argparse.Namespace, *, seed: Optional[bytes] = None) -> None:
+    def __init__(self, args: argparse.Namespace, settings: Settings, *, seed: Optional[bytes] = None) -> None:
         self.seed = seed
         self.plan = None
         if self.seed is None:
             self.seed = os.urandom(16)
         self.rnd = random.Random(self.seed)
-        if options.race:
+        if settings.race:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
-        if isinstance(options.goal, range):
-            options.goal = self.rnd.randint(min(options.goal), max(options.goal))
-        if options.plan:
-            assert options.multiworld is None
-            self.plan = Plan(options.plan)
+        if args.plan:
+            assert settings.multiworld is None
+            self.plan = Plan(args.plan)
 
-        if options.multiworld:
-            self.__logic = logic.MultiworldLogic(options, self.rnd)
+        if settings.multiworld:
+            self.__logic = logic.MultiworldLogic(settings, self.rnd)
         else:
             for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
                 world_setup = WorldSetup()
-                world_setup.randomize(options, self.rnd)
-                self.__logic = logic.Logic(options, world_setup=world_setup)
-                if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(options, self.rnd).toDict().values()):
+                world_setup.randomize(settings, self.rnd)
+                self.__logic = logic.Logic(settings, world_setup=world_setup)
+                if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(settings, self.rnd).toDict().values()):
                     break
 
         if self.plan:
@@ -54,27 +53,27 @@ class Randomizer:
                 elif item is not None:
                     ii.forced_item = item
 
-        if options.multiworld:
-            item_placer = MultiworldItemPlacer(self.__logic, options.forwardfactor if options.forwardfactor else 0.5, options.accessibility_rule, options.multiworld)
-        elif options.dungeon_items in ('standard', 'localkeys') or options.forwardfactor:
-            item_placer = ForwardItemPlacer(self.__logic, options.forwardfactor, options.accessibility_rule)
+        if settings.multiworld:
+            item_placer = MultiworldItemPlacer(self.__logic, settings.forwardfactor if settings.forwardfactor > 0.0 else 0.5, settings.accessibility, settings.multiworld)
+        elif settings.dungeon_items in ('', 'localkeys') or settings.forwardfactor > 0.0:
+            item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
-            item_placer = RandomItemPlacer(self.__logic, options.accessibility_rule)
-        for item, count in self.readItemPool(options, item_placer).items():
+            item_placer = RandomItemPlacer(self.__logic, settings.accessibility)
+        for item, count in self.readItemPool(settings, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
         item_placer.run(self.rnd)
 
-        if options.multiworld:
+        if settings.multiworld:
             z = None
-            if options.output_filename is not None:
-                z = zipfile.ZipFile(options.output_filename, "w")
+            if args.output_filename is not None:
+                z = zipfile.ZipFile(args.output_filename, "w")
                 z.write(os.path.join(os.path.dirname(__file__), "multiworld/bizhawkConnector.lua"), "bizhawkConnector.lua")
                 z.write(os.path.join(os.path.dirname(__file__), "multiworld/socket.dll"), "socket.dll")
             roms = []
-            for n in range(options.multiworld):
-                rom = generator.generateRom(options.multiworld_options[n], self.seed, self.__logic, rnd=self.rnd, multiworld=n)
-                fname = "LADXR_Multiworld_%d_%d.gbc" % (options.multiworld, n + 1)
+            for n in range(settings.multiworld):
+                rom = generator.generateRom(args, settings.multiworld_settings[n], self.seed, self.__logic, rnd=self.rnd, multiworld=n)
+                fname = "LADXR_Multiworld_%d_%d.gbc" % (settings.multiworld, n + 1)
                 if z:
                     handle = z.open(fname, "w")
                     rom.save(handle, name="LADXR")
@@ -82,40 +81,40 @@ class Randomizer:
                 else:
                     rom.save(fname, name="LADXR")
                 roms.append(rom)
-            if (options.spoilerformat != "none" or options.log_directory) and not options.race:
-                log = spoilerLog.SpoilerLog(options, roms)
-                if options.log_directory:
-                    filename = "LADXR_Multiworld_%d_%s_%s.json" % (options.multiworld, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
-                    log_path = os.path.join(options.log_directory, filename)
+            if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
+                log = spoilerLog.SpoilerLog(settings, roms)
+                if args.log_directory:
+                    filename = "LADXR_Multiworld_%d_%s_%s.json" % (settings.multiworld, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
+                    log_path = os.path.join(args.log_directory, filename)
                     log.outputJson(log_path)
-                if options.spoilerformat != "none":
-                    extension = "json" if options.spoilerformat == "json" else "txt"
-                    sfname = "LADXR_Multiworld_%d.%s" % (options.multiworld, extension)
+                if args.spoilerformat != "none":
+                    extension = "json" if args.spoilerformat == "json" else "txt"
+                    sfname = "LADXR_Multiworld_%d.%s" % (settings.multiworld, extension)
                     log.output(sfname, z)
         else:
-            rom = generator.generateRom(options, self.seed, self.__logic, rnd=self.rnd)
-            filename = options.output_filename
+            rom = generator.generateRom(args, settings, self.seed, self.__logic, rnd=self.rnd)
+            filename = args.output_filename
             if filename is None:
                 filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
             rom.save(filename, name="LADXR")
 
-            if (options.spoilerformat != "none" or options.log_directory) and not options.race:
-                log = spoilerLog.SpoilerLog(options, [rom])
-                if options.log_directory:
+            if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
+                log = spoilerLog.SpoilerLog(args, [rom])
+                if args.log_directory:
                     filename = "LADXR_%s_%s.json" % (datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
-                    log_path = os.path.join(options.log_directory, filename)
+                    log_path = os.path.join(args.log_directory, filename)
                     log.outputJson(log_path)
-                if options.spoilerformat != "none":
-                    log.output(options.spoiler_filename)
+                if args.spoilerformat != "none":
+                    log.output(args.spoiler_filename)
 
-    def readItemPool(self, options: argparse.Namespace, item_placer: "ItemPlacer") -> Dict[str, int]:
+    def readItemPool(self, settings: Settings, item_placer: "ItemPlacer") -> Dict[str, int]:
         item_pool = {}
-        # Collect the item pool from the rom to see which items we can randomize.
-        if options.multiworld is None:
-            item_pool = itempool.ItemPool(options, self.rnd).toDict()
+        # Build the item pool to see which items we can randomize.
+        if settings.multiworld is None:
+            item_pool = itempool.ItemPool(settings, self.rnd).toDict()
         else:
-            for world in range(options.multiworld):
-                world_item_pool = itempool.ItemPool(options.multiworld_options[world], self.rnd).toDict()
+            for world in range(settings.multiworld):
+                world_item_pool = itempool.ItemPool(settings.multiworld_settings[world], self.rnd).toDict()
                 for item, count in world_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
@@ -149,11 +148,11 @@ class Randomizer:
 
 
 class ItemPlacer:
-    def __init__(self, logic: logic.Logic, accessibility_rule: str) -> None:
+    def __init__(self, logic: logic.Logic, accessibility: str) -> None:
         self._logic = logic
         self._item_pool: Dict[str, int] = {}
         self._spots: List[locations.itemInfo.ItemInfo] = []
-        self._accessibility_rule: str = accessibility_rule
+        self._accessibility: str = accessibility
 
     def addItem(self, item: str, count: int = 1) -> None:
         self._item_pool[item] = self._item_pool.get(item, 0) + count
@@ -274,7 +273,7 @@ class RandomItemPlacer(ItemPlacer):
             e.addItem(item_pool_item, count)
         e.visit(self._logic.start)
 
-        if self._accessibility_rule == "goal":
+        if self._accessibility == "goal":
             return self._logic.windfish in e.getAccessableLocations()
         else:
             if len(e.getAccessableLocations()) != len(self._logic.location_list):
@@ -294,11 +293,11 @@ class ForwardItemPlacer(ItemPlacer):
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
     ]
 
-    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility_rule: str, *, verbose: bool = False) -> None:
-        super().__init__(logic, accessibility_rule)
+    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility: str, *, verbose: bool = False) -> None:
+        super().__init__(logic, accessibility)
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
-        self.__forwardfactor = forwardfactor if forwardfactor else 0.5
+        self.__forwardfactor = forwardfactor if forwardfactor > 0.0 else 0.5
         self.__start_spots_filled = False
         self.__verbose = verbose
 
@@ -312,7 +311,7 @@ class ForwardItemPlacer(ItemPlacer):
         while self._item_pool:
             if not self._placeItem(rnd):
                 bail_counter += 1
-                if bail_counter > 100:
+                if bail_counter > 30:
                     raise Error("Failed to place an item for a bunch of retries")
             else:
                 bail_counter = 0
@@ -320,7 +319,7 @@ class ForwardItemPlacer(ItemPlacer):
     def _placeItem(self, rnd: random.Random) -> bool:
         e = explorer.Explorer()
         e.visit(self._logic.start)
-        if self._accessibility_rule == "goal" and self._logic.windfish in e.getAccessableLocations():
+        if self._accessibility == "goal" and self._logic.windfish in e.getAccessableLocations():
             spots = self._spots
             req_items = []
         else:
@@ -354,7 +353,7 @@ class ForwardItemPlacer(ItemPlacer):
         spot = rnd.choices(spots, [spot.weight for spot in spots])[0]
 
         spot.item = item
-        if self._accessibility_rule != "goal" or self._logic.windfish not in e.getAccessableLocations():
+        if self._accessibility != "goal" or self._logic.windfish not in e.getAccessableLocations():
             if e.getRequiredItemsForNextLocations() and not self.hasNewPlacesToExplore():
                 spot.item = None
                 return False
@@ -376,8 +375,8 @@ class ForwardItemPlacer(ItemPlacer):
 
 
 class MultiworldItemPlacer(ForwardItemPlacer):
-    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility_rule: str, world_count: int) -> None:
-        super().__init__(logic, forwardfactor, accessibility_rule, verbose=True)
+    def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility: str, world_count: int) -> None:
+        super().__init__(logic, forwardfactor, accessibility, verbose=True)
         self.__world_count = world_count
         self.__initial_spot_count = 0
         self.DUNGEON_ITEMS = ["%s_W%d" % (item, w) for item in self.DUNGEON_ITEMS for w in range(world_count)]
@@ -409,8 +408,8 @@ class MultiworldItemPlacer(ForwardItemPlacer):
             self._item_pool = new_item_pool
         return False
 
-    def canStillPlaceItemPool(self) -> bool:
-        return True
+    # def canStillPlaceItemPool(self) -> bool:
+    #     return True
 
     def _chooseItem(self, rnd: random.Random, req_items: List[str]) -> str:
         per_world: Dict[int, int] = {}
