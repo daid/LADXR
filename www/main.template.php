@@ -7,11 +7,7 @@
 <script>
 var gfxInfoMap = <?=json_encode($gfx_info)?>
 </script>
-<?if(isset($_GET["wasm"])){?>
-<script src="wasmscript.js"></script>
-<?}else{?>
 <script src="script.js"></script>
-<?}?>
 </head>
 <body>
     <input type="checkbox" id="generatingdialog" class="modal">

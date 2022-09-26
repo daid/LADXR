@@ -1,6 +1,7 @@
 "use strict";
 
 var spoilerContent = "";
+var worker;
 
 function ID(id) { return document.getElementById(id); }
 
@@ -65,21 +66,24 @@ function setValidRom(valid, msg)
 
 function b64toBlob(b64Data, contentType='', sliceSize=512)
 {
-    const byteCharacters = atob(b64Data);
     const byteArrays = [];
+    if (typeof(b64Data) == "string") {
+        const byteCharacters = atob(b64Data);
 
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
 
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
         }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+    } else {
+        byteArrays.push(b64Data);
     }
-
     const blob = new Blob(byteArrays, {type: contentType});
     return blob;
 }
@@ -227,22 +231,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
         ID("gfxmod").oninput();
     }
 
-    ID("form").onsubmit = function(e) {
+    ID("form").onsubmit = async function(e) {
         e.preventDefault();
         var form = e.target;
         var url = form.action;
-        var formData = new FormData(form);
 
         startSeedGeneration();
-
-        var req = new XMLHttpRequest();
-        req.open("POST", url);
-        req.addEventListener("load", function()
-        {
-            var response = req.response;
-            try { response = JSON.parse(response); } catch {}
-            seedComplete(response);
-        });
-        req.send(formData);
+        if (!worker) {
+            worker = new Worker("worker.js");
+            worker.onmessage = function(event) {
+                seedComplete(event.data);
+            }
+            worker.onerror = console.log;
+        }
+        var buffer = await ID("rom").files[0].arrayBuffer();
+        var a = new Uint8Array(buffer);
+        var args = ["/input.gbc", "--output", "/output.gbc", "--spoilerfilename", "/spoiler.txt"];
+        for(var e of ID("form").elements) {
+            if ("arg" in e.attributes && e.value != "") {
+                args.push(e.attributes["arg"].value);
+                if (e.textContent != "YesNo") { //HACK
+                    if (e.id == "gfxmod") //HACK2
+                        args.push("gfx/" + e.value);
+                    else
+                        args.push(e.value);
+                }
+            }
+        }
+        worker.postMessage({"input.gbc": a, "args": args});
     };
 });
