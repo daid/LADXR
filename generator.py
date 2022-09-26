@@ -1,7 +1,7 @@
-import random
 import binascii
 import importlib.util
 import importlib.machinery
+import os
 
 from romTables import ROMWithTables
 import assembler
@@ -68,8 +68,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         pymod.prePatch(rom)
 
     if settings.gfxmod:
-        for gfx in settings.gfxmod:
-            patches.aesthetics.gfxMod(rom, gfx)
+        patches.aesthetics.gfxMod(rom, os.path.join(os.path.dirname(__file__), "gfx", settings.gfxmod))
 
     assembler.resetConsts()
     assembler.const("INV_SIZE", 16)

@@ -49,6 +49,23 @@ class Setting:
                     return option_short
         return self.value + ">"
 
+    def toJson(self):
+        result = {
+            "key": self.key,
+            "category": self.category,
+            "short_key": self.short_key,
+            "label": self.label,
+            "description": self.description,
+            "multiworld": self.multiworld,
+            "aesthetic": self.aesthetic,
+            "default": self.default,
+        }
+        if self.options:
+            result["options"] = [{"key": option_key, "short": option_short, "label": option_label} for option_key, option_short, option_label in self.options]
+        if self.placeholder:
+            result["placeholder"] = self.placeholder
+        return result
+
 
 class Settings:
     def __init__(self, multiworld_count=None):
@@ -251,7 +268,7 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
                     setting.value = True
                 elif setting.options:
                     for option_key, option_short, option_label in setting.options:
-                        if value[index:].startswith(option_short):
+                        if option_key != setting.default and value[index:].startswith(option_short):
                             setting.value = option_key
                             index += len(option_short)
                             break
@@ -300,3 +317,6 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
         if key not in self.__by_key:
             raise ValueError(f"Setting {key} not found")
         self.__by_key[key].set(value)
+
+    def toJson(self):
+        return [s.toJson() for s in self.__all]

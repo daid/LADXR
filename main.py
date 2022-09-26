@@ -1,6 +1,6 @@
 import binascii
 from romTables import ROMWithTables
-import shlex
+import json
 import randomizer
 import logic
 import spoilerLog
@@ -41,6 +41,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Set a configuration setting for rom generation")
     parser.add_argument('--short', dest="shortsettings", type=str, required=False,
         help="Set a configuration setting for rom generation")
+    parser.add_argument('--settingjson', dest="settingjson", action="store_true",
+        help="Dump a json blob which describes all settings")
 
     parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
         help="Read an item placement plan")
@@ -53,6 +55,9 @@ def main(mainargs: Optional[List[str]] = None) -> None:
 
     settings = Settings()
     args = parser.parse_args(mainargs)
+    if args.settingjson:
+        print(json.dumps(settings.toJson()))
+        return
     if args.shortsettings is not None:
         settings.loadShortString(args.shortsettings)
     if args.settings:
