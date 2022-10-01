@@ -5,11 +5,12 @@ enabled = True
 directory = _test
 commands =
     python3 ../main.py ../input.gbc --timeout 120 --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --dungeon-items keysanity --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --logic glitched --dungeon-items keysanity --heartpiece --seashells --heartcontainers --instruments --owlstatues both --dungeonshuffle --witch --boomerang gift --steal never --goal random --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --logic casual --dungeon-items keysy --pool casual --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --textmode none --output /dev/null
-    python3 ../main.py ../input.gbc --timeout 120 --overworld dungeondive --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 -s seashells=0 -s heartpiece=0 -s dungeonitems=keysanity --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 -s logic=glitched --dungeon-items keysanity -s heartpiece=0 -s seashells=0 -s heartcontainers=0 -s instruments=1 -s owlstatues=both -s dungeonshuffle=1 -s witch=0 -s boomerang=gift -s steal=never -s goal=random --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 -s logic=casual --dungeonitems=keysy -s itempool=casual --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 -s textmode=none --output /dev/null
+    python3 ../main.py ../input.gbc --timeout 120 -s overworld=dungeondive --output /dev/null
+ignore =
     python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle simple --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle advanced --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 --seashells --heartpiece --entranceshuffle insanity --output /dev/null
