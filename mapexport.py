@@ -1,4 +1,5 @@
 import PIL.Image, PIL.ImageDraw
+import os
 from roomEditor import RoomEditor, ObjectHorizontal, ObjectVertical, ObjectWarp
 
 
@@ -39,11 +40,11 @@ class RenderedMap:
     def placeObject(self, x, y, type_id):
         if self.overworld:
             if type_id == 0xF5:
-                if self.getObject(x, y) in (0x28, 0x83, 0x90):
+                if self.getObject(x, y) in (0x28, 0x29, 0x83, 0x90):
                     self.placeObject(x, y, 0x29)
                 else:
                     self.placeObject(x, y, 0x25)
-                if self.getObject(x + 1, y) in (0x27, 0x82, 0x90):
+                if self.getObject(x + 1, y) in (0x27, 0x2A, 0x82, 0x90):
                     self.placeObject(x + 1, y, 0x2A)
                 else:
                     self.placeObject(x + 1, y, 0x26)
@@ -221,20 +222,21 @@ class MapExport:
         }
         self.__room_map_info = {}
 
-        f = open("test.html", "wt")
-        result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
+        os.makedirs("_map/img", exist_ok=True)
+        f = open("_map/test.html", "wt")
+        result = PIL.Image.new("L", (16 * (20 * 8 + 1), 16 * (16 * 8 + 1)))
         for n in range(0x100):
             x = n % 0x10
             y = n // 0x10
-            result.paste(self.exportRoom(n), (x * 20 * 8, y * 16 * 8))
-        result.save("overworld.png")
-        f.write("<img src='overworld.png'><br><br>")
-        
-        self.exportMetaTiles(f, "metatiles_main.png", 0x0F, 0, lambda n: n >= 32 and (n < 0x6C or n >= 0x70))
+            result.paste(self.exportRoom(n), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
+        result.save("_map/img/overworld.png")
+        f.write("<img src='img/overworld.png'><br><br>")
+        return
+        self.exportMetaTiles(f, "_map/img/metatiles_main.png", 0x0F, 0, lambda n: n >= 32 and (n < 0x6C or n >= 0x70))
         for n in (0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3E):
-            self.exportMetaTiles(f, "metatiles_%02x.png" % (n), n, 0, lambda n: n < 32)
+            self.exportMetaTiles(f, "_map/img/metatiles_%02x.png" % (n), n, 0, lambda n: n < 32)
         for n in range(2, 17):
-            self.exportMetaTiles(f, "metatiles_anim_%02x.png" % (n), 0x0F, n, lambda n: n >= 0x6C and n < 0x70)
+            self.exportMetaTiles(f, "_map/img/metatiles_anim_%02x.png" % (n), 0x0F, n, lambda n: n >= 0x6C and n < 0x70)
 
         for n in (0,1,2,3,4,5,6,7, 10, 11):
             addr = 0x0220 + n * 8 * 8
@@ -251,8 +253,8 @@ class MapExport:
                         continue
                     self.__room_map_info[room] = (x, y, n)
                     result.paste(self.exportRoom(room), (x * 20 * 8, y * 16 * 8))
-            result.save("dungeon_%d.png" % (n))
-            f.write("<img src='dungeon_%d.png'><br><br>" % (n))
+            result.save("_map/img/dungeon_%d.png" % (n))
+            f.write("<img src='img/dungeon_%d.png'><br><br>" % (n))
 
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x100):
@@ -261,8 +263,8 @@ class MapExport:
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x100), (x * 20 * 8, y * 16 * 8))
-        result.save("caves1.png")
-        f.write("<img src='caves1.png'><br><br>")
+        result.save("_map/img/caves1.png")
+        f.write("<img src='img/caves1.png'><br><br>")
         result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
         for n in range(0x0FF):
             if n + 0x200 in self.__room_map_info:
@@ -270,8 +272,8 @@ class MapExport:
             x = n % 0x10
             y = n // 0x10
             result.paste(self.exportRoom(n + 0x200), (x * 20 * 8, y * 16 * 8))
-        result.save("caves2.png")
-        f.write("<img src='caves2.png'>")
+        result.save("_map/img/caves2.png")
+        f.write("<img src='img/caves2.png'>")
         f.close()
 
     def exportMetaTiles(self, f, name, main_set, animation_set, condition_func):
@@ -303,7 +305,7 @@ class MapExport:
                     result.paste(tilemap[metatile_info[obj*4+3]], (x*16+8, y*16+8))
 
         result.save(name)
-        f.write("%s<br><img src='%s'><br><br>" % (name, name))
+        f.write("%s<br><img src='%s'><br><br>" % (name[5:], name[5:]))
 
     def exportRoom(self, room_nr):
         re = RoomEditor(self.__rom, room_nr)
@@ -429,6 +431,10 @@ class MapExport:
         warp_pos = []
         for y in range(8):
             for x in range(10):
+                # draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (rendered_map.objects[(x, y)]))
+                # physics_flags = self.__rom.banks[8][0x0AD4 + rendered_map.objects[(x, y)]]
+                # if physics_flags != 0:
+                #     draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (physics_flags))
                 if rendered_map.objects[(x, y)] in (0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB):
                     warp_pos.append((x, y))
         for x, y, type_id in re.entities:

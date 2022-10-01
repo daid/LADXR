@@ -222,18 +222,154 @@ class RoomEditor:
                         self.addEntity(x, y, type_id)
                     elif obj["type"] == "hidden_tile":
                         self.objects.append(Object(x, y, int(obj["name"], 16)))
-        for n in range(80):
-            if self.overlay:
-                self.overlay[n] = tiles[n]
+        self.buildObjectList(tiles, reduce_size=True)
+        return data
 
-            if tiles[n] in {0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
-                            0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-                            0x48, 0x49, 0x4B, 0x4C, 0x4E,
-                            0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F}:
-                tiles[n] = 0x3A  # Solid tiles
-            if tiles[n] in {0x08, 0x09, 0x0C, 0x44,
-                            0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF}:
-                tiles[n] = 0x04  # Open tiles
+    def getTileArray(self):
+        # TODO: Fix for dungeon rooms.
+        tiles = [self.floor_object] * 80
+        def objHSize(type_id):
+            if type_id == 0xF5:
+                return 2
+            return 1
+        def objVSize(type_id):
+            if type_id == 0xF5:
+                return 2
+            return 1
+        def getObject(x, y):
+            x, y = (x & 15), (y & 15)
+            if x < 10 and y < 8:
+                return tiles[x + y * 10]
+            return 0
+        def placeObject(x, y, type_id):
+            if type_id == 0xF5:
+                if getObject(x, y) in (0x28, 0x29, 0x83, 0x90):
+                    placeObject(x, y, 0x29)
+                else:
+                    placeObject(x, y, 0x25)
+                if getObject(x + 1, y) in (0x27, 0x82, 0x90, 0x2A):
+                    placeObject(x + 1, y, 0x2A)
+                else:
+                    placeObject(x + 1, y, 0x26)
+                if getObject(x, y + 1) in (0x26, 0x2A):
+                    placeObject(x, y + 1, 0x2A)
+                elif getObject(x, y + 1) == 0x90:
+                    placeObject(x, y + 1, 0x82)
+                else:
+                    placeObject(x, y + 1, 0x27)
+                if getObject(x + 1, y + 1) in (0x25, 0x29):
+                    placeObject(x + 1, y + 1, 0x29)
+                elif getObject(x + 1, y + 1) == 0x90:
+                    placeObject(x + 1, y + 1, 0x83)
+                else:
+                    placeObject(x + 1, y + 1, 0x28)
+            elif type_id == 0xF6:  # two door house
+                placeObject(x + 0, y, 0x55)
+                placeObject(x + 1, y, 0x5A)
+                placeObject(x + 2, y, 0x5A)
+                placeObject(x + 3, y, 0x5A)
+                placeObject(x + 4, y, 0x56)
+                placeObject(x + 0, y + 1, 0x57)
+                placeObject(x + 1, y + 1, 0x59)
+                placeObject(x + 2, y + 1, 0x59)
+                placeObject(x + 3, y + 1, 0x59)
+                placeObject(x + 4, y + 1, 0x58)
+                placeObject(x + 0, y + 2, 0x5B)
+                placeObject(x + 1, y + 2, 0xE2)
+                placeObject(x + 2, y + 2, 0x5B)
+                placeObject(x + 3, y + 2, 0xE2)
+                placeObject(x + 4, y + 2, 0x5B)
+            elif type_id == 0xF7:  # large house
+                placeObject(x + 0, y, 0x55)
+                placeObject(x + 1, y, 0x5A)
+                placeObject(x + 2, y, 0x56)
+                placeObject(x + 0, y + 1, 0x57)
+                placeObject(x + 1, y + 1, 0x59)
+                placeObject(x + 2, y + 1, 0x58)
+                placeObject(x + 0, y + 2, 0x5B)
+                placeObject(x + 1, y + 2, 0xE2)
+                placeObject(x + 2, y + 2, 0x5B)
+            elif type_id == 0xF8:  # catfish
+                placeObject(x + 0, y, 0xB6)
+                placeObject(x + 1, y, 0xB7)
+                placeObject(x + 2, y, 0x66)
+                placeObject(x + 0, y + 1, 0x67)
+                placeObject(x + 1, y + 1, 0xE3)
+                placeObject(x + 2, y + 1, 0x68)
+            elif type_id == 0xF9:  # palace door
+                placeObject(x + 0, y, 0xA4)
+                placeObject(x + 1, y, 0xA5)
+                placeObject(x + 2, y, 0xA6)
+                placeObject(x + 0, y + 1, 0xA7)
+                placeObject(x + 1, y + 1, 0xE3)
+                placeObject(x + 2, y + 1, 0xA8)
+            elif type_id == 0xFA:  # stone pig head
+                placeObject(x + 0, y, 0xBB)
+                placeObject(x + 1, y, 0xBC)
+                placeObject(x + 0, y + 1, 0xBD)
+                placeObject(x + 1, y + 1, 0xBE)
+            elif type_id == 0xFB:  # palmtree
+                if x == 15:
+                    placeObject(x + 1, y + 1, 0xB7)
+                    placeObject(x + 1, y + 2, 0xCE)
+                else:
+                    placeObject(x + 0, y, 0xB6)
+                    placeObject(x + 0, y + 1, 0xCD)
+                    placeObject(x + 1, y + 0, 0xB7)
+                    placeObject(x + 1, y + 1, 0xCE)
+            elif type_id == 0xFC:  # square "hill with hole" (seen near lvl4 entrance)
+                placeObject(x + 0, y, 0x2B)
+                placeObject(x + 1, y, 0x2C)
+                placeObject(x + 2, y, 0x2D)
+                placeObject(x + 0, y + 1, 0x37)
+                placeObject(x + 1, y + 1, 0xE8)
+                placeObject(x + 2, y + 1, 0x38)
+                placeObject(x - 1, y + 2, 0x0A)
+                placeObject(x + 0, y + 2, 0x33)
+                placeObject(x + 1, y + 2, 0x2F)
+                placeObject(x + 2, y + 2, 0x34)
+                placeObject(x + 0, y + 3, 0x0A)
+                placeObject(x + 1, y + 3, 0x0A)
+                placeObject(x + 2, y + 3, 0x0A)
+                placeObject(x + 3, y + 3, 0x0A)
+            elif type_id == 0xFD:  # small house
+                placeObject(x + 0, y, 0x52)
+                placeObject(x + 1, y, 0x52)
+                placeObject(x + 2, y, 0x52)
+                placeObject(x + 0, y + 1, 0x5B)
+                placeObject(x + 1, y + 1, 0xE2)
+                placeObject(x + 2, y + 1, 0x5B)
+            else:
+                x, y = (x & 15), (y & 15)
+                if x < 10 and y < 8:
+                    tiles[x + y * 10] = type_id
+        for obj in self.objects:
+            if isinstance(obj, ObjectWarp):
+                pass
+            elif isinstance(obj, ObjectHorizontal):
+                for n in range(0, obj.count):
+                    placeObject(obj.x + n * objHSize(obj.type_id), obj.y, obj.type_id)
+            elif isinstance(obj, ObjectVertical):
+                for n in range(0, obj.count):
+                    placeObject(obj.x, obj.y + n * objVSize(obj.type_id), obj.type_id)
+            else:
+                placeObject(obj.x, obj.y, obj.type_id)
+        return tiles
+
+    def buildObjectList(self, tiles, *, reduce_size=False):
+        tiles = tiles.copy()
+        if self.overlay:
+            for n in range(80):
+                self.overlay[n] = tiles[n]
+                if reduce_size:
+                    if tiles[n] in {0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+                                    0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+                                    0x48, 0x49, 0x4B, 0x4C, 0x4E,
+                                    0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F}:
+                        tiles[n] = 0x3A  # Solid tiles
+                    if tiles[n] in {0x08, 0x09, 0x0C, 0x44,
+                                    0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF}:
+                        tiles[n] = 0x04  # Open tiles
 
         counts = {}
         for n in tiles:
@@ -260,7 +396,6 @@ class RoomEditor:
                     self.objects.append(ObjectVertical(x, y, obj, h))
                 else:
                     self.objects.append(Object(x, y, obj))
-        return data
 
 
 class Object:
