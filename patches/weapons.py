@@ -1,4 +1,5 @@
 from assembler import ASM
+from roomEditor import RoomEditor
 
 
 def patchSuperWeapons(rom):
@@ -53,3 +54,11 @@ def patchSuperWeapons(rom):
     # Super charge the ocarina
     rom.patch(0x02, 0x0AD8, ASM("cp $38"), ASM("cp $08"))
     rom.patch(0x02, 0x0B05, ASM("cp $14"), ASM("cp $04"))
+
+    re = RoomEditor(rom, 0x23D)
+    tiles = re.getTileArray()
+    tiles[11] = 0x0D
+    tiles[12] = 0xA7
+    tiles[22] = 0x98
+    re.buildObjectList(tiles)
+    re.store(rom)
