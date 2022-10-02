@@ -243,11 +243,11 @@ class RoomEditor:
             return 0
         def placeObject(x, y, type_id):
             if type_id == 0xF5:
-                if getObject(x, y) in (0x28, 0x29, 0x83, 0x90):
+                if getObject(x, y) in (0x1B, 0x28, 0x29, 0x83, 0x90):
                     placeObject(x, y, 0x29)
                 else:
                     placeObject(x, y, 0x25)
-                if getObject(x + 1, y) in (0x27, 0x82, 0x90, 0x2A):
+                if getObject(x + 1, y) in (0x1B, 0x27, 0x82, 0x86, 0x8A, 0x90, 0x2A):
                     placeObject(x + 1, y, 0x2A)
                 else:
                     placeObject(x + 1, y, 0x26)

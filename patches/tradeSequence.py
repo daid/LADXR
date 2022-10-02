@@ -33,7 +33,8 @@ def patchTrendy(rom):
         xor  a
         ldh  [$F1], a ; sprite variant
     """), fill_nop=True)
-    rom.patch(0x04, 0x3622, 0x3627, "", fill_nop=True) # Dont set the trade item
+    rom.patch(0x04, 0x2E80, ASM("ldh a, [$F8]"), ASM("ld a, $10"))  # Prevent marin cutscene from triggering, as that locks the game now.
+    rom.patch(0x04, 0x3622, 0x3627, "", fill_nop=True)  # Dont set the trade item
 
 
 def patchPapahlsWife(rom):
