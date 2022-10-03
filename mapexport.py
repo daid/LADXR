@@ -327,7 +327,7 @@ class MapExport:
         room.main_tileset_id = self.__rom.banks[0x20][0x2E73 + (room_id & 0x0F) // 2 + ((room_id >> 5) * 8)]
         room.animation_tileset_id = re.animation_id
         if self.__rom.banks[0x3F][0x2F00 + room_id]:  # If we have the the per room tileset patch, use that data
-            room.main_tileset_id = self.__rom.banks[0x3F][0x2F00 + room_nr]
+            room.main_tileset_id = self.__rom.banks[0x3F][0x2F00 + room_id]
         room.tiles = re.getTileArray()
 
         room.attribute_bank = self.__rom.banks[0x1A][0x2476 + room_id]
