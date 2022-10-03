@@ -3,6 +3,18 @@ import os
 from roomEditor import RoomEditor, ObjectHorizontal, ObjectVertical, ObjectWarp
 
 
+
+class Room:
+    def __init__(self, n):
+        self.n = n
+        self.tiles = None
+        self.main_tileset_id = None
+        self.animation_tileset_id = None
+        self.palette_id = None
+        self.attribute_bank = None
+        self.attribute_addr = None
+
+
 class RenderedMap:
     WALL_UP = 0x01
     WALL_DOWN = 0x02
@@ -220,15 +232,16 @@ class MapExport:
             0x0F: self.getTiles(0x0F),
             0x12: self.getTiles(0x12),
         }
+        self.__tile_cache = {}
         self.__room_map_info = {}
 
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
-        result = PIL.Image.new("L", (16 * (20 * 8 + 1), 16 * (16 * 8 + 1)))
+        result = PIL.Image.new("RGB", (16 * (20 * 8 + 1), 16 * (16 * 8 + 1)))
         for n in range(0x100):
             x = n % 0x10
             y = n // 0x10
-            result.paste(self.exportRoom(n), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
+            result.paste(self.buildRoom(n), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
         result.save("_map/img/overworld.png")
         f.write("<img src='img/overworld.png'><br><br>")
         return
@@ -275,6 +288,91 @@ class MapExport:
         result.save("_map/img/caves2.png")
         f.write("<img src='img/caves2.png'>")
         f.close()
+
+    def getTileset(self, main_tileset, animation_id):
+        subtiles = [0] * 0x100
+        for n in range(0, 0x20):
+            subtiles[n] = (0x2F << 10) + (main_tileset << 4) + n
+        for n in range(0x20, 0x80):
+            subtiles[n] = (0x2C << 10) + 0x100 + n
+        for n in range(0x80, 0x100):
+            subtiles[n] = (0x2C << 10) + n
+
+        addr = (0x000, 0x000, 0x2B0, 0x2C0, 0x2D0, 0x2E0, 0x2F0, 0x2D0, 0x300, 0x310, 0x320, 0x2A0, 0x330, 0x350, 0x360, 0x340, 0x370)[animation_id]
+        for n in range(0x6C, 0x70):
+            subtiles[n] = (0x2C << 10) + addr + n - 0x6C
+        return subtiles
+
+    def getPalette(self, palette_index):
+        palette_addr = self.__rom.banks[0x21][0x02B1 + palette_index * 2]
+        palette_addr |= self.__rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
+        palette_addr -= 0x4000
+
+        palette = []
+        for n in range(8*4):
+            p0 = self.__rom.banks[0x21][palette_addr]
+            p1 = self.__rom.banks[0x21][palette_addr + 1]
+            pal = p0 | p1 << 8
+            palette_addr += 2
+            r = (pal & 0x1F) << 3
+            g = ((pal >> 5) & 0x1F) << 3
+            b = ((pal >> 10) & 0x1F) << 3
+            palette.append((r, g, b))
+        return palette
+
+    def buildRoom(self, room_id):
+        re = RoomEditor(self.__rom, room_id)
+
+        room = Room(room_id)
+        room.main_tileset_id = self.__rom.banks[0x20][0x2E73 + (room_id & 0x0F) // 2 + ((room_id >> 5) * 8)]
+        room.animation_tileset_id = re.animation_id
+        if self.__rom.banks[0x3F][0x2F00 + room_id]:  # If we have the the per room tileset patch, use that data
+            room.main_tileset_id = self.__rom.banks[0x3F][0x2F00 + room_nr]
+        room.tiles = re.getTileArray()
+
+        room.attribute_bank = self.__rom.banks[0x1A][0x2476 + room_id]
+        room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
+        room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
+        room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
+
+        # Draw the room
+        tileset = self.getTileset(room.main_tileset_id, room.animation_tileset_id)
+        metatiles = self.__rom.banks[0x1A][0x2B1D:0x2B1D+0x400]
+        attributes = self.__rom.banks[room.attribute_bank][room.attribute_addr-0x4000:room.attribute_addr-0x4000+0x400]
+        result = PIL.Image.new('RGB', (8 * 20, 8 * 16))
+        for y in range(8):
+            for x in range(10):
+                tile_nr = room.tiles[x + y * 10]
+                metatile = metatiles[tile_nr*4:tile_nr*4+4]
+                attrtile = attributes[tile_nr*4:tile_nr*4+4]
+                self.drawSubtile(result, x*16, y*16, tileset[metatile[0]], attrtile[0], room.palette_id)
+                self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_id)
+                self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_id)
+                self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_id)
+        return result
+
+    def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_id):
+        if (subtile_id, attr, palette_id) not in self.__tile_cache:
+            assert (attr & 0x40) == 0
+            result = PIL.Image.new("RGB", (8, 8))
+            palette = self.getPalette(palette_id)[(attr&7)*4:(attr&7)*4+4]
+            addr = (subtile_id&0x3FF)<<4
+            tile_data = self.__rom.banks[subtile_id >> 10][addr:addr+0x10]
+            for y in range(8):
+                a = tile_data[y * 2]
+                b = tile_data[y * 2 + 1]
+                for x in range(8):
+                    v = 0
+                    bit = 0x80 >> x
+                    if attr & 0x20:
+                        bit = 0x01 << x
+                    if a & bit:
+                        v |= 0x01
+                    if b & bit:
+                        v |= 0x02
+                    result.putpixel((x,y), palette[v])
+            self.__tile_cache[(subtile_id, attr, palette_id)] = result
+        img.paste(self.__tile_cache[(subtile_id, attr, palette_id)], (ox, oy))
 
     def exportMetaTiles(self, f, name, main_set, animation_set, condition_func):
         condition = lambda n: condition_func(n) and (n < 0x80 or n >= 0xF0)
