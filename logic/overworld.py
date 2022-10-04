@@ -95,10 +95,11 @@ class World:
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
         hookshot_cave = Location()
-        hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, HOOKSHOT)
+        hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
         swamp = Location().connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
+        swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER))
         swamp_chest = Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
@@ -308,8 +309,8 @@ class World:
         obstacle_cave_entrance = Location()
         obstacle_cave_inside = Location().connect(obstacle_cave_entrance, SWORD)
         obstacle_cave_inside.connect(obstacle_cave_entrance, FEATHER, one_way=True) # can get past the rock room from right to left pushing blocks and jumping over the pit
-        obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, HOOKSHOT)  # chest at obstacles
-        obstacle_cave_exit = Location().connect(obstacle_cave_inside, PEGASUS_BOOTS)
+        obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, OR(HOOKSHOT, ROOSTER))  # chest at obstacles
+        obstacle_cave_exit = Location().connect(obstacle_cave_inside, OR(PEGASUS_BOOTS, ROOSTER))
 
         lower_right_taltal = Location()
         self._addEntrance("obstacle_cave_entrance", windfish_egg, obstacle_cave_entrance, POWER_BRACELET)
