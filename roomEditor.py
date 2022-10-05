@@ -347,11 +347,114 @@ class RoomEditor:
                     if x < 10 and y < 8:
                         tiles[x + y * 10] = type_id
         else:
-            # TODO Indoor macros, template walls
             def placeObject(x, y, type_id):
                 x, y = (x & 15), (y & 15)
-                if x < 10 and y < 8:
-                    tiles[x + y * 10] = type_id
+                if type_id == 0xEC:  # key door
+                    placeObject(x, y, 0x2D)
+                    placeObject(x + 1, y, 0x2E)
+                elif type_id == 0xED:
+                    placeObject(x, y, 0x2F)
+                    placeObject(x + 1, y, 0x30)
+                elif type_id == 0xEE:
+                    placeObject(x, y, 0x31)
+                    placeObject(x, y + 1, 0x32)
+                elif type_id == 0xEF:
+                    placeObject(x, y, 0x33)
+                    placeObject(x, y + 1, 0x34)
+                elif type_id == 0xF0:  # closed door
+                    placeObject(x, y, 0x35)
+                    placeObject(x + 1, y, 0x36)
+                elif type_id == 0xF1:
+                    placeObject(x, y, 0x37)
+                    placeObject(x + 1, y, 0x38)
+                elif type_id == 0xF2:
+                    placeObject(x, y, 0x39)
+                    placeObject(x, y + 1, 0x3A)
+                elif type_id == 0xF3:
+                    placeObject(x, y, 0x3B)
+                    placeObject(x, y + 1, 0x3C)
+                elif type_id == 0xF4:  # open door
+                    placeObject(x, y, 0x43)
+                    placeObject(x + 1, y, 0x44)
+                elif type_id == 0xF5:
+                    placeObject(x, y, 0x8C)
+                    placeObject(x + 1, y, 0x08)
+                elif type_id == 0xF6:
+                    placeObject(x, y, 0x09)
+                    placeObject(x, y + 1, 0x0A)
+                elif type_id == 0xF7:
+                    placeObject(x, y, 0x0B)
+                    placeObject(x, y + 1, 0x0C)
+                elif type_id == 0xF8:  # boss door
+                    placeObject(x, y, 0xA4)
+                    placeObject(x + 1, y, 0xA5)
+                elif type_id == 0xF9:  # stairs door
+                    placeObject(x, y, 0xAF)
+                    placeObject(x + 1, y, 0xB0)
+                elif type_id == 0xFA:  # flipwall
+                    placeObject(x, y, 0xB1)
+                    placeObject(x + 1, y, 0xB2)
+                elif type_id == 0xFB:  # one way arrow
+                    placeObject(x, y, 0x45)
+                    placeObject(x + 1, y, 0x46)
+                elif type_id == 0xFC:  # entrance
+                    placeObject(x + 0, y, 0xB3)
+                    placeObject(x + 1, y, 0xB4)
+                    placeObject(x + 2, y, 0xB4)
+                    placeObject(x + 3, y, 0xB5)
+                    placeObject(x + 0, y + 1, 0xB6)
+                    placeObject(x + 1, y + 1, 0xB7)
+                    placeObject(x + 2, y + 1, 0xB8)
+                    placeObject(x + 3, y + 1, 0xB9)
+                    placeObject(x + 0, y + 2, 0xBA)
+                    placeObject(x + 1, y + 2, 0xBB)
+                    placeObject(x + 2, y + 2, 0xBC)
+                    placeObject(x + 3, y + 2, 0xBD)
+                elif type_id == 0xFD:  # entrance
+                    placeObject(x, y, 0xC1)
+                    placeObject(x + 1, y, 0xC2)
+                else:
+                    if x < 10 and y < 8:
+                        tiles[x + y * 10] = type_id
+
+            def addWalls(flags):
+                for x in range(0, 10):
+                    if flags & 0b0010:
+                        placeObject(x, 0, 0x21)
+                    if flags & 0b0001:
+                        placeObject(x, 7, 0x22)
+                for y in range(0, 8):
+                    if flags & 0b1000:
+                        placeObject(0, y, 0x23)
+                    if flags & 0b0100:
+                        placeObject(9, y, 0x24)
+                if flags & 0b1000 and flags & 0b0010:
+                    placeObject(0, 0, 0x25)
+                if flags & 0b0100 and flags & 0b0010:
+                    placeObject(9, 0, 0x26)
+                if flags & 0b1000 and flags & 0b0001:
+                    placeObject(0, 7, 0x27)
+                if flags & 0b0100 and flags & 0b0001:
+                    placeObject(9, 7, 0x28)
+
+            if self.floor_object & 0xF0 == 0x00:
+                addWalls(0b1111)
+            if self.floor_object & 0xF0 == 0x10:
+                addWalls(0b1101)
+            if self.floor_object & 0xF0 == 0x20:
+                addWalls(0b1011)
+            if self.floor_object & 0xF0 == 0x30:
+                addWalls(0b1110)
+            if self.floor_object & 0xF0 == 0x40:
+                addWalls(0b0111)
+            if self.floor_object & 0xF0 == 0x50:
+                addWalls(0b1001)
+            if self.floor_object & 0xF0 == 0x60:
+                addWalls(0b0101)
+            if self.floor_object & 0xF0 == 0x70:
+                addWalls(0b0110)
+            if self.floor_object & 0xF0 == 0x80:
+                addWalls(0b1010)
         for obj in self.objects:
             if isinstance(obj, ObjectWarp):
                 pass

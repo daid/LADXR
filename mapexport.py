@@ -237,7 +237,13 @@ class MapExport:
         #}
         self.__tile_cache = {}
         self.__room_map_info = {}
-        self.__json_data = {"rooms": {}, "attributes": {}, "physics_flag": [n for n in self.__rom.banks[8][0x0AD4:0x0AD4+0x100]]}
+        self.__json_data = {
+            "rooms": {},
+            "maps": {},
+            "attributes": {},
+            "overworld_physics_flag": [n for n in self.__rom.banks[8][0x0AD4:0x0AD4+0x100]],
+            "indoor1_physics_flag": [n for n in self.__rom.banks[8][0x0BD4:0x0BD4 + 0x100]],
+        }
 
     def export_all(self, w=16, h=16):
         os.makedirs("_map/img", exist_ok=True)
@@ -247,7 +253,8 @@ class MapExport:
 
         for n in (0,1,2,3,4,5,6,7, 10): # skipping 11, color dungeon now
             addr = 0x0220 + n * 8 * 8
-            result = PIL.Image.new("L", (8 * 161, 8 * 129))
+            result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
+            map_data = {}
             for y in range(8):
                 for x in range(8):
                     room = self.__rom.banks[0x14][addr] + 0x100
@@ -258,16 +265,19 @@ class MapExport:
                     addr += 1
                     if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
                         continue
+                    map_data[x+y*16] = room
                     self.__room_map_info[room] = (x, y, n)
-                    result.paste(self.buildRoom(room), (x * 161, y * 129))
-            result.save("_map/img/dungeon_%d.png" % (n))
-            f.write("<img src='img/dungeon_%d.png'><br><br>" % (n))
+                    result.paste(self.buildRoom(room, n), (x * 161, y * 129))
+            self.__json_data["maps"][f"dungeon_{n}"] = map_data
+            result.save(f"_map/img/dungeon_{n}.png")
+            f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
 
         f.write("<script>var data = ")
         f.write(json.dumps(self.__json_data))
         f.write("""
 function h2(n) { if (n < 16) return "0x0" + n.toString(16); return "0x" + n.toString(16); }
 function updateTooltip(e) {
+    var map = e.target.getAttribute("map")
     var tooltip = document.getElementById("tooltip");
     var roomx = Math.floor(e.offsetX / 161);
     var roomy = Math.floor(e.offsetY / 129);
@@ -275,8 +285,17 @@ function updateTooltip(e) {
     var tiley = Math.floor((e.offsetY - roomy * 129) / 16)
     if (tilex < 0 || tilex > 9 || tiley < 0 || tiley > 7) return;
     var room = data.rooms[roomx + roomy*16];
+    if (map) {
+        var room_id = data.maps[map][roomx + roomy*16];
+        if (room_id === undefined) return;
+        room = data.rooms[room_id];
+    }
     var tile_id = room.tiles[tilex + tiley*10];
     var attributes = data.attributes[(room.attribute_bank << 16) | room.attribute_addr]
+    if (map) {
+        var metatiles = data.indoor1_metatiles
+        var physics_flag = data.indoor1_physics_flag
+    }
 
     tooltip.style.left = roomx * 161 + tilex * 16 + e.target.getBoundingClientRect().x - document.body.getBoundingClientRect().x + 24;
     tooltip.style.top = roomy * 129 + tiley * 16 + e.target.getBoundingClientRect().y - document.body.getBoundingClientRect().y + 24;
@@ -288,9 +307,9 @@ function updateTooltip(e) {
         Attribute data: ${h2(room.attribute_bank)}:${h2(room.attribute_addr)}
         
         Tile ID: ${h2(tile_id)}
-        Subtiles: ${h2(data.metatiles[tile_id*4])} ${h2(data.metatiles[tile_id*4+1])} ${h2(data.metatiles[tile_id*4+2])} ${h2(data.metatiles[tile_id*4+3])}
+        Subtiles: ${h2(metatiles[tile_id*4])} ${h2(metatiles[tile_id*4+1])} ${h2(metatiles[tile_id*4+2])} ${h2(metatiles[tile_id*4+3])}
         TileAttr: ${h2(attributes[tile_id*4])} ${h2(attributes[tile_id*4+1])} ${h2(attributes[tile_id*4+2])} ${h2(attributes[tile_id*4+3])}
-        Physics: ${h2(data.physics_flag[tile_id])}
+        Physics: ${h2(physics_flag[tile_id])}
     `
 }
 for(var e of document.getElementsByTagName("img")) {
@@ -375,8 +394,12 @@ for(var e of document.getElementsByTagName("img")) {
         return subtiles
 
     def getPalette(self, palette_index):
-        palette_addr = self.__rom.banks[0x21][0x02B1 + palette_index * 2]
-        palette_addr |= self.__rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
+        if palette_index < 0x100:
+            palette_addr = self.__rom.banks[0x21][0x02B1 + palette_index * 2]
+            palette_addr |= self.__rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
+        else:
+            palette_addr = self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2]
+            palette_addr |= self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2 + 1] << 8
         palette_addr -= 0x4000
 
         palette = []
@@ -398,7 +421,7 @@ for(var e of document.getElementsByTagName("img")) {
                 result.paste(self.buildRoom(x + y * 16), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
         return result
 
-    def buildRoom(self, room_id):
+    def buildRoom(self, room_id, map_id=None):
         re = RoomEditor(self.__rom, room_id)
 
         room = Room(room_id)
@@ -413,14 +436,16 @@ for(var e of document.getElementsByTagName("img")) {
 
         if room_id < 0x100:
             room.attribute_bank = self.__rom.banks[0x1A][0x2476 + room_id]
-        else:
+        elif room_id < 0x200:
             room.attribute_bank = 0x23
+        else:
+            room.attribute_bank = 0x24
         room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
         room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
         if room_id < 0x100:
             room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
         else:
-            room.palette_id = 0  #TODO
+            room.palette_id = 0x100 + map_id
 
         self.__json_data["rooms"][room_id] = room.to_json()
 
@@ -428,11 +453,13 @@ for(var e of document.getElementsByTagName("img")) {
         if room_id < 0x100:
             tileset = self.getOverworldTileset(room.main_tileset_id, room.animation_tileset_id)
             metatiles = self.__rom.banks[0x1A][0x2B1D:0x2B1D+0x400]
+            if "overworld_metatiles" not in self.__json_data:
+                self.__json_data["overworld_metatiles"] = [n for n in metatiles]
         else:
             tileset = self.getIndoorTileset(room.main_tileset_id, room.animation_tileset_id)
             metatiles = self.__rom.banks[0x08][0x03B0:0x03B0+0x400]
-        if "metatiles" not in self.__json_data:
-            self.__json_data["metatiles"] = [n for n in metatiles]
+            if "indoor1_metatiles" not in self.__json_data:
+                self.__json_data["indoor1_metatiles"] = [n for n in metatiles]
         attributes = self.__rom.banks[room.attribute_bank][room.attribute_addr-0x4000:room.attribute_addr-0x4000+0x400]
         if (room.attribute_bank << 16) | room.attribute_addr not in self.__json_data["attributes"]:
             self.__json_data["attributes"][(room.attribute_bank << 16) | room.attribute_addr] = [n for n in attributes]
@@ -450,7 +477,6 @@ for(var e of document.getElementsByTagName("img")) {
 
     def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_id):
         if (subtile_id, attr, palette_id) not in self.__tile_cache:
-            assert (attr & 0x40) == 0
             result = PIL.Image.new("RGB", (8, 8))
             palette = self.getPalette(palette_id)[(attr&7)*4:(attr&7)*4+4]
             addr = (subtile_id&0x3FF)<<4
@@ -458,6 +484,9 @@ for(var e of document.getElementsByTagName("img")) {
             for y in range(8):
                 a = tile_data[y * 2]
                 b = tile_data[y * 2 + 1]
+                if attr & 0x40:
+                    a = tile_data[14 - y * 2]
+                    b = tile_data[15 - y * 2]
                 for x in range(8):
                     v = 0
                     bit = 0x80 >> x
