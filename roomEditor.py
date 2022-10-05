@@ -226,8 +226,10 @@ class RoomEditor:
         return data
 
     def getTileArray(self):
-        # TODO: Fix for dungeon rooms.
-        tiles = [self.floor_object] * 80
+        if self.room < 0x100:
+            tiles = [self.floor_object] * 80
+        else:
+            tiles = [self.floor_object & 0x0F] * 80
         def objHSize(type_id):
             if type_id == 0xF5:
                 return 2
@@ -345,6 +347,7 @@ class RoomEditor:
                     if x < 10 and y < 8:
                         tiles[x + y * 10] = type_id
         else:
+            # TODO Indoor macros, template walls
             def placeObject(x, y, type_id):
                 x, y = (x & 15), (y & 15)
                 if x < 10 and y < 8:
