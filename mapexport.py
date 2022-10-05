@@ -1,7 +1,7 @@
 import PIL.Image, PIL.ImageDraw
 import os
+import json
 from roomEditor import RoomEditor, ObjectHorizontal, ObjectVertical, ObjectWarp
-
 
 
 class Room:
@@ -13,6 +13,9 @@ class Room:
         self.palette_id = None
         self.attribute_bank = None
         self.attribute_addr = None
+
+    def to_json(self):
+        return self.__dict__
 
 
 class RenderedMap:
@@ -234,16 +237,48 @@ class MapExport:
         }
         self.__tile_cache = {}
         self.__room_map_info = {}
+        self.__json_data = {"rooms": {}, "attributes": {}, "physics_flag": [n for n in self.__rom.banks[8][0x0AD4:0x0AD4+0x100]]}
 
+    def export_all(self, w=16, h=16):
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
-        result = PIL.Image.new("RGB", (16 * (20 * 8 + 1), 16 * (16 * 8 + 1)))
-        for n in range(0x100):
-            x = n % 0x10
-            y = n // 0x10
-            result.paste(self.buildRoom(n), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
-        result.save("_map/img/overworld.png")
+        self.buildOverworld(w, h).save("_map/img/overworld.png")
         f.write("<img src='img/overworld.png'><br><br>")
+        f.write("<script>var data = ")
+        f.write(json.dumps(self.__json_data))
+        f.write("""
+function h2(n) { if (n < 16) return "0x0" + n.toString(16); return "0x" + n.toString(16); }
+function updateTooltip(e) {
+    var tooltip = document.getElementById("tooltip");
+    var roomx = Math.floor(e.offsetX / 161);
+    var roomy = Math.floor(e.offsetY / 129);
+    var tilex = Math.floor((e.offsetX - roomx * 161) / 16)
+    var tiley = Math.floor((e.offsetY - roomy * 129) / 16)
+    if (tilex < 0 || tilex > 9 || tiley < 0 || tiley > 7) return;
+    var room = data.rooms[roomx + roomy*16];
+    var tile_id = room.tiles[tilex + tiley*10];
+    var attributes = data.attributes[(room.attribute_bank << 16) | room.attribute_addr]
+
+    tooltip.style.left = roomx * 161 + tilex * 16 + e.target.getBoundingClientRect().x - document.body.getBoundingClientRect().x + 24;
+    tooltip.style.top = roomy * 129 + tiley * 16 + e.target.getBoundingClientRect().y - document.body.getBoundingClientRect().y + 24;
+
+    tooltip.innerText = `Room ID: ${h2(room.n)}
+        Tileset: ${h2(room.main_tileset_id)}
+        Palette: ${h2(room.palette_id)}
+        Animation set: ${h2(room.animation_tileset_id)}
+        Attribute data: ${h2(room.attribute_bank)}:${h2(room.attribute_addr)}
+        
+        Tile ID: ${h2(tile_id)}
+        Subtiles: ${h2(data.metatiles[tile_id*4])} ${h2(data.metatiles[tile_id*4+1])} ${h2(data.metatiles[tile_id*4+2])} ${h2(data.metatiles[tile_id*4+3])}
+        TileAttr: ${h2(attributes[tile_id*4])} ${h2(attributes[tile_id*4+1])} ${h2(attributes[tile_id*4+2])} ${h2(attributes[tile_id*4+3])}
+        Physics: ${h2(data.physics_flag[tile_id])}
+    `
+}
+for(var e of document.getElementsByTagName("img")) {
+    e.onmousemove = updateTooltip
+}
+        """)
+        f.write("</script><div id='tooltip' style='position:absolute; background-color: white; padding: 4px; border: solid black 1px'>X</div>")
         return
         self.exportMetaTiles(f, "_map/img/metatiles_main.png", 0x0F, 0, lambda n: n >= 32 and (n < 0x6C or n >= 0x70))
         for n in (0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3E):
@@ -320,6 +355,13 @@ class MapExport:
             palette.append((r, g, b))
         return palette
 
+    def buildOverworld(self, w, h):
+        result = PIL.Image.new("RGB", (w * (20 * 8 + 1), h * (16 * 8 + 1)))
+        for y in range(h):
+            for x in range(w):
+                result.paste(self.buildRoom(x + y * 16), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
+        return result
+
     def buildRoom(self, room_id):
         re = RoomEditor(self.__rom, room_id)
 
@@ -335,10 +377,16 @@ class MapExport:
         room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
         room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
 
+        self.__json_data["rooms"][room_id] = room.to_json()
+
         # Draw the room
         tileset = self.getTileset(room.main_tileset_id, room.animation_tileset_id)
         metatiles = self.__rom.banks[0x1A][0x2B1D:0x2B1D+0x400]
+        if "metatiles" not in self.__json_data:
+            self.__json_data["metatiles"] = [n for n in metatiles]
         attributes = self.__rom.banks[room.attribute_bank][room.attribute_addr-0x4000:room.attribute_addr-0x4000+0x400]
+        if (room.attribute_bank << 16) | room.attribute_addr not in self.__json_data["attributes"]:
+            self.__json_data["attributes"][(room.attribute_bank << 16) | room.attribute_addr] = [n for n in attributes]
         result = PIL.Image.new('RGB', (8 * 20, 8 * 16))
         for y in range(8):
             for x in range(10):

@@ -87,7 +87,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         import mapexport
         print(f"Loading: {args.input_filename}")
         rom = ROMWithTables(args.input_filename)
-        mapexport.MapExport(rom)
+        mapexport.MapExport(rom).export_all()
         sys.exit(0)
 
     if args.emptyplan:

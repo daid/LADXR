@@ -28,7 +28,12 @@ def patchOverworldTilesets(rom):
     for x in range(16):
         for y in range(16):
             rom.banks[0x3F][0x2F00+x+y*16] = rom.banks[0x20][0x2E73 + (x // 2) + (y // 2) * 8]
-    rom.banks[0x3F][0x2F07] = rom.banks[0x3F][0x2F08] # Fix the room next to the egg
+    rom.banks[0x3F][0x2F07] = rom.banks[0x3F][0x2F08]  # Fix the room next to the egg
+    rom.banks[0x3F][0x2F17] = rom.banks[0x3F][0x2F08]  # Fix the room next to the egg
+    rom.banks[0x3F][0x2F3A] = 0x0F  # room below mambo cave
+    rom.banks[0x3F][0x2F3B] = 0x0F  # room below D4
+    rom.banks[0x3F][0x2F4B] = 0x0F  # room next to castle
+    rom.banks[0x3F][0x2F5B] = 0x0F  # room next to castle
     # Fix the rooms around the camera shop
     rom.banks[0x3F][0x2F26] = 0x0F
     rom.banks[0x3F][0x2F27] = 0x0F
