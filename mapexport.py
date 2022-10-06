@@ -285,14 +285,16 @@ function updateTooltip(e) {
     var tiley = Math.floor((e.offsetY - roomy * 129) / 16)
     if (tilex < 0 || tilex > 9 || tiley < 0 || tiley > 7) return;
     var room = data.rooms[roomx + roomy*16];
-    if (map) {
+    if (map !== null) {
         var room_id = data.maps[map][roomx + roomy*16];
         if (room_id === undefined) return;
         room = data.rooms[room_id];
     }
     var tile_id = room.tiles[tilex + tiley*10];
     var attributes = data.attributes[(room.attribute_bank << 16) | room.attribute_addr]
-    if (map) {
+    var metatiles = data.overworld_metatiles
+    var physics_flag = data.overworld_physics_flag
+    if (map !== null) {
         var metatiles = data.indoor1_metatiles
         var physics_flag = data.indoor1_physics_flag
     }
