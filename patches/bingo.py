@@ -177,7 +177,7 @@ def checkMemoryEqualGreater(location, count):
     """ % (location, count)
 
 
-def InventoryGoal(item, *, memory_location=None, msg=None):
+def InventoryGoal(item, *, memory_location=None, msg=None, group=None):
     if memory_location is not None:
         code = checkMemoryNotZero(memory_location)
     elif item in INVENTORY_MAP:
@@ -201,7 +201,7 @@ def InventoryGoal(item, *, memory_location=None, msg=None):
         """
     if msg is None:
         msg = "Find the {%s}" % (item)
-    return Goal(msg, code, ITEM_TILES[item])
+    return Goal(msg, code, ITEM_TILES[item], group=group)
 
 
 def KillGoal(description, entity_id, tile_info):
@@ -268,7 +268,7 @@ BINGO_GOALS = [
     InventoryGoal(BOW),
     InventoryGoal(SHOVEL),
     # InventoryGoal(MAGIC_POWDER),
-    InventoryGoal(TOADSTOOL, msg="Have the {TOADSTOOL}"),
+    InventoryGoal(TOADSTOOL, msg="Have the {TOADSTOOL}", group="witch"),
     Goal("Find the L2 {SHIELD}", checkMemoryEqualCode("$DB44", "2"), TileInfo(0x86, 0x87, 0x06, 0xB2)),
     Goal("Find 10 Secret Seashells", checkForSeashellsCode(10), ITEM_TILES[SEASHELL]),
     Goal("Find the L2 {SWORD}", checkMemoryEqualCode("$DB4E", "2"), TileInfo(0x84, 0x85, 0x06, 0xB2)),
@@ -399,8 +399,7 @@ BINGO_GOALS = [
 
     Goal("Save Marin on the Mountain Bridge", checkMemoryMask("$D808", "$10"), TileInfo(0x1A6C, colormap=[2, 3, 1, 0])),
     Goal("Save Raccoon Tarin", checkMemoryMask("$D851", "$10"), TileInfo(0x1888, colormap=[2, 3, 1, 0])),
-    Goal("Trade the {TOADSTOOL} with the witch", checkMemoryMask("$DAA2", "$20"),
-         TileInfo(0x0A30, colormap=[2, 3, 1, 0])),
+    Goal("Trade the {TOADSTOOL} with the witch", checkMemoryMask("$DAA2", "$20"), TileInfo(0x0A30, colormap=[2, 3, 1, 0]), group="witch"),
 ]
 
 
