@@ -1,0 +1,98 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<input type="checkbox" id="generatingdialog" class="modal">
+<div>
+    <div class="card">
+        <h3 class="section"><span class="spinner" style="margin: 0 10 0 0"></span>Randomizing...</h3>
+        <p class="section" id="generatingtext">Working magic...</p>
+    </div>
+</div>
+
+<input type="checkbox" id="seeddonedialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="seeddonedialog" class="modal-close" ></label>
+        <h3 class="section">Seed generation complete!</h3>
+        <p class="section">Seed: <span id="seedSpan">...</span></p>
+        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
+    </div>
+</div>
+<input type="checkbox" id="errordialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="errordialog" class="modal-close" ></label>
+        <h3 class="section">Error:</h3>
+        <p class="section"><pre id="failureMessage"></pre></p>
+    </div>
+</div>
+
+<input type="checkbox" id="emulatordialog" class="modal">
+<div>
+    <div class="card fluid" style="max-height: none">
+        <div class="row" id="emulatorcontainer">
+            <span class="icon-settings" id="emulatorsettingsbutton"></span>
+        </div>
+    </div>
+</div>
+<input type="checkbox" id="emulatorsettingsdialog" class="modal">
+<div>
+    <div class="card" style="max-width: 800px; max-height: none"><div class="row">
+        <label for="emulatorsettingsdialog" class="modal-close" ></label>
+        <div class="col-sm-4">
+            <div class="row"><h4>Volume</h4></div>
+            <div class="row"><input type="range" min="0" max="100" value="50" id="volume0" style="width: 100%"></div>
+            <div class="row"><input type="range" min="0" max="100" value="50" id="volume1" style="width: 100%"></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row"><h4>Keys</h4></div>
+            <div class="row"><button id="keyUP">Up: ...</button></div>
+            <div class="row"><button id="keyDOWN">Down: ...</button></div>
+            <div class="row"><button id="keyLEFT">Left: ...</button></div>
+            <div class="row"><button id="keyRIGHT">Right: ...</button></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row"><h4>&nbsp;</h4></div>
+            <div class="row"><button id="keyB">B: ...</button></div>
+            <div class="row"><button id="keyA">A: ...</button></div>
+            <div class="row"><button id="keySTART">Start: ...</button></div>
+            <div class="row"><button id="keySELECT">Select: ...</button></div>
+        </div>
+    </div></div>
+</div>
+
+<div class="container" id="settings">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
+            <input type="file" id="rom" name="rom" style="display:none"/>
+            <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
+        </div>
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
+            <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/options.js"></script>
+<script src="js/ui.js"></script>
+<script>"use strict";
+var roms = [];
+
+function ID(s) { return document.getElementById(s); }
+
+var idx = options.findIndex((e) => e.category != "Main");
+options.splice(idx, 0, {
+    key: 'spoilerformat', category: "Main", label: "Spoiler Format",
+    options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
+    description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
+buildUI(function(s) { return s.key != 'forwardfactor'; });
+
+</script>
+</body>
+</html>
