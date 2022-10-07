@@ -39,6 +39,11 @@ async function seedComplete(data) {
     }
 }
 
+function seedStdout(message)
+{
+    console.log(message);
+}
+
 function downloadRom(filename, blob)
 {
     var element = document.createElement('a');
@@ -249,7 +254,12 @@ async function postToWorker(data)
     if (!worker) {
         worker = new Worker("js/worker.js");
         worker.onmessage = function(event) {
-            seedComplete(event.data);
+            if (event.data.type == "done")
+                seedComplete(event.data);
+            else if (event.data.type == "stdout")
+                seedStdout(event.data.message);
+            else
+                console.log(event.data);
         }
         worker.onerror = console.log;
     }
