@@ -112,7 +112,7 @@ async function startRomGeneration()
         args.push("--spoilerformat");
         args.push(e.value);
     }
-    for(var sss in ID("mwsettings").value.split("\n"))
+    for(var sss of ID("mwsettings").value.split("\n"))
     {
         sss = sss.trim();
         if (sss == "") continue;
