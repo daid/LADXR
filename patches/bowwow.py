@@ -81,7 +81,7 @@ def fixBowwow(rom, everywhere=False):
         rom.patch(0x01, 0x1FC4, ASM("ret z"), "", fill_nop=True)
         rom.patch(0x01, 0x1FC7, ASM("ret z"), "", fill_nop=True)
         rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)  # dungeon
-        rom.patch(0x01, 0x1FBC, ASM("ret nz"), "", fill_nop=True)  # sidescroller
+        # rom.patch(0x01, 0x1FBC, ASM("ret nz"), "", fill_nop=True)  # sidescroller: TOFIX this breaks fishing minigame reward
     else:
         # Patch the bowwow create code to call our custom check of we are in swamp function.
         rom.patch(0x01, 0x211F, ASM("ldh a, [$F6]\ncp $A7\nret z\nld a, [$DB56]\ncp $01\njr nz, $36"), ASM("""
