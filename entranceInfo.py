@@ -79,7 +79,7 @@ ENTRANCE_INFO = {
     "papahl_house_left":            EntranceInfo(0x82, target=0x2a5, type="connector", index=0),
     "papahl_house_right":           EntranceInfo(0x82, target=0x2a6, type="connector", index=1),
     "dream_hut":                    EntranceInfo(0x83, target=0x2aa, type="single"),
-    "rooster_grave":                EntranceInfo(0x92, target=0x1f4, type="dummy"),
+    "rooster_grave":                EntranceInfo(0x92, target=0x1f4, type="single"),
     "shop":                         EntranceInfo(0x93, target=0x2a1, type="single"),
     "madambowwow":                  EntranceInfo(0xA1, target=0x2a7, type="dummy", index=1),
     "kennel":                       EntranceInfo(0xA1, target=0x2b2, type="single", index=0),
