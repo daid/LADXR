@@ -97,7 +97,8 @@ class Dungeon8:
 class NoDungeon8:
     def __init__(self, options, world_setup, r):
         entrance = Location(8)
-        Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(entrance, r.boss_requirements[
+        boss = Location(8).add(HeartContainer(0x234)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[7]])
+        instrument = Location(8).add(Instrument(0x230)).connect(boss, FEATHER) # jump over the lava to get to the instrument
 
         self.entrance = entrance
