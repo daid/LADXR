@@ -486,12 +486,17 @@ class RoomEditor:
 
         counts = {}
         for n in tiles:
-            counts[n] = counts.get(n, 0) + 1
+            if n < 0x0F or self.room < 0x100:
+                counts[n] = counts.get(n, 0) + 1
         self.floor_object = max(counts, key=counts.get)
+        for y in range(8) if self.room < 0x100 else range(1, 7):
+            for x in range(10) if self.room < 0x100 else range(1, 9):
+                if tiles[x + y * 10] == self.floor_object:
+                    tiles[x + y * 10] = -1
         for y in range(8):
             for x in range(10):
                 obj = tiles[x + y * 10]
-                if obj == self.floor_object:
+                if obj == -1:
                     continue
                 w = 1
                 h = 1
@@ -501,11 +506,11 @@ class RoomEditor:
                     h += 1
                 if w > h:
                     for n in range(w):
-                        tiles[x + n + y * 10] = self.floor_object
+                        tiles[x + n + y * 10] = -1
                     self.objects.append(ObjectHorizontal(x, y, obj, w))
                 elif h > 1:
                     for n in range(h):
-                        tiles[x + (y + n) * 10] = self.floor_object
+                        tiles[x + (y + n) * 10] = -1
                     self.objects.append(ObjectVertical(x, y, obj, h))
                 else:
                     self.objects.append(Object(x, y, obj))

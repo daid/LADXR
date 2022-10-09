@@ -245,32 +245,33 @@ class MapExport:
             "indoor1_physics_flag": [n for n in self.__rom.banks[8][0x0BD4:0x0BD4 + 0x100]],
         }
 
-    def export_all(self, w=16, h=16):
+    def export_all(self, w=16, h=16, *, dungeons=True):
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
         self.buildOverworld(w, h).save("_map/img/overworld.png")
         f.write("<img src='img/overworld.png'><br><br>")
 
-        for n in (0,1,2,3,4,5,6,7, 10): # skipping 11, color dungeon now
-            addr = 0x0220 + n * 8 * 8
-            result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
-            map_data = {}
-            for y in range(8):
-                for x in range(8):
-                    room = self.__rom.banks[0x14][addr] + 0x100
-                    if n > 5:
-                        room += 0x100
-                    if n == 11:
-                        room += 0x100
-                    addr += 1
-                    if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
-                        continue
-                    map_data[x+y*16] = room
-                    self.__room_map_info[room] = (x, y, n)
-                    result.paste(self.buildRoom(room, n), (x * 161, y * 129))
-            self.__json_data["maps"][f"dungeon_{n}"] = map_data
-            result.save(f"_map/img/dungeon_{n}.png")
-            f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
+        if dungeons:
+            for n in (0,1,2,3,4,5,6,7, 10): # skipping 11, color dungeon now
+                addr = 0x0220 + n * 8 * 8
+                result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
+                map_data = {}
+                for y in range(8):
+                    for x in range(8):
+                        room = self.__rom.banks[0x14][addr] + 0x100
+                        if n > 5:
+                            room += 0x100
+                        if n == 11:
+                            room += 0x100
+                        addr += 1
+                        if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
+                            continue
+                        map_data[x+y*16] = room
+                        self.__room_map_info[room] = (x, y, n)
+                        result.paste(self.buildRoom(room, n), (x * 161, y * 129))
+                self.__json_data["maps"][f"dungeon_{n}"] = map_data
+                result.save(f"_map/img/dungeon_{n}.png")
+                f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
 
         f.write("<script>var data = ")
         f.write(json.dumps(self.__json_data))
