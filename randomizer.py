@@ -82,7 +82,7 @@ class Randomizer:
                     rom.save(fname, name="LADXR")
                 roms.append(rom)
             if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
-                log = spoilerLog.SpoilerLog(settings, roms)
+                log = spoilerLog.SpoilerLog(settings, args, roms)
                 if args.log_directory:
                     filename = "LADXR_Multiworld_%d_%s_%s.json" % (settings.multiworld, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
                     log_path = os.path.join(args.log_directory, filename)
@@ -99,7 +99,7 @@ class Randomizer:
             rom.save(filename, name="LADXR")
 
             if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
-                log = spoilerLog.SpoilerLog(args, [rom])
+                log = spoilerLog.SpoilerLog(settings, args, [rom])
                 if args.log_directory:
                     filename = "LADXR_%s_%s.json" % (datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
                     log_path = os.path.join(args.log_directory, filename)
