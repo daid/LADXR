@@ -124,18 +124,6 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
-    
-    def updateEntranceTypes(self, settings):
-        if settings.tradequest:
-            ENTRANCE_INFO['writes_house'].type = 'single'
-            ENTRANCE_INFO['banana_seller'].type = 'single'
-            ENTRANCE_INFO['animal_house5'].type = 'single'
-            ENTRANCE_INFO['animal_house3'].type = 'single'
-        else:
-            ENTRANCE_INFO['writes_house'].type = 'dummy'
-            ENTRANCE_INFO['banana_seller'].type = 'dummy'
-            ENTRANCE_INFO['animal_house5'].type = 'dummy'
-            ENTRANCE_INFO['animal_house3'].type = 'dummy'
 
     def loadFromRom(self, rom):
         import patches.overworld
