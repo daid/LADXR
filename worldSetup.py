@@ -48,6 +48,10 @@ class WorldSetup:
             
             return entrances
 
+        tradeEntrances = ['writes_house', 'banana_seller', 'animal_house5', 'animal_house3']
+        for entrance in tradeEntrances:
+            ENTRANCE_INFO[entrance].type = 'single' if settings.tradequest else 'dummy'
+
         if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
         if settings.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
@@ -120,6 +124,18 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
+    
+    def updateEntranceTypes(self, settings):
+        if settings.tradequest:
+            ENTRANCE_INFO['writes_house'].type = 'single'
+            ENTRANCE_INFO['banana_seller'].type = 'single'
+            ENTRANCE_INFO['animal_house5'].type = 'single'
+            ENTRANCE_INFO['animal_house3'].type = 'single'
+        else:
+            ENTRANCE_INFO['writes_house'].type = 'dummy'
+            ENTRANCE_INFO['banana_seller'].type = 'dummy'
+            ENTRANCE_INFO['animal_house5'].type = 'dummy'
+            ENTRANCE_INFO['animal_house3'].type = 'dummy'
 
     def loadFromRom(self, rom):
         import patches.overworld
