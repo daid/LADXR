@@ -320,3 +320,6 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
 
     def toJson(self):
         return [s.toJson() for s in self.__all]
+
+    def __iter__(self):
+        return iter(self.__all)

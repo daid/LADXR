@@ -158,7 +158,7 @@ class SpoilerLog:
         jsonContent = json.dumps({
             "accessibleItems": [item.__dict__ for item in self.accessibleItems],
             "inaccessibleItems": [item.__dict__ for item in self.inaccessibleItems or []],
-            "options": self.settings,
+            "options": {s.key: s.value for s in self.settings},
             "entrances":
                 {entrance: target for entrance, target in self.logic.world_setup.entrance_mapping.items() if entrance != target}
                 if isinstance(self.logic, logic.Logic) else [
