@@ -7,6 +7,20 @@ from patches import bingo
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
 MULTI_CHEST_WEIGHTS = [20,           20,   20,       50,        50,        20,         10,         5,          5,        20,  10,        10]
 
+# List of all the possible locations where we can place our starting house
+start_locations = [
+    "phone_d8",
+    "rooster_house",
+    "writes_phone",
+    "castle_phone",
+    "photo_house",
+    "start_house",
+    "prairie_right_phone",
+    "banana_seller",
+    "prairie_low_phone",
+    "animal_phone",
+]
+
 
 class WorldSetup:
     def __init__(self):
@@ -25,31 +39,17 @@ class WorldSetup:
         self.bingo_goals = None
         self.multichest = RUPEES_20
 
-    def randomize(self, settings, rnd):
-        if settings.overworld == "dungeondive":
-            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
-        if settings.randomstartlocation and settings.entranceshuffle == "none":
-            # List of all the possible locations where we can place our starting house
-            start_locations = [
-                "phone_d8",
-                "rooster_house",
-                "writes_phone",
-                "castle_phone",
-                "photo_house",
-                "start_house",
-                "prairie_right_phone",
-                "banana_seller",
-                "prairie_low_phone",
-                "animal_phone",
-            ]
-            start_location = start_locations.pop(rnd.randrange(len(start_locations)))
-            if start_location != "start_house":
-                self.entrance_mapping[start_location] = "start_house"
-                self.entrance_mapping["start_house"] = start_location
+    def getEntrancePool(self, settings, connectorsOnly=False):
+        entrances = []
+
+        if connectorsOnly:
+            if settings.entranceshuffle in ("advanced", "expert", "insanity"):
+                entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "connector"]
+            
+            return entrances
+
         if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
-            for entrance in entrances.copy():
-                self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
         if settings.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
             types = {"single"}
             if settings.entranceshuffle in ("expert", "insanity"):
@@ -61,13 +61,26 @@ class WorldSetup:
             if settings.dungeonshuffle:
                 types.add("dungeon")
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type in types]
-            for entrance in entrances.copy():
-                self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
 
-        if settings.entranceshuffle in ("advanced", "expert", "insanity"):
-            entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "connector"]
-            for entrance in entrances.copy():
-                self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
+        return entrances
+
+    def randomize(self, settings, rnd):
+        if settings.overworld == "dungeondive":
+            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
+        if settings.randomstartlocation and settings.entranceshuffle == "none":
+            start_location = start_locations[rnd.randrange(len(start_locations))]
+            if start_location != "start_house":
+                self.entrance_mapping[start_location] = "start_house"
+                self.entrance_mapping["start_house"] = start_location
+        
+        entrances = self.getEntrancePool(settings)
+        for entrance in entrances.copy():
+            self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
+
+        # Shuffle connectors among themselves
+        entrances = self.getEntrancePool(settings, connectorsOnly=True)
+        for entrance in entrances.copy():
+            self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
 
         if settings.boss != "default":
             values = list(range(9))
