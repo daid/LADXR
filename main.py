@@ -113,7 +113,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             args.spoilerformat = "console"
 
         try:
-            log = spoilerLog.SpoilerLog(args, roms)
+            log = spoilerLog.SpoilerLog(settings, args, roms)
             log.output(args.spoiler_filename)
             sys.exit(0)
         except spoilerLog.RaceRomException:

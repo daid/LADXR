@@ -42,7 +42,7 @@ class SpoilerItemInfo:
 
 
 class SpoilerLog:
-    def __init__(self, args, roms):
+    def __init__(self, settings, args, roms):
         for rom in roms:
             if rom.banks[0][7] == 0x01:
                 raise RaceRomException()
@@ -52,7 +52,7 @@ class SpoilerLog:
         self.accessibleItems = []
         self.inaccessibleItems = None
         self.outputFormat = args.spoilerformat
-        self.settings = Settings()
+        self.settings = settings
 
         # Assume the broadest settings if we're dumping a seed we didn't just create
         if args.dump:
