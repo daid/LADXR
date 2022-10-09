@@ -359,7 +359,7 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             raft_game.add(OwlStatue(0x5D))
 
-        outside_rooster_house = Location().connect(lower_right_taltal, FLIPPERS)
+        outside_rooster_house = Location().connect(lower_right_taltal, OR(FLIPPERS, ROOSTER))
         self._addEntrance("rooster_house", outside_rooster_house, None, None)
         bird_cave = Location()
         bird_key = Location().add(BirdKey())
