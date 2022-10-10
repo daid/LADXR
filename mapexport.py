@@ -228,13 +228,6 @@ class RenderedMap:
 class MapExport:
     def __init__(self, rom):
         self.__rom = rom
-
-        #self.__tiles = {
-        #    0x0C: self.getTiles(0x0C),
-        #    0x0D: self.getTiles(0x0D),
-        #    0x0F: self.getTiles(0x0F),
-        #    0x12: self.getTiles(0x12),
-        #}
         self.__tile_cache = {}
         self.__room_map_info = {}
         self.__json_data = {
@@ -314,6 +307,21 @@ function updateTooltip(e) {
         TileAttr: ${h2(attributes[tile_id*4])} ${h2(attributes[tile_id*4+1])} ${h2(attributes[tile_id*4+2])} ${h2(attributes[tile_id*4+3])}
         Physics: ${h2(physics_flag[tile_id])}
     `
+    for(var ent of room.entities) {
+        if (ent.x == tilex && ent.y == tiley) {
+            tooltip.innerText += `
+Entity: ${h2(ent.type)}
+`
+        }
+    }
+    for(var warp of room.warps) {
+        if (warp.x == tilex && warp.y == tiley) {
+            tooltip.innerText += `
+Warp to:
+Map: ${h2(warp.map)} Room: ${h2(warp.room)}
+`
+        }
+    }
 }
 for(var e of document.getElementsByTagName("img")) {
     e.onmousemove = updateTooltip
@@ -451,6 +459,21 @@ for(var e of document.getElementsByTagName("img")) {
             room.palette_id = 0x100 + map_id
 
         self.__json_data["rooms"][room_id] = room.to_json()
+        self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
+        self.__json_data["rooms"][room_id]["warps"] = []
+        warp_tile_objs = [obj for obj in re.objects if obj.type_id in {0xE1, 0xE2, 0xE3, 0xC6}]
+        for idx, obj in enumerate(obj for obj in re.objects if isinstance(obj, ObjectWarp)):
+            if idx >= len(warp_tile_objs):
+                continue
+            self.__json_data["rooms"][room_id]["warps"].append({
+                "x": warp_tile_objs[idx].x,
+                "y": warp_tile_objs[idx].y,
+                "type": obj.warp_type,
+                "room": obj.room,
+                "map": obj.map_nr,
+                "target_x": obj.target_x,
+                "target_y": obj.target_y,
+            });
 
         # Draw the room
         if room_id < 0x100:
@@ -467,6 +490,7 @@ for(var e of document.getElementsByTagName("img")) {
         if (room.attribute_bank << 16) | room.attribute_addr not in self.__json_data["attributes"]:
             self.__json_data["attributes"][(room.attribute_bank << 16) | room.attribute_addr] = [n for n in attributes]
         result = PIL.Image.new('RGB', (8 * 20, 8 * 16))
+        draw = PIL.ImageDraw.Draw(result)
         for y in range(8):
             for x in range(10):
                 tile_nr = room.tiles[x + y * 10]
@@ -476,6 +500,13 @@ for(var e of document.getElementsByTagName("img")) {
                 self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_id)
                 self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_id)
                 self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_id)
+        for x, y, type_id in re.entities:
+            draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
+            draw.text((x * 16 + 2, y * 16 + 1), "%02X" % (type_id))
+            draw.text((x * 16 + 4, y * 16 + 1), "%02X" % (type_id))
+            draw.text((x * 16 + 2, y * 16 + 3), "%02X" % (type_id))
+            draw.text((x * 16 + 4, y * 16 + 3), "%02X" % (type_id))
+            draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id), fill=0)
         return result
 
     def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_id):
