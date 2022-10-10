@@ -48,16 +48,14 @@ class WorldSetup:
             
             return entrances
 
-        tradeEntrances = ['writes_house', 'banana_seller', 'animal_house5', 'animal_house3']
-        for entrance in tradeEntrances:
-            ENTRANCE_INFO[entrance].type = 'single' if settings.tradequest else 'dummy'
-
         if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
         if settings.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
             types = {"single"}
+            if settings.tradequest:
+                types.add("trade")
             if settings.entranceshuffle in ("expert", "insanity"):
-                types.add("dummy")
+                types.update(["dummy", "trade"])
             if settings.entranceshuffle in ("insanity",):
                 types.add("insanity")
             if settings.randomstartlocation:
