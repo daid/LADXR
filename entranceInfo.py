@@ -43,7 +43,7 @@ ENTRANCE_INFO = {
     # Row 2-3
     "writes_cave_left":             EntranceInfo(0x20, target=0x2ae, type="connector"),
     "writes_cave_right":            EntranceInfo(0x21, target=0x2af, type="connector"),
-    "writes_house":                 EntranceInfo(0x30, target=0x2a8, type="dummy"),
+    "writes_house":                 EntranceInfo(0x30, target=0x2a8, type="trade"),
     "writes_phone":                 EntranceInfo(0x31, target=0x29b, type="dummy"),
     "d2":                           EntranceInfo(0x24, target=0x136, dungeon=2, instrument_room=0x12A),
     "moblin_cave":                  EntranceInfo(0x35, target=0x2f0, type="single"),
@@ -112,7 +112,7 @@ ENTRANCE_INFO = {
     # Beach area
     "d1":                           EntranceInfo(0xD3, target=0x117, dungeon=1, instrument_room=0x102),
     "boomerang_cave":               EntranceInfo(0xF4, target=0x1f5, type="single", instrument_room="Alt1F5"),  # instrument_room is to configure the exit on the alt room layout
-    "banana_seller":                EntranceInfo(0xE3, target=0x2fe, type="dummy"),
+    "banana_seller":                EntranceInfo(0xE3, target=0x2fe, type="trade"),
     "ghost_house":                  EntranceInfo(0xF6, target=0x1e3, type="single"),
 
     # Lower prairie
@@ -128,9 +128,9 @@ ENTRANCE_INFO = {
     "animal_phone":                 EntranceInfo(0xDB, target=0x2e3, type="dummy"),
     "animal_house1":                EntranceInfo(0xCC, target=0x2db, type="dummy", index=0),
     "animal_house2":                EntranceInfo(0xCC, target=0x2dd, type="dummy", index=1),
-    "animal_house3":                EntranceInfo(0xCD, target=0x2d9, type="dummy", index=1),
+    "animal_house3":                EntranceInfo(0xCD, target=0x2d9, type="trade", index=1),
     "animal_house4":                EntranceInfo(0xCD, target=0x2da, type="dummy", index=2),
-    "animal_house5":                EntranceInfo(0xDD, target=0x2d7, type="dummy"),
+    "animal_house5":                EntranceInfo(0xDD, target=0x2d7, type="trade"),
     "animal_cave":                  EntranceInfo(0xCD, target=0x2f7, type="single", index=0),
     "desert_cave":                  EntranceInfo(0xCF, target=0x1f9, type="single"),
 }
