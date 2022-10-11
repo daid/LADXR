@@ -1,6 +1,7 @@
 from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
 from locations import constants
+from typing import List
 
 
 # Room containing the boss
@@ -142,13 +143,18 @@ def getCleanBossRoom(rom, dungeon_nr):
     return re
 
 
-def changeBosses(rom, mapping):
+def changeBosses(rom, mapping: List[int]):
     # Fix the color dungeon not properly warping to room 0 with the boss.
     for addr in range(0x04E0, 0x04E0 + 64):
         if rom.banks[0x14][addr] == 0x00 and addr not in {0x04E0 + 1 + 3 * 8, 0x04E0 + 2 + 6 * 8}:
             rom.banks[0x14][addr] = 0xFF
     # Fix the genie death not really liking pits/water.
     rom.patch(0x04, 0x0521, ASM("ld [hl], $81"), ASM("ld [hl], $91"))
+
+    # For the sidescroll bosses, we need to update this check to be the evil eagle dungeon.
+    # But if evil eagle is not there we still need to remove this check to make angler fish work in D7
+    dungeon_nr = mapping.index(6) if 6 in mapping else 0xFE
+    rom.patch(0x02, 0x1FC8, ASM("cp $06"), ASM("cp $%02x" % (dungeon_nr if dungeon_nr < 8 else 0xff)))
 
     for dungeon_nr in range(9):
         target = mapping[dungeon_nr]
@@ -197,7 +203,6 @@ def changeBosses(rom, mapping):
 
             # Patch the eagle heart container to open up the right room.
             rom.patch(0x03, 0x1A04, ASM("ld hl, $DA2E"), ASM("ld hl, $%04x" % (getBossRoomStatusFlagLocation(dungeon_nr))))
-            rom.patch(0x02, 0x1FC8, ASM("cp $06"), ASM("cp $%02x" % (dungeon_nr if dungeon_nr < 8 else 0xff)))
 
             # Add the staircase to the boss, and fix the warp back.
             re = getCleanBossRoom(rom, dungeon_nr)
