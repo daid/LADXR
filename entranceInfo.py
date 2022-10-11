@@ -87,7 +87,7 @@ ENTRANCE_INFO = {
     "library":                      EntranceInfo(0xB0, target=0x1fa, type="dummy"),
     "ulrira":                       EntranceInfo(0xB1, target=0x2a9, type="dummy"),
     "mabe_phone":                   EntranceInfo(0xB2, target=0x2cb, type="dummy"),
-    "trendy_shop":                  EntranceInfo(0xB3, target=0x2a0, type="dummy"),
+    "trendy_shop":                  EntranceInfo(0xB3, target=0x2a0, type="trade"),
     # Ukuku Prairie
     "prairie_left_phone":           EntranceInfo(0xA4, target=0x2b4, type="dummy"),
     "prairie_left_cave1":           EntranceInfo(0x84, target=0x2cd, type="single"),

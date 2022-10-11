@@ -321,6 +321,7 @@ Entity: ${h2(ent.type)}
             tooltip.innerText += `
 Warp to:
 Map: ${h2(warp.map)} Room: ${h2(warp.room)}
+Target: ${h2(warp.target_x)} ${h2(warp.target_y)}
 `
         }
     }
