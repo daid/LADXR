@@ -273,6 +273,7 @@ function h2(n) { if (n < 16) return "0x0" + n.toString(16); return "0x" + n.toSt
 function updateTooltip(e) {
     var map = e.target.getAttribute("map")
     var tooltip = document.getElementById("tooltip");
+    tooltip.style.display = 'None'; 
     var roomx = Math.floor(e.offsetX / 161);
     var roomy = Math.floor(e.offsetY / 129);
     var tilex = Math.floor((e.offsetX - roomx * 161) / 16)
@@ -295,6 +296,7 @@ function updateTooltip(e) {
 
     tooltip.style.left = roomx * 161 + tilex * 16 + e.target.getBoundingClientRect().x - document.body.getBoundingClientRect().x + 24;
     tooltip.style.top = roomy * 129 + tiley * 16 + e.target.getBoundingClientRect().y - document.body.getBoundingClientRect().y + 24;
+    tooltip.style.display = ''; 
 
     tooltip.innerText = `Room ID: ${h2(room.n)}
         Tileset: ${h2(room.main_tileset_id)}
@@ -325,6 +327,7 @@ Map: ${h2(warp.map)} Room: ${h2(warp.room)}
 }
 for(var e of document.getElementsByTagName("img")) {
     e.onmousemove = updateTooltip
+    e.onmouseleave = function() { document.getElementById("tooltip").style.display = 'None'; }
 }
         """)
         f.write("</script><div id='tooltip' style='position:absolute; background-color: white; padding: 4px; border: solid black 1px; white-space: nowrap'>X</div><div style='height:300px'></div>")
@@ -461,13 +464,12 @@ for(var e of document.getElementsByTagName("img")) {
         self.__json_data["rooms"][room_id] = room.to_json()
         self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
         self.__json_data["rooms"][room_id]["warps"] = []
-        warp_tile_objs = [obj for obj in re.objects if obj.type_id in {0xE1, 0xE2, 0xE3, 0xC6}]
+        warp_tiles = [idx for idx, tile_id in enumerate(room.tiles) if tile_id in {0xE1, 0xE2, 0xE3, 0xC6, 0xBA}]
         for idx, obj in enumerate(obj for obj in re.objects if isinstance(obj, ObjectWarp)):
-            if idx >= len(warp_tile_objs):
-                continue
+            warp_tile = warp_tiles[idx] if idx < len(warp_tiles) else 0
             self.__json_data["rooms"][room_id]["warps"].append({
-                "x": warp_tile_objs[idx].x,
-                "y": warp_tile_objs[idx].y,
+                "x": warp_tile % 10,
+                "y": warp_tile // 10,
                 "type": obj.warp_type,
                 "room": obj.room,
                 "map": obj.map_nr,
