@@ -65,12 +65,12 @@ class Logic:
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
             egg_trigger = OR(AND(OCARINA, SONG1), BOMB)
 
-        if configuration_options.goal == "seashells":
+        if world_setup.goal == "seashells":
             world.nightmare.connect(world.egg, COUNT(SEASHELL, 20))
-        elif configuration_options.goal in ("raft", "bingo", "bingo-full"):
+        elif world_setup.goal in ("raft", "bingo", "bingo-full"):
             world.nightmare.connect(world.egg, egg_trigger)
         else:
-            goal = int(configuration_options.goal)
+            goal = int(world_setup.goal)
             if goal < 0:
                 world.nightmare.connect(world.egg, None)
             elif goal == 0:
