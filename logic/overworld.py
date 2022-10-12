@@ -64,6 +64,7 @@ class World:
         elif options.boomerang == 'gift':
             Location().add(BoomerangGuy()).connect(boomerang_cave, None)
         self._addEntrance("boomerang_cave", sword_beach, boomerang_cave, BOMB)
+        self._addEntranceRequirementExit("boomerang_cave", None)
 
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
         ghost_hut_outside = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET)
@@ -146,6 +147,7 @@ class World:
         Location().add(Chest(0x2F4)).connect(prairie_left_cave2, PEGASUS_BOOTS)
         Location().add(HeartPiece(0x2E5)).connect(prairie_left_cave2, AND(BOMB, PEGASUS_BOOTS))
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
+        self._addEntranceRequirementExit("prairie_left_cave2", None)
 
         mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
@@ -231,6 +233,7 @@ class World:
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
         castle_inside = Location()
+        castle_inside.connect(castle_outside, None, one_way=True) # the button in the connector allows access to the castle grounds in ER
         castle_top_outside = Location()
         castle_top_inside = Location()
         self._addEntrance("castle_main_entrance", castle_outside, castle_inside, r.bush)
@@ -274,6 +277,7 @@ class World:
 
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
+        self._addEntranceRequirementExit("animal_cave", None)
         animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
 
         desert_cave = Location()
@@ -293,6 +297,7 @@ class World:
 
         armos_fairy_entrance = Location().connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
         self._addEntrance("armos_fairy", armos_fairy_entrance, None, BOMB)
+        self._addEntranceRequirementExit("armos_fairy", None)
 
         d6_connector_left = Location()
         d6_connector_right = Location().connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
@@ -398,6 +403,7 @@ class World:
         self._addEntrance("right_taltal_connector5", right_taltal_connector_outside2, right_taltal_connector4, None)
         self._addEntrance("right_taltal_connector6", d7_platau, right_taltal_connector4, None)
         self._addEntrance("right_fairy", right_taltal_connector_outside2, None, BOMB)
+        self._addEntranceRequirementExit("right_fairy", None)
         self._addEntrance("d7", d7_tower, None, None)
         if options.logic != "casual": # D7 area ledge drops
             d7_platau.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
@@ -427,6 +433,7 @@ class World:
         fire_cave_bottom = Location()
         fire_cave_top = Location().connect(fire_cave_bottom, COUNT(SHIELD, 2))
         self._addEntrance("fire_cave_entrance", outside_fire_cave, fire_cave_bottom, BOMB)
+        self._addEntranceRequirementExit("fire_cave_entrance", None)
 
         d8_entrance = Location()
         if options.logic != "casual":
@@ -568,31 +575,20 @@ class World:
     def _addEntrance(self, name, outside, inside, requirement):
         assert name not in self.overworld_entrance, "Duplicate entrance: %s" % name
         assert name in ENTRANCE_INFO
-        self.overworld_entrance[name] = (outside, requirement, None, None)
+        self.overworld_entrance[name] = EntranceExterior(outside, requirement)
         self.indoor_location[name] = inside
 
     def _addEntranceRequirement(self, name, requirement):
         assert name in self.overworld_entrance
-        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
-        self.overworld_entrance[name] = (outside, OR(requirement, old_requirement), one_way_enter_requirement, one_way_exit_requirement)
+        self.overworld_entrance[name].addRequirement(requirement)
 
     def _addEntranceRequirementEnter(self, name, requirement):
         assert name in self.overworld_entrance
-        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
-        if one_way_enter_requirement is None:
-            one_way_enter_requirement = requirement
-        else:
-            one_way_enter_requirement = OR(one_way_enter_requirement, requirement)
-        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
+        self.overworld_entrance[name].addEnterRequirement(requirement)
 
     def _addEntranceRequirementExit(self, name, requirement):
         assert name in self.overworld_entrance
-        outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement = self.overworld_entrance[name]
-        if one_way_exit_requirement is None:
-            one_way_exit_requirement = requirement
-        else:
-            one_way_exit_requirement = OR(one_way_exit_requirement, requirement)
-        self.overworld_entrance[name] = (outside, old_requirement, one_way_enter_requirement, one_way_exit_requirement)
+        self.overworld_entrance[name].addExitRequirement(requirement)
 
     def updateIndoorLocation(self, name, location):
         assert name in self.indoor_location
@@ -638,3 +634,32 @@ class DungeonDiveOverworld:
 
     def updateIndoorLocation(self, name, location):
         self.indoor_location[name] = location
+
+
+class EntranceExterior:
+    def __init__(self, outside, requirement, one_way_enter_requirement="UNSET", one_way_exit_requirement="UNSET"):
+        self.location = outside
+        self.requirement = requirement
+        self.one_way_enter_requirement = one_way_enter_requirement
+        self.one_way_exit_requirement = one_way_exit_requirement
+    
+    def addRequirement(self, new_requirement):
+        self.requirement = OR(self.requirement, new_requirement)
+
+    def addExitRequirement(self, new_requirement):
+        if self.one_way_exit_requirement == "UNSET":
+            self.one_way_exit_requirement = new_requirement
+        else:
+            self.one_way_exit_requirement = OR(self.one_way_exit_requirement, new_requirement)
+
+    def addEnterRequirement(self, new_requirement):
+        if self.one_way_enter_requirement == "UNSET":
+            self.one_way_enter_requirement = new_requirement
+        else:
+            self.one_way_enter_requirement = OR(self.one_way_enter_requirement, new_requirement)
+    
+    def enterIsSet(self):
+        return self.one_way_enter_requirement != "UNSET"
+    
+    def exitIsSet(self):
+        return self.one_way_exit_requirement != "UNSET"
