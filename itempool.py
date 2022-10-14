@@ -63,7 +63,7 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_SCALE: 1,
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
-    "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1,
+    "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1, "CASTLE_BUTTON": 1
 }
 
 
@@ -202,6 +202,7 @@ class ItemPool:
             self.remove("MEDICINE2")
             self.remove("RAFT")
             self.remove("ANGLER_KEYHOLE")
+            self.remove("CASTLE_BUTTON")
             self.remove(TRADING_ITEM_YOSHI_DOLL)
             self.remove(TRADING_ITEM_RIBBON)
             self.remove(TRADING_ITEM_DOG_FOOD)

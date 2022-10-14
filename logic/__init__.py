@@ -53,13 +53,13 @@ class Logic:
             assert k in world.overworld_entrance, k
 
         for entrance, indoor in world_setup.entrance_mapping.items():
-            location, requirement, one_way_enter_requirement, one_way_exit_requirement = world.overworld_entrance[entrance]
+            exterior = world.overworld_entrance[entrance]
             if world.indoor_location[indoor] is not None:
-                location.connect(world.indoor_location[indoor], requirement)
-                if one_way_enter_requirement is not None:
-                    location.connect(world.indoor_location[indoor], one_way_enter_requirement, one_way=True)
-                if one_way_exit_requirement is not None:
-                    world.indoor_location[indoor].connect(location, one_way_exit_requirement, one_way=True)
+                exterior.location.connect(world.indoor_location[indoor], exterior.requirement)
+                if exterior.enterIsSet():
+                    exterior.location.connect(world.indoor_location[indoor], exterior.one_way_enter_requirement, one_way=True)
+                if exterior.exitIsSet():
+                    world.indoor_location[indoor].connect(exterior.location, exterior.one_way_exit_requirement, one_way=True)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':

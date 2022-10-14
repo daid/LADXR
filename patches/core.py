@@ -1,4 +1,5 @@
 from assembler import ASM
+from entranceInfo import ENTRANCE_INFO
 from roomEditor import RoomEditor, ObjectWarp, ObjectHorizontal
 from backgroundEditor import BackgroundEditor
 import utils
@@ -174,6 +175,42 @@ noWrapDown:
 
     re = RoomEditor(rom, 0x2a3)
     warp = re.getWarps()[0]
+
+    type = 0x00
+    map = 0x00
+    room = warp.room
+    x = warp.target_x
+    y = warp.target_y
+
+    one_way = [
+        'd0',
+        'd1',
+        'd3',
+        'd4',
+        'd6',
+        'd8',
+        'animal_cave',
+        'right_fairy',
+        'rooster_grave',
+        'prairie_left_cave2',
+        'prairie_left_fairy',
+        'armos_fairy',
+        'boomerang_cave',
+        'madbatter_taltal',
+        'forest_madbatter',
+    ]
+
+    one_way = {ENTRANCE_INFO[x].room for x in one_way}
+
+    if warp.room in one_way:
+        # we're starting at a one way exit room
+        # warp indoors to avoid soft locks
+        type = 0x01
+        map = 0x10
+        room = 0xa3
+        x = 0x50
+        y = 0x7f
+
     rom.patch(0x01, 0x3E20, 0x4000, ASM("""
         ; First, handle save & quit
         cp   $01
@@ -191,7 +228,9 @@ noWrapDown:
 
         ; Replace warp0 tile data, and put link on that tile.
         xor  a
+        ld   a, $%02x ; Type
         ld   [$D401], a
+        ld   a, $%02x ; Map
         ld   [$D402], a
         ld   a, $%02x ; Room
         ld   [$D403], a
@@ -214,7 +253,7 @@ noWrapDown:
         ld   [$DB96], a
         ret
         jp   $40BE  ; return to normal "return to game" handling
-    """ % (warp.room, warp.target_x, warp.target_y)), fill_nop=True)
+    """ % (type, map, room, x, y)), fill_nop=True)
 
 
     # Patch the S&Q screen to have 3 options.

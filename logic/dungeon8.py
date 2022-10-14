@@ -73,6 +73,7 @@ class Dungeon8:
             sparks_chest.connect(entrance_left, OR(r.attack_hookshot, FEATHER, PEGASUS_BOOTS)) # 1 pit buffer across the pit. Add requirements for all the options to get to this area
             lower_center.connect(entrance_up, None) # sideways block push in peahat room to get past keyblock
             miniboss_entrance.connect(lower_center, AND(BOMB, FEATHER, HOOKSHOT)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
+            miniboss_entrance.connect(lower_center, AND(BOMB, FEATHER, FOUND(KEY8, 1))) # same as above, but without clipping past the keyblock
             up_left.connect(lower_center, FEATHER) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             up_left.connect(upper_center, FEATHER) # from up left you can jesus jump / lava swim around the key door next to the boss.
             top_left_stairs.connect(up_left, AND(FEATHER, SWORD)) # superjump
