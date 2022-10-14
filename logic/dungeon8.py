@@ -36,7 +36,7 @@ class Dungeon8:
         middle_center_1 = Location(8).connect(upper_center, BOMB)
         middle_center_2 = Location(8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
         middle_center_3 = Location(8).connect(middle_center_2, KEY8)
-        miniboss_entrance = Location(8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 5))) # hookshot to get across to keyblock, 5 to make vanilla possible
+        miniboss_entrance = Location(8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 7))) # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
         miniboss = Location(8).connect(miniboss_entrance, AND(FEATHER, r.miniboss_requirements[world_setup.miniboss_mapping[7]]))  # feather for 2d section, sword to kill
         miniboss.add(DungeonChest(0x237)) # fire rod chest
 
@@ -54,7 +54,7 @@ class Dungeon8:
 
         top_left_stairs = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
         top_left_stairs.connect(up_left, None, one_way=True) # jump down from the staircase to the right
-        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8, FOUND(KEY8, 6)))
+        nightmare_key = Location(8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8, FOUND(KEY8, 7)))
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
@@ -66,6 +66,7 @@ class Dungeon8:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
             vire_drop_key.connect(entrance_left, BOMB) # use bombs to kill rolling bones and vire
+            bottom_right.connect(slime_chest, FEATHER) # diagonal jump over the pits to reach rolling rock / zamboni
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
             slime_chest.connect(entrance, AND(r.attack_hookshot_powder, POWER_BRACELET))  # kill vire with powder or bombs 
         
@@ -73,7 +74,7 @@ class Dungeon8:
             sparks_chest.connect(entrance_left, OR(r.attack_hookshot, FEATHER, PEGASUS_BOOTS)) # 1 pit buffer across the pit. Add requirements for all the options to get to this area
             lower_center.connect(entrance_up, None) # sideways block push in peahat room to get past keyblock
             miniboss_entrance.connect(lower_center, AND(BOMB, FEATHER, HOOKSHOT)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
-            miniboss_entrance.connect(lower_center, AND(BOMB, FEATHER, FOUND(KEY8, 1))) # same as above, but without clipping past the keyblock
+            miniboss_entrance.connect(lower_center, AND(BOMB, FEATHER, FOUND(KEY8, 7))) # same as above, but without clipping past the keyblock
             up_left.connect(lower_center, FEATHER) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             up_left.connect(upper_center, FEATHER) # from up left you can jesus jump / lava swim around the key door next to the boss.
             top_left_stairs.connect(up_left, AND(FEATHER, SWORD)) # superjump
@@ -88,7 +89,7 @@ class Dungeon8:
             medicine_chest.connect(upper_center, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss.connect(miniboss_entrance, AND(PEGASUS_BOOTS, r.miniboss_requirements[world_setup.miniboss_mapping[7]])) # get through 2d section with boots bonks
             top_left_stairs.connect(map_chest, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
-            nightmare_key.connect(top_left_stairs, AND(PEGASUS_BOOTS, SWORD, FOUND(KEY8, 6))) # use a boots bonk to cross the 2d section + the lava in cueball room
+            nightmare_key.connect(top_left_stairs, AND(PEGASUS_BOOTS, SWORD, FOUND(KEY8, 7))) # use a boots bonk to cross the 2d section + the lava in cueball room
             bottom_right.connect(entrance_up, AND(POWER_BRACELET, PEGASUS_BOOTS), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
             bossdoor.connect(entrance_up, AND(PEGASUS_BOOTS, MAGIC_ROD)) # boots bonk through 2d section
             

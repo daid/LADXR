@@ -61,6 +61,8 @@ class Dungeon5:
             start_hookshot_chest.connect(entrance, PEGASUS_BOOTS) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             fourth_stalfos_area.connect(compass, AND(PEGASUS_BOOTS, SWORD)) # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
             blade_trap_chest.connect(area2, AND(PEGASUS_BOOTS, r.attack_hookshot_powder)) # boots bonk + pit buffer past the blade traps
+            post_gohma.connect(area2, AND(PEGASUS_BOOTS, FEATHER, POWER_BRACELET)) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across. Sideways block push + pick up pots to reach post_gohma
+            staircase_before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, FEATHER)) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_stalfos.connect(area2, SWORD) # knock master stalfos down 255 times (about 23 minutes)
             north_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # get to first chest via the north chest with pit buffering

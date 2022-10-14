@@ -501,7 +501,7 @@ class World:
             fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # can bomb trigger the item without having the hook 
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(next_to_castle, FEATHER) # jesus jump (north of kanalet castle phonebooth)
-            animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
+            animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text or shaq jump in bottom right corner if text is off
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, OR(HOOKSHOT, FEATHER, PEGASUS_BOOTS))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  FEATHER) # villa buffer across the pits
 
@@ -511,7 +511,7 @@ class World:
             armos_fairy_entrance.connect(raft_exit, FEATHER) # jesus jump (2-ish screen) from fairy cave to lower raft connector
             self._addEntranceRequirementEnter("obstacle_cave_entrance", HOOKSHOT) # clip past the rocks in front of obstacle cave entrance
             obstacle_cave_inside_chest.connect(obstacle_cave_inside, FEATHER) # jump to the rightmost pits + 1 pit buffer to jump across
-            obstacle_cave_exit.connect(obstacle_cave_inside, FEATHER) #  1 pit buffer above boots crytals to get past
+            obstacle_cave_exit.connect(obstacle_cave_inside, FEATHER) #  1 pit buffer above boots crystals to get past
             lower_right_taltal.connect(hibiscus_item, AND(TRADING_ITEM_PINEAPPLE, BOMB), one_way=True) # bomb trigger papahl from below ledge, requires pineapple
             
             self._addEntranceRequirement("heartpiece_swim_cave", FEATHER)  # jesus jump into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
@@ -533,6 +533,7 @@ class World:
             swamp.connect(forest_toadstool, SHIELD) # damage boost from toadstool area across the pit.
             forest.connect(forest_heartpiece, PEGASUS_BOOTS, one_way=True) # boots bonk across the pits
             log_cave_heartpiece.connect(forest_cave, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
+            log_cave_heartpiece.connect(forest_cave, AND(ROOSTER, OR(PEGASUS_BOOTS, SWORD, BOW, MAGIC_ROD))) # boots rooster hop in bottom left corner to "superjump" into the area. use buffers after picking up rooster to gain height / time to throw rooster again facing up
             writes_hut_outside.connect(swamp, None) # damage boost with moblin arrow next to telephone booth
             writes_cave_left_chest.connect(writes_cave, None) # damage boost off the zol to get across the pit.
             graveyard.connect(crazy_tracy_hut, HOOKSHOT, one_way=True) # use hookshot spam to clip the rock on the right with the crow
@@ -565,6 +566,7 @@ class World:
             d6_connector_right.connect(d6_connector_left, PEGASUS_BOOTS) # boots bonk across bottom wall at water and pits (can do both ways)
             
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
+            obstacle_cave_entrance.connect(obstacle_cave_inside, AND(PEGASUS_BOOTS, ROOSTER)) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
             d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump a long way
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
                 below_right_taltal.connect(raft_game, AND(FEATHER, r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
@@ -573,6 +575,7 @@ class World:
             bird_key.connect(bird_cave, AND(FEATHER, PEGASUS_BOOTS)) # boots jump above wall, use multiple pit buffers to get across
             mountain_bridge_staircase.connect(outside_rooster_house, OR(PEGASUS_BOOTS, FEATHER)) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
             left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, AND(PEGASUS_BOOTS, FEATHER), one_way=True) # boots jump to bottom left corner of pits, pit buffer and jump to left
+            left_right_connector_cave_exit.connect(left_right_connector_cave_entrance, AND(ROOSTER, OR(PEGASUS_BOOTS, SWORD, BOW, MAGIC_ROD)), one_way=True)  # pass through the passage in reverse using a boots rooster hop or rooster superjump in the one way passage area
             
         self.start = start_house
         self.egg = windfish_egg

@@ -44,12 +44,14 @@ class Dungeon6:
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(left_side, AND(POWER_BRACELET, FEATHER), one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
             lower_right_side.connect(center_2_and_upper_right_side, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)), one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
-            lower_right_side.connect(center_1, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)), one_way=True) # POWER_BRACELET is implied from lower_right_side. superjump from waterway + shag jump to pass key block at tiles room
+            center_2_and_upper_right_side.connect(center_1, AND(POWER_BRACELET, FEATHER), one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
             boss_key.connect(lower_right_side, FEATHER) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
         if options.logic == 'hell':
             entrance.connect(left_side, AND(POWER_BRACELET, PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # can boots superhop off the top right corner in 3 wizrobe raised blocks room
             medicine_chest.connect(lower_right_side, AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW))) # can boots superhop off the top wall with bow or magic rod
+            center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2))) # use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
+            lower_right_side.connect(center_2_and_upper_right_side, FEATHER, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
             
         self.entrance = entrance
 
