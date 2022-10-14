@@ -625,15 +625,15 @@ class DungeonDiveOverworld:
 
         self.start = start_house
         self.overworld_entrance = {
-            "d1": (start_house, None, None, None),
-            "d2": (start_house, None, None, None),
-            "d3": (start_house, None, None, None),
-            "d4": (start_house, None, None, None),
-            "d5": (start_house, FLIPPERS, None, None),
-            "d6": (start_house, None, None, None),
-            "d7": (start_house, None, None, None),
-            "d8": (start_house, None, None, None),
-            "d0": (start_house, None, None, None),
+            "d1": EntranceExterior(start_house, None),
+            "d2": EntranceExterior(start_house, None),
+            "d3": EntranceExterior(start_house, None),
+            "d4": EntranceExterior(start_house, None),
+            "d5": EntranceExterior(start_house, FLIPPERS),
+            "d6": EntranceExterior(start_house, None),
+            "d7": EntranceExterior(start_house, None),
+            "d8": EntranceExterior(start_house, None),
+            "d0": EntranceExterior(start_house, None),
         }
         self.egg = egg
         self.nightmare = nightmare
