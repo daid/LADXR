@@ -232,12 +232,13 @@ class World:
         castle_secret_entrance_left = Location()
         castle_secret_entrance_right = Location().connect(castle_secret_entrance_left, FEATHER)
         castle_outside = Location()
+        castle_outside.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
         self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
         self._addEntrance("castle_secret_exit", castle_outside, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
         castle_inside = Location()
-        castle_inside.connect(castle_outside, None, one_way=True) # the button in the connector allows access to the castle grounds in ER
+        Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
         castle_top_outside = Location()
         castle_top_inside = Location()
         self._addEntrance("castle_main_entrance", castle_outside, castle_inside, r.bush)
