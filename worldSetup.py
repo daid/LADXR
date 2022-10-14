@@ -132,3 +132,4 @@ class WorldSetup:
             self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
         self.boss_mapping = patches.enemies.readBossMapping(rom)
         self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
+        self.goal = 8 # Better then nothing
