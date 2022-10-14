@@ -20,6 +20,8 @@ class StartItem(DroppedKey):
             # When we have bowwow mode, we pretend to be a sword for logic reasons
             self.OPTIONS = [SWORD]
             self.give_bowwow = True
+        if options.randomstartlocation and options.entranceshuffle != 'none':
+            self.OPTIONS.append(FLIPPERS)
 
     def patch(self, rom, option, *, multiworld=None):
         assert multiworld is None

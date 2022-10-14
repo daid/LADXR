@@ -27,6 +27,7 @@ class World:
         self._addEntrance("papahl_house_left", mabe_village, papahl_house, None)
         self._addEntrance("papahl_house_right", mabe_village, papahl_house, None)
         self._addEntrance("rooster_grave", mabe_village, rooster_cave, COUNT(POWER_BRACELET, 2))
+        self._addEntranceRequirementExit("rooster_grave", None) # if exiting, you do not need l2 bracelet
         self._addEntrance("madambowwow", mabe_village, None, None)
         self._addEntrance("ulrira", mabe_village, None, None)
         self._addEntrance("mabe_phone", mabe_village, None, None)
@@ -64,7 +65,7 @@ class World:
         elif options.boomerang == 'gift':
             Location().add(BoomerangGuy()).connect(boomerang_cave, None)
         self._addEntrance("boomerang_cave", sword_beach, boomerang_cave, BOMB)
-        self._addEntranceRequirementExit("boomerang_cave", None)
+        self._addEntranceRequirementExit("boomerang_cave", None) # if exiting, you do not need bombs
 
         sword_beach_to_ghost_hut = Location().add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
         ghost_hut_outside = Location().connect(sword_beach_to_ghost_hut, POWER_BRACELET)
@@ -87,6 +88,7 @@ class World:
         forest_madbatter = Location()
         Location().add(MadBatter(0x1E1)).connect(forest_madbatter, MAGIC_POWDER)
         self._addEntrance("forest_madbatter", forest, forest_madbatter, POWER_BRACELET)
+        self._addEntranceRequirementExit("forest_madbatter", None) # if exiting, you do not need bracelet
 
         forest_cave = Location()
         Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
@@ -123,6 +125,7 @@ class World:
             graveyard.add(OwlStatue(0x035))  # Moblin cave owl
         self._addEntrance("photo_house", graveyard, None, None)
         self._addEntrance("d0", graveyard, None, POWER_BRACELET)
+        self._addEntranceRequirementExit("d0", None) # if exiting, you do not need bracelet
         ghost_grave = Location().connect(forest, POWER_BRACELET)
         Location().add(Seashell(0x074)).connect(ghost_grave, AND(r.bush, SHOVEL))  # next to grave cave, digging spot
 
@@ -142,12 +145,13 @@ class World:
         self._addEntrance("prairie_right_phone", ukuku_prairie, None, None)
         self._addEntrance("prairie_left_cave1", ukuku_prairie, Location().add(Chest(0x2CD)), None) # cave next to town
         self._addEntrance("prairie_left_fairy", ukuku_prairie, None, BOMB)
+        self._addEntranceRequirementExit("prairie_left_fairy", None) # if exiting, you do not need bombs
 
         prairie_left_cave2 = Location()  # Bomb cave
         Location().add(Chest(0x2F4)).connect(prairie_left_cave2, PEGASUS_BOOTS)
         Location().add(HeartPiece(0x2E5)).connect(prairie_left_cave2, AND(BOMB, PEGASUS_BOOTS))
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
-        self._addEntranceRequirementExit("prairie_left_cave2", None)
+        self._addEntranceRequirementExit("prairie_left_cave2", None) # if exiting, you do not need bombs
 
         mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
@@ -277,7 +281,7 @@ class World:
 
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
-        self._addEntranceRequirementExit("animal_cave", None)
+        self._addEntranceRequirementExit("animal_cave", None) # if exiting, you do not need bombs
         animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
 
         desert_cave = Location()
@@ -297,7 +301,7 @@ class World:
 
         armos_fairy_entrance = Location().connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
         self._addEntrance("armos_fairy", armos_fairy_entrance, None, BOMB)
-        self._addEntranceRequirementExit("armos_fairy", None)
+        self._addEntranceRequirementExit("armos_fairy", None) # if exiting, you do not need bombs
 
         d6_connector_left = Location()
         d6_connector_right = Location().connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
@@ -403,7 +407,7 @@ class World:
         self._addEntrance("right_taltal_connector5", right_taltal_connector_outside2, right_taltal_connector4, None)
         self._addEntrance("right_taltal_connector6", d7_platau, right_taltal_connector4, None)
         self._addEntrance("right_fairy", right_taltal_connector_outside2, None, BOMB)
-        self._addEntranceRequirementExit("right_fairy", None)
+        self._addEntranceRequirementExit("right_fairy", None) # if exiting, you do not need bombs
         self._addEntrance("d7", d7_tower, None, None)
         if options.logic != "casual": # D7 area ledge drops
             d7_platau.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
@@ -425,6 +429,7 @@ class World:
         taltal_boulder_zone.add(Chest(0x004)) # top of falling rocks hill
         taltal_madbatter = Location().connect(Location().add(MadBatter(0x1E2)), MAGIC_POWDER)
         self._addEntrance("madbatter_taltal", taltal_boulder_zone, taltal_madbatter, POWER_BRACELET)
+        self._addEntranceRequirementExit("madbatter_taltal", None) # if exiting, you do not need bracelet
 
         outside_fire_cave = Location()
         if options.logic != "casual":
@@ -433,7 +438,7 @@ class World:
         fire_cave_bottom = Location()
         fire_cave_top = Location().connect(fire_cave_bottom, COUNT(SHIELD, 2))
         self._addEntrance("fire_cave_entrance", outside_fire_cave, fire_cave_bottom, BOMB)
-        self._addEntranceRequirementExit("fire_cave_entrance", None)
+        self._addEntranceRequirementExit("fire_cave_entrance", None) # if exiting, you do not need bombs
 
         d8_entrance = Location()
         if options.logic != "casual":
@@ -442,6 +447,7 @@ class World:
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
         self._addEntrance("phone_d8", d8_entrance, None, None)
         self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
+        self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
         nightmare = Location()
         windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
