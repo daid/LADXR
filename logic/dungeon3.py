@@ -61,28 +61,28 @@ class Dungeon3:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             dungeon3_3_bombite_room.connect(area_right, BOOMERANG) # 3 bombite room from the left side, grab item with boomerang
-            dungeon3_reverse_eye.connect(entrance, HOOKSHOT) # hookshot the chest to get to the right side
-            dungeon3_north_key_drop.connect(area_up, POWER_BRACELET) # use pots to kill the enemies
-            dungeon3_south_key_drop.connect(area_down, POWER_BRACELET) # use pots to kill enemies
+            dungeon3_reverse_eye.connect(entrance, r.hookshot_over_pit) # hookshot the chest to get to the right side
+            dungeon3_north_key_drop.connect(area_up, r.throw_pot) # use pots to kill the enemies
+            dungeon3_south_key_drop.connect(area_down, r.throw_pot) # use pots to kill enemies
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            area2.connect(dungeon3_raised_blocks_east, AND(r.attack_hookshot_powder, FEATHER), one_way=True) # use superjump to get over the bottom left block
-            area3.connect(dungeon3_raised_blocks_north, AND(OR(PEGASUS_BOOTS, HOOKSHOT), FEATHER), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks. Instead of boots can also get to that area with a hookshot clip past the movable block
-            area3.connect(dungeon3_zol_stalfos, HOOKSHOT, one_way=True) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
-            dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
-            dungeon3_post_dodongo_chest.connect(area_right, AND(FEATHER, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys to open enough blocks TODO: nag messages to skip a key
+            area2.connect(dungeon3_raised_blocks_east, AND(r.attack_hookshot_powder, r.super_jump_feather), one_way=True) # use superjump to get over the bottom left block
+            area3.connect(dungeon3_raised_blocks_north, AND(OR(PEGASUS_BOOTS, r.hookshot_clip_block), r.shaq_jump), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks. Instead of boots can also get to that area with a hookshot clip past the movable block
+            area3.connect(dungeon3_zol_stalfos, r.hookshot_clip_block, one_way=True) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
+            dungeon3_nightmare_key_chest.connect(area_right, AND(r.super_jump_feather, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
+            dungeon3_post_dodongo_chest.connect(area_right, AND(r.super_jump_feather, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys to open enough blocks TODO: nag messages to skip a key
         
         if options.logic == 'hell':
-            area2.connect(dungeon3_raised_blocks_east, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # use boots superhop to get over the bottom left block
-            area3.connect(dungeon3_raised_blocks_north, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD)), one_way=True) # use boots superhop off top wall or left wall to get on raised blocks
-            area_up.connect(dungeon3_zol_stalfos, AND(FEATHER, OR(BOW, MAGIC_ROD, SWORD)), one_way=True) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
-            area_left_key_drop.connect(area_left, SHIELD) # knock everything into the pit including the teleporting owls
-            dungeon3_south_key_drop.connect(area_down, SHIELD) # knock everything into the pit including the teleporting owls
-            dungeon3_nightmare_key_chest.connect(area_right, AND(FEATHER, SHIELD)) # superjump into jumping stalfos and shield bump to right ledge
-            dungeon3_nightmare_key_chest.connect(area_right, AND(BOMB, PEGASUS_BOOTS, HOOKSHOT)) # boots bonk across the pits with pit buffering and hookshot to the chest
+            area2.connect(dungeon3_raised_blocks_east, r.boots_superhop, one_way=True) # use boots superhop to get over the bottom left block
+            area3.connect(dungeon3_raised_blocks_north, r.boots_superhop, one_way=True) # use boots superhop off top wall or left wall to get on raised blocks
+            area_up.connect(dungeon3_zol_stalfos, AND(r.super_jump_feather, r.attack_skeleton), one_way=True) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
+            area_left_key_drop.connect(area_left, r.shield_bump) # knock everything into the pit including the teleporting owls
+            dungeon3_south_key_drop.connect(area_down, r.shield_bump) # knock everything into the pit including the teleporting owls
+            dungeon3_nightmare_key_chest.connect(area_right, AND(r.super_jump_feather, r.shield_bump)) # superjump into jumping stalfos and shield bump to right ledge
+            dungeon3_nightmare_key_chest.connect(area_right, AND(BOMB, r.pit_buffer_boots, HOOKSHOT)) # boots bonk across the pits with pit buffering and hookshot to the chest
             compass_chest.connect(dungeon3_3_bombite_room, OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs
             pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, FEATHER, POWER_BRACELET)) # use bracelet super bounce glitch to pass through first part underground section
-            pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, PEGASUS_BOOTS, "MEDICINE2")) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
+            pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             
         self.entrance = entrance
 
