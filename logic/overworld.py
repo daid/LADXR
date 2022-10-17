@@ -476,7 +476,7 @@ class World:
             fire_cave_bottom.connect(fire_cave_top, AND(r.damage_boost, PEGASUS_BOOTS), one_way=True) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            #self._addEntranceRequirement("dream_hut", FEATHER) # text clip TODO: require nag messages
+            self._addEntranceRequirement("dream_hut", AND(options.nagmessages, FEATHER)) # text clip
             self._addEntranceRequirementEnter("dream_hut", r.hookshot_clip) # clip past the rocks in front of dream hut
             dream_hut_right.connect(dream_hut_left, r.super_jump_feather) # super jump
             forest.connect(swamp, r.bomb_trigger)  # bomb trigger tarin
@@ -501,7 +501,7 @@ class World:
             fisher_under_bridge.connect(bay_water, AND(r.bomb_trigger, FLIPPERS)) # can bomb trigger the item without having the hook 
             animal_village.connect(ukuku_prairie, r.jesus_jump) # jesus jump
             below_right_taltal.connect(next_to_castle, r.jesus_jump) # jesus jump (north of kanalet castle phonebooth)
-            #animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text TODO: nag messages
+            animal_village_connector_right.connect(animal_village_connector_left, AND(options.nagmessages, FEATHER)) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(r.bomb_trigger, OR(HOOKSHOT, FEATHER, r.boots_bonk_pit))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  r.pit_buffer) # villa buffer across the pits
 
