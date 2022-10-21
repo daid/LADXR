@@ -3,27 +3,16 @@ from locations.items import *
 
 
 class OR:
-    __slots__ = ('__items', '__children', 'static_result')
+    __slots__ = ('__items', '__children')
+
+    def __new__(cls, *args):
+        if True in args:
+            return True
+        return super().__new__(cls)
 
     def __init__(self, *args):
         self.__items = [item for item in args if isinstance(item, str)]
         self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
-
-        self.static_result = None
-        if True in args:
-            self.static_result = True
-            self.__children.append(BOOL(True))
-
-        for child in [x for x in self.__children if type(x) in (OR, AND)]:
-            if child.static_result == False:
-                # the child can't affect our test(), just remove it
-                self.__children.remove(child)
-            elif child.static_result == True:
-                # we can never test() as False
-                # swap out the child in case we're at the top level
-                self.__children.remove(child)
-                self.__children.append(BOOL(True))
-                self.static_result = True
 
         assert self.__items or self.__children, args
 
@@ -81,27 +70,16 @@ class OR:
 
 
 class AND:
-    __slots__ = ('__items', '__children', 'static_result')
+    __slots__ = ('__items', '__children')
+
+    def __new__(cls, *args):
+        if False in args:
+            return False
+        return super().__new__(cls)
 
     def __init__(self, *args):
         self.__items = [item for item in args if isinstance(item, str)]
         self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
-
-        self.static_result = None
-        if False in args:
-            self.static_result = False
-            self.__children.append(BOOL(False))
-
-        for child in [x for x in self.__children if type(x) in (OR, AND)]:
-            if child.static_result == False:
-                # we can never test() as True
-                # swap out the child in case we're at the top level
-                self.__children.remove(child)
-                self.__children.append(BOOL(False))
-                self.static_result = False
-            elif child.static_result == True:
-                # the child can't affect our test(), just remove it
-                self.__children.remove(child)
 
     def __repr__(self) -> str:
         return "and%s" % (self.__items+self.__children)
@@ -150,26 +128,6 @@ class AND:
 
     def copyWithModifiedItemNames(self, f) -> "AND":
         return AND(*(f(item) for item in self.__items), *(child.copyWithModifiedItemNames(f) for child in self.__children))
-
-
-# a placeholder class to force a result from test() without impacting performance for the vast majority of conditions that aren't forced
-class BOOL:
-    __slots__ = ('__value')
-
-    def __init__(self, value):
-        self.__value = value
-    
-    def __repr__(self) -> str:
-        return str(self.__value)
-    
-    def hasConsumableRequirement(self) -> bool:
-        return False
-    
-    def test(self, inventory):
-        return self.__value
-
-    def getItems(self, inventory, target_set) -> None:
-        return
 
 
 class COUNT:

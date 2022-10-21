@@ -20,6 +20,12 @@ class Location:
 
     def connect(self, other, req, *, one_way=False):
         assert isinstance(other, Location), type(other)
+
+        if isinstance(req, bool):
+            if req:
+                self.connect(other, None, one_way=one_way)
+            return
+
         if other in self.__connected_to:
             for idx, data in enumerate(self.gated_connections):
                 if data[0] == other:
