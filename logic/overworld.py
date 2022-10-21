@@ -529,8 +529,9 @@ class World:
             self._addEntranceRequirement("d8", OR(BOMB, AND(OCARINA, SONG3))) # bomb trigger the head and walk trough, or play the ocarina song 3 and walk through
 
         if options.logic == 'hell':
-            dream_hut_right.connect(dream_hut, POWER_BRACELET) # grab the wall twice to control mimics without moving, and make them clip the wall to pass safely
-            swamp.connect(forest_toadstool, SHIELD) # damage boost from toadstool area across the pit.
+            dream_hut_right.connect(dream_hut, None) # alternate diagonal movement with orthogonal movement to control the mimics. Get them clipped into the walls to walk past
+            swamp.connect(forest_toadstool, None) # damage boost from toadstool area across the pit
+            swamp.connect(forest, AND(r.bush, OR(PEGASUS_BOOTS, HOOKSHOT))) # boots bonk / hookshot spam over the pits right of forest_rear_chest
             forest.connect(forest_heartpiece, PEGASUS_BOOTS, one_way=True) # boots bonk across the pits
             log_cave_heartpiece.connect(forest_cave, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             log_cave_heartpiece.connect(forest_cave, AND(ROOSTER, OR(PEGASUS_BOOTS, SWORD, BOW, MAGIC_ROD))) # boots rooster hop in bottom left corner to "superjump" into the area. use buffers after picking up rooster to gain height / time to throw rooster again facing up

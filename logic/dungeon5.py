@@ -55,14 +55,16 @@ class Dungeon5:
             post_gohma.connect(area2, HOOKSHOT) # glitch through the blocks/pots with hookshot. Zoomerang can be used but has no logical implications because of 2d section requiring hookshot
             north_bridge_chest.connect(north_of_crossroads, FEATHER) # 1 pit buffer to clip bottom wall and jump across the pits
             east_bridge_chest.connect(first_bridge_chest, FEATHER) # 1 pit buffer to clip bottom wall and jump across the pits
-            after_stalfos.connect(staircase_before_boss, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # use the keyblock to get a wall clip in right wall to perform a superjump over the pushable block
-            
+            #after_stalfos.connect(staircase_before_boss, AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # use the keyblock to get a wall clip in right wall to perform a superjump over the pushable block TODO: nagmessages
+            after_stalfos.connect(staircase_before_boss, AND(PEGASUS_BOOTS, FEATHER, OR(SWORD, BOW, MAGIC_ROD))) # charge a boots dash in bottom right corner to the right, jump before hitting the wall and use weapon to the left side before hitting the wall
+         
         if  options.logic == 'hell':
             start_hookshot_chest.connect(entrance, PEGASUS_BOOTS) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             fourth_stalfos_area.connect(compass, AND(PEGASUS_BOOTS, SWORD)) # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
             blade_trap_chest.connect(area2, AND(PEGASUS_BOOTS, r.attack_hookshot_powder)) # boots bonk + pit buffer past the blade traps
-            post_gohma.connect(area2, AND(PEGASUS_BOOTS, FEATHER, POWER_BRACELET)) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across. Sideways block push + pick up pots to reach post_gohma
+            post_gohma.connect(area2, AND(PEGASUS_BOOTS, FEATHER, POWER_BRACELET, r.attack_hookshot_powder)) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across. Sideways block push + pick up pots to reach post_gohma
             staircase_before_boss.connect(post_gohma, AND(PEGASUS_BOOTS, FEATHER)) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
+            after_stalfos.connect(staircase_before_boss, AND(FEATHER, SWORD)) # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
             after_stalfos.connect(area2, SWORD) # knock master stalfos down 255 times (about 23 minutes)
             north_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, PEGASUS_BOOTS) # get to first chest via the north chest with pit buffering
