@@ -231,21 +231,22 @@ class World:
         self._addEntrance("castle_phone", next_to_castle, None, None)
         castle_secret_entrance_left = Location()
         castle_secret_entrance_right = Location().connect(castle_secret_entrance_left, FEATHER)
-        castle_outside = Location()
-        castle_outside.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
+        castle_courtyard = Location()
+        castle_frontdoor = Location().connect(castle_courtyard, r.bush)
+        castle_frontdoor.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
         self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
-        self._addEntrance("castle_secret_exit", castle_outside, castle_secret_entrance_left, None)
+        self._addEntrance("castle_secret_exit", castle_courtyard, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
         castle_inside = Location()
         Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
         castle_top_outside = Location()
         castle_top_inside = Location()
-        self._addEntrance("castle_main_entrance", castle_outside, castle_inside, r.bush)
+        self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, r.bush)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
-        Location().add(GoldLeaf(0x05A)).connect(castle_outside, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
-        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_outside, AND(POWER_BRACELET, r.attack_hookshot_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
+        Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(POWER_BRACELET, r.attack_hookshot_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
@@ -466,7 +467,7 @@ class World:
             self._addEntranceRequirement("mamu", AND(FEATHER, POWER_BRACELET)) # can clear the gaps at the start with just feather, can reach bottom left sign with a well timed jump while wall clipped
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(FEATHER, OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
             fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # can talk to the fisherman from the water when the boat is low (requires swimming up out of the water a bit)
-            crow_gold_leaf.connect(castle_outside, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
+            crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
             desert_lanmola.connect(desert, BOMB) # use bombs to kill lanmola
@@ -558,7 +559,7 @@ class World:
             ukuku_prairie.connect(bay_water, FEATHER, one_way=True) # jesus jump
             bay_water.connect(d5_entrance, FEATHER) # jesus jump into d5 entrance (wall clip), wall clip + jesus jump to get out
             
-            crow_gold_leaf.connect(castle_outside, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
+            crow_gold_leaf.connect(castle_courtyard, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, FEATHER)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, PEGASUS_BOOTS) # boots bonk across bottom wall (both at entrance and in item room)
 
