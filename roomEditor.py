@@ -114,7 +114,7 @@ class RoomEditor:
 
         if isinstance(new_room_nr, int) and new_room_nr < 0x100:
             if self.tileset_index is not None:
-                rom.banks[0x3F][0x2f00 + new_room_nr] = self.tileset_index & 0xFF
+                rom.banks[0x3F][0x3F00 + new_room_nr] = self.tileset_index & 0xFF
             if self.attribset is not None:
                 # With a tileset, comes metatile gbc data that we need to store a proper bank+pointer.
                 rom.banks[0x1A][0x2476 + new_room_nr] = self.attribset[0]
@@ -505,6 +505,9 @@ class RoomEditor:
                     w += 1
                 while y + h < 8 and tiles[x + (y + h) * 10] == obj:
                     h += 1
+                if obj in {0xE1, 0xE2, 0xE3, 0xBA, 0xC6}:  # Entrances should never be horizontal/vertical lists
+                    w = 1
+                    h = 1
                 if w > h:
                     for n in range(w):
                         tiles[x + n + y * 10] = -1

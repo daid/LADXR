@@ -135,6 +135,15 @@ def forceLinksPalette(rom, index):
     rom.patch(0, 0x1DD2,
             ASM("ld a, [$DC0F]\nand a\njr z, $03\ninc a"),
             ASM("ld a, $%02X" % (index)), fill_nop=True)
+    # Fix the waking up from bed palette
+    if index == 1:
+        rom.patch(0x21, 0x33FC, "A222", "FF05")
+    elif index == 2:
+        rom.patch(0x21, 0x33FC, "A222", "3F14")
+    elif index == 3:
+        rom.patch(0x21, 0x33FC, "A222", "037E")
+    for n in range(6):
+        rom.patch(0x05, 0x1261 + n * 2, "00", f"{index:02x}")
 
 
 def fastText(rom):
