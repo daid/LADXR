@@ -4,7 +4,7 @@ from locations.all import *
 
 
 class Dungeon6:
-    def __init__(self, options, world_setup, r):
+    def __init__(self, options, world_setup, r, *, raft_game_chest=True):
         entrance = Location(6)
         Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
         Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
@@ -19,7 +19,8 @@ class Dungeon6:
         left_side = Location(6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOOMERANG)))
         Location(6).add(DroppedKey(0x1B4)).connect(left_side, OR(BOMB, BOW, MAGIC_ROD)) # 2 wizrobe drop key
         top_left = Location(6).add(DungeonChest(0x1B0)).connect(left_side, COUNT(POWER_BRACELET, 2)) # top left chest horseheads
-        Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
+        if raft_game_chest:
+            Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
 
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)

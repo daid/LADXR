@@ -442,8 +442,8 @@ for(var e of document.getElementsByTagName("img")) {
         room = Room(room_id)
         if room_id < 0x100:
             room.main_tileset_id = self.__rom.banks[0x20][0x2E73 + (room_id & 0x0F) // 2 + ((room_id >> 5) * 8)]
-            if self.__rom.banks[0x3F][0x2F00 + room_id]:  # If we have the the per room tileset patch, use that data
-                room.main_tileset_id = self.__rom.banks[0x3F][0x2F00 + room_id]
+            if self.__rom.banks[0x3F][0x3F00 + room_id]:  # If we have the the per room tileset patch, use that data
+                room.main_tileset_id = self.__rom.banks[0x3F][0x3F00 + room_id]
         else:
             room.main_tileset_id = self.__rom.banks[0x20][0x2eB3 + room_id - 0x100]
         room.animation_tileset_id = re.animation_id
@@ -632,8 +632,8 @@ for(var e of document.getElementsByTagName("img")) {
 
         if room_nr < 0x100:
             sub_tileset_offset = self.__rom.banks[0x20][0x2E73 + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)] << 4
-            if self.__rom.banks[0x3F][0x2F00 + room_nr]:  # If we have the the per room tileset patch, use that data
-                sub_tileset_offset = self.__rom.banks[0x3F][0x2F00 + room_nr] << 4
+            if self.__rom.banks[0x3F][0x3F00 + room_nr]:  # If we have the the per room tileset patch, use that data
+                sub_tileset_offset = self.__rom.banks[0x3F][0x3F00 + room_nr] << 4
             tilemap = self.__tiles[0x0f][sub_tileset_offset:sub_tileset_offset+0x20]
             tilemap += self.__tiles[0x0c][0x120:0x180]
             tilemap += self.__tiles[0x0c][0x080:0x100]

@@ -14,6 +14,7 @@ from locations.items import *
 from locations.keyLocation import KeyLocation
 from worldSetup import WorldSetup
 import itempool
+import mapgen
 
 
 class Logic:
@@ -23,6 +24,8 @@ class Logic:
 
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options, r)
+        elif configuration_options.overworld == "random":
+            world = mapgen.LogicGenerator(configuration_options, world_setup, r, world_setup.map)
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
@@ -36,7 +39,7 @@ class Logic:
             world.updateIndoorLocation("d7", dungeon7.NoDungeon7(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d8", dungeon8.NoDungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.NoDungeonColor(configuration_options, world_setup, r).entrance)
-        else:
+        elif configuration_options.overworld != "random":
             world.updateIndoorLocation("d1", dungeon1.Dungeon1(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d2", dungeon2.Dungeon2(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d3", dungeon3.Dungeon3(configuration_options, world_setup, r).entrance)
@@ -47,19 +50,20 @@ class Logic:
             world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
 
-        for k in world.overworld_entrance.keys():
-            assert k in world_setup.entrance_mapping, k
-        for k in world_setup.entrance_mapping.keys():
-            assert k in world.overworld_entrance, k
+        if configuration_options.overworld != "random":
+            for k in world.overworld_entrance.keys():
+                assert k in world_setup.entrance_mapping, k
+            for k in world_setup.entrance_mapping.keys():
+                assert k in world.overworld_entrance, k
 
-        for entrance, indoor in world_setup.entrance_mapping.items():
-            exterior = world.overworld_entrance[entrance]
-            if world.indoor_location[indoor] is not None:
-                exterior.location.connect(world.indoor_location[indoor], exterior.requirement)
-                if exterior.enterIsSet():
-                    exterior.location.connect(world.indoor_location[indoor], exterior.one_way_enter_requirement, one_way=True)
-                if exterior.exitIsSet():
-                    world.indoor_location[indoor].connect(exterior.location, exterior.one_way_exit_requirement, one_way=True)
+            for entrance, indoor in world_setup.entrance_mapping.items():
+                exterior = world.overworld_entrance[entrance]
+                if world.indoor_location[indoor] is not None:
+                    exterior.location.connect(world.indoor_location[indoor], exterior.requirement)
+                    if exterior.enterIsSet():
+                        exterior.location.connect(world.indoor_location[indoor], exterior.one_way_enter_requirement, one_way=True)
+                    if exterior.exitIsSet():
+                        world.indoor_location[indoor].connect(exterior.location, exterior.one_way_exit_requirement, one_way=True)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
@@ -86,6 +90,7 @@ class Logic:
                     world.start.add(KeyLocation("KEY%d" % (n + 1)))
                 world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n + 1)))
 
+        self.world = world
         self.start = world.start
         self.windfish = world.windfish
         self.location_list = []

@@ -13,6 +13,7 @@ from locations.items import *
 import generator
 import spoilerLog
 import itempool
+import mapgen
 from plan import Plan
 from worldSetup import WorldSetup
 from settings import Settings
@@ -41,6 +42,9 @@ class Randomizer:
             for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
                 world_setup = WorldSetup()
                 world_setup.randomize(settings, self.rnd)
+                if settings.overworld == "random":
+                    world_setup.map = mapgen.generate(args.input_filename, 6, 6)
+                random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
                 if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(settings, self.rnd).toDict().values()):
                     break
@@ -111,10 +115,10 @@ class Randomizer:
         item_pool = {}
         # Build the item pool to see which items we can randomize.
         if settings.multiworld is None:
-            item_pool = itempool.ItemPool(settings, self.rnd).toDict()
+            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd).toDict()
         else:
             for world in range(settings.multiworld):
-                world_item_pool = itempool.ItemPool(settings.multiworld_settings[world], self.rnd).toDict()
+                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd).toDict()
                 for item, count in world_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
@@ -235,7 +239,6 @@ class RandomItemPlacer(ItemPlacer):
         # Random placement
         spot = rnd.choice(self._spots)
         options = [i for i in spot.getOptions() if i in self._item_pool]
-
         if not options:
             return False
         item = rnd.choice(options)
@@ -344,7 +347,6 @@ class ForwardItemPlacer(ItemPlacer):
 
         if self.__verbose:
             print("Locations left: %d Considering now %d for %d items" % (len(self._spots), len(spots), len(req_items)))
-
         item = self._chooseItem(rnd, req_items)
         spots = [spot for spot in spots if item in spot.getOptions()]
         spots.sort(key=lambda spot: spot.nameId)

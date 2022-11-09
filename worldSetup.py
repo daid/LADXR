@@ -38,6 +38,7 @@ class WorldSetup:
         self.goal = None
         self.bingo_goals = None
         self.multichest = RUPEES_20
+        self.map = None  # Randomly generated map data
 
     def getEntrancePool(self, settings, connectorsOnly=False):
         entrances = []

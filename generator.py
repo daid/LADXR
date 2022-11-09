@@ -5,6 +5,7 @@ import os
 
 from romTables import ROMWithTables
 import assembler
+import mapgen
 import patches.overworld
 import patches.dungeon
 import patches.entrances
@@ -160,6 +161,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.overworld.createDungeonOnlyOverworld(rom)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
+    elif settings.overworld == 'random':
+        patches.overworld.patchOverworldTilesets(rom)
+        mapgen.store_map(rom, logic.world.map)
     if settings.dungeon_items == 'keysy':
         patches.dungeon.removeKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
@@ -244,7 +248,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if settings.overworld != "dungeondive":
+    if settings.overworld not in {"dungeondive", "random"}:
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):

@@ -133,7 +133,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             r = randomizer.Randomizer(args, settings, seed=userSeed)
             seed = binascii.hexlify(r.seed).decode("ascii").upper()
             break
-        except randomizer.Error:
+        except randomizer.Error as e:
             if userSeed is not None:
                 print("Specified seed does not produce a valid result.")
                 sys.exit(1)
@@ -141,7 +141,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             if retry_count > 100:
                 print("Randomization keeps failing, abort!")
                 sys.exit(1)
-            print("Failed, trying again: %d" % (retry_count))
+            print("Failed (%s), trying again: %d" % (e, retry_count))
 
     print("Seed: %s" % (seed))
 
