@@ -32,5 +32,5 @@ jobs:
     - name: Upload windows dist build
       uses: actions/upload-artifact@v3
       with:
-        name: viewervivify-windows
+        name: multiworld-client-windows
         path: multiworld/dist/multiworldclient
