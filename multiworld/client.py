@@ -4,7 +4,11 @@ import struct
 
 class Gameboy:
     def __init__(self):
-        self.__emu = evilemu.find_gameboy_emulators()[0]
+        print("Waiting for emulator.")
+        emus = []
+        while len(emus) == 0:
+            emus = list(evilemu.find_gameboy_emulators())
+        self.__emu = emus[0]
 
     def memread(self, addr: int) -> int:
         if 0x0000 < addr < 0x8000:
