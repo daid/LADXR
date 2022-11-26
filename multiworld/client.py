@@ -139,7 +139,7 @@ if __name__ == "__main__":
             gb.memwriteAND(wLinkStatusBits, 0xFD)
 
         if (gb.memread(wLinkStatusBits) & 0x04) == 0x04:
-            target = (gb.memread(wLinkSendShopTarget) - 0x18) / 0x10
+            target = (gb.memread(wLinkSendShopTarget) - 0x18) // 0x10
             item = gb.memread(wLinkSendShopItem)
 
             #  Translate item from shop item to giving item
