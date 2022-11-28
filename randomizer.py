@@ -46,7 +46,7 @@ class Randomizer:
                     world_setup.map = mapgen.generate(args.input_filename, 6, 6)
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(settings, self.rnd).toDict().values()):
+                if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd).toDict().values()):
                     break
 
         if self.plan:
