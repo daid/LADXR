@@ -1,7 +1,12 @@
+from locations.birdKey import BirdKey
 from locations.chest import Chest
+from locations.faceKey import FaceKey
 from locations.goldLeaf import GoldLeaf
 from locations.heartPiece import HeartPiece
+from locations.madBatter import MadBatter
+from locations.song import Song
 from locations.startItem import StartItem
+from locations.tradeSequence import TradeSequenceItem
 from logic import *
 from logic.dungeon1 import Dungeon1
 from logic.dungeon2 import Dungeon2
@@ -189,7 +194,7 @@ INFO = {
     "papahl_entrance": EntranceInfo(
         items={None: 1},
         logic=lambda c, w, r: Location().add(Chest(0x28A)),
-        exits=[("castle_secret_exit", lambda loc: loc)],
+        exits=[("papahl_exit", lambda loc: loc)],
     ),
     "papahl_exit": EntranceInfo(),
 
@@ -209,8 +214,37 @@ INFO = {
 
     "richard_house": EntranceInfo(
         items={None: 1},
-        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2C8), AND(COUNT(GOLD_LEAF, 5), OR(FEATHER, HOOKSHOT, ROOSTER)))),
+        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2C8)), AND(COUNT(GOLD_LEAF, 5), OR(FEATHER, HOOKSHOT, ROOSTER))),
         exits=[("richard_maze", lambda loc: Location().connect(loc, COUNT(GOLD_LEAF, 5)))],
     ),
     "richard_maze": EntranceInfo(),
+
+    "boomerang_cave": EntranceInfo(),  # TODO boomerang gift
+    "trendy_shop": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2A0, TRADING_ITEM_YOSHI_DOLL)), FOUND("RUPEES", 50))
+    ),
+    "moblin_cave": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[w.miniboss_mapping["moblin_cave"]]))
+    ),
+    "prairie_madbatter": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
+    ),
+    "ulrira": EntranceInfo(),
+
+    "bird_cave": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(BirdKey()), OR(AND(FEATHER, COUNT(POWER_BRACELET, 2)), ROOSTER))
+    ),
+    "mamu": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
+    ),
+    "armos_temple": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(FaceKey()), r.miniboss_requirements[w.miniboss_mapping["armos_temple"]])
+    ),
+    "animal_house1": EntranceInfo(),
 }

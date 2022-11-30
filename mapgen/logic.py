@@ -42,7 +42,7 @@ class LogicGenerator:
         for room in the_map:
             for location in room.locations:
                 if self.logic_map[(room.x * 10 + location.x) + (room.y * 8 + location.y) * self.w] is None:
-                    print(f"Location not mapped to logic: {room} {location.__class__.__name__} {location.x} {location.y}")
+                    raise RuntimeError(f"Location not mapped to logic: {room} {location.__class__.__name__} {location.x} {location.y}")
 
         tmp = set()
         def r(n):

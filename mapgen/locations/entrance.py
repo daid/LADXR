@@ -41,8 +41,7 @@ class Entrance(LocationBase):
 
     def connect_logic(self, logic_location):
         if self.entrance_name not in INFO:
-            print(f"WARNING: Logic connection to entrance unmapped! {self.entrance_name}")
-            return
+            raise RuntimeError(f"WARNING: Logic connection to entrance unmapped! {self.entrance_name}")
         if self.inside_logic:
             req = None
             if self.room.tiles[self.x + self.y * 10] == 0xBA:

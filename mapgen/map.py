@@ -129,7 +129,7 @@ class Map:
         return iter(self.__rooms)
 
     def get(self, x, y) -> RoomInfo:
-        assert 0 <= x < self.w and 0 <= y < self.h
+        assert 0 <= x < self.w and 0 <= y < self.h, f"{x} {y}"
         return self.__rooms[x + y * self.w]
 
     def get_tile(self, x, y):
