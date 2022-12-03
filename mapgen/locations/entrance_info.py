@@ -247,4 +247,5 @@ INFO = {
         logic=lambda c, w, r: Location().connect(Location().add(FaceKey()), r.miniboss_requirements[w.miniboss_mapping["armos_temple"]])
     ),
     "animal_house1": EntranceInfo(),
+    "madambowwow": EntranceInfo(),
 }

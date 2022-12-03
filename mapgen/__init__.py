@@ -128,6 +128,8 @@ def generate(rom_filename, w, h):
                 print(f"Failed {x} {y} {e.x%10} {e.y%8} {n}")
                 imggen.on_step(wfcmap, err=(e.x, e.y))
                 wfcmap.clear()
+            if n == 49:
+                raise RuntimeError("Failed to fill chunk")
         print(f"Done {x} {y}")
     imggen.on_step(wfcmap)
     wfcmap.store_tile_data(the_map)
