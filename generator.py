@@ -94,6 +94,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     assembler.const("wZolSpawnCount", 0xDE10)
     assembler.const("wCuccoSpawnCount", 0xDE11)
+    assembler.const("wDropBombSpawnCount", 0xDE12)
+    assembler.const("wLinkSpawnDelay", 0xDE13)
 
     #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)

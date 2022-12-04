@@ -29,12 +29,24 @@ MainLoop:
     and  a
     ret  nz
 
+    ld   a, [wLinkSpawnDelay]
+    and  a
+    jr   z, .allowSpawn
+    dec  a
+    ld   [wLinkSpawnDelay], a
+    jr   .noSpawn
+
+.allowSpawn:
     ld   a, [wZolSpawnCount]
     and  a
     call nz, LinkSpawnSlime
     ld   a, [wCuccoSpawnCount]
     and  a
     call nz, LinkSpawnCucco
+    ld   a, [wDropBombSpawnCount]
+    and  a
+    call nz, LinkSpawnBomb
+.noSpawn:
 
     ; Have an item to give?
     ld   hl, wLinkStatusBits
@@ -107,22 +119,12 @@ SpecialHealth:
 
 LinkSpawnSlime:
     ld   a, $1B
-    ld   e, $0A
+    ld   e, $08
     call $3B98 ; SpawnNewEntity in range
     ret  c
 
     ; Place somewhere random
-    ld   hl, $C200
-    add  hl, de
-    call $280D
-    and  $7F
-    add  a, $08
-    ld   [hl], a
-    ld   hl, $C210
-    add  hl, de
-    call $280D
-    and  $7F
-    ld   [hl], a
+    call placeRandom
 
     ld   hl, $C310
     add  hl, de
@@ -134,7 +136,7 @@ LinkSpawnSlime:
 
 LinkSpawnCucco:
     ld   a, $6C
-    ld   e, $0A
+    ld   e, $08
     call $3B98 ; SpawnNewEntity in range
     ret  c
 
@@ -151,4 +153,49 @@ LinkSpawnCucco:
     ld   hl, wCuccoSpawnCount
     dec  [hl]
 
+    ret
+
+LinkSpawnBomb:
+    ld   a, $02
+    ld   e, $08
+    call $3B98 ; SpawnNewEntity in range
+    ret  c
+
+    call placeRandom
+
+    ld   hl, $C310 ; z pos
+    add  hl, de
+    ld   [hl], $4F
+
+    ld   hl, $C430 ; wEntitiesOptions1Table
+    add  hl, de
+    res  0, [hl]
+    ld   hl, $C2E0 ; wEntitiesTransitionCountdownTable
+    add  hl, de
+    ld   [hl], $80
+    ld   hl, $C440 ; wEntitiesPrivateState4Table
+    add  hl, de
+    ld   [hl], $01
+
+    ld   hl, wDropBombSpawnCount
+    dec  [hl]
+    call $280D
+    and  $1F
+    ld   [wLinkSpawnDelay], a
+    ret
+
+placeRandom:
+    ; Place somewhere random
+    ld   hl, $C200
+    add  hl, de
+    call $280D
+    and  $7F
+    add  a, $08
+    ld   [hl], a
+    ld   hl, $C210
+    add  hl, de
+    call $280D
+    and  $3F
+    add  a, $20
+    ld   [hl], a
     ret
