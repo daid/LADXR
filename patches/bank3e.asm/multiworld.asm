@@ -132,11 +132,15 @@ LinkSpawnSlime:
 
     ld   hl, wZolSpawnCount
     dec  [hl]
+
+    call $280D
+    and  $03
+    ld   [wLinkSpawnDelay], a
     ret
 
 LinkSpawnCucco:
     ld   a, $6C
-    ld   e, $08
+    ld   e, $04
     call $3B98 ; SpawnNewEntity in range
     ret  c
 
@@ -150,9 +154,18 @@ LinkSpawnCucco:
     ldh  a, [$99]
     ld   [hl], a
 
+    ; Set the "hits till cucco killer attack" much lower
+    ld   hl, $C2B0
+    add  hl, de
+    ld   a, $21
+    ld   [hl], a
+
     ld   hl, wCuccoSpawnCount
     dec  [hl]
 
+    call $280D
+    and  $07
+    ld   [wLinkSpawnDelay], a
     ret
 
 LinkSpawnBomb:
@@ -179,6 +192,7 @@ LinkSpawnBomb:
 
     ld   hl, wDropBombSpawnCount
     dec  [hl]
+
     call $280D
     and  $1F
     ld   [wLinkSpawnDelay], a
