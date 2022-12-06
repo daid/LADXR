@@ -45,7 +45,7 @@ def addBank3E(rom, seed):
     """))
 
     my_path = os.path.dirname(__file__)
-    rom.patch(0x3E, 0x0000, 0x3000, ASM("""
+    rom.patch(0x3E, 0x0000, 0x2F00, ASM("""
         call MainJumpTable
         pop af
         jp $080C ; switch bank and return to normal code.

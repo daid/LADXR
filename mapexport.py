@@ -476,7 +476,7 @@ for(var e of document.getElementsByTagName("img")) {
                 "map": obj.map_nr,
                 "target_x": obj.target_x,
                 "target_y": obj.target_y,
-            });
+            })
 
         # Draw the room
         if room_id < 0x100:
