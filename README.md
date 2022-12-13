@@ -7,7 +7,9 @@ See https://daid.github.io/LADXR/
 
 ## Usage
 
-The only requirement to use is python3, and a proper Links Awakening ROM.
+The only requirements are: to use python3, and the v1.0 ROM for Links Awakening DX.
+
+The proper SHA-1 for the rom is `d90ac17e9bf17b6c61624ad9f05447bdb5efc01a`.
 
 Basic usage:
 `python3 main.py zelda.gbc`
