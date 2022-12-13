@@ -84,6 +84,7 @@ class World:
         crazy_tracy_hut_inside = Location()
         Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
+        start_house.connect(crazy_tracy_hut, SONG2, one_way=True) # Manbo's Mambo into the pond outside Tracy
 
         forest_madbatter = Location()
         Location().add(MadBatter(0x1E1)).connect(forest_madbatter, MAGIC_POWDER)
@@ -102,6 +103,7 @@ class World:
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
         swamp = Location().connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
+        swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
         swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER))
         swamp_chest = Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
@@ -214,6 +216,7 @@ class World:
         # Richard
         richard_house = Location()
         richard_cave = Location().connect(richard_house, COUNT(GOLD_LEAF, 5))
+        richard_cave.connect(richard_house, None, one_way=True) # can exit richard's cave even without leaves
         richard_cave_chest = Location().add(Chest(0x2C8)).connect(richard_cave, OR(FEATHER, HOOKSHOT, ROOSTER))
         richard_maze = Location()
         self._addEntrance("richard_house", ukuku_prairie, richard_house, None)
@@ -308,6 +311,7 @@ class World:
         d6_connector_left = Location()
         d6_connector_right = Location().connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
         d6_entrance = Location()
+        d6_entrance.connect(bay_water, FLIPPERS, one_way=True)
         d6_armos_island = Location().connect(bay_water, FLIPPERS)
         self._addEntrance("d6_connector_entrance", d6_armos_island, d6_connector_right, None)
         self._addEntrance("d6_connector_exit", d6_entrance, d6_connector_left, None)
@@ -339,6 +343,7 @@ class World:
         below_right_taltal = Location().connect(windfish_egg, POWER_BRACELET)
         below_right_taltal.add(KeyLocation("ANGLER_KEYHOLE"))
         below_right_taltal.connect(bay_water, FLIPPERS)
+        below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
 
         heartpiece_swim_cave = Location().connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
@@ -465,7 +470,7 @@ class World:
             graveyard_heartpiece.connect(graveyard_cave_right, OR(HOOKSHOT, BOOMERANG)) # push bottom block, wall clip and hookshot/boomerang corner to grab item
             
             self._addEntranceRequirement("mamu", AND(FEATHER, POWER_BRACELET)) # can clear the gaps at the start with just feather, can reach bottom left sign with a well timed jump while wall clipped
-            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(FEATHER, OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
+            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
             fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # can talk to the fisherman from the water when the boat is low (requires swimming up out of the water a bit)
             crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
