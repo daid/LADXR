@@ -122,7 +122,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
             Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
                                                                           ('smallkeys', 's', 'Small keys'),
                                                                           ('localkeys', 'L', 'Map/Compass/Beaks'),
-                                                                          ('nightmarekey', 'N', 'MCB + SmallKeys'),
+                                                                          ('localnightmarekey', 'N', 'MCB + SmallKeys'),
                                                                           ('keysanity', 'K', 'Keysanity'),
                                                                           ('keysy', 'k', 'Keysy')], default='',
                 description="""Sets if dungeon items can only be in their respective dungeon, or everywhere.
