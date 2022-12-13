@@ -891,6 +891,7 @@ label {
 }
 
 [type="search"] {
+    appearance: textfield;
     -webkit-appearance: textfield;
     outline-offset: -2px
 }
@@ -1018,6 +1019,7 @@ button,
 html [type="button"],
 [type="reset"],
 [type="submit"] {
+    appearance: button;
     -webkit-appearance: button
 }
 
@@ -2093,7 +2095,6 @@ mark.tag {
 
 progress {
     display: block;
-    vertical-align: baseline;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
