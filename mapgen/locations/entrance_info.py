@@ -7,6 +7,10 @@ from locations.madBatter import MadBatter
 from locations.song import Song
 from locations.startItem import StartItem
 from locations.tradeSequence import TradeSequenceItem
+from locations.seashell import Seashell
+from locations.shop import ShopItem
+from locations.droppedKey import DroppedKey
+from locations.witch import Witch
 from logic import *
 from logic.dungeon1 import Dungeon1
 from logic.dungeon2 import Dungeon2
@@ -233,6 +237,12 @@ INFO = {
         logic=lambda c, w, r: Location().connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
     ),
     "ulrira": EntranceInfo(),
+    "rooster_house": EntranceInfo(),
+    "animal_house2": EntranceInfo(),
+    "animal_house4": EntranceInfo(),
+    "armos_fairy": EntranceInfo(),
+    "right_fairy": EntranceInfo(),
+    "photo_house": EntranceInfo(),
 
     "bird_cave": EntranceInfo(
         items={None: 1},
@@ -248,4 +258,60 @@ INFO = {
     ),
     "animal_house1": EntranceInfo(),
     "madambowwow": EntranceInfo(),
+    "library": EntranceInfo(),
+    "kennel": EntranceInfo(
+        items={None: 1, TRADING_ITEM_RIBBON: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Seashell(0x2B2)), SHOVEL).connect(Location().add(TradeSequenceItem(0x2B2, TRADING_ITEM_DOG_FOOD)), TRADING_ITEM_RIBBON)
+    ),
+    "dream_hut": EntranceInfo(
+        items={None: 2},
+        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2BF)), OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER)).connect(Location().add(Chest(0x2BE)), AND(OR(SWORD, BOOMERANG, HOOKSHOT, FEATHER), PEGASUS_BOOTS))
+    ),
+    "hookshot_cave": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2B3)), OR(HOOKSHOT, ROOSTER))
+    ),
+    "madbatter_taltal": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(MadBatter(0x1E2)), MAGIC_POWDER)
+    ),
+    "forest_madbatter": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(MadBatter(0x1E1)), MAGIC_POWDER)
+    ),
+    "banana_seller": EntranceInfo(
+        items={TRADING_ITEM_DOG_FOOD: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2FE, TRADING_ITEM_BANANAS)), TRADING_ITEM_DOG_FOOD)
+    ),
+    "shop": EntranceInfo(
+        items={None: 2},
+        logic=lambda c, w, r: Location().connect(Location().add(ShopItem(0)), COUNT("RUPEES", 200)).connect(Location().add(ShopItem(1)), COUNT("RUPEES", 980))
+    ),
+    "ghost_house": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Seashell(0x1E3)), POWER_BRACELET)
+    ),
+    "writes_house": EntranceInfo(
+        items={TRADING_ITEM_LETTER: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2A8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
+    ),
+    "animal_house5": EntranceInfo(
+        items={TRADING_ITEM_HIBISCUS: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HIBISCUS)
+    ),
+    "crazy_tracy": EntranceInfo(
+        items={"MEDICINE2": 1},
+        logic=lambda c, w, r: Location().connect(Location().add(KeyLocation("MEDICINE2")), FOUND("RUPEES", 50))
+    ),
+    "rooster_grave": EntranceInfo(
+        logic=lambda c, w, r: Location().connect(Location().add(DroppedKey(0x1E4)), AND(OCARINA, SONG3))
+    ),
+    "desert_cave": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(HeartPiece(0x1E8)), BOMB)
+    ),
+    "witch": EntranceInfo(
+        items={TOADSTOOL: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(Witch()), TOADSTOOL)
+    ),
 }

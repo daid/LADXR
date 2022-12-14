@@ -44,6 +44,8 @@ class Randomizer:
                 world_setup.randomize(settings, self.rnd)
                 if settings.overworld == "random":
                     world_setup.map = mapgen.generate(args.input_filename, 6, 6)
+                    if world_setup.map is None:
+                        continue
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
                 if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd).toDict().values()):
