@@ -43,7 +43,7 @@ class Randomizer:
                 world_setup = WorldSetup()
                 world_setup.randomize(settings, self.rnd)
                 if settings.overworld == "random":
-                    world_setup.map = mapgen.generate(args.input_filename, 6, 6)
+                    world_setup.map = mapgen.generate(args.input_filename, 8, 8)
                     if world_setup.map is None:
                         continue
                 random.setstate(self.rnd.getstate())

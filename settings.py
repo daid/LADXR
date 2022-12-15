@@ -189,7 +189,8 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
             Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('random', 'R', 'Randomized')], default='normal',
                 description="""
 [Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.
-[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed."""),
+[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
+[Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
             Setting('superweapons', 'Special', 'q', 'Enable super weapons', default=False,
