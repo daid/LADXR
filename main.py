@@ -56,7 +56,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     settings = Settings()
     args = parser.parse_args(mainargs)
     if args.settingjson:
-        print(json.dumps(settings.toJson()))
+        print("var options =")
+        print(json.dumps(settings.toJson(), indent=1))
         return
     if args.shortsettings is not None:
         settings.loadShortString(args.shortsettings)
