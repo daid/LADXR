@@ -106,17 +106,19 @@ class LocationGenerator:
             if reachable_map.area[info.map_x + info.map_y * reachable_map.w] == -1:
                 reachable_map.fill(info.map_x, info.map_y)
 
-        house_entrances = ["rooster_house", "writes_house", "photo_house", "raft_house", "crazy_tracy", "witch", "dream_hut", "shop", "madambowwow", "kennel", "library", "ulrira", "trendy_shop", "seashell_mansion", "armos_temple", "banana_seller", "ghost_house", "animal_house1", "animal_house2", "animal_house3", "animal_house4", "animal_house5"]
-        cave_entrances = ["madbatter_taltal", "bird_cave", "right_fairy", "moblin_cave", "hookshot_cave", "forest_madbatter", "castle_jump_cave", "rooster_grave", "prairie_left_cave1", "prairie_left_cave2", "prairie_left_fairy", "mamu", "armos_fairy", "armos_maze_cave", "boomerang_cave", "prairie_madbatter", "animal_cave", "desert_cave"]
+        disabled_entrances = ["boomerang_cave", "seashell_mansion"]
+        house_entrances = ["rooster_house", "writes_house", "photo_house", "raft_house", "crazy_tracy", "witch", "dream_hut", "shop", "madambowwow", "kennel", "library", "ulrira", "trendy_shop", "armos_temple", "banana_seller", "ghost_house", "animal_house1", "animal_house2", "animal_house3", "animal_house4", "animal_house5"]
+        cave_entrances = ["madbatter_taltal", "bird_cave", "right_fairy", "moblin_cave", "hookshot_cave", "forest_madbatter", "castle_jump_cave", "rooster_grave", "prairie_left_cave1", "prairie_left_cave2", "prairie_left_fairy", "mamu", "armos_fairy", "armos_maze_cave", "prairie_madbatter", "animal_cave", "desert_cave"]
         water_entrances = ["mambo", "heartpiece_swim_cave"]
         phone_entrances = ["phone_d8", "writes_phone", "castle_phone", "mabe_phone", "prairie_left_phone", "prairie_right_phone", "prairie_low_phone", "animal_phone"]
         dungeon_entrances = ["d7", "d8", "d6", "d5", "d4", "d3", "d2", "d1", "d0"]
-        connector_entrances = [("fire_cave_entrance", "fire_cave_exit"), ("left_taltal_entrance", "left_to_right_taltalentrance"), ("obstacle_cave_entrance", "obstacle_cave_outside_chest", "obstacle_cave_exit"), ("papahl_entrance", "papahl_exit"), ("multichest_left", "multichest_right", "multichest_top"), ("right_taltal_connector1", "right_taltal_connector2"), ("right_taltal_connector3", "right_taltal_connector4"), ("right_taltal_connector5", "right_taltal_connector6"), ("writes_cave_left", "writes_cave_right"), ("raft_return_enter", "raft_return_exit"), ("toadstool_entrance", "toadstool_exit"), ("graveyard_cave_left", "graveyard_cave_right"), ("castle_main_entrance", "castle_upper_left", "castle_upper_right"), ("castle_secret_entrance", "castle_secret_exit"), ("papahl_house_left", "papahl_house_right"), ("prairie_right_cave_top", "prairie_right_cave_bottom", "prairie_right_cave_high"), ("prairie_to_animal_connector", "animal_to_prairie_connector"), ("d6_connector_entrance", "d6_connector_exit"), ("richard_house", "richard_maze"), ("prairie_madbatter_connector_entrance", "prairie_madbatter_connector_exit")]
+        connector_entrances = [("fire_cave_entrance", "fire_cave_exit"), ("left_to_right_taltalentrance", "left_taltal_entrance"), ("obstacle_cave_entrance", "obstacle_cave_outside_chest", "obstacle_cave_exit"), ("papahl_entrance", "papahl_exit"), ("multichest_left", "multichest_right", "multichest_top"), ("right_taltal_connector1", "right_taltal_connector2"), ("right_taltal_connector3", "right_taltal_connector4"), ("right_taltal_connector5", "right_taltal_connector6"), ("writes_cave_left", "writes_cave_right"), ("raft_return_enter", "raft_return_exit"), ("toadstool_entrance", "toadstool_exit"), ("graveyard_cave_left", "graveyard_cave_right"), ("castle_main_entrance", "castle_upper_left", "castle_upper_right"), ("castle_secret_entrance", "castle_secret_exit"), ("papahl_house_left", "papahl_house_right"), ("prairie_right_cave_top", "prairie_right_cave_bottom", "prairie_right_cave_high"), ("prairie_to_animal_connector", "animal_to_prairie_connector"), ("d6_connector_entrance", "d6_connector_exit"), ("richard_house", "richard_maze"), ("prairie_madbatter_connector_entrance", "prairie_madbatter_connector_exit")]
 
         # For each area that is not yet reachable from the start area:
         # add a connector cave from a reachable area to this new area.
         reachable_areas = [0]
         unreachable_areas = list(range(1, reachable_map.next_area_id))
+        retry_count = 10000
         while unreachable_areas:
             source = random.choice(reachable_areas)
             target = random.choice(unreachable_areas)
@@ -124,6 +126,9 @@ class LocationGenerator:
             source_entrances = [info for info in todo_entrances if reachable_map.area[info.map_x + info.map_y * reachable_map.w] == source]
             target_entrances = [info for info in todo_entrances if reachable_map.area[info.map_x + info.map_y * reachable_map.w] == target]
             if not source_entrances:
+                retry_count -= 1
+                if retry_count < 1:
+                    raise RuntimeError("Failed to add connectors...")
                 continue
 
             source_info = random.choice(source_entrances)

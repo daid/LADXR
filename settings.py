@@ -308,6 +308,8 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
             dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
         if self.overworld == "nodungeons":
             dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+        if self.overworld == "random":
+            self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 
     def set(self, value: str) -> None:
         if "=" in value:

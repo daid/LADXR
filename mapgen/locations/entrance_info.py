@@ -223,6 +223,11 @@ INFO = {
     ),
     "richard_maze": EntranceInfo(),
 
+    "left_to_right_taltalentrance": EntranceInfo(
+        exits=[("left_taltal_entrance", lambda loc: one_way(loc, OR(HOOKSHOT, ROOSTER)))],
+    ),
+    "left_taltal_entrance": EntranceInfo(),
+
     "boomerang_cave": EntranceInfo(),  # TODO boomerang gift
     "trendy_shop": EntranceInfo(
         items={None: 1},
@@ -295,9 +300,13 @@ INFO = {
         items={TRADING_ITEM_LETTER: 1},
         logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2A8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
     ),
-    "animal_house5": EntranceInfo(
+    "animal_house3": EntranceInfo(
         items={TRADING_ITEM_HIBISCUS: 1},
-        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HIBISCUS)
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2D9, TRADING_ITEM_LETTER)), TRADING_ITEM_HIBISCUS)
+    ),
+    "animal_house5": EntranceInfo(
+        items={TRADING_ITEM_HONEYCOMB: 1},
+        logic=lambda c, w, r: Location().connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HONEYCOMB)
     ),
     "crazy_tracy": EntranceInfo(
         items={"MEDICINE2": 1},
@@ -314,4 +323,19 @@ INFO = {
         items={TOADSTOOL: 1},
         logic=lambda c, w, r: Location().connect(Location().add(Witch()), TOADSTOOL)
     ),
+    "prairie_left_cave1": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().add(Chest(0x2CD))
+    ),
+    "prairie_left_cave2": EntranceInfo(
+        items={None: 2},
+        logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2F4)), PEGASUS_BOOTS).connect(Location().add(HeartPiece(0x2E5)), AND(BOMB, PEGASUS_BOOTS))
+    ),
+    "castle_jump_cave": EntranceInfo(
+        items={None: 1},
+        logic=lambda c, w, r: Location().add(Chest(0x1FD))
+    ),
+    "raft_house": EntranceInfo(),
+    "prairie_left_fairy": EntranceInfo(),
+    "seashell_mansion": EntranceInfo(),  # TODO: Not sure if we can guarantee enough shells
 }
