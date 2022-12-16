@@ -183,7 +183,8 @@ class World:
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
 
         prairie_cave = Location()
-        prairie_cave_secret_exit = Location().connect(prairie_cave, AND(BOMB, OR(FEATHER, ROOSTER)))
+        prairie_cave_secret_exit = Location().connect(prairie_cave, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True)
+        prairie_cave = Location().connect(prairie_cave_secret_exit, OR(FEATHER, ROOSTER), one_way=True) # bomb walls are one-way
         self._addEntrance("prairie_right_cave_top", ukuku_prairie, prairie_cave, None)
         self._addEntrance("prairie_right_cave_bottom", left_bay_area, prairie_cave, None)
         self._addEntrance("prairie_right_cave_high", prairie_plateau, prairie_cave_secret_exit, None)
@@ -274,7 +275,7 @@ class World:
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
         animal_village_connector_left = Location()
         animal_village_connector_right = Location().connect(animal_village_connector_left, PEGASUS_BOOTS)
-        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)) # passage under river blocked by bush
+        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.bush) # passage under river
         self._addEntrance("animal_to_prairie_connector", animal_village, animal_village_connector_right, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_village.add(OwlStatue(0x0DA))
@@ -282,7 +283,7 @@ class World:
         desert = Location().connect(animal_village, r.bush)  # Note: We moved the walrus blocking the desert.
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             desert.add(OwlStatue(0x0CF))
-        desert_lanmola = Location().add(AnglerKey()).connect(desert, OR(BOW, SWORD, HOOKSHOT, MAGIC_ROD, BOOMERANG))
+        desert_lanmola = Location().add(AnglerKey()).connect(desert, r.attack_hookshot_no_bomb)
 
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
@@ -386,7 +387,8 @@ class World:
         bridge_seashell = Location().add(Seashell(0x00C)).connect(outside_rooster_house, AND(OR(FEATHER, ROOSTER), POWER_BRACELET))  # seashell right of rooster house, there is a hole in the bridge
 
         multichest_cave = Location()
-        multichest_cave_secret = Location().connect(multichest_cave, BOMB)
+        multichest_cave_secret = Location().connect(multichest_cave, one_way=True) # bomb walls are one-way
+        multichest_cave.connect(multichest_cave_secret, BOMB, one_way=True)
         water_cave_hole = Location()  # Location with the hole that drops you onto the hearth piece under water
         if options.logic != "casual":
             water_cave_hole.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
