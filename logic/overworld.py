@@ -275,7 +275,7 @@ class World:
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
         animal_village_connector_left = Location()
         animal_village_connector_right = Location().connect(animal_village_connector_left, PEGASUS_BOOTS)
-        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.bush) # passage under river
+        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD) # passage under river blocked by bush
         self._addEntrance("animal_to_prairie_connector", animal_village, animal_village_connector_right, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_village.add(OwlStatue(0x0DA))
