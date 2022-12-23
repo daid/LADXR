@@ -5,8 +5,11 @@ h2b = binascii.unhexlify
 
 
 class ROM:
-    def __init__(self, filename):
-        data = open(filename, "rb").read()
+    def __init__(self, filename=None, data=None):
+        assert filename != None or data != None
+
+        if filename != None:
+            data = open(filename, "rb").read()
         #assert len(data) == 1024 * 1024
         self.banks = []
         for n in range(0x40):

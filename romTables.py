@@ -180,8 +180,8 @@ class IndoorRoomSpriteData(PointerTable):
 
 
 class ROMWithTables(ROM):
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename=None, data=None):
+        super().__init__(filename, data)
 
         # Ability to patch any text in the game with different text
         self.texts = Texts(self)
