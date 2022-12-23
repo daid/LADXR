@@ -72,3 +72,7 @@ class ROM:
 
     def readHexSeed(self):
         return self.banks[0x3E][0x2F00:0x2F10].hex().upper()
+    
+    def readShortSettings(self):
+        length = self.banks[0x3E][0x2F20]
+        return self.banks[0x3E][0x2F21:0x2F21+length].decode('utf-8')
