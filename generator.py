@@ -113,7 +113,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.easyColorDungeonAccess(rom)
     patches.owl.removeOwlEvents(rom)
     patches.enemies.fixArmosKnightAsMiniboss(rom)
-    patches.bank3e.addBank3E(rom, seed)
+    patches.bank3e.addBank3E(rom, seed, settings)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
     patches.core.fixMarinFollower(rom)
