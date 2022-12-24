@@ -157,6 +157,9 @@ function buildUI(filter_function) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
             }
             html += `</select>`;
+        } else if (s.file) {
+            html += `<input type='file' id='${s.key}' name='${s.key}' style='display: none;'>`;
+            html += `<label style="box-sizing: border-box; text-align: center" for="${s.key}" class="button" id="${s.key}label">Select File</label>`
         } else {
             html += `<input id='${s.key}' name='${s.key}' placeholder='${s.placeholder?s.placeholder:""}'>`;
         }
@@ -241,12 +244,21 @@ async function startRomGeneration()
     randomGenerationString();
     var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
     var args = ["--short", updateSettingsString()];
+    var data = {"input.gbc": buffer, "args": args, "id": 0};
     var e = ID("spoilerformat");
     if (e && e.value != 'none') {
         args.push("--spoilerformat");
         args.push(e.value);
     }
-    await postToWorker({"input.gbc": buffer, "args": args, "id": 0});
+
+    e = ID("plan");
+    if (e && e.value != "") {
+        args.push("--plan");
+        args.push('/plan.txt');
+        data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+
+    await postToWorker(data);
 }
 
 async function postToWorker(data)

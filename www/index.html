@@ -91,6 +91,12 @@ options.splice(idx, 0, {
     key: 'spoilerformat', category: "Main", label: "Spoiler Format",
     options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
     description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
+
+idx = options.findIndex((e) => e.category == "User options");
+options.splice(idx, 0, {
+    key: 'plan', category: "Special", label: "Plan file",
+    file: true, default: '',
+    description: "Optional plandomizer file, used to manually set the location of some or all items"});
 buildUI(function(s) { return s.key != 'forwardfactor'; });
 
 </script>
