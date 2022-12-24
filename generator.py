@@ -56,7 +56,7 @@ import hints
 # Function to generate a final rom, this patches the rom with all required patches
 def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     print("Loading: %s" % (args.input_filename))
-    rom = ROMWithTables(args.input_filename)
+    rom = ROMWithTables(open(args.input_filename, 'rb'))
 
     pymods = []
     if args.pymod:

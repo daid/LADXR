@@ -5,15 +5,10 @@ h2b = binascii.unhexlify
 
 
 class ROM:
-    def __init__(self, filename=None, data=None):
-        assert filename != None or data != None
-
-        if filename != None:
-            data = open(filename, "rb").read()
-        #assert len(data) == 1024 * 1024
+    def __init__(self, filestream):
         self.banks = []
         for n in range(0x40):
-            self.banks.append(bytearray(data[n*0x4000:(n+1)*0x4000]))
+            self.banks.append(bytearray(filestream.read(0x4000)))
 
     def patch(self, bank_nr, addr, old, new, *, fill_nop=False):
         new = h2b(new)

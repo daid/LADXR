@@ -555,7 +555,7 @@ class EntityData:
 if __name__ == "__main__":
     from rom import ROM
     import sys
-    rom = ROM(sys.argv[1])
+    rom = ROM(open(sys.argv[1], 'rb'))
     ed = EntityData(rom)
     for e in ed.entities:
         print(NAME[e.index], e.bowwow_eat_flag)
