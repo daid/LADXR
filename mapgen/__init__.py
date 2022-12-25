@@ -99,7 +99,7 @@ def store_map(rom, the_map: Map):
 
 
 def generate(rom_filename, w, h):
-    rom = ROMWithTables(rom_filename)
+    rom = ROMWithTables(open(rom_filename, 'rb'))
     overworld.patchOverworldTilesets(rom)
     core.cleanup(rom)
     tilesets = loadTileInfo(rom)

@@ -87,7 +87,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     if args.exportmap:
         import mapexport
         print(f"Loading: {args.input_filename}")
-        rom = ROMWithTables(args.input_filename)
+        rom = ROMWithTables(open(args.input_filename, 'rb'))
         mapexport.MapExport(rom).export_all()
         sys.exit(0)
 
@@ -108,7 +108,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
 
     if args.dump is not None or args.test:
         print("Loading: %s" % (args.input_filename))
-        roms = [ROMWithTables(f) for f in [args.input_filename] + args.dump]
+        roms = [ROMWithTables(open(f, 'rb')) for f in [args.input_filename] + args.dump]
 
         if args.spoilerformat == "none":
             args.spoilerformat = "console"
