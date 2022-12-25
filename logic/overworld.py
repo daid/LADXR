@@ -387,7 +387,7 @@ class World:
         bridge_seashell = Location().add(Seashell(0x00C)).connect(outside_rooster_house, AND(OR(FEATHER, ROOSTER), POWER_BRACELET))  # seashell right of rooster house, there is a hole in the bridge
 
         multichest_cave = Location()
-        multichest_cave_secret = Location().connect(multichest_cave, one_way=True) # bomb walls are one-way
+        multichest_cave_secret = Location().connect(multichest_cave, None, one_way=True) # bomb walls are one-way
         multichest_cave.connect(multichest_cave_secret, BOMB, one_way=True)
         water_cave_hole = Location()  # Location with the hole that drops you onto the hearth piece under water
         if options.logic != "casual":
