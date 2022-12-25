@@ -84,7 +84,7 @@ class World:
         crazy_tracy_hut_inside = Location()
         Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
-        start_house.connect(crazy_tracy_hut, SONG2, one_way=True) # Manbo's Mambo into the pond outside Tracy
+        start_house.connect(crazy_tracy_hut, AND(OCARINA, SONG2), one_way=True) # Manbo's Mambo into the pond outside Tracy
 
         forest_madbatter = Location()
         Location().add(MadBatter(0x1E1)).connect(forest_madbatter, MAGIC_POWDER)
