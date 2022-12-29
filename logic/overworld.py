@@ -12,7 +12,7 @@ class World:
         mabe_village = Location()
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, r.bush)  # well
         Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
-        Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush_no_boomerang)  # bushes below the shop
+        Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
         Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
         rooster_cave = Location()
