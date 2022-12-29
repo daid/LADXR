@@ -238,7 +238,7 @@ class World:
         castle_courtyard = Location()
         castle_frontdoor = Location().connect(castle_courtyard, r.bush)
         castle_frontdoor.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
-        self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
+        self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, r.pit_bush)
         self._addEntrance("castle_secret_exit", castle_courtyard, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
@@ -275,7 +275,7 @@ class World:
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
         animal_village_connector_left = Location()
         animal_village_connector_right = Location().connect(animal_village_connector_left, PEGASUS_BOOTS)
-        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD)) # passage under river blocked by bush
+        self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.pit_bush) # passage under river blocked by bush
         self._addEntrance("animal_to_prairie_connector", animal_village, animal_village_connector_right, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_village.add(OwlStatue(0x0DA))
@@ -506,7 +506,7 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, FEATHER, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(FEATHER, POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            ukuku_prairie.connect(richard_maze, r.pit_bush, one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
             fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # can bomb trigger the item without having the hook 
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(next_to_castle, FEATHER) # jesus jump (north of kanalet castle phonebooth)
