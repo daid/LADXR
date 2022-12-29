@@ -164,8 +164,8 @@ class World:
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
         dungeon3_entrance.connect(ukuku_prairie, None, one_way=True) # jump down ledge back to ukuku_prairie
 
-        prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.item_bush))  # next to lv3
-        Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.item_bush)  # next to seashell house
+        prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.bush))  # next to lv3
+        Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)  # next to seashell house
         Location().add(Seashell(0x0A4)).connect(ukuku_prairie, PEGASUS_BOOTS)  # smash into tree next to phonehouse
         self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER)) # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(ukuku_prairie, POWER_BRACELET)  # under the rock
@@ -174,8 +174,8 @@ class World:
         left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER))
         self._addEntrance("prairie_low_phone", left_bay_area, None, None)
 
-        Location().add(Seashell(0x0E9)).connect(left_bay_area, r.item_bush)  # same screen as mermaid statue
-        tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.item_bush))  # tiny island
+        Location().add(Seashell(0x0E9)).connect(left_bay_area, r.bush)  # same screen as mermaid statue
+        tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.bush))  # tiny island
 
         prairie_plateau = Location()  # prairie plateau at the owl statue
         if options.owlstatues == "both" or options.owlstatues == "overworld":
@@ -499,10 +499,10 @@ class World:
             graveyard_cave_left.connect(graveyard_heartpiece, BOMB, one_way=True) # bomb trigger the heartpiece from the left side
             graveyard_heartpiece.connect(graveyard_cave_right, None) # sideways block push from the right staircase.
 
-            prairie_island_seashell.connect(ukuku_prairie, AND(FEATHER, r.item_bush)) # jesus jump from right side, screen transition on top of the water to reach the island
+            prairie_island_seashell.connect(ukuku_prairie, AND(FEATHER, r.bush)) # jesus jump from right side, screen transition on top of the water to reach the island
             self._addEntranceRequirement("castle_jump_cave", FEATHER) # 1 pit buffer to clip bottom wall and jump across.
             left_bay_area.connect(ghost_hut_outside, FEATHER) # 1 pit buffer to get across
-            tiny_island.connect(left_bay_area, AND(FEATHER, r.item_bush)) # jesus jump around
+            tiny_island.connect(left_bay_area, AND(FEATHER, r.bush)) # jesus jump around
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, FEATHER, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(FEATHER, POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
