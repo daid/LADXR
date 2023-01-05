@@ -224,7 +224,7 @@ class World:
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             Location().add(OwlStatue(0x0C6)).connect(richard_maze, r.bush)
-        Location().add(SlimeKey()).connect(richard_maze, AND(r.bush, SHOVEL))
+        Location().add(SlimeKey()).connect(richard_maze, AND(OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG), SHOVEL))
 
         next_to_castle = Location()
         if options.tradequest:
