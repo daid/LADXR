@@ -519,6 +519,7 @@ class World:
 
             d6_entrance.connect(ukuku_prairie, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance bottom ledge to ukuku prairie
             d6_entrance.connect(armos_fairy_entrance, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance top ledge to armos fairy entrance
+            d6_connector_left.connect(d6_connector_right, FEATHER) # jesus jump over water <-> left side is jumpable, or villa buffer if it's easier for you
             armos_fairy_entrance.connect(d6_armos_island, FEATHER, one_way=True) # jesus jump from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, FEATHER) # jesus jump (2-ish screen) from fairy cave to lower raft connector
             self._addEntranceRequirementEnter("obstacle_cave_entrance", HOOKSHOT) # clip past the rocks in front of obstacle cave entrance
