@@ -209,7 +209,10 @@ class World:
         bay_water.connect(ukuku_prairie, FLIPPERS)
         bay_water.connect(left_bay_area, FLIPPERS)
         fisher_under_bridge = Location().add(TradeSequenceItem(0x2F5, TRADING_ITEM_NECKLACE))
-        fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FEATHER, FLIPPERS))
+        if options.logic == "casual":
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FEATHER, FLIPPERS))
+        else
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, OR(FEATHER, SWORD, BOW), FLIPPERS)) # just swing/shoot at fisher, trivially easy
         bay_water.connect(Location().add(TradeSequenceItem(0x0C9, TRADING_ITEM_SCALE)), AND(TRADING_ITEM_NECKLACE, FLIPPERS))
         d5_entrance = Location().connect(bay_water, FLIPPERS)
         self._addEntrance("d5", d5_entrance, None, None)
@@ -474,7 +477,7 @@ class World:
             
             self._addEntranceRequirement("mamu", AND(FEATHER, POWER_BRACELET)) # can clear the gaps at the start with just feather, can reach bottom left sign with a well timed jump while wall clipped
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
-            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS, OR(SWORD, BOW)) # can talk to the fisherman from the water when the boat is low, you are out of water, and using an upwards facing item: investigate other items
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS) # go left of fisherman's boat, hold up, mash a, and alternate dpad horizontal inputs until you trigger him.
             crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
@@ -560,7 +563,6 @@ class World:
             tiny_island.connect(left_bay_area, AND(PEGASUS_BOOTS, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(PEGASUS_BOOTS, OR(MAGIC_POWDER, BOMB, SWORD, MAGIC_ROD, BOOMERANG))) # Boots bonk across the bottom wall, then remove one of the bushes to get on land
             self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(PEGASUS_BOOTS, r.bush)) # if exiting, you can pick up the bushes by normal means and boots bonk across the bottom wall
-            fisher_under_bridge.connect("bay_water", AND(FLIPPERS, TRADING_ITEM_FISHING_HOOK)) # potentially impossible? only pulled off with boomerang, and very inconsistently so.
 
             # bay_water connectors, only left_bay_area, ukuku_prairie and animal_village have to be connected with jesus jumps. below_right_taltal, d6_armos_island and armos_fairy_entrance are accounted for via ukuku prairie in glitch logic
             left_bay_area.connect(bay_water, FEATHER) # jesus jump (can always reach bay_water with jesus jumping from every way to enter bay_water, so no one_way)
