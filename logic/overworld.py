@@ -581,7 +581,9 @@ class World:
             
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, AND(PEGASUS_BOOTS, ROOSTER)) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
-            d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump a long way
+            d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump 5 screens to staircase below damp cave
+            lower_right_taltal.connect(below_right_taltal, FEATHER, one_way=True) # jesus jump to waterfall ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
+            
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
                 below_right_taltal.connect(raft_game, AND(FEATHER, r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
             outside_raft_house.connect(below_right_taltal, AND(FEATHER, PEGASUS_BOOTS)) #superjump from ledge left to right, can buffer to land on ledge instead of water, then superjump right which is pixel perfect
