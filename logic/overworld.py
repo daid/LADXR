@@ -536,7 +536,7 @@ class World:
             self._addEntranceRequirement("heartpiece_swim_cave", OR(FEATHER, ROOSTER))  # jesus jump/rooster into the cave entrance after jumping down the ledge, can jesus jump/rooster back to the ladder 1 screen below
             self._addEntranceRequirement("mambo", OR(FEATHER, ROOSTER))  # jesus jump/rooster from d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, OR(FEATHER, ROOSTER), one_way=True) # jesus jump/rooster from the ledge at raft to the staircase 1 screen south
-            d4_entrance.connect(below_right_taltal, ROOSTER) # jesus rooster (4 transitions) to staircase below damp cave
+            d4_entrance.connect(below_right_taltal, ROOSTER, one_way=True) # jesus rooster (4 transitions) to staircase below damp cave
             lower_right_taltal.connect(below_right_taltal, ROOSTER, one_way=True) # rooster to waterfall ledges, jump off, enter and exit s+q menu to regain pauses, jesus rooster 3 transitions to staircase below damp cave
 
             self._addEntranceRequirement("multichest_left", FEATHER) # jesus jump past staircase leading up the mountain 
@@ -589,7 +589,7 @@ class World:
             
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, AND(PEGASUS_BOOTS, ROOSTER)) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
-            d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump 5 screens to staircase below damp cave
+            d4_entrance.connect(below_right_taltal, FEATHER, one_way=true) # jesus jump 5 screens to staircase below damp cave
             lower_right_taltal.connect(below_right_taltal, FEATHER, one_way=True) # jesus jump to waterfall ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
             
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
