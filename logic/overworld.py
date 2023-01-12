@@ -537,7 +537,7 @@ class World:
             self._addEntranceRequirement("mambo", OR(FEATHER, ROOSTER))  # jesus jump/rooster from d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, OR(FEATHER, ROOSTER), one_way=True) # jesus jump/rooster from the ledge at raft to the staircase 1 screen south
             d4_entrance.connect(below_right_taltal, ROOSTER, one_way=True) # jesus rooster (4 transitions) to staircase below damp cave
-            lower_right_taltal.connect(below_right_taltal, ROOSTER, one_way=True) # rooster to waterfall ledges, jump off, enter and exit s+q menu to regain pauses, jesus rooster 3 transitions to staircase below damp cave
+            lower_right_taltal.connect(below_right_taltal, ROOSTER, one_way=True) # jump off ledge above d4, jesus rooster 4 transitions to staircase below damp cave
 
             self._addEntranceRequirement("multichest_left", FEATHER) # jesus jump past staircase leading up the mountain 
             outside_rooster_house.connect(lower_right_taltal, FEATHER) # jesus jump (1 or 2 screen depending if angler key is used) to staircase leading up the mountain
