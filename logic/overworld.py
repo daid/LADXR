@@ -597,7 +597,7 @@ class World:
             self._addEntranceRequirement("mambo", ROOSTER)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, ROOSTER, one_way=True) # jesus jump from the ledge at raft to the staircase 1 screen south
             self._addEntranceRequirement("multichest_left", ROOSTER) # jesus jump past staircase leading up the mountain 
-            outside_rooster_house.connect(lower_right_taltal, ROOSTER) # jesus jump down to staircase below damp cave
+            outside_rooster_house.connect(lower_right_taltal, ROOSTER, one_way=True) # jesus jump down to staircase below damp cave
             
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
                 below_right_taltal.connect(raft_game, AND(OR(FEATHER, ROOSTER), r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
