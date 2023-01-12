@@ -165,7 +165,7 @@ class World:
         dungeon3_entrance.connect(ukuku_prairie, None, one_way=True) # jump down ledge back to ukuku_prairie
 
         prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.bush))  # next to lv3
-        Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)  # next to seashell house
+        seashell_mansion_bush = Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)
         Location().add(Seashell(0x0A4)).connect(ukuku_prairie, PEGASUS_BOOTS)  # smash into tree next to phonehouse
         self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER)) # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(ukuku_prairie, POWER_BRACELET)  # under the rock
@@ -209,7 +209,10 @@ class World:
         bay_water.connect(ukuku_prairie, FLIPPERS)
         bay_water.connect(left_bay_area, FLIPPERS)
         fisher_under_bridge = Location().add(TradeSequenceItem(0x2F5, TRADING_ITEM_NECKLACE))
-        fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FEATHER, FLIPPERS))
+        if options.logic == "casual":
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FEATHER, FLIPPERS))
+        else
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, OR(FEATHER, SWORD, BOW), FLIPPERS)) # just swing/shoot at fisher, trivially easy
         bay_water.connect(Location().add(TradeSequenceItem(0x0C9, TRADING_ITEM_SCALE)), AND(TRADING_ITEM_NECKLACE, FLIPPERS))
         d5_entrance = Location().connect(bay_water, FLIPPERS)
         self._addEntrance("d5", d5_entrance, None, None)
@@ -224,7 +227,7 @@ class World:
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             Location().add(OwlStatue(0x0C6)).connect(richard_maze, r.bush)
-        Location().add(SlimeKey()).connect(richard_maze, AND(r.bush, SHOVEL))
+        Location().add(SlimeKey()).connect(richard_maze, AND(OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG), SHOVEL))
 
         next_to_castle = Location()
         if options.tradequest:
@@ -474,7 +477,7 @@ class World:
             
             self._addEntranceRequirement("mamu", AND(FEATHER, POWER_BRACELET)) # can clear the gaps at the start with just feather, can reach bottom left sign with a well timed jump while wall clipped
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
-            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # can talk to the fisherman from the water when the boat is low (requires swimming up out of the water a bit)
+            fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS) # face the fisherman from the left, get within 4 pixels (a range, not exact) of his left side, hold up, and mash a until you get the textbox.
             crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(PEGASUS_BOOTS, FEATHER)) # jump across horizontal 4 gap to heart piece
@@ -506,8 +509,8 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, FEATHER, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(FEATHER, POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, r.pit_bush, one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
-            fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # can bomb trigger the item without having the hook 
+            ukuku_prairie.connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, BOOMERANG, BOMB), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # up-most left wall is a pit: bomb trigger with it 
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(next_to_castle, FEATHER) # jesus jump (north of kanalet castle phonebooth)
             animal_village_connector_right.connect(animal_village_connector_left, FEATHER) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text or shaq jump in bottom right corner if text is off
@@ -516,6 +519,7 @@ class World:
 
             d6_entrance.connect(ukuku_prairie, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance bottom ledge to ukuku prairie
             d6_entrance.connect(armos_fairy_entrance, FEATHER, one_way=True) # jesus jump (2 screen) from d6 entrance top ledge to armos fairy entrance
+            d6_connector_left.connect(d6_connector_right, FEATHER) # jesus jump over water <-> left side is jumpable, or villa buffer if it's easier for you
             armos_fairy_entrance.connect(d6_armos_island, FEATHER, one_way=True) # jesus jump from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, FEATHER) # jesus jump (2-ish screen) from fairy cave to lower raft connector
             self._addEntranceRequirementEnter("obstacle_cave_entrance", HOOKSHOT) # clip past the rocks in front of obstacle cave entrance
@@ -577,7 +581,9 @@ class World:
             
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS, OR(SWORD, MAGIC_ROD, BOW)))) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, AND(PEGASUS_BOOTS, ROOSTER)) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
-            d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump a long way
+            d4_entrance.connect(below_right_taltal, FEATHER) # jesus jump 5 screens to staircase below damp cave
+            lower_right_taltal.connect(below_right_taltal, FEATHER, one_way=True) # jesus jump to waterfall ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
+            
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
                 below_right_taltal.connect(raft_game, AND(FEATHER, r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
             outside_raft_house.connect(below_right_taltal, AND(FEATHER, PEGASUS_BOOTS)) #superjump from ledge left to right, can buffer to land on ledge instead of water, then superjump right which is pixel perfect
