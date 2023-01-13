@@ -157,9 +157,6 @@ function buildUI(filter_function) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
             }
             html += `</select>`;
-        } else if (s.file) {
-            html += `<input type='file' id='${s.key}' name='${s.key}' style='display: none;'>`;
-            html += `<label style="box-sizing: border-box; text-align: center" for="${s.key}" class="button" id="${s.key}label">Select File</label>`
         } else {
             html += `<input id='${s.key}' name='${s.key}' placeholder='${s.placeholder?s.placeholder:""}'>`;
         }

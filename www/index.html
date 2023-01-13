@@ -66,14 +66,36 @@
     </div></div>
 </div>
 
-<div class="container" id="settings">
-    <div class="row">
-        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
-            <input type="file" id="rom" name="rom" style="display:none"/>
-            <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
+
+<div class="container">
+    <div id="settings">
+        <div class="row">
+            <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
+                <input type="file" id="rom" name="rom" style="display:none"/>
+                <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
+            </div>
+            <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
+                <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
+            </div>
         </div>
-        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
-            <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Plandomizer</h1>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">
+            <div class="inputcontainer tooltip bottom" aria-label="Optional plandomizer file, used to manually set the location of some or all items">
+                <label for='plan'>Plan file:</label>
+                <input type='file' id='plan' name='plan' style='display: none;'>
+                <label style="box-sizing: border-box; text-align: center" for="plan" class="button" id="planlabel">Select File</label>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <p><a href="https://daid.github.io/LADXR/plan-template.txt">Empty plan template</a></p>
+            <p>See the <a href="https://daid.github.io/LADXR/faq.html#plando">FAQ</a> for details</p>
         </div>
     </div>
 </div>
@@ -91,12 +113,6 @@ options.splice(idx, 0, {
     key: 'spoilerformat', category: "Main", label: "Spoiler Format",
     options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
     description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
-
-idx = options.findIndex((e) => e.category == "User options");
-options.splice(idx, 0, {
-    key: 'plan', category: "Special", label: "Plan file",
-    file: true, default: '',
-    description: "Optional plandomizer file, used to manually set the location of some or all items"});
 buildUI(function(s) { return s.key != 'forwardfactor'; });
 
 </script>
