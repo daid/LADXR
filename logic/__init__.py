@@ -18,9 +18,13 @@ import mapgen
 
 
 class Logic:
-    def __init__(self, configuration_options, *, world_setup):
+    def __init__(self, configuration_options, *, world_setup, requirements_settings=None):
         self.world_setup = world_setup
-        r = RequirementsSettings(configuration_options)
+
+        if requirements_settings == None:
+            requirements_settings = RequirementsSettings(configuration_options)
+
+        r = requirements_settings
 
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options, r)
