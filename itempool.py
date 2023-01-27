@@ -68,9 +68,9 @@ DEFAULT_ITEM_POOL = {
 
 
 class ItemPool:
-    def __init__(self, settings, rnd):
+    def __init__(self, logic, settings, rnd):
         self.__pool = {}
-        self.__setup(settings)
+        self.__setup(logic, settings)
         self.__randomizeRupees(settings, rnd)
 
     def add(self, item, count=1):
@@ -95,10 +95,13 @@ class ItemPool:
                 return
         raise RuntimeError("Wanted to remove more rupees from the pool then we have")
 
-    def __setup(self, settings):
-        for item, count in DEFAULT_ITEM_POOL.items():
+    def __setup(self, logic, settings):
+        default_item_pool = DEFAULT_ITEM_POOL
+        if settings.overworld == "random":
+            default_item_pool = logic.world.map.get_item_pool()
+        for item, count in default_item_pool.items():
             self.add(item, count)
-        if settings.boomerang != 'default':
+        if settings.boomerang != 'default' and settings.overworld != "random":
             self.add(BOOMERANG)
         if settings.owlstatues == 'both':
             self.add(RUPEES_20, 9 + 24)

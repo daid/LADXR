@@ -50,6 +50,7 @@ class Connection(socketserver.StreamRequestHandler):
                     break
             else:
                 print("Unknown command from client: %02x" % (command))
+                break
         print("Close", self)
 
 

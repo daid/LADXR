@@ -18,6 +18,12 @@ RenderChestItem:
     ret  c
     cp   $96
     ret  nc
+
+    ; But check if we are not state >3 before that, else the fade-out at the instrument room breaks.
+    ldh  a, [$F0] ; hActiveEntityState
+    cp   $03
+    ret  nc
+
     ; Call the color cycling code
     xor  a
     ld   [$DC82], a

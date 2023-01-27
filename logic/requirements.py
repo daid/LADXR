@@ -1,12 +1,19 @@
+from typing import Optional
 from locations.items import *
 
 
 class OR:
     __slots__ = ('__items', '__children')
 
+    def __new__(cls, *args):
+        if True in args:
+            return True
+        return super().__new__(cls)
+
     def __init__(self, *args):
         self.__items = [item for item in args if isinstance(item, str)]
-        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
+        self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
+
         assert self.__items or self.__children, args
 
     def __repr__(self) -> str:
@@ -65,9 +72,14 @@ class OR:
 class AND:
     __slots__ = ('__items', '__children')
 
+    def __new__(cls, *args):
+        if False in args:
+            return False
+        return super().__new__(cls)
+
     def __init__(self, *args):
         self.__items = [item for item in args if isinstance(item, str)]
-        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
+        self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
 
     def __repr__(self) -> str:
         return "and%s" % (self.__items+self.__children)
@@ -242,6 +254,7 @@ def isConsumable(item) -> bool:
 class RequirementsSettings:
     def __init__(self, options):
         self.bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET, BOOMERANG)
+        self.pit_bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, BOOMERANG, BOMB) # unique
         self.attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
         self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
         self.attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm

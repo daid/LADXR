@@ -56,7 +56,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     settings = Settings()
     args = parser.parse_args(mainargs)
     if args.settingjson:
-        print(json.dumps(settings.toJson()))
+        print("var options =")
+        print(json.dumps(settings.toJson(), indent=1))
         return
     if args.shortsettings is not None:
         settings.loadShortString(args.shortsettings)
@@ -86,7 +87,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     if args.exportmap:
         import mapexport
         print(f"Loading: {args.input_filename}")
-        rom = ROMWithTables(args.input_filename)
+        rom = ROMWithTables(open(args.input_filename, 'rb'))
         mapexport.MapExport(rom).export_all()
         sys.exit(0)
 
@@ -107,7 +108,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
 
     if args.dump is not None or args.test:
         print("Loading: %s" % (args.input_filename))
-        roms = [ROMWithTables(f) for f in [args.input_filename] + args.dump]
+        roms = [ROMWithTables(open(f, 'rb')) for f in [args.input_filename] + args.dump]
 
         if args.spoilerformat == "none":
             args.spoilerformat = "console"
@@ -133,7 +134,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             r = randomizer.Randomizer(args, settings, seed=userSeed)
             seed = binascii.hexlify(r.seed).decode("ascii").upper()
             break
-        except randomizer.Error:
+        except randomizer.Error as e:
             if userSeed is not None:
                 print("Specified seed does not produce a valid result.")
                 sys.exit(1)
@@ -141,7 +142,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             if retry_count > 100:
                 print("Randomization keeps failing, abort!")
                 sys.exit(1)
-            print("Failed, trying again: %d" % (retry_count))
+            print("Failed (%s), trying again: %d" % (e, retry_count))
 
     print("Seed: %s" % (seed))
 
