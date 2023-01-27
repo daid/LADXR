@@ -173,15 +173,15 @@ def reduceMessageLengths(rom, rnd):
         "kbranch finally took a break!",
         "Pink Batman knows that trick, ask them!",
         "Baby seed ahead.",
-        "Abandon all hope ye who enter here..."
-        "Link... Open your eyes...\nWait, you're #####?"
+        "Abandon all hope ye who enter here...",
+        "Link... Open your eyes...\nWait, you're #####?",
         "Remember, there are no bugs in LADX.",
         "#####, #####, you got to wake up!\nDinner is ready.",
         "Go find the stepladder.",
         "Pizza power!",
         "Eastmost peninsula is the secret.",
-        "There is no cow level.,
-        "You cannot lift rocks with your bear hands".,
+        "There is no cow level.",
+        "You cannot lift rocks with your bear hands.",
         "Don't worry, the doghouse was patched.",
         "The carpet whale isn't real, it can't hurt you.",
         "Isn't this a demake of Phantom Hourglass?",
@@ -229,7 +229,7 @@ def reduceMessageLengths(rom, rnd):
         "Good luck finding the rooster.",
         "Good luck finding the hookshot.",
         "Good luck finding the magic rod.",
-        "It's not a fire rod.\nIt's a magic rod, it shoots magic.
+        "It's not a fire rod.\nIt's a magic rod, it shoots magic.",
         "You should check the Seashell Mansion.",
         "Mt. Tamaranch",
         "WIND FISH IN NAME ONLY, FOR IT IS NEITHER.",
