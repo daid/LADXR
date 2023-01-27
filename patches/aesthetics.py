@@ -199,7 +199,6 @@ def reduceMessageLengths(rom, rnd):
         "404 Marin.personality not found.",
         "Idk man, works on my machine.",
         "Hey guys, did you know that Vaporeon",
-        "Where do you live?", ask="Yes No",
         "Trans rights!",
         "Support gay rights!\nAnd their lefts!",
         "Snake? Snake?! SNAAAAKE!!!",
