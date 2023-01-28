@@ -519,7 +519,7 @@ class World:
 
             d6_entrance.connect(ukuku_prairie, r.jesus_jump, one_way=True) # jesus jump (2 screen) from d6 entrance bottom ledge to ukuku prairie
             d6_entrance.connect(armos_fairy_entrance, r.jesus_jump, one_way=True) # jesus jump (2 screen) from d6 entrance top ledge to armos fairy entrance
-			d6_connector_left.connect(d6_connector_right, r.jesus_jump) # jesus jump over water; left side is jumpable, or villa buffer if it's easier for you
+            d6_connector_left.connect(d6_connector_right, r.jesus_jump) # jesus jump over water; left side is jumpable, or villa buffer if it's easier for you
             armos_fairy_entrance.connect(d6_armos_island, r.jesus_jump, one_way=True) # jesus jump from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, r.jesus_jump) # jesus jump (2-ish screen) from fairy cave to lower raft connector
             self._addEntranceRequirementEnter("obstacle_cave_entrance", r.hookshot_clip) # clip past the rocks in front of obstacle cave entrance
@@ -566,12 +566,12 @@ class World:
             self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(r.pit_buffer_boots, r.bush)) # if exiting, you can pick up the bushes by normal means and boots bonk across the bottom wall
 
             # bay_water connectors, only left_bay_area, ukuku_prairie and animal_village have to be connected with jesus jumps. below_right_taltal, d6_armos_island and armos_fairy_entrance are accounted for via ukuku prairie in glitch logic
-            left_bay_area.connect(bay_water, OR(r.jesus_jump, ROOSTER)) # jesus jump/rooster (can always reach bay_water with jesus jumping from every way to enter bay_water, so no one_way)
-            animal_village.connect(bay_water, OR(r.jesus_jump, ROOSTER)) # jesus jump/rooster (can always reach bay_water with jesus jumping from every way to enter bay_water, so no one_way)
-            ukuku_prairie.connect(bay_water, OR(r.jesus_jump, ROOSTER), one_way=True) # jesus jump/rooster
-            bay_water.connect(d5_entrance, OR(r.jesus_jump, ROOSTER)) # jesus jump/rooster into d5 entrance (wall clip), wall clip + jesus jump to get out
-            prairie_island_seashell.connect(ukuku_prairie, AND(ROOSTER, r.bush)) # jesus rooster from right side, screen transition on top of the water to reach the island
-            bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, ROOSTER, one_way=True) # jesus rooster (3 screen) through the underground passage leading to martha's bay mad batter
+            left_bay_area.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster (can always reach bay_water with jesus jumping from every way to enter bay_water, so no one_way)
+            animal_village.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster (can always reach bay_water with jesus jumping from every way to enter bay_water, so no one_way)
+            ukuku_prairie.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster
+            bay_water.connect(d5_entrance, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster into d5 entrance (wall clip), wall clip + jesus jump to get out
+            prairie_island_seashell.connect(ukuku_prairie, AND(r.jesus_rooster, r.bush)) # jesus rooster from right side, screen transition on top of the water to reach the island
+            bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_rooster, one_way=True) # jesus rooster (3 screen) through the underground passage leading to martha's bay mad batter
 
 			#TODO: add jesus rooster to trick list
             
@@ -579,28 +579,28 @@ class World:
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, r.super_jump_feather)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.pit_buffer_boots) # boots bonk across bottom wall (both at entrance and in item room)
 
-            d6_armos_island.connect(ukuku_prairie, OR(r.jesus_jump, ROSTER)) # jesus jump/rooster (3 screen) from seashell mansion to armos island
+            d6_armos_island.connect(ukuku_prairie, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster (3 screen) from seashell mansion to armos island
             armos_fairy_entrance.connect(d6_armos_island, r.jesus_buffer, one_way=True) # jesus jump from top (fairy bomb cave) to armos island with fast falling 
             d6_connector_right.connect(d6_connector_left, r.pit_buffer_boots) # boots bonk across bottom wall at water and pits (can do both ways)
 
-            d6_entrance.connect(ukuku_prairie, ROOSTER, one_way=True) # jesus rooster (2 screen) from d6 entrance bottom ledge to ukuku prairie
-            d6_entrance.connect(armos_fairy_entrance, ROOSTER, one_way=True) # jesus rooster (2 screen) from d6 entrance top ledge to armos fairy entrance
-            armos_fairy_entrance.connect(d6_armos_island, ROOSTER, one_way=True) # jesus rooster from top (fairy bomb cave) to armos island
-            armos_fairy_entrance.connect(raft_exit, ROOSTER) # jesus rooster (2-ish screen) from fairy cave to lower raft connector
+            d6_entrance.connect(ukuku_prairie, r.jesus_rooster, one_way=True) # jesus rooster (2 screen) from d6 entrance bottom ledge to ukuku prairie
+            d6_entrance.connect(armos_fairy_entrance, r.jesus_rooster, one_way=True) # jesus rooster (2 screen) from d6 entrance top ledge to armos fairy entrance
+            armos_fairy_entrance.connect(d6_armos_island, r.jesus_rooster, one_way=True) # jesus rooster from top (fairy bomb cave) to armos island
+            armos_fairy_entrance.connect(raft_exit, r.jesus_rooster) # jesus rooster (2-ish screen) from fairy cave to lower raft connector
             
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip_block, r.super_jump_boots)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, r.boots_roosterhop) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
-            d4_entrance.connect(below_right_taltal, OR(r.jesus_jump, ROOSTER), one_way=True) # jesus jump/rooster 5 screens to staircase below damp cave
+            d4_entrance.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster 5 screens to staircase below damp cave
 
-            lower_right_taltal.connect(below_right_taltal, OR(FEATHER, ROOSTER), one_way=True) # jesus jump/rooster to upper ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
-            self._addEntranceRequirement("heartpiece_swim_cave", ROOSTER)  # jesus rooster into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            self._addEntranceRequirement("mambo", ROOSTER)  # jesus rooster from d4 entrance to mambo's cave entrance
-            outside_raft_house.connect(below_right_taltal, ROOSTER, one_way=True) # jesus rooster from the ledge at raft to the staircase 1 screen south
-            self._addEntranceRequirement("multichest_left", ROOSTER) # jesus rooster past staircase leading up the mountain 
-            outside_rooster_house.connect(lower_right_taltal, ROOSTER, one_way=True) # jesus rooster down to staircase below damp cave
+            lower_right_taltal.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster to upper ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
+            self._addEntranceRequirement("heartpiece_swim_cave", r.jesus_rooster)  # jesus rooster into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
+            self._addEntranceRequirement("mambo", r.jesus_rooster)  # jesus rooster from d4 entrance to mambo's cave entrance
+            outside_raft_house.connect(below_right_taltal, r.jesus_rooster, one_way=True) # jesus rooster from the ledge at raft to the staircase 1 screen south
+            self._addEntranceRequirement("multichest_left", r.jesus_rooster) # jesus rooster past staircase leading up the mountain 
+            outside_rooster_house.connect(lower_right_taltal, r.jesus_rooster, one_way=True) # jesus rooster down to staircase below damp cave
             
             if options.entranceshuffle in ("default", "simple"): # connector cave from armos d6 area to raft shop may not be randomized to add a flippers path since flippers stop you from jesus jumping
-                below_right_taltal.connect(raft_game, AND(OR(r.jesus_jump, ROOSTER), r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
+                below_right_taltal.connect(raft_game, AND(OR(r.jesus_jump, r.jesus_rooster), r.attack_hookshot_powder), one_way=True) # jesus jump from heartpiece water cave, around the island and clip past the diagonal gap in the rock, then jesus jump all the way down the waterfall to the chests (attack req for hardlock flippers+feather scenario)
             outside_raft_house.connect(below_right_taltal, AND(r.super_jump, PEGASUS_BOOTS)) #superjump from ledge left to right, can buffer to land on ledge instead of water, then superjump right which is pixel perfect. Boots to get out of wall after landing
             bridge_seashell.connect(outside_rooster_house, AND(r.boots_bonk_pit, POWER_BRACELET)) # boots bonk
             bird_key.connect(bird_cave, AND(r.boots_jump, r.pit_buffer)) # boots jump above wall, use multiple pit buffers to get across
