@@ -183,8 +183,8 @@ class World:
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
 
         prairie_cave = Location()
-        prairie_cave_secret_exit = Location().connect(prairie_cave, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True)
-        prairie_cave = Location().connect(prairie_cave_secret_exit, OR(FEATHER, ROOSTER), one_way=True) # bomb walls are one-way        
+        prairie_cave_secret_exit = Location().connect(prairie_cave, OR(FEATHER, ROOSTER), one_way=True)
+        prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True) # bomb walls are one-way        
         self._addEntrance("prairie_right_cave_top", ukuku_prairie, prairie_cave, None)
         self._addEntrance("prairie_right_cave_bottom", left_bay_area, prairie_cave, None)
         self._addEntrance("prairie_right_cave_high", prairie_plateau, prairie_cave_secret_exit, None)
