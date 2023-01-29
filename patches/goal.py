@@ -4,6 +4,7 @@ from utils import formatText
 
 
 def setRequiredInstrumentCount(rom, count):
+    rom.texts[0x1A3] = formatText("You need %d instruments" % (count))
     if count >= 8:
         return
     if count < 0:
@@ -12,7 +13,6 @@ def setRequiredInstrumentCount(rom, count):
         count = 0
 
     # TODO: Music bugs out at the end, unless you have all instruments.
-    rom.texts[0x1A3] = formatText("You need %d instruments" % (count))
     rom.patch(0x19, 0x0B79, None, "0000")  # always spawn all instruments, we need the last one as that handles opening the egg.
     rom.patch(0x19, 0x0BF4, ASM("jp $3BC0"), ASM("jp $7FE0")) # instead of rendering the instrument, jump to the code below.
     rom.patch(0x19, 0x0BFE, ASM("""
