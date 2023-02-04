@@ -412,8 +412,36 @@ def allowColorDungeonSpritesEverywhere(rom):
 
 
 def updateSpriteData(rom):
-    # Remove all the special sprite change exceptions.
-    rom.patch(0x00, 0x0DAD, 0x0DDB, ASM("jp $0DDB"), fill_nop=True)
+    # Change the special sprite change exceptions
+    rom.patch(0x00, 0x0DAD, 0x0DDB, ASM("""
+    ; Check for indoor
+    ld   a, d
+    and  a
+    jr   nz, noChange
+
+    ldh  a, [$F6] ; hMapRoom
+    cp   $C9
+    jr   nz, sirenRoomEnd
+    ld   a, [$D8C9] ; wOverworldRoomStatus + ROOM_OW_SIREN
+    and  $20
+    jr   z, noChange
+    ld   hl, $7837
+    jp   $0DFE
+
+sirenRoomEnd:
+    ldh  a, [$F6] ; hMapRoom
+    cp   $D8
+    jr   nz, noChange
+    ld   a, [$D8FD] ; wOverworldRoomStatus + ROOM_OW_WALRUS 
+    and  $20
+    jr   z, noChange
+    ld   hl, $783B
+    jp   $0DFE
+
+noChange:
+    """), fill_nop=True)
+    rom.patch(0x20, 0x3837, "A4FF8BFF", "A461FF72")
+    rom.patch(0x20, 0x383B, "A44DFFFF", "A4C5FF70")
 
     # For each room update the sprite load data based on which entities are in there.
     for room_nr in range(0x316):
