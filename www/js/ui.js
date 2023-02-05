@@ -26,6 +26,10 @@ async function seedComplete(data) {
             else
                 ID("spoilerButton").style.display = 'none';
         }
+
+        if (ID("magpieLink")) {
+            ID("magpieLink").href = `https://magpietracker.us/?shortString=${encodeURIComponent(document.location.hash)}`;
+        }
     }
     else
     {
