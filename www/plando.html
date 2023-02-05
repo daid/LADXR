@@ -1,0 +1,89 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<input type="checkbox" id="generatingdialog" class="modal">
+<div>
+    <div class="card">
+        <h3 class="section"><span class="spinner" style="margin: 0 10 0 0"></span>Randomizing...</h3>
+        <p class="section" id="generatingtext">Working magic...</p>
+    </div>
+</div>
+
+<input type="checkbox" id="seeddonedialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="seeddonedialog" class="modal-close" ></label>
+        <h3 class="section">Seed generation complete!</h3>
+        <p class="section">Seed: <span id="seedSpan">...</span></p>
+        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
+    </div>
+</div>
+<input type="checkbox" id="errordialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="errordialog" class="modal-close" ></label>
+        <h3 class="section">Error:</h3>
+        <p class="section"><pre id="failureMessage"></pre></p>
+    </div>
+</div>
+
+<div class="container" id="settings">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
+            <input type="file" id="rom" name="rom" style="display:none"/>
+            <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
+        </div>
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
+            <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
+        </div>
+    </div>
+
+    <h1>Plandomizer</h1>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="inputcontainer tooltip bottom" aria-label="The short settings string to use">
+                <label for='settings'>Settings string:</label>
+                <input type="text" id="settings">
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">
+            <div class="inputcontainer tooltip bottom" aria-label="The plandomizer file to apply">
+                <label for='plan'>Plan file:</label>
+                <input type='file' id='plan' name='plan' style='display: none;'>
+                <label style="box-sizing: border-box; text-align: center" for="plan" class="button" id="planlabel">Select File</label>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <p><a href="https://daid.github.io/LADXR/plan-template.txt">Empty plan template</a></p>
+            <p>See the <a href="https://daid.github.io/LADXR/faq.html#plando">FAQ</a> for details</p>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/options.js"></script>
+<script src="js/ui.js"></script>
+<script>"use strict";
+function ID(s) { return document.getElementById(s); }
+
+var idx = options.findIndex((e) => e.category != "Main");
+options.splice(idx, 0, {
+    key: 'spoilerformat', category: "Main", label: "Spoiler Format",
+    options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
+    description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
+buildUI(function(s) { return s.key == 'seed' || s.key == "spoilerformat"; });
+
+function seedStdout(message)
+{
+    console.log(message);
+    ID("generatingtext").innerText = message;
+}
+</script>
+</body>
+</html>

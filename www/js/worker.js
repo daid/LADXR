@@ -23,6 +23,9 @@ self.onmessage = async (event) => {
     try {
         self.pyodide.FS.writeFile("/input.gbc", event.data["input.gbc"]);
         self.pyodide.FS.writeFile("/spoiler.txt", "");
+        if ("plan.txt" in event.data) {
+            self.pyodide.FS.writeFile("/plan.txt", event.data["plan.txt"]);
+        }
         stdout = [];
         console.log("Started randomizer:", event.data.args)
         self.pyladxr.main(["/input.gbc", "--output", "/output.gbc", "--spoilerfilename", "/spoiler.txt"].concat(event.data["args"]));
