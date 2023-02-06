@@ -88,6 +88,12 @@ class OP(ExprBase):
         return OP(op, left, right)
 
 
+class AssemblerException(Exception):
+    def __init__(self, token, message):
+        self.token = token
+        self.message = message
+
+
 class Tokenizer:
     TOKEN_REGEX = re.compile('|'.join('(?P<%s>%s)' % pair for pair in [
         ('NUMBER', r'\d+(\.\d*)?'),
@@ -101,6 +107,7 @@ class Tokenizer:
         ('OP', r'[+\-*/,\(\)]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
+        ('MACROARG', r'\\[0-9]'),
         ('NEWLINE', r'\n'),
         ('SKIP', r'[ \t]+'),
         ('MISMATCH', r'.'),
@@ -115,7 +122,7 @@ class Tokenizer:
             value: Union[str, int] = mo.group()
             if kind == 'MISMATCH':
                 print(code.split("\n")[line_num-1])
-                raise RuntimeError("Syntax error on line: %d: %s\n%s", line_num, value)
+                raise AssemblerException(Token('?', '', line_num), "Syntax error on line: %d: %s" % (line_num, value))
             elif kind == 'SKIP':
                 pass
             elif kind == 'COMMENT':
@@ -139,12 +146,16 @@ class Tokenizer:
     def pop(self) -> Token:
         return self.__tokens.pop(0)
 
+    def shift(self, tokens: List[Token]) -> None:
+        self.__tokens = tokens + self.__tokens
+
     def expect(self, kind: str, value: Optional[str] = None) -> None:
         pop = self.pop()
         if not pop.isA(kind, value):
             if value is not None:
-                raise SyntaxError("%s != %s:%s" % (pop, kind, value))
-            raise SyntaxError("%s != %s" % (pop, kind))
+                raise AssemblerException(pop, "%s != %s:%s" % (pop, kind, value))
+            raise AssemblerException(pop, "%s != %s" % (pop, kind))
+        return pop
 
     def __bool__(self) -> bool:
         return bool(self.__tokens)
@@ -179,157 +190,182 @@ class Assembler:
         self.__constant: Dict[str, int] = {}
         self.__link: Dict[int, Tuple[int, ExprBase]] = {}
         self.__scope: Optional[str] = None
+        self.__macros: Dict[str, List[Token]] = {}
 
         self.__tok = Tokenizer("")
 
     def process(self, code: str) -> None:
         conditional_stack = [True]
         self.__tok = Tokenizer(code)
-        try:
-            while self.__tok:
-                start = self.__tok.pop()
-                if start.kind == 'NEWLINE':
-                    pass  # Empty newline
-                elif start.kind == 'DIRECTIVE':
-                    if start.value == '#IF':
-                        t = self.parseExpression()
-                        assert isinstance(t, Token)
-                        conditional_stack.append(conditional_stack[-1] and t.value != 0)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == '#ELSE':
-                        conditional_stack[-1] = not conditional_stack[-1] and conditional_stack[-2]
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == '#ENDIF':
-                        conditional_stack.pop()
-                        assert conditional_stack
-                        self.__tok.expect('NEWLINE')
-                    else:
-                        raise SyntaxError(start)
-                elif not conditional_stack[-1]:
-                    while not self.__tok.pop().isA('NEWLINE'):
-                        pass
-                elif start.kind == 'ID':
-                    if start.value == 'DB':
-                        self.instrDB()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'DW':
-                        self.instrDW()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'LD':
-                        self.instrLD()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'LDH':
-                        self.instrLDH()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'LDI':
-                        self.instrLDI()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'LDD':
-                        self.instrLDD()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'INC':
-                        self.instrINC()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'DEC':
-                        self.instrDEC()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'ADD':
-                        self.instrADD()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'ADC':
-                        self.instrALU(0x88)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SUB':
-                        self.instrALU(0x90)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SBC':
-                        self.instrALU(0x98)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'AND':
-                        self.instrALU(0xA0)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'XOR':
-                        self.instrALU(0xA8)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'OR':
-                        self.instrALU(0xB0)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'CP':
-                        self.instrALU(0xB8)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'BIT':
-                        self.instrBIT(0x40)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RES':
-                        self.instrBIT(0x80)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SET':
-                        self.instrBIT(0xC0)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RET':
-                        self.instrRET()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'CALL':
-                        self.instrCALL()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RLC':
-                        self.instrCB(0x00)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RRC':
-                        self.instrCB(0x08)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RL':
-                        self.instrCB(0x10)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RR':
-                        self.instrCB(0x18)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SLA':
-                        self.instrCB(0x20)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SRA':
-                        self.instrCB(0x28)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SWAP':
-                        self.instrCB(0x30)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'SRL':
-                        self.instrCB(0x38)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'RST':
-                        self.instrRST()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'JP':
-                        self.instrJP()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'JR':
-                        self.instrJR()
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'PUSH':
-                        self.instrPUSHPOP(0xC5)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value == 'POP':
-                        self.instrPUSHPOP(0xC1)
-                        self.__tok.expect('NEWLINE')
-                    elif start.value in self.SIMPLE_INSTR:
-                        self.__result.append(self.SIMPLE_INSTR[str(start.value)])
-                        self.__tok.expect('NEWLINE')
-                    elif self.__tok.peek().kind == 'LABEL':
-                        self.__tok.pop()
-                        self.addLabel(str(start.value))
-                    elif self.__tok.peek().kind == 'ASSIGN':
-                        self.__tok.pop()
-                        value = self.__tok.pop()
-                        if value.kind != 'NUMBER':
-                            raise SyntaxError(start)
-                        self.addConstant(str(start.value), int(value.value))
-                    else:
-                        raise SyntaxError(start)
+        while self.__tok:
+            start = self.__tok.pop()
+            if start.kind == 'NEWLINE':
+                pass  # Empty newline
+            elif start.kind == 'DIRECTIVE':
+                if start.value == '#IF':
+                    t = self.parseExpression()
+                    assert isinstance(t, Token)
+                    conditional_stack.append(conditional_stack[-1] and t.value != 0)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == '#ELSE':
+                    conditional_stack[-1] = not conditional_stack[-1] and conditional_stack[-2]
+                    self.__tok.expect('NEWLINE')
+                elif start.value == '#ENDIF':
+                    conditional_stack.pop()
+                    assert conditional_stack
+                    self.__tok.expect('NEWLINE')
+                elif start.value == '#MACRO':
+                    name = self.__tok.expect('ID')
+                    self.__tok.expect('NEWLINE')
+                    macro = []
+                    while not self.__tok.peek().isA('DIRECTIVE', '#END'):
+                        macro.append(self.__tok.pop())
+                        if not self.__tok:
+                            raise AssemblerException(name, 'Unterminated macro')
+                    self.__tok.pop()
+                    self.__tok.expect('NEWLINE')
+                    self.__macros[name.value] = macro
                 else:
-                    raise SyntaxError(start)
-        except SyntaxError:
-            print("Syntax error on line: %s" % code.split("\n")[self.__tok.peek().line_nr-1])
-            raise
+                    raise AssemblerException(start, "Unexpected directive")
+            elif not conditional_stack[-1]:
+                while not self.__tok.pop().isA('NEWLINE'):
+                    pass
+            elif start.kind == 'ID':
+                if start.value == 'DB':
+                    self.instrDB()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'DW':
+                    self.instrDW()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'LD':
+                    self.instrLD()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'LDH':
+                    self.instrLDH()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'LDI':
+                    self.instrLDI()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'LDD':
+                    self.instrLDD()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'INC':
+                    self.instrINC()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'DEC':
+                    self.instrDEC()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'ADD':
+                    self.instrADD()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'ADC':
+                    self.instrALU(0x88)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SUB':
+                    self.instrALU(0x90)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SBC':
+                    self.instrALU(0x98)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'AND':
+                    self.instrALU(0xA0)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'XOR':
+                    self.instrALU(0xA8)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'OR':
+                    self.instrALU(0xB0)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'CP':
+                    self.instrALU(0xB8)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'BIT':
+                    self.instrBIT(0x40)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RES':
+                    self.instrBIT(0x80)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SET':
+                    self.instrBIT(0xC0)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RET':
+                    self.instrRET()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'CALL':
+                    self.instrCALL()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RLC':
+                    self.instrCB(0x00)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RRC':
+                    self.instrCB(0x08)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RL':
+                    self.instrCB(0x10)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RR':
+                    self.instrCB(0x18)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SLA':
+                    self.instrCB(0x20)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SRA':
+                    self.instrCB(0x28)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SWAP':
+                    self.instrCB(0x30)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'SRL':
+                    self.instrCB(0x38)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'RST':
+                    self.instrRST()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'JP':
+                    self.instrJP()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'JR':
+                    self.instrJR()
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'PUSH':
+                    self.instrPUSHPOP(0xC5)
+                    self.__tok.expect('NEWLINE')
+                elif start.value == 'POP':
+                    self.instrPUSHPOP(0xC1)
+                    self.__tok.expect('NEWLINE')
+                elif start.value in self.SIMPLE_INSTR:
+                    self.__result.append(self.SIMPLE_INSTR[str(start.value)])
+                    self.__tok.expect('NEWLINE')
+                elif start.value in self.__macros:
+                    params = [[]]
+                    while not self.__tok.peek().isA('NEWLINE'):
+                        if self.__tok.peek().isA('OP', ','):
+                            params.append([])
+                            self.__tok.pop()
+                        else:
+                            params[-1].append(self.__tok.pop())
+                    self.__tok.pop()
+                    to_add = []
+                    for token in self.__macros[start.value]:
+                        if token.isA('MACROARG'):
+                            for p in params[int(token.value[1:]) - 1]:
+                                to_add.append(p)
+                        else:
+                            to_add.append(token)
+                    self.__tok.shift(to_add)
+                elif self.__tok.peek().kind == 'LABEL':
+                    self.__tok.pop()
+                    self.addLabel(str(start.value))
+                elif self.__tok.peek().kind == 'ASSIGN':
+                    self.__tok.pop()
+                    value = self.__tok.pop()
+                    if value.kind != 'NUMBER':
+                        raise AssemblerException(start, "Can only assign numbers")
+                    self.addConstant(str(start.value), int(value.value))
+                else:
+                    raise AssemblerException(start, "Syntax error")
+            else:
+                raise AssemblerException(start, "Syntax error")
 
     def insert8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
@@ -700,7 +736,7 @@ class Assembler:
             self.__tok.expect('OP', ')')
             return result
         if t.kind not in ('ID', 'NUMBER', 'STRING'):
-            raise SyntaxError
+            raise AssemblerException(t, "Unexpected")
         if t.isA('ID') and t.value in CONST_MAP:
             t.kind = 'NUMBER'
             t.value = CONST_MAP[str(t.value)]
@@ -834,9 +870,16 @@ if __name__ == "__main__":
 label:
     nop
 .end:
-    """, 0)
+    """, 0x100)
     ASM("""
     jr label
 label:
     """)
     assert ASM("db 1 + 2 * 3") == b'07'
+    print(ASM("""
+#MACRO testMacro
+    db \\1, \\2
+#END
+    testMacro 1, 1
+    testMacro 2, 2
+"""))
