@@ -429,6 +429,11 @@ var options =
     "key": "bingo-full",
     "short": "B",
     "label": "Bingo-25!"
+   },
+   {
+    "key": "specific",
+    "short": "s",
+    "label": "4 specific instruments"
    }
   ]
  },
