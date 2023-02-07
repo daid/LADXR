@@ -189,43 +189,48 @@ ItemNamePointers:
     dw ItemNameNone ; 0x7d
     dw ItemNameNone ; 0x7e
     dw ItemNameNone ; 0x7f
-    dw ItemNameHeartPiece ; 0x80
-    dw ItemNameBowwow
-    dw ItemName10Arrows
-    dw ItemNameSingleArrow
-    dw ItemNamePowderUpgrade
-    dw ItemNameBombUpgrade
-    dw ItemNameArrowUpgrade
-    dw ItemNameRedTunic
-    dw ItemNameBlueTunic
-    dw ItemNameHeartContainer
-    dw ItemNameBadHeartContainer
-    dw ItemNameSong1
-    dw ItemNameSong2
-    dw ItemNameSong3
-    dw ItemInstrument1
-    dw ItemInstrument2
-    dw ItemInstrument3
-    dw ItemInstrument4
-    dw ItemInstrument5
-    dw ItemInstrument6
-    dw ItemInstrument7
-    dw ItemInstrument8
-    dw ItemRooster
-    dw ItemTradeQuest1
-    dw ItemTradeQuest2
-    dw ItemTradeQuest3
-    dw ItemTradeQuest4
-    dw ItemTradeQuest5
-    dw ItemTradeQuest6
-    dw ItemTradeQuest7
-    dw ItemTradeQuest8
-    dw ItemTradeQuest9
-    dw ItemTradeQuest10
-    dw ItemTradeQuest11
-    dw ItemTradeQuest12
-    dw ItemTradeQuest13
-    dw ItemTradeQuest14
+
+    dw M"Got the {HEART_PIECE}" ; 0x80
+    dw M"Got the {BOWWOW}"
+    dw M"Got {ARROWS_10}"
+    dw M"Got the {SINGLE_ARROW}"
+    dw M"Got the {MAX_POWDER_UPGRADE}"
+    dw M"Got the {MAX_BOMBS_UPGRADE}"
+    dw M"Got the {MAX_ARROWS_UPGRADE}"
+    dw M"Got the {RED_TUNIC}"
+    dw M"Got the {BLUE_TUNIC}"
+    dw M"Got a {HEART_CONTAINER}"
+    dw M"Got the {BAD_HEART_CONTAINER}"
+
+
+    dw M"Got the {SONG1}"
+    dw M"Got {SONG2}"
+    dw M"Got {SONG3}"
+
+    dw M"You've got the {INSTRUMENT1}"
+    dw M"You've got the {INSTRUMENT2}"
+    dw M"You've got the {INSTRUMENT3}"
+    dw M"You've got the {INSTRUMENT4}"
+    dw M"You've got the {INSTRUMENT5}"
+    dw M"You've got the {INSTRUMENT6}"
+    dw M"You've got the {INSTRUMENT7}"
+    dw M"You've got the {INSTRUMENT8}"
+    dw M"You've got the {ROOSTER}"
+
+    dw M"You've got the Yoshi Doll"
+    dw M"You've got the Ribbon"
+    dw M"You've got the Dog Food"
+    dw M"You've got the Bananas"
+    dw M"You've got the Stick"
+    dw M"You've got the Honeycomb"
+    dw M"You've got the Pineapple"
+    dw M"You've got the Hibiscus"
+    dw M"You've got the Letter"
+    dw M"You've got the Broom"
+    dw M"You've got the Fishing Hook"
+    dw M"You've got the Necklace"
+    dw M"You've got the Scale"
+    dw M"You've got the Magnifying Lens"
 
 ItemNameNone:
     db m"NONE", $ff
@@ -388,81 +393,3 @@ ItemNameNightmareKey9:
     db m"Got the {NIGHTMARE_KEY9}", $ff
 ItemNameToadstool:
     db m"Got the {TOADSTOOL}", $ff
-
-ItemNameHeartPiece:
-    db m"Got the {HEART_PIECE}", $ff
-ItemNameBowwow:
-    db m"Got the {BOWWOW}", $ff
-ItemName10Arrows:
-    db m"Got {ARROWS_10}", $ff
-ItemNameSingleArrow:
-    db m"Got the {SINGLE_ARROW}", $ff
-ItemNamePowderUpgrade:
-    db m"Got the {MAX_POWDER_UPGRADE}", $ff
-ItemNameBombUpgrade:
-    db m"Got the {MAX_BOMBS_UPGRADE}", $ff
-ItemNameArrowUpgrade:
-    db m"Got the {MAX_ARROWS_UPGRADE}", $ff
-ItemNameRedTunic:
-    db m"Got the {RED_TUNIC}", $ff
-ItemNameBlueTunic:
-    db m"Got the {BLUE_TUNIC}", $ff
-ItemNameHeartContainer:
-    db m"Got a {HEART_CONTAINER}", $ff
-ItemNameBadHeartContainer:
-    db m"Got the {BAD_HEART_CONTAINER}", $ff
-ItemNameSong1:
-    db m"Got the {SONG1}", $ff
-ItemNameSong2:
-    db m"Got {SONG2}", $ff
-ItemNameSong3:
-    db m"Got {SONG3}", $ff
-
-ItemInstrument1:
-    db m"You've got the {INSTRUMENT1}", $ff
-ItemInstrument2:
-    db m"You've got the {INSTRUMENT2}", $ff
-ItemInstrument3:
-    db m"You've got the {INSTRUMENT3}", $ff
-ItemInstrument4:
-    db m"You've got the {INSTRUMENT4}", $ff
-ItemInstrument5:
-    db m"You've got the {INSTRUMENT5}", $ff
-ItemInstrument6:
-    db m"You've got the {INSTRUMENT6}", $ff
-ItemInstrument7:
-    db m"You've got the {INSTRUMENT7}", $ff
-ItemInstrument8:
-    db m"You've got the {INSTRUMENT8}", $ff
-
-ItemRooster:
-    db m"You've got the {ROOSTER}", $ff
-
-ItemTradeQuest1:
-    db m"You've got the Yoshi Doll", $ff
-ItemTradeQuest2:
-    db m"You've got the Ribbon", $ff
-ItemTradeQuest3:
-    db m"You've got the Dog Food", $ff
-ItemTradeQuest4:
-    db m"You've got the Bananas", $ff
-ItemTradeQuest5:
-    db m"You've got the Stick", $ff
-ItemTradeQuest6:
-    db m"You've got the Honeycomb", $ff
-ItemTradeQuest7:
-    db m"You've got the Pineapple", $ff
-ItemTradeQuest8:
-    db m"You've got the Hibiscus", $ff
-ItemTradeQuest9:
-    db m"You've got the Letter", $ff
-ItemTradeQuest10:
-    db m"You've got the Broom", $ff
-ItemTradeQuest11:
-    db m"You've got the Fishing Hook", $ff
-ItemTradeQuest12:
-    db m"You've got the Necklace", $ff
-ItemTradeQuest13:
-    db m"You've got the Scale", $ff
-ItemTradeQuest14:
-    db m"You've got the Magnifying Lens", $ff

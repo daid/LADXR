@@ -1,5 +1,5 @@
 import binascii
-from typing import Optional, Dict, ItemsView, List, Union, Tuple
+from typing import Optional, Dict, ItemsView, List, Union, Tuple, Generator
 
 import utils
 import re
@@ -149,7 +149,7 @@ class Tokenizer:
     def shift(self, tokens: List[Token]) -> None:
         self.__tokens = tokens + self.__tokens
 
-    def expect(self, kind: str, value: Optional[str] = None) -> None:
+    def expect(self, kind: str, value: Optional[str] = None) -> Token:
         pop = self.pop()
         if not pop.isA(kind, value):
             if value is not None:
@@ -159,6 +159,13 @@ class Tokenizer:
 
     def __bool__(self) -> bool:
         return bool(self.__tokens)
+
+
+class Section:
+    def __init__(self, base_address: Optional[int] = None):
+        self.base_address = base_address if base_address is not None else -1
+        self.data = bytearray()
+        self.link: Dict[int, Tuple[int, ExprBase]] = {}
 
 
 class Assembler:
@@ -183,18 +190,20 @@ class Assembler:
     LINK_ABS8 = 1
     LINK_ABS16 = 2
 
-    def __init__(self, base_address: Optional[int] = None) -> None:
-        self.__base_address = base_address or -1
-        self.__result = bytearray()
-        self.__label: Dict[str, int] = {}
+    def __init__(self) -> None:
+        self.__sections: List[Section] = []
+        self.__current_section = Section()
+        self.__label: Dict[str, Tuple[Section, int]] = {}
         self.__constant: Dict[str, int] = {}
-        self.__link: Dict[int, Tuple[int, ExprBase]] = {}
         self.__scope: Optional[str] = None
         self.__macros: Dict[str, List[Token]] = {}
 
         self.__tok = Tokenizer("")
 
-    def process(self, code: str) -> None:
+    def process(self, code: str, *, base_address: Optional[int] = None) -> None:
+        self.__current_section = Section(base_address)
+        self.__sections.append(self.__current_section)
+        self.__scope = None
         conditional_stack = [True]
         self.__tok = Tokenizer(code)
         while self.__tok:
@@ -334,7 +343,7 @@ class Assembler:
                     self.instrPUSHPOP(0xC1)
                     self.__tok.expect('NEWLINE')
                 elif start.value in self.SIMPLE_INSTR:
-                    self.__result.append(self.SIMPLE_INSTR[str(start.value)])
+                    self.__current_section.data.append(self.SIMPLE_INSTR[str(start.value)])
                     self.__tok.expect('NEWLINE')
                 elif start.value in self.__macros:
                     params = [[]]
@@ -372,35 +381,35 @@ class Assembler:
             assert isinstance(expr, Token)
             value = int(expr.value)
         else:
-            self.__link[len(self.__result)] = (Assembler.LINK_ABS8, expr)
+            self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_ABS8, expr)
             value = 0
         assert 0 <= value < 256
-        self.__result.append(value)
+        self.__current_section.data.append(value)
 
     def insertRel8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
             assert isinstance(expr, Token)
-            self.__result.append(int(expr.value))
+            self.__current_section.data.append(int(expr.value))
         else:
-            self.__link[len(self.__result)] = (Assembler.LINK_REL8, expr)
-            self.__result.append(0x00)
+            self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_REL8, expr)
+            self.__current_section.data.append(0x00)
 
     def insert16(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
             assert isinstance(expr, Token)
             value = int(expr.value)
         else:
-            self.__link[len(self.__result)] = (Assembler.LINK_ABS16, expr)
+            self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_ABS16, expr)
             value = 0
         assert 0 <= value <= 0xFFFF
-        self.__result.append(value & 0xFF)
-        self.__result.append(value >> 8)
+        self.__current_section.data.append(value & 0xFF)
+        self.__current_section.data.append(value >> 8)
 
     def insertString(self, string: str) -> None:
         if string.startswith('"') and string.endswith('"'):
-            self.__result += string[1:-1].encode("ascii")
+            self.__current_section.data += string[1:-1].encode("ascii")
         elif string.startswith("m\"") and string.endswith("\""):
-            self.__result += utils.formatText(string[2:-1].replace("|", "\n"))
+            self.__current_section.data += utils.formatText(string[2:-1].replace("|", "\n"))
         else:
             raise SyntaxError
 
@@ -411,55 +420,55 @@ class Assembler:
         lr8 = left_param.asReg8()
         rr8 = right_param.asReg8()
         if lr8 is not None and rr8 is not None:
-            self.__result.append(0x40 | (lr8 << 3) | rr8)
+            self.__current_section.data.append(0x40 | (lr8 << 3) | rr8)
         elif left_param.isA('ID', 'A') and isinstance(right_param, REF):
             if right_param.expr.isA('ID', 'BC'):
-                self.__result.append(0x0A)
+                self.__current_section.data.append(0x0A)
             elif right_param.expr.isA('ID', 'DE'):
-                self.__result.append(0x1A)
+                self.__current_section.data.append(0x1A)
             elif right_param.expr.isA('ID', 'HL+'):  # TODO
-                self.__result.append(0x2A)
+                self.__current_section.data.append(0x2A)
             elif right_param.expr.isA('ID', 'HL-'):  # TODO
-                self.__result.append(0x3A)
+                self.__current_section.data.append(0x3A)
             elif right_param.expr.isA('ID', 'C'):
-                self.__result.append(0xF2)
+                self.__current_section.data.append(0xF2)
             else:
-                self.__result.append(0xFA)
+                self.__current_section.data.append(0xFA)
                 self.insert16(right_param.expr)
         elif right_param.isA('ID', 'A') and isinstance(left_param, REF):
             if left_param.expr.isA('ID', 'BC'):
-                self.__result.append(0x02)
+                self.__current_section.data.append(0x02)
             elif left_param.expr.isA('ID', 'DE'):
-                self.__result.append(0x12)
+                self.__current_section.data.append(0x12)
             elif left_param.expr.isA('ID', 'HL+'):  # TODO
-                self.__result.append(0x22)
+                self.__current_section.data.append(0x22)
             elif left_param.expr.isA('ID', 'HL-'):  # TODO
-                self.__result.append(0x32)
+                self.__current_section.data.append(0x32)
             elif left_param.expr.isA('ID', 'C'):
-                self.__result.append(0xE2)
+                self.__current_section.data.append(0xE2)
             else:
-                self.__result.append(0xEA)
+                self.__current_section.data.append(0xEA)
                 self.insert16(left_param.expr)
         elif left_param.isA('ID', 'BC'):
-            self.__result.append(0x01)
+            self.__current_section.data.append(0x01)
             self.insert16(right_param)
         elif left_param.isA('ID', 'DE'):
-            self.__result.append(0x11)
+            self.__current_section.data.append(0x11)
             self.insert16(right_param)
         elif left_param.isA('ID', 'HL'):
-            self.__result.append(0x21)
+            self.__current_section.data.append(0x21)
             self.insert16(right_param)
         elif left_param.isA('ID', 'SP'):
             if right_param.isA('ID', 'HL'):
-                self.__result.append(0xF9)
+                self.__current_section.data.append(0xF9)
             else:
-                self.__result.append(0x31)
+                self.__current_section.data.append(0x31)
                 self.insert16(right_param)
         elif right_param.isA('ID', 'SP') and isinstance(left_param, REF):
-            self.__result.append(0x08)
+            self.__current_section.data.append(0x08)
             self.insert16(left_param.expr)
         elif lr8 is not None:
-            self.__result.append(0x06 | (lr8 << 3))
+            self.__current_section.data.append(0x06 | (lr8 << 3))
             self.insert8(right_param)
         else:
             raise SyntaxError
@@ -470,15 +479,15 @@ class Assembler:
         right_param = self.parseParam()
         if left_param.isA('ID', 'A') and isinstance(right_param, REF):
             if right_param.expr.isA('ID', 'C'):
-                self.__result.append(0xF2)
+                self.__current_section.data.append(0xF2)
             else:
-                self.__result.append(0xF0)
+                self.__current_section.data.append(0xF0)
                 self.insert8(right_param.expr)
         elif right_param.isA('ID', 'A') and isinstance(left_param, REF):
             if left_param.expr.isA('ID', 'C'):
-                self.__result.append(0xE2)
+                self.__current_section.data.append(0xE2)
             else:
-                self.__result.append(0xE0)
+                self.__current_section.data.append(0xE0)
                 self.insert8(left_param.expr)
         else:
             raise SyntaxError
@@ -488,9 +497,9 @@ class Assembler:
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
         if left_param.isA('ID', 'A') and isinstance(right_param, REF) and right_param.expr.isA('ID', 'HL'):
-            self.__result.append(0x2A)
+            self.__current_section.data.append(0x2A)
         elif right_param.isA('ID', 'A') and isinstance(left_param, REF) and left_param.expr.isA('ID', 'HL'):
-            self.__result.append(0x22)
+            self.__current_section.data.append(0x22)
         else:
             raise SyntaxError
 
@@ -499,9 +508,9 @@ class Assembler:
         self.__tok.expect('OP', ',')
         right_param = self.parseParam()
         if left_param.isA('ID', 'A') and isinstance(right_param, REF) and right_param.expr.isA('ID', 'HL'):
-            self.__result.append(0x3A)
+            self.__current_section.data.append(0x3A)
         elif right_param.isA('ID', 'A') and isinstance(left_param, REF) and left_param.expr.isA('ID', 'HL'):
-            self.__result.append(0x32)
+            self.__current_section.data.append(0x32)
         else:
             raise SyntaxError
 
@@ -509,15 +518,15 @@ class Assembler:
         param = self.parseParam()
         r8 = param.asReg8()
         if r8 is not None:
-            self.__result.append(0x04 | (r8 << 3))
+            self.__current_section.data.append(0x04 | (r8 << 3))
         elif param.isA('ID', 'BC'):
-            self.__result.append(0x03)
+            self.__current_section.data.append(0x03)
         elif param.isA('ID', 'DE'):
-            self.__result.append(0x13)
+            self.__current_section.data.append(0x13)
         elif param.isA('ID', 'HL'):
-            self.__result.append(0x23)
+            self.__current_section.data.append(0x23)
         elif param.isA('ID', 'SP'):
-            self.__result.append(0x33)
+            self.__current_section.data.append(0x33)
         else:
             raise SyntaxError
 
@@ -525,15 +534,15 @@ class Assembler:
         param = self.parseParam()
         r8 = param.asReg8()
         if r8 is not None:
-            self.__result.append(0x05 | (r8 << 3))
+            self.__current_section.data.append(0x05 | (r8 << 3))
         elif param.isA('ID', 'BC'):
-            self.__result.append(0x0B)
+            self.__current_section.data.append(0x0B)
         elif param.isA('ID', 'DE'):
-            self.__result.append(0x1B)
+            self.__current_section.data.append(0x1B)
         elif param.isA('ID', 'HL'):
-            self.__result.append(0x2B)
+            self.__current_section.data.append(0x2B)
         elif param.isA('ID', 'SP'):
-            self.__result.append(0x3B)
+            self.__current_section.data.append(0x3B)
         else:
             raise SyntaxError
 
@@ -545,14 +554,14 @@ class Assembler:
         if left_param.isA('ID', 'A'):
             rr8 = right_param.asReg8()
             if rr8 is not None:
-                self.__result.append(0x80 | rr8)
+                self.__current_section.data.append(0x80 | rr8)
             else:
-                self.__result.append(0xC6)
+                self.__current_section.data.append(0xC6)
                 self.insert8(right_param)
         elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value in REGS16A:
-            self.__result.append(0x09 | REGS16A[str(right_param.value)] << 4)
+            self.__current_section.data.append(0x09 | REGS16A[str(right_param.value)] << 4)
         elif left_param.isA('ID', 'SP'):
-            self.__result.append(0xE8)
+            self.__current_section.data.append(0xE8)
             self.insert8(right_param)
         else:
             raise SyntaxError
@@ -564,22 +573,22 @@ class Assembler:
             param = self.parseParam()
         r8 = param.asReg8()
         if r8 is not None:
-            self.__result.append(code_value | r8)
+            self.__current_section.data.append(code_value | r8)
         else:
-            self.__result.append(code_value | 0x46)
+            self.__current_section.data.append(code_value | 0x46)
             self.insert8(param)
 
     def instrRST(self) -> None:
         param = self.parseParam()
         if param.isA('NUMBER') and isinstance(param, Token) and (int(param.value) & ~0x38) == 0:
-            self.__result.append(0xC7 | int(param.value))
+            self.__current_section.data.append(0xC7 | int(param.value))
         else:
             raise SyntaxError
 
     def instrPUSHPOP(self, code_value: int) -> None:
         param = self.parseParam()
         if param.isA('ID') and isinstance(param, Token) and str(param.value) in REGS16B:
-            self.__result.append(code_value | (REGS16B[str(param.value)] << 4))
+            self.__current_section.data.append(code_value | (REGS16B[str(param.value)] << 4))
         else:
             raise SyntaxError
 
@@ -590,19 +599,19 @@ class Assembler:
             condition = param
             param = self.parseParam()
             if condition.isA('ID') and isinstance(condition, Token) and str(condition.value) in FLAGS:
-                self.__result.append(0x20 | FLAGS[str(condition.value)])
+                self.__current_section.data.append(0x20 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
-            self.__result.append(0x18)
+            self.__current_section.data.append(0x18)
         self.insertRel8(param)
 
     def instrCB(self, code_value: int) -> None:
         param = self.parseParam()
         r8 = param.asReg8()
         if r8 is not None:
-            self.__result.append(0xCB)
-            self.__result.append(code_value | r8)
+            self.__current_section.data.append(0xCB)
+            self.__current_section.data.append(code_value | r8)
         else:
             raise SyntaxError
 
@@ -612,8 +621,8 @@ class Assembler:
         right_param = self.parseParam()
         rr8 = right_param.asReg8()
         if left_param.isA('NUMBER') and isinstance(left_param, Token) and rr8 is not None:
-            self.__result.append(0xCB)
-            self.__result.append(code_value | (int(left_param.value) << 3) | rr8)
+            self.__current_section.data.append(0xCB)
+            self.__current_section.data.append(code_value | (int(left_param.value) << 3) | rr8)
         else:
             raise SyntaxError
 
@@ -621,11 +630,11 @@ class Assembler:
         if self.__tok.peek().isA('ID'):
             condition = self.__tok.pop()
             if condition.isA('ID') and condition.value in FLAGS:
-                self.__result.append(0xC0 | FLAGS[str(condition.value)])
+                self.__current_section.data.append(0xC0 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
-            self.__result.append(0xC9)
+            self.__current_section.data.append(0xC9)
 
     def instrCALL(self) -> None:
         param = self.parseParam()
@@ -634,11 +643,11 @@ class Assembler:
             condition = param
             param = self.parseParam()
             if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
-                self.__result.append(0xC4 | FLAGS[str(condition.value)])
+                self.__current_section.data.append(0xC4 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         else:
-            self.__result.append(0xCD)
+            self.__current_section.data.append(0xCD)
         self.insert16(param)
 
     def instrJP(self) -> None:
@@ -648,14 +657,14 @@ class Assembler:
             condition = param
             param = self.parseParam()
             if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
-                self.__result.append(0xC2 | FLAGS[str(condition.value)])
+                self.__current_section.data.append(0xC2 | FLAGS[str(condition.value)])
             else:
                 raise SyntaxError
         elif param.isA('ID', 'HL'):
-            self.__result.append(0xE9)
+            self.__current_section.data.append(0xE9)
             return
         else:
-            self.__result.append(0xC3)
+            self.__current_section.data.append(0xC3)
         self.insert16(param)
 
     def instrDW(self) -> None:
@@ -691,7 +700,7 @@ class Assembler:
             self.__scope = label
         assert label not in self.__label, "Duplicate label: %s" % (label)
         assert label not in self.__constant, "Duplicate label: %s" % (label)
-        self.__label[label] = len(self.__result)
+        self.__label[label] = self.__current_section, len(self.__current_section.data)
 
     def addConstant(self, name: str, value: int) -> None:
         assert name not in self.__constant, "Duplicate constant: %s" % (name)
@@ -749,26 +758,37 @@ class Assembler:
         return t
 
     def link(self) -> None:
-        for offset, (link_type, link_expr) in self.__link.items():
-            expr = self.resolveExpr(link_expr)
-            assert expr is not None
-            assert expr.isA('NUMBER'), expr
-            assert isinstance(expr, Token)
-            value = int(expr.value)
-            if link_type == Assembler.LINK_REL8:
-                byte = (value - self.__base_address) - offset - 1
-                assert -128 <= byte <= 127, expr
-                self.__result[offset] = byte & 0xFF
-            elif link_type == Assembler.LINK_ABS8:
-                assert 0 <= value <= 0xFF
-                self.__result[offset] = value & 0xFF
-            elif link_type == Assembler.LINK_ABS16:
-                assert self.__base_address >= 0, "Cannot place absolute values in a relocatable code piece"
-                assert 0 <= value <= 0xFFFF
-                self.__result[offset] = value & 0xFF
-                self.__result[offset + 1] = value >> 8
-            else:
-                raise RuntimeError
+        for section in self.__sections:
+            inline_strings: Dict[bytes, int] = {}
+            for offset, (link_type, link_expr) in section.link.items():
+                expr = self.resolveExpr(link_expr)
+                assert expr is not None
+                if expr.isA('STRING') and (expr.value.startswith("i") or expr.value.startswith("M")):
+                    if expr.value.startswith("i"):
+                        strdata = expr.value[2:-1].encode("ascii") + b'\x00'
+                    else:
+                        strdata = utils.formatText(expr.value[2:-1].replace("|", "\n"))
+                    if strdata not in inline_strings:
+                        inline_strings[strdata] = len(section.data) + section.base_address
+                        section.data += strdata
+                    expr = Token('NUMBER', inline_strings[strdata], expr.line_nr)
+                assert expr.isA('NUMBER'), expr
+                assert isinstance(expr, Token)
+                value = int(expr.value)
+                if link_type == Assembler.LINK_REL8:
+                    byte = (value - section.base_address) - offset - 1
+                    assert -128 <= byte <= 127, expr
+                    section.data[offset] = byte & 0xFF
+                elif link_type == Assembler.LINK_ABS8:
+                    assert 0 <= value <= 0xFF
+                    section.data[offset] = value & 0xFF
+                elif link_type == Assembler.LINK_ABS16:
+                    assert section.base_address > -1, "Cannot place absolute values in a relocatable code piece"
+                    assert 0 <= value <= 0xFFFF
+                    section.data[offset] = value & 0xFF
+                    section.data[offset + 1] = value >> 8
+                else:
+                    raise RuntimeError
 
     def resolveExpr(self, expr: Optional[ExprBase]) -> Optional[ExprBase]:
         if expr is None:
@@ -778,14 +798,17 @@ class Assembler:
             assert left is not None
             return OP.make(expr.op, left, self.resolveExpr(expr.right))
         elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
-            return Token('NUMBER', self.__label[str(expr.value)] + self.__base_address, expr.line_nr)
+            section, offset = self.__label[str(expr.value)]
+            return Token('NUMBER', offset + section.base_address, expr.line_nr)
         return expr
 
-    def getResult(self) -> bytearray:
-        return self.__result
+    def getResults(self) -> Generator[Tuple[int, bytearray], None, None]:
+        for section in self.__sections:
+            yield section.base_address, section.data
 
-    def getLabels(self) -> ItemsView[str, int]:
-        return self.__label.items()
+    def getLabels(self) -> Generator[Tuple[str, int], None, None]:
+        for label, (section, address) in self.__label.items():
+            yield label, address + section.base_address
 
 
 def const(name: str, value: int) -> None:
@@ -799,14 +822,16 @@ def resetConsts() -> None:
 
 
 def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[Dict[str, int]] = None) -> bytes:
-    asm = Assembler(base_address)
-    asm.process(code)
+    asm = Assembler()
+    asm.process(code, base_address=base_address)
     asm.link()
     if labels_result is not None:
         assert base_address is not None
         for label, offset in asm.getLabels():
-            labels_result[label] = base_address + offset
-    return binascii.hexlify(asm.getResult())
+            labels_result[label] = offset
+    for addr, data in asm.getResults():
+        return binascii.hexlify(data)
+    return b''
 
 
 def allOpcodesTest() -> None:
@@ -877,9 +902,6 @@ label:
     """)
     assert ASM("db 1 + 2 * 3") == b'07'
     print(ASM("""
-#MACRO testMacro
-    db \\1, \\2
-#END
-    testMacro 1, 1
-    testMacro 2, 2
-"""))
+    dw M"Inline string"
+    dw M"Inline string"
+""", 0x1000))
