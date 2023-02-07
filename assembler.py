@@ -1,5 +1,5 @@
 import binascii
-from typing import Optional, Dict, ItemsView, List, Union, Tuple, Generator
+from typing import Optional, Dict, Iterator, List, Union, Tuple, Generator
 
 import utils
 import re
@@ -88,6 +88,15 @@ class OP(ExprBase):
         return OP(op, left, right)
 
 
+class CALL(ExprBase):
+    def __init__(self, function, param):
+        self.function = function
+        self.param = param
+
+    def __repr__(self) -> str:
+        return f"{self.function}({self.param})"
+
+
 class AssemblerException(Exception):
     def __init__(self, token, message):
         self.token = token
@@ -162,10 +171,18 @@ class Tokenizer:
 
 
 class Section:
-    def __init__(self, base_address: Optional[int] = None):
+    def __init__(self, base_address: Optional[int] = None, bank: Optional[int] = None) -> None:
         self.base_address = base_address if base_address is not None else -1
+        self.bank = bank
         self.data = bytearray()
         self.link: Dict[int, Tuple[int, ExprBase]] = {}
+
+    def __repr__(self) -> str:
+        if self.bank is not None:
+            return f"Section@{self.bank:02x}:{self.base_address:04x} {binascii.hexlify(self.data).decode('ascii')}"
+        if self.base_address > -1:
+            return f"Section@{self.base_address:04x} {binascii.hexlify(self.data).decode('ascii')}"
+        return f"Section {binascii.hexlify(self.data).decode('ascii')}"
 
 
 class Assembler:
@@ -200,8 +217,8 @@ class Assembler:
 
         self.__tok = Tokenizer("")
 
-    def process(self, code: str, *, base_address: Optional[int] = None) -> None:
-        self.__current_section = Section(base_address)
+    def process(self, code: str, *, base_address: Optional[int] = None, bank: Optional[int] = None) -> None:
+        self.__current_section = Section(base_address, bank)
         self.__sections.append(self.__current_section)
         self.__scope = None
         conditional_stack = [True]
@@ -755,6 +772,11 @@ class Assembler:
         elif t.isA('ID') and str(t.value).startswith("."):
             assert self.__scope is not None
             t.value = self.__scope + str(t.value)
+        elif t.isA('ID') and self.__tok.peek().isA('OP', '('):
+            self.__tok.pop()
+            param = self.parseExpression()
+            self.__tok.expect('OP', ')')
+            return CALL(t.value, param)
         return t
 
     def link(self) -> None:
@@ -772,7 +794,8 @@ class Assembler:
                         inline_strings[strdata] = len(section.data) + section.base_address
                         section.data += strdata
                     expr = Token('NUMBER', inline_strings[strdata], expr.line_nr)
-                assert expr.isA('NUMBER'), expr
+                if not expr.isA('NUMBER'):
+                    raise AssemblerException(expr, f"Failed to link {link_expr}, symbol not found?")
                 assert isinstance(expr, Token)
                 value = int(expr.value)
                 if link_type == Assembler.LINK_REL8:
@@ -797,14 +820,17 @@ class Assembler:
             left = self.resolveExpr(expr.left)
             assert left is not None
             return OP.make(expr.op, left, self.resolveExpr(expr.right))
+        elif isinstance(expr, CALL):
+            if expr.function == 'BANK':
+                section, offset = self.__label[expr.param.value]
+                return Token('NUMBER', section.bank, expr.param.line_nr)
         elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
             section, offset = self.__label[str(expr.value)]
             return Token('NUMBER', offset + section.base_address, expr.line_nr)
         return expr
 
-    def getResults(self) -> Generator[Tuple[int, bytearray], None, None]:
-        for section in self.__sections:
-            yield section.base_address, section.data
+    def getSections(self) -> Iterator[Section]:
+        return iter(self.__sections)
 
     def getLabels(self) -> Generator[Tuple[str, int], None, None]:
         for label, (section, address) in self.__label.items():
@@ -829,8 +855,8 @@ def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[D
         assert base_address is not None
         for label, offset in asm.getLabels():
             labels_result[label] = offset
-    for addr, data in asm.getResults():
-        return binascii.hexlify(data)
+    for section in asm.getSections():
+        return binascii.hexlify(section.data)
     return b''
 
 
@@ -901,7 +927,14 @@ label:
 label:
     """)
     assert ASM("db 1 + 2 * 3") == b'07'
-    print(ASM("""
+    assert ASM("""
     dw M"Inline string"
     dw M"Inline string"
-""", 0x1000))
+""", 0x1000)[:4] == b'0410'
+
+    asm = Assembler()
+    asm.process(" db 1, 2, 3\nlabel:\ndw label", base_address=0x4000, bank=1)
+    asm.process(" db 2, BANK(label), 3\ndw label", base_address=0x4000, bank=2)
+    asm.link()
+    for s in asm.getSections():
+        print(s)

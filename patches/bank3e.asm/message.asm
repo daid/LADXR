@@ -12,11 +12,6 @@ BuildItemMessage:
     ld   de, wCustomMessage
     jp   MessageCopyString
 
-FoundItemForOtherPlayerPostfix:
-    db m" for player X", $ff
-GotItemFromOtherPlayerPostfix:
-    db m" from player X", $ff
-
 MessagePad:
     jr .start
 .loop:
@@ -33,13 +28,13 @@ MessagePad:
 
 MessageAddTargetPlayer:
     call MessagePad
-    ld   hl, FoundItemForOtherPlayerPostfix
+    ld   hl, M" for player X"
     call MessageCopyString
     ret
 
 MessageAddFromPlayer:
     call MessagePad
-    ld   hl, GotItemFromOtherPlayerPostfix
+    ld   hl, M" from player X"
     call MessageCopyString
     ret
 
