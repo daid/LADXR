@@ -48,8 +48,8 @@
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-4">
             <div class="inputcontainer tooltip bottom" aria-label="The short settings string to use">
-                <label for='settings'>Settings string:</label>
-                <input type="text" id="settings">
+                <label for='settingsString'>Settings string:</label>
+                <input type="text" id="settingsString">
             </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">
@@ -78,6 +78,29 @@ options.splice(idx, 0, {
     options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
     description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
 buildUI(function(s) { return s.key == 'seed' || s.key == "spoilerformat"; });
+
+async function startRomGeneration()
+{
+    ID("generatingdialog").checked = true;
+    randomGenerationString();
+    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
+    var args = ["--short", ID('settingsString').value];
+    var data = {"input.gbc": buffer, "args": args, "id": 0};
+    var e = ID("spoilerformat");
+    if (e && e.value != 'none') {
+        args.push("--spoilerformat");
+        args.push(e.value);
+    }
+
+    e = ID("plan");
+    if (e && e.value != "") {
+        args.push("--plan");
+        args.push('/plan.txt');
+        data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+
+    await postToWorker(data);
+}
 
 function seedStdout(message)
 {
