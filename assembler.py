@@ -443,9 +443,9 @@ class Assembler:
                 self.__current_section.data.append(0x0A)
             elif right_param.expr.isA('ID', 'DE'):
                 self.__current_section.data.append(0x1A)
-            elif right_param.expr.isA('ID', 'HL+'):  # TODO
+            elif right_param.expr.isA('ID', 'HL+'):
                 self.__current_section.data.append(0x2A)
-            elif right_param.expr.isA('ID', 'HL-'):  # TODO
+            elif right_param.expr.isA('ID', 'HL-'):
                 self.__current_section.data.append(0x3A)
             elif right_param.expr.isA('ID', 'C'):
                 self.__current_section.data.append(0xF2)
@@ -457,9 +457,9 @@ class Assembler:
                 self.__current_section.data.append(0x02)
             elif left_param.expr.isA('ID', 'DE'):
                 self.__current_section.data.append(0x12)
-            elif left_param.expr.isA('ID', 'HL+'):  # TODO
+            elif left_param.expr.isA('ID', 'HL+'):
                 self.__current_section.data.append(0x22)
-            elif left_param.expr.isA('ID', 'HL-'):  # TODO
+            elif left_param.expr.isA('ID', 'HL-'):
                 self.__current_section.data.append(0x32)
             elif left_param.expr.isA('ID', 'C'):
                 self.__current_section.data.append(0xE2)
@@ -742,6 +742,8 @@ class Assembler:
         p = self.__tok.peek()
         if p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
+            if self.__tok.peek().isA('REFCLOSE') and t.isA('ID', 'HL'): # Special exception for HL+/HL-
+                return Token('ID', f'HL{p.value}', t.line_nr)
             return OP.make(str(p.value), t, self.parseAddSub())
         return t
 
@@ -938,3 +940,4 @@ label:
     asm.link()
     for s in asm.getSections():
         print(s)
+    ASM("ld a, [hl+]")
