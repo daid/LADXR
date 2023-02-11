@@ -59,7 +59,7 @@ class OP(ExprBase):
         self.right = right
 
     def __repr__(self) -> str:
-        return "%s %s %s" % (self.left, self.op, self.right)
+        return "(%s %s %s)" % (self.left, self.op, self.right)
 
     @staticmethod
     def make(op: str, left: ExprBase, right: Optional[ExprBase] = None) -> ExprBase:
@@ -740,19 +740,21 @@ class Assembler:
     def parseAddSub(self) -> ExprBase:
         t = self.parseFactor()
         p = self.__tok.peek()
-        if p.isA('OP', '+') or p.isA('OP', '-'):
+        while p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
             if self.__tok.peek().isA('REFCLOSE') and t.isA('ID', 'HL'): # Special exception for HL+/HL-
                 return Token('ID', f'HL{p.value}', t.line_nr)
-            return OP.make(str(p.value), t, self.parseAddSub())
+            t = OP.make(str(p.value), t, self.parseFactor())
+            p = self.__tok.peek()
         return t
 
     def parseFactor(self) -> ExprBase:
         t = self.parseUnary()
         p = self.__tok.peek()
-        if p.isA('OP', '*') or p.isA('OP', '/'):
+        while p.isA('OP', '*') or p.isA('OP', '/'):
             self.__tok.pop()
-            return OP.make(str(p.value), t, self.parseFactor())
+            t = OP.make(str(p.value), t, self.parseUnary())
+            p = self.__tok.peek()
         return t
 
     def parseUnary(self) -> ExprBase:
@@ -837,6 +839,10 @@ class Assembler:
     def getLabels(self) -> Generator[Tuple[str, int], None, None]:
         for label, (section, address) in self.__label.items():
             yield label, address + section.base_address
+
+    def getLabel(self, name: str) -> Tuple[int, int]:
+        section, offset = self.__label[name.upper()]
+        return section.base_address + offset, section.bank
 
 
 def const(name: str, value: int) -> None:
