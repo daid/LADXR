@@ -59,7 +59,7 @@ class OP(ExprBase):
         self.right = right
 
     def __repr__(self) -> str:
-        return "%s %s %s" % (self.left, self.op, self.right)
+        return "(%s %s %s)" % (self.left, self.op, self.right)
 
     @staticmethod
     def make(op: str, left: ExprBase, right: Optional[ExprBase] = None) -> ExprBase:
@@ -443,9 +443,9 @@ class Assembler:
                 self.__current_section.data.append(0x0A)
             elif right_param.expr.isA('ID', 'DE'):
                 self.__current_section.data.append(0x1A)
-            elif right_param.expr.isA('ID', 'HL+'):  # TODO
+            elif right_param.expr.isA('ID', 'HL+'):
                 self.__current_section.data.append(0x2A)
-            elif right_param.expr.isA('ID', 'HL-'):  # TODO
+            elif right_param.expr.isA('ID', 'HL-'):
                 self.__current_section.data.append(0x3A)
             elif right_param.expr.isA('ID', 'C'):
                 self.__current_section.data.append(0xF2)
@@ -457,9 +457,9 @@ class Assembler:
                 self.__current_section.data.append(0x02)
             elif left_param.expr.isA('ID', 'DE'):
                 self.__current_section.data.append(0x12)
-            elif left_param.expr.isA('ID', 'HL+'):  # TODO
+            elif left_param.expr.isA('ID', 'HL+'):
                 self.__current_section.data.append(0x22)
-            elif left_param.expr.isA('ID', 'HL-'):  # TODO
+            elif left_param.expr.isA('ID', 'HL-'):
                 self.__current_section.data.append(0x32)
             elif left_param.expr.isA('ID', 'C'):
                 self.__current_section.data.append(0xE2)
@@ -740,17 +740,21 @@ class Assembler:
     def parseAddSub(self) -> ExprBase:
         t = self.parseFactor()
         p = self.__tok.peek()
-        if p.isA('OP', '+') or p.isA('OP', '-'):
+        while p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
-            return OP.make(str(p.value), t, self.parseAddSub())
+            if self.__tok.peek().isA('REFCLOSE') and t.isA('ID', 'HL'): # Special exception for HL+/HL-
+                return Token('ID', f'HL{p.value}', t.line_nr)
+            t = OP.make(str(p.value), t, self.parseFactor())
+            p = self.__tok.peek()
         return t
 
     def parseFactor(self) -> ExprBase:
         t = self.parseUnary()
         p = self.__tok.peek()
-        if p.isA('OP', '*') or p.isA('OP', '/'):
+        while p.isA('OP', '*') or p.isA('OP', '/'):
             self.__tok.pop()
-            return OP.make(str(p.value), t, self.parseFactor())
+            t = OP.make(str(p.value), t, self.parseUnary())
+            p = self.__tok.peek()
         return t
 
     def parseUnary(self) -> ExprBase:
@@ -835,6 +839,10 @@ class Assembler:
     def getLabels(self) -> Generator[Tuple[str, int], None, None]:
         for label, (section, address) in self.__label.items():
             yield label, address + section.base_address
+
+    def getLabel(self, name: str) -> Tuple[int, int]:
+        section, offset = self.__label[name.upper()]
+        return section.base_address + offset, section.bank
 
 
 def const(name: str, value: int) -> None:
@@ -938,3 +946,4 @@ label:
     asm.link()
     for s in asm.getSections():
         print(s)
+    ASM("ld a, [hl+]")
