@@ -254,7 +254,7 @@ var options =
   "category": "Gameplay",
   "short_key": "E",
   "label": "Entrance randomizer",
-  "description": "Randomizes where overworld entrances lead to.\n[Simple] single entrance caves that contain items are randomized\n[Advanced] Connector caves are also randomized\n[Expert] Caves/houses without items are also randomized\n[Insanity] A few very annoying entrances will be randomized as well.\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.\nNote, some entrances can lead into water, use the warp-to-home from the save&quit menu to escape this.",
+  "description": "Randomizes where overworld entrances lead to.\n[Simple] single entrance caves that contain items are randomized\n[Split] Connector caves are also randomized, in a separate pool from single entrance caves\n[Mixed] Connector caves are also randomized, in the same pool as single entrance caves\n\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.",
   "multiworld": true,
   "aesthetic": false,
   "default": "none",
@@ -270,21 +270,46 @@ var options =
     "label": "Simple"
    },
    {
-    "key": "advanced",
-    "short": "a",
-    "label": "Advanced"
+    "key": "split",
+    "short": "S",
+    "label": "Split"
    },
    {
-    "key": "expert",
-    "short": "E",
-    "label": "Expert"
-   },
-   {
-    "key": "insanity",
-    "short": "I",
-    "label": "Insanity"
+    "key": "mixed",
+    "short": "m",
+    "label": "Mixed"
    }
   ]
+ },
+ {
+  "key": "shufflejunk",
+  "category": "Gameplay",
+  "short_key": "j",
+  "label": "Shuffle itemless entrances",
+  "description": "Caves/houses without items are also randomized",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "shuffleannoying",
+  "category": "Gameplay",
+  "short_key": "a",
+  "label": "Shuffle annoying entrances",
+  "description": "A few very annoying entrances will be randomized as well, such as Mamu and the Raft House",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "shufflewater",
+  "category": "Gameplay",
+  "short_key": "w",
+  "label": "Shuffle water entrances",
+  "description": "Entrances that lead to water will also be randomized, such as Manbo and Damp Cave. Use the warp-to-home from the save&quit menu if you get stuck.",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
  },
  {
   "key": "boss",

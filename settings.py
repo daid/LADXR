@@ -134,14 +134,18 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
                 description='Randomize where your starting house is located'),
             Setting('dungeonshuffle', 'Gameplay', 'u', 'Dungeon shuffle', default=False,
                 description='Randomizes the dungeon that each dungeon entrance leads to'),
-            Setting('entranceshuffle', 'Gameplay', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("advanced", 'a', "Advanced"), ("expert", 'E', "Expert"), ("insanity", 'I', "Insanity")], default='none',
+            Setting('entranceshuffle', 'Gameplay', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed")], default='none',
                 description="""Randomizes where overworld entrances lead to.
 [Simple] single entrance caves that contain items are randomized
-[Advanced] Connector caves are also randomized
-[Expert] Caves/houses without items are also randomized
-[Insanity] A few very annoying entrances will be randomized as well.
-If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.
-Note, some entrances can lead into water, use the warp-to-home from the save&quit menu to escape this."""),
+[Split] Connector caves are also randomized, in a separate pool from single entrance caves
+[Mixed] Connector caves are also randomized, in the same pool as single entrance caves
+If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances."""),
+            Setting('shufflejunk', 'Gameplay', 'j', 'Shuffle itemless entrances', default=False,
+                description="Caves/houses without items are also randomized"),
+            Setting('shuffleannoying', 'Gameplay', 'a', 'Shuffle annoying entrances', default=False,
+                description="A few very annoying entrances will be randomized as well, such as Mamu and the Raft House"),
+            Setting('shufflewater', 'Gameplay', 'w', 'Shuffle water entrances', default=False,
+                description="Entrances that lead to water will also be randomized, such as Manbo and Damp Cave. Use the warp-to-home from the save&quit menu if you get stuck."),
             Setting('boss', 'Gameplay', 'B', 'Boss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon bosses that each dungeon has'),
             Setting('miniboss', 'Gameplay', 'b', 'Miniboss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
