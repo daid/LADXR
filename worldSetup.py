@@ -81,39 +81,35 @@ class WorldSetup:
                 self.entrance_mapping[start_location] = "start_house"
                 self.entrance_mapping["start_house"] = start_location
 
-        if settings.entranceshuffle == 'mixed':
-            startingSpotCount = len(logic.Logic(settings, world_setup=self).iteminfo_list)
-            entrances = set(self.getEntrancePool(settings))
-            unmappedEntrances = list(entrances)
+        entrancePool = set(self.getEntrancePool(settings))
+        unmappedEntrances = list(entrancePool)
 
-            for entrance in entrances:
+        for entrance in entrancePool:
+            self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
+
+        if settings.entranceshuffle == 'split':
+            # Shuffle connectors among themselves
+            # entrancePool is intentionally overwritten so we're only swapping connectors
+            entrancePool = self.getEntrancePool(settings, connectorsOnly=True)
+            unmappedEntrances = list(entrancePool)
+
+            for entrance in entrancePool.copy():
                 self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
 
-            for _ in range(1000):
-                log = logic.Logic(settings, world_setup=self)
+        # Make sure all entrances in the pool are accessible
+        for j in range(1000):
+            log = logic.Logic(settings, world_setup=self)
+            islands = [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
-                if len(logic.Logic(settings, world_setup=self).iteminfo_list) == startingSpotCount:
-                    break
+            if not islands:
+                break
 
-                islands = [x for x in log.world.overworld_entrance if x in entrances
-                                                                        and log.world.overworld_entrance[x].location not in log.location_list]
-                mainlands = [x for x in log.world.overworld_entrance if x in entrances
-                                                                        and x not in islands]
-                island = rnd.choice(islands)
-                mainland = rnd.choice(mainlands)
+            island = rnd.choice(islands)
+            main = rnd.choice([x for x in entrancePool if x not in islands])
 
-                temp = self.entrance_mapping[island]
-                self.entrance_mapping[island] = self.entrance_mapping[mainland]
-                self.entrance_mapping[mainland] = temp
-        else:
-            entrances = self.getEntrancePool(settings)
-            for entrance in entrances.copy():
-                self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
-
-            # Shuffle connectors among themselves
-            entrances = self.getEntrancePool(settings, connectorsOnly=True)
-            for entrance in entrances.copy():
-                self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
+            temp = self.entrance_mapping[island]
+            self.entrance_mapping[island] = self.entrance_mapping[main]
+            self.entrance_mapping[main] = temp
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
