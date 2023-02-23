@@ -85,6 +85,15 @@ class OP(ExprBase):
             if op == '>':
                 left.value = 1 if left.value > right.value else 0
                 return left
+            if op == '<=':
+                left.value = 1 if left.value <= right.value else 0
+                return left
+            if op == '>=':
+                left.value = 1 if left.value >= right.value else 0
+                return left
+            if op == '==':
+                left.value = 1 if left.value == right.value else 0
+                return left
         if left.isA('NUMBER') and right is None:
             assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
@@ -120,7 +129,7 @@ class Tokenizer:
         ('DIRECTIVE', r'#[A-Za-z_]+'),
         ('STRING', '[a-zA-Z]?"[^"]*"'),
         ('ID', r'\.?[A-Za-z_][A-Za-z0-9_\.]*'),
-        ('OP', r'[+\-*/,\(\)<>]'),
+        ('OP', r'(?:<=)|(?:>=)|(?:==)|[+\-*/,\(\)<>]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
         ('MACROARG', r'\\[0-9]'),
@@ -774,7 +783,7 @@ class Assembler:
     def parseCompare(self) -> ExprBase:
         t = self.parseAddSub()
         p = self.__tok.peek()
-        while p.isA('OP', '<') or p.isA('OP', '>'):
+        while p.isA('OP', '<') or p.isA('OP', '>') or p.isA('OP', '<=') or p.isA('OP', '>=') or p.isA('OP', '=='):
             self.__tok.pop()
             t = OP.make(str(p.value), t, self.parseAddSub())
             p = self.__tok.peek()
@@ -999,3 +1008,7 @@ label:
     for s in asm.getSections():
         print(s)
     ASM("ld a, [hl+]")
+
+    assert ASM("db 1 <= 1+1") == b'01'
+    assert ASM("db 1+1 >= 1") == b'01'
+    assert ASM("db 1+1 == 1") == b'00'
