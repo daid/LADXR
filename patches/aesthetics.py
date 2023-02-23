@@ -71,7 +71,7 @@ def gfxMod(rom, filename):
 
 def createGfxImage(rom, filename):
     import PIL.Image
-    bank_count = 8
+    bank_count = 10
     img = PIL.Image.new("P", (32 * 8, 32 * 8 * bank_count))
     img.putpalette((
         128, 0, 128,
