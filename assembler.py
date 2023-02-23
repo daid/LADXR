@@ -79,6 +79,12 @@ class OP(ExprBase):
             if op == '/':
                 left.value //= right.value
                 return left
+            if op == '<':
+                left.value = 1 if left.value < right.value else 0
+                return left
+            if op == '>':
+                left.value = 1 if left.value > right.value else 0
+                return left
         if left.isA('NUMBER') and right is None:
             assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
@@ -114,7 +120,7 @@ class Tokenizer:
         ('DIRECTIVE', r'#[A-Za-z_]+'),
         ('STRING', '[a-zA-Z]?"[^"]*"'),
         ('ID', r'\.?[A-Za-z_][A-Za-z0-9_\.]*'),
-        ('OP', r'[+\-*/,\(\)]'),
+        ('OP', r'[+\-*/,\(\)<>]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
         ('MACROARG', r'\\[0-9]'),
@@ -220,6 +226,7 @@ class Assembler:
         self.__constant: Dict[str, int] = {}
         self.__scope: Optional[str] = None
         self.__macros: Dict[str, List[Token]] = {}
+        self.__asserts: List[Tuple[Token, ExprBase]] = []
         self.__base_path = None
         self.__tok = Tokenizer("")
 
@@ -275,6 +282,9 @@ class Assembler:
                     self.__tok.expect('NEWLINE')
                     import patches.aesthetics
                     self.__current_section.data += patches.aesthetics.imageTo2bpp(os.path.join(self.__base_path, filename), tileheight=8)
+                elif start.value == '#ASSERT':
+                    self.__asserts.append((start, self.parseExpression()))
+                    self.__tok.expect('NEWLINE')
                 else:
                     raise AssemblerException(start, "Unexpected directive")
             elif not conditional_stack[-1]:
@@ -758,7 +768,16 @@ class Assembler:
         return self.parseExpression()
 
     def parseExpression(self) -> ExprBase:
+        t = self.parseCompare()
+        return t
+
+    def parseCompare(self) -> ExprBase:
         t = self.parseAddSub()
+        p = self.__tok.peek()
+        while p.isA('OP', '<') or p.isA('OP', '>'):
+            self.__tok.pop()
+            t = OP.make(str(p.value), t, self.parseAddSub())
+            p = self.__tok.peek()
         return t
 
     def parseAddSub(self) -> ExprBase:
@@ -767,6 +786,7 @@ class Assembler:
         while p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
             if self.__tok.peek().isA('REFCLOSE') and t.isA('ID', 'HL'): # Special exception for HL+/HL-
+                assert isinstance(t, Token)
                 return Token('ID', f'HL{p.value}', t.line_nr)
             t = OP.make(str(p.value), t, self.parseFactor())
             p = self.__tok.peek()
@@ -808,6 +828,14 @@ class Assembler:
         return t
 
     def link(self) -> None:
+        for token, expr in self.__asserts:
+            result = self.resolveExpr(expr)
+            if not result.isA('NUMBER'):
+                raise AssemblerException(token, f"Failed to parse assert {expr}, symbol not found?")
+            assert isinstance(result, Token)
+            value = int(result.value)
+            if value == 0:
+                raise AssemblerException(token, f"Assertion failed")
         for section in self.__sections:
             inline_strings: Dict[bytes, int] = {}
             for offset, (link_type, link_expr) in section.link.items():
