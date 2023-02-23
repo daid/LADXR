@@ -853,9 +853,9 @@ var options =
     "label": "Martha"
    },
    {
-    "key": "Matty_LA.bin",
-    "short": "Matty_LA.bin>",
-    "label": "Matty_LA"
+    "key": "Matty.bin",
+    "short": "Matty.bin>",
+    "label": "Matty"
    },
    {
     "key": "Meme.bin",
