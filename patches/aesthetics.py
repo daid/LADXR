@@ -5,11 +5,12 @@ import entityData
 import os
 
 
-def imageTo2bpp(filename):
+def imageTo2bpp(filename, *, tileheight=None):
     import PIL.Image
     img = PIL.Image.open(filename)
     assert (img.size[0] % 8) == 0
-    tileheight = 8 if img.size[1] == 8 else 16
+    if tileheight is None:
+        tileheight = 8 if img.size[1] == 8 else 16
     assert (img.size[1] % tileheight) == 0
 
     cols = img.size[0] // 8
@@ -22,7 +23,7 @@ def imageTo2bpp(filename):
                 a = 0
                 b = 0
                 for x in range(8):
-                    c = img.getpixel((tx * 8 + x, ty * 16 + y))
+                    c = img.getpixel((tx * 8 + x, ty * tileheight + y))
                     if c & 1:
                         a |= 0x80 >> x
                     if c & 2:

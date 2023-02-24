@@ -3,6 +3,7 @@ from typing import Optional, Dict, Iterator, List, Union, Tuple, Generator
 
 import utils
 import re
+import os
 
 
 REGS8 = {"A": 7, "B": 0, "C": 1, "D": 2, "E": 3, "H": 4, "L": 5, "[HL]": 6}
@@ -78,6 +79,21 @@ class OP(ExprBase):
             if op == '/':
                 left.value //= right.value
                 return left
+            if op == '<':
+                left.value = 1 if left.value < right.value else 0
+                return left
+            if op == '>':
+                left.value = 1 if left.value > right.value else 0
+                return left
+            if op == '<=':
+                left.value = 1 if left.value <= right.value else 0
+                return left
+            if op == '>=':
+                left.value = 1 if left.value >= right.value else 0
+                return left
+            if op == '==':
+                left.value = 1 if left.value == right.value else 0
+                return left
         if left.isA('NUMBER') and right is None:
             assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
@@ -108,12 +124,12 @@ class Tokenizer:
         ('NUMBER', r'\d+(\.\d*)?'),
         ('HEX', r'\$[0-9A-Fa-f]+'),
         ('ASSIGN', r':='),
-        ('COMMENT', r';[^\n]+'),
+        ('COMMENT', r';[^\n]*'),
         ('LABEL', r':'),
         ('DIRECTIVE', r'#[A-Za-z_]+'),
         ('STRING', '[a-zA-Z]?"[^"]*"'),
         ('ID', r'\.?[A-Za-z_][A-Za-z0-9_\.]*'),
-        ('OP', r'[+\-*/,\(\)]'),
+        ('OP', r'(?:<=)|(?:>=)|(?:==)|[+\-*/,\(\)<>]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
         ('MACROARG', r'\\[0-9]'),
@@ -124,6 +140,10 @@ class Tokenizer:
 
     def __init__(self, code: str) -> None:
         self.__tokens: List[Token] = []
+        self.shiftCode(code)
+
+    def shiftCode(self, code: str) -> None:
+        new_tokens: List[Token] = []
         line_num = 1
         for mo in self.TOKEN_REGEX.finditer(code):
             kind = mo.lastgroup
@@ -144,10 +164,11 @@ class Tokenizer:
                     kind = 'NUMBER'
                 elif kind == 'ID':
                     value = str(value).upper()
-                self.__tokens.append(Token(kind, value, line_num))
+                new_tokens.append(Token(kind, value, line_num))
                 if kind == 'NEWLINE':
                     line_num += 1
-        self.__tokens.append(Token('NEWLINE', '\n', line_num))
+        new_tokens.append(Token('NEWLINE', '\n', line_num))
+        self.shift(new_tokens)
 
     def peek(self) -> Token:
         return self.__tokens[0]
@@ -214,8 +235,13 @@ class Assembler:
         self.__constant: Dict[str, int] = {}
         self.__scope: Optional[str] = None
         self.__macros: Dict[str, List[Token]] = {}
-
+        self.__asserts: List[Tuple[Token, ExprBase]] = []
+        self.__base_path = None
         self.__tok = Tokenizer("")
+
+    def processFile(self, base_path: str, filename: str, **kwargs):
+        self.__base_path = base_path
+        self.process(open(os.path.join(base_path, filename), "rt").read(), **kwargs)
 
     def process(self, code: str, *, base_address: Optional[int] = None, bank: Optional[int] = None) -> None:
         self.__current_section = Section(base_address, bank)
@@ -251,6 +277,23 @@ class Assembler:
                     self.__tok.pop()
                     self.__tok.expect('NEWLINE')
                     self.__macros[name.value] = macro
+                elif start.value == '#INCLUDE':
+                    filename = self.__tok.expect('STRING').value[1:-1]
+                    self.__tok.expect('NEWLINE')
+                    self.__tok.shiftCode(open(os.path.join(self.__base_path, filename), "rt").read())
+                elif start.value == '#ALIGN':
+                    value = self.__tok.expect('NUMBER').value
+                    self.__tok.expect('NEWLINE')
+                    while len(self.__current_section.data) % value:
+                        self.__current_section.data.append(0)
+                elif start.value == '#INCGFX':
+                    filename = self.__tok.expect('STRING').value[1:-1]
+                    self.__tok.expect('NEWLINE')
+                    import patches.aesthetics
+                    self.__current_section.data += patches.aesthetics.imageTo2bpp(os.path.join(self.__base_path, filename), tileheight=8)
+                elif start.value == '#ASSERT':
+                    self.__asserts.append((start, self.parseExpression()))
+                    self.__tok.expect('NEWLINE')
                 else:
                     raise AssemblerException(start, "Unexpected directive")
             elif not conditional_stack[-1]:
@@ -734,7 +777,16 @@ class Assembler:
         return self.parseExpression()
 
     def parseExpression(self) -> ExprBase:
+        t = self.parseCompare()
+        return t
+
+    def parseCompare(self) -> ExprBase:
         t = self.parseAddSub()
+        p = self.__tok.peek()
+        while p.isA('OP', '<') or p.isA('OP', '>') or p.isA('OP', '<=') or p.isA('OP', '>=') or p.isA('OP', '=='):
+            self.__tok.pop()
+            t = OP.make(str(p.value), t, self.parseAddSub())
+            p = self.__tok.peek()
         return t
 
     def parseAddSub(self) -> ExprBase:
@@ -743,6 +795,7 @@ class Assembler:
         while p.isA('OP', '+') or p.isA('OP', '-'):
             self.__tok.pop()
             if self.__tok.peek().isA('REFCLOSE') and t.isA('ID', 'HL'): # Special exception for HL+/HL-
+                assert isinstance(t, Token)
                 return Token('ID', f'HL{p.value}', t.line_nr)
             t = OP.make(str(p.value), t, self.parseFactor())
             p = self.__tok.peek()
@@ -784,6 +837,14 @@ class Assembler:
         return t
 
     def link(self) -> None:
+        for token, expr in self.__asserts:
+            result = self.resolveExpr(expr)
+            if not result.isA('NUMBER'):
+                raise AssemblerException(token, f"Failed to parse assert {expr}, symbol not found?")
+            assert isinstance(result, Token)
+            value = int(result.value)
+            if value == 0:
+                raise AssemblerException(token, f"Assertion failed")
         for section in self.__sections:
             inline_strings: Dict[bytes, int] = {}
             for offset, (link_type, link_expr) in section.link.items():
@@ -947,3 +1008,7 @@ label:
     for s in asm.getSections():
         print(s)
     ASM("ld a, [hl+]")
+
+    assert ASM("db 1 <= 1+1") == b'01'
+    assert ASM("db 1+1 >= 1") == b'01'
+    assert ASM("db 1+1 == 1") == b'00'
