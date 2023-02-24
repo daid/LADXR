@@ -84,6 +84,11 @@ class WorldSetup:
         entrancePool = set(self.getEntrancePool(settings))
         unmappedEntrances = list(entrancePool)
 
+        # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
+        if 'd7' in entrancePool and settings.entranceshuffle == 'mixed':
+            self.entrance_mapping['d7'] = rnd.choice([x for x in entrancePool if ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
+            entrancePool.remove('d7')
+
         for entrance in entrancePool:
             self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
 
@@ -95,17 +100,6 @@ class WorldSetup:
 
             for entrance in entrancePool.copy():
                 self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
-
-        # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
-        if 'd7' in entrancePool:
-            entrancePool.remove('d7')
-
-            if ENTRANCE_INFO[self.entrance_mapping['d7']].type == "connector":
-                replacement = rnd.choice([x for x in entrancePool if ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
-
-                temp = self.entrance_mapping['d7']
-                self.entrance_mapping['d7'] = self.entrance_mapping[replacement]
-                self.entrance_mapping[replacement] = temp
 
         # Make sure all entrances in the pool are accessible
         for j in range(1000):
