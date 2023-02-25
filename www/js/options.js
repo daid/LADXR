@@ -848,6 +848,11 @@ var options =
     "label": "NESLink"
    },
    {
+    "key": "Ninten.bin",
+    "short": "Ninten.bin>",
+    "label": "Ninten"
+   },
+   {
     "key": "Richard.bin",
     "short": "Richard.bin>",
     "label": "Richard"
