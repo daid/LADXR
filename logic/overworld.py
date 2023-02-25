@@ -130,6 +130,7 @@ class World:
         self._addEntranceRequirementExit("d0", None) # if exiting, you do not need bracelet
         ghost_grave = Location().connect(forest, POWER_BRACELET)
         Location().add(Seashell(0x074)).connect(ghost_grave, AND(r.bush, SHOVEL))  # next to grave cave, digging spot
+        graveyard.connect(forest_heartpiece, OR(BOOMERANG, HOOKSHOT), one_way=True) # grab the heart piece surrounded by pits from the north
 
         graveyard_cave_left = Location()
         graveyard_cave_right = Location().connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
@@ -497,6 +498,7 @@ class World:
             swamp.connect(forest_toadstool, None, one_way=True) # villa buffer from top (swamp phonebooth area) to bottom (toadstool area)
             writes_hut_outside.connect(swamp, None, one_way=True) # villa buffer from top (writes hut) to bottom (swamp phonebooth area) or damage boost
             graveyard.connect(forest_heartpiece, None, one_way=True) # villa buffer from top.
+            graveyard.connect(forest, None, one_way=True) # villa buffer from the top twice to get to the main forest area
             log_cave_heartpiece.connect(forest_cave, FEATHER) # super jump
             log_cave_heartpiece.connect(forest_cave, BOMB) # bomb trigger
             graveyard_cave_left.connect(graveyard_heartpiece, BOMB, one_way=True) # bomb trigger the heartpiece from the left side
@@ -509,7 +511,7 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, FEATHER, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, BOOMERANG, BOMB), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            ukuku_prairie.connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, BOOMERANG, BOMB)) # break bushes on north side of the maze, and 1 pit buffer into the maze. Do the same in one of the two northern screens of the maze to escape
             fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # up-most left wall is a pit: bomb trigger with it 
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(next_to_castle, FEATHER) # jesus jump (north of kanalet castle phonebooth)
