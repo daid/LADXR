@@ -345,7 +345,7 @@ var options =
   "category": "Gameplay",
   "short_key": "G",
   "label": "Goal",
-  "description": "Changes the goal of the game.\n[1-8 instruments], number of instruments required to open the egg.\n[No instruments] open the egg without instruments, still requires the ocarina with the balled of the windfish\n[Egg already open] the egg is already open, just head for it once you have the items needed to defeat the boss.\n[Randomized instrument count] random number of instruments required to open the egg, between 0 and 8.\n[Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.\n[Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.\n[Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!\n[Bingo-25] Bingo, but need to fill the whole bingo card to win!",
+  "description": "Changes the goal of the game.\n[1-8 instruments], number of instruments required to open the egg.\n[No instruments] open the egg without instruments, still requires the ocarina with the balled of the windfish\n[Egg already open] the egg is already open, just head for it once you have the items needed to defeat the boss.\n[Randomized instrument count] random number of instruments required to open the egg, between 0 and 8.\n[Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.\n[Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.\n[Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!\n[Bingo-25] Bingo, but need to fill the whole bingo card to win!\n[Sign Maze] Go on a long trip on the overworld sign maze to open the egg.",
   "multiworld": true,
   "aesthetic": false,
   "default": "8",
@@ -429,6 +429,11 @@ var options =
     "key": "bingo-full",
     "short": "B",
     "label": "Bingo-25!"
+   },
+   {
+    "key": "maze",
+    "short": "m",
+    "label": "Sign Maze"
    },
    {
     "key": "specific",
