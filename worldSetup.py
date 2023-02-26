@@ -3,6 +3,7 @@ import logic
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
+from patches import maze
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -38,6 +39,7 @@ class WorldSetup:
         }
         self.goal = None
         self.bingo_goals = None
+        self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
 
@@ -144,6 +146,9 @@ class WorldSetup:
             self.goal = -1
         elif settings.goal in {"seashells", "bingo", "bingo-full"}:
             self.goal = settings.goal
+        elif settings.goal in {"maze"}:
+            self.goal = settings.goal
+            self.sign_maze = maze.buildMaze(rnd)
         elif settings.goal == "specific":
             instruments = [c for c in "12345678"]
             rnd.shuffle(instruments)

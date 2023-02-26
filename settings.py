@@ -156,7 +156,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                                                          ('open', 'O', 'Egg already open'), ('random', 'R', 'Random instrument count'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!'), ('specific', 's', '4 specific instruments')], default='8',
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='8',
                 description="""Changes the goal of the game.
 [1-8 instruments], number of instruments required to open the egg.
 [No instruments] open the egg without instruments, still requires the ocarina with the balled of the windfish
@@ -165,7 +165,8 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.
 [Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.
 [Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!
-[Bingo-25] Bingo, but need to fill the whole bingo card to win!"""),
+[Bingo-25] Bingo, but need to fill the whole bingo card to win!
+[Sign Maze] Go on a long trip on the overworld sign maze to open the egg."""),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
                 description="""Effects which items are shuffled.
 [Casual] places more inventory and key items so the seed is easier.
@@ -309,6 +310,9 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
             dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
             dis("boss", "random", "shuffle", "With bingo goal, bosses need to be on normal or shuffle")
             dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
+        if self.goal == "maze":
+            req("overworld", "normal", "Maze goal does not work with dungeondive")
+            req("accessibility", "all", "Maze goal needs 'all' accessibility")
         if self.overworld == "dungeondive":
             dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
         if self.overworld == "nodungeons":

@@ -48,6 +48,7 @@ import patches.instrument
 import patches.endscreen
 import patches.save
 import patches.bingo
+import patches.maze
 import patches.multiworld
 import patches.tradeSequence
 import hints
@@ -243,6 +244,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.goal.setRaftGoal(rom)
     elif world_setup.goal in ("bingo", "bingo-full"):
         patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, world_setup.goal)
+    elif world_setup.goal == "maze":
+        patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
     elif world_setup.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
     elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
