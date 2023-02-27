@@ -4,6 +4,7 @@ from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
+from randomizer import Error
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -104,12 +105,12 @@ class WorldSetup:
                 self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
 
         # Make sure all entrances in the pool are accessible
-        for j in range(1000):
+        for _ in range(1000):
             log = logic.Logic(settings, world_setup=self)
             islands = [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
             if not islands:
-                break
+                return
 
             island = rnd.choice(islands)
             main = rnd.choice([x for x in entrancePool if x not in islands])
@@ -117,6 +118,8 @@ class WorldSetup:
             temp = self.entrance_mapping[island]
             self.entrance_mapping[island] = self.entrance_mapping[main]
             self.entrance_mapping[main] = temp
+        
+        raise Error("Failed to make all entrances accessible after a bunch of retries")
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":

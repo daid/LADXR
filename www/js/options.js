@@ -565,7 +565,7 @@ var options =
   "category": "Entrances",
   "short_key": "j",
   "label": "Shuffle itemless entrances",
-  "description": "Caves/houses without items are also randomized",
+  "description": "Caves/houses without items are also randomized when 'Entrance randomizer' is not set to 'Default'",
   "multiworld": true,
   "aesthetic": false,
   "default": false
@@ -575,7 +575,7 @@ var options =
   "category": "Entrances",
   "short_key": "a",
   "label": "Shuffle annoying entrances",
-  "description": "A few very annoying entrances will be randomized as well, such as Mamu and the Raft House",
+  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized 'Entrance randomizer' is not set to 'Default'",
   "multiworld": true,
   "aesthetic": false,
   "default": false
@@ -585,7 +585,7 @@ var options =
   "category": "Entrances",
   "short_key": "w",
   "label": "Shuffle water entrances",
-  "description": "Entrances that lead to water will also be randomized, such as Manbo and Damp Cave. Use the warp-to-home from the save&quit menu if you get stuck.",
+  "description": "Entrances that lead to water (Manbo and Damp Cave) will also be randomized when 'Entrance randomizer' is not set to 'Default'. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works).",
   "multiworld": true,
   "aesthetic": false,
   "default": false
