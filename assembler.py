@@ -865,7 +865,8 @@ class Assembler:
                 value = int(expr.value)
                 if link_type == Assembler.LINK_REL8:
                     byte = (value - section.base_address) - offset - 1
-                    assert -128 <= byte <= 127, expr
+                    if byte < -128 or byte > 127:
+                        raise AssemblerException(expr, f"Failed to link {link_expr}, result out of range for jr")
                     section.data[offset] = byte & 0xFF
                 elif link_type == Assembler.LINK_ABS8:
                     assert 0 <= value <= 0xFF
