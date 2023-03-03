@@ -8,6 +8,8 @@ import os
 def imageTo2bpp(filename, *, tileheight=None):
     import PIL.Image
     img = PIL.Image.open(filename)
+    if img.mode != "P":
+        img = img.convert("P", palette=[128, 0, 128, 0, 0, 0, 128, 128, 128, 255, 255, 255])
     assert (img.size[0] % 8) == 0
     if tileheight is None:
         tileheight = 8 if img.size[1] == 8 else 16
