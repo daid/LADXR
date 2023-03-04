@@ -105,9 +105,10 @@ class OP(ExprBase):
 
 
 class CALL(ExprBase):
-    def __init__(self, function, param):
+    def __init__(self, function, param, *, line_nr):
         self.function = function
         self.param = param
+        self.line_nr = line_nr
 
     def __repr__(self) -> str:
         return f"{self.function}({self.param})"
@@ -243,10 +244,13 @@ class Assembler:
         self.__base_path = base_path
         self.process(open(os.path.join(base_path, filename), "rt").read(), **kwargs)
 
-    def process(self, code: str, *, base_address: Optional[int] = None, bank: Optional[int] = None) -> None:
+    def newSection(self, *, base_address: Optional[int] = None, bank: Optional[int] = None):
         self.__current_section = Section(base_address, bank)
         self.__sections.append(self.__current_section)
         self.__scope = None
+
+    def process(self, code: str, *, base_address: Optional[int] = None, bank: Optional[int] = None) -> None:
+        self.newSection(base_address=base_address, bank=bank)
         conditional_stack = [True]
         self.__tok = Tokenizer(code)
         while self.__tok:
@@ -472,6 +476,12 @@ class Assembler:
             self.__current_section.data += utils.formatText(string[2:-1].replace("|", "\n"))
         else:
             raise SyntaxError
+
+    def insertData(self, data: bytes) -> None:
+        self.__current_section.data += data
+
+    def currentSectionSize(self) -> int:
+        return len(self.__current_section.data)
 
     def instrLD(self) -> None:
         left_param = self.parseParam()
@@ -833,7 +843,7 @@ class Assembler:
             self.__tok.pop()
             param = self.parseExpression()
             self.__tok.expect('OP', ')')
-            return CALL(t.value, param)
+            return CALL(t.value, param, line_nr=t.line_nr)
         return t
 
     def link(self) -> None:
@@ -888,8 +898,18 @@ class Assembler:
             return OP.make(expr.op, left, self.resolveExpr(expr.right))
         elif isinstance(expr, CALL):
             if expr.function == 'BANK':
+                if expr.param.value not in self.__label:
+                    raise AssemblerException(expr, f"Cannot find label: {expr.param.value}")
                 section, offset = self.__label[expr.param.value]
                 return Token('NUMBER', section.bank, expr.param.line_nr)
+            elif expr.function == 'LOW':
+                param = self.resolveExpr(expr.param)
+                if param.isA('NUMBER'):
+                    return Token('NUMBER', param.value & 0xFF, expr.line_nr)
+            elif expr.function == 'HIGH':
+                param = self.resolveExpr(expr.param)
+                if param.isA('NUMBER'):
+                    return Token('NUMBER', (param.value >> 8) & 0xFF, expr.line_nr)
         elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
             section, offset = self.__label[str(expr.value)]
             return Token('NUMBER', offset + section.base_address, expr.line_nr)

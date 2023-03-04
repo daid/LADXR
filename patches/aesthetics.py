@@ -5,11 +5,20 @@ import entityData
 import os
 
 
-def imageTo2bpp(filename, *, tileheight=None):
+def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
     img = PIL.Image.open(filename)
     if img.mode != "P":
-        img = img.convert("P", palette=[128, 0, 128, 0, 0, 0, 128, 128, 128, 255, 255, 255])
+        img = img.convert("P", palette=PIL.Image.ADAPTIVE, colors=4)
+    if colormap:
+        pal3 = img.getpalette()[0:12]
+        pal = [(pal3[n*3] << 16) | (pal3[n*3+1] << 8) | (pal3[n*3+2]) for n in range(4)]
+        remap = [0, 1, 2, 3]
+        for n in range(4):
+            for m in range(4):
+                if pal[n] == colormap[m]:
+                    remap[m] = n
+        img = img.remap_palette(remap)
     assert (img.size[0] % 8) == 0
     if tileheight is None:
         tileheight = 8 if img.size[1] == 8 else 16
