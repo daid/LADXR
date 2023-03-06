@@ -307,6 +307,9 @@ class Assembler:
                 if start.value == 'DB':
                     self.instrDB()
                     self.__tok.expect('NEWLINE')
+                elif start.value == 'DS':
+                    self.instrDS()
+                    self.__tok.expect('NEWLINE')
                 elif start.value == 'DW':
                     self.instrDW()
                     self.__tok.expect('NEWLINE')
@@ -745,6 +748,13 @@ class Assembler:
             self.__tok.pop()
             param = self.parseExpression()
             self.insert16(param)
+
+    def instrDS(self) -> None:
+        param = self.parseExpression()
+        if param.isA('NUMBER'):
+            self.insertData(b'\x00' * param.value)
+        else:
+            raise AssemblerException(condition, "Syntax error")
 
     def instrDB(self) -> None:
         param = self.parseExpression()
