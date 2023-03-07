@@ -39,6 +39,9 @@ class Token(ExprBase):
             return REGS8.get(str(self.value), None)
         return None
 
+    def copy(self):
+        return Token(self.kind, self.value, self.line_nr)
+
 
 class REF(ExprBase):
     def __init__(self, expr: ExprBase) -> None:
@@ -425,7 +428,7 @@ class Assembler:
                     for token in self.__macros[start.value]:
                         if token.isA('MACROARG'):
                             for p in params[int(token.value[1:]) - 1]:
-                                to_add.append(p)
+                                to_add.append(p.copy())
                         else:
                             to_add.append(token)
                     self.__tok.shift(to_add)
@@ -754,7 +757,7 @@ class Assembler:
         if param.isA('NUMBER'):
             self.insertData(b'\x00' * param.value)
         else:
-            raise AssemblerException(condition, "Syntax error")
+            raise AssemblerException(param, "Syntax error")
 
     def instrDB(self) -> None:
         param = self.parseExpression()
