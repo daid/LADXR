@@ -437,7 +437,7 @@ class Assembler:
                     self.addLabel(str(start.value))
                 elif self.__tok.peek().kind == 'ASSIGN':
                     self.__tok.pop()
-                    value = self.__tok.pop()
+                    value = self.parseExpression()
                     if value.kind != 'NUMBER':
                         raise AssemblerException(start, "Can only assign numbers")
                     self.addConstant(str(start.value), int(value.value))
