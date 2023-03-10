@@ -74,6 +74,15 @@ class WorldSetup:
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type in types]
 
         return entrances
+    
+    def swapEntrances(self, a, b):
+        temp = self.entrance_mapping[a]
+        self.entrance_mapping[a] = self.entrance_mapping[b]
+        self.entrance_mapping[b] = temp
+    
+    def inaccessibleEntrances(self, settings, entrancePool):
+        log = logic.Logic(settings, world_setup=self)
+        return [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
     def pickEntrances(self, settings, rnd):
         if settings.overworld == "dungeondive":
@@ -84,15 +93,19 @@ class WorldSetup:
                 self.entrance_mapping[start_location] = "start_house"
                 self.entrance_mapping["start_house"] = start_location
 
-        entrancePool = set(self.getEntrancePool(settings))
+        entrancePool = self.getEntrancePool(settings)
+        simpleEntrances = []
+
+        if settings.entranceshuffle == 'mixed':
+            # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
+            specialEntrances = ['d7']
+            for entrance in [x for x in specialEntrances if x in entrancePool]:
+                simpleEntrances.append(entrance)
+                entrancePool.remove(entrance)
+
         unmappedEntrances = list(entrancePool)
 
-        # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
-        if 'd7' in entrancePool and settings.entranceshuffle == 'mixed':
-            self.entrance_mapping['d7'] = rnd.choice([x for x in entrancePool if ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
-            entrancePool.remove('d7')
-
-        for entrance in entrancePool:
+        for entrance in [x for x in entrancePool if x != 'd7']:
             self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
 
         if settings.entranceshuffle == 'split':
@@ -106,20 +119,34 @@ class WorldSetup:
 
         # Make sure all entrances in the pool are accessible
         for _ in range(1000):
-            log = logic.Logic(settings, world_setup=self)
-            islands = [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
+            islands = self.inaccessibleEntrances(settings, entrancePool)
+            islands = [x for x in islands if x not in simpleEntrances]
 
             if not islands:
-                return
+                break
 
             island = rnd.choice(islands)
-            main = rnd.choice([x for x in entrancePool if x not in islands])
+            main = rnd.choice([x for x in entrancePool if x not in islands and x != 'd7'])
 
-            temp = self.entrance_mapping[island]
-            self.entrance_mapping[island] = self.entrance_mapping[main]
-            self.entrance_mapping[main] = temp
+            self.swapEntrances(island, main)
         
-        raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        if self.inaccessibleEntrances(settings, entrancePool):
+            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        
+        # Shuffle the special simple entrances separately
+        for _ in range(1000):
+            for entrance in simpleEntrances:
+                # Swap twice so finding one end doesn't tell you what's behind the other
+                for _ in range(2):
+                    swap = rnd.choice([x for x in entrancePool if x != 'start_house' and ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
+                    self.swapEntrances(entrance, swap)
+            
+            if not self.inaccessibleEntrances(settings, entrancePool):
+                break
+        
+        if self.inaccessibleEntrances(settings, entrancePool):
+            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
