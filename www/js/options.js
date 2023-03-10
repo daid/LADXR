@@ -575,7 +575,7 @@ var options =
   "category": "Entrances",
   "short_key": "a",
   "label": "Shuffle annoying entrances",
-  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized 'Entrance randomizer' is not set to 'Default'",
+  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized when 'Entrance randomizer' is not set to 'Default'",
   "multiworld": true,
   "aesthetic": false,
   "default": false
