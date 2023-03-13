@@ -932,9 +932,9 @@ class Assembler:
     def getSections(self) -> Iterator[Section]:
         return iter(self.__sections)
 
-    def getLabels(self) -> Generator[Tuple[str, int], None, None]:
+    def getLabels(self) -> Generator[Tuple[str, int, int], None, None]:
         for label, (section, address) in self.__label.items():
-            yield label, address + section.base_address
+            yield label, address + section.base_address, section.bank
 
     def getLabel(self, name: str) -> Tuple[int, int]:
         section, offset = self.__label[name.upper()]
@@ -957,7 +957,7 @@ def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[D
     asm.link()
     if labels_result is not None:
         assert base_address is not None
-        for label, offset in asm.getLabels():
+        for label, offset, bank in asm.getLabels():
             labels_result[label] = offset
     for section in asm.getSections():
         return binascii.hexlify(section.data)
