@@ -11,7 +11,7 @@ def fixDroppedKey(rom):
 
     # Patch the key pickup code to use the chest pickup code.
     rom.patch(0x03, 0x248F, None, ASM("""
-        ldh  a, [$F6] ; load room nr
+        ldh  a, [$FFF6] ; load room nr
         cp   $7C  ; L4 Side-view room where the key drops
         jr   nz, notSpecialSideView
 
@@ -24,7 +24,7 @@ notSpecialSideView:
         ld   a, $06 ; giveItemMultiworld
         rst  8
         
-        ldh  a, [$F1] ; Load active sprite variant to see if this is just a normal small key
+        ldh  a, [$FFF1] ; Load active sprite variant to see if this is just a normal small key
         cp   $1A
         jr   z, isAKey
         

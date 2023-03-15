@@ -1,5 +1,5 @@
 RenderChestItem:
-    ldh  a, [$F1] ; active sprite
+    ldh  a, [$FFF1] ; active sprite
     and  $80
     jr   nz, .renderLargeItem
 
@@ -13,14 +13,14 @@ RenderChestItem:
     call $3BC0 ; RenderActiveEntitySpritePair
 
     ; If we are an instrument
-    ldh  a, [$F1]
+    ldh  a, [$FFF1]
     cp   $8E
     ret  c
     cp   $96
     ret  nc
 
     ; But check if we are not state >3 before that, else the fade-out at the instrument room breaks.
-    ldh  a, [$F0] ; hActiveEntityState
+    ldh  a, [$FFF0] ; hActiveEntityState
     cp   $03
     ret  nc
 
@@ -54,7 +54,7 @@ SendItemFromChestToOtherGame:
     call OffsetPointerByRoomNumber
     ld   a, [hl]
     ld   [wLinkSendItemTarget], a
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     ld   [wLinkSendItemItem], a
 
     ; Finally set the status bit to indicate there is an item to send
@@ -73,7 +73,7 @@ GiveItemFromChestMultiworld:
 
 GiveItemFromChest:
     call IncreaseCheckCounter
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
 
     rst  0 ; JUMP TABLE
     dw ChestPowerBracelet; CHEST_POWER_BRACELET
@@ -288,7 +288,7 @@ ChestBow:
 ChestMagicPowder:
     ; Reset the toadstool state
     ld   a, $0B
-    ldh  [$A5], a
+    ldh  [$FFA5], a
     xor  a
     ld   [$DB4B], a ; has toadstool
 
@@ -391,7 +391,7 @@ ChestInventoryTable:
     db   $0D ; Boomerang
 
 ChestWithItem:
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     ld   d, $00
     ld   e, a
     ld   hl, ChestInventoryTable
@@ -472,7 +472,7 @@ AddDungeonItem:
     ld   hl, $DDDA
     add  hl, de
     inc  [hl]
-    ldh  a, [$F7]   ; is current map == color dungeon
+    ldh  a, [$FFF7]   ; is current map == color dungeon
     cp   $ff
     ret  nz
     ld   hl, $DBCC
@@ -631,7 +631,7 @@ GiveSong3:
     ret
 
 GiveInstrument:
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     sub  $8E
     ld   d, $00
     ld   e, a
@@ -646,17 +646,17 @@ GiveRooster:
 
     ;ld   a, $01
     ;ld   [$DB7B], a ; has rooster
-    ldh  a, [$F9] ; do not spawn rooster in sidescroller
+    ldh  a, [$FFF9] ; do not spawn rooster in sidescroller
     and  a
     ret  z
 
     ld   a, $D5 ; ENTITY_ROOSTER
     call $3B86 ; SpawnNewEntity_trampoline
-    ldh  a, [$98] ; LinkX
+    ldh  a, [$FF98] ; LinkX
     ld   hl, $C200 ; wEntitiesPosXTable
     add  hl, de
     ld   [hl], a
-    ldh  a, [$99] ; LinkY
+    ldh  a, [$FF99] ; LinkY
     ld   hl, $C210 ; wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
@@ -732,7 +732,7 @@ ItemMessageMultiworld:
 ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
-    ldh  a, [$F1]
+    ldh  a, [$FFF1]
     ld   d, $00
     ld   e, a
     ld   hl, ItemMessageTable
@@ -925,7 +925,7 @@ RenderHeartPiece:
     call OffsetPointerByRoomNumber
 
     ld   a, [hl]
-    ldh  [$F1], a ; set currentEntitySpriteVariant
+    ldh  [$FFF1], a ; set currentEntitySpriteVariant
     call $3B0C ; SetEntitySpriteVariant
 
     and  $80
@@ -947,11 +947,11 @@ RenderHeartPiece:
 
 
 OffsetPointerByRoomNumber:
-    ldh  a, [$F6] ; map room
+    ldh  a, [$FFF6] ; map room
     ld   e, a
     ld   a, [$DBA5] ; is indoor
     ld   d, a
-    ldh  a, [$F7]   ; mapId
+    ldh  a, [$FFF7]   ; mapId
     cp   $FF
     jr   nz, .notColorDungeon
 
@@ -973,7 +973,7 @@ GiveItemAndMessageForRoom:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call GiveItemFromChest
     jp ItemMessage
 
@@ -982,7 +982,7 @@ GiveItemAndMessageForRoomMultiworld:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call GiveItemFromChestMultiworld
     jp ItemMessageMultiworld
 
@@ -991,18 +991,18 @@ RenderItemForRoom:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     jp   RenderChestItem
 
 ; Increase the amount of checks we completed, unless we are on the multichest room.
 IncreaseCheckCounter:
-    ldh  a, [$F6] ; map room
+    ldh  a, [$FFF6] ; map room
     cp   $F2
     jr   nz, .noMultiChest
     ld   a, [$DBA5] ; is indoor
     and  a
     jr   z, .noMultiChest
-    ldh  a, [$F7]   ; mapId
+    ldh  a, [$FFF7]   ; mapId
     cp   $0A
     ret  z
 

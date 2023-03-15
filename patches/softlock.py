@@ -67,7 +67,7 @@ def removeBirdKeyHoleDrop(rom):
     # Prevent the cave with the bird key from dropping you in the water
     # (if you do not have flippers this would softlock you)
     rom.patch(0x02, 0x1176, ASM("""
-        ldh a, [$F7]
+        ldh a, [$FFF7]
         cp $0A
         jr nz, $30
     """), ASM("""

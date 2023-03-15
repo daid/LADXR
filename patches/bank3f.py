@@ -8,22 +8,22 @@ def addBank3F(rom):
     rom.patch(0, 0x0150, ASM("""
         cp   $11 ; is running on Game Boy Color?
         jr   nz, notGBC
-        ldh  a, [$4d]
+        ldh  a, [$FF4d]
         and  $80 ; do we need to switch the CPU speed?
         jr   nz, speedSwitchDone
         ; switch to GBC speed
         ld   a, $30
-        ldh  [$00], a
+        ldh  [$FF00], a
         ld   a, $01
-        ldh  [$4d], a
+        ldh  [$FF4d], a
         xor  a
-        ldh  [$ff], a
+        ldh  [$FFff], a
         stop
         db $00
 
     speedSwitchDone:
         xor  a
-        ldh  [$70], a
+        ldh  [$FF70], a
         ld   a, $01 ; isGBC = true
         jr   Init
 
@@ -54,115 +54,115 @@ def addBank3F(rom):
     rom.patch(0x3F, 0x0000, None, ASM("""
         ; switch speed
         ld   a, $30
-        ldh  [$00], a
+        ldh  [$FF00], a
         ld   a, $01
-        ldh  [$4d], a
+        ldh  [$FF4d], a
         xor  a
-        ldh  [$ff], a
+        ldh  [$FFff], a
         stop
         db $00
 
         ; Switch VRAM bank
         ld   a, $01
-        ldh  [$4F], a
+        ldh  [$FF4F], a
 
         call $28CF ; display off
 
         ; Use the GBC DMA to transfer our tile data
         ld   a, $68
-        ldh  [$51], a
+        ldh  [$FF51], a
         ld   a, $00
-        ldh  [$52], a
+        ldh  [$FF52], a
 
         ld   a, $80
-        ldh  [$53], a
+        ldh  [$FF53], a
         ld   a, $00
-        ldh  [$54], a
+        ldh  [$FF54], a
 
         ld   a, $7F
-        ldh  [$55], a
+        ldh  [$FF55], a
 
     waitTillTransferDone:
-        ldh  a, [$55]
+        ldh  a, [$FF55]
         and  $80
         jr z, waitTillTransferDone
 
         ld   a, $70
-        ldh  [$51], a
+        ldh  [$FF51], a
         ld   a, $00
-        ldh  [$52], a
+        ldh  [$FF52], a
 
         ld   a, $88
-        ldh  [$53], a
+        ldh  [$FF53], a
         ld   a, $00
-        ldh  [$54], a
+        ldh  [$FF54], a
 
         ld   a, $7F
-        ldh  [$55], a
+        ldh  [$FF55], a
 
     waitTillTransferDone2:
-        ldh  a, [$55]
+        ldh  a, [$FF55]
         and  $80
         jr z, waitTillTransferDone2
 
         ld   a, $68
-        ldh  [$51], a
+        ldh  [$FF51], a
         ld   a, $00
-        ldh  [$52], a
+        ldh  [$FF52], a
 
         ld   a, $90
-        ldh  [$53], a
+        ldh  [$FF53], a
         ld   a, $00
-        ldh  [$54], a
+        ldh  [$FF54], a
 
         ld   a, $7F
-        ldh  [$55], a
+        ldh  [$FF55], a
 
     waitTillTransferDone3:
-        ldh  a, [$55]
+        ldh  a, [$FF55]
         and  $80
         jr z, waitTillTransferDone3
 
         ; Switch VRAM bank back
         ld   a, $00
-        ldh  [$4F], a
+        ldh  [$FF4F], a
 
         ; Switch the display back on, else the later code hangs
         ld   a, $80
-        ldh  [$40], a
+        ldh  [$FF40], a
 
     speedSwitchDone:
         xor  a
-        ldh  [$70], a
+        ldh  [$FF70], a
 
         ; Check if we are running on a bad emulator
-        ldh  [$02], a
-        ldh  a, [$02]
+        ldh  [$FF02], a
+        ldh  a, [$FF02]
         and  $7c
         cp   $7c
         jr   nz, badEmu
 
         ; Enable the timer to run 32 times per second
         xor  a
-        ldh  [$06], a
+        ldh  [$FF06], a
         ld   a, $04
-        ldh  [$07], a
+        ldh  [$FF07], a
 
         ; Set SB to $FF to indicate we have no data from hardware
         ld   a, $FF
-        ldh  [$01], a
+        ldh  [$FF01], a
         ret
 badEmu:
         xor  a
-        ldh  [$40], a ; switch display off
+        ldh  [$FF40], a ; switch display off
         ; Load some palette
         ld   a, $80
-        ldh  [$68], a
+        ldh  [$FF68], a
         xor  a
-        ldh  [$69], a
-        ldh  [$69], a
-        ldh  [$69], a
-        ldh  [$69], a
+        ldh  [$FF69], a
+        ldh  [$FF69], a
+        ldh  [$FF69], a
+        ldh  [$FF69], a
 
         ; Load a different gfx tile for the first gfx
         cpl
@@ -255,7 +255,7 @@ badEmu:
 
         ; lcd on
         ld   a, $91
-        ldh  [$40], a
+        ldh  [$FF40], a
 blockBadEmu:
         di
         jr   blockBadEmu

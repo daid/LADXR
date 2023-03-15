@@ -1,6 +1,6 @@
 BuildItemMessage:
     ld   hl, ItemNamePointers
-    ldh  a, [$F1]
+    ldh  a, [$FFF1]
     ld   d, $00
     ld   e, a
     add  hl, de

@@ -51,7 +51,7 @@ noinc:
     ; Entry point of render code
         ld   hl, $DB65  ; table of having instruments
         push bc
-        ldh  a, [$F1]
+        ldh  a, [$FFF1]
         ld   c, a
         add  hl, bc
         pop  bc
@@ -83,10 +83,10 @@ def setSeashellGoal(rom, count):
     re.store(rom)
 
     rom.patch(0x19, 0x0ACB, 0x0C21, ASM("""
-        ldh  a, [$F8] ; room status
+        ldh  a, [$FFF8] ; room status
         and  $10
         ret  nz
-        ldh  a, [$F0] ; active entity state
+        ldh  a, [$FFF0] ; active entity state
         rst  0
         dw   state0, state1, state2, state3, state4
 
@@ -94,7 +94,7 @@ state0:
         ld   a, [$C124] ; room transition state
         and  a
         ret  nz
-        ldh  a, [$99]  ; link position Y
+        ldh  a, [$FF99]  ; link position Y
         cp   $70
         ret  nc
         jp   $3B12  ; increase entity state
@@ -118,7 +118,7 @@ state1:
         add  hl, bc
         inc  [hl] ; increase amount of displayed shells
         ld   a, $2B
-        ldh  [$F4], a ; SFX
+        ldh  [$FFF4], a ; SFX
         ret
 
 state2:
@@ -133,11 +133,11 @@ state2:
 
 state3:
         ld   a, $23
-        ldh  [$F2], a ; SFX: Dungeon opened
+        ldh  [$FFF2], a ; SFX: Dungeon opened
         ld   hl, $D806 ; egg room status
         set  4, [hl]
         ld   a, [hl]
-        ldh  [$F8], a ; current room status
+        ldh  [$FFF8], a ; current room status
         call $3B12 ; increase entity state
 
         ld   a, $00
@@ -272,12 +272,12 @@ def setRaftGoal(rom):
         and a
         ret nz
         ; Check if we are moving off the bottom of the map
-        ldh a, [$99]
+        ldh a, [$FF99]
         cp  $7D
         ret c
         ; Move link back so it does not move off the map
         ld  a, $7D
-        ldh [$99], a
+        ldh [$FF99], a
         
         xor a
         ld  e, a

@@ -406,7 +406,7 @@ SignEntityHandler:
     jr   z, .standingSign
     
     ; Flying sign
-    ldh  a, [$E7] ; hFrameCounter
+    ldh  a, [$FFE7] ; hFrameCounter
     rra
     rra
     rra
@@ -421,7 +421,7 @@ SignEntityHandler:
     add  hl, bc
     ld   [hl], a
 
-    ldh  a, [$E7] ; hFrameCounter
+    ldh  a, [$FFE7] ; hFrameCounter
     and  $08
     ld   e, a
     ld   d, b
@@ -450,7 +450,7 @@ SignEntityHandler:
     cp   $80
     ret  nz
 
-    ldh  a, [$CC] ; hJoypadState
+    ldh  a, [$FFCC] ; hJoypadState
     and  $10 ; J_A
     ret  z
     jp   signUsed
@@ -478,22 +478,22 @@ SignEntityHandler:
     cp   $80
     ret  nz
 
-    ldh  a, [$CC] ; hJoypadState
+    ldh  a, [$FFCC] ; hJoypadState
     and  $10 ; J_A
     ret  z
     
-    ldh  a, [$9E] ; hLinkDirection
+    ldh  a, [$FF9E] ; hLinkDirection
     cp   $02
     ret  nz
     
-    ldh  a, [$98] ; hLinkPositionX 
+    ldh  a, [$FF98] ; hLinkPositionX 
     ld   hl, $FFEE ; hActiveEntityPosX  
     sub  [hl]
     add  a, $08
     cp   $10
     ret  nc
 
-    ldh  a, [$99] ; hLinkPositionY 
+    ldh  a, [$FF99] ; hLinkPositionY 
     ld   hl, $FFEF ; hActiveEntityPosY  
     sub  [hl]
     sub  a, $08
@@ -543,7 +543,7 @@ wrongSign:
     jr   z, firstSign
 
     ld   a, $1D   ; JINGLE_WRONG_ANSWER
-    ldh  [$F2], a ; hJingle
+    ldh  [$FFF2], a ; hJingle
     ld   a, $AD
     call $2373 ; OpenDialogInTable1
     ret

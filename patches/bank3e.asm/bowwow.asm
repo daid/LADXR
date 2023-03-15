@@ -4,7 +4,7 @@ CheckIfLoadBowWow:
         cp   $01
         jr   nz, .noLoadBowwow
 
-        ldh  a, [$F6] ; load map number
+        ldh  a, [$FFF6] ; load map number
         cp   $22
         jr   z, .loadBowwow
         cp   $23
@@ -93,7 +93,7 @@ BowwowEat:
 
     ; Play SFX
     ld   a, $03
-    ldh  [$F2], a
+    ldh  [$FFF2], a
     ; Call normal "destroy entity and drop item" handler
     jp   $3F50
 
@@ -104,7 +104,7 @@ BowwowHurtEnemy:
     rst  $18
     ; Play SFX
     ld   a, $03
-    ldh  [$F2], a
+    ldh  [$FFF2], a
     ret
 
 BowwowEatGenie:
@@ -265,9 +265,9 @@ BowwowEatNightmare:
     ld   [hl], $14
     ; play proper sfx
     ld   a, $07
-    ldh  [$F3], a
+    ldh  [$FFF3], a
     ld   a, $37
-    ldh  [$F2], a
+    ldh  [$FFF2], a
     ; No idea why this is done, but it happens when you use powder on the slime
     ld   a, $03
     ld   [$D220], a
@@ -293,11 +293,11 @@ BowwowEatNightmare:
     add  hl, bc
     ld   [hl], $C0
     ld   a, $36
-    ldh  [$F2], a
+    ldh  [$FFF2], a
 .agahnimNotDeadYet:
     ld   hl, $C420
     add  hl, bc
     ld   [hl], $14
     ld   a, $07
-    ldh  [$F3], a
+    ldh  [$FFF3], a
     ret

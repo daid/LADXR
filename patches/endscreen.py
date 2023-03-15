@@ -18,7 +18,7 @@ def updateEndScreen(rom):
     rom.patch(0x3F, 0x0200, None, ASM("""
     ; Disable LCD
     xor a
-    ldh  [$40], a
+    ldh  [$FF40], a
     
     ld  hl, $8000
     ld  de, $5000
@@ -30,7 +30,7 @@ copyLoop:
     jr  z, copyLoop
 
     ld  a, $01
-    ldh [$4F], a
+    ldh [$FF4F], a
 
     ld  hl, $8000
     ld  de, $6000
@@ -61,7 +61,7 @@ clearLoop2:
     jr  nz, clearLoop2
 
     xor  a
-    ldh  [$4F], a
+    ldh  [$FF4F], a
 
 
     ld  hl, $9800
@@ -124,12 +124,12 @@ loadLoop2:
 
     ; Enable LCD
     ld  a, $91
-    ldh [$40], a
+    ldh [$FF40], a
     ld  [$d6fd], a
     
     xor a
-    ldh [$96], a
-    ldh [$97], a
+    ldh [$FF96], a
+    ldh [$FF97], a
     ret
     """))
     

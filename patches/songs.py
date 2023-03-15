@@ -55,7 +55,7 @@ def upgradeMarin(rom):
     rom.patch(0x05, 0x11B3, ASM("""
         ld   de, $515F
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -87,7 +87,7 @@ def upgradeManbo(rom):
     rom.patch(0x18, 0x0786, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -129,7 +129,7 @@ def upgradeMamu(rom):
     rom.patch(0x18, 0x0299, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         call $3C77
     """), ASM("""
         ld   a, $0C

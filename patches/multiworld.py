@@ -37,7 +37,7 @@ def addMultiworldShop(rom, this_player, player_count):
     ld   a, $01
     ld   [$C50A], a ; this stops link from using items
 
-    ldh  a, [$EE] ; X
+    ldh  a, [$FFEE] ; X
     cp   $08
     ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
     jp   z, shopItemsHandler
@@ -45,12 +45,12 @@ def addMultiworldShop(rom, this_player, player_count):
 ;Draw shopkeeper
     ld   de, OwnerSpriteData
     call $3BC0 ; render sprite pair
-    ldh  a, [$E7] ; frame counter
+    ldh  a, [$FFE7] ; frame counter
     swap a
     and  $01
     call $3B0C ; set sprite variant
 
-    ldh  a, [$F0]
+    ldh  a, [$FFF0]
     and  a
     jr   nz, checkTalkingResult
 
@@ -81,11 +81,11 @@ shopItemsHandler:
     ld   h, $00
 loop:
     ; First load links position to render the item at
-    ldh  a, [$98] ; LinkX
-    ldh  [$EE], a ; X
-    ldh  a, [$99] ; LinkY
+    ldh  a, [$FF98] ; LinkX
+    ldh  [$FFEE], a ; X
+    ldh  a, [$FF99] ; LinkY
     sub  $0E
-    ldh  [$EC], a ; Y
+    ldh  [$FFEC], a ; Y
     ; Check if this is the item we have picked up
     ld   a, [$C509] ; picked up item in shop
     dec  a
@@ -95,13 +95,13 @@ loop:
     ld   a, h
     swap a
     add  a, $20
-    ldh  [$EE], a ; X
+    ldh  [$FFEE], a ; X
     ld   a, $30
-    ldh  [$EC], a ; Y
+    ldh  [$FFEC], a ; Y
 .renderCarry:
     ld   a, h
     push hl
-    ldh  [$F1], a ; variant
+    ldh  [$FFF1], a ; variant
     cp   $03
     jr   nc, .singleSprite
     ld   de, ItemsDualSpriteData
@@ -120,7 +120,7 @@ loop:
     jr   nz, loop
 
 ;   check if we want to pickup or drop an item
-    ldh  a, [$CC]
+    ldh  a, [$FFCC]
     and  $30 ; A or B button
     call nz, checkForPickup
 
@@ -135,7 +135,7 @@ loop:
     call $0CAF ; reset spin attack...
 
     ; Check if we are trying to exit the shop and so drop our item.
-    ldh  a, [$99]
+    ldh  a, [$FF99]
     cp   $78
     ret  c
     xor  a
@@ -144,21 +144,21 @@ loop:
     ret
 
 checkForPickup:
-    ldh  a, [$9E] ; direction
+    ldh  a, [$FF9E] ; direction
     cp   $02
     ret  nz
-    ldh  a, [$99] ; LinkY
+    ldh  a, [$FF99] ; LinkY
     cp   $48
     ret  nc
 
     ld   a, $13
-    ldh  [$F2], a ; play SFX
+    ldh  [$FFF2], a ; play SFX
 
     ld   a, [$C509] ; picked up shop item
     and  a
     jr   nz, .drop
 
-    ldh  a, [$98] ; LinkX
+    ldh  a, [$FF98] ; LinkX
     sub  $08
     swap a
     and  $07
@@ -207,7 +207,7 @@ talkHandler:
     ld   [hl], a
     ld   de, $FFEF
     add  hl, de
-    ldh  a, [$EE]
+    ldh  a, [$FFEE]
     swap a
     and  $0F
     add  a, $30
@@ -291,7 +291,7 @@ TalkResultHandler:
     ld  hl, $DDFE
     ld  a, [$C509] ; currently picked up item 
     ldi [hl], a
-    ldh a, [$EE]   ; X position of NPC
+    ldh a, [$FFEE]   ; X position of NPC
     ldi [hl], a
     ld  hl, $DDF7
     set 2, [hl]

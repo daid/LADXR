@@ -48,12 +48,12 @@ hasProperItem:
 
     call $64C6 ; check if game is busy (pops this stack frame if busy)
 
-    ldh a, [$E7] ; frame counter
+    ldh a, [$FFE7] ; frame counter
     swap a
     and  $01
     call $3B0C ; set entity sprite variant
     call $641A ; check collision
-    ldh  a, [$F0] ;entity state
+    ldh  a, [$FFF0] ;entity state
     rst 0
     dw  waitForTalk
     dw  talking
@@ -115,7 +115,7 @@ sprite:
 
 def upgradeDungeonOwlStatues(rom):
     # Call our custom handler after the check for the stone beak
-    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$F7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
+    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$FFF7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
 
 def upgradeOverworldOwlStatues(rom):
     # Replace the code that handles signs/owl statues on the overworld

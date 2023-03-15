@@ -84,7 +84,7 @@ def fixBowwow(rom, everywhere=False):
         # rom.patch(0x01, 0x1FBC, ASM("ret nz"), "", fill_nop=True)  # sidescroller: TOFIX this breaks fishing minigame reward
     else:
         # Patch the bowwow create code to call our custom check of we are in swamp function.
-        rom.patch(0x01, 0x211F, ASM("ldh a, [$F6]\ncp $A7\nret z\nld a, [$DB56]\ncp $01\njr nz, $36"), ASM("""
+        rom.patch(0x01, 0x211F, ASM("ldh a, [$FFF6]\ncp $A7\nret z\nld a, [$DB56]\ncp $01\njr nz, $36"), ASM("""
             ld a, $07
             rst 8
             ld  a, e
@@ -124,7 +124,7 @@ Continue:
         pop  bc
         ret
     """), fill_nop=True)
-    rom.patch(0x05, 0x0387, ASM("ld a, $03\nldh [$F2], a"), "", fill_nop=True)  # remove the default chomp sfx
+    rom.patch(0x05, 0x0387, ASM("ld a, $03\nldh [$FFF2], a"), "", fill_nop=True)  # remove the default chomp sfx
 
     # Various enemies
     rom.banks[0x14][0x1218 + 0xC5] = 0x01  # Urchin

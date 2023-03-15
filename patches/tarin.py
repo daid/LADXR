@@ -22,14 +22,14 @@ def updateTarin(rom):
 
     rom.patch(0x05, 0x0CF0, ASM("""
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   de, $4CC6
         call $3C77
     """), ASM("""
         ld   a, $0C ; RenderItemForRoom
         rst  8
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
     """), fill_nop=True)
 
     # Set the room status to finished. (replaces a GBC check)
@@ -39,8 +39,8 @@ def updateTarin(rom):
     """), fill_nop=True)
 
     # Instead of checking for the shield level to put you in the bed, check the room flag.
-    rom.patch(0x05, 0x1202, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
-    rom.patch(0x05, 0x0C6D, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$F8]\nand $20"))
+    rom.patch(0x05, 0x1202, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$FFF8]\nand $20"))
+    rom.patch(0x05, 0x0C6D, ASM("ld a, [$DB44]\nand a"), ASM("ldh a, [$FFF8]\nand $20"))
 
     # If the starting item is picked up, load the right palette when entering the room
     rom.patch(0x21, 0x0176, ASM("ld a, [$DB48]\ncp $01"), ASM("ld a, [$DAA3]\ncp $A1"), fill_nop=True)

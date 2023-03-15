@@ -134,7 +134,7 @@ def slowLowHPBeep(rom):
 
 def removeFlashingLights(rom):
     # Remove the switching between two backgrounds at mamu, always show the spotlights.
-    rom.patch(0x00, 0x01EB, ASM("ldh a, [$E7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
+    rom.patch(0x00, 0x01EB, ASM("ldh a, [$FFE7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
     # Remove flashing colors from shopkeeper killing you after stealing and the mad batter giving items.
     rom.patch(0x24, 0x3B77, ASM("push bc"), ASM("ret"))
 
@@ -332,11 +332,11 @@ def allowColorDungeonSpritesEverywhere(rom):
     # Patch the spriteset loading code to load the 4 entries from the normal table instead of skipping this for color dungeon specific exception weirdness
     rom.patch(0x00, 0x0DA4, ASM("jr nc, $05"), ASM("jr nc, $41"))
     rom.patch(0x00, 0x0DE5, ASM("""
-        ldh  a, [$F7]
+        ldh  a, [$FFF7]
         cp   $FF
         jr   nz, $06
         ld a, $01
-        ldh [$91], a
+        ldh [$FF91], a
         jr $40
     """), ASM("""
         jr $0A ; skip over the rest of the code
@@ -376,21 +376,21 @@ def allowColorDungeonSpritesEverywhere(rom):
         ;$C197 = index of sprite set to update (target addr = ($8400 + $100 * [$C197]))
         ld  a, d
         add a, $40
-        ldh [$51], a
+        ldh [$FF51], a
         xor a
-        ldh [$52], a
-        ldh [$54], a
+        ldh [$FF52], a
+        ldh [$FF54], a
         ld  a, [$C197]
         add a, $84
-        ldh [$53], a
+        ldh [$FF53], a
         ld  a, $0F
-        ldh [$55], a
+        ldh [$FF55], a
 
         ; See if we need to do anything next
         ld  a, [$C10E] ; check the 2nd update flag
         and a
         jr  nz, getNext
-        ldh [$91], a ; no 2nd update flag, so clear primary update flag
+        ldh [$FF91], a ; no 2nd update flag, so clear primary update flag
         ret
     getNext:
         ld  hl, $C197
@@ -407,8 +407,8 @@ def allowColorDungeonSpritesEverywhere(rom):
         ; we get here by some color dungeon specific code jumping to this position
         ; We still need that color dungeon specific code as it loads background tiles
         xor a
-        ldh [$91], a
-        ldh [$93], a
+        ldh [$FF91], a
+        ldh [$FF93], a
         ret
     """))
     rom.patch(0x00, 0x073E, "00" * (0x07AF - 0x073E), ASM("""
@@ -418,7 +418,7 @@ def allowColorDungeonSpritesEverywhere(rom):
         xor a
         ld  [$C10E], a ; clear the 2nd update flag
         inc a
-        ldh [$91], a ; set the primary update flag
+        ldh [$FF91], a ; set the primary update flag
         ret
     """), fill_nop=True)
 
@@ -431,7 +431,7 @@ def updateSpriteData(rom):
     and  a
     jr   nz, noChange
 
-    ldh  a, [$F6] ; hMapRoom
+    ldh  a, [$FFF6] ; hMapRoom
     cp   $C9
     jr   nz, sirenRoomEnd
     ld   a, [$D8C9] ; wOverworldRoomStatus + ROOM_OW_SIREN
@@ -441,7 +441,7 @@ def updateSpriteData(rom):
     jp   $0DFE
 
 sirenRoomEnd:
-    ldh  a, [$F6] ; hMapRoom
+    ldh  a, [$FFF6] ; hMapRoom
     cp   $D8
     jr   nz, noChange
     ld   a, [$D8FD] ; wOverworldRoomStatus + ROOM_OW_WALRUS 

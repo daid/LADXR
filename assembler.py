@@ -231,6 +231,7 @@ class Assembler:
     LINK_REL8 = 0
     LINK_ABS8 = 1
     LINK_ABS16 = 2
+    LINK_HIGH8 = 3
 
     def __init__(self) -> None:
         self.__sections: List[Section] = []
@@ -453,8 +454,22 @@ class Assembler:
         else:
             self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_ABS8, expr)
             value = 0
-        assert 0 <= value < 256
-        self.__current_section.data.append(value)
+        if 0 <= value < 0x100:
+            self.__current_section.data.append(value)
+        else:
+            raise AssemblerException(expr, "8 bit value out of range")
+
+    def insertHigh8(self, expr: ExprBase) -> None:
+        if expr.isA('NUMBER'):
+            assert isinstance(expr, Token)
+            value = int(expr.value)
+        else:
+            self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_HIGH8, expr)
+            value = 0
+        if 0xFF00 <= value < 0x10000:
+            self.__current_section.data.append(value & 0xFF)
+        else:
+            raise AssemblerException(expr, "HRAM 8 bit value out of range")
 
     def insertRel8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
@@ -559,13 +574,13 @@ class Assembler:
                 self.__current_section.data.append(0xF2)
             else:
                 self.__current_section.data.append(0xF0)
-                self.insert8(right_param.expr)
+                self.insertHigh8(right_param.expr)
         elif right_param.isA('ID', 'A') and isinstance(left_param, REF):
             if left_param.expr.isA('ID', 'C'):
                 self.__current_section.data.append(0xE2)
             else:
                 self.__current_section.data.append(0xE0)
-                self.insert8(left_param.expr)
+                self.insertHigh8(left_param.expr)
         else:
             raise AssemblerException(left_param, "Syntax error")
 
@@ -894,6 +909,9 @@ class Assembler:
                     section.data[offset] = byte & 0xFF
                 elif link_type == Assembler.LINK_ABS8:
                     assert 0 <= value <= 0xFF
+                    section.data[offset] = value & 0xFF
+                elif link_type == Assembler.LINK_HIGH8:
+                    assert 0xFF00 <= value <= 0xFFFF
                     section.data[offset] = value & 0xFF
                 elif link_type == Assembler.LINK_ABS16:
                     assert section.base_address > -1, "Cannot place absolute values in a relocatable code piece"

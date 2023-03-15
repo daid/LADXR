@@ -25,7 +25,7 @@ MainLoop:
     and  a
     ret  nz
     ; Check if interaction is blocked
-    ldh  a, [$A1]
+    ldh  a, [$FFA1]
     and  a
     ret  nz
 
@@ -59,7 +59,7 @@ MainLoop:
     jr   z, LinkGiveSlime
     cp   $F0
     jr   nc, HandleSpecialItem
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call GiveItemFromChest
     call BuildItemMessage
     call MessageAddFromPlayer
@@ -119,8 +119,8 @@ SpecialPieceOfPower:
     ld   a, $27
     ld   [$D368], a
     ld   a, $49
-    ldh  [$BD], a
-    ldh  [$BF], a
+    ldh  [$FFBD], a
+    ldh  [$FFBF], a
     ret
 SpecialHealth:
     ; Regen all health
@@ -158,11 +158,11 @@ LinkSpawnCucco:
     ; Place where link is at.
     ld   hl, $C200
     add  hl, de
-    ldh  a, [$98]
+    ldh  a, [$FF98]
     ld   [hl], a
     ld   hl, $C210
     add  hl, de
-    ldh  a, [$99]
+    ldh  a, [$FF99]
     ld   [hl], a
 
     ; Set the "hits till cucco killer attack" much lower
@@ -247,11 +247,11 @@ SpecialRandomTeleport:
     add  a, $10
     ld   [$D405], a
 
-    ldh  a, [$98]
+    ldh  a, [$FF98]
     swap a
     and  $0F
     ld   e, a
-    ldh  a, [$99]
+    ldh  a, [$FF99]
     sub  $08
     and  $F0
     or   e
