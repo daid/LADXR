@@ -97,6 +97,18 @@ class OP(ExprBase):
             if op == '==':
                 left.value = 1 if left.value == right.value else 0
                 return left
+            if op == '<<':
+                left.value <<= right.value
+                return left
+            if op == '>>':
+                left.value >>= right.value
+                return left
+            if op == '&':
+                left.value &= right.value
+                return left
+            if op == '|':
+                left.value |= right.value
+                return left
         if left.isA('NUMBER') and right is None:
             assert isinstance(left, Token) and isinstance(left.value, int)
             if op == '+':
@@ -133,7 +145,7 @@ class Tokenizer:
         ('DIRECTIVE', r'#[A-Za-z_]+'),
         ('STRING', '[a-zA-Z]?"[^"]*"'),
         ('ID', r'\.?[A-Za-z_][A-Za-z0-9_\.]*'),
-        ('OP', r'(?:<=)|(?:>=)|(?:==)|[+\-*/,\(\)<>]'),
+        ('OP', r'(?:<=)|(?:>=)|(?:==)|(?:<<)|(?:>>)|[+\-*/,\(\)<>&|]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
         ('MACROARG', r'\\[0-9]'),
@@ -190,6 +202,13 @@ class Tokenizer:
                 raise AssemblerException(pop, "%s != %s:%s" % (pop, kind, value))
             raise AssemblerException(pop, "%s != %s" % (pop, kind))
         return pop
+
+    def popIf(self, kind: str, value: Optional[str] = None) -> bool:
+        token = self.peek()
+        if token.isA(kind, value):
+            self.pop()
+            return True
+        return False
 
     def __bool__(self) -> bool:
         return bool(self.__tokens)
@@ -640,23 +659,29 @@ class Assembler:
 
     def instrADD(self) -> None:
         left_param = self.parseParam()
-        self.__tok.expect('OP', ',')
-        right_param = self.parseParam()
-
-        if left_param.isA('ID', 'A'):
-            rr8 = right_param.asReg8()
-            if rr8 is not None:
-                self.__current_section.data.append(0x80 | rr8)
+        if self.__tok.popIf('OP', ','):
+            right_param = self.parseParam()
+            if left_param.isA('ID', 'A'):
+                rr8 = right_param.asReg8()
+                if rr8 is not None:
+                    self.__current_section.data.append(0x80 | rr8)
+                else:
+                    self.__current_section.data.append(0xC6)
+                    self.insert8(right_param)
+            elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value in REGS16A:
+                self.__current_section.data.append(0x09 | REGS16A[str(right_param.value)] << 4)
+            elif left_param.isA('ID', 'SP'):
+                self.__current_section.data.append(0xE8)
+                self.insert8(right_param)
+            else:
+                raise AssemblerException(left_param, "Syntax error")
+        else:
+            lr8 = left_param.asReg8()
+            if lr8 is not None:
+                self.__current_section.data.append(0x80 | lr8)
             else:
                 self.__current_section.data.append(0xC6)
-                self.insert8(right_param)
-        elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value in REGS16A:
-            self.__current_section.data.append(0x09 | REGS16A[str(right_param.value)] << 4)
-        elif left_param.isA('ID', 'SP'):
-            self.__current_section.data.append(0xE8)
-            self.insert8(right_param)
-        else:
-            raise AssemblerException(left_param, "Syntax error")
+                self.insert8(left_param)
 
     def instrALU(self, code_value: int) -> None:
         param = self.parseParam()
@@ -816,13 +841,40 @@ class Assembler:
         return self.parseExpression()
 
     def parseExpression(self) -> ExprBase:
+        t = self.parseBitOr()
+        return t
+
+    def parseBitOr(self) -> ExprBase:
+        t = self.parseBitAnd()
+        p = self.__tok.peek()
+        while p.isA('OP', '|'):
+            self.__tok.pop()
+            t = OP.make(str(p.value), t, self.parseBitAnd())
+            p = self.__tok.peek()
+        return t
+
+    def parseBitAnd(self) -> ExprBase:
         t = self.parseCompare()
+        p = self.__tok.peek()
+        while p.isA('OP', '&'):
+            self.__tok.pop()
+            t = OP.make(str(p.value), t, self.parseCompare())
+            p = self.__tok.peek()
         return t
 
     def parseCompare(self) -> ExprBase:
-        t = self.parseAddSub()
+        t = self.parseShift()
         p = self.__tok.peek()
         while p.isA('OP', '<') or p.isA('OP', '>') or p.isA('OP', '<=') or p.isA('OP', '>=') or p.isA('OP', '=='):
+            self.__tok.pop()
+            t = OP.make(str(p.value), t, self.parseShift())
+            p = self.__tok.peek()
+        return t
+
+    def parseShift(self) -> ExprBase:
+        t = self.parseAddSub()
+        p = self.__tok.peek()
+        while p.isA('OP', '<<') or p.isA('OP', '>>'):
             self.__tok.pop()
             t = OP.make(str(p.value), t, self.parseAddSub())
             p = self.__tok.peek()
@@ -1052,7 +1104,7 @@ label:
     assert ASM("""
     dw M"Inline string"
     dw M"Inline string"
-""", 0x1000)[:4] == b'0410'
+""", 0x1000)[:8] == b'04100410'
 
     asm = Assembler()
     asm.process(" db 1, 2, 3\nlabel:\ndw label", base_address=0x4000, bank=1)
@@ -1065,3 +1117,10 @@ label:
     assert ASM("db 1 <= 1+1") == b'01'
     assert ASM("db 1+1 >= 1") == b'01'
     assert ASM("db 1+1 == 1") == b'00'
+    assert ASM("add a, a") == ASM("add a")
+    assert ASM("add a, $10") == ASM("add $10")
+
+    assert ASM("db 1 << 1") == b'02'
+    assert ASM("db 1 << 1 + 1") == b'04'
+    assert ASM("db 1 & 2") == b'00'
+    assert ASM("db 1 | 2") == b'03'
