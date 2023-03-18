@@ -1,5 +1,6 @@
 from .itemInfo import ItemInfo
 from .constants import *
+import utils
 
 
 class TradeSequenceItem(ItemInfo):
@@ -26,6 +27,25 @@ class TradeSequenceItem(ItemInfo):
 
     def patch(self, rom, option, *, multiworld=None):
         rom.banks[0x3E][self.room + 0x3B16] = CHEST_ITEMS[option]
+
+        if option == self.__default_item:
+            return
+        if self.__default_item == TRADING_ITEM_DOG_FOOD:
+            rom.texts[0x181] = utils.formatText("Make-up! Jewels! Dresses! I want it all! Sigh... And some new accessories would be nice... Oh! That Ribbon! I need it! Will you trade for my {%s}?" % option, ask="Yes  No!")
+            rom.texts[0x182] = b'\xff'
+            rom.texts[0x183] = utils.formatText("Lucky! Thanks! Well, here's your {%s}!" % option)
+        elif self.__default_item == TRADING_ITEM_BANANAS:
+            rom.texts[0x1CA] = utils.formatText("MUNCH MUNCH!! ... ... ... ... That was great! I know it's not a fair trade, but here's some {%s}! YUM..." % option)
+        elif self.__default_item == TRADING_ITEM_PINEAPPLE:
+            rom.texts[0x1CF] = utils.formatText("Hi ho! Hey you! Is that possibly a <honeycomb> you have? I just ran out! Will you swap it for a {%s}?" % option, ask="Yes  No")
+        elif self.__default_item == TRADING_ITEM_HIBISCUS:
+            rom.texts[0x173] = utils.formatText("AH! This isn't meant to be a reward... Here, take this {%s}!" % option)
+        elif self.__default_item == TRADING_ITEM_LETTER:
+            rom.texts[0x168] = utils.formatText("I would like you to take this {%s}, please!" % option)
+        elif self.__default_item == TRADING_ITEM_BROOM:
+            rom.texts[0x135] = utils.formatText("Mmm... She's so beautiful... I must give you something for your trouble... Hmm...  Well, it looks like all I have is this {%s}... how'll that be?" % option, ask="Fine No...")
+        elif self.__default_item == TRADING_ITEM_FISHING_HOOK:
+            rom.texts[0x15D] = utils.formatText("Okay! In return you can have this {%s} I found when I swept by the river bank!" % option)
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)
