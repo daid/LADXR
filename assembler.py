@@ -985,6 +985,8 @@ class Assembler:
                 if expr.param.value not in self.__label:
                     raise AssemblerException(expr, f"Cannot find label: {expr.param.value}")
                 section, offset = self.__label[expr.param.value]
+                if section.bank is None:
+                    raise AssemblerException(expr, f"Tried to get bank of label: {expr.param.value}, but label not in a bank.")
                 return Token('NUMBER', section.bank, expr.param.line_nr)
             elif expr.function == 'LOW':
                 param = self.resolveExpr(expr.param)

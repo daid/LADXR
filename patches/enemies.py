@@ -206,8 +206,17 @@ def changeBosses(rom, mapping: List[int]):
 
             # Add the staircase to the boss, and fix the warp back.
             re = getCleanBossRoom(rom, dungeon_nr)
-            re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 6, 0x2F8, 72, 80)]
+            re.objects += [
+                Object(3, 3, 0x2C),
+                ObjectHorizontal(4, 3, 0x22, 2),
+                Object(6, 3, 0x2B),
+                Object(3, 4, 0x2A),
+                Object(4, 4, 0xA2),
+                Object(5, 4, 0x21),
+                Object(6, 4, 0x29),
+                ObjectWarp(2, 6, 0x2F8, 72, 80)]
             re.store(rom)
+            rom.banks[0x20][0x2EB3 + re.room - 0x100] = 0  # Change the room tileset to include the stairs
             re = RoomEditor(rom, 0x2F8)
             re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr], 72, 80)
             re.store(rom)
