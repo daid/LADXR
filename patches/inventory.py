@@ -143,8 +143,8 @@ def moreSlots(rom):
     rom.patch(0x19, 0x2df2, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
     rom.patch(0x19, 0x2ef1, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x19, 0x2f95, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
-    rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
-    rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, $00"), fill_nop=True) # This sets the palette for the inventory submenu trade item.
+    rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, $00"), fill_nop=True) # This sets the palette for the inventory submenu trade item.
     rom.patch(0x36, 0x0948, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x19, 0x31Ca, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
     rom.patch(0x19, 0x3215, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
