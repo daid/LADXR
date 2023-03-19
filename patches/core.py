@@ -250,6 +250,16 @@ noWrapDown:
 
         ld   a, $07
         ld   [$DB96], a
+        
+        ; Clear all entity status, so they are no longer rendered.
+        ld   hl, $C280
+        xor  a
+        ld   c, 16
+clearOAMLoop:
+        ld   [hl+], a
+        dec  c
+        jr   nz, clearOAMLoop
+        
         ret
         jp   $40BE  ; return to normal "return to game" handling
     """ % (type, map, room, x, y)), fill_nop=True)
