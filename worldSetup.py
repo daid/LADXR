@@ -105,7 +105,7 @@ class WorldSetup:
 
         unmappedEntrances = list(entrancePool)
 
-        for entrance in [x for x in entrancePool if x != 'd7']:
+        for entrance in [x for x in entrancePool]:
             self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
 
         if settings.entranceshuffle == 'split':
@@ -120,13 +120,12 @@ class WorldSetup:
         # Make sure all entrances in the pool are accessible
         for _ in range(1000):
             islands = self.inaccessibleEntrances(settings, entrancePool)
-            islands = [x for x in islands if x not in simpleEntrances]
 
             if not islands:
                 break
 
             island = rnd.choice(islands)
-            main = rnd.choice([x for x in entrancePool if x not in islands and x != 'd7'])
+            main = rnd.choice([x for x in entrancePool if x not in islands])
 
             self.swapEntrances(island, main)
         
@@ -146,6 +145,8 @@ class WorldSetup:
         
         if self.inaccessibleEntrances(settings, entrancePool):
             raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        
+        assert ENTRANCE_INFO[self.entrance_mapping['d7']].type != 'connector', "D7 shouldn't be a connector"
 
 
     def randomize(self, settings, rnd):
