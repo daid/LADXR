@@ -1,4 +1,6 @@
 import patches.enemies
+import logic
+import randomizer
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
@@ -46,30 +48,43 @@ class WorldSetup:
         entrances = []
 
         if connectorsOnly:
-            if settings.entranceshuffle in ("advanced", "expert", "insanity"):
+            if settings.entranceshuffle in ("split", "mixed"):
                 entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "connector"]
             
             return entrances
 
         if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
-        if settings.entranceshuffle in ("simple", "advanced", "expert", "insanity"):
+        if settings.entranceshuffle in ("simple", "split", "mixed"):
             types = {"single"}
             if settings.tradequest:
                 types.add("trade")
-            if settings.entranceshuffle in ("expert", "insanity"):
+            if settings.shufflejunk:
                 types.update(["dummy", "trade"])
-            if settings.entranceshuffle in ("insanity",):
+            if settings.shuffleannoying:
                 types.add("insanity")
+            if settings.shufflewater:
+                types.add("water")
             if settings.randomstartlocation:
                 types.add("start")
             if settings.dungeonshuffle:
                 types.add("dungeon")
+            if settings.entranceshuffle in ("mixed"):
+                types.add("connector")
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type in types]
 
         return entrances
+    
+    def swapEntrances(self, a, b):
+        temp = self.entrance_mapping[a]
+        self.entrance_mapping[a] = self.entrance_mapping[b]
+        self.entrance_mapping[b] = temp
+    
+    def inaccessibleEntrances(self, settings, entrancePool):
+        log = logic.Logic(settings, world_setup=self)
+        return [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
-    def randomize(self, settings, rnd):
+    def pickEntrances(self, settings, rnd):
         if settings.overworld == "dungeondive":
             self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
         if settings.randomstartlocation and settings.entranceshuffle == "none":
@@ -77,16 +92,64 @@ class WorldSetup:
             if start_location != "start_house":
                 self.entrance_mapping[start_location] = "start_house"
                 self.entrance_mapping["start_house"] = start_location
+
+        entrancePool = self.getEntrancePool(settings)
+        simpleEntrances = []
+
+        if settings.entranceshuffle == 'mixed':
+            # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
+            specialEntrances = ['d7']
+            for entrance in [x for x in specialEntrances if x in entrancePool]:
+                simpleEntrances.append(entrance)
+                entrancePool.remove(entrance)
+
+        unmappedEntrances = list(entrancePool)
+
+        for entrance in [x for x in entrancePool]:
+            self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
+
+        if settings.entranceshuffle == 'split':
+            # Shuffle connectors among themselves
+            # entrancePool is intentionally overwritten so we're only swapping connectors
+            entrancePool = self.getEntrancePool(settings, connectorsOnly=True)
+            unmappedEntrances = list(entrancePool)
+
+            for entrance in entrancePool.copy():
+                self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
+
+        # Make sure all entrances in the pool are accessible
+        for _ in range(1000):
+            islands = self.inaccessibleEntrances(settings, entrancePool)
+
+            if not islands:
+                break
+
+            island = rnd.choice(islands)
+            main = rnd.choice([x for x in entrancePool if x not in islands])
+
+            self.swapEntrances(island, main)
         
-        entrances = self.getEntrancePool(settings)
-        for entrance in entrances.copy():
-            self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
+        if self.inaccessibleEntrances(settings, entrancePool):
+            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        
+        # Shuffle the special simple entrances separately
+        for _ in range(1000):
+            for entrance in simpleEntrances:
+                # Swap twice so finding one end doesn't tell you what's behind the other
+                for _ in range(2):
+                    swap = rnd.choice([x for x in entrancePool if x != 'start_house' and ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
+                    self.swapEntrances(entrance, swap)
+            
+            if not self.inaccessibleEntrances(settings, entrancePool):
+                break
+        
+        if self.inaccessibleEntrances(settings, entrancePool):
+            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        
+        assert ENTRANCE_INFO[self.entrance_mapping['d7']].type != 'connector', "D7 shouldn't be a connector"
 
-        # Shuffle connectors among themselves
-        entrances = self.getEntrancePool(settings, connectorsOnly=True)
-        for entrance in entrances.copy():
-            self.entrance_mapping[entrance] = entrances.pop(rnd.randrange(len(entrances)))
 
+    def randomize(self, settings, rnd):
         if settings.boss != "default":
             values = list(range(9))
             if settings.heartcontainers:
@@ -132,6 +195,8 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
+
+        self.pickEntrances(settings, rnd)
 
     def loadFromRom(self, rom):
         import patches.overworld

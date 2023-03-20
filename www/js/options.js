@@ -230,63 +230,6 @@ var options =
   ]
  },
  {
-  "key": "randomstartlocation",
-  "category": "Gameplay",
-  "short_key": "r",
-  "label": "Random start location",
-  "description": "Randomize where your starting house is located",
-  "multiworld": true,
-  "aesthetic": false,
-  "default": false
- },
- {
-  "key": "dungeonshuffle",
-  "category": "Gameplay",
-  "short_key": "u",
-  "label": "Dungeon shuffle",
-  "description": "Randomizes the dungeon that each dungeon entrance leads to",
-  "multiworld": true,
-  "aesthetic": false,
-  "default": false
- },
- {
-  "key": "entranceshuffle",
-  "category": "Gameplay",
-  "short_key": "E",
-  "label": "Entrance randomizer",
-  "description": "Randomizes where overworld entrances lead to.\n[Simple] single entrance caves that contain items are randomized\n[Advanced] Connector caves are also randomized\n[Expert] Caves/houses without items are also randomized\n[Insanity] A few very annoying entrances will be randomized as well.\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.\nNote, some entrances can lead into water, use the warp-to-home from the save&quit menu to escape this.",
-  "multiworld": true,
-  "aesthetic": false,
-  "default": "none",
-  "options": [
-   {
-    "key": "none",
-    "short": "",
-    "label": "Default"
-   },
-   {
-    "key": "simple",
-    "short": "s",
-    "label": "Simple"
-   },
-   {
-    "key": "advanced",
-    "short": "a",
-    "label": "Advanced"
-   },
-   {
-    "key": "expert",
-    "short": "E",
-    "label": "Expert"
-   },
-   {
-    "key": "insanity",
-    "short": "I",
-    "label": "Insanity"
-   }
-  ]
- },
- {
   "key": "boss",
   "category": "Gameplay",
   "short_key": "B",
@@ -564,6 +507,88 @@ var options =
     "label": "Normal"
    }
   ]
+ },
+ {
+  "key": "randomstartlocation",
+  "category": "Entrances",
+  "short_key": "r",
+  "label": "Random start location",
+  "description": "Randomize where your starting house is located",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "dungeonshuffle",
+  "category": "Entrances",
+  "short_key": "u",
+  "label": "Dungeon shuffle",
+  "description": "Randomizes the dungeon that each dungeon entrance leads to",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "entranceshuffle",
+  "category": "Entrances",
+  "short_key": "E",
+  "label": "Entrance randomizer",
+  "description": "Randomizes where overworld entrances lead to.\n[Simple] single entrance caves that contain items are randomized\n[Split] Connector caves are also randomized, in a separate pool from single entrance caves\n[Mixed] Connector caves are also randomized, in the same pool as single entrance caves\n\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": "none",
+  "options": [
+   {
+    "key": "none",
+    "short": "",
+    "label": "Default"
+   },
+   {
+    "key": "simple",
+    "short": "s",
+    "label": "Simple"
+   },
+   {
+    "key": "split",
+    "short": "S",
+    "label": "Split"
+   },
+   {
+    "key": "mixed",
+    "short": "m",
+    "label": "Mixed"
+   }
+  ]
+ },
+ {
+  "key": "shufflejunk",
+  "category": "Entrances",
+  "short_key": "j",
+  "label": "Shuffle itemless entrances",
+  "description": "Caves/houses without items are also randomized when 'Entrance randomizer' is not set to 'Default'",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "shuffleannoying",
+  "category": "Entrances",
+  "short_key": "a",
+  "label": "Shuffle annoying entrances",
+  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized when 'Entrance randomizer' is not set to 'Default'",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
+ },
+ {
+  "key": "shufflewater",
+  "category": "Entrances",
+  "short_key": "w",
+  "label": "Shuffle water entrances",
+  "description": "Entrances that lead to water (Manbo and Damp Cave) will also be randomized when 'Entrance randomizer' is not set to 'Default'. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works).",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": false
  },
  {
   "key": "bowwow",
