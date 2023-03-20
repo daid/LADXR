@@ -102,6 +102,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
 
     patches.core.cleanup(rom)
+    patches.core.fixD7exit(rom)
     if multiworld is not None:
         patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
