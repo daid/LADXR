@@ -207,7 +207,7 @@ def reduceMessageLengths(rom, rnd):
         "This is still better than doing Dampe dungeons.",
         "They say that Marin can be found here."
         "Stalfos are such boneheads.",
-        "90% bug-free!",
+        "90 percent bug-free!",
         "404 Marin.personality not found.",
         "Idk man, works on my machine.",
         "Hey guys, did you know that Vaporeon",
@@ -266,11 +266,11 @@ def reduceMessageLengths(rom, rnd):
         "Isn't this the game where you date a seagull?",
         "!tele broken, pls fix",
         "You look pretty good for a guy who probably drowned.",
-        "I heard Matty's a cheater.",
         "Remember, we race on Sundays.",
         "Pink Batman delayed this race for lunch.",
         "This randomizer was made possible by players like you. \n \n Thank you!",
         "Now with real fake doors!",
+        "Now with real fake floors!",
         "You could be doing something productive right now.",
         "No eggs were harmed in the making of this game.",
         "I'm helping the goat, \ncatfishing Mr. Write is kinda the goal.",
@@ -281,7 +281,7 @@ def reduceMessageLengths(rom, rnd):
         "Don't forget the Richard picture.",
         "Are you sure you wanna do this?  I kinda like this island.",
         "SJ, BT, WW, OoB, HIJKLMNOP.",
-        "$5 in the swear jar.  Now.",
+        "5 dollars in the swear jar.  Now.",
         "#####, I promise this seed will be better than the last one.",
         "Want your name here?  Contribute to LADXR!",
         "Kappa",
@@ -307,7 +307,10 @@ def reduceMessageLengths(rom, rnd):
         "#####, get up!  It's my turn in the bed!  Tarin's smells too much...",
         "Have you ever had a dream\nthat\nyo wa-\nyo had\nyo\nthat...",
         "Next time, try a salad.",
-        "*seagull noises*"
+        "seagull noises",
+        "I'm telling you, YOU HAVE UNO, it came free with your Xbox!",
+        "LADXR - Now with even more Marin quotes!",
+        "You guys are spending more time adding Marin quotes than actually playing the game."
     ]))
 
     # Reduce length of a bunch of common texts
