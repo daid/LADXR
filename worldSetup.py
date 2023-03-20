@@ -94,15 +94,6 @@ class WorldSetup:
                 self.entrance_mapping["start_house"] = start_location
 
         entrancePool = self.getEntrancePool(settings)
-        simpleEntrances = []
-
-        if settings.entranceshuffle == 'mixed':
-            # Exiting from a closed D7 gets you stuck in the wall, don't let a connector come out there
-            specialEntrances = ['d7']
-            for entrance in [x for x in specialEntrances if x in entrancePool]:
-                simpleEntrances.append(entrance)
-                entrancePool.remove(entrance)
-
         unmappedEntrances = list(entrancePool)
 
         for entrance in [x for x in entrancePool]:
@@ -131,22 +122,6 @@ class WorldSetup:
         
         if self.inaccessibleEntrances(settings, entrancePool):
             raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
-        
-        # Shuffle the special simple entrances separately
-        for _ in range(1000):
-            for entrance in simpleEntrances:
-                # Swap twice so finding one end doesn't tell you what's behind the other
-                for _ in range(2):
-                    swap = rnd.choice([x for x in entrancePool if x != 'start_house' and ENTRANCE_INFO[self.entrance_mapping[x]].type != 'connector'])
-                    self.swapEntrances(entrance, swap)
-            
-            if not self.inaccessibleEntrances(settings, entrancePool):
-                break
-        
-        if self.inaccessibleEntrances(settings, entrancePool):
-            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
-        
-        assert ENTRANCE_INFO[self.entrance_mapping['d7']].type != 'connector', "D7 shouldn't be a connector"
 
 
     def randomize(self, settings, rnd):
