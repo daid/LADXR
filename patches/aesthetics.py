@@ -229,7 +229,6 @@ def reduceMessageLengths(rom, rnd):
         "Technoblade never dies!",
         "Thank you, CrystalSaver!",
         "Wait, LADX has a rando?",
-        "https://tinyurl.com/ladxr",
         "Wait, how many Pokemon are there now?",
         "GOOD EMU",
         "Good luck finding the feather.",
