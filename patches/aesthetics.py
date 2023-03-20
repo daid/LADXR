@@ -304,7 +304,7 @@ def reduceMessageLengths(rom, rnd):
         "The thumbs-up sign had been used by the Galactic Federation for ages. Me, I was known for giving the thumbs-down during briefing. I had my reasons, though... Commander Adam Malkovich was normally cool and not one to joke around, but he would end all of his mission briefings by saying, 'Any objections, Lady?'",
         "Hot hippos are near your location!",
         "#####, get up!  It's my turn in the bed!  Tarin's smells too much...",
-        "Have you ever had a dream\nthat\nyo wa-\nyo had\nyo\nthat...",
+        "Have you ever had a dream\nthat\nyo wa-\nyo had\nyo\nthat\nthat you could do anything?",
         "Next time, try a salad.",
         "seagull noises",
         "I'm telling you, YOU HAVE UNO, it came free with your Xbox!",
