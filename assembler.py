@@ -454,12 +454,18 @@ class Assembler:
                                 raise AssemblerException(token, "Can only concat ID tokens")
                             to_add[-1] = to_add[-1].copy()
                             if token.isA('MACROARG'):
+                                argn = int(token.value[1:]) - 1
+                                if argn >= len(params):
+                                    raise AssemblerException(start, "Missing argument for macro")
                                 for p in params[int(token.value[1:]) - 1]:
                                     to_add[-1].value += p.value
                             else:
                                 to_add[-1].value = to_add[-1].value + token.value
                         elif token.isA('MACROARG'):
-                            for p in params[int(token.value[1:]) - 1]:
+                            argn = int(token.value[1:]) - 1
+                            if argn >= len(params):
+                                raise AssemblerException(start, "Missing argument for macro")
+                            for p in params[argn]:
                                 to_add.append(p.copy())
                         elif token.isA('TOKENCONCAT'):
                             concat = True
