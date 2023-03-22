@@ -148,7 +148,8 @@ class Tokenizer:
         ('OP', r'(?:<=)|(?:>=)|(?:==)|(?:<<)|(?:>>)|[+\-*/,\(\)<>&|]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
-        ('MACROARG', r'\\[0-9]'),
+        ('MACROARG', r'\\[0-9]+'),
+        ('TOKENCONCAT', r'##'),
         ('NEWLINE', r'\n'),
         ('SKIP', r'[ \t]+'),
         ('MISMATCH', r'.'),
@@ -445,10 +446,23 @@ class Assembler:
                             params[-1].append(self.__tok.pop())
                     self.__tok.pop()
                     to_add = []
+                    concat = False
                     for token in self.__macros[start.value]:
-                        if token.isA('MACROARG'):
+                        if concat:
+                            concat = False
+                            if not to_add[-1].isA('ID'):
+                                raise AssemblerException(token, "Can only concat ID tokens")
+                            to_add[-1] = to_add[-1].copy()
+                            if token.isA('MACROARG'):
+                                for p in params[int(token.value[1:]) - 1]:
+                                    to_add[-1].value += p.value
+                            else:
+                                to_add[-1].value = to_add[-1].value + token.value
+                        elif token.isA('MACROARG'):
                             for p in params[int(token.value[1:]) - 1]:
                                 to_add.append(p.copy())
+                        elif token.isA('TOKENCONCAT'):
+                            concat = True
                         else:
                             to_add.append(token)
                     self.__tok.shift(to_add)
@@ -1130,3 +1144,11 @@ label:
     assert ASM("db 1 << 1 + 1") == b'04'
     assert ASM("db 1 & 2") == b'00'
     assert ASM("db 1 | 2") == b'03'
+    assert ASM(r"""
+#MACRO test
+    dw test ## \1
+#END
+testhello := $100
+testtest := $200
+    test hello
+    test test""") == b'00010002'
