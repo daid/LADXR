@@ -460,7 +460,7 @@ class Assembler:
                     value = self.parseExpression()
                     if value.kind != 'NUMBER':
                         raise AssemblerException(start, "Can only assign numbers")
-                    self.addConstant(str(start.value), int(value.value))
+                    self.setConstant(str(start.value), int(value.value))
                 else:
                     raise AssemblerException(start, "Syntax error")
             else:
@@ -828,6 +828,10 @@ class Assembler:
 
     def addConstant(self, name: str, value: int) -> None:
         assert name not in self.__constant, "Duplicate constant: %s" % (name)
+        assert name not in self.__label, "Duplicate constant: %s" % (name)
+        self.__constant[name] = value
+
+    def setConstant(self, name: str, value: int) -> None:
         assert name not in self.__label, "Duplicate constant: %s" % (name)
         self.__constant[name] = value
 
