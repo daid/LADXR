@@ -939,6 +939,7 @@ class Assembler:
             t.kind = 'NUMBER'
             t.value = CONST_MAP[str(t.value)]
         elif t.isA('ID') and t.value in self.__constant:
+            t = t.copy()
             t.kind = 'NUMBER'
             t.value = self.__constant[str(t.value)]
         elif t.isA('ID') and str(t.value).startswith("."):
