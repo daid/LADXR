@@ -470,7 +470,7 @@ class Assembler:
                         elif token.isA('TOKENCONCAT'):
                             concat = True
                         else:
-                            to_add.append(token)
+                            to_add.append(token.copy())
                     self.__tok.shift(to_add)
                 elif self.__tok.peek().kind == 'LABEL':
                     self.__tok.pop()
