@@ -120,13 +120,13 @@ class OP(ExprBase):
 
 
 class CALL(ExprBase):
-    def __init__(self, function, param, *, line_nr):
+    def __init__(self, function, params, *, line_nr):
         self.function = function
-        self.param = param
+        self.params = params
         self.line_nr = line_nr
 
     def __repr__(self) -> str:
-        return f"{self.function}({self.param})"
+        return f"{self.function}({self.params})"
 
 
 class AssemblerException(Exception):
@@ -953,9 +953,11 @@ class Assembler:
             t.value = self.__scope + str(t.value)
         elif t.isA('ID') and self.__tok.peek().isA('OP', '('):
             self.__tok.pop()
-            param = self.parseExpression()
+            params = [self.parseExpression()]
+            while self.__tok.popIf('OP', ','):
+                params.append(self.parseExpression())
             self.__tok.expect('OP', ')')
-            return CALL(t.value, param, line_nr=t.line_nr)
+            return CALL(t.value, params, line_nr=t.line_nr)
         return t
 
     def link(self) -> None:
@@ -981,6 +983,20 @@ class Assembler:
                         inline_strings[strdata] = len(section.data) + section.base_address
                         section.data += strdata
                     expr = Token('NUMBER', inline_strings[strdata], expr.line_nr)
+                if isinstance(expr, CALL) and expr.function == 'INLINE':
+                    data = bytearray()
+                    for p in expr.params:
+                        p = self.resolveExpr(p)
+                        if not p.isA('NUMBER'):
+                            raise AssemblerException(p, f"Failed to link {p}, symbol not found?")
+                        if p.value < 0 or p.value > 255:
+                            raise AssemblerException(p, f"Value out of range for INLINE")
+                        data.append(p.value)
+                    data = bytes(data)
+                    if data not in inline_strings:
+                        inline_strings[data] = len(section.data) + section.base_address
+                        section.data += data
+                    expr = Token('NUMBER', inline_strings[data], expr.line_nr)
                 if not expr.isA('NUMBER'):
                     raise AssemblerException(expr, f"Failed to link {link_expr}, symbol not found?")
                 assert isinstance(expr, Token)
@@ -1013,18 +1029,24 @@ class Assembler:
             return OP.make(expr.op, left, self.resolveExpr(expr.right))
         elif isinstance(expr, CALL):
             if expr.function == 'BANK':
-                if expr.param.value not in self.__label:
-                    raise AssemblerException(expr, f"Cannot find label: {expr.param.value}")
-                section, offset = self.__label[expr.param.value]
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to BANK() function")
+                if expr.params[0].value not in self.__label:
+                    raise AssemblerException(expr, f"Cannot find label: {expr.params[0].value}")
+                section, offset = self.__label[expr.params[0].value]
                 if section.bank is None:
-                    raise AssemblerException(expr, f"Tried to get bank of label: {expr.param.value}, but label not in a bank.")
-                return Token('NUMBER', section.bank, expr.param.line_nr)
+                    raise AssemblerException(expr, f"Tried to get bank of label: {expr.params[0].value}, but label not in a bank.")
+                return Token('NUMBER', section.bank, expr.params[0].line_nr)
             elif expr.function == 'LOW':
-                param = self.resolveExpr(expr.param)
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to LOW() function")
+                param = self.resolveExpr(expr.params[0])
                 if param.isA('NUMBER'):
                     return Token('NUMBER', param.value & 0xFF, expr.line_nr)
             elif expr.function == 'HIGH':
-                param = self.resolveExpr(expr.param)
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to HIGH() function")
+                param = self.resolveExpr(expr.params[0])
                 if param.isA('NUMBER'):
                     return Token('NUMBER', (param.value >> 8) & 0xFF, expr.line_nr)
         elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
