@@ -814,10 +814,16 @@ class Assembler:
 
     def instrDS(self) -> None:
         param = self.parseExpression()
-        if param.isA('NUMBER'):
-            self.insertData(b'\x00' * param.value)
-        else:
+        if not param.isA('NUMBER'):
             raise AssemblerException(param, "Syntax error")
+        amount = param.value
+        data = b'\x00'
+        if self.__tok.popIf('OP', ','):
+            param = self.parseExpression()
+            if not param.isA('NUMBER'):
+                raise AssemblerException(param, "Syntax error")
+            data = bytes([param.value])
+        self.insertData(data * amount)
 
     def instrDB(self) -> None:
         param = self.parseExpression()
