@@ -83,6 +83,16 @@ function randomGenerationString()
         setTimeout(randomGenerationString, 1000);
 }
 
+function updateGfxModImage() {
+    var gfxmod = ID('gfxmod').value
+    if (gfxmod) {
+        var url = 'LADXR/gfx/' + gfxmod + '.png';
+        ID('gfxmodimg').src = url;
+    } else {
+        ID('gfxmodimg').src = '';
+    }
+}
+
 function updateSettingsString() {
     var sss = "";
     for(var s of options) {
@@ -156,6 +166,9 @@ function buildUI(filter_function) {
             opts = [{key: true, label: "Yes"}, {key: false, label: "No"}]
         }
         if (opts) {
+            if (s.key == 'gfxmod') {
+                html += '<img id="gfxmodimg">';
+            }
             html += `<select id='${s.key}' name='${s.key}'>`;
             for(var o of opts) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
@@ -170,8 +183,12 @@ function buildUI(filter_function) {
     ID("settings").innerHTML += html;
     loadSettingsString();
     for(var s of options) {
-        if (ID(s.key)) ID(s.key).oninput = updateSettingsString;
+        if (ID(s.key)) {
+            ID(s.key).oninput = updateSettingsString;
+            if (s.key == 'gfxmod') ID(s.key).oninput = function(e) { updateGfxModImage(); updateSettingsString(); };
+        }
     }
+    updateGfxModImage();
     updateSettingsString();
     updateForm();
 
