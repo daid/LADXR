@@ -5,6 +5,7 @@ import os
 
 from romTables import ROMWithTables
 import assembler
+import mapgen
 import patches.overworld
 import patches.dungeon
 import patches.entrances
@@ -55,7 +56,7 @@ import hints
 # Function to generate a final rom, this patches the rom with all required patches
 def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     print("Loading: %s" % (args.input_filename))
-    rom = ROMWithTables(args.input_filename)
+    rom = ROMWithTables(open(args.input_filename, 'rb'))
 
     pymods = []
     if args.pymod:
@@ -93,6 +94,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     assembler.const("wZolSpawnCount", 0xDE10)
     assembler.const("wCuccoSpawnCount", 0xDE11)
+    assembler.const("wDropBombSpawnCount", 0xDE12)
+    assembler.const("wLinkSpawnDelay", 0xDE13)
 
     #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
@@ -110,7 +113,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.easyColorDungeonAccess(rom)
     patches.owl.removeOwlEvents(rom)
     patches.enemies.fixArmosKnightAsMiniboss(rom)
-    patches.bank3e.addBank3E(rom, seed)
+    patches.bank3e.addBank3E(rom, seed, settings)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
     patches.core.fixMarinFollower(rom)
@@ -160,6 +163,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.overworld.createDungeonOnlyOverworld(rom)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
+    elif settings.overworld == 'random':
+        patches.overworld.patchOverworldTilesets(rom)
+        mapgen.store_map(rom, logic.world.map)
     if settings.dungeon_items == 'keysy':
         patches.dungeon.removeKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
@@ -244,7 +250,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if settings.overworld != "dungeondive":
+    if settings.overworld not in {"dungeondive", "random"}:
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):

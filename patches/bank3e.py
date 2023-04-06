@@ -9,7 +9,7 @@ def hasBank3E(rom):
 
 # Bank $3E is used for large chunks of custom code.
 #   Mainly for new chest and dropped items handling.
-def addBank3E(rom, seed):
+def addBank3E(rom, seed, settings):
     # No default text for getting the bow, so use an unused slot.
     rom.texts[0x89] = formatText("Found the {BOW}!")
     rom.texts[0xD9] = formatText("Found the {BOOMERANG}!")  # owl text slot reuse
@@ -45,7 +45,7 @@ def addBank3E(rom, seed):
     """))
 
     my_path = os.path.dirname(__file__)
-    rom.patch(0x3E, 0x0000, 0x3000, ASM("""
+    rom.patch(0x3E, 0x0000, 0x2F00, ASM("""
         call MainJumpTable
         pop af
         jp $080C ; switch bank and return to normal code.
@@ -204,7 +204,12 @@ WriteToVRAM:
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
 
-    rom.patch(0x3E, 0x2F00, "00" * len(seed), binascii.hexlify(seed))
+    shortSeed = seed[:0x20]
+    rom.patch(0x3E, 0x2F00, "00" * len(shortSeed), binascii.hexlify(shortSeed))
+
+    shortSettings = settings.getShortString().encode('utf-8')
+    rom.patch(0x3E, 0x2F20, "00", binascii.hexlify(len(shortSettings).to_bytes(1, 'little')))
+    rom.patch(0x3E, 0x2F21, "00" * len(shortSettings), binascii.hexlify(shortSettings))
 
     # Prevent the photo album from crashing due to serial interrupts
     rom.patch(0x28, 0x00D2, ASM("ld a, $09"), ASM("ld a, $01"))

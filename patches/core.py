@@ -227,7 +227,6 @@ noWrapDown:
         call $0C7D
 
         ; Replace warp0 tile data, and put link on that tile.
-        xor  a
         ld   a, $%02x ; Type
         ld   [$D401], a
         ld   a, $%02x ; Map

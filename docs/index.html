@@ -1,26 +1,26 @@
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+<link rel="stylesheet" href="style.css">
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
-<h1>LADXR: Legend of Zelda: Link's Awakening DX - Randomizer</h1>
+<h1>LADXR: The Legend of Zelda: Link's Awakening DX - Randomizer</h1>
 
 <h2>What is this?</h2>
+<p>LADXR is an item (and entrance) randomizer for the North American/English (revision-0/v1.0) ROM of "The Legend of Zelda: Link's Awakening DX".</p>
+<p><em>What does this do?</em> It changes the locations of items in order to provide a new experience to the game.</p>
+<p>It ensures the game is still beatable by checking if all locations can still be reached, but progress will (usually) not be linear: you will have to find your own path.</p>
+<p>The goal of this randomizer is to create a new experience, both glitchless and bugless (except those caused by the player). Normal gameplay should not introduce any bugs, and it can be experienced like the normal game.</p>
+
+<h2>Feature list:</h2>
 <ul>
-<p>This is a randomizer for the Game Boy Color game The Legend of Zelda: Link's Awakening DX</p>
-<p>What does this do? It changes the locations of items in the game to give a new way to play the game.</p>
-<p>It ensures the game is still beatable, by checking if all locations can still be reached. But no guarantee that you progress from Dungeon to Dungeon, you will have to find your own path.</p>
-<p>The goal of this randomizer is to create a new experience, which does not show any glitches or bugs (except when you use a bug/glitch yourself). Normal gameplay should not introduce any bugs, and it can be experienced like the normal game.</p>
-<p>Feature list:
-<li>All contents in chests are shuffled.</li>
-<li>The shield given by Tarin is shuffled.</li>
-<li>Heart Pieces and seashells not found in chests can be shuffled optionally.</li>
-<li>Small Keys, Nightmare Keys, Maps, Compasses, and Stone Beaks are shuffled within their respective dungeons. Keysanity will allow them to be shuffled anywhere in the game.</li>
+<li>Nearly every item is able to be shuffled, depending on your selected settings.</li>
+<li>Dungeon items are shuffled within their respective dungeon by default, but can be included with the rest of the pool (via keysanity, and the such).</li>
 <li>Dungeon keys (Tail Key, Angler Key, Face Key, Bird Key and Slime Key) and the Golden Leaves are also shuffled into the pool of items.</li>
-<li>Completing the trading sequence is not required to beat the game. (The book that tells you the path through the Wind Fish's Egg is readable without the Magnifying Lens) This also means that taking Marin on a date isn't required, either.</li>
+<li>The trading sequence and the date with Marin are now optional. Each part of the trading sequence will give you an item if you show them what they need.</li>
 </ul>
 <p>See the <a href="faq.html">FAQ</a></p>
 <p>See the <a href="tips.html">Tips</a></p>
@@ -28,11 +28,11 @@
 <h2>Play</h2>
 
 <p>You can use the following webpages to generate a custom randomized ROM for you.</p>
-<p><a href="http://ladxr.daid.eu/latest/"><strong>Latest: </strong>Latest greatest version, can change at any moment and might be unstable, but most of the time works great.</a></p>
-<p><a href="http://ladxr.daid.eu/v10/"><strong>V0.10: </strong>Current stable version. Fixed all the issues found in v0.9 and very stable, adds a few options not available in 0.9</a></p>
-<p><a href="http://ladxr.daid.eu/v09/"><strong>V0.9: </strong>Long time in the work compared to V0.8, many new options, newer web interface. Recommended. Entrance randomization contains bugs and should be avoided.</a></p>
-<p><a href="http://ladxr.daid.eu/v08/"><strong>V0.8: </strong>Combining boss shuffle with heart container randomization is buggy. Various small logic bugs, less options then 0.9.</a></p>
-<p><a href="http://ladxr.daid.eu/v07/"><strong>V0.7: </strong>Older version, few small logic bugs, much less options.</a></p>
+<p><a href="http://ladxr.daid.eu/latest/"><strong>Latest: </strong>The latest and greatest version, fresh off of the master branch. Can change at any moment, and may be unstable, but most of the time it works great.</a></p>
+<p><a href="http://ladxr.daid.eu/v10/"><strong>V0.10: </strong>Current stable version. Many bugfixes from v0.9, also adds a few more options.</a></p>
+<p><a href="http://ladxr.daid.eu/v09/"><strong>V0.9: </strong>Long time in the work compared to V0.8, many new options, newer web interface. Entrance randomization contains bugs, and should be avoided.</a></p>
+<p><a href="http://ladxr.daid.eu/v08/"><strong>V0.8: </strong>Combining boss shuffle with heart container randomization is buggy. Various small logic bugs, less options than v0.9.</a></p>
+<p><a href="http://ladxr.daid.eu/v07/"><strong>V0.7: </strong>A few small logic bugs, far less options.</a></p>
 <p><a href="http://ladxr.daid.eu/v06/"><strong>V0.6: </strong>Whole bunch of small bugs, softlocking due to bad key logic is possible, many newer features not available.</a></p>
 <p><a href="http://ladxr.daid.eu/v05/"><strong>V0.5: </strong>Contains a few logic bugs, newer versions are recommended.</a></p>
 <p>(Older versions are too unstable to be useful and are not recommended, as seed generation was not stable)</p>
@@ -40,7 +40,7 @@
 <h2>Community</h2>
 
 <p>Drop by on <a href="https://discord.gg/XTw7X2G">discord</a> for a chat, or to join in on races!</p>
-<p>Report issues/bugs on <a href="https://discord.gg/XTw7X2G">discord</a>, or at <a href="https://github.com/daid/LADXR/issues">github issue tracker</a></p>
+<p>Report issues/bugs on <a href="https://discord.gg/XTw7X2G">discord</a>, or at the <a href="https://github.com/daid/LADXR/issues">github issue tracker</a></p>
 <p>Visit <a href="https://sites.google.com/view/z4randomizer">here</a> for another Links Awakening Randomizer called Z4R, which has a different focus and gives different playstyle options. Both are cool! We use the same discord server.</p>
 <p>New to the game?  We recommend using a tracker!</p>
 <ul>
@@ -49,7 +49,7 @@
 </ul>
 <h2>Development</h2>
 
-<p>Source code is available at: <a href="https://github.com/daid/LADXR/">Source code</a>. If you want to contribute, that can be done in many ways, including updating documentation, logic. Or even just bug reports!</p>
+<p>Source code is available at <a href="https://github.com/daid/LADXR/">Github</a>. If you want to contribute, that can be done in many ways, including updating documentation, logic, or even just bug reports!</p>
 
 </body>
 </html>
