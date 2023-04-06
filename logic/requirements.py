@@ -301,6 +301,7 @@ class RequirementsSettings:
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
+        self.text_clip = options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Not sure how this works, during testing it looks to be working as intended for logic
         self.jesus_rooster = ROOSTER
 
         self.boss_requirements = [
