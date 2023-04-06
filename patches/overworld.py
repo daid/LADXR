@@ -14,7 +14,7 @@ def patchOverworldTilesets(rom):
         ld   [hl], $3F
         ld   d, $00
         ld   e, a
-        ld   hl, $6F00
+        ld   hl, $7F00
         add  hl, de
         ldh  a, [$94] ; We need to load the currently loaded tileset in E to compare it
         ld   e, a
@@ -27,17 +27,17 @@ def patchOverworldTilesets(rom):
 
     for x in range(16):
         for y in range(16):
-            rom.banks[0x3F][0x2F00+x+y*16] = rom.banks[0x20][0x2E73 + (x // 2) + (y // 2) * 8]
-    rom.banks[0x3F][0x2F07] = rom.banks[0x3F][0x2F08]  # Fix the room next to the egg
-    rom.banks[0x3F][0x2F17] = rom.banks[0x3F][0x2F08]  # Fix the room next to the egg
-    rom.banks[0x3F][0x2F3A] = 0x0F  # room below mambo cave
-    rom.banks[0x3F][0x2F3B] = 0x0F  # room below D4
-    rom.banks[0x3F][0x2F4B] = 0x0F  # room next to castle
-    rom.banks[0x3F][0x2F5B] = 0x0F  # room next to castle
+            rom.banks[0x3F][0x3F00+x+y*16] = rom.banks[0x20][0x2E73 + (x // 2) + (y // 2) * 8]
+    rom.banks[0x3F][0x3F07] = rom.banks[0x3F][0x3F08]  # Fix the room next to the egg
+    rom.banks[0x3F][0x3F17] = rom.banks[0x3F][0x3F08]  # Fix the room next to the egg
+    rom.banks[0x3F][0x3F3A] = 0x0F  # room below mambo cave
+    rom.banks[0x3F][0x3F3B] = 0x0F  # room below D4
+    rom.banks[0x3F][0x3F4B] = 0x0F  # room next to castle
+    rom.banks[0x3F][0x3F5B] = 0x0F  # room next to castle
     # Fix the rooms around the camera shop
-    rom.banks[0x3F][0x2F26] = 0x0F
-    rom.banks[0x3F][0x2F27] = 0x0F
-    rom.banks[0x3F][0x2F36] = 0x0F
+    rom.banks[0x3F][0x3F26] = 0x0F
+    rom.banks[0x3F][0x3F27] = 0x0F
+    rom.banks[0x3F][0x3F36] = 0x0F
 
 
 def createDungeonOnlyOverworld(rom):
@@ -96,7 +96,7 @@ def exportOverworld(rom):
             room_nr = room_index
         else:
             room_nr = int(room_index[3:], 16)
-        tileset_index = rom.banks[0x3F][0x2f00 + room_nr]
+        tileset_index = rom.banks[0x3F][0x3F00 + room_nr]
         attributedata_bank = rom.banks[0x1A][0x2476 + room_nr]
         attributedata_addr = rom.banks[0x1A][0x1E76 + room_nr * 2]
         attributedata_addr |= rom.banks[0x1A][0x1E76 + room_nr * 2 + 1] << 8

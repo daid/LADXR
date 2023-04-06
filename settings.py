@@ -122,7 +122,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
             Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
                                                                           ('smallkeys', 's', 'Small keys'),
                                                                           ('localkeys', 'L', 'Map/Compass/Beaks'),
-                                                                          ('nightmarekey', 'N', 'MCB + SmallKeys'),
+                                                                          ('localnightmarekey', 'N', 'MCB + SmallKeys'),
                                                                           ('keysanity', 'K', 'Keysanity'),
                                                                           ('keysy', 'k', 'Keysy')], default='',
                 description="""Sets if dungeon items can only be in their respective dungeon, or everywhere.
@@ -186,10 +186,11 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
 [Never] you can never steal from the shop."""),
             Setting('bowwow', 'Special', 'g', 'Good boy mode', options=[('normal', '', 'Disabled'), ('always', 'a', 'Enabled'), ('swordless', 's', 'Enabled (swordless)')], default='normal',
                 description='Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'),
-            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons')], default='normal',
+            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('random', 'R', 'Randomized')], default='normal',
                 description="""
 [Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.
-[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed."""),
+[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
+[Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
             Setting('superweapons', 'Special', 'q', 'Enable super weapons', default=False,
@@ -308,6 +309,8 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
             dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
         if self.overworld == "nodungeons":
             dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+        if self.overworld == "random":
+            self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 
     def set(self, value: str) -> None:
         if "=" in value:

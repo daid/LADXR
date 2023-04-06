@@ -331,11 +331,11 @@ def changeMiniBosses(rom, mapping):
                 elif 0x140 <= re.room < 0x15D: #D3
                     target = (2, 0x152, 80, 80)
                 elif 0x15D <= re.room < 0x180: #D4
-                    target = (2, 0x174, 80, 80)
+                    target = (3, 0x174, 80, 80)
                 elif 0x180 <= re.room < 0x1AC: #D5
-                    target = (2, 0x1A1, 80, 80)
+                    target = (4, 0x1A1, 80, 80)
                 elif 0x1B0 <= re.room < 0x1DE: #D6
-                    target = (2, 0x1D4, 80, 80)
+                    target = (5, 0x1D4, 80, 80)
                 elif 0x200 <= re.room < 0x22D: #D7
                     target = (6, 0x20E, 80, 80)
                 elif 0x22D <= re.room < 0x26C: #D8

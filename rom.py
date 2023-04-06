@@ -5,12 +5,10 @@ h2b = binascii.unhexlify
 
 
 class ROM:
-    def __init__(self, filename):
-        data = open(filename, "rb").read()
-        assert len(data) == 1024 * 1024
+    def __init__(self, filestream):
         self.banks = []
         for n in range(0x40):
-            self.banks.append(bytearray(data[n*0x4000:(n+1)*0x4000]))
+            self.banks.append(bytearray(filestream.read(0x4000)))
 
     def patch(self, bank_nr, addr, old, new, *, fill_nop=False):
         new = h2b(new)
@@ -72,3 +70,7 @@ class ROM:
 
     def readHexSeed(self):
         return self.banks[0x3E][0x2F00:0x2F10].hex().upper()
+    
+    def readShortSettings(self):
+        length = self.banks[0x3E][0x2F20]
+        return self.banks[0x3E][0x2F21:0x2F21+length].decode('utf-8')

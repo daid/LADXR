@@ -1,12 +1,19 @@
+from typing import Optional
 from locations.items import *
 
 
 class OR:
     __slots__ = ('__items', '__children')
 
+    def __new__(cls, *args):
+        if True in args:
+            return True
+        return super().__new__(cls)
+
     def __init__(self, *args):
-        self.__items = [item for item in args if isinstance(item, str)]
-        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
+        self.__items = [item for item in args if type(item) in (str, bool)]
+        self.__children = [item for item in args if type(item) not in (str, bool, type(None))]
+
         assert self.__items or self.__children, args
 
     def __repr__(self) -> str:
@@ -29,7 +36,7 @@ class OR:
 
     def test(self, inventory) -> bool:
         for item in self.__items:
-            if item in inventory:
+            if item == True or item in inventory:
                 return True
         for child in self.__children:
             if child.test(inventory):
@@ -65,9 +72,14 @@ class OR:
 class AND:
     __slots__ = ('__items', '__children')
 
+    def __new__(cls, *args):
+        if False in args:
+            return False
+        return super().__new__(cls)
+
     def __init__(self, *args):
         self.__items = [item for item in args if isinstance(item, str)]
-        self.__children = [item for item in args if not isinstance(item, str) and item is not None]
+        self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
 
     def __repr__(self) -> str:
         return "and%s" % (self.__items+self.__children)
@@ -87,7 +99,7 @@ class AND:
 
     def test(self, inventory) -> bool:
         for item in self.__items:
-            if item not in inventory:
+            if item != True and item not in inventory:
                 return False
         for child in self.__children:
             if not child.test(inventory):
@@ -232,6 +244,8 @@ def hasConsumableRequirement(requirements) -> bool:
 def isConsumable(item) -> bool:
     if item is None:
         return False
+    if isinstance(item, bool):
+        return False
     if item.startswith("RUPEES_") or item == "RUPEES":
         return True
     if item.startswith("KEY"):
@@ -242,6 +256,7 @@ def isConsumable(item) -> bool:
 class RequirementsSettings:
     def __init__(self, options):
         self.bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET, BOOMERANG)
+        self.pit_bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, BOOMERANG, BOMB) # unique
         self.attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
         self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
         self.attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
@@ -286,6 +301,7 @@ class RequirementsSettings:
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
+        self.jesus_rooster = ROOSTER
 
         self.boss_requirements = [
             SWORD,  # D1 boss
