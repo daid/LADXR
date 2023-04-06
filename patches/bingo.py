@@ -505,7 +505,7 @@ init:
     inc  a
     ld   [wState], a
     di
-    ldh  [$4F], a ; 2nd vram bank
+    ldh  [$FF4F], a ; 2nd vram bank
 
     ld   hl, $9843
     ld   c, 25
@@ -518,7 +518,7 @@ init:
     pop  hl
     jr   nz, .notDone
 .statWait1:
-    ldh  a, [$41] ;STAT
+    ldh  a, [$FF41] ;STAT
     and  $02
     jr   nz, .statWait1 
     ld   a, $04
@@ -528,7 +528,7 @@ init:
     ld   bc, $0020
     add  hl, bc
 .statWait2:
-    ldh  a, [$41] ;STAT
+    ldh  a, [$FF41] ;STAT
     and  $02
     jr   nz, .statWait2 
     ld   a, $04
@@ -554,7 +554,7 @@ init:
     jr   nz, .checkDoneLoop
 
     xor  a
-    ldh  [$4F], a ; 1st vram bank
+    ldh  [$FF4F], a ; 1st vram bank
     ei
 
 checkGoalDone:
@@ -592,7 +592,7 @@ chooseSquare:
     ld   a, $02
     ldi  [hl], a
 
-    ldh  a, [$CC] ; button presses
+    ldh  a, [$FFCC] ; button presses
     bit  0, a
     jr   nz, .right
     bit  1, a
@@ -685,7 +685,7 @@ finishGame:
     and  a
     ret  nz
     
-    ldh  a, [$CC] ; button presses
+    ldh  a, [$FFCC] ; button presses
     and  a
     ret  z
     
@@ -964,7 +964,7 @@ messageTable:
         call $7000
     """))
     rom.patch(0x0D, 0x3000, 0x4000, ASM("""
-        ldh  a, [$EB] ; active entity
+        ldh  a, [$FFEB] ; active entity
     """ + "\n".join([goal.kill_code for goal in goals if goal.kill_code is not None]) + """
 done:   ; Return to normal item drop handler
         ld   a,  $03   ;normal drop item handler bank

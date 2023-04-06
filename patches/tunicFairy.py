@@ -22,7 +22,7 @@ giveItems:
     """), fill_nop=True)
     rom.patch(0x36, 0x1139, 0x1144, ASM("""
         ld  a, [$51BF]
-        ldh [$F1], a
+        ldh [$FFF1], a
         ld  a, $02
         rst 8
         ld  a, $03
@@ -31,7 +31,7 @@ giveItems:
 
     rom.patch(0x36, 0x1162, 0x1192, ASM("""
         ld  a, [$51C0]
-        ldh [$F1], a
+        ldh [$FFF1], a
         ld  a, $02
         rst 8
         ld  a, $03

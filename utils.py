@@ -145,7 +145,7 @@ def setReplacementName(key: str, value: str) -> None:
 def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
     instr = instr.format(**_NAMES)
     s = instr.encode("ascii")
-    s = s.replace(b"'", b"^")
+    s = s.replace(b"'", b"^").replace(b'<honeycomb>', b'\xE5')
 
     def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
@@ -169,7 +169,7 @@ def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -
     if ask is not None:
         askbytes = ask.encode("ascii")
         result = result.rstrip()
-        while len(result) % 32 != 16:
+        while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + askbytes + b'\xfe'
     return result.rstrip() + b'\xff'

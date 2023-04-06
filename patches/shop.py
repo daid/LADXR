@@ -37,7 +37,7 @@ skipSubRoutine:
         ld   de, $C505
         
         ; Check if we want to load a key item into the shop.
-        ldh  a, [$F8]
+        ldh  a, [$FFF8]
         bit  4, a
         jr   nz, checkForSecondKeyItem
         ld   a, $01
@@ -85,7 +85,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3AC3, 0x3AD8, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C5]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $02
         rst  8
         ; Update the room status to mark first item as bought
@@ -99,7 +99,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3A91, 0x3AA9, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C6]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $02
         rst  8
         ; Update the room status to mark second item as bought
@@ -122,7 +122,7 @@ hasNoBombs:
         and  a
         jr   nz, notShovel
         ld   a, [$77C5]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $01
         rst  8
         ret
@@ -130,7 +130,7 @@ notShovel:
         cp   $04
         jr   nz, notBow
         ld   a, [$77C6]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $01
         rst  8
         ret

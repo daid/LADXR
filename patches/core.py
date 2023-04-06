@@ -1,6 +1,6 @@
 from assembler import ASM
 from entranceInfo import ENTRANCE_INFO
-from roomEditor import RoomEditor, ObjectWarp, ObjectHorizontal
+from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from backgroundEditor import BackgroundEditor
 import utils
 
@@ -25,23 +25,23 @@ def fixWrongWarp(rom):
 
 def bugfixBossroomTopPush(rom):
     rom.patch(0x14, 0x14D9, ASM("""
-        ldh  a, [$99]
+        ldh  a, [$FF99]
         dec  a
-        ldh  [$99], a
+        ldh  [$FF99], a
     """), ASM("""
         jp   $7F80
     """), fill_nop=True)
     rom.patch(0x14, 0x3F80, "00" * 0x80, ASM("""
-        ldh  a, [$99]
+        ldh  a, [$FF99]
         cp   $50
         jr   nc, up
 down:
         inc  a
-        ldh  [$99], a
+        ldh  [$FF99], a
         jp   $54DE
 up:
         dec  a
-        ldh  [$99], a
+        ldh  [$FF99], a
         jp   $54DE
     """), fill_nop=True)
 
@@ -79,7 +79,7 @@ def cleanup(rom):
 
 
 def disablePhotoPrint(rom):
-    rom.patch(0x28, 0x07CC, ASM("ldh [$01], a\nldh [$02], a"), "", fill_nop=True) # do not reset the serial link
+    rom.patch(0x28, 0x07CC, ASM("ldh [$FF01], a\nldh [$FF02], a"), "", fill_nop=True) # do not reset the serial link
     rom.patch(0x28, 0x0483, ASM("ld a, $13"), ASM("jr $EA", 0x4483)) # Do not print on A press, but jump to cancel
     rom.patch(0x28, 0x0492, ASM("ld hl, $4439"), ASM("ret"), fill_nop=True) # Do not show the print/cancel overlay
 
@@ -114,7 +114,7 @@ def quickswap(rom, button):
 
 def injectMainLoop(rom):
     rom.patch(0x00, 0x0346, ASM("""
-        ldh  a, [$FE]
+        ldh  a, [$FFFE]
         and  a
         jr   z, $08
     """), ASM("""
@@ -128,12 +128,12 @@ def warpHome(rom):
     rom.patch(0x01, 0x012A, 0x0150, ASM("""
         ld   hl, $C13F
         call $6BA8 ; make sound on keypress
-        ldh  a, [$CC] ; load joystick status
+        ldh  a, [$FFCC] ; load joystick status
         and  $04      ; if up
         jr   z, noUp
         dec  [hl]
 noUp:
-        ldh  a, [$CC] ; load joystick status
+        ldh  a, [$FFCC] ; load joystick status
         and  $08      ; if down
         jr   z, noDown
         inc  [hl]
@@ -238,11 +238,11 @@ noWrapDown:
         ld   a, $%02x ; Y
         ld   [$D405], a
 
-        ldh  a, [$98]
+        ldh  a, [$FF98]
         swap a
         and  $0F
         ld   e, a
-        ldh  a, [$99]
+        ldh  a, [$FF99]
         sub  $08
         and  $F0
         or   e
@@ -250,6 +250,16 @@ noWrapDown:
 
         ld   a, $07
         ld   [$DB96], a
+        
+        ; Clear all entity status, so they are no longer rendered.
+        ld   hl, $C280
+        xor  a
+        ld   c, 16
+clearOAMLoop:
+        ld   [hl+], a
+        dec  c
+        jr   nz, clearOAMLoop
+        
         ret
         jp   $40BE  ; return to normal "return to game" handling
     """ % (type, map, room, x, y)), fill_nop=True)
@@ -528,3 +538,14 @@ OAMData:
         gfx_low = "\n".join([line.split(" ")[n] for line in tile_graphics.split("\n")[8:]])
         rom.banks[0x38][0x1400+n*0x20:0x1410+n*0x20] = utils.createTileData(gfx_high)
         rom.banks[0x38][0x1410+n*0x20:0x1420+n*0x20] = utils.createTileData(gfx_low)
+
+
+# For the D7 exit, make it so that we can exit it properly in ER
+def fixD7exit(rom):
+    re = RoomEditor(rom, 0x0E)
+    for x in [0, 1, 2, 8, 9]:
+        for y in range(3):
+            re.removeObject(x, y)
+    re.objects.append(Object(5, 2, 0xE1))
+    re.objects.append(Object(5, 3, 0x4A))
+    re.store(rom)

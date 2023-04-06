@@ -206,8 +206,17 @@ def changeBosses(rom, mapping: List[int]):
 
             # Add the staircase to the boss, and fix the warp back.
             re = getCleanBossRoom(rom, dungeon_nr)
-            re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 6, 0x2F8, 72, 80)]
+            re.objects += [
+                Object(3, 3, 0x2C),
+                ObjectHorizontal(4, 3, 0x22, 2),
+                Object(6, 3, 0x2B),
+                Object(3, 4, 0x2A),
+                Object(4, 4, 0xA2),
+                Object(5, 4, 0x21),
+                Object(6, 4, 0x29),
+                ObjectWarp(2, 6, 0x2F8, 72, 80)]
             re.store(rom)
+            rom.banks[0x20][0x2EB3 + re.room - 0x100] = 0  # Change the room tileset to include the stairs
             re = RoomEditor(rom, 0x2F8)
             re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr], 72, 80)
             re.store(rom)
@@ -289,7 +298,7 @@ def changeMiniBosses(rom, mapping):
         ld  hl, $C17B
         or  [hl]
         ret nz
-        ldh a, [$F6] ; room
+        ldh a, [$FFF6] ; room
         cp  $45 ; check for D3 dodogo room
         ret z
         cp  $7F ; check for armos temple room
@@ -403,11 +412,11 @@ def doubleTrouble(rom):
         #     re.entities += [(3, 4, 0x63), (2, 4, 0x63)]
         #     re.store(rom)
         #     # Remove that links movement is blocked
-        #     rom.patch(0x05, 0x2258, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1AE3, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1C5D, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1C8D, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1CAF, ASM("ldh [$A1], a"), "0000")
+        #     rom.patch(0x05, 0x2258, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1AE3, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1C5D, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1C8D, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1CAF, ASM("ldh [$FFA1], a"), "0000")
         if re.hasEntity(0x62):  # hot head (TODO: Drops thwo hearts)
             re.removeEntities(0x62)
             re.entities += [(2, 2, 0x62), (4, 4, 0x62)]

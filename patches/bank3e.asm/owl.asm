@@ -10,7 +10,7 @@ HandleOwlStatue:
     ld   hl, $7B16
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call ItemMessage
     call GiveItemFromChest
     ret
@@ -21,9 +21,9 @@ GetRoomStatusAddressInHL:
     ld   a, [$DBA5] ; isIndoor
     ld   d, a
     ld   hl, $D800
-    ldh  a, [$F6]   ; room nr
+    ldh  a, [$FFF6]   ; room nr
     ld   e, a
-    ldh  a, [$F7]   ; map nr
+    ldh  a, [$FFF7]   ; map nr
     cp   $FF
     jr   nz, .notColorDungeon
 
@@ -49,5 +49,5 @@ RenderOwlStatueItem:
     ld   hl, $7B16
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     jp   RenderChestItem

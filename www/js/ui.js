@@ -26,6 +26,10 @@ async function seedComplete(data) {
             else
                 ID("spoilerButton").style.display = 'none';
         }
+
+        if (ID("magpieLink")) {
+            ID("magpieLink").href = `https://magpietracker.us/?shortString=${encodeURIComponent(document.location.hash)}`;
+        }
     }
     else
     {
@@ -77,6 +81,16 @@ function randomGenerationString()
     }
     if (ID("generatingdialog").checked)
         setTimeout(randomGenerationString, 1000);
+}
+
+function updateGfxModImage() {
+    var gfxmod = ID('gfxmod').value
+    if (gfxmod && gfxmod != 'custom') {
+        var url = 'LADXR/gfx/' + gfxmod + '.png';
+        ID('gfxmodimg').src = url;
+    } else {
+        ID('gfxmodimg').src = '';
+    }
 }
 
 function updateSettingsString() {
@@ -152,9 +166,16 @@ function buildUI(filter_function) {
             opts = [{key: true, label: "Yes"}, {key: false, label: "No"}]
         }
         if (opts) {
+            if (s.key == 'gfxmod') {
+                html += '<input type="file" name="customgfxfile" id="customgfxfile" style="display: none">';
+                html += '<img id="gfxmodimg">';
+            }
             html += `<select id='${s.key}' name='${s.key}'>`;
             for(var o of opts) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
+            }
+            if (s.key == 'gfxmod') {
+                html += `<option value='custom'>Custom...</option>`;
             }
             html += `</select>`;
         } else {
@@ -166,8 +187,16 @@ function buildUI(filter_function) {
     ID("settings").innerHTML += html;
     loadSettingsString();
     for(var s of options) {
-        if (ID(s.key)) ID(s.key).oninput = updateSettingsString;
+        if (ID(s.key)) {
+            ID(s.key).oninput = updateSettingsString;
+            if (s.key == 'gfxmod') ID(s.key).oninput = function(e) {
+                if (ID('gfxmod').value == 'custom') ID('customgfxfile').click();
+                updateGfxModImage();
+                updateSettingsString();
+            };
+        }
     }
+    updateGfxModImage();
     updateSettingsString();
     updateForm();
 
@@ -241,12 +270,27 @@ async function startRomGeneration()
     randomGenerationString();
     var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
     var args = ["--short", updateSettingsString()];
+    var data = {"input.gbc": buffer, "args": args, "id": 0};
     var e = ID("spoilerformat");
     if (e && e.value != 'none') {
         args.push("--spoilerformat");
         args.push(e.value);
     }
-    await postToWorker({"input.gbc": buffer, "args": args, "id": 0});
+
+    e = ID("plan");
+    if (e && e.value != "") {
+        args.push("--plan");
+        args.push('/plan.txt');
+        data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+    e = ID("gfxmod")
+    if (e.value == "custom" && ID('customgfxfile').value) {
+        args.push("-s");
+        args.push("gfxmod=custom.png");
+        data['gfx.png'] =  new Uint8Array(await ID("customgfxfile").files[0].arrayBuffer());
+    }
+
+    await postToWorker(data);
 }
 
 async function postToWorker(data)

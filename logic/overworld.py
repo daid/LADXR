@@ -130,6 +130,7 @@ class World:
         self._addEntranceRequirementExit("d0", None) # if exiting, you do not need bracelet
         ghost_grave = Location().connect(forest, POWER_BRACELET)
         Location().add(Seashell(0x074)).connect(ghost_grave, AND(r.bush, SHOVEL))  # next to grave cave, digging spot
+        graveyard.connect(forest_heartpiece, OR(BOOMERANG, HOOKSHOT), one_way=True) # grab the heart piece surrounded by pits from the north
 
         graveyard_cave_left = Location()
         graveyard_cave_right = Location().connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
@@ -183,8 +184,8 @@ class World:
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
 
         prairie_cave = Location()
-        prairie_cave_secret_exit = Location().connect(prairie_cave, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True)
-        prairie_cave = Location().connect(prairie_cave_secret_exit, OR(FEATHER, ROOSTER), one_way=True) # bomb walls are one-way        
+        prairie_cave_secret_exit = Location().connect(prairie_cave, OR(FEATHER, ROOSTER), one_way=True)
+        prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True) # bomb walls are one-way        
         self._addEntrance("prairie_right_cave_top", ukuku_prairie, prairie_cave, None)
         self._addEntrance("prairie_right_cave_bottom", left_bay_area, prairie_cave, None)
         self._addEntrance("prairie_right_cave_high", prairie_plateau, prairie_cave_secret_exit, None)
@@ -412,6 +413,7 @@ class World:
         d7_platau = Location()
         d7_tower = Location()
         d7_platau.connect(d7_tower, AND(POWER_BRACELET, BIRD_KEY), one_way=True)
+        d7_tower.connect(d7_platau, None, one_way=True)
         self._addEntrance("right_taltal_connector1", water_cave_hole, right_taltal_connector1, None)
         self._addEntrance("right_taltal_connector2", right_taltal_connector_outside1, right_taltal_connector1, None)
         self._addEntrance("right_taltal_connector3", right_taltal_connector_outside1, right_taltal_connector2, None)
@@ -497,11 +499,12 @@ class World:
             swamp.connect(forest_toadstool, r.pit_buffer_itemless, one_way=True) # villa buffer from top (swamp phonebooth area) to bottom (toadstool area)
             writes_hut_outside.connect(swamp, r.pit_buffer_itemless, one_way=True) # villa buffer from top (writes hut) to bottom (swamp phonebooth area) or damage boost
             graveyard.connect(forest_heartpiece, r.pit_buffer_itemless, one_way=True) # villa buffer from top.
+            graveyard.connect(forest, None, one_way=True) # villa buffer from the top twice to get to the main forest area
             log_cave_heartpiece.connect(forest_cave, r.super_jump_feather) # super jump
             log_cave_heartpiece.connect(forest_cave, r.bomb_trigger) # bomb trigger
             graveyard_cave_left.connect(graveyard_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger the heartpiece from the left side
             graveyard_heartpiece.connect(graveyard_cave_right, r.sideways_block_push) # sideways block push from the right staircase.
-
+            
             prairie_island_seashell.connect(ukuku_prairie, AND(r.jesus_jump, r.bush)) # jesus jump from right side, screen transition on top of the water to reach the island
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across.
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer) # 1 pit buffer to get across
@@ -509,13 +512,14 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_jump, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(r.pit_buffer, POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, AND(r.pit_buffer_itemless, OR(AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), BOMB, BOOMERANG, MAGIC_ROD, SWORD)), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            ukuku_prairie.connect(richard_maze, AND(r.pit_buffer_itemless, OR(AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), BOMB, BOOMERANG, MAGIC_ROD, SWORD)), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze. Do the same in one of the two northern screens of the maze to escape
             fisher_under_bridge.connect(bay_water, AND(r.bomb_trigger, FLIPPERS)) # up-most left wall is a pit: bomb trigger with it 
             animal_village.connect(ukuku_prairie, r.jesus_jump) # jesus jump
             below_right_taltal.connect(next_to_castle, r.jesus_jump) # jesus jump (north of kanalet castle phonebooth)
             animal_village_connector_right.connect(animal_village_connector_left, AND(r.text_clip, FEATHER)) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(r.bomb_trigger, OR(HOOKSHOT, FEATHER, r.boots_bonk_pit))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  r.pit_buffer) # villa buffer across the pits
+
 
             d6_entrance.connect(ukuku_prairie, r.jesus_jump, one_way=True) # jesus jump (2 screen) from d6 entrance bottom ledge to ukuku prairie
             d6_entrance.connect(armos_fairy_entrance, r.jesus_jump, one_way=True) # jesus jump (2 screen) from d6 entrance top ledge to armos fairy entrance
