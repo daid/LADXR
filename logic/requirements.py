@@ -11,8 +11,8 @@ class OR:
         return super().__new__(cls)
 
     def __init__(self, *args):
-        self.__items = [item for item in args if type(item) in (str, bool)]
-        self.__children = [item for item in args if type(item) not in (str, bool, type(None))]
+        self.__items = [item for item in args if isinstance(item, str)]
+        self.__children = [item for item in args if type(item) not in (bool, str) and item is not None]
 
         assert self.__items or self.__children, args
 
@@ -36,7 +36,7 @@ class OR:
 
     def test(self, inventory) -> bool:
         for item in self.__items:
-            if item == True or item in inventory:
+            if item in inventory:
                 return True
         for child in self.__children:
             if child.test(inventory):
@@ -99,7 +99,7 @@ class AND:
 
     def test(self, inventory) -> bool:
         for item in self.__items:
-            if item != True and item not in inventory:
+            if item not in inventory:
                 return False
         for child in self.__children:
             if not child.test(inventory):
@@ -243,8 +243,6 @@ def hasConsumableRequirement(requirements) -> bool:
 
 def isConsumable(item) -> bool:
     if item is None:
-        return False
-    if isinstance(item, bool):
         return False
     if item.startswith("RUPEES_") or item == "RUPEES":
         return True
