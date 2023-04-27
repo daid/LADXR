@@ -85,6 +85,8 @@ class WorldSetup:
         return [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
     def pickEntrances(self, settings, rnd):
+        if settings.overworld == "random":
+            return
         if settings.overworld == "dungeondive":
             self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
         if settings.randomstartlocation and settings.entranceshuffle == "none":
