@@ -1,6 +1,6 @@
 "use strict";
 
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js");
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.js");
 
 var stdout = [];
 function jsprint(...args)
@@ -25,6 +25,10 @@ self.onmessage = async (event) => {
         self.pyodide.FS.writeFile("/spoiler.txt", "");
         if ("plan.txt" in event.data) {
             self.pyodide.FS.writeFile("/plan.txt", event.data["plan.txt"]);
+        }
+        if ("gfx.png" in event.data) {
+            await pyodide.loadPackage("pillow");
+            self.pyodide.FS.writeFile("gfx/custom.png", event.data["gfx.png"]);
         }
         stdout = [];
         console.log("Started randomizer:", event.data.args)

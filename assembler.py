@@ -120,13 +120,13 @@ class OP(ExprBase):
 
 
 class CALL(ExprBase):
-    def __init__(self, function, param, *, line_nr):
+    def __init__(self, function, params, *, line_nr):
         self.function = function
-        self.param = param
+        self.params = params
         self.line_nr = line_nr
 
     def __repr__(self) -> str:
-        return f"{self.function}({self.param})"
+        return f"{self.function}({self.params})"
 
 
 class AssemblerException(Exception):
@@ -148,7 +148,8 @@ class Tokenizer:
         ('OP', r'(?:<=)|(?:>=)|(?:==)|(?:<<)|(?:>>)|[+\-*/,\(\)<>&|]'),
         ('REFOPEN', r'\['),
         ('REFCLOSE', r'\]'),
-        ('MACROARG', r'\\[0-9]'),
+        ('MACROARG', r'\\[0-9]+'),
+        ('TOKENCONCAT', r'##'),
         ('NEWLINE', r'\n'),
         ('SKIP', r'[ \t]+'),
         ('MISMATCH', r'.'),
@@ -445,12 +446,31 @@ class Assembler:
                             params[-1].append(self.__tok.pop())
                     self.__tok.pop()
                     to_add = []
+                    concat = False
                     for token in self.__macros[start.value]:
-                        if token.isA('MACROARG'):
-                            for p in params[int(token.value[1:]) - 1]:
+                        if concat:
+                            concat = False
+                            if not to_add[-1].isA('ID'):
+                                raise AssemblerException(token, "Can only concat ID tokens")
+                            to_add[-1] = to_add[-1].copy()
+                            if token.isA('MACROARG'):
+                                argn = int(token.value[1:]) - 1
+                                if argn >= len(params):
+                                    raise AssemblerException(start, "Missing argument for macro")
+                                for p in params[int(token.value[1:]) - 1]:
+                                    to_add[-1].value += p.value
+                            else:
+                                to_add[-1].value = to_add[-1].value + token.value
+                        elif token.isA('MACROARG'):
+                            argn = int(token.value[1:]) - 1
+                            if argn >= len(params):
+                                raise AssemblerException(start, "Missing argument for macro")
+                            for p in params[argn]:
                                 to_add.append(p.copy())
+                        elif token.isA('TOKENCONCAT'):
+                            concat = True
                         else:
-                            to_add.append(token)
+                            to_add.append(token.copy())
                     self.__tok.shift(to_add)
                 elif self.__tok.peek().kind == 'LABEL':
                     self.__tok.pop()
@@ -460,7 +480,7 @@ class Assembler:
                     value = self.parseExpression()
                     if value.kind != 'NUMBER':
                         raise AssemblerException(start, "Can only assign numbers")
-                    self.addConstant(str(start.value), int(value.value))
+                    self.setConstant(str(start.value), int(value.value))
                 else:
                     raise AssemblerException(start, "Syntax error")
             else:
@@ -794,10 +814,16 @@ class Assembler:
 
     def instrDS(self) -> None:
         param = self.parseExpression()
-        if param.isA('NUMBER'):
-            self.insertData(b'\x00' * param.value)
-        else:
+        if not param.isA('NUMBER'):
             raise AssemblerException(param, "Syntax error")
+        amount = param.value
+        data = b'\x00'
+        if self.__tok.popIf('OP', ','):
+            param = self.parseExpression()
+            if not param.isA('NUMBER'):
+                raise AssemblerException(param, "Syntax error")
+            data = bytes([param.value])
+        self.insertData(data * amount)
 
     def instrDB(self) -> None:
         param = self.parseExpression()
@@ -828,6 +854,10 @@ class Assembler:
 
     def addConstant(self, name: str, value: int) -> None:
         assert name not in self.__constant, "Duplicate constant: %s" % (name)
+        assert name not in self.__label, "Duplicate constant: %s" % (name)
+        self.__constant[name] = value
+
+    def setConstant(self, name: str, value: int) -> None:
         assert name not in self.__label, "Duplicate constant: %s" % (name)
         self.__constant[name] = value
 
@@ -915,6 +945,7 @@ class Assembler:
             t.kind = 'NUMBER'
             t.value = CONST_MAP[str(t.value)]
         elif t.isA('ID') and t.value in self.__constant:
+            t = t.copy()
             t.kind = 'NUMBER'
             t.value = self.__constant[str(t.value)]
         elif t.isA('ID') and str(t.value).startswith("."):
@@ -922,9 +953,11 @@ class Assembler:
             t.value = self.__scope + str(t.value)
         elif t.isA('ID') and self.__tok.peek().isA('OP', '('):
             self.__tok.pop()
-            param = self.parseExpression()
+            params = [self.parseExpression()]
+            while self.__tok.popIf('OP', ','):
+                params.append(self.parseExpression())
             self.__tok.expect('OP', ')')
-            return CALL(t.value, param, line_nr=t.line_nr)
+            return CALL(t.value, params, line_nr=t.line_nr)
         return t
 
     def link(self) -> None:
@@ -950,6 +983,20 @@ class Assembler:
                         inline_strings[strdata] = len(section.data) + section.base_address
                         section.data += strdata
                     expr = Token('NUMBER', inline_strings[strdata], expr.line_nr)
+                if isinstance(expr, CALL) and expr.function == 'INLINE':
+                    data = bytearray()
+                    for p in expr.params:
+                        p = self.resolveExpr(p)
+                        if not p.isA('NUMBER'):
+                            raise AssemblerException(p, f"Failed to link {p}, symbol not found?")
+                        if p.value < 0 or p.value > 255:
+                            raise AssemblerException(p, f"Value out of range for INLINE")
+                        data.append(p.value)
+                    data = bytes(data)
+                    if data not in inline_strings:
+                        inline_strings[data] = len(section.data) + section.base_address
+                        section.data += data
+                    expr = Token('NUMBER', inline_strings[data], expr.line_nr)
                 if not expr.isA('NUMBER'):
                     raise AssemblerException(expr, f"Failed to link {link_expr}, symbol not found?")
                 assert isinstance(expr, Token)
@@ -982,18 +1029,24 @@ class Assembler:
             return OP.make(expr.op, left, self.resolveExpr(expr.right))
         elif isinstance(expr, CALL):
             if expr.function == 'BANK':
-                if expr.param.value not in self.__label:
-                    raise AssemblerException(expr, f"Cannot find label: {expr.param.value}")
-                section, offset = self.__label[expr.param.value]
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to BANK() function")
+                if expr.params[0].value not in self.__label:
+                    raise AssemblerException(expr, f"Cannot find label: {expr.params[0].value}")
+                section, offset = self.__label[expr.params[0].value]
                 if section.bank is None:
-                    raise AssemblerException(expr, f"Tried to get bank of label: {expr.param.value}, but label not in a bank.")
-                return Token('NUMBER', section.bank, expr.param.line_nr)
+                    raise AssemblerException(expr, f"Tried to get bank of label: {expr.params[0].value}, but label not in a bank.")
+                return Token('NUMBER', section.bank, expr.params[0].line_nr)
             elif expr.function == 'LOW':
-                param = self.resolveExpr(expr.param)
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to LOW() function")
+                param = self.resolveExpr(expr.params[0])
                 if param.isA('NUMBER'):
                     return Token('NUMBER', param.value & 0xFF, expr.line_nr)
             elif expr.function == 'HIGH':
-                param = self.resolveExpr(expr.param)
+                if len(expr.params) != 1:
+                    raise AssemblerException(expr, f"Wrong number of parameters to HIGH() function")
+                param = self.resolveExpr(expr.params[0])
                 if param.isA('NUMBER'):
                     return Token('NUMBER', (param.value >> 8) & 0xFF, expr.line_nr)
         elif isinstance(expr, Token) and expr.isA('ID') and isinstance(expr, Token) and expr.value in self.__label:
@@ -1126,3 +1179,11 @@ label:
     assert ASM("db 1 << 1 + 1") == b'04'
     assert ASM("db 1 & 2") == b'00'
     assert ASM("db 1 | 2") == b'03'
+    assert ASM(r"""
+#MACRO test
+    dw test ## \1
+#END
+testhello := $100
+testtest := $200
+    test hello
+    test test""") == b'00010002'

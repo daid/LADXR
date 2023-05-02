@@ -83,6 +83,17 @@ function randomGenerationString()
         setTimeout(randomGenerationString, 1000);
 }
 
+function updateGfxModImage() {
+    if (!ID('gfxmod')) return;
+    var gfxmod = ID('gfxmod').value
+    if (gfxmod && gfxmod != 'custom') {
+        var url = 'LADXR/gfx/' + gfxmod + '.png';
+        ID('gfxmodimg').src = url;
+    } else {
+        ID('gfxmodimg').src = '';
+    }
+}
+
 function updateSettingsString() {
     var sss = "";
     for(var s of options) {
@@ -156,9 +167,16 @@ function buildUI(filter_function) {
             opts = [{key: true, label: "Yes"}, {key: false, label: "No"}]
         }
         if (opts) {
+            if (s.key == 'gfxmod') {
+                html += '<input type="file" name="customgfxfile" id="customgfxfile" style="display: none">';
+                html += '<img id="gfxmodimg">';
+            }
             html += `<select id='${s.key}' name='${s.key}'>`;
             for(var o of opts) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
+            }
+            if (s.key == 'gfxmod') {
+                html += `<option value='custom'>Custom...</option>`;
             }
             html += `</select>`;
         } else {
@@ -170,8 +188,16 @@ function buildUI(filter_function) {
     ID("settings").innerHTML += html;
     loadSettingsString();
     for(var s of options) {
-        if (ID(s.key)) ID(s.key).oninput = updateSettingsString;
+        if (ID(s.key)) {
+            ID(s.key).oninput = updateSettingsString;
+            if (s.key == 'gfxmod') ID(s.key).oninput = function(e) {
+                if (ID('gfxmod').value == 'custom') ID('customgfxfile').click();
+                updateGfxModImage();
+                updateSettingsString();
+            };
+        }
     }
+    updateGfxModImage();
     updateSettingsString();
     updateForm();
 
@@ -257,6 +283,12 @@ async function startRomGeneration()
         args.push("--plan");
         args.push('/plan.txt');
         data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+    e = ID("gfxmod")
+    if (e.value == "custom" && ID('customgfxfile').value) {
+        args.push("-s");
+        args.push("gfxmod=custom.png");
+        data['gfx.png'] =  new Uint8Array(await ID("customgfxfile").files[0].arrayBuffer());
     }
 
     await postToWorker(data);
