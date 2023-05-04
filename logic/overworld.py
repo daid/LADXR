@@ -357,8 +357,9 @@ class World:
         lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
         self._addEntrance("d4", d4_entrance, None, ANGLER_KEY)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
+        outside_mambo = Location().connect(d4_entrance, FLIPPERS)
         mambo = Location().connect(Location().add(Song(0x2FD)), AND(OCARINA, FLIPPERS))  # Manbo's Mambo
-        self._addEntrance("mambo", d4_entrance, mambo, FLIPPERS) 
+        self._addEntrance("mambo", outside_mambo, mambo, None) 
 
         # Raft game.
         raft_house = Location()
@@ -531,7 +532,7 @@ class World:
             lower_right_taltal.connect(hibiscus_item, AND(TRADING_ITEM_PINEAPPLE, BOMB), one_way=True) # bomb trigger papahl from below ledge, requires pineapple
             
             self._addEntranceRequirement("heartpiece_swim_cave", FEATHER)  # jesus jump into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            self._addEntranceRequirement("mambo", FEATHER)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
+            outside_mambo.connect(d4_entrance, FEATHER)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, FEATHER, one_way=True) # jesus jump from the ledge at raft to the staircase 1 screen south
 
             self._addEntranceRequirement("multichest_left", FEATHER) # jesus jump past staircase leading up the mountain 
@@ -593,7 +594,7 @@ class World:
             d4_entrance.connect(below_right_taltal, OR(FEATHER, ROOSTER), one_way=True) # jesus jump/rooster 5 screens to staircase below damp cave
             lower_right_taltal.connect(below_right_taltal, OR(FEATHER, ROOSTER), one_way=True) # jesus jump/rooster to upper ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
             self._addEntranceRequirement("heartpiece_swim_cave", ROOSTER)  # jesus rooster into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            self._addEntranceRequirement("mambo", ROOSTER)  # jesus rooster from d4 entrance to mambo's cave entrance
+            outside_mambo.connect(below_right_taltal, OR(FEATHER, ROOSTER))  # jesus jump/rooster to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, ROOSTER, one_way=True) # jesus rooster from the ledge at raft to the staircase 1 screen south
             self._addEntranceRequirement("multichest_left", ROOSTER) # jesus rooster past staircase leading up the mountain 
             outside_rooster_house.connect(lower_right_taltal, ROOSTER, one_way=True) # jesus rooster down to staircase below damp cave
