@@ -513,7 +513,8 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, FEATHER, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, BOOMERANG, BOMB)) # break bushes on north side of the maze, and 1 pit buffer into the maze. Do the same in one of the two northern screens of the maze to escape
+            ukuku_prairie.connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, BOOMERANG, BOMB), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            richard_maze.connect(ukuku_prairie, OR(SWORD, MAGIC_POWDER, MAGIC_ROD, BOOMERANG, BOMB), one_way=True) # do the same as above (but without powder capacity) in one of the two northern screens of the maze to escape
             fisher_under_bridge.connect(bay_water, AND(BOMB, FLIPPERS)) # up-most left wall is a pit: bomb trigger with it 
             animal_village.connect(ukuku_prairie, FEATHER) # jesus jump
             below_right_taltal.connect(next_to_castle, FEATHER) # jesus jump (north of kanalet castle phonebooth)
