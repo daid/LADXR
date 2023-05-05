@@ -90,7 +90,7 @@ ItemNamePointers:
     dw ItemNameRupees500
     dw ItemNameSeashell
     dw ItemNameMessage
-    dw ItemNameNone
+    dw ItemNameZol
     dw ItemNameKey1
     dw ItemNameKey2
     dw ItemNameKey3
@@ -137,12 +137,12 @@ ItemNamePointers:
     dw ItemNameNightmareKey8
     dw ItemNameNightmareKey9
     dw ItemNameToadstool
-    dw ItemNameNone ; 0x51
-    dw ItemNameNone ; 0x52
-    dw ItemNameNone ; 0x53
-    dw ItemNameNone ; 0x54
-    dw ItemNameNone ; 0x55
-    dw ItemNameNone ; 0x56
+    dw ItemNameZol ; 0x51
+    dw ItemNameZol ; 0x52
+    dw ItemNameZol ; 0x53
+    dw ItemNameZol ; 0x54
+    dw ItemNameZol ; 0x55
+    dw ItemNameZol ; 0x56
     dw ItemNameNone ; 0x57
     dw ItemNameNone ; 0x58
     dw ItemNameNone ; 0x59
@@ -296,6 +296,8 @@ ItemNameSeashell:
     db m"Got a {SEASHELL}", $ff
 ItemNameMessage:
     db m"Got ... nothing?", $ff
+ItemNameZol:
+    db m"LOL, ZOL!", $ff
 ItemNameKey1:
     db m"Got a {KEY1}", $ff
 ItemNameKey2:
