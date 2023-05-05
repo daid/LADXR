@@ -70,7 +70,7 @@ class Dungeon3:
             area3.connect(dungeon3_raised_blocks_north, AND(OR(PEGASUS_BOOTS, r.hookshot_clip_block), r.shaq_jump), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks. Instead of boots can also get to that area with a hookshot clip past the movable block
             area3.connect(dungeon3_zol_stalfos, r.hookshot_clip_block, one_way=True) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
             dungeon3_nightmare_key_chest.connect(area_right, AND(r.super_jump_feather, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
-            dungeon3_post_dodongo_chest.connect(area_right, AND(r.text_clip, r.super_jump_feather, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys to open enough blocks
+            #dungeon3_post_dodongo_chest.connect(area_right, AND(r.text_clip, r.super_jump_feather, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys to open enough blocks
         
         if options.logic == 'hell':
             area2.connect(dungeon3_raised_blocks_east, r.boots_superhop, one_way=True) # use boots superhop to get over the bottom left block
