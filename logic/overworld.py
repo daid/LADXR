@@ -224,7 +224,8 @@ class World:
         self._addEntrance("richard_house", ukuku_prairie, richard_house, None)
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
         slime_key_area = Location().connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG))
-        Location().add(OwlStatue(0x0C6)).connect(slime_key_area, options.owlstatues in ('both', 'overworld'))
+        if options.owlstatues == "both" or options.owlstatues == "overworld":
+            Location().add(OwlStatue(0x0C6)).connect(slime_key_area, None)
         Location().add(SlimeKey()).connect(slime_key_area, SHOVEL)
 
         next_to_castle = Location()
