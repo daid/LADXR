@@ -84,6 +84,7 @@ function randomGenerationString()
 }
 
 function updateGfxModImage() {
+    if (!ID('gfxmod')) return;
     var gfxmod = ID('gfxmod').value
     if (gfxmod && gfxmod != 'custom') {
         var url = 'LADXR/gfx/' + gfxmod + '.png';
