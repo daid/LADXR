@@ -38,23 +38,23 @@ class Dungeon7:
             first_key.items[0].forced_item = KEY7
             
         if options.logic == 'glitched' or options.logic == 'hell':
-            topright_pillar_area.connect(entrance, AND(FEATHER, SWORD)) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down. center superjump has to be low so sword added
-            toprightF1_chest.connect(topright_pillar_area, FEATHER) # superjump from F1 switch room
-            topleftF2_area = Location(7).connect(topright_pillar_area, FEATHER) # superjump in top left pillar room over the blocks from right to left, to reach tile room
+            topright_pillar_area.connect(entrance, r.super_jump_sword) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down. center superjump has to be low so sword added
+            toprightF1_chest.connect(topright_pillar_area, r.super_jump_feather) # superjump from F1 switch room
+            topleftF2_area = Location(7).connect(topright_pillar_area, r.super_jump_feather) # superjump in top left pillar room over the blocks from right to left, to reach tile room
             topleftF2_area.connect(topleftF1_chest, None, one_way = True) # fall down tile room holes on left side to reach top left chest on ground floor
-            topleftF1_chest.connect(bottomleftF2_area, AND(PEGASUS_BOOTS, FEATHER), one_way = True) # without hitting the switch, jump on raised blocks at f1 pegs chest (0x209), and boots jump to stairs to reach hinox area
-            final_pillar_area.connect(bottomleftF2_area, OR(r.attack_hookshot, POWER_BRACELET, AND(FEATHER, SHIELD))) # sideways block push to get to the chest and pillar, kill requirement for 3 of a kind enemies to access chest. Assumes you do not get ball stuck on raised pegs for bracelet path
+            topleftF1_chest.connect(bottomleftF2_area, r.boots_jump, one_way = True) # without hitting the switch, jump on raised blocks at f1 pegs chest (0x209), and boots jump to stairs to reach hinox area
+            final_pillar_area.connect(bottomleftF2_area, AND(r.sideways_block_push, OR(r.attack_hookshot, POWER_BRACELET, AND(FEATHER, SHIELD)))) # sideways block push to get to the chest and pillar, kill requirement for 3 of a kind enemies to access chest. Assumes you do not get ball stuck on raised pegs for bracelet path
             if options.owlstatues == "both" or options.owlstatues == "dungeon":
-                bottomleft_owl.connect(bottomleftF2_area, STONE_BEAK7) # sideways block push to get to the owl statue
-            final_pillar.connect(bottomleftF2_area, BOMB) # bomb trigger pillar
-            pre_boss.connect(final_pillar, FEATHER) # superjump on top of goomba to extend superjump to boss door plateau
+                bottomleft_owl.connect(bottomleftF2_area, AND(r.sideways_block_push, STONE_BEAK7)) # sideways block push to get to the owl statue
+            final_pillar.connect(bottomleftF2_area, r.bomb_trigger) # bomb trigger pillar
+            pre_boss.connect(final_pillar, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
             pre_boss.connect(beamos_horseheads_area, None, one_way=True) # can drop down from raised plateau to beamos horseheads area
             
         if options.logic == 'hell':
-            topright_pillar_area.connect(entrance, FEATHER) # superjump in the center to get on raised blocks, has to be low
-            topright_pillar_area.connect(entrance, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop in the center to get on raised blocks
-            toprightF1_chest.connect(topright_pillar_area, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop from F1 switch room
-            pre_boss.connect(final_pillar, AND(PEGASUS_BOOTS, OR(BOW, MAGIC_ROD))) # boots superhop on top of goomba to extend superhop to boss door plateau
+            topright_pillar_area.connect(entrance, r.super_jump_feather) # superjump in the center to get on raised blocks, has to be low
+            topright_pillar_area.connect(entrance, r.boots_superhop) # boots superhop in the center to get on raised blocks
+            toprightF1_chest.connect(topright_pillar_area, r.boots_superhop) # boots superhop from F1 switch room
+            pre_boss.connect(final_pillar, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
         
         self.entrance = entrance
 
