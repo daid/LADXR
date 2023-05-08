@@ -51,7 +51,7 @@ def addBank3F(rom):
     Init:
         """), fill_nop=True)
 
-    rom.patch(0x3F, 0x0000, None, ASM("""
+    rom.patch(0x3F, 0x0000, "00" * 0x200, ASM("""
         ; switch speed
         ld   a, $30
         ldh  [$FF00], a
@@ -260,7 +260,7 @@ blockBadEmu:
         di
         jr   blockBadEmu
         
-        """))
+        """), fill_nop=True)
 
     # Copy all normal item graphics
     rom.banks[0x3F][0x2800:0x2B00] = rom.banks[0x2C][0x0800:0x0B00]  # main items

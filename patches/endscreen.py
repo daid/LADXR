@@ -15,7 +15,7 @@ def updateEndScreen(rom):
     """))
     rom.patch(0x17, 0x2FCE, "B170", "D070") # Ignore the final tile data load
     
-    rom.patch(0x3F, 0x0200, None, ASM("""
+    rom.patch(0x3F, 0x0200, "00" * 0xA0, ASM("""
     ; Disable LCD
     xor a
     ldh  [$FF40], a
@@ -131,9 +131,7 @@ loadLoop2:
     ldh [$FF96], a
     ldh [$FF97], a
     ret
-    """))
+    """), fill_nop=True)
     
-    addr = 0x1000
-    for c in open(os.path.join(os.path.dirname(__file__), "nyan.bin"), "rb").read():
-        rom.banks[0x3F][addr] = c
-        addr += 1
+    data = open(os.path.join(os.path.dirname(__file__), "nyan.bin"), "rb").read()
+    rom.banks[0x3F][0x1000:0x1000+len(data)] = data

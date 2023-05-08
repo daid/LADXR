@@ -28,12 +28,12 @@ class Dungeon1:
             stalfos_keese_room.connect(entrance, r.attack_hookshot_powder) # stalfos jump away when you press a button.
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            boss_key.connect(entrance, FEATHER)  # super jump
-            dungeon1_miniboss.connect(dungeon1_right_side, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # damage boost or buffer pause over the pit to cross or mushroom
+            boss_key.connect(entrance, r.super_jump_feather)  # super jump
+            dungeon1_miniboss.connect(dungeon1_right_side, AND(OR(r.damage_boost, r.pit_buffer), r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # damage boost or buffer pause over the pit to cross or mushroom
         
         if options.logic == 'hell':
             feather_chest.connect(dungeon1_upper_left, SWORD)  # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
-            boss_key.connect(entrance, FOUND(KEY1,3)) # damage boost off the hardhat to cross the pit
+            boss_key.connect(entrance, AND(r.damage_boost, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
             
         self.entrance = entrance
 

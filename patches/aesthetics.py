@@ -66,7 +66,7 @@ def gfxMod(rom, filename):
     if ext == ".bin":
         updateGraphics(rom, 0x2C, 0, open(filename, "rb").read())
     elif ext in (".png", ".bmp"):
-        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename))
+        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF]))
     elif ext == ".json":
         import json
         data = json.load(open(filename, "rt"))
