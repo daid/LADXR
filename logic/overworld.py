@@ -223,9 +223,10 @@ class World:
         richard_maze = Location()
         self._addEntrance("richard_house", ukuku_prairie, richard_house, None)
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
+        slime_key_area = Location().connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG))
         if options.owlstatues == "both" or options.owlstatues == "overworld":
-            Location().add(OwlStatue(0x0C6)).connect(richard_maze, r.bush)
-        Location().add(SlimeKey()).connect(richard_maze, AND(OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG), SHOVEL))
+            Location().add(OwlStatue(0x0C6)).connect(slime_key_area, None)
+        Location().add(SlimeKey()).connect(slime_key_area, SHOVEL)
 
         next_to_castle = Location()
         if options.tradequest:
@@ -354,8 +355,9 @@ class World:
         lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
         self._addEntrance("d4", d4_entrance, None, ANGLER_KEY)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
+        outside_mambo = Location().connect(d4_entrance, FLIPPERS)
         mambo = Location().connect(Location().add(Song(0x2FD)), AND(OCARINA, FLIPPERS))  # Manbo's Mambo
-        self._addEntrance("mambo", d4_entrance, mambo, FLIPPERS) 
+        self._addEntrance("mambo", outside_mambo, mambo, None) 
 
         # Raft game.
         raft_house = Location()
@@ -510,7 +512,8 @@ class World:
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_jump, one_way=True) # jesus jump (3 screen) through the underground passage leading to martha's bay mad batter
             self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(r.pit_buffer, POWER_BRACELET)) # villa buffer into the top side of the bush, then pick it up
             
-            ukuku_prairie.connect(richard_maze, AND(r.pit_buffer_itemless, OR(AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), BOMB, BOOMERANG, MAGIC_ROD, SWORD)), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze. Do the same in one of the two northern screens of the maze to escape
+            ukuku_prairie.connect(richard_maze, AND(r.pit_buffer_itemless, OR(AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), BOMB, BOOMERANG, MAGIC_ROD, SWORD)), one_way=True) # break bushes on north side of the maze, and 1 pit buffer into the maze
+            richard_maze.connect(ukuku_prairie, AND(r.pit_buffer_itemless, OR(MAGIC_POWDER, BOMB, BOOMERANG, MAGIC_ROD, SWORD)), one_way=True) # same as above (without powder upgrade) in one of the two northern screens of the maze to escape
             fisher_under_bridge.connect(bay_water, AND(r.bomb_trigger, FLIPPERS)) # up-most left wall is a pit: bomb trigger with it 
             animal_village.connect(ukuku_prairie, r.jesus_jump) # jesus jump
             below_right_taltal.connect(next_to_castle, r.jesus_jump) # jesus jump (north of kanalet castle phonebooth)
@@ -530,7 +533,7 @@ class World:
             lower_right_taltal.connect(hibiscus_item, AND(TRADING_ITEM_PINEAPPLE, r.bomb_trigger), one_way=True) # bomb trigger papahl from below ledge, requires pineapple
             
             self._addEntranceRequirement("heartpiece_swim_cave", r.jesus_jump)  # jesus jump into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            self._addEntranceRequirement("mambo", r.jesus_jump)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
+            outside_mambo.connect(d4_entrance, r.jesus_jump)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, r.jesus_jump, one_way=True) # jesus jump from the ledge at raft to the staircase 1 screen south
 
             self._addEntranceRequirement("multichest_left", r.jesus_jump) # jesus jump past staircase leading up the mountain 
@@ -538,7 +541,7 @@ class World:
             d7_platau.connect(water_cave_hole, None, one_way=True) # use save and quit menu to gain control while falling to dodge the water cave hole
             mountain_bridge_staircase.connect(outside_rooster_house, AND(r.boots_jump, r.pit_buffer)) # cross bridge to staircase with pit buffer to clip bottom wall and jump across. added boots_jump to not require going through this section with just feather
             bird_key.connect(bird_cave, r.hookshot_jump)  # hookshot jump across the big pits room
-            right_taltal_connector2.connect(right_taltal_connector3, r.pit_buffer_itemless, one_way=True) # 2 seperate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
+            right_taltal_connector2.connect(right_taltal_connector3, r.pit_buffer_itemless, one_way=True) # 2 separate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
             left_right_connector_cave_exit.connect(left_right_connector_cave_entrance, AND(HOOKSHOT, r.super_jump_feather), one_way=True)  # pass through the passage in reverse using a superjump to get out of the dead end
             obstacle_cave_inside.connect(mountain_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger from boots crystal cave
             self._addEntranceRequirement("d8", OR(r.bomb_trigger, AND(OCARINA, SONG3))) # bomb trigger the head and walk through, or play the ocarina song 3 and walk through
@@ -596,7 +599,7 @@ class World:
 
             lower_right_taltal.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster to upper ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
             self._addEntranceRequirement("heartpiece_swim_cave", r.jesus_rooster)  # jesus rooster into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            self._addEntranceRequirement("mambo", r.jesus_rooster)  # jesus rooster from d4 entrance to mambo's cave entrance
+            outside_mambo.connect(below_right_taltal, OR(r.jesus_rooster, r.jesus_jump))  # jesus jump/rooster to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, r.jesus_rooster, one_way=True) # jesus rooster from the ledge at raft to the staircase 1 screen south
             self._addEntranceRequirement("multichest_left", r.jesus_rooster) # jesus rooster past staircase leading up the mountain 
             outside_rooster_house.connect(lower_right_taltal, r.jesus_rooster, one_way=True) # jesus rooster down to staircase below damp cave
