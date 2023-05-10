@@ -48,7 +48,7 @@ class Randomizer:
                         continue
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("split", "mixed") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd).toDict().values()):
+                if settings.entranceshuffle not in ("split", "mixed") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
                     break
 
         if self.plan:
@@ -117,10 +117,10 @@ class Randomizer:
         item_pool = {}
         # Build the item pool to see which items we can randomize.
         if settings.multiworld is None:
-            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd).toDict()
+            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict()
         else:
             for world in range(settings.multiworld):
-                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd).toDict()
+                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd, self.plan != None).toDict()
                 for item, count in world_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 

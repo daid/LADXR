@@ -266,6 +266,41 @@ class RequirementsSettings:
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
+        # add trick directory here
+        self.throw_pot = POWER_BRACELET # grab pots to kill enemies
+        self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
+        self.super_jump = AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # standard superjump for glitch logic
+        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # boots dash into wall for unclipped superjump
+        self.super_jump_feather = FEATHER # using only feather to align and jump off walls
+        self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
+        self.super_jump_rooster = AND(ROOSTER, OR(SWORD, BOW, MAGIC_ROD)) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
+        self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
+        self.boots_superhop = AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW)) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
+        self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
+        self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
+        self.damage_boost = None # use damage to cross pits / get through forced barriers
+        self.sideways_block_push = None # wall clip pushable block, get against the edge and push block to move it sideways
+        self.wall_clip = None # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) or just getting a better position for jumps
+        self.pit_buffer_itemless = None # walk on top of pits and buffer down
+        self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
+        self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to cross gaps
+        self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
+        self.boots_bonk = PEGASUS_BOOTS # bonk against walls in 2d sections to get to higher places (no pits involved usually)
+        self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps
+        self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
+        self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
+        self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
+        self.hookshot_spam_pit = HOOKSHOT # use hookshot with spam to cross 1 tile gaps
+        self.hookshot_clip = HOOKSHOT # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
+        self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
+        self.hookshot_over_pit = HOOKSHOT # use hookshot while over a pit to reach certain areas (see d3 vacuum room, d5 north of crossroads for example)
+        self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
+        self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
+        self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
+        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
+        self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
+        self.jesus_rooster = ROOSTER
 
         self.boss_requirements = [
             SWORD,  # D1 boss
