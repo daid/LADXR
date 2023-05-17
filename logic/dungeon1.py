@@ -19,13 +19,14 @@ class Dungeon1:
         dungeon1_right_side = Location(1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(1).add(OwlStatue(0x10A)).connect(dungeon1_right_side, STONE_BEAK1)
-        Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(r.attack_hookshot, SHIELD)) # three of a kind, shield stops the suit from changing
+        dungeon1_3_of_a_kind = Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(r.attack_hookshot_no_bomb, SHIELD)) # three of a kind, shield stops the suit from changing
         dungeon1_miniboss = Location(1).connect(dungeon1_right_side, AND(r.miniboss_requirements[world_setup.miniboss_mapping[0]], FEATHER))
         dungeon1_boss = Location(1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
         Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss, r.boss_requirements[world_setup.boss_mapping[0]])
 
         if options.logic not in ('normal', 'casual'):
             stalfos_keese_room.connect(entrance, r.attack_hookshot_powder) # stalfos jump away when you press a button.
+            dungeon1_3_of_a_kind.connect(dungeon1_right_side, BOMB) # use timed bombs to match the 3 of a kinds
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, r.super_jump_feather)  # super jump
