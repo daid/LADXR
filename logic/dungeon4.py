@@ -42,7 +42,7 @@ class Dungeon4:
         boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, r.boss_requirements[world_setup.boss_mapping[3]]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            sidescroller_key.connect(before_miniboss, AND(FEATHER, BOOMERANG)) # grab the key jumping over the water and boomerang downwards
+            sidescroller_key.connect(before_miniboss, BOOMERANG) # fall off the bridge and boomerang downwards before hitting the water to grab the item
             sidescroller_key.connect(before_miniboss, AND(r.throw_pot, FLIPPERS)) # kill the zols with the pots in the room to spawn the key
             rightside_crossroads.connect(entrance, r.tight_jump) # jump across the corners
             puddle_crack_block_chest.connect(rightside_crossroads, r.tight_jump) # jump around the bombable block

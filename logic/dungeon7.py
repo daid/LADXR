@@ -14,7 +14,7 @@ class Dungeon7:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(7).add(OwlStatue(0x204)).connect(topright_pillar_area, STONE_BEAK7)
         topright_pillar_area.add(DungeonChest(0x209))  # stone slab chest can be reached by dropping down a hole
-        three_of_a_kind_north = Location(7).add(DungeonChest(0x211)).connect(topright_pillar_area, OR(r.attack_hookshot, AND(FEATHER, SHIELD)))  # compass chest; path without feather with hitting switch by falling on the raised blocks. No bracelet because ball does not reset
+        three_of_a_kind_north = Location(7).add(DungeonChest(0x211)).connect(topright_pillar_area, OR(r.attack_hookshot_no_bomb, AND(OR(BOMB, FEATHER), SHIELD)))  # compass chest; either hit the switch, or have feather to fall on top of raised blocks. No bracelet because ball does not reset
         bottomleftF2_area = Location(7).connect(topright_pillar_area, r.attack_hookshot)  # area with hinox, be able to hit a switch to reach that area
         topleftF1_chest = Location(7).add(DungeonChest(0x201)) # top left chest on F1
         bottomleftF2_area.connect(topleftF1_chest, None, one_way = True)  # drop down in left most holes of hinox room or tile room
@@ -36,6 +36,9 @@ class Dungeon7:
 
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             first_key.items[0].forced_item = KEY7
+            
+        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
+            three_of_a_kind_north.connect(topright_pillar_area, BOMB) # use timed bombs to match the 3 of a kinds (south 3 of a kind room is implicite as normal logic can not reach chest without hookshot)
             
         if options.logic == 'glitched' or options.logic == 'hell':
             topright_pillar_area.connect(entrance, r.super_jump_sword) # superjump in the center to get on raised blocks, superjump in switch room to right side to walk down. center superjump has to be low so sword added
