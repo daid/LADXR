@@ -48,7 +48,7 @@ class Randomizer:
                         continue
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("split", "mixed") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd).toDict().values()):
+                if settings.entranceshuffle not in ("split", "mixed") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
                     break
 
         if self.plan:

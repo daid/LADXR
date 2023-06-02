@@ -30,12 +30,12 @@ class DungeonColor:
         boss.add(TunicFairy(0), TunicFairy(1))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            room2.connect(entrance, POWER_BRACELET) # throw pots at enemies
-            pre_boss.connect(room6, FEATHER)  # before the boss, jump past raised blocks without boots
+            room2.connect(entrance, r.throw_pot) # throw pots at enemies
+            pre_boss.connect(room6, r.tight_jump) # before the boss, jump past raised blocks without boots
 
         if options.logic == 'hell':
-            room2_weapon.connect(room2, SHIELD) # shield bump karakoro into the holes
-            room4karakoro.connect(room4, SHIELD) # shield bump karakoro into the holes
+            room2_weapon.connect(room2, r.shield_bump) # shield bump karakoro into the holes
+            room4karakoro.connect(room4, r.shield_bump) # shield bump karakoro into the holes
             
         self.entrance = entrance
 

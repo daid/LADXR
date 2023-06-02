@@ -155,7 +155,7 @@ class MultiworldLogic:
                     world_setup = WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
-                    if options.entranceshuffle not in ("split", "mixed") or len(world.iteminfo_list) == sum(itempool.ItemPool(options, rnd).toDict().values()):
+                    if options.entranceshuffle not in ("split", "mixed") or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
                         break
 
             for ii in world.iteminfo_list:
