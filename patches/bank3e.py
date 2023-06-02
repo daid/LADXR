@@ -207,9 +207,10 @@ WriteToVRAM:
     shortSeed = seed[:0x20]
     rom.patch(0x3E, 0x2F00, "00" * len(shortSeed), binascii.hexlify(shortSeed))
 
-    shortSettings = settings.getShortString().encode('utf-8')
-    rom.patch(0x3E, 0x2F20, "00", binascii.hexlify(len(shortSettings).to_bytes(1, 'little')))
-    rom.patch(0x3E, 0x2F21, "00" * len(shortSettings), binascii.hexlify(shortSettings))
+    if not settings.race:
+        shortSettings = settings.getShortString().encode('utf-8')
+        rom.patch(0x3E, 0x2F20, "00", binascii.hexlify(len(shortSettings).to_bytes(1, 'little')))
+        rom.patch(0x3E, 0x2F21, "00" * len(shortSettings), binascii.hexlify(shortSettings))
 
     # Prevent the photo album from crashing due to serial interrupts
     rom.patch(0x28, 0x00D2, ASM("ld a, $09"), ASM("ld a, $01"))
