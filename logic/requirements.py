@@ -280,10 +280,10 @@ class RequirementsSettings:
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
-        self.damage_boost = None # use damage to cross pits / get through forced barriers
-        self.sideways_block_push = None # wall clip pushable block, get against the edge and push block to move it sideways
-        self.wall_clip = None # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) or just getting a better position for jumps
-        self.pit_buffer_itemless = None # walk on top of pits and buffer down
+        self.damage_boost = True # use damage to cross pits / get through forced barriers
+        self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
+        self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) or just getting a better position for jumps
+        self.pit_buffer_itemless = True # walk on top of pits and buffer down
         self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
         self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to cross gaps
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
