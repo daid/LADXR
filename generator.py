@@ -82,6 +82,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
     assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
     assembler.const("wCustomMessage", 0xC0A0)
+    assembler.const("wBowwowChain", 0xD1E0)  # Need $1A bytes for the chain and other bowwow related memory
 
     # We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
     assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
