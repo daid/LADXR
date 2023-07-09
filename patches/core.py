@@ -254,6 +254,7 @@ noWrapDown:
         ; Clear all entity status, so they are no longer rendered.
         ld   hl, $C280
         xor  a
+        ld   [$C18E], a ; clear wRoomEvent so minibosses
         ld   c, 16
 clearOAMLoop:
         ld   [hl+], a
