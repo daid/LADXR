@@ -223,11 +223,10 @@ class ItemPool:
                 self.removeRupee()
             self.remove(RED_TUNIC)
             self.remove(SEASHELL, 3)
-            self.removeRupees(28-self.get(MEDICINE))
+            self.removeRupees(29-self.get(MEDICINE))
             self.remove(MEDICINE, self.get(MEDICINE))
             self.remove(GEL, 4)
             self.remove(MESSAGE, 1)
-            self.remove(BOMB, 1)
             self.add(RUPEES_500, 3)
 
         if settings.bowwow == 'always':
