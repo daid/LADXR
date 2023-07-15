@@ -154,9 +154,9 @@ class ItemPool:
         elif settings.itempool == 'pain':
             self.add(BAD_HEART_CONTAINER, 12)
             self.remove(BLUE_TUNIC)
-            self.remove(MEDICINE, 2)
+            self.removeRupees(7-self.get(MEDICINE))
+            self.remove(MEDICINE, self.get(MEDICINE))
             self.remove(HEART_PIECE, 4)
-            self.removeRupees(5)
         elif settings.itempool == 'keyup':
             for n in range(9):
                 self.remove("MAP%d" % (n + 1))
@@ -177,11 +177,6 @@ class ItemPool:
                         self.remove(item_name, self.__pool[item_name])
                     self.add(item_name, amount)
 
-        if settings.goal == "seashells":
-            for n in range(8):
-                self.remove("INSTRUMENT%d" % (n + 1))
-            self.add(SEASHELL, 8)
-
         if settings.overworld == "dungeondive":
             self.remove(SWORD)
             self.remove(MAX_ARROWS_UPGRADE)
@@ -198,8 +193,8 @@ class ItemPool:
             self.remove(SONG3)
             self.remove(HEART_PIECE, 8)
             self.remove(RUPEES_50, 9)
-            self.remove(RUPEES_20, 2)
-            self.remove(MEDICINE, 3)
+            self.removeRupees(5-self.get(MEDICINE))
+            self.remove(MEDICINE, self.get(MEDICINE))
             self.remove(MESSAGE)
             self.remove(BOWWOW)
             self.remove(ROOSTER)
@@ -233,14 +228,20 @@ class ItemPool:
             self.remove(BLUE_TUNIC)
             self.remove(RED_TUNIC)
             self.remove(SEASHELL, 2)
-            self.remove(RUPEES_20, 6)
-            self.remove(RUPEES_50, 17)
-            self.remove(MEDICINE, 3)
+            self.removeRupees(26-self.get(MEDICINE))
+            self.remove(MEDICINE, self.get(MEDICINE))
             self.remove(GEL, 4)
             self.remove(MESSAGE, 1)
             self.remove(BOMB, 1)
             self.remove(RUPEES_100, 3)
             self.add(RUPEES_500, 3)
+
+        if settings.goal == "seashells":
+            for n in range(8):
+                self.remove("INSTRUMENT%d" % (n + 1))
+            self.add(SEASHELL, 8)
+            if self.get(SEASHELL) < 20:
+                raise RuntimeError("Not enough seashells (" + str(self.get(SEASHELL)) + ") available in itempool")
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.
@@ -261,6 +262,8 @@ class ItemPool:
                 rupee_item.append(k)
                 rupee_item_count.append(v)
         rupee_chests = sum(v for k, v in self.__pool.items() if k.startswith("RUPEES_"))
+        if rupee_chests // 5 > sum(rupee_item_count):
+            rupee_chests = 5*sum(rupee_item_count)
         for n in range(rupee_chests // 5):
             new_item = rnd.choices((BOMB, SINGLE_ARROW, ARROWS_10, MAGIC_POWDER, MEDICINE), (10, 5, 10, 10, 1))[0]
             while True:

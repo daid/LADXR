@@ -316,9 +316,13 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
             req("overworld", "normal", "Maze goal does not work with dungeondive")
             req("accessibility", "all", "Maze goal needs 'all' accessibility")
         if self.overworld == "dungeondive":
-            dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
+            dis("owlstatues", "overworld", "", "Dungeon dive does not work with owl statues in overworld")
+            dis("owlstatues", "both", "dungeon", "Dungeon dive does not work with owl statues in overworld")
+            if (self.itempool == "pain") & (self.owlstatues == ""):
+                req("accessibility", "goal", "Dungeon dive does not leave enough rupees in itempool for all accessibility")
         if self.overworld == "nodungeons":
-            dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+            dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
+            dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
         if self.overworld == "random":
             self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 
