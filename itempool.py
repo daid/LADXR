@@ -91,7 +91,7 @@ class ItemPool:
             self.removeRupee()
 
     def removeRupee(self):
-        for item in (RUPEES_20, RUPEES_50, RUPEES_200, RUPEES_500):
+        for item in (RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500):
             if self.get(item) > 0:
                 self.remove(item)
                 return
@@ -217,15 +217,17 @@ class ItemPool:
             for n in range(9):
                 for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
                     self.remove(f"{item_name}{n+1}", self.get(f"{item_name}{n+1}"))
-            self.remove(BLUE_TUNIC)
+            if self.get(BLUE_TUNIC) > 0:
+                self.remove(BLUE_TUNIC)
+            else:
+                self.removeRupee()
             self.remove(RED_TUNIC)
-            self.remove(SEASHELL, 2)
-            self.removeRupees(26-self.get(MEDICINE))
+            self.remove(SEASHELL, 3)
+            self.removeRupees(28-self.get(MEDICINE))
             self.remove(MEDICINE, self.get(MEDICINE))
             self.remove(GEL, 4)
             self.remove(MESSAGE, 1)
             self.remove(BOMB, 1)
-            self.remove(RUPEES_100, 3)
             self.add(RUPEES_500, 3)
 
         if settings.bowwow == 'always':
