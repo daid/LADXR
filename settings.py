@@ -315,6 +315,8 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
         if self.goal == "maze":
             req("overworld", "normal", "Maze goal does not work with dungeondive")
             req("accessibility", "all", "Maze goal needs 'all' accessibility")
+        if self.itempool == "pain":
+            req("heartpiece", True, "Path of pain removes heart pieces")
         if self.overworld == "dungeondive":
             dis("owlstatues", "overworld", "", "Dungeon dive does not work with owl statues in overworld")
             dis("owlstatues", "both", "dungeon", "Dungeon dive does not work with owl statues in overworld")
