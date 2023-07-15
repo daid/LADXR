@@ -112,15 +112,6 @@ class ItemPool:
         elif settings.owlstatues == 'overworld':
             self.add(RUPEES_20, 9)
 
-        if settings.bowwow == 'always':
-            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
-            self.add(SWORD)
-            self.remove(BOWWOW)
-        elif settings.bowwow == 'swordless':
-            # Bowwow mode takes a sword from the pool to give as bowwow, we need to remove all swords and Bowwow except for 1
-            self.add(RUPEES_20, self.get(BOWWOW) + self.get(SWORD) - 1)
-            self.remove(SWORD, self.get(SWORD) - 1)
-            self.remove(BOWWOW, self.get(BOWWOW))
         if settings.hpmode == 'inverted':
             self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
@@ -132,6 +123,7 @@ class ItemPool:
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
 
         if settings.itempool == 'casual':
+            self.add(SWORD)
             self.add(FLIPPERS)
             self.add(FEATHER)
             self.add(HOOKSHOT)
@@ -144,7 +136,7 @@ class ItemPool:
             self.add(POWER_BRACELET)
             self.add(SHOVEL)
             self.add(RUPEES_200, 2)
-            self.removeRupees(13)
+            self.removeRupees(14)
 
             for n in range(9):
                 self.remove("MAP%d" % (n + 1))
@@ -236,6 +228,16 @@ class ItemPool:
             self.remove(RUPEES_100, 3)
             self.add(RUPEES_500, 3)
 
+        if settings.bowwow == 'always':
+            # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
+            self.add(SWORD)
+            self.remove(BOWWOW)
+        elif settings.bowwow == 'swordless':
+            # Bowwow mode takes a sword from the pool to give as bowwow, we need to remove all swords and Bowwow except for 1
+            self.add(RUPEES_20, self.get(BOWWOW) + self.get(SWORD) - 1)
+            self.remove(SWORD, self.get(SWORD) - 1)
+            self.remove(BOWWOW, self.get(BOWWOW))
+            
         if settings.goal == "seashells":
             for n in range(8):
                 self.remove("INSTRUMENT%d" % (n + 1))
