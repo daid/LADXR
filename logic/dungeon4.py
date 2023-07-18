@@ -70,6 +70,7 @@ class Dungeon4:
             before_boss.connect(left_water_area, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon4:

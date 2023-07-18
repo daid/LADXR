@@ -38,6 +38,7 @@ class DungeonColor:
             room4karakoro.connect(room4, r.shield_bump) # shield bump karakoro into the holes
             
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeonColor:

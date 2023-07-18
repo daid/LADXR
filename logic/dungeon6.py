@@ -55,6 +55,7 @@ class Dungeon6:
             lower_right_side.connect(center_2_and_upper_right_side, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
             
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon6:

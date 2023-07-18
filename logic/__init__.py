@@ -26,6 +26,8 @@ class Logic:
             world = overworld.DungeonDiveOverworld(configuration_options, r)
         elif configuration_options.overworld == "random":
             world = mapgen.LogicGenerator(configuration_options, world_setup, r, world_setup.map)
+        elif configuration_options.overworld == "dungeonchain":
+            world = overworld.DungeonChain(configuration_options, r)
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
@@ -39,6 +41,10 @@ class Logic:
             world.updateIndoorLocation("d7", dungeon7.NoDungeon7(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d8", dungeon8.NoDungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.NoDungeonColor(configuration_options, world_setup, r).entrance)
+        elif configuration_options.overworld == "dungeonchain":
+            dungeon_constructors = [dungeon1.Dungeon1, dungeon2.Dungeon2, dungeon3.Dungeon3, dungeon4.Dungeon4, dungeon5.Dungeon5, dungeon6.Dungeon6, dungeon7.Dungeon7, dungeon8.Dungeon8, dungeonColor.DungeonColor]
+            for index in world_setup.dungeon_chain:
+                world.chain(dungeon_constructors[index](configuration_options, world_setup, r))
         elif configuration_options.overworld != "random":
             world.updateIndoorLocation("d1", dungeon1.Dungeon1(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d2", dungeon2.Dungeon2(configuration_options, world_setup, r).entrance)
@@ -50,7 +56,7 @@ class Logic:
             world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
 
-        if configuration_options.overworld != "random":
+        if configuration_options.overworld not in {"dungeonchain", "random"}:
             for k in world.overworld_entrance.keys():
                 assert k in world_setup.entrance_mapping, k
             for k in world_setup.entrance_mapping.keys():
@@ -69,7 +75,9 @@ class Logic:
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
             egg_trigger = OR(AND(OCARINA, SONG1), BOMB)
 
-        if world_setup.goal == "seashells":
+        if configuration_options.overworld == "dungeonchain":
+            pass  # Dungeon chain has no egg, so no egg requirement.
+        elif world_setup.goal == "seashells":
             world.nightmare.connect(world.egg, COUNT(SEASHELL, 20))
         elif world_setup.goal in ("raft", "bingo", "bingo-full", "maze"):
             world.nightmare.connect(world.egg, egg_trigger)

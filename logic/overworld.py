@@ -688,6 +688,26 @@ class DungeonDiveOverworld:
         self.indoor_location[name] = location
 
 
+class DungeonChain:
+    def __init__(self, options, r):
+        start_house = Location().add(StartItem())
+
+        nightmare = Location()
+        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+
+        self.start = start_house
+        self.nightmare = nightmare
+        self.windfish = windfish
+        self.__end = self.start
+
+    def chain(self, dungeon):
+        self.__end.connect(dungeon.entrance, None)
+        self.__end = dungeon.final_room
+        # Remove the instruments and fairy rewards from logic, reward room is entrance to next dungeon.
+        dungeon.final_room.items = [i for i in dungeon.final_room.items if not isinstance(i, Instrument)]
+        dungeon.final_room.items = [i for i in dungeon.final_room.items if not isinstance(i, TunicFairy)]
+
+
 class EntranceExterior:
     def __init__(self, outside, requirement, one_way_enter_requirement="UNSET", one_way_exit_requirement="UNSET"):
         self.location = outside

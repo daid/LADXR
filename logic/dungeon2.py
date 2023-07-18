@@ -51,6 +51,7 @@ class Dungeon2:
             dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
         self.entrance = entrance
+        self.final_room = dungeon2_boss
 
 
 class NoDungeon2:

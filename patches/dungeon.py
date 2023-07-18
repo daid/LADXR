@@ -1,4 +1,5 @@
-from roomEditor import RoomEditor, Object, ObjectHorizontal
+from roomEditor import RoomEditor, Object, ObjectHorizontal, ObjectWarp
+from assembler import ASM
 
 
 KEY_DOORS = {
@@ -127,3 +128,46 @@ def patchNoDungeons(rom):
     #D0
     setMinimap(11, 2, 6, 0x00)
     setMinimap(11, 3, 6, 0x01)
+
+
+def patchDungeonChain(rom, world_setup):
+    entrance_rooms = [0x117, 0x136, 0x152, 0x17A, 0x1A1, 0x1D4, 0x20E, 0x25D, 0x312, 0x274]
+    maps = [0, 1, 2, 3, 4, 5, 6, 7, 0xFF, 8]
+    exit_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301, 0x272]
+    order = world_setup.dungeon_chain + [9]  # Add 9 as egg, which always will be the final link in the chain.
+    print(order)
+
+    last_exit_map = 0x10
+    last_exit_room = 0x2A3  # Start house
+
+    for n in range(len(order)):
+        re = RoomEditor(rom, last_exit_room)
+        re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
+        re.objects.append(ObjectWarp(1, maps[order[n]], entrance_rooms[order[n]], 80, 124))
+        if last_exit_map != 0x10:
+            re.entities = []
+            re.objects.append(ObjectHorizontal(4, 2, 0x1D, 2))
+            if last_exit_room == 0x301:  # Remove the border in color dungeon room
+                re.removeObject(2, 1)
+                re.removeObject(7, 1)
+                re.removeObject(2, 4)
+                re.removeObject(3, 4)
+                re.removeObject(7, 4)
+        re.store(rom)
+
+        re = RoomEditor(rom, entrance_rooms[order[n]] if order[n] != 9 else 0x270)
+        re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
+        re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 124 if last_exit_map == 0x10 else 64))
+        if order[n] == 9:  # For the egg, don't give an option to enter the maze
+            re.removeObject(3, 0)
+            re.removeObject(4, 0)
+            re.removeObject(6, 0)
+        re.store(rom)
+
+        last_exit_map = maps[order[n]]
+        last_exit_room = exit_rooms[order[n]]
+
+    # Do not lock the color dungeon final room door.
+    rom.patch(0x14, 0x0201, "24", "00")
+    # Fix that the music stays on boss defeated after killing the boss and switching map.
+    rom.patch(0x03, 0x23B9, ASM("ld [$D46C], a"), "", fill_nop=True)

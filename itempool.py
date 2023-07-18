@@ -70,7 +70,7 @@ DEFAULT_ITEM_POOL = {
 class ItemPool:
     def __init__(self, logic, settings, rnd, plando):
         self.__pool = {}
-        self.__setup(logic, settings)
+        self.__setup(logic, settings, rnd)
 
         if not plando:
             self.__randomizeRupees(settings, rnd)
@@ -97,7 +97,7 @@ class ItemPool:
                 return
         raise RuntimeError("Wanted to remove more rupees from the pool then we have")
 
-    def __setup(self, logic, settings):
+    def __setup(self, logic, settings, rnd):
         default_item_pool = DEFAULT_ITEM_POOL
         if settings.overworld == "random":
             default_item_pool = logic.world.map.get_item_pool()
@@ -241,6 +241,59 @@ class ItemPool:
             self.remove(BOMB, 1)
             self.remove(RUPEES_100, 3)
             self.add(RUPEES_500, 3)
+        if settings.overworld == "dungeonchain":
+            self.__pool = {}
+            required_item_count = 1  # Start item
+            key_counts = [3, 5, 9, 5, 3, 3, 3, 7, 3]
+            item_counts = [3, 3, 4, 4, 5, 7, 4, 7, 0]
+            required_items_per_dungeon = [
+                {FEATHER, SHIELD, BOMB},
+                {POWER_BRACELET, FEATHER},
+                {POWER_BRACELET, PEGASUS_BOOTS},
+                {SHIELD, FLIPPERS, FEATHER, PEGASUS_BOOTS, BOMB},
+                {HOOKSHOT, FEATHER, BOMB, POWER_BRACELET, FLIPPERS},
+                {POWER_BRACELET, POWER_BRACELET+"2", BOMB, FEATHER, HOOKSHOT},
+                {POWER_BRACELET, SHIELD, SHIELD+"2", BOMB, HOOKSHOT},
+                {MAGIC_ROD, BOMB, FEATHER, POWER_BRACELET, HOOKSHOT},
+                {POWER_BRACELET, HOOKSHOT}
+            ]
+            required_items = {SWORD, BOW, MAGIC_POWDER}
+            for dungeon_idx in logic.world_setup.dungeon_chain:
+                self.add(f"KEY{dungeon_idx+1}", key_counts[dungeon_idx])
+                self.add(f"NIGHTMARE_KEY{dungeon_idx + 1}")
+                self.add(f"MAP{dungeon_idx + 1}")
+                self.add(f"COMPASS{dungeon_idx + 1}")
+                self.add(f"STONE_BEAK{dungeon_idx + 1}")
+                if dungeon_idx != 8:
+                    self.add(HEART_CONTAINER)
+                required_item_count += item_counts[dungeon_idx]
+                required_items.update(required_items_per_dungeon[dungeon_idx])
+            for item in required_items:
+                if item.endswith("2"):
+                    item = item[:-1]
+                self.add(item)
+                required_item_count -= 1
+            major_additions = [SWORD, FEATHER, HOOKSHOT, BOW, BOMB, MAGIC_POWDER, MAGIC_ROD, PEGASUS_BOOTS, POWER_BRACELET, SHIELD, BOOMERANG]
+            minor_additions = [BOMB, MAGIC_POWDER, BLUE_TUNIC, RED_TUNIC, MAX_ARROWS_UPGRADE, MAX_BOMBS_UPGRADE, MAX_POWDER_UPGRADE, MEDICINE]
+            junk_items = [RUPEES_100, RUPEES_20, RUPEES_50, SEASHELL, GEL, MESSAGE]
+            max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
+            for n in range(3):
+                pick = rnd.choice(major_additions)
+                if pick not in required_items and required_item_count > 0:
+                    self.add(pick)
+                    required_item_count -= 1
+            for n in range(required_item_count // 3):
+                pick = rnd.choice(minor_additions)
+                if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
+                    self.add(pick)
+                    required_item_count -= 1
+
+            assert required_item_count >= 0
+            while required_item_count > 0:
+                pick = rnd.choice(junk_items)
+                if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
+                    self.add(pick)
+                    required_item_count -= 1
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.

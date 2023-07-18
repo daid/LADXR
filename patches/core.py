@@ -123,7 +123,7 @@ def injectMainLoop(rom):
         rst  8
     """), fill_nop=True)
 
-def warpHome(rom):
+def warpHome(rom, force_inside=False):
     # Patch the S&Q menu to allow 3 options
     rom.patch(0x01, 0x012A, 0x0150, ASM("""
         ld   hl, $C13F
@@ -202,7 +202,7 @@ noWrapDown:
 
     one_way = {ENTRANCE_INFO[x].room for x in one_way}
 
-    if warp.room in one_way:
+    if warp.room in one_way or force_inside:
         # we're starting at a one way exit room
         # warp indoors to avoid soft locks
         type = 0x01
