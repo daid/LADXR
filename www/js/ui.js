@@ -17,6 +17,17 @@ async function seedComplete(data) {
 
         if (ID("seedSpan"))
             ID("seedSpan").innerText = data.seed;
+        if (ID("shareseed")) {
+            if (ID("seed").value != "") {
+                ID("shareseed").value = document.location;
+            } else {
+                ID("seed").value = data.seed;
+                updateSettingsString();
+                ID("shareseed").value = document.location;
+                ID("seed").value = "";
+                updateSettingsString();
+            }
+        }
 
         spoilerContent = data.spoiler
 
