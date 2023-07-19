@@ -72,6 +72,8 @@ class Settings:
         gfx_options = [('', '', 'Default')]
         gfx_path = os.path.join(os.path.dirname(__file__), "gfx")
         for filename in sorted(os.listdir(gfx_path)):
+            if filename == "template.png":
+                continue
             if filename.endswith(".bin"):
                 gfx_options.append((filename, filename + ">", filename[:-4]))
             if filename.endswith(".png") and not filename.endswith(".bin.png"):
@@ -193,10 +195,11 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Never] you can never steal from the shop."""),
             Setting('bowwow', 'Special', 'g', 'Good boy mode', options=[('normal', '', 'Disabled'), ('always', 'a', 'Enabled'), ('swordless', 's', 'Enabled (swordless)')], default='normal',
                 description='Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'),
-            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('random', 'R', 'Randomized')], default='normal',
+            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('dungeonchain', 'C', 'Dungeon chain'), ('random', 'R', 'Randomized')], default='normal',
                 description="""
 [Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.
 [No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
+[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.
 [Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
@@ -315,10 +318,16 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
         if self.goal == "maze":
             req("overworld", "normal", "Maze goal does not work with dungeondive")
             req("accessibility", "all", "Maze goal needs 'all' accessibility")
+        if self.itempool == "pain":
+            req("heartpiece", True, "Path of pain removes heart pieces")
         if self.overworld == "dungeondive":
-            dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
+            dis("owlstatues", "overworld", "", "Dungeon dive does not work with owl statues in overworld")
+            dis("owlstatues", "both", "dungeon", "Dungeon dive does not work with owl statues in overworld")
+            if (self.itempool == "pain") & (self.owlstatues == ""):
+                req("accessibility", "goal", "Dungeon dive does not leave enough rupees in itempool for all accessibility")
         if self.overworld == "nodungeons":
-            dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+            dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
+            dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
         if self.overworld == "random":
             self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 

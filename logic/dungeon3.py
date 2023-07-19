@@ -85,6 +85,7 @@ class Dungeon3:
             pre_boss.connect(towards_boss4, AND(r.attack_no_boomerang, r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon3:

@@ -46,6 +46,7 @@ class WorldSetup:
         self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
+        self.dungeon_chain = None
 
     def getEntrancePool(self, settings, connectorsOnly=False):
         entrances = []
@@ -88,7 +89,7 @@ class WorldSetup:
         return [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
 
     def pickEntrances(self, settings, rnd):
-        if settings.overworld == "random":
+        if settings.overworld in {"random", "dungeonchain"}:
             return
         if settings.overworld == "dungeondive":
             self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
@@ -127,7 +128,6 @@ class WorldSetup:
         
         if self.inaccessibleEntrances(settings, entrancePool):
             raise Error("Failed to make all entrances accessible after a bunch of retries")
-
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
@@ -174,6 +174,11 @@ class WorldSetup:
         if self.goal in {"bingo", "bingo-full"}:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
+        if settings.overworld == "dungeonchain":
+            self.dungeon_chain = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            rnd.shuffle(self.dungeon_chain)
+            self.dungeon_chain = self.dungeon_chain[:5]
+
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
         self.pickEntrances(settings, rnd)
@@ -188,3 +193,4 @@ class WorldSetup:
         self.boss_mapping = patches.enemies.readBossMapping(rom)
         self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
         self.goal = 8 # Better then nothing
+        self.dungeon_chain = [0, 1, 2, 3, 4, 5, 6, 7, 8]  # TODO Actually read this from rom

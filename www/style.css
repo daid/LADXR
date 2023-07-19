@@ -20,7 +20,7 @@
     margin: 0px;
     box-sizing: border-box;
 }
-.inputcontainer *:last-child {
+.inputcontainer > :last-child {
     flex: 1 1 auto;
     background: #DDD;
     border: solid 1px #AAA;

@@ -97,6 +97,7 @@ class Dungeon8:
             bossdoor.connect(entrance_up, AND(r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk through 2d section
             
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon8:

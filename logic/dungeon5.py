@@ -80,6 +80,7 @@ class Dungeon5:
             before_boss.connect(after_stalfos, r.super_jump_sword) # cross pits room from bottom left to top left by unclipped superjump on bottom wall on top of side wall, then jump across            
 
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon5:

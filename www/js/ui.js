@@ -116,6 +116,11 @@ function updateSettingsString() {
 function loadSettingsString() {
     var sss = decodeURI(document.location.hash);
     if (!sss.startsWith("#")) return;
+    loadShortSettingsString(sss.substr(1));
+}
+
+function loadShortSettingsString(sss)
+{
     console.log("Loading " + sss);
     for(var s of options) {
         var e = ID(s.key);
@@ -123,7 +128,7 @@ function loadSettingsString() {
         if (typeof(s.default) == 'boolean') e.value = false;
     }
 
-    var idx = 1;
+    var idx = 0;
     while(idx < sss.length) {
         var key = sss[idx];
         idx += 1;
