@@ -325,6 +325,10 @@ def changeMiniBosses(rom, mapping):
                 for y in range(0, 3):
                     re.removeObject(x, y)
 
+        if name == "GHOMA" and target != 4:
+            # Ghoma gets stuck on just about everything, so remove collision for him
+            rom.banks[0x03][0x0340] = 0xD5
+
         if name == "CUE_BALL":
             re.objects += [
                 Object(3, 3, 0x2c),
