@@ -135,7 +135,6 @@ def patchDungeonChain(rom, world_setup):
     maps = [0, 1, 2, 3, 4, 5, 6, 7, 0xFF, 8]
     exit_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301, 0x272]
     order = world_setup.dungeon_chain + [9]  # Add 9 as egg, which always will be the final link in the chain.
-    print(order)
 
     last_exit_map = 0x10
     last_exit_room = 0x2A3  # Start house

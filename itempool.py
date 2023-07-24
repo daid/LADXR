@@ -233,6 +233,9 @@ class ItemPool:
             required_item_count = 1  # Start item
             key_counts = [3, 5, 9, 5, 3, 3, 3, 7, 3]
             item_counts = [3, 3, 4, 4, 5, 7, 4, 7, 0]
+            if settings.owlstatues in {'both', 'dungeon'}:
+                for idx, count in enumerate([3, 3, 3, 1, 2, 3, 3, 3, 3]):
+                    item_counts[idx] += count
             required_items_per_dungeon = [
                 {FEATHER, SHIELD, BOMB},
                 {POWER_BRACELET, FEATHER},
