@@ -60,7 +60,7 @@ class DroppedKey(ItemInfo):
         raise ValueError("Could not find chest contents in ROM (0x%02x)" % (value))
 
     def __repr__(self):
-        if self._location and self._location.dungeon:
+        if self._location and self._location.dungeon is not None:
             return "%s:%03x:%d" % (self.__class__.__name__, self.room, self._location.dungeon)
         else:
             return "%s:%03x" % (self.__class__.__name__, self.room)

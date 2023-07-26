@@ -119,7 +119,7 @@ GiveItemFromChest:
     dw AddKey ; KEY6
     dw AddKey ; KEY7
     dw AddKey ; KEY8
-    dw AddKey ; KEY9
+    dw AddKey ; KEY0
     dw AddMap ; MAP1
     dw AddMap ; MAP2
     dw AddMap ; MAP3
@@ -128,7 +128,7 @@ GiveItemFromChest:
     dw AddMap ; MAP6
     dw AddMap ; MAP7
     dw AddMap ; MAP8
-    dw AddMap ; MAP9
+    dw AddMap ; MAP0
     dw AddCompass ; COMPASS1
     dw AddCompass ; COMPASS2
     dw AddCompass ; COMPASS3
@@ -137,7 +137,7 @@ GiveItemFromChest:
     dw AddCompass ; COMPASS6
     dw AddCompass ; COMPASS7
     dw AddCompass ; COMPASS8
-    dw AddCompass ; COMPASS9
+    dw AddCompass ; COMPASS0
     dw AddStoneBeak ; STONE_BEAK1
     dw AddStoneBeak ; STONE_BEAK2
     dw AddStoneBeak ; STONE_BEAK3
@@ -146,7 +146,7 @@ GiveItemFromChest:
     dw AddStoneBeak ; STONE_BEAK6
     dw AddStoneBeak ; STONE_BEAK7
     dw AddStoneBeak ; STONE_BEAK8
-    dw AddStoneBeak ; STONE_BEAK9
+    dw AddStoneBeak ; STONE_BEAK0
     dw AddNightmareKey ; NIGHTMARE_KEY1
     dw AddNightmareKey ; NIGHTMARE_KEY2
     dw AddNightmareKey ; NIGHTMARE_KEY3
@@ -155,7 +155,7 @@ GiveItemFromChest:
     dw AddNightmareKey ; NIGHTMARE_KEY6
     dw AddNightmareKey ; NIGHTMARE_KEY7
     dw AddNightmareKey ; NIGHTMARE_KEY8
-    dw AddNightmareKey ; NIGHTMARE_KEY9
+    dw AddNightmareKey ; NIGHTMARE_KEY0
     dw AddToadstool ; Toadstool
     dw StartZolDrop ; $51 ; Rupees50 disguise
     dw StartZolDrop ; $52 ; Rupees20 disguise
@@ -827,7 +827,7 @@ ItemSpriteTable:
     db $4A, $1D        ; KEY6
     db $4A, $1D        ; KEY7
     db $4A, $1D        ; KEY8
-    db $4A, $1D        ; KEY9
+    db $4A, $1D        ; KEY0
     db $40, $1C        ; MAP1
     db $40, $1C        ; MAP2
     db $40, $1C        ; MAP3
@@ -836,7 +836,7 @@ ItemSpriteTable:
     db $40, $1C        ; MAP6
     db $40, $1C        ; MAP7
     db $40, $1C        ; MAP8
-    db $40, $1C        ; MAP9
+    db $40, $1C        ; MAP0
     db $42, $1D        ; COMPASS1
     db $42, $1D        ; COMPASS2
     db $42, $1D        ; COMPASS3
@@ -845,7 +845,7 @@ ItemSpriteTable:
     db $42, $1D        ; COMPASS6
     db $42, $1D        ; COMPASS7
     db $42, $1D        ; COMPASS8
-    db $42, $1D        ; COMPASS9
+    db $42, $1D        ; COMPASS0
     db $44, $1C        ; STONE_BEAK1
     db $44, $1C        ; STONE_BEAK2
     db $44, $1C        ; STONE_BEAK3
@@ -854,7 +854,7 @@ ItemSpriteTable:
     db $44, $1C        ; STONE_BEAK6
     db $44, $1C        ; STONE_BEAK7
     db $44, $1C        ; STONE_BEAK8
-    db $44, $1C        ; STONE_BEAK9
+    db $44, $1C        ; STONE_BEAK0
     db $46, $1C        ; NIGHTMARE_KEY1
     db $46, $1C        ; NIGHTMARE_KEY2
     db $46, $1C        ; NIGHTMARE_KEY3
@@ -863,7 +863,7 @@ ItemSpriteTable:
     db $46, $1C        ; NIGHTMARE_KEY6
     db $46, $1C        ; NIGHTMARE_KEY7
     db $46, $1C        ; NIGHTMARE_KEY8
-    db $46, $1C        ; NIGHTMARE_KEY9
+    db $46, $1C        ; NIGHTMARE_KEY0
     db $4C, $1C        ; Toadstool
     db $A6, $15 ; $51 ; Rupees50 disguise
     db $38, $19 ; $52 ; Rupees20 disguise

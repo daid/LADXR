@@ -42,7 +42,7 @@ class Logic:
             world.updateIndoorLocation("d8", dungeon8.NoDungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.NoDungeonColor(configuration_options, world_setup, r).entrance)
         elif configuration_options.overworld == "dungeonchain":
-            dungeon_constructors = [dungeon1.Dungeon1, dungeon2.Dungeon2, dungeon3.Dungeon3, dungeon4.Dungeon4, dungeon5.Dungeon5, dungeon6.Dungeon6, dungeon7.Dungeon7, dungeon8.Dungeon8, dungeonColor.DungeonColor]
+            dungeon_constructors = {1: dungeon1.Dungeon1, 2: dungeon2.Dungeon2, 3: dungeon3.Dungeon3, 4: dungeon4.Dungeon4, 5: dungeon5.Dungeon5, 6: dungeon6.Dungeon6, 7: dungeon7.Dungeon7, 8: dungeon8.Dungeon8, 0: dungeonColor.DungeonColor}
             for index in world_setup.dungeon_chain:
                 world.chain(dungeon_constructors[index](configuration_options, world_setup, r))
         elif configuration_options.overworld != "random":

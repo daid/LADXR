@@ -43,7 +43,7 @@ CHEST_ITEMS = {
     KEY6: 0x28,
     KEY7: 0x29,
     KEY8: 0x2A,
-    KEY9: 0x2B,
+    KEY0: 0x2B,
 
     MAP1: 0x2C,
     MAP2: 0x2D,
@@ -53,7 +53,7 @@ CHEST_ITEMS = {
     MAP6: 0x31,
     MAP7: 0x32,
     MAP8: 0x33,
-    MAP9: 0x34,
+    MAP0: 0x34,
 
     COMPASS1: 0x35,
     COMPASS2: 0x36,
@@ -63,7 +63,7 @@ CHEST_ITEMS = {
     COMPASS6: 0x3A,
     COMPASS7: 0x3B,
     COMPASS8: 0x3C,
-    COMPASS9: 0x3D,
+    COMPASS0: 0x3D,
 
     STONE_BEAK1: 0x3E,
     STONE_BEAK2: 0x3F,
@@ -73,7 +73,7 @@ CHEST_ITEMS = {
     STONE_BEAK6: 0x43,
     STONE_BEAK7: 0x44,
     STONE_BEAK8: 0x45,
-    STONE_BEAK9: 0x46,
+    STONE_BEAK0: 0x46,
 
     NIGHTMARE_KEY1: 0x47,
     NIGHTMARE_KEY2: 0x48,
@@ -83,7 +83,7 @@ CHEST_ITEMS = {
     NIGHTMARE_KEY6: 0x4C,
     NIGHTMARE_KEY7: 0x4D,
     NIGHTMARE_KEY8: 0x4E,
-    NIGHTMARE_KEY9: 0x4F,
+    NIGHTMARE_KEY0: 0x4F,
 
     TOADSTOOL: 0x50,
 

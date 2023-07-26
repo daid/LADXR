@@ -172,13 +172,19 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         if settings.overworld == "dungeonchain":
-            self.dungeon_chain = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-            rnd.shuffle(self.dungeon_chain)
-            self.dungeon_chain = self.dungeon_chain[:5]
+            self._buildDungeonChain(rnd)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
         self.pickEntrances(settings, rnd)
+
+    def _buildDungeonChain(self, rnd):
+        # Build a chain of 5 dungeons
+        self.dungeon_chain = [1, 2, 3, 4, 5, 6, 7, 8]
+        if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
+            self.dungeon_chain.append(0)
+        rnd.shuffle(self.dungeon_chain)
+        self.dungeon_chain = self.dungeon_chain[:5]
 
     def loadFromRom(self, rom):
         import patches.overworld
