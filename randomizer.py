@@ -190,7 +190,7 @@ class ItemPlacer:
         item_pool = self._item_pool.copy()
         spots = self._spots.copy()
         def scoreSpot(s: locations.itemInfo.ItemInfo) -> Tuple[int, str]:
-            if s.location.dungeon:
+            if s.location.dungeon is not None:
                 return 0, s.nameId
             return len(s.getOptions()), s.nameId
         spots.sort(key=scoreSpot)
@@ -293,9 +293,9 @@ class RandomItemPlacer(ItemPlacer):
 
 class ForwardItemPlacer(ItemPlacer):
     DUNGEON_ITEMS = [
-        COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS9,
-        MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP9,
-        STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
+        COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS0,
+        MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP0,
+        STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK0
     ]
 
     def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility: str, *, verbose: bool = False) -> None:

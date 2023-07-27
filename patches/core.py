@@ -202,7 +202,7 @@ noWrapDown:
 
     one_way = {ENTRANCE_INFO[x].room for x in one_way}
 
-    if warp.room in one_way or force_inside:
+    if warp.room in one_way or force_inside or warp.room > 0x100:
         # we're starting at a one way exit room
         # warp indoors to avoid soft locks
         type = 0x01
