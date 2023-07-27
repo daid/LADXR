@@ -133,17 +133,17 @@ def patchNoDungeons(rom):
 def patchDungeonChain(rom, world_setup):
     entrance_rooms = {
         1: 0x117, 2: 0x136, 3: 0x152, 4: 0x17A, 5: 0x1A1, 6: 0x1D4, 7: 0x20E, 8: 0x25D, 0: 0x312, "egg": 0x274,
-        "shop": 0x2A1, "mamu": 0x2FB,
+        "shop": 0x2A1, "mamu": 0x2FB, "trendy": 0x2A0, "dream": 0x2AA, "chestcave": 0x2CD,
     }
     maps = {
         1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 0: 0xFF, "egg": 8,
-        "shop": 0x0E, "mamu": 0x11,
+        "shop": 0x0E, "mamu": 0x11, "trendy": 0x0F, "dream": 0x13, "chestcave": 0x11,
     }
     exit_rooms = {
         1: 0x102, 2: 0x12A, 3: 0x159, 4: 0x162, 5: 0x182, 6: 0x1B5, 7: 0x22C, 8: 0x230, 0: 0x301, "egg": 0x272,
-        "shop": 0x2A1, "mamu": 0x2FB,
+        "shop": 0x2A1, "mamu": 0x2FB, "trendy": 0x2A0, "dream": 0x2AA, "chestcave": 0x2CD,
     }
-    single_rooms = {"shop", "mamu"}
+    single_rooms = {"shop", "mamu", "trendy", "dream", "chestcave"}
     order = world_setup.dungeon_chain + ["egg"]
 
     last_exit_map = 0x10
@@ -205,6 +205,11 @@ def patchDungeonChain(rom, world_setup):
 
     # Patch the yarna bones code into an entity that handles the two doors in a single room for us
     rom.patch(0x15, 0x043F, 0x0492, ASM("""
+    ; Prevent changing the warp when we are entering the dream bed
+    ld  a, [$C11C] ; wLinkMotionState
+    cp  3 ; LINK_MOTION_MAP_FADE_OUT
+    ret z
+    
     ldh a, [$FFA2] ; linkZ
     cp  $70
     jr  nz, linkNotFallingIn

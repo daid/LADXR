@@ -232,7 +232,10 @@ class ItemPool:
             self.__pool = {}
             required_item_count = 1  # Start item
             key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
-            item_counts = {1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0, "shop": 2, "mamu": 1}
+            item_counts = {
+                1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
+            }
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
@@ -248,6 +251,9 @@ class ItemPool:
                 0: {POWER_BRACELET, HOOKSHOT},
                 "shop": {RUPEES_100, RUPEES_200, RUPEES_500},
                 "mamu": {RUPEES_100, RUPEES_200, OCARINA},
+                "trendy": {RUPEES_50},
+                "dream": {PEGASUS_BOOTS},
+                "chestcave": set(),
             }
             required_items = {SWORD, BOW, MAGIC_POWDER}
             for dungeon_idx in logic.world_setup.dungeon_chain:

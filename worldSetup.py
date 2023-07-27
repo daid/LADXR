@@ -185,6 +185,10 @@ class WorldSetup:
             self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
         self.dungeon_chain = self.dungeon_chain[:5]
+        # Check if we want a random extra insert.
+        if rnd.randrange(0, 100) < 80:
+            inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]
+            self.dungeon_chain.insert(rnd.randint(1, 4), rnd.choice(inserts))
 
     def loadFromRom(self, rom):
         import patches.overworld
