@@ -47,7 +47,7 @@ class Setting:
             for option_key, option_short, option_label in self.options:
                 if self.value == option_key:
                     return option_short
-        return self.value + ">"
+        return str(self.value) + ">"
 
     def toJson(self):
         result = {
@@ -285,7 +285,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                             break
                 else:
                     end_of_param = value.find(">", index)
-                    setting.value = value[index:end_of_param]
+                    setting.set(value[index:end_of_param])
                     index = end_of_param + 1
 
     def getShortString(self):
