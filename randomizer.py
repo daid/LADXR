@@ -334,7 +334,7 @@ class ForwardItemPlacer(ItemPlacer):
                     self.__start_spots_filled = True
             else:
                 spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-            req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool]
+            req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool or item == "RUPEES"]
             req_items.sort()
         if not req_items:
             for di in self.DUNGEON_ITEMS:
@@ -343,7 +343,10 @@ class ForwardItemPlacer(ItemPlacer):
                     break
         if req_items:
             if "RUPEES" in req_items:
-                req_items += [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]
+                req_items.remove("RUPEES")
+                for rup in [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]:
+                    if rup in self._item_pool:
+                        req_items.append(rup)
         else:
             req_items = [item for item in sorted(self._item_pool.keys())]
 
