@@ -146,6 +146,9 @@ class RoomEditor:
     def hasEntity(self, type_id):
         return any(map(lambda e: e[2] == type_id, self.entities))
 
+    def hasObject(self, type_id):
+        return any(map(lambda o: o.type_id == type_id, self.objects))
+
     def changeObject(self, x, y, new_type):
         for obj in self.objects:
             if obj.x == x and obj.y == y:

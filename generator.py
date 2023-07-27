@@ -165,6 +165,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
     elif settings.overworld == 'dungeonchain':
+        patches.shop.changeShopPrices(rom, 200, 500)
         patches.dungeon.patchDungeonChain(rom, logic.world_setup)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
@@ -211,7 +212,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         rom.patch(0, 0x0003, "00", "01")
 
     # Patch the sword check on the shopkeeper turning around.
-    if settings.steal == 'never':
+    if settings.steal == 'never' or settings.overworld == "dungeonchain":
         rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
     elif settings.steal == 'always':
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")

@@ -131,22 +131,47 @@ def patchNoDungeons(rom):
 
 
 def patchDungeonChain(rom, world_setup):
-    entrance_rooms = [0x117, 0x136, 0x152, 0x17A, 0x1A1, 0x1D4, 0x20E, 0x25D, 0x312, 0x274]
-    maps = [0, 1, 2, 3, 4, 5, 6, 7, 0xFF, 8]
-    exit_rooms = [0x102, 0x12A, 0x159, 0x162, 0x182, 0x1B5, 0x22C, 0x230, 0x301, 0x272]
-    order = world_setup.dungeon_chain + [9]  # Add 9 as egg, which always will be the final link in the chain.
+    entrance_rooms = {
+        1: 0x117, 2: 0x136, 3: 0x152, 4: 0x17A, 5: 0x1A1, 6: 0x1D4, 7: 0x20E, 8: 0x25D, 0: 0x312, "egg": 0x274,
+        "shop": 0x2A1, "mamu": 0x2FB,
+    }
+    maps = {
+        1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 0: 0xFF, "egg": 8,
+        "shop": 0x0E, "mamu": 0x11,
+    }
+    exit_rooms = {
+        1: 0x102, 2: 0x12A, 3: 0x159, 4: 0x162, 5: 0x182, 6: 0x1B5, 7: 0x22C, 8: 0x230, 0: 0x301, "egg": 0x272,
+        "shop": 0x2A1, "mamu": 0x2FB,
+    }
+    single_rooms = {"shop", "mamu"}
+    order = world_setup.dungeon_chain + ["egg"]
 
     last_exit_map = 0x10
     last_exit_room = 0x2A3  # Start house
+    last_exit_chain = "start"
 
-    for n in range(len(order)):
+    for chain_step in order:
+        # Patch the exit of the previous map to warp the next chain step.
         re = RoomEditor(rom, last_exit_room)
-        re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
-        re.objects.append(ObjectWarp(1, maps[order[n]], entrance_rooms[order[n]], 80, 124))
-        if last_exit_map != 0x10:
-            re.entities = []
-            re.objects.append(ObjectHorizontal(4, 2, 0x1D, 2))
-            if last_exit_room == 0x301:  # Remove the border in color dungeon room
+        if last_exit_chain in single_rooms:
+            # Duplicate the return-to-previous warp, and add a warp to the next one.
+            # Then add two doors and an entity that controls the door warps
+            re.objects += re.getWarps()
+            re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 96 if chain_step == 0 else 124))
+            re.objects = [obj for obj in re.objects if obj.type_id not in {0xFD, 0xCB}]
+            if last_exit_chain == "mamu":
+                re.objects += [Object(2, 7, 0xF5), Object(6, 7, 0xF5)]
+                re.entities.append((1, 0, 0x44))  # yarna bones entity
+            else:
+                re.objects += [Object(2, 7, 0xFD), Object(6, 7, 0xFD)]
+                re.entities.append((0, 0, 0x44))  # yarna bones entity
+        else:
+            re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
+            re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 124))
+            if last_exit_chain != "start":
+                re.entities = []
+                re.objects.append(ObjectHorizontal(4, 2, 0x1D, 2))
+            if last_exit_chain == 0:  # Remove the border in color dungeon room
                 re.removeObject(2, 1)
                 re.removeObject(7, 1)
                 re.removeObject(2, 4)
@@ -154,19 +179,76 @@ def patchDungeonChain(rom, world_setup):
                 re.removeObject(7, 4)
         re.store(rom)
 
-        re = RoomEditor(rom, entrance_rooms[order[n]] if order[n] != 9 else 0x270)
+        # Patch the entrance of this chain step to goto the previous step.
+        re = RoomEditor(rom, entrance_rooms[chain_step] if chain_step != "egg" else 0x270)
         re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
-        re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 124 if last_exit_map == 0x10 else 64))
-        if order[n] == 9:  # For the egg, don't give an option to enter the maze
+        if last_exit_chain == "start":
+            re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 124))
+        elif last_exit_chain in single_rooms:
+            re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 112, 124))
+        else:
+            re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 64))
+        if chain_step == "egg":  # For the egg, don't give an option to enter the maze
             re.removeObject(3, 0)
             re.removeObject(4, 0)
             re.removeObject(6, 0)
         re.store(rom)
 
-        last_exit_map = maps[order[n]]
-        last_exit_room = exit_rooms[order[n]]
+        last_exit_map = maps[chain_step]
+        last_exit_room = exit_rooms[chain_step]
+        last_exit_chain = chain_step
 
     # Do not lock the color dungeon final room door.
     rom.patch(0x14, 0x0201, "24", "00")
     # Fix that the music stays on boss defeated after killing the boss and switching map.
     rom.patch(0x03, 0x23B9, ASM("ld [$D46C], a"), "", fill_nop=True)
+
+    # Patch the yarna bones code into an entity that handles the two doors in a single room for us
+    rom.patch(0x15, 0x043F, 0x0492, ASM("""
+    ldh a, [$FFA2] ; linkZ
+    cp  $70
+    jr  nz, linkNotFallingIn
+    ld  a, $30
+    ldh [$FF98], a ; linkX
+    ld  a, $78
+    ldh [$FF99], a ; linkY
+linkNotFallingIn:
+
+    ldh a, [$FF98] ; linkX
+    cp  $50
+    ld  de, $D401 ; warp0 data
+    jr  nc, rightSide
+leftSide:
+    ld  hl, $D406 ; warp1 data
+    jr  copyWarpData
+rightSide:
+    ld  hl, $D40B ; warp2 data
+
+copyWarpData:
+    push bc
+    ld  c, 5
+.loop:
+    ld  a, [hl+]
+    ld  [de], a
+    inc de
+    dec c
+    jr  nz, .loop
+    pop bc
+    
+    ldh a, [$FFEE] ; active entity X
+    cp  $10
+    ret c
+    ; If we use fake exit tiles, make sure the tiles are proper exits
+    ld  hl, $D783
+    ld  a, $C1
+    ld  [hl+], a
+    ld  a, $C2
+    ld  [hl+], a
+    inc hl
+    inc hl
+    ld  a, $C1
+    ld  [hl+], a
+    ld  a, $C2
+    ld  [hl+], a
+    ret
+""", 0x443F), fill_nop=True)
