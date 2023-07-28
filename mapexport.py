@@ -231,6 +231,7 @@ for(var e of document.getElementsByTagName("img")) {
         return result
 
     def buildRoom(self, room_id):
+        map_id = self.room_map_info(room_id).map_id
         re = RoomEditor(self.__rom, room_id)
 
         room = Room(room_id)
@@ -249,12 +250,21 @@ for(var e of document.getElementsByTagName("img")) {
             room.attribute_bank = 0x23
         else:
             room.attribute_bank = 0x24
-        room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
-        room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
+        if map_id is None:
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
+        elif map_id == 6:
+            room.attribute_bank = 0x23
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2 + 1] << 8
+        else:
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) + map_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) + map_id * 2 + 1] << 8
+
         if room_id < 0x100:
             room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
-        elif self.room_map_info(room_id).map_id is not None:
-            room.palette_id = 0x100 + self.room_map_info(room_id).map_id
+        elif map_id is not None:
+            room.palette_id = 0x100 + map_id
         else:
             room.palette_id = 0x100
 
