@@ -7,7 +7,7 @@
 
 handleSerialLink:
     ; Check if we got a byte from hardware
-    ldh  a, [$01]
+    ldh  a, [$FF01]
 
     cp   $D6
     jr   z, serialReadMem
@@ -19,9 +19,9 @@ handleSerialLink:
 finishSerialLink:
     ; Do a new idle transfer.
     ld   a, $E4
-    ldh  [$01], a
+    ldh  [$FF01], a
     ld   a, $81
-    ldh  [$02], a
+    ldh  [$FF02], a
     ret
 
 serialReadMem:
@@ -76,14 +76,14 @@ serialOrMem:
 
 ; Transfer A to the serial link and wait for it to be done and return the result in A
 serialTransfer:
-    ldh  [$01], a
+    ldh  [$FF01], a
     ld   a, $81
-    ldh  [$02], a
+    ldh  [$FF02], a
 .loop:
-    ldh  a, [$02]
+    ldh  a, [$FF02]
     and  $80
     jr   nz, .loop
-    ldh  a, [$01]
+    ldh  a, [$FF01]
     ret
 
 #ENDIF

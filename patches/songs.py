@@ -55,7 +55,7 @@ def upgradeMarin(rom):
     rom.patch(0x05, 0x11B3, ASM("""
         ld   de, $515F
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -72,6 +72,10 @@ def upgradeMarin(rom):
         rst  8
     """), fill_nop=True)
 
+    # Load marin singing even if you have the marin date
+    rom.patch(0x03, 0x0A91, ASM("jp nz, $3F8D"), "", fill_nop=True)
+    rom.patch(0x05, 0x0E6E, ASM("jp nz, $7B4B"), "", fill_nop=True)
+
 
 def upgradeManbo(rom):
     # Instead of checking if we have the song, check if we have a specific room flag set
@@ -87,7 +91,7 @@ def upgradeManbo(rom):
     rom.patch(0x18, 0x0786, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -129,7 +133,7 @@ def upgradeMamu(rom):
     rom.patch(0x18, 0x0299, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         call $3C77
     """), ASM("""
         ld   a, $0C

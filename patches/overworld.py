@@ -16,7 +16,7 @@ def patchOverworldTilesets(rom):
         ld   e, a
         ld   hl, $7F00
         add  hl, de
-        ldh  a, [$94] ; We need to load the currently loaded tileset in E to compare it
+        ldh  a, [$FF94] ; We need to load the currently loaded tileset in E to compare it
         ld   e, a
         ld   a, [hl]
         ld   hl, $2100

@@ -1,0 +1,271 @@
+
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<input type="checkbox" id="generatingdialog" class="modal">
+<div>
+    <div class="card">
+        <h3 class="section"><span class="spinner" style="margin: 0 10 0 0"></span>Randomizing...</h3>
+        <p class="section" id="generatingtext">Working magic...</p>
+    </div>
+</div>
+
+<input type="checkbox" id="seeddonedialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="seeddonedialog" class="modal-close" ></label>
+        <h3 class="section">Seed generation complete!</h3>
+        <p class="section">Seed: <span id="seedSpan">...</span></p>
+        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
+        <p class="section"><a id="magpieLink">Open in Magpie</a></p>
+    </div>
+</div>
+<input type="checkbox" id="errordialog" class="modal">
+<div>
+    <div class="card large">
+        <label for="errordialog" class="modal-close" ></label>
+        <h3 class="section">Error:</h3>
+        <p class="section"><pre id="failureMessage"></pre></p>
+    </div>
+</div>
+
+<input type="checkbox" id="emulatordialog" class="modal">
+<div>
+    <div class="card fluid" style="max-height: none">
+        <div class="row" id="emulatorcontainer">
+            <span class="icon-settings" id="emulatorsettingsbutton"></span>
+        </div>
+    </div>
+</div>
+<input type="checkbox" id="emulatorsettingsdialog" class="modal">
+<div>
+    <div class="card" style="max-width: 800px; max-height: none"><div class="row">
+        <label for="emulatorsettingsdialog" class="modal-close" ></label>
+        <div class="col-sm-4">
+            <div class="row"><h4>Volume</h4></div>
+            <div class="row"><input type="range" min="0" max="100" value="50" id="volume0" style="width: 100%"></div>
+            <div class="row"><input type="range" min="0" max="100" value="50" id="volume1" style="width: 100%"></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row"><h4>Keys</h4></div>
+            <div class="row"><button id="keyUP">Up: ...</button></div>
+            <div class="row"><button id="keyDOWN">Down: ...</button></div>
+            <div class="row"><button id="keyLEFT">Left: ...</button></div>
+            <div class="row"><button id="keyRIGHT">Right: ...</button></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row"><h4>&nbsp;</h4></div>
+            <div class="row"><button id="keyB">B: ...</button></div>
+            <div class="row"><button id="keyA">A: ...</button></div>
+            <div class="row"><button id="keySTART">Start: ...</button></div>
+            <div class="row"><button id="keySELECT">Select: ...</button></div>
+        </div>
+    </div></div>
+</div>
+
+<div class="container" id="settings" style="margin-bottom: 0px;">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
+            <input type="file" id="rom" name="rom" style="display:none" accept=".gbc"/>
+            <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
+        </div>
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
+            <input style="width:100%" id="submitbutton" type="submit" value="Randomize!" disabled/>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <button onclick="ID('settingsm').style.display = ID('settingsm').style.display == '' ? 'None' : ''">Show/Hide</button>
+    <div id="settingsm" style="display: none"></div>
+</div>
+
+
+<script src="js/options.js"></script>
+<script src="js/ui.js"></script>
+<script>"use strict";
+var roms = [];
+
+function ID(s) { return document.getElementById(s); }
+
+buildUI(function(s) { return s.aesthetic; });
+
+function isMystery(s) { return !s.aesthetic && s.key != "race" && (typeof(s.default) == 'boolean' || s.options); }
+
+function buildMysteryUI() {
+    var last_cat = ""
+    var html = "";
+    for(var s of options) {
+        if (!isMystery(s)) continue;
+
+        if (last_cat != s.category) {
+            if (last_cat != "") html += `</div>`;
+            html += `<div class="row"><div class="col-sm-12"><h1>${s.category}</h1></div>`
+            last_cat = s.category;
+        }
+        html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
+        html += `<div class="inputcontainer">`;
+        html += `<label>${s.label}:</label>`;
+
+        html += `<div>`;
+        if (typeof(s.default) == 'boolean') {
+            html += `<select id='${s.key}'>`;
+            for(var n=10; n>=0; n--) {
+                html += `<option value='${n}'>${n*10}%</option>`;
+            }
+            html += `</select>`;
+        } else {
+            for(var o of s.options) {
+                html += `<div style="display: flex;flex-direction: row;justify-content: flex-end;align-items: baseline;">`
+                html += `${o.label}:`
+                html += `<select id='${s.key}_${o.key}'>`;
+                for(var n=10; n>=0; n--) {
+                    html += `<option value='${n}'>${n}</option>`;
+                }
+                html += `</select></div>`;
+            }
+        }
+        html += `</div>`;
+        html += `</div></div>`;
+    }
+    html += `</div>`;
+    ID("settingsm").innerHTML = html;
+
+    for(var s of options) {
+        if (!isMystery(s)) continue;
+        if (typeof(s.default) == 'boolean') {
+            ID(`${s.key}`).oninput = buildMysteryOptions
+        } else {
+            for(var o of s.options) {
+                ID(`${s.key}_${o.key}`).oninput = buildMysteryOptions
+            }
+        }
+    }
+}
+buildMysteryUI();
+
+function buildMysteryOptions()
+{
+    var msss = "";
+    for(var s of options) {
+        if (!isMystery(s)) continue;
+        if (typeof(s.default) == 'boolean') {
+            var value = parseInt(ID(`${s.key}`).value);
+            msss += s.short_key + "!" + value.toString(16);
+            if (os.length != 3) throw Error("OS.length != 3");
+        } else {
+            for(var o of s.options) {
+                var value = parseInt(ID(`${s.key}_${o.key}`).value);
+                var os = s.short_key + (o.short != "" ? o.short : " ") + value.toString(16);
+                if (os.length != 3) throw Error("OS.length != 3");
+                msss += os;
+            }
+        }
+    }
+    console.log(msss);
+    var url = document.location.origin + document.location.pathname + "?!" + encrypt(msss) + document.location.hash;
+    history.replaceState(null, '', url);
+}
+
+function updateMysteryOptions(msss)
+{
+    for(var n=0; n<msss.length; n+=3) {
+        var ss = msss.substr(n, 1);
+        var so = msss.substr(n + 1, 1);
+        var sv = parseInt(msss.substr(n + 2, 1), 16);
+        for(var s of options) {
+            if (s.short_key == ss) {
+                if (so == "!") {
+                    ID(s.key).value = sv;
+                } else {
+                    for(var o of s.options) {
+                        if (o.short == so) {
+                            ID(`${s.key}_${o.key}`).value = sv;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function encrypt(i)
+{
+    var s = "";
+    for(var n=0; n<i.length; n++) {
+        var rng = Math.floor(Math.random() * 255);
+        s += String.fromCharCode(rng) + String.fromCharCode(i.charCodeAt(n) ^ rng);
+    }
+    return btoa(s);
+}
+
+function decrypt(i)
+{
+    i = atob(i);
+    var s = ""
+    for(var n=0; n<i.length; n+=2) {
+        s += String.fromCharCode(i.charCodeAt(n) ^ i.charCodeAt(n + 1));
+    }
+    return s;
+}
+
+function randomizeSettings()
+{
+    var sss = "V"; // Always race mode, to hide settings from magpie.
+    for(var s of options) {
+        if (!isMystery(s)) continue;
+        if (typeof(s.default) == 'boolean') {
+            var value = parseInt(ID(`${s.key}`).value) / 10.0;
+            if (Math.random() < value) {
+                sss += s.short_key;
+            }
+        } else {
+            var total = 0;
+            for(var o of s.options) {
+                total += parseInt(ID(`${s.key}_${o.key}`).value);
+            }
+            var rng = Math.floor(Math.random() * total);
+            for(var o of s.options) {
+                rng -= parseInt(ID(`${s.key}_${o.key}`).value);
+                if (rng <= 0) {
+                    sss += s.short_key + o.short;
+                    break;
+                }
+            }
+        }
+    }
+    return sss;
+}
+
+async function startRomGeneration()
+{
+    ID("generatingdialog").checked = true;
+    randomGenerationString();
+    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
+    var randomsettings = randomizeSettings();
+    var args = ["--short", updateSettingsString() + randomsettings];
+    var data = {"input.gbc": buffer, "args": args, "id": 0};
+
+    var e = ID("gfxmod")
+    if (e.value == "custom" && ID('customgfxfile').value) {
+        args.push("-s");
+        args.push("gfxmod=custom.png");
+        data['gfx.png'] = new Uint8Array(await ID("customgfxfile").files[0].arrayBuffer());
+    }
+
+    await postToWorker(data);
+}
+
+updateMysteryOptions("Lc0L aLh0Lg0LH0AaaAgah!9s!9H!9I!1T!8W!9R!9Zd3Zt0ZgaD aDs3DL5DN5DK5Dk2B aBsaBrab absabraG8aG75G65G50G40G30G20G10G01GO1GR0G<0G>5GS5Gb3GB0Gm5Gs5P aPc1Pp1Pk1m ami1m11ml1X aXO2XH2X10taatnat ar!2u!3E aEs2ES1Em0j!3a!0w!3g aga1gs0O aOD1ON1OR0o aoD1oO1oB1q!0")
+if (document.location.search.startsWith("?!")) {
+    var msss = decrypt(document.location.search.substr(2));
+    updateMysteryOptions(msss);
+}
+
+</script>
+</body>
+</html>

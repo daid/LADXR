@@ -18,18 +18,19 @@ class ShopItem(ItemInfo):
         TRADING_ITEM_FISHING_HOOK,TRADING_ITEM_NECKLACE,TRADING_ITEM_SCALE,TRADING_ITEM_MAGNIFYING_GLASS
     ]
 
-    def __init__(self, index):
+    def __init__(self, index, *, price=None):
         self.__index = index
+        self.__price = price if price is not None else [200, 980][index]
         super().__init__(0x2A1)
 
     def patch(self, rom, option, *, multiworld=None):
         assert multiworld is None
         if self.__index == 0:
             rom.patch(0x04, 0x37C5, "08", "%02X" % (CHEST_ITEMS[option]))
-            rom.texts[0x030] = formatText("Deluxe {%s} 200 {RUPEES}!" % (option), ask="Buy  No Way")
+            rom.texts[0x030] = formatText("Deluxe {%s} %d {RUPEES}!" % (option, self.__price), ask="Buy  No Way")
         elif self.__index == 1:
             rom.patch(0x04, 0x37C6, "02", "%02X" % (CHEST_ITEMS[option]))
-            rom.texts[0x02C] = formatText("{%s} Only 980 {RUPEES}!" % (option), ask="Buy  No Way")
+            rom.texts[0x02C] = formatText("{%s} Only %d {RUPEES}!" % (option, self.__price), ask="Buy  No Way")
 
     def read(self, rom):
         value = rom.banks[0x04][0x37C5 + self.__index]

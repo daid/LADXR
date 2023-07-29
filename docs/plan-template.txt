@@ -1,0 +1,429 @@
+;Plandomizer data
+;Items: ANGLER_KEY, ARROWS_10, BAD_HEART_CONTAINER, BIRD_KEY, BLUE_TUNIC, BOMB, BOOMERANG, BOW, BOWWOW, COMPASS, COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS9, FACE_KEY, FEATHER, FLIPPERS, GEL, GOLD_LEAF, HEART_CONTAINER, HEART_PIECE, HOOKSHOT, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8, KEY, KEY1, KEY2, KEY3, KEY4, KEY5, KEY6, KEY7, KEY8, KEY9, MAGIC_POWDER, MAGIC_ROD, MAGNIFYING_LENS, MAP, MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP9, MAX_ARROWS_UPGRADE, MAX_BOMBS_UPGRADE, MAX_POWDER_UPGRADE, MEDICINE, MESSAGE, NIGHTMARE_KEY, NIGHTMARE_KEY1, NIGHTMARE_KEY2, NIGHTMARE_KEY3, NIGHTMARE_KEY4, NIGHTMARE_KEY5, NIGHTMARE_KEY6, NIGHTMARE_KEY7, NIGHTMARE_KEY8, NIGHTMARE_KEY9, OCARINA, PEGASUS_BOOTS, POWER_BRACELET, RED_TUNIC, ROOSTER, RUPEES_100, RUPEES_20, RUPEES_200, RUPEES_50, RUPEES_500, SEASHELL, SHIELD, SHOVEL, SINGLE_ARROW, SLIME_KEY, SONG1, SONG2, SONG3, STONE_BEAK, STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9, SWORD, TAIL_KEY, TOADSTOOL, TRADING_ITEM_BANANAS, TRADING_ITEM_BROOM, TRADING_ITEM_DOG_FOOD, TRADING_ITEM_FISHING_HOOK, TRADING_ITEM_HIBISCUS, TRADING_ITEM_HONEYCOMB, TRADING_ITEM_LETTER, TRADING_ITEM_MAGNIFYING_GLASS, TRADING_ITEM_NECKLACE, TRADING_ITEM_PINEAPPLE, TRADING_ITEM_RIBBON, TRADING_ITEM_SCALE, TRADING_ITEM_STICK, TRADING_ITEM_YOSHI_DOLL
+;Modify the item pool:
+;Pool:SWORD:+5
+;Pool:RUPEES_50:-5
+;Animal Village - Bear Cook
+Location:0x2D7-Trade: 
+;Animal Village - Goat
+Location:0x2D9-Trade: 
+;Animal Village - Grandma
+Location:0x0CD-Trade: 
+;Donut Plains - Donut Plains Ledge Dig
+Location:0x0A8: 
+;Donut Plains - Rock Seashell
+Location:0x0B9: 
+;Face Shrine - Raft Chest
+Location:0x06C: 
+;Goponga Swamp - MrWrite
+Location:0x2A8-Trade: 
+;Goponga Swamp - Swampy Chest
+Location:0x034: 
+;Goponga Swamp - Write Cave East
+Location:0x2AF: 
+;Goponga Swamp - Write Cave West
+Location:0x2AE: 
+;Kanalet Castle - Ball and Chain Darknut Leaf
+Location:0x2C6: 
+;Kanalet Castle - Bombable Darknut Leaf
+Location:0x2C5: 
+;Kanalet Castle - Bomberman Meets Whack-a-mole Leaf
+Location:0x05A: 
+;Kanalet Castle - Boots Pit
+Location:0x1FD: 
+;Kanalet Castle - Crow Rock Leaf
+Location:0x058: 
+;Kanalet Castle - Darknut, Zol, Bubble Leaf
+Location:0x2D2: 
+;Kanalet Castle - In the Moat Heart Piece
+Location:0x078: 
+;Koholint Prairie - Ghost Grave Dig
+Location:0x074: 
+;Koholint Prairie - Graveyard Connector
+Location:0x2DF: 
+;Koholint Prairie - Heart Piece of Shame
+Location:0x044: 
+;Koholint Prairie - Witch Item
+Location:0x2A2: 
+;Mabe Village - Ballad of the Wind Fish
+Location:0x092: 
+;Mabe Village - Bush Field
+Location:0x0A3: 
+;Mabe Village - Dog House Dig
+Location:0x2B2: 
+;Mabe Village - Dream Hut East
+Location:0x2BF: 
+;Mabe Village - Dream Hut West
+Location:0x2BE: 
+;Mabe Village - Fishing Game Heart Piece
+Location:0x2B1: 
+;Mabe Village - Papahl's Wife
+Location:0x2A6-Trade: 
+;Mabe Village - Rooster
+Location:0x1E4: 
+;Mabe Village - Shop 200 Item
+Location:0x2A1-0: 
+;Mabe Village - Shop 980 Item
+Location:0x2A1-1: 
+;Mabe Village - Tarin's Gift
+Location:0x2A3: 
+;Mabe Village - Trendy Game
+Location:0x2A0-Trade: 
+;Mabe Village - Well Heart Piece
+Location:0x2A4: 
+;Mabe Village - YipYip
+Location:0x2B2-Trade: 
+;Martha's Bay - Fisher
+Location:0x2F5-Trade: 
+;Martha's Bay - Ghost House Barrel
+Location:0x1E3: 
+;Martha's Bay - Island Bush of Destiny
+Location:0x0F8: 
+;Martha's Bay - Lone Bush
+Location:0x0E9: 
+;Martha's Bay - Mad Batter
+Location:0x1E0: 
+;Martha's Bay - Mermaid
+Location:0x0C9-Trade: 
+;Martha's Bay - Mermaid Statue
+Location:0x297-Trade: 
+;Martha's Bay - Peninsula Dig
+Location:0x0DA: 
+;Mysterious Woods - Cave Crystal Chest
+Location:0x2BD: 
+;Mysterious Woods - Cave Skull Heart Piece
+Location:0x2AB: 
+;Mysterious Woods - Hookshot Cave
+Location:0x2B3: 
+;Mysterious Woods - Mad Batter
+Location:0x1E1: 
+;Mysterious Woods - Tail Key Chest
+Location:0x041: 
+;Mysterious Woods - Toadstool
+Location:0x050: 
+;Mysterious Woods - Two Zol, Moblin Chest
+Location:0x071: 
+;Pothole Field - Slime Key Dig
+Location:0x0C6: 
+;Pothole Field - Under Richard's House
+Location:0x2C8: 
+;Rapids Ride - East
+Location:0x05D: 
+;Rapids Ride - West
+Location:0x05C: 
+;Southern Face Shrine - Armos Knight
+Location:0x27F: 
+;Southern Face Shrine - Under Armos Cave
+Location:0x2FC: 
+;Tal Tal Heights - Damp Cave Heart Piece
+Location:0x1F2: 
+;Tal Tal Heights - Manbo's Mambo
+Location:0x2FD: 
+;Tal Tal Heights - Moblin Cave
+Location:0x2E2: 
+;Tal Tal Heights - Papahl
+Location:0x019-Trade: 
+;Tal Tal Mountains - Access Tunnel Bombable Heart Piece
+Location:0x2BA: 
+;Tal Tal Mountains - Access Tunnel Exterior
+Location:0x018: 
+;Tal Tal Mountains - Access Tunnel Interior
+Location:0x2BB: 
+;Tal Tal Mountains - Bird Key Cave
+Location:0x27A: 
+;Tal Tal Mountains - Bridge Rock
+Location:0x00C: 
+;Tal Tal Mountains - Mad Batter
+Location:0x1E2: 
+;Tal Tal Mountains - Outside Five Chest Game
+Location:0x01D: 
+;Tal Tal Mountains - Outside Mad Batter
+Location:0x004: 
+;Tal Tal Mountains - Paphl Cave
+Location:0x28A: 
+;Toronbo Shores - Banana Sale
+Location:0x2FE-Trade: 
+;Toronbo Shores - Boomerang Guy Item
+Location:0x1F5: 
+;Toronbo Shores - Outside D1 Tree Bonk
+Location:0x0D2: 
+;Toronbo Shores - Sword on the Beach
+Location:0x0F2: 
+;Toronbo Shores - West of Ghost House Chest
+Location:0x0E5: 
+;Turtle Rock - Outside Heart Piece
+Location:0x000: 
+;Ukuku Prairie - Boots 'n' Bomb Cave Bombable Wall
+Location:0x2E5: 
+;Ukuku Prairie - Boots 'n' Bomb Cave Chest
+Location:0x2F4: 
+;Ukuku Prairie - Cave East of Mabe
+Location:0x2CD: 
+;Ukuku Prairie - East of Mabe Tree Bonk
+Location:0x0A4: 
+;Ukuku Prairie - East of Seashell Mansion Bush
+Location:0x08B: 
+;Ukuku Prairie - Honeycomb
+Location:0x087-Trade: 
+;Ukuku Prairie - Kiki
+Location:0x07B-Trade: 
+;Ukuku Prairie - Mamu
+Location:0x2FB: 
+;Ukuku Prairie - Outside D3 Island Bush
+Location:0x0A6: 
+;Ukuku Prairie - Outside D3 Ledge Dig
+Location:0x0A5: 
+;Ukuku Prairie - Seashell Mansion
+Location:0x2E9: 
+;Yarna Desert - Bomb Arrow Cave
+Location:0x2E6: 
+;Yarna Desert - Cave Under Lanmola
+Location:0x1E8: 
+;Yarna Desert - Lanmola
+Location:0x0CE: 
+;Yarna Desert - Rock Seashell
+Location:0x0FF: 
+;Tail Cave - Bombable Wall Seashell Chest
+Location:0x10C: 
+;Tail Cave - Feather Chest
+Location:0x11D: 
+;Tail Cave - Four Zol Chest
+Location:0x115: 
+;Tail Cave - Hardhat Beetles Key
+Location:0x116: 
+;Tail Cave - Mini-Moldorm Spawn Chest
+Location:0x10D: 
+;Tail Cave - Moldorm Heart Container
+Location:0x106: 
+;Tail Cave - Nightmare Key Chest
+Location:0x108: 
+;Tail Cave - Pit Button Chest
+Location:0x113: 
+;Tail Cave - Spark, Mini-Moldorm Chest
+Location:0x10E: 
+;Tail Cave - Three of a Kind Chest
+Location:0x10A: 
+;Tail Cave - Two Stalfos, Two Keese Chest
+Location:0x114: 
+;Bottle Grotto - Boo Buddies Room Chest
+Location:0x120: 
+;Bottle Grotto - Button Spawn Chest
+Location:0x139: 
+;Bottle Grotto - Enemy Order Room Chest
+Location:0x127: 
+;Bottle Grotto - Entrance Chest
+Location:0x136: 
+;Bottle Grotto - First Switch Locked Chest
+Location:0x138: 
+;Bottle Grotto - Genie Heart Container
+Location:0x12B: 
+;Bottle Grotto - Hardhat Beetle Pit Chest
+Location:0x12E: 
+;Bottle Grotto - Mask-Mimic Chest
+Location:0x137: 
+;Bottle Grotto - Mask-Mimic Key
+Location:0x134: 
+;Bottle Grotto - Outside Boo Buddies Room Chest
+Location:0x121: 
+;Bottle Grotto - Second Switch Locked Chest
+Location:0x122: 
+;Bottle Grotto - Two Stalfos Key
+Location:0x132: 
+;Bottle Grotto - Vacuum Mouth Chest
+Location:0x126: 
+;Key Cavern - After Stairs Key
+Location:0x14D: 
+;Key Cavern - Boots Chest
+Location:0x146: 
+;Key Cavern - Four Zol Chest
+Location:0x14F: 
+;Key Cavern - Nightmare Door Key
+Location:0x15B: 
+;Key Cavern - North Key Room Key
+Location:0x154: 
+;Key Cavern - Slime Eye Heart Container
+Location:0x15A: 
+;Key Cavern - South Key Room Key
+Location:0x158: 
+;Key Cavern - Sword Stalfos, Keese Switch Chest
+Location:0x150: 
+;Key Cavern - Three Bombite Key
+Location:0x141: 
+;Key Cavern - Three Zol, Stalfos Chest
+Location:0x142: 
+;Key Cavern - Tile Arrow Ledge Chest
+Location:0x147: 
+;Key Cavern - Two Bombite, Sword Stalfos, Zol Chest
+Location:0x151: 
+;Key Cavern - Two Stalfos, Zol Chest
+Location:0x14E: 
+;Key Cavern - Two Zol, Stalfos Ledge Chest
+Location:0x144: 
+;Key Cavern - Two Zol, Two Pairodd Key
+Location:0x148: 
+;Key Cavern - Vacuum Mouth Chest
+Location:0x153: 
+;Key Cavern - West Key Room Key
+Location:0x155: 
+;Key Cavern - Zol Switch Chest
+Location:0x14C: 
+;Angler's Tunnel - Angler Fish Heart Container
+Location:0x166: 
+;Angler's Tunnel - Blob Chest
+Location:0x16D: 
+;Angler's Tunnel - Crystal Chest
+Location:0x17B: 
+;Angler's Tunnel - Flipper Locked After Boots Pit Chest
+Location:0x16E: 
+;Angler's Tunnel - Flipper Locked Before Boots Pit Chest
+Location:0x175: 
+;Angler's Tunnel - Flippers Chest
+Location:0x160: 
+;Angler's Tunnel - Lower Bomb Locked Watery Chest
+Location:0x171: 
+;Angler's Tunnel - NW of Boots Pit Ledge Chest
+Location:0x16A: 
+;Angler's Tunnel - Nightmare Key Ledge Chest
+Location:0x176: 
+;Angler's Tunnel - Pit Key
+Location:0x169: 
+;Angler's Tunnel - Spark Chest
+Location:0x168: 
+;Angler's Tunnel - Two Spiked Beetle, Zol Chest
+Location:0x178: 
+;Angler's Tunnel - Upper Bomb Locked Watery Chest
+Location:0x165: 
+;Angler's Tunnel - Watery Statue Chest
+Location:0x179: 
+;Catfish's Maw - Crystal Key
+Location:0x181: 
+;Catfish's Maw - Entrance Hookshottable Chest
+Location:0x1A0: 
+;Catfish's Maw - Flying Bomb Chest East
+Location:0x18F: 
+;Catfish's Maw - Flying Bomb Chest South
+Location:0x19B: 
+;Catfish's Maw - Hookshot Note Chest
+Location:0x196: 
+;Catfish's Maw - Master Stalfos Item
+Location:0x180: 
+;Catfish's Maw - Nightmare Key/Torch Cross Chest
+Location:0x186: 
+;Catfish's Maw - Slime Eel Heart Container
+Location:0x185: 
+;Catfish's Maw - Spark, Two Iron Mask Chest
+Location:0x19E: 
+;Catfish's Maw - Swort Stalfos, Star, Bridge Chest
+Location:0x188: 
+;Catfish's Maw - Three Iron Mask Chest
+Location:0x197: 
+;Catfish's Maw - Three Stalfos Chest
+Location:0x183: 
+;Catfish's Maw - Two Stalfos, Star Pit Chest
+Location:0x18E: 
+;Face Shrine - Facade Heart Container
+Location:0x1BC: 
+;Face Shrine - Flying Heart, Statue Chest
+Location:0x1C9: 
+;Face Shrine - Four Wizzrobe Ledge Chest
+Location:0x1D1: 
+;Face Shrine - L2 Bracelet Chest
+Location:0x1CE: 
+;Face Shrine - Mini-Moldorm, Spark Chest
+Location:0x1CF: 
+;Face Shrine - Pot Locked Chest
+Location:0x1B6: 
+;Face Shrine - Stairs Across Statues Chest
+Location:0x1B9: 
+;Face Shrine - Switch, Star Above Statues Chest
+Location:0x1B3: 
+;Face Shrine - Three Wizzrobe, Switch Chest
+Location:0x1C0: 
+;Face Shrine - Tile Room Key
+Location:0x1C3: 
+;Face Shrine - Top Left Horse Heads Chest
+Location:0x1B0: 
+;Face Shrine - Top Right Horse Heads Chest
+Location:0x1B1: 
+;Face Shrine - Two Wizzrobe Key
+Location:0x1B4: 
+;Face Shrine - Water Tektite Chest
+Location:0x1BE: 
+;Eagle's Tower - Beamos Ledge Chest
+Location:0x204: 
+;Eagle's Tower - Conveyor Beamos Chest
+Location:0x220: 
+;Eagle's Tower - Entrance Key
+Location:0x210: 
+;Eagle's Tower - Evil Eagle Heart Container
+Location:0x223: 
+;Eagle's Tower - Hinox Key
+Location:0x21B: 
+;Eagle's Tower - Horse Head, Bubble Chest
+Location:0x212: 
+;Eagle's Tower - Kirby Ledge Chest
+Location:0x201: 
+;Eagle's Tower - Mirror Shield Chest
+Location:0x21A: 
+;Eagle's Tower - Nightmare Key/After Grim Creeper Chest
+Location:0x224: 
+;Eagle's Tower - Switch Wrapped Chest
+Location:0x209: 
+;Eagle's Tower - Three of a Kind, No Pit Chest
+Location:0x211: 
+;Eagle's Tower - Three of a Kind, Pit Chest
+Location:0x21C: 
+;Turtle Rock - Beamos Blocked Chest
+Location:0x240: 
+;Turtle Rock - Dodongo Chest
+Location:0x23D: 
+;Turtle Rock - Four Ropes Pot Chest
+Location:0x25F: 
+;Turtle Rock - Gibdos on Cracked Floor Key
+Location:0x23E: 
+;Turtle Rock - Hot Head Heart Container
+Location:0x234: 
+;Turtle Rock - Lava Arrow Statue Key
+Location:0x241: 
+;Turtle Rock - Lava Ledge Chest
+Location:0x235: 
+;Turtle Rock - Left Vire Key
+Location:0x24C: 
+;Turtle Rock - Left of Hinox Zamboni Chest
+Location:0x24D: 
+;Turtle Rock - Magic Rod Chest
+Location:0x237: 
+;Turtle Rock - Nightmare Key/Big Zamboni Chest
+Location:0x232: 
+;Turtle Rock - Push Block Chest
+Location:0x24F: 
+;Turtle Rock - Right Lava Chest
+Location:0x259: 
+;Turtle Rock - Spark, Pit Chest
+Location:0x255: 
+;Turtle Rock - Two Torches Room Chest
+Location:0x246: 
+;Turtle Rock - Vacuum Mouth Chest
+Location:0x25C: 
+;Turtle Rock - West of Boss Door Ledge Chest
+Location:0x23A: 
+;Turtle Rock - Zamboni, Two Zol Key
+Location:0x25A: 
+;Color Dungeon - Bullshit Room
+Location:0x307: 
+;Color Dungeon - Entrance Chest
+Location:0x30F: 
+;Color Dungeon - Lower Small Key
+Location:0x314: 
+;Color Dungeon - Nightmare Key Chest
+Location:0x302: 
+;Color Dungeon - Tunic Fairy Item 1
+Location:0x301-0: 
+;Color Dungeon - Tunic Fairy Item 2
+Location:0x301-1: 
+;Color Dungeon - Two Socket Chest
+Location:0x311: 
+;Color Dungeon - Upper Small Key
+Location:0x308: 
+;Color Dungeon - Zol Chest
+Location:0x306: 

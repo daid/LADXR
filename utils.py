@@ -44,7 +44,7 @@ _NAMES = {
     KEY6: "Key for Face Shrine",
     KEY7: "Key for Eagle's Tower",
     KEY8: "Key for Turtle Rock",
-    KEY9: "Key for Color Dungeon",
+    KEY0: "Key for Color Dungeon",
 
     MAP: "Dungeon Map",
     MAP1: "Map for Tail Cave",
@@ -55,7 +55,7 @@ _NAMES = {
     MAP6: "Map for Face Shrine",
     MAP7: "Map for Eagle's Tower",
     MAP8: "Map for Turtle Rock",
-    MAP9: "Map for Color Dungeon",
+    MAP0: "Map for Color Dungeon",
 
     COMPASS: "Dungeon Compass",
     COMPASS1: "Compass for Tail Cave",
@@ -66,7 +66,7 @@ _NAMES = {
     COMPASS6: "Compass for Face Shrine",
     COMPASS7: "Compass for Eagle's Tower",
     COMPASS8: "Compass for Turtle Rock",
-    COMPASS9: "Compass for Color Dungeon",
+    COMPASS0: "Compass for Color Dungeon",
 
     STONE_BEAK: "Stone Beak",
     STONE_BEAK1: "Stone Beak for Tail Cave",
@@ -77,7 +77,7 @@ _NAMES = {
     STONE_BEAK6: "Stone Beak for Face Shrine",
     STONE_BEAK7: "Stone Beak for Eagle's Tower",
     STONE_BEAK8: "Stone Beak for Turtle Rock",
-    STONE_BEAK9: "Stone Beak for Color Dungeon",
+    STONE_BEAK0: "Stone Beak for Color Dungeon",
 
     NIGHTMARE_KEY: "Nightmare Key",
     NIGHTMARE_KEY1: "Nightmare Key for Tail Cave",
@@ -88,7 +88,7 @@ _NAMES = {
     NIGHTMARE_KEY6: "Nightmare Key for Face Shrine",
     NIGHTMARE_KEY7: "Nightmare Key for Eagle's Tower",
     NIGHTMARE_KEY8: "Nightmare Key for Turtle Rock",
-    NIGHTMARE_KEY9: "Nightmare Key for Color Dungeon",
+    NIGHTMARE_KEY0: "Nightmare Key for Color Dungeon",
 
     HEART_PIECE: "Piece of Heart",
     BOWWOW: "Bowwow",
@@ -145,7 +145,7 @@ def setReplacementName(key: str, value: str) -> None:
 def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
     instr = instr.format(**_NAMES)
     s = instr.encode("ascii")
-    s = s.replace(b"'", b"^")
+    s = s.replace(b"'", b"^").replace(b'<honeycomb>', b'\xE5')
 
     def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
@@ -169,7 +169,7 @@ def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -
     if ask is not None:
         askbytes = ask.encode("ascii")
         result = result.rstrip()
-        while len(result) % 32 != 16:
+        while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + askbytes + b'\xfe'
     return result.rstrip() + b'\xff'

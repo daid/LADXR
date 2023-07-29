@@ -39,18 +39,19 @@ class Dungeon2:
         
         if options.logic == 'glitched' or options.logic == 'hell':
             dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
-            dungeon2_r6.connect(miniboss, FEATHER) # superjump to staircase next to hinox. 
+            dungeon2_r6.connect(miniboss, r.super_jump_feather) # superjump to staircase next to hinox. 
             
         if options.logic == 'hell':    
-            dungeon2_map_chest.connect(dungeon2_l2, AND(r.attack_hookshot_powder, PEGASUS_BOOTS)) # use boots to jump over the pits
-            dungeon2_r4.connect(dungeon2_r3, OR(PEGASUS_BOOTS, HOOKSHOT)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
+            dungeon2_map_chest.connect(dungeon2_l2, AND(r.attack_hookshot_powder, r.boots_bonk_pit)) # use boots to jump over the pits
+            dungeon2_r4.connect(dungeon2_r3, r.boots_bonk_pit) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             dungeon2_r4.connect(shyguy_key_drop, r.rear_attack_range, one_way=True) # adjust for alternate requirements for dungeon2_r4
-            miniboss.connect(dungeon2_r5, AND(PEGASUS_BOOTS, r.miniboss_requirements[world_setup.miniboss_mapping[1]])) # use boots to dash over the spikes in the 2d section
-            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(HOOKSHOT, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)), FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
-            dungeon2_post_stairs_boss.connect(dungeon2_pre_stairs_boss, OR(BOMB, AND(PEGASUS_BOOTS, FEATHER))) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
-            dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(PEGASUS_BOOTS, HOOKSHOT)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
+            miniboss.connect(dungeon2_r5, AND(r.boots_dash_2d, r.miniboss_requirements[world_setup.miniboss_mapping[1]])) # use boots to dash over the spikes in the 2d section
+            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(r.hookshot_clip_block, OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)), FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
+            dungeon2_post_stairs_boss.connect(dungeon2_pre_stairs_boss, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
+            dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
         self.entrance = entrance
+        self.final_room = dungeon2_boss
 
 
 class NoDungeon2:

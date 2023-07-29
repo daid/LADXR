@@ -37,7 +37,7 @@ skipSubRoutine:
         ld   de, $C505
         
         ; Check if we want to load a key item into the shop.
-        ldh  a, [$F8]
+        ldh  a, [$FFF8]
         bit  4, a
         jr   nz, checkForSecondKeyItem
         ld   a, $01
@@ -85,7 +85,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3AC3, 0x3AD8, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C5]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $02
         rst  8
         ; Update the room status to mark first item as bought
@@ -99,7 +99,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3A91, 0x3AA9, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C6]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $02
         rst  8
         ; Update the room status to mark second item as bought
@@ -122,7 +122,7 @@ hasNoBombs:
         and  a
         jr   nz, notShovel
         ld   a, [$77C5]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $01
         rst  8
         ret
@@ -130,7 +130,7 @@ notShovel:
         cp   $04
         jr   nz, notBow
         ld   a, [$77C6]
-        ldh  [$F1], a
+        ldh  [$FFF1], a
         ld   a, $01
         rst  8
         ret
@@ -146,3 +146,19 @@ notArrows:
         ld   de, $7B5A
         jp   $3C77
     """), fill_nop=True)
+
+
+def changeShopPrices(rom, price1, price2):
+    rom.patch(0x04, 0x37D3 + 1, "09", f"{price1//100:02d}")
+    rom.patch(0x04, 0x37DC + 1, "80", f"{price1%100:02d}")
+    rom.patch(0x04, 0x37E5 + 1, "03", f"{price1>>8:02x}")
+    rom.patch(0x04, 0x37EE + 1, "D4", f"{price1&0xFF:02x}")
+    rom.patch(0x04, 0x3732 + 0 * 11 + 3, "B2B0B0", f"B{price1//100:01x}B{(price1//10)%10:01x}B{price1%10:01x}")
+    rom.texts[0x030] = rom.texts[0x030].replace(b"200", f"{price1:3d}".encode("ascii"))
+
+    rom.patch(0x04, 0x37D3 + 5, "09", f"{price2//100:02d}")
+    rom.patch(0x04, 0x37DC + 5, "80", f"{price2%100:02d}")
+    rom.patch(0x04, 0x37E5 + 5, "03", f"{price2>>8:02x}")
+    rom.patch(0x04, 0x37EE + 5, "D4", f"{price2&0xFF:02x}")
+    rom.patch(0x04, 0x3732 + 4 * 11 + 3, "B9B8B0", f"B{price2//100:01x}B{(price2//10)%10:01x}B{price2%10:01x}")
+    rom.texts[0x02C] = rom.texts[0x02C].replace(b"980", f"{price2:3d}".encode("ascii"))

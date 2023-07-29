@@ -47,7 +47,7 @@ class Setting:
             for option_key, option_short, option_label in self.options:
                 if self.value == option_key:
                     return option_short
-        return self.value + ">"
+        return str(self.value) + ">"
 
     def toJson(self):
         result = {
@@ -72,7 +72,11 @@ class Settings:
         gfx_options = [('', '', 'Default')]
         gfx_path = os.path.join(os.path.dirname(__file__), "gfx")
         for filename in sorted(os.listdir(gfx_path)):
+            if filename == "template.png":
+                continue
             if filename.endswith(".bin"):
+                gfx_options.append((filename, filename + ">", filename[:-4]))
+            if filename.endswith(".png") and not filename.endswith(".bin.png"):
                 gfx_options.append((filename, filename + ">", filename[:-4]))
 
         self.__all = [
@@ -130,18 +134,22 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Maps/.../..] specified items can be anywhere
 [Keysanity] all dungeon items can be anywhere.
 [Keysy] no keys, key doors are already open."""),
-            Setting('randomstartlocation', 'Gameplay', 'r', 'Random start location', default=False,
+            Setting('randomstartlocation', 'Entrances', 'r', 'Random start location', default=False,
                 description='Randomize where your starting house is located'),
-            Setting('dungeonshuffle', 'Gameplay', 'u', 'Dungeon shuffle', default=False,
+            Setting('dungeonshuffle', 'Entrances', 'u', 'Dungeon shuffle', default=False,
                 description='Randomizes the dungeon that each dungeon entrance leads to'),
-            Setting('entranceshuffle', 'Gameplay', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("advanced", 'a', "Advanced"), ("expert", 'E', "Expert"), ("insanity", 'I', "Insanity")], default='none',
+            Setting('entranceshuffle', 'Entrances', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed")], default='none',
                 description="""Randomizes where overworld entrances lead to.
 [Simple] single entrance caves that contain items are randomized
-[Advanced] Connector caves are also randomized
-[Expert] Caves/houses without items are also randomized
-[Insanity] A few very annoying entrances will be randomized as well.
-If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.
-Note, some entrances can lead into water, use the warp-to-home from the save&quit menu to escape this."""),
+[Split] Connector caves are also randomized, in a separate pool from single entrance caves
+[Mixed] Connector caves are also randomized, in the same pool as single entrance caves
+If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances."""),
+            Setting('shufflejunk', 'Entrances', 'j', 'Shuffle itemless entrances', default=False,
+                description="Caves/houses without items are also randomized when entranceshuffle is set"),
+            Setting('shuffleannoying', 'Entrances', 'a', 'Shuffle annoying entrances', default=False,
+                description="A few very annoying entrances (Mamu and the Raft House) will also be randomized when entranceshuffle is set"),
+            Setting('shufflewater', 'Entrances', 'w', 'Shuffle water entrances', default=False,
+                description="Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entranceshuffle is set. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works)."),
             Setting('boss', 'Gameplay', 'B', 'Boss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon bosses that each dungeon has'),
             Setting('miniboss', 'Gameplay', 'b', 'Miniboss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
@@ -152,7 +160,7 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
                                                          ('open', 'O', 'Egg already open'), ('random', 'R', 'Random instrument count'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!')], default='8',
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='8',
                 description="""Changes the goal of the game.
 [1-8 instruments], number of instruments required to open the egg.
 [No instruments] open the egg without instruments, still requires the ocarina with the balled of the windfish
@@ -161,7 +169,8 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
 [Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.
 [Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.
 [Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!
-[Bingo-25] Bingo, but need to fill the whole bingo card to win!"""),
+[Bingo-25] Bingo, but need to fill the whole bingo card to win!
+[Sign Maze] Go on a long trip on the overworld sign maze to open the egg."""),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
                 description="""Effects which items are shuffled.
 [Casual] places more inventory and key items so the seed is easier.
@@ -186,10 +195,11 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
 [Never] you can never steal from the shop."""),
             Setting('bowwow', 'Special', 'g', 'Good boy mode', options=[('normal', '', 'Disabled'), ('always', 'a', 'Enabled'), ('swordless', 's', 'Enabled (swordless)')], default='normal',
                 description='Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'),
-            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('random', 'R', 'Randomized')], default='normal',
+            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('dungeonchain', 'C', 'Dungeon chain'), ('random', 'R', 'Randomized')], default='normal',
                 description="""
 [Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.
 [No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
+[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.
 [Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
@@ -275,7 +285,7 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
                             break
                 else:
                     end_of_param = value.find(">", index)
-                    setting.value = value[index:end_of_param]
+                    setting.set(value[index:end_of_param])
                     index = end_of_param + 1
 
     def getShortString(self):
@@ -305,10 +315,19 @@ Note, some entrances can lead into water, use the warp-to-home from the save&qui
             dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
             dis("boss", "random", "shuffle", "With bingo goal, bosses need to be on normal or shuffle")
             dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
+        if self.goal == "maze":
+            req("overworld", "normal", "Maze goal does not work with dungeondive")
+            req("accessibility", "all", "Maze goal needs 'all' accessibility")
+        if self.itempool == "pain":
+            req("heartpiece", True, "Path of pain removes heart pieces")
         if self.overworld == "dungeondive":
-            dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
+            dis("owlstatues", "overworld", "", "Dungeon dive does not work with owl statues in overworld")
+            dis("owlstatues", "both", "dungeon", "Dungeon dive does not work with owl statues in overworld")
+            if (self.itempool == "pain") & (self.owlstatues == ""):
+                req("accessibility", "goal", "Dungeon dive does not leave enough rupees in itempool for all accessibility")
         if self.overworld == "nodungeons":
-            dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+            dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
+            dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
         if self.overworld == "random":
             self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 

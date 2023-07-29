@@ -48,7 +48,7 @@ class Randomizer:
                         continue
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("advanced", "expert", "insanity") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd).toDict().values()):
+                if settings.entranceshuffle not in ("split", "mixed") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
                     break
 
         if self.plan:
@@ -61,7 +61,7 @@ class Randomizer:
 
         if settings.multiworld:
             item_placer = MultiworldItemPlacer(self.__logic, settings.forwardfactor if settings.forwardfactor > 0.0 else 0.5, settings.accessibility, settings.multiworld)
-        elif settings.dungeon_items in ('', 'localkeys') or settings.forwardfactor > 0.0:
+        elif settings.dungeon_items in {'', 'localkeys'} or settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
             item_placer = RandomItemPlacer(self.__logic, settings.accessibility)
@@ -117,10 +117,10 @@ class Randomizer:
         item_pool = {}
         # Build the item pool to see which items we can randomize.
         if settings.multiworld is None:
-            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd).toDict()
+            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict()
         else:
             for world in range(settings.multiworld):
-                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd).toDict()
+                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd, self.plan != None).toDict()
                 for item, count in world_item_pool.items():
                     item_pool["%s_W%d" % (item, world)] = count
 
@@ -190,7 +190,7 @@ class ItemPlacer:
         item_pool = self._item_pool.copy()
         spots = self._spots.copy()
         def scoreSpot(s: locations.itemInfo.ItemInfo) -> Tuple[int, str]:
-            if s.location.dungeon:
+            if s.location.dungeon is not None:
                 return 0, s.nameId
             return len(s.getOptions()), s.nameId
         spots.sort(key=scoreSpot)
@@ -293,9 +293,9 @@ class RandomItemPlacer(ItemPlacer):
 
 class ForwardItemPlacer(ItemPlacer):
     DUNGEON_ITEMS = [
-        COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS9,
-        MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP9,
-        STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK9
+        COMPASS1, COMPASS2, COMPASS3, COMPASS4, COMPASS5, COMPASS6, COMPASS7, COMPASS8, COMPASS0,
+        MAP1, MAP2, MAP3, MAP4, MAP5, MAP6, MAP7, MAP8, MAP0,
+        STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK0
     ]
 
     def __init__(self, logic: logic.Logic, forwardfactor: float, accessibility: str, *, verbose: bool = False) -> None:
@@ -334,7 +334,7 @@ class ForwardItemPlacer(ItemPlacer):
                     self.__start_spots_filled = True
             else:
                 spots = [spot for loc in e.getAccessableLocations() for spot in loc.items if spot.item is None]
-            req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool]
+            req_items = [item for item in e.getRequiredItemsForNextLocations() if item in self._item_pool or item == "RUPEES"]
             req_items.sort()
         if not req_items:
             for di in self.DUNGEON_ITEMS:
@@ -343,7 +343,10 @@ class ForwardItemPlacer(ItemPlacer):
                     break
         if req_items:
             if "RUPEES" in req_items:
-                req_items += [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]
+                req_items.remove("RUPEES")
+                for rup in [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]:
+                    if rup in self._item_pool:
+                        req_items.append(rup)
         else:
             req_items = [item for item in sorted(self._item_pool.keys())]
 

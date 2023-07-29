@@ -8,6 +8,7 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
+from . import dungeonChain
 from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
@@ -26,6 +27,8 @@ class Logic:
             world = overworld.DungeonDiveOverworld(configuration_options, r)
         elif configuration_options.overworld == "random":
             world = mapgen.LogicGenerator(configuration_options, world_setup, r, world_setup.map)
+        elif configuration_options.overworld == "dungeonchain":
+            world = overworld.DungeonChain(configuration_options, r)
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
@@ -39,6 +42,8 @@ class Logic:
             world.updateIndoorLocation("d7", dungeon7.NoDungeon7(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d8", dungeon8.NoDungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.NoDungeonColor(configuration_options, world_setup, r).entrance)
+        elif configuration_options.overworld == "dungeonchain":
+            dungeonChain.construct(configuration_options, world_setup=world_setup, world=world, requirements_settings=r)
         elif configuration_options.overworld != "random":
             world.updateIndoorLocation("d1", dungeon1.Dungeon1(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d2", dungeon2.Dungeon2(configuration_options, world_setup, r).entrance)
@@ -50,7 +55,7 @@ class Logic:
             world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
 
-        if configuration_options.overworld != "random":
+        if configuration_options.overworld not in {"dungeonchain", "random"}:
             for k in world.overworld_entrance.keys():
                 assert k in world_setup.entrance_mapping, k
             for k in world_setup.entrance_mapping.keys():
@@ -69,10 +74,14 @@ class Logic:
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
             egg_trigger = OR(AND(OCARINA, SONG1), BOMB)
 
-        if world_setup.goal == "seashells":
+        if configuration_options.overworld == "dungeonchain":
+            pass  # Dungeon chain has no egg, so no egg requirement.
+        elif world_setup.goal == "seashells":
             world.nightmare.connect(world.egg, COUNT(SEASHELL, 20))
-        elif world_setup.goal in ("raft", "bingo", "bingo-full"):
+        elif world_setup.goal in ("raft", "bingo", "bingo-full", "maze"):
             world.nightmare.connect(world.egg, egg_trigger)
+        elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
+            world.nightmare.connect(world.egg, AND(egg_trigger, *["INSTRUMENT%s" % c for c in world_setup.goal[1:]]))
         else:
             goal = int(world_setup.goal)
             if goal < 0:
@@ -153,7 +162,7 @@ class MultiworldLogic:
                     world_setup = WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
-                    if options.entranceshuffle not in ("advanced", "expert", "insanity") or len(world.iteminfo_list) == sum(itempool.ItemPool(options, rnd).toDict().values()):
+                    if options.entranceshuffle not in ("split", "mixed") or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
                         break
 
             for ii in world.iteminfo_list:

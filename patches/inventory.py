@@ -28,7 +28,7 @@ def songSelectAfterOcarinaSelect(rom):
         and a
         ret z
         ld  a, $08
-        ldh [$90], a ; load ocarina song select graphics
+        ldh [$FF90], a ; load ocarina song select graphics
         ;ld  a, $10
         ;ld  [$C1B8], a ; shows the opening animation
         ld  a, $01
@@ -60,7 +60,7 @@ def songSelectAfterOcarinaSelect(rom):
         ld  a, [$C1B5]
         and a
         ret nz
-        ldh a, [$E7] ; frame counter
+        ldh a, [$FFE7] ; frame counter
         and $10
         ret nz 
     """), fill_nop=True)
@@ -143,8 +143,8 @@ def moreSlots(rom):
     rom.patch(0x19, 0x2df2, ASM("ld [$DB0E], a"), ASM("ld [$DB40], a"))
     rom.patch(0x19, 0x2ef1, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x19, 0x2f95, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
-    rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
-    rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
+    rom.patch(0x20, 0x1b04, ASM("ld a, [$DB0E]"), ASM("ld a, $00"), fill_nop=True) # This sets the palette for the inventory submenu trade item.
+    rom.patch(0x20, 0x1e42, ASM("ld a, [$DB0E]"), ASM("ld a, $00"), fill_nop=True) # This sets the palette for the inventory submenu trade item.
     rom.patch(0x36, 0x0948, ASM("ld a, [$DB0E]"), ASM("ld a, [$DB40]"))
     rom.patch(0x19, 0x31Ca, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
     rom.patch(0x19, 0x3215, ASM("ld a, [$DB0F]"), ASM("ld a, [$DB41]"))
@@ -260,7 +260,7 @@ RoosterUse:
     # Patch the toadstool entity code to give the proper item, and not set the has-toadstool flag.
     rom.patch(0x03, 0x1D6F, ASM("""
         ld   a, $0A
-        ldh  [$A5], a
+        ldh  [$FFA5], a
         ld   d, $0C
         call $6472
         ld   a, $01
@@ -324,13 +324,13 @@ def advancedInventorySubscreen(rom):
     rom.patch(0x20, 0x3E08+0x32, "00" * 25, "9DAA08464646464646464646" "9DCA08B0B0B0B0B0B0B0B0B0" "00")
 
     # instead of doing an GBC specific check, jump to our custom handling
-    rom.patch(0x20, 0x19DE, ASM("ldh a, [$FE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
+    rom.patch(0x20, 0x19DE, ASM("ldh a, [$FFFE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
 
     rom.patch(0x20, 0x3F00, "00" * 0x100, ASM("""
         ld   a, [$DBA5] ; isIndoor
         and  a
         jr   z, RenderKeysCounts
-        ldh  a, [$F7]   ; mapNr
+        ldh  a, [$FFF7]   ; mapNr
         cp   $FF
         jr   z, RenderDungeonFix
         cp   $06

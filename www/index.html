@@ -20,7 +20,15 @@
         <label for="seeddonedialog" class="modal-close" ></label>
         <h3 class="section">Seed generation complete!</h3>
         <p class="section">Seed: <span id="seedSpan">...</span></p>
-        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
+        <p class="section">
+            <button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button>
+            <a class="button large primary" style="" id="magpieLink">Open in Magpie</a>
+        </p>
+        <p class="section" style="display: flex; align-items: center;">
+            Share:
+            <input id="shareseed" style="flex-grow: 1; margin-right: 0px" readonly/>
+            <button id="shareseedbutton" style="margin-left: 0px" onclick="ID('shareseed').select(); navigator.clipboard.writeText(ID('shareseed').value); alert('Link copied to clipboard', 'LADXR')"><span class="icon-link"></span></button>
+        </p>
     </div>
 </div>
 <input type="checkbox" id="errordialog" class="modal">
@@ -69,7 +77,7 @@
 <div class="container" id="settings">
     <div class="row">
         <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Requires 'Legend of Zelda, The - Link's Awakening DX (V1.0)' English version">
-            <input type="file" id="rom" name="rom" style="display:none"/>
+            <input type="file" id="rom" name="rom" style="display:none" accept=".gbc"/>
             <label style="width:100%; box-sizing: border-box; text-align: center" for="rom" class="button" id="romlabel">Select input ROM</label>
         </div>
         <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">

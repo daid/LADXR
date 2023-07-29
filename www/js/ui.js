@@ -17,6 +17,17 @@ async function seedComplete(data) {
 
         if (ID("seedSpan"))
             ID("seedSpan").innerText = data.seed;
+        if (ID("shareseed")) {
+            if (ID("seed").value != "") {
+                ID("shareseed").value = document.location;
+            } else {
+                ID("seed").value = data.seed;
+                updateSettingsString();
+                ID("shareseed").value = document.location;
+                ID("seed").value = "";
+                updateSettingsString();
+            }
+        }
 
         spoilerContent = data.spoiler
 
@@ -25,6 +36,10 @@ async function seedComplete(data) {
                 ID("spoilerButton").style.display = '';
             else
                 ID("spoilerButton").style.display = 'none';
+        }
+
+        if (ID("magpieLink")) {
+            ID("magpieLink").href = `https://magpietracker.us/?shortString=${encodeURIComponent(document.location.hash)}`;
         }
     }
     else
@@ -79,6 +94,17 @@ function randomGenerationString()
         setTimeout(randomGenerationString, 1000);
 }
 
+function updateGfxModImage() {
+    if (!ID('gfxmod')) return;
+    var gfxmod = ID('gfxmod').value
+    if (gfxmod && gfxmod != 'custom') {
+        var url = 'LADXR/gfx/' + gfxmod + '.png';
+        ID('gfxmodimg').src = url;
+    } else {
+        ID('gfxmodimg').src = '';
+    }
+}
+
 function updateSettingsString() {
     var sss = "";
     for(var s of options) {
@@ -101,6 +127,11 @@ function updateSettingsString() {
 function loadSettingsString() {
     var sss = decodeURI(document.location.hash);
     if (!sss.startsWith("#")) return;
+    loadShortSettingsString(sss.substr(1));
+}
+
+function loadShortSettingsString(sss)
+{
     console.log("Loading " + sss);
     for(var s of options) {
         var e = ID(s.key);
@@ -108,7 +139,7 @@ function loadSettingsString() {
         if (typeof(s.default) == 'boolean') e.value = false;
     }
 
-    var idx = 1;
+    var idx = 0;
     while(idx < sss.length) {
         var key = sss[idx];
         idx += 1;
@@ -152,9 +183,16 @@ function buildUI(filter_function) {
             opts = [{key: true, label: "Yes"}, {key: false, label: "No"}]
         }
         if (opts) {
+            if (s.key == 'gfxmod') {
+                html += '<input type="file" name="customgfxfile" id="customgfxfile" style="display: none">';
+                html += '<img id="gfxmodimg">';
+            }
             html += `<select id='${s.key}' name='${s.key}'>`;
             for(var o of opts) {
                 html += `<option value='${o.key}' ${s.default==o.key?"selected":""}>${o.label}</option>`;
+            }
+            if (s.key == 'gfxmod') {
+                html += `<option value='custom'>Custom...</option>`;
             }
             html += `</select>`;
         } else {
@@ -166,8 +204,16 @@ function buildUI(filter_function) {
     ID("settings").innerHTML += html;
     loadSettingsString();
     for(var s of options) {
-        if (ID(s.key)) ID(s.key).oninput = updateSettingsString;
+        if (ID(s.key)) {
+            ID(s.key).oninput = updateSettingsString;
+            if (s.key == 'gfxmod') ID(s.key).oninput = function(e) {
+                if (ID('gfxmod').value == 'custom') ID('customgfxfile').click();
+                updateGfxModImage();
+                updateSettingsString();
+            };
+        }
     }
+    updateGfxModImage();
     updateSettingsString();
     updateForm();
 
@@ -241,12 +287,27 @@ async function startRomGeneration()
     randomGenerationString();
     var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
     var args = ["--short", updateSettingsString()];
+    var data = {"input.gbc": buffer, "args": args, "id": 0};
     var e = ID("spoilerformat");
     if (e && e.value != 'none') {
         args.push("--spoilerformat");
         args.push(e.value);
     }
-    await postToWorker({"input.gbc": buffer, "args": args, "id": 0});
+
+    e = ID("plan");
+    if (e && e.value != "") {
+        args.push("--plan");
+        args.push('/plan.txt');
+        data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+    e = ID("gfxmod")
+    if (e.value == "custom" && ID('customgfxfile').value) {
+        args.push("-s");
+        args.push("gfxmod=custom.png");
+        data['gfx.png'] =  new Uint8Array(await ID("customgfxfile").files[0].arrayBuffer());
+    }
+
+    await postToWorker(data);
 }
 
 async function postToWorker(data)

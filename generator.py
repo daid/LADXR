@@ -48,6 +48,7 @@ import patches.instrument
 import patches.endscreen
 import patches.save
 import patches.bingo
+import patches.maze
 import patches.multiworld
 import patches.tradeSequence
 import hints
@@ -81,6 +82,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
     assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
     assembler.const("wCustomMessage", 0xC0A0)
+    assembler.const("wBowwowChain", 0xD1E0)  # Need $1A bytes for the chain and other bowwow related memory
 
     # We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
     assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
@@ -101,6 +103,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
 
     patches.core.cleanup(rom)
+    patches.core.fixD7exit(rom)
     if multiworld is not None:
         patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
@@ -161,6 +164,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     if settings.overworld == 'dungeondive':
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
+    elif settings.overworld == 'dungeonchain':
+        patches.shop.changeShopPrices(rom, 200, 500)
+        patches.dungeon.patchDungeonChain(rom, logic.world_setup)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
     elif settings.overworld == 'random':
@@ -206,7 +212,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         rom.patch(0, 0x0003, "00", "01")
 
     # Patch the sword check on the shopkeeper turning around.
-    if settings.steal == 'never':
+    if settings.steal == 'never' or settings.overworld == "dungeonchain":
         rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
     elif settings.steal == 'always':
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
@@ -243,14 +249,18 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.goal.setRaftGoal(rom)
     elif world_setup.goal in ("bingo", "bingo-full"):
         patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, world_setup.goal)
+    elif world_setup.goal == "maze":
+        patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
     elif world_setup.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
+    elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
+        patches.goal.setSpecificInstruments(rom, [int(c) for c in world_setup.goal[1:]])
     else:
         patches.goal.setRequiredInstrumentCount(rom, world_setup.goal)
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if settings.overworld not in {"dungeondive", "random"}:
+    if settings.overworld not in {"dungeondive", "dungeonchain", "random"}:
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):
@@ -262,7 +272,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     if not args.romdebugmode:
         patches.core.addFrameCounter(rom, len(item_list))
 
-    patches.core.warpHome(rom)  # Needs to be done after setting the start location.
+    patches.core.warpHome(rom, settings.overworld == "dungeonchain")  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), settings)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)

@@ -206,8 +206,17 @@ def changeBosses(rom, mapping: List[int]):
 
             # Add the staircase to the boss, and fix the warp back.
             re = getCleanBossRoom(rom, dungeon_nr)
-            re.objects += [Object(4, 4, 0xBE), ObjectWarp(2, 6, 0x2F8, 72, 80)]
+            re.objects += [
+                Object(3, 3, 0x2C),
+                ObjectHorizontal(4, 3, 0x22, 2),
+                Object(6, 3, 0x2B),
+                Object(3, 4, 0x2A),
+                Object(4, 4, 0xA2),
+                Object(5, 4, 0x21),
+                Object(6, 4, 0x29),
+                ObjectWarp(2, 6, 0x2F8, 72, 80)]
             re.store(rom)
+            rom.banks[0x20][0x2EB3 + re.room - 0x100] = 0  # Change the room tileset to include the stairs
             re = RoomEditor(rom, 0x2F8)
             re.objects[-1] = ObjectWarp(1, dungeon_nr if dungeon_nr < 8 else 0xff, BOSS_ROOMS[dungeon_nr], 72, 80)
             re.store(rom)
@@ -223,6 +232,12 @@ def changeBosses(rom, mapping: List[int]):
             if target == 4:
                 # For slime eel, we need to setup the right wall tiles.
                 rom.banks[0x20][0x2EB3 + BOSS_ROOMS[dungeon_nr] - 0x100] = 0x06
+                if dungeon_nr == 1:
+                    re.removeObject(3, 3)
+                    re.removeObject(6, 3)
+                    for n in range(10):
+                        re.removeObject(n, 0)
+                        re.removeObject(n, 1)
             if target == 5:
                 # Patch facade so he doesn't use the spinning tiles, which is a problem for the sprites.
                 rom.patch(0x04, 0x121D, ASM("cp $14"), ASM("cp $00"))
@@ -289,7 +304,7 @@ def changeMiniBosses(rom, mapping):
         ld  hl, $C17B
         or  [hl]
         ret nz
-        ldh a, [$F6] ; room
+        ldh a, [$FFF6] ; room
         cp  $45 ; check for D3 dodogo room
         ret z
         cp  $7F ; check for armos temple room
@@ -309,6 +324,10 @@ def changeMiniBosses(rom, mapping):
             for x in range(3, 7):
                 for y in range(0, 3):
                     re.removeObject(x, y)
+
+        if name == "GHOMA" and target != 4:
+            # Ghoma gets stuck on just about everything, so remove collision for him
+            rom.banks[0x03][0x0340] = 0xD5
 
         if name == "CUE_BALL":
             re.objects += [
@@ -403,11 +422,11 @@ def doubleTrouble(rom):
         #     re.entities += [(3, 4, 0x63), (2, 4, 0x63)]
         #     re.store(rom)
         #     # Remove that links movement is blocked
-        #     rom.patch(0x05, 0x2258, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1AE3, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1C5D, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1C8D, ASM("ldh [$A1], a"), "0000")
-        #     rom.patch(0x05, 0x1CAF, ASM("ldh [$A1], a"), "0000")
+        #     rom.patch(0x05, 0x2258, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1AE3, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1C5D, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1C8D, ASM("ldh [$FFA1], a"), "0000")
+        #     rom.patch(0x05, 0x1CAF, ASM("ldh [$FFA1], a"), "0000")
         if re.hasEntity(0x62):  # hot head (TODO: Drops thwo hearts)
             re.removeEntities(0x62)
             re.entities += [(2, 2, 0x62), (4, 4, 0x62)]

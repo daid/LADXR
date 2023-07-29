@@ -1,5 +1,5 @@
 RenderChestItem:
-    ldh  a, [$F1] ; active sprite
+    ldh  a, [$FFF1] ; active sprite
     and  $80
     jr   nz, .renderLargeItem
 
@@ -13,14 +13,14 @@ RenderChestItem:
     call $3BC0 ; RenderActiveEntitySpritePair
 
     ; If we are an instrument
-    ldh  a, [$F1]
+    ldh  a, [$FFF1]
     cp   $8E
     ret  c
     cp   $96
     ret  nc
 
     ; But check if we are not state >3 before that, else the fade-out at the instrument room breaks.
-    ldh  a, [$F0] ; hActiveEntityState
+    ldh  a, [$FFF0] ; hActiveEntityState
     cp   $03
     ret  nc
 
@@ -54,7 +54,7 @@ SendItemFromChestToOtherGame:
     call OffsetPointerByRoomNumber
     ld   a, [hl]
     ld   [wLinkSendItemTarget], a
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     ld   [wLinkSendItemItem], a
 
     ; Finally set the status bit to indicate there is an item to send
@@ -73,7 +73,7 @@ GiveItemFromChestMultiworld:
 
 GiveItemFromChest:
     call IncreaseCheckCounter
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
 
     rst  0 ; JUMP TABLE
     dw ChestPowerBracelet; CHEST_POWER_BRACELET
@@ -119,7 +119,7 @@ GiveItemFromChest:
     dw AddKey ; KEY6
     dw AddKey ; KEY7
     dw AddKey ; KEY8
-    dw AddKey ; KEY9
+    dw AddKey ; KEY0
     dw AddMap ; MAP1
     dw AddMap ; MAP2
     dw AddMap ; MAP3
@@ -128,7 +128,7 @@ GiveItemFromChest:
     dw AddMap ; MAP6
     dw AddMap ; MAP7
     dw AddMap ; MAP8
-    dw AddMap ; MAP9
+    dw AddMap ; MAP0
     dw AddCompass ; COMPASS1
     dw AddCompass ; COMPASS2
     dw AddCompass ; COMPASS3
@@ -137,7 +137,7 @@ GiveItemFromChest:
     dw AddCompass ; COMPASS6
     dw AddCompass ; COMPASS7
     dw AddCompass ; COMPASS8
-    dw AddCompass ; COMPASS9
+    dw AddCompass ; COMPASS0
     dw AddStoneBeak ; STONE_BEAK1
     dw AddStoneBeak ; STONE_BEAK2
     dw AddStoneBeak ; STONE_BEAK3
@@ -146,7 +146,7 @@ GiveItemFromChest:
     dw AddStoneBeak ; STONE_BEAK6
     dw AddStoneBeak ; STONE_BEAK7
     dw AddStoneBeak ; STONE_BEAK8
-    dw AddStoneBeak ; STONE_BEAK9
+    dw AddStoneBeak ; STONE_BEAK0
     dw AddNightmareKey ; NIGHTMARE_KEY1
     dw AddNightmareKey ; NIGHTMARE_KEY2
     dw AddNightmareKey ; NIGHTMARE_KEY3
@@ -155,14 +155,14 @@ GiveItemFromChest:
     dw AddNightmareKey ; NIGHTMARE_KEY6
     dw AddNightmareKey ; NIGHTMARE_KEY7
     dw AddNightmareKey ; NIGHTMARE_KEY8
-    dw AddNightmareKey ; NIGHTMARE_KEY9
+    dw AddNightmareKey ; NIGHTMARE_KEY0
     dw AddToadstool ; Toadstool
-    dw NoItem ; $51
-    dw NoItem ; $52
-    dw NoItem ; $53
-    dw NoItem ; $54
-    dw NoItem ; $55
-    dw NoItem ; $56
+    dw StartZolDrop ; $51 ; Rupees50 disguise
+    dw StartZolDrop ; $52 ; Rupees20 disguise
+    dw StartZolDrop ; $53 ; Rupees100 disguise
+    dw StartZolDrop ; $54 ; Seashell disguise
+    dw StartZolDrop ; $55 ; Medicine disguise
+    dw StartZolDrop ; $56 ; Bomb disguise
     dw NoItem ; $57
     dw NoItem ; $58
     dw NoItem ; $59
@@ -288,7 +288,7 @@ ChestBow:
 ChestMagicPowder:
     ; Reset the toadstool state
     ld   a, $0B
-    ldh  [$A5], a
+    ldh  [$FFA5], a
     xor  a
     ld   [$DB4B], a ; has toadstool
 
@@ -351,6 +351,13 @@ AddSeaShell:
     ld   [wSeashellsCount], a
     ret
 
+StartZolDrop:
+    ld   a, 5
+    ld   [wZolSpawnCount], a
+    ld   a, $1D ; JINGLE_WRONG_ANSWER
+    ldh  [$FFF2], a ; hJingle
+    ret
+
 PieceOfHeart:
 #IF HARD_MODE
     ld   a, $FF
@@ -391,7 +398,7 @@ ChestInventoryTable:
     db   $0D ; Boomerang
 
 ChestWithItem:
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     ld   d, $00
     ld   e, a
     ld   hl, ChestInventoryTable
@@ -472,7 +479,7 @@ AddDungeonItem:
     ld   hl, $DDDA
     add  hl, de
     inc  [hl]
-    ldh  a, [$F7]   ; is current map == color dungeon
+    ldh  a, [$FFF7]   ; is current map == color dungeon
     cp   $ff
     ret  nz
     ld   hl, $DBCC
@@ -631,7 +638,7 @@ GiveSong3:
     ret
 
 GiveInstrument:
-    ldh  a, [$F1] ; Load active sprite variant
+    ldh  a, [$FFF1] ; Load active sprite variant
     sub  $8E
     ld   d, $00
     ld   e, a
@@ -646,17 +653,17 @@ GiveRooster:
 
     ;ld   a, $01
     ;ld   [$DB7B], a ; has rooster
-    ldh  a, [$F9] ; do not spawn rooster in sidescroller
+    ldh  a, [$FFF9] ; do not spawn rooster in sidescroller
     and  a
     ret  z
 
     ld   a, $D5 ; ENTITY_ROOSTER
     call $3B86 ; SpawnNewEntity_trampoline
-    ldh  a, [$98] ; LinkX
+    ldh  a, [$FF98] ; LinkX
     ld   hl, $C200 ; wEntitiesPosXTable
     add  hl, de
     ld   [hl], a
-    ldh  a, [$99] ; LinkY
+    ldh  a, [$FF99] ; LinkY
     ld   hl, $C210 ; wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
@@ -732,7 +739,12 @@ ItemMessageMultiworld:
 ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
-    ldh  a, [$F1]
+    ldh  a, [$FFF1]
+    cp   $80
+    jr   nc, .bigItem
+    cp   $51
+    ret  nc   ; no message on LOL-ZOL item
+.bigItem:
     ld   d, $00
     ld   e, a
     ld   hl, ItemMessageTable
@@ -815,7 +827,7 @@ ItemSpriteTable:
     db $4A, $1D        ; KEY6
     db $4A, $1D        ; KEY7
     db $4A, $1D        ; KEY8
-    db $4A, $1D        ; KEY9
+    db $4A, $1D        ; KEY0
     db $40, $1C        ; MAP1
     db $40, $1C        ; MAP2
     db $40, $1C        ; MAP3
@@ -824,7 +836,7 @@ ItemSpriteTable:
     db $40, $1C        ; MAP6
     db $40, $1C        ; MAP7
     db $40, $1C        ; MAP8
-    db $40, $1C        ; MAP9
+    db $40, $1C        ; MAP0
     db $42, $1D        ; COMPASS1
     db $42, $1D        ; COMPASS2
     db $42, $1D        ; COMPASS3
@@ -833,7 +845,7 @@ ItemSpriteTable:
     db $42, $1D        ; COMPASS6
     db $42, $1D        ; COMPASS7
     db $42, $1D        ; COMPASS8
-    db $42, $1D        ; COMPASS9
+    db $42, $1D        ; COMPASS0
     db $44, $1C        ; STONE_BEAK1
     db $44, $1C        ; STONE_BEAK2
     db $44, $1C        ; STONE_BEAK3
@@ -842,7 +854,7 @@ ItemSpriteTable:
     db $44, $1C        ; STONE_BEAK6
     db $44, $1C        ; STONE_BEAK7
     db $44, $1C        ; STONE_BEAK8
-    db $44, $1C        ; STONE_BEAK9
+    db $44, $1C        ; STONE_BEAK0
     db $46, $1C        ; NIGHTMARE_KEY1
     db $46, $1C        ; NIGHTMARE_KEY2
     db $46, $1C        ; NIGHTMARE_KEY3
@@ -851,8 +863,14 @@ ItemSpriteTable:
     db $46, $1C        ; NIGHTMARE_KEY6
     db $46, $1C        ; NIGHTMARE_KEY7
     db $46, $1C        ; NIGHTMARE_KEY8
-    db $46, $1C        ; NIGHTMARE_KEY9
+    db $46, $1C        ; NIGHTMARE_KEY0
     db $4C, $1C        ; Toadstool
+    db $A6, $15 ; $51 ; Rupees50 disguise
+    db $38, $19 ; $52 ; Rupees20 disguise
+    db $38, $18 ; $53 ; Rupees100 disguise
+    db $9E, $14 ; $54 ; Seashell disguise
+    db $A0, $14 ; $55 ; Medicine disguise
+    db $80, $15 ; $56 ; Bomb disguise
 
 LargeItemSpriteTable:
     db $AC, $02, $AC, $22 ; heart piece
@@ -900,7 +918,7 @@ ItemMessageTable:
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     ; $40
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
-    db $0F, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    db $0F, $C9, $C9, $C9, $C9, $C9, $C9, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80
@@ -925,7 +943,7 @@ RenderHeartPiece:
     call OffsetPointerByRoomNumber
 
     ld   a, [hl]
-    ldh  [$F1], a ; set currentEntitySpriteVariant
+    ldh  [$FFF1], a ; set currentEntitySpriteVariant
     call $3B0C ; SetEntitySpriteVariant
 
     and  $80
@@ -947,11 +965,11 @@ RenderHeartPiece:
 
 
 OffsetPointerByRoomNumber:
-    ldh  a, [$F6] ; map room
+    ldh  a, [$FFF6] ; map room
     ld   e, a
     ld   a, [$DBA5] ; is indoor
     ld   d, a
-    ldh  a, [$F7]   ; mapId
+    ldh  a, [$FFF7]   ; mapId
     cp   $FF
     jr   nz, .notColorDungeon
 
@@ -973,7 +991,7 @@ GiveItemAndMessageForRoom:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call GiveItemFromChest
     jp ItemMessage
 
@@ -982,7 +1000,7 @@ GiveItemAndMessageForRoomMultiworld:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     call GiveItemFromChestMultiworld
     jp ItemMessageMultiworld
 
@@ -991,18 +1009,18 @@ RenderItemForRoom:
     ld   hl, $7800
     call OffsetPointerByRoomNumber
     ld   a, [hl]
-    ldh  [$F1], a
+    ldh  [$FFF1], a
     jp   RenderChestItem
 
 ; Increase the amount of checks we completed, unless we are on the multichest room.
 IncreaseCheckCounter:
-    ldh  a, [$F6] ; map room
+    ldh  a, [$FFF6] ; map room
     cp   $F2
     jr   nz, .noMultiChest
     ld   a, [$DBA5] ; is indoor
     and  a
     jr   z, .noMultiChest
-    ldh  a, [$F7]   ; mapId
+    ldh  a, [$FFF7]   ; mapId
     cp   $0A
     ret  z
 

@@ -99,7 +99,9 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         f.write(";Pool:SWORD:+5\n")
         f.write(";Pool:RUPEES_50:-5\n")
         import worldSetup
-        iteminfo_list = logic.Logic(args, world_setup=worldSetup.WorldSetup()).iteminfo_list
+        ws = worldSetup.WorldSetup()
+        ws.goal = settings.goal
+        iteminfo_list = logic.Logic(settings, world_setup=ws).iteminfo_list
         for ii in sorted(iteminfo_list, key=lambda n: (n.location.dungeon if n.location.dungeon else -1, repr(n.metadata))):
             if len(ii.OPTIONS) > 1:
                 f.write(";%r\n" % (ii.metadata))

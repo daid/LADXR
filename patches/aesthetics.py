@@ -5,11 +5,23 @@ import entityData
 import os
 
 
-def imageTo2bpp(filename):
+def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
     img = PIL.Image.open(filename)
+    if img.mode != "P":
+        img = img.convert("P", palette=PIL.Image.ADAPTIVE, colors=4)
+    remap = [0, 1, 2, 3]
+    if colormap:
+        pal3 = img.getpalette()[0:12]
+        pal = [(pal3[n*3] << 16) | (pal3[n*3+1] << 8) | (pal3[n*3+2]) for n in range(4)]
+        for m in range(4):
+            for n in range(4):
+                if pal[n] == colormap[m]:
+                    remap[n] = m
+                    break
     assert (img.size[0] % 8) == 0
-    tileheight = 8 if img.size[1] == 8 else 16
+    if tileheight is None:
+        tileheight = 8 if img.size[1] == 8 else 16
     assert (img.size[1] % tileheight) == 0
 
     cols = img.size[0] // 8
@@ -22,7 +34,7 @@ def imageTo2bpp(filename):
                 a = 0
                 b = 0
                 for x in range(8):
-                    c = img.getpixel((tx * 8 + x, ty * 16 + y))
+                    c = remap[img.getpixel((tx * 8 + x, ty * tileheight + y)) & 3]
                     if c & 1:
                         a |= 0x80 >> x
                     if c & 2:
@@ -54,7 +66,7 @@ def gfxMod(rom, filename):
     if ext == ".bin":
         updateGraphics(rom, 0x2C, 0, open(filename, "rb").read())
     elif ext in (".png", ".bmp"):
-        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename))
+        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF]))
     elif ext == ".json":
         import json
         data = json.load(open(filename, "rt"))
@@ -70,7 +82,7 @@ def gfxMod(rom, filename):
 
 def createGfxImage(rom, filename):
     import PIL.Image
-    bank_count = 8
+    bank_count = 10
     img = PIL.Image.new("P", (32 * 8, 32 * 8 * bank_count))
     img.putpalette((
         128, 0, 128,
@@ -122,7 +134,7 @@ def slowLowHPBeep(rom):
 
 def removeFlashingLights(rom):
     # Remove the switching between two backgrounds at mamu, always show the spotlights.
-    rom.patch(0x00, 0x01EB, ASM("ldh a, [$E7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
+    rom.patch(0x00, 0x01EB, ASM("ldh a, [$FFE7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
     # Remove flashing colors from shopkeeper killing you after stealing and the mad batter giving items.
     rom.patch(0x24, 0x3B77, ASM("push bc"), ASM("ret"))
 
@@ -195,7 +207,7 @@ def reduceMessageLengths(rom, rnd):
         "This is still better than doing Dampe dungeons.",
         "They say that Marin can be found here."
         "Stalfos are such boneheads.",
-        "90% bug-free!",
+        "90 percent bug-free!",
         "404 Marin.personality not found.",
         "Idk man, works on my machine.",
         "Hey guys, did you know that Vaporeon",
@@ -217,7 +229,6 @@ def reduceMessageLengths(rom, rnd):
         "Technoblade never dies!",
         "Thank you, CrystalSaver!",
         "Wait, LADX has a rando?",
-        "https://tinyurl.com/ladxr",
         "Wait, how many Pokemon are there now?",
         "GOOD EMU",
         "Good luck finding the feather.",
@@ -249,7 +260,56 @@ def reduceMessageLengths(rom, rnd):
         "#####, how do I download RAM?",
         "Is this a delayed April Fool's Joke?",
         "Dayoman is close to getting 120% in 1:20!",
-        "Play as if your footage will go in a\nSummoning Salt video."
+        "Play as if your footage will go in a\nSummoning Salt video.",
+        "I hope you prepared for our date later.",
+        "Isn't this the game where you date a seagull?",
+        "!tele broken, pls fix",
+        "You look pretty good for a guy who probably drowned.",
+        "Remember, we race on Sundays.",
+        "Pink Batman delayed this race for lunch.",
+        "This randomizer was made possible by players like you. \n \n Thank you!",
+        "Now with real fake doors!",
+        "Now with real fake floors!",
+        "You could be doing something productive right now.",
+        "No eggs were harmed in the making of this game.",
+        "I'm helping the goat, \ncatfishing Mr. Write is kinda the goal.",
+        "There are actually two LADX randomizers.",
+        "Did you actually dump this cart?"
+        "You're not gonna cheat... \n ...right?",
+        "Mamu's singing is so bad it wakes the dead.",
+        "Don't forget the Richard picture.",
+        "Are you sure you wanna do this?  I kinda like this island.",
+        "SJ, BT, WW, OoB, HIJKLMNOP.",
+        "5 dollars in the swear jar.  Now.",
+        "#####, I promise this seed will be better than the last one.",
+        "Want your name here?  Contribute to LADXR!",
+        "Kappa",
+        "Dragon already finished this seed, about an hour ago.",
+        "HEY! \n \n LANGUAGE!",
+        "I sell seashells on the seashore.",
+        "Hey!  Are you even listening to me?",
+        "Your stay will total 10,000 rupees.  I hope you have good insurance.",
+        "I have like the biggest crush on you.  Will you get the hints now?",
+        "Daid watches Matty for ideas. \nBlame her if things go wrong.",
+        "'All of you are to blame.' -Daid",
+        "Batman Contingency Plan: Link.  Step 1: Disguise yourself as a maiden to attract the young hero.",
+        "I have flooded the Wind Fish's Egg with a deadly neurotoxin.",
+        "Ahh, General #####.",
+        "Finally, Link's Awakening!",
+        "Is the Wind Fish dreaming that he's sleeping in an egg?  Or is he dreaming that he's you?",
+        "Save Koholint.  By destroying it.  Huh?  Don't ask me, I'm just a kid!",
+        "There aren't enough women in this village to sustain a civilization.",
+        "So does this game take place before or after Oracles?",
+        "Have you tried the critically acclaimed MMORPG FINAL FANTASY XIV that has a free trial up to level 60 including the Heavensward expansion?",
+        "The thumbs-up sign had been used by the Galactic Federation for ages. Me, I was known for giving the thumbs-down during briefing. I had my reasons, though... Commander Adam Malkovich was normally cool and not one to joke around, but he would end all of his mission briefings by saying, 'Any objections, Lady?'",
+        "Hot hippos are near your location!",
+        "#####, get up!  It's my turn in the bed!  Tarin's smells too much...",
+        "Have you ever had a dream\nthat\nyo wa-\nyo had\nyo\nthat\nthat you could do anything?",
+        "Next time, try a salad.",
+        "seagull noises",
+        "I'm telling you, YOU HAVE UNO, it came free with your Xbox!",
+        "LADXR - Now with even more Marin quotes!",
+        "You guys are spending more time adding Marin quotes than actually playing the game."
     ]))
 
     # Reduce length of a bunch of common texts
@@ -320,11 +380,11 @@ def allowColorDungeonSpritesEverywhere(rom):
     # Patch the spriteset loading code to load the 4 entries from the normal table instead of skipping this for color dungeon specific exception weirdness
     rom.patch(0x00, 0x0DA4, ASM("jr nc, $05"), ASM("jr nc, $41"))
     rom.patch(0x00, 0x0DE5, ASM("""
-        ldh  a, [$F7]
+        ldh  a, [$FFF7]
         cp   $FF
         jr   nz, $06
         ld a, $01
-        ldh [$91], a
+        ldh [$FF91], a
         jr $40
     """), ASM("""
         jr $0A ; skip over the rest of the code
@@ -364,21 +424,21 @@ def allowColorDungeonSpritesEverywhere(rom):
         ;$C197 = index of sprite set to update (target addr = ($8400 + $100 * [$C197]))
         ld  a, d
         add a, $40
-        ldh [$51], a
+        ldh [$FF51], a
         xor a
-        ldh [$52], a
-        ldh [$54], a
+        ldh [$FF52], a
+        ldh [$FF54], a
         ld  a, [$C197]
         add a, $84
-        ldh [$53], a
+        ldh [$FF53], a
         ld  a, $0F
-        ldh [$55], a
+        ldh [$FF55], a
 
         ; See if we need to do anything next
         ld  a, [$C10E] ; check the 2nd update flag
         and a
         jr  nz, getNext
-        ldh [$91], a ; no 2nd update flag, so clear primary update flag
+        ldh [$FF91], a ; no 2nd update flag, so clear primary update flag
         ret
     getNext:
         ld  hl, $C197
@@ -395,8 +455,8 @@ def allowColorDungeonSpritesEverywhere(rom):
         ; we get here by some color dungeon specific code jumping to this position
         ; We still need that color dungeon specific code as it loads background tiles
         xor a
-        ldh [$91], a
-        ldh [$93], a
+        ldh [$FF91], a
+        ldh [$FF93], a
         ret
     """))
     rom.patch(0x00, 0x073E, "00" * (0x07AF - 0x073E), ASM("""
@@ -406,14 +466,42 @@ def allowColorDungeonSpritesEverywhere(rom):
         xor a
         ld  [$C10E], a ; clear the 2nd update flag
         inc a
-        ldh [$91], a ; set the primary update flag
+        ldh [$FF91], a ; set the primary update flag
         ret
     """), fill_nop=True)
 
 
 def updateSpriteData(rom):
-    # Remove all the special sprite change exceptions.
-    rom.patch(0x00, 0x0DAD, 0x0DDB, ASM("jp $0DDB"), fill_nop=True)
+    # Change the special sprite change exceptions
+    rom.patch(0x00, 0x0DAD, 0x0DDB, ASM("""
+    ; Check for indoor
+    ld   a, d
+    and  a
+    jr   nz, noChange
+
+    ldh  a, [$FFF6] ; hMapRoom
+    cp   $C9
+    jr   nz, sirenRoomEnd
+    ld   a, [$D8C9] ; wOverworldRoomStatus + ROOM_OW_SIREN
+    and  $20
+    jr   z, noChange
+    ld   hl, $7837
+    jp   $0DFE
+
+sirenRoomEnd:
+    ldh  a, [$FFF6] ; hMapRoom
+    cp   $D8
+    jr   nz, noChange
+    ld   a, [$D8FD] ; wOverworldRoomStatus + ROOM_OW_WALRUS 
+    and  $20
+    jr   z, noChange
+    ld   hl, $783B
+    jp   $0DFE
+
+noChange:
+    """), fill_nop=True)
+    rom.patch(0x20, 0x3837, "A4FF8BFF", "A461FF72")
+    rom.patch(0x20, 0x383B, "A44DFFFF", "A4C5FF70")
 
     # For each room update the sprite load data based on which entities are in there.
     for room_nr in range(0x316):

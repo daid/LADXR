@@ -29,7 +29,7 @@ def oracleMode(rom):
     rom.patch(0x03, 0x15C7, "2E2D382F2E2D3837", "2E2D382E2E2D3837")
 
     # Make dropping in water without flippers damage you.
-    rom.patch(0x02, 0x3722, ASM("ldh a, [$AF]"), ASM("ld a, $06"))
+    rom.patch(0x02, 0x3722, ASM("ldh a, [$FFAF]"), ASM("ld a, $06"))
 
 
 def heroMode(rom):
