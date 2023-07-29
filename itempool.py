@@ -216,7 +216,7 @@ class ItemPool:
         if settings.overworld == "nodungeons":
             for n in range(9):
                 for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
-                    self.remove(f"{item_name}{n+1}", self.get(f"{item_name}{n+1}"))
+                    self.remove(f"{item_name}{n}", self.get(f"{item_name}{n}"))
             if self.get(BLUE_TUNIC) > 0:
                 self.remove(BLUE_TUNIC)
             else:
