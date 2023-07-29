@@ -138,6 +138,7 @@ def patchDungeonChain(rom, world_setup):
     maps = {
         1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 0: 0xFF, "egg": 8,
         "shop": 0x0E, "mamu": 0x11, "trendy": 0x0F, "dream": 0x13, "chestcave": 0x11,
+        "cavegen": 0x0A,
     }
     exit_rooms = {
         1: 0x102, 2: 0x12A, 3: 0x159, 4: 0x162, 5: 0x182, 6: 0x1B5, 7: 0x22C, 8: 0x230, 0: 0x301, "egg": 0x272,
@@ -145,6 +146,28 @@ def patchDungeonChain(rom, world_setup):
     }
     single_rooms = {"shop", "mamu", "trendy", "dream", "chestcave"}
     order = world_setup.dungeon_chain + ["egg"]
+
+    if world_setup.cavegen:
+        for ri in [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]:
+            re = RoomEditor(rom, ri)
+            re.entities = []
+            re.objects = []
+            re.store(rom)
+        for xy in range(8 * 8):
+            rom.banks[0x14][0x0220 + 10 * 8 * 8 + xy] = 0
+        for room in world_setup.cavegen.all_rooms:
+            rom.banks[0x14][0x0220 + 10 * 8 * 8 + room.x + room.y * 8] = room.room_id & 0xFF
+            rom.banks[0x14][0x0000 + room.room_id - 0x100] = room.event
+            re = RoomEditor(rom, room.room_id)
+            re.entities = room.entities
+            re.buildObjectList(room.tiles)
+            re.store(rom)
+            if room.type == "start":
+                entrance_rooms["cavegen"] = room.room_id
+            if room.type == "end":
+                exit_rooms["cavegen"] = room.room_id
+        # Fix tile attributes for bombable walls
+        rom.patch(0x24, 0x0400 + 0x3F * 4, "00000000040404040000000000000000", "04040404040404040404040404040404")
 
     last_exit_map = 0x10
     last_exit_room = 0x2A3  # Start house
@@ -167,7 +190,10 @@ def patchDungeonChain(rom, world_setup):
                 re.entities.append((0, 0, 0x44))  # yarna bones entity
         else:
             re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
-            re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 124))
+            if chain_step == "cavegen":
+                re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 80))
+            else:
+                re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 124))
             if last_exit_chain != "start":
                 re.entities = []
                 re.objects.append(ObjectHorizontal(4, 2, 0x1D, 2))

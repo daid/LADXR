@@ -234,8 +234,10 @@ class ItemPool:
             key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
             item_counts = {
                 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
-                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1, "cavegen": 0,
             }
+            if logic.world_setup.cavegen:
+                item_counts["cavegen"] = logic.world_setup.cavegen.get_reward_count()
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
@@ -254,6 +256,7 @@ class ItemPool:
                 "trendy": {RUPEES_50},
                 "dream": {PEGASUS_BOOTS},
                 "chestcave": set(),
+                "cavegen": {BOMB},
             }
             required_items = {SWORD, BOW, MAGIC_POWDER}
             for dungeon_idx in logic.world_setup.dungeon_chain:

@@ -5,6 +5,7 @@ from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
+import cavegen
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -43,6 +44,7 @@ class WorldSetup:
         self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
+        self.cavegen = None
         self.dungeon_chain = None
 
     def getEntrancePool(self, settings, connectorsOnly=False):
@@ -185,6 +187,12 @@ class WorldSetup:
             self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
         self.dungeon_chain = self.dungeon_chain[:5]
+        # Check if we randomly replace one of the dungeons with a cavegen
+        if rnd.randrange(0, 100) < 80:
+            self.cavegen = cavegen.Generator(rnd)
+            self.cavegen.generate()
+            # cavegen.dump("cave.svg", self.cavegen.start)
+            self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:
             inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]

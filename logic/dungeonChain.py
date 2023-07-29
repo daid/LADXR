@@ -18,7 +18,10 @@ def construct(configuration_options, *, world_setup, world, requirements_setting
         "shop": Shop, "mamu": Mamu, "trendy": Trendy, "dream": DreamShrine, "chestcave": ChestCave,
     })
     for index in world_setup.dungeon_chain:
-        world.chain(dungeon_constructors[index](configuration_options, world_setup, requirements_settings))
+        if index == "cavegen":
+            world.chain(CaveGen(configuration_options, world_setup, requirements_settings))
+        else:
+            world.chain(dungeon_constructors[index](configuration_options, world_setup, requirements_settings))
 
 
 class Shop:
@@ -63,3 +66,23 @@ class ChestCave:
         self.final_room = self.entrance
 
         self.entrance.add(Chest(0x2CD))
+
+
+class CaveGen:
+    def __init__(self, configuration_options, world_setup, requirements_settings):
+        self.requirements_settings = requirements_settings
+        self.entrance = Location()
+        self._add_room(self.entrance, world_setup.cavegen.start)
+
+    def _add_room(self, location, room):
+        if room.type == "end":
+            self.final_room = location
+        elif room.type == "chest":
+            location.add(Chest(room.room_id))
+        elif room.type == "miniboss":
+            location = Location().connect(location, self.requirements_settings.miniboss_requirements[room.hazard])
+        for c in room.connections:
+            next_location = location
+            if c.type == "bomb":
+                next_location = Location().connect(location, BOMB)
+            self._add_room(next_location, c.target)

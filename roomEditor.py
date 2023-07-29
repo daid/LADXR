@@ -511,6 +511,55 @@ class RoomEditor:
                 if obj in {0xE1, 0xE2, 0xE3, 0xBA, 0xC6}:  # Entrances should never be horizontal/vertical lists
                     w = 1
                     h = 1
+                if not is_overworld:
+                    if obj == 0x2D and tiles[x + 1 + y * 10] == 0x2E:  # Key door
+                        obj = 0xEC
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x2F and tiles[x + 1 + y * 10] == 0x30:
+                        obj = 0xED
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x31 and tiles[x + (y + 1) * 10] == 0x32:
+                        obj = 0xEE
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x33 and tiles[x + (y + 1) * 10] == 0x34:
+                        obj = 0xEF
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x35 and tiles[x + 1 + y * 10] == 0x36:  # closed door
+                        obj = 0xF0
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x37 and tiles[x + 1 + y * 10] == 0x38:
+                        obj = 0xF1
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x39 and tiles[x + (y + 1) * 10] == 0x3A:
+                        obj = 0xF2
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x3B and tiles[x + (y + 1) * 10] == 0x3C:
+                        obj = 0xF3
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x43 and tiles[x + 1 + y * 10] == 0x44:  # open door
+                        obj = 0xF4
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x8C and tiles[x + 1 + y * 10] == 0x08:
+                        obj = 0xF5
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x09 and tiles[x + (y + 1) * 10] == 0x0A:
+                        obj = 0xF6
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x0B and tiles[x + (y + 1) * 10] == 0x0C:
+                        obj = 0xF7
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0xA4 and tiles[x + 1 + y * 10] == 0xA5:  # boss door
+                        obj = 0xF8
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0xAF and tiles[x + 1 + y * 10] == 0xB0:  # stairs door
+                        obj = 0xF9
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0xB1 and tiles[x + 1 + y * 10] == 0xB2:  # flipwall door
+                        obj = 0xFA
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x45 and tiles[x + 1 + y * 10] == 0x46:  # one way arrow
+                        obj = 0xFB
+                        tiles[x + 1 + y * 10] = -1
                 if w > h:
                     for n in range(w):
                         tiles[x + n + y * 10] = -1
