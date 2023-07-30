@@ -44,13 +44,44 @@ TILE_CONNECTIONS = {
         "right": {4*10+9: 0x42},
     },
 }
-ENEMY_TYPES = ["MOBLIN", "KEESE"]
+ENEMY_TYPES = [
+    "MOBLIN", "KEESE", "TEKTITE", "GHINI", "STALFOS", "GEL", "GIBDO", "LIKE_LIKE", "IRON_MASK",
+    "MIMIC", "MINI_MOLDORM", "SPIKED_BEETLE", "TIMER_BOMBITE", "PAIRODD", "ANTI_KIRBY", "WATER_TEKTITE",
+    "STAR", "GOOMBA", "PEAHAT", "SNAKE", "WINGED_OCTOROCK", "BOMBER", "VIRE", "SAND_CRAB", "POKEY",
+    "COLOR_GHOUL",
+]
 MINIBOSS_TYPES = ["ROLLING_BONES", "HINOX", "DODONGO", "CUE_BALL", "GHOMA", "SMASHER", "GRIM_CREEPER", "BLAINO",
                   "AVALAUNCH", "GIANT_BUZZ_BLOB", "MOBLIN_KING", "ARMOS_KNIGHT"]
 
 HAZARD_ENTITIES = {
-    "MOBLIN": [(-1, -1, 0x0B), (-1, -1, 0x0B), (-1, -1, 0x0B)],
+    "MOBLIN": [(-1, -1, 0x0B), (-1, -1, 0x0B), (-1, -1, 0x0B), (-1, -1, 0x14)],
     "KEESE": [(-1, -1, 0x19), (-1, -1, 0x19), (-1, -1, 0x19), (-1, -1, 0x19)],
+    "TEKTITE": [(-1, -1, 0x0D), (-1, -1, 0x0D), (-1, -1, 0x0D)],
+    "GHINI": [(-1, -1, 0x12), (-1, -1, 0x12)],
+    "STALFOS": [(-1, -1, 0x1A), (-1, -1, 0x1A), (-1, -1, 0x1E), (-1, -1, 0x1E)],
+    "GEL": [(-1, -1, 0x1B), (-1, -1, 0x1B), (-1, -1, 0x1B), (-1, -1, 0x9B), (-1, -1, 0x9B)],
+    "GIBDO": [(-1, -1, 0x1F), (-1, -1, 0x1F)],
+    "WIZROBE": [(-1, -1, 0x21), (-1, -1, 0x21), (-1, -1, 0x21)],
+    "LIKE_LIKE": [(-1, -1, 0x23), (-1, -1, 0x23)],
+    "IRON_MASK": [(-1, -1, 0x24), (-1, -1, 0x24), (-1, -1, 0x24)],
+    "MIMIC": [(-1, -1, 0x28), (-1, -1, 0x28)],
+    "MINI_MOLDORM": [(-1, -1, 0x29)],
+    "SPIKED_BEETLE": [(-1, -1, 0x2C), (-1, -1, 0x2C)],
+    "BOUNCING_BOMBITE": [(-1, -1, 0x55), (-1, -1, 0x55), (-1, -1, 0x55)],
+    "TIMER_BOMBITE": [(-1, -1, 0x56), (-1, -1, 0x56), (-1, -1, 0x56)],
+    "PAIRODD": [(-1, -1, 0x57), (-1, -1, 0x57)],
+    "ANTI_KIRBY": [(-1, -1, 0x91)],
+    "WATER_TEKTITE": [(-1, -1, 0x99), (-1, -1, 0x99), (-1, -1, 0x99)],
+    "STAR": [(-1, -1, 0x9C)],
+    "GOOMBA": [(-1, -1, 0x9F), (-1, -1, 0x9F), (-1, -1, 0x9F)],
+    "PEAHAT": [(-1, -1, 0xA0), (-1, -1, 0xA0)],
+    "SNAKE": [(-1, -1, 0xA0), (-1, -1, 0xA0), (-1, -1, 0xA0)],
+    "WINGED_OCTOROCK": [(-1, -1, 0xAE), (-1, -1, 0xAE)],
+    "BOMBER": [(-1, -1, 0xBA)],
+    "VIRE": [(-1, -1, 0xBD)],
+    "SAND_CRAB": [(-1, -1, 0xC6), (-1, -1, 0xC6), (-1, -1, 0xC6)],
+    "POKEY": [(-1, -1, 0xE3), (-1, -1, 0xE3)],
+    "COLOR_GHOUL": [(-1, -1, 0xEC), (-1, -1, 0xED), (-1, -1, 0xEE)],
 
     "ROLLING_BONES": [(8, 3, 0x81), (6, 3, 0x82)],
     "HINOX": [(5, 2, 0x89)],
@@ -190,12 +221,14 @@ class Generator:
 
         # Setup entities for hazards
         for room in [room for room in self.all_rooms if room.hazard]:
+            first = True
             for x, y, entity in HAZARD_ENTITIES[room.hazard]:
                 if x < 0:
                     x = self.rng.randint(1, 8)
                     y = self.rng.randint(1, 6)
-                    if self.rng.randrange(0, 100) < 20:
+                    if not first and self.rng.randrange(0, 100) < 20:
                         continue
+                    first = False
                 room.entities.append((x, y, entity))
 
     def build_room_tiles(self, room):
