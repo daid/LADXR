@@ -161,6 +161,8 @@ def patchDungeonChain(rom, world_setup):
             re = RoomEditor(rom, room.room_id)
             re.entities = room.entities
             re.buildObjectList(room.tiles)
+            if re.hasEntity(0xBE):
+                re.objects.append(ObjectWarp(1, 0x0A, world_setup.cavegen.start.room_id, 80, 80))
             re.store(rom)
             if room.type == "start":
                 entrance_rooms["cavegen"] = room.room_id
