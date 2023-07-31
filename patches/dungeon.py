@@ -285,3 +285,5 @@ copyWarpData:
     ld  [hl+], a
     ret
 """, 0x443F), fill_nop=True)
+    # For the color ghouls, they normally wait till the door is locked before attacking, remove that check.
+    rom.patch(0x36, 0x23E1, ASM("ret z"), "", fill_nop=True)
