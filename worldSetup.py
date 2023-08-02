@@ -1,11 +1,14 @@
 import patches.enemies
 import logic
-import randomizer
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
 import cavegen
+
+
+class Error(Exception):
+    pass
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -126,7 +129,7 @@ class WorldSetup:
             self.swapEntrances(island, main)
         
         if self.inaccessibleEntrances(settings, entrancePool):
-            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+            raise Error("Failed to make all entrances accessible after a bunch of retries")
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
