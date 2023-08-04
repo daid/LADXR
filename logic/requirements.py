@@ -337,6 +337,7 @@ class RequirementsSettings:
         if options.bowwow != "normal":
             # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword ca$            # Except for taking out bushes (and crystal pillars are removed)
             self.bush.remove(SWORD)
+            self.pit_bush.remove(SWORD)
             self.hit_switch.remove(SWORD)
         if options.logic == "casual":
             # In casual mode, remove the more complex kill methods
