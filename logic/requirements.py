@@ -256,7 +256,8 @@ class RequirementsSettings:
         self.bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, POWER_BRACELET, BOOMERANG)
         self.pit_bush = OR(SWORD, MAGIC_POWDER, MAGIC_ROD, BOOMERANG, BOMB) # unique
         self.attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
-        self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # switches, hinox, shrouded stalfos
+        self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # hinox, shrouded stalfos
+        self.hit_switch = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # hit switches in dungeons
         self.attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
         self.attack_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # ?
         self.attack_hookshot_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
@@ -332,10 +333,11 @@ class RequirementsSettings:
 
         # Adjust for options
         if options.hardmode == "ohko":
-            self.miniboss_requirements["ROLLING_BONES"] = OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, self.attack_hookshot) # should not deal with roller damage
+            self.miniboss_requirements["ROLLING_BONES"] = OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, self.attack_hookshot)) # should not deal with roller damage
         if options.bowwow != "normal":
             # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword ca$            # Except for taking out bushes (and crystal pillars are removed)
             self.bush.remove(SWORD)
+            self.hit_switch.remove(SWORD)
         if options.logic == "casual":
             # In casual mode, remove the more complex kill methods
             self.bush.remove(MAGIC_POWDER)

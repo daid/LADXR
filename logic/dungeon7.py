@@ -14,8 +14,8 @@ class Dungeon7:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(7).add(OwlStatue(0x204)).connect(topright_pillar_area, STONE_BEAK7)
         topright_pillar_area.add(DungeonChest(0x209))  # stone slab chest can be reached by dropping down a hole
-        three_of_a_kind_north = Location(7).add(DungeonChest(0x211)).connect(topright_pillar_area, OR(r.attack_hookshot_no_bomb, AND(OR(BOMB, FEATHER), SHIELD)))  # compass chest; either hit the switch, or have feather to fall on top of raised blocks. No bracelet because ball does not reset
-        bottomleftF2_area = Location(7).connect(topright_pillar_area, r.attack_hookshot)  # area with hinox, be able to hit a switch to reach that area
+        three_of_a_kind_north = Location(7).add(DungeonChest(0x211)).connect(topright_pillar_area, OR(AND(r.hit_switch, r.attack_hookshot_no_bomb), AND(OR(BOMB, FEATHER), SHIELD)))  # compass chest; either hit the switch, or have feather to fall on top of raised blocks. No bracelet because ball does not reset
+        bottomleftF2_area = Location(7).connect(topright_pillar_area, r.hit_switch)  # area with hinox, be able to hit a switch to reach that area
         topleftF1_chest = Location(7).add(DungeonChest(0x201)) # top left chest on F1
         bottomleftF2_area.connect(topleftF1_chest, None, one_way = True)  # drop down in left most holes of hinox room or tile room
         Location(7).add(DroppedKey(0x21B)).connect(bottomleftF2_area, r.attack_hookshot) # hinox drop key
@@ -23,9 +23,9 @@ class Dungeon7:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             bottomleft_owl = Location(7).add(OwlStatue(0x21C)).connect(bottomleftF2_area, AND(BOMB, STONE_BEAK7))
         nightmare_key = Location(7).add(DungeonChest(0x224)).connect(bottomleftF2_area, r.miniboss_requirements[world_setup.miniboss_mapping[6]]) # nightmare key after the miniboss
-        mirror_shield_chest = Location(7).add(DungeonChest(0x21A)).connect(bottomleftF2_area, r.attack_hookshot)  # mirror shield chest, need to be able to hit a switch to reach or
+        mirror_shield_chest = Location(7).add(DungeonChest(0x21A)).connect(bottomleftF2_area, r.hit_switch)  # mirror shield chest, need to be able to hit a switch to reach or
         bottomleftF2_area.connect(mirror_shield_chest, AND(KEY7, FOUND(KEY7, 3)), one_way = True) # reach mirror shield chest from hinox area by opening keyblock
-        toprightF1_chest = Location(7).add(DungeonChest(0x204)).connect(bottomleftF2_area, r.attack_hookshot)  # chest on the F1 right ledge. Added attack_hookshot since switch needs to be hit to get back up
+        toprightF1_chest = Location(7).add(DungeonChest(0x204)).connect(bottomleftF2_area, r.hit_switch)  # chest on the F1 right ledge. Added attack_hookshot since switch needs to be hit to get back up
         final_pillar_area = Location(7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar
         final_pillar = Location(7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
