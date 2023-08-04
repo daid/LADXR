@@ -486,7 +486,7 @@ class World:
             
             d6_connector_left.connect(d6_connector_right, AND(OR(FLIPPERS, PEGASUS_BOOTS), FEATHER))  # jump the gap in underground passage to d6 left side to skip hookshot
             bird_key.connect(bird_cave, COUNT(POWER_BRACELET, 2))  # corner walk past the one pit on the left side to get to the elephant statue
-            fire_cave_bottom.connect(fire_cave_top, AND(r.damage_boost, PEGASUS_BOOTS), one_way=True) # flame skip
+            fire_cave_bottom.connect(fire_cave_top, AND(r.damage_boost_special, PEGASUS_BOOTS), one_way=True) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':
             self._addEntranceRequirementEnter("dream_hut", r.hookshot_clip) # clip past the rocks in front of dream hut
@@ -594,7 +594,7 @@ class World:
             armos_fairy_entrance.connect(d6_armos_island, r.jesus_rooster, one_way=True) # jesus rooster from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, r.jesus_rooster) # jesus rooster (2-ish screen) from fairy cave to lower raft connector
             
-            obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip_block, r.super_jump_boots)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
+            obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip, r.super_jump_boots)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, r.boots_roosterhop) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
             d4_entrance.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster 5 screens to staircase below damp cave
 

@@ -280,7 +280,8 @@ class RequirementsSettings:
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
-        self.damage_boost = True # use damage to cross pits / get through forced barriers
+        self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
+        self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
         self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) or just getting a better position for jumps
         self.pit_buffer_itemless = True # walk on top of pits and buffer down
@@ -293,7 +294,7 @@ class RequirementsSettings:
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
         self.hookshot_spam_pit = HOOKSHOT # use hookshot with spam to cross 1 tile gaps
-        self.hookshot_clip = HOOKSHOT # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
+        self.hookshot_clip = AND(HOOKSHOT, options.superweapons == False) # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
         self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
         self.hookshot_over_pit = HOOKSHOT # use hookshot while over a pit to reach certain areas (see d3 vacuum room, d5 north of crossroads for example)
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
@@ -301,7 +302,7 @@ class RequirementsSettings:
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
-        self.jesus_rooster = ROOSTER
+        self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
 
         self.boss_requirements = [
             SWORD,  # D1 boss
@@ -330,7 +331,9 @@ class RequirementsSettings:
         }
 
         # Adjust for options
-        if options.bowwow != 'normal':
+        if options.hardmode == "ohko":
+            self.miniboss_requirements["ROLLING_BONES"] = OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, self.attack_hookshot) # should not deal with roller damage
+        if options.bowwow != "normal":
             # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword ca$            # Except for taking out bushes (and crystal pillars are removed)
             self.bush.remove(SWORD)
         if options.logic == "casual":
