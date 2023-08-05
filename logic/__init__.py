@@ -96,8 +96,8 @@ class Logic:
         if configuration_options.dungeon_items == 'keysy':
             for n in range(9):
                 for count in range(9):
-                    world.start.add(KeyLocation("KEY%d" % (n + 1)))
-                world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n + 1)))
+                    world.start.add(KeyLocation("KEY%d" % (n)))
+                world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n)))
 
         self.world = world
         self.start = world.start
