@@ -347,7 +347,7 @@ class ForwardItemPlacer(ItemPlacer):
                 for rup in [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]:
                     if rup in self._item_pool:
                         req_items.append(rup)
-        else:
+        if not req_items:
             req_items = [item for item in sorted(self._item_pool.keys())]
 
         if self.__verbose:
