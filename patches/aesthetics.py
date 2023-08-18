@@ -449,6 +449,7 @@ def enableExtendedLinkSprites(rom):
     ret
     """), fill_nop=True)
     rom.patch(0x00, 0x1D0C, ASM("call $0B0B"), "", fill_nop=True)
+    rom.patch(0x00, 0x1DE5, ASM("ld [hl], $23"), ASM("ld [hl], $03"))  # Fix the diving sprite
 
 
 def allowColorDungeonSpritesEverywhere(rom):
