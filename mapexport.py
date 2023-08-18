@@ -42,7 +42,8 @@ class MapExport:
             if n == 0x2FF:
                 continue
             for warp in RoomEditor(rom, n).getWarps():
-                self.room_map_info(warp.room).map_id = warp.map_nr
+                if warp.warp_type > 0:
+                    self.room_map_info(warp.room).map_id = warp.map_nr
                 if warp.warp_type == 2:
                     self.room_map_info(warp.room).sidescroll = True
 
