@@ -57,6 +57,10 @@ def patchGraphics(rom, graphics_data):
             graphics_data = graphics_data[info["size"]:]
             if info.get("patch") == "extlink":
                 enableExtendedLinkSprites(rom)
+            if info.get("patch") == "pinkbatman":
+                for n in range(16):
+                    rom.banks[0x19][0x0FDC + n * 2] |= 6
+                rom.banks[0x21][0x0824] = 0x1B
     else:
         # Old style graphics, just fixed bin at 0x2C
         updateGraphics(rom, 0x2C, 0, graphics_data)
