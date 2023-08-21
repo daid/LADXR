@@ -21,8 +21,15 @@
         <label for="seeddonedialog" class="modal-close" ></label>
         <h3 class="section">Seed generation complete!</h3>
         <p class="section">Seed: <span id="seedSpan">...</span></p>
-        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
-        <p class="section"><a id="magpieLink">Open in Magpie</a></p>
+        <p class="section">
+            <button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button>
+            <a class="button large primary" style="" id="magpieLink">Open in Magpie</a>
+        </p>
+        <p class="section" style="display: flex; align-items: center;">
+            Share:
+            <input id="shareseed" style="flex-grow: 1; margin-right: 0px" readonly/>
+            <button id="shareseedbutton" style="margin-left: 0px" onclick="ID('shareseed').select(); navigator.clipboard.writeText(ID('shareseed').value); alert('Link copied to clipboard', 'LADXR')"><span class="icon-link"></span></button>
+        </p>
     </div>
 </div>
 <input type="checkbox" id="errordialog" class="modal">
@@ -79,9 +86,11 @@
         </div>
     </div>
 </div>
-<div class="container">
+<div class="container" id="randomsettings">
     <button onclick="ID('settingsm').style.display = ID('settingsm').style.display == '' ? 'None' : ''">Show/Hide</button>
     <div id="settingsm" style="display: none"></div>
+</div>
+<div class="container" id="preloadinfo" style="display: none">
 </div>
 
 
@@ -89,6 +98,7 @@
 <script src="js/ui.js"></script>
 <script>"use strict";
 var roms = [];
+var randomsettings;
 
 function ID(s) { return document.getElementById(s); }
 
@@ -246,7 +256,8 @@ async function startRomGeneration()
     ID("generatingdialog").checked = true;
     randomGenerationString();
     var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
-    var randomsettings = randomizeSettings();
+    if (ID("randomsettings").style.display != "none")
+        randomsettings = randomizeSettings();
     var args = ["--short", updateSettingsString() + randomsettings];
     var data = {"input.gbc": buffer, "args": args, "id": 0};
 
@@ -260,10 +271,20 @@ async function startRomGeneration()
     await postToWorker(data);
 }
 
+function getShareLink() {
+    return document.location.origin + document.location.pathname + "?=" + encrypt("<" + ID("seedSpan").innerText + ">" + randomsettings);
+}
+
 updateMysteryOptions("Lc0L aLh0Lg0LH0AaaAgah!9s!9H!9I!1T!8W!9R!9Zd3Zt0ZgaD aDs3DL5DN5DK5Dk2r!2u!3E aEs2ES1Em0Ew0Ec0Ei0EM0j!3a!0w!3B aBsaBrab absabraG8aG75G65G50G40G30G20G10G01GO1GR0G<0G>5GS5Gb3GB0Gm5Gs5P aPc1Pp1Pk1m ami1m11ml1X aXO2XH2X10taatnat ag aga1gs0O aOD1ON1OC1OR0o aoD1oO1oB1q!0")
 if (document.location.search.startsWith("?!")) {
     var msss = decrypt(document.location.search.substr(2));
     updateMysteryOptions(msss);
+}
+if (document.location.search.startsWith("?=")) {
+    ID("randomsettings").style.display = "none";
+    randomsettings = decrypt(document.location.search.substr(2));
+    ID("preloadinfo").style.display = "";
+    ID("preloadinfo").innerHTML = "<H2>Using supplied mystery settings, will generate the same rom.</H2>";
 }
 
 </script>
