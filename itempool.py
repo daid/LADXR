@@ -281,9 +281,12 @@ class ItemPool:
             max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
             for n in range(3):
                 pick = rnd.choice(major_additions)
-                if pick not in required_items and required_item_count > 0:
+                if pick not in required_items or pick in {SWORD, SHIELD} and required_item_count > 0:
                     self.add(pick)
                     required_item_count -= 1
+                    major_additions.remove(pick)
+                    if not major_additions:
+                        break
             for n in range(required_item_count // 3):
                 pick = rnd.choice(minor_additions)
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
