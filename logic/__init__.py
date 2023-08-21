@@ -56,19 +56,38 @@ class Logic:
             world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
 
         if configuration_options.overworld not in {"dungeonchain", "random"}:
-            for k in world.overworld_entrance.keys():
+            for k in world.entrances.keys():
                 assert k in world_setup.entrance_mapping, k
             for k in world_setup.entrance_mapping.keys():
-                assert k in world.overworld_entrance, k
+                assert k in world.entrances, k
 
-            for entrance, indoor in world_setup.entrance_mapping.items():
-                exterior = world.overworld_entrance[entrance]
-                if world.indoor_location[indoor] is not None:
-                    exterior.location.connect(world.indoor_location[indoor], exterior.requirement)
-                    if exterior.enterIsSet():
-                        exterior.location.connect(world.indoor_location[indoor], exterior.one_way_enter_requirement, one_way=True)
-                    if exterior.exitIsSet():
-                        world.indoor_location[indoor].connect(exterior.location, exterior.one_way_exit_requirement, one_way=True)
+            for source, target in world_setup.entrance_mapping.items():
+                se = world.entrances[source]
+                if not se.location:
+                    continue
+                te = world.entrances[target]
+                empty_cycle_targets = {target}
+                while te.location is None:
+                    # If the target is empty, we need to check if we can get from that empty location to somewhere else.
+                    assert te.requirement is None
+                    assert not te.enterIsSet()
+                    assert not te.exitIsSet()
+                    target = world_setup.entrance_mapping[target]
+                    if target in empty_cycle_targets:
+                        break
+                    empty_cycle_targets.add(target)
+                    te = world.entrances[target]
+                if te.location and te.location != se.location:
+                    if se.requirement is not None and te.requirement is not None:
+                        se.location.connect(te.location, AND(se.requirement, te.requirement), one_way=True)
+                    elif se.requirement is not None:
+                        se.location.connect(te.location, se.requirement, one_way=True)
+                    else:
+                        se.location.connect(te.location, te.requirement, one_way=True)
+                    if se.enterIsSet():
+                        se.location.connect(te.location, se.one_way_enter_requirement, one_way=True)
+                    if te.exitIsSet():
+                        se.location.connect(te.location, te.one_way_exit_requirement, one_way=True)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
@@ -162,7 +181,7 @@ class MultiworldLogic:
                     world_setup = WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
-                    if options.entranceshuffle not in ("split", "mixed") or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
+                    if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
                         break
 
             for ii in world.iteminfo_list:

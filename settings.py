@@ -138,11 +138,15 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
                 description='Randomize where your starting house is located'),
             Setting('dungeonshuffle', 'Entrances', 'u', 'Dungeon shuffle', default=False,
                 description='Randomizes the dungeon that each dungeon entrance leads to'),
-            Setting('entranceshuffle', 'Entrances', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed")], default='none',
+            Setting('entranceshuffle', 'Entrances', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed"), ("wild", 'w', "Wild"), ("chaos", "c", "Chaos"), ("insane", 'i', "Insane"), ("madness", 'M', "Madness")], default='none',
                 description="""Randomizes where overworld entrances lead to.
 [Simple] single entrance caves that contain items are randomized
 [Split] Connector caves are also randomized, in a separate pool from single entrance caves
 [Mixed] Connector caves are also randomized, in the same pool as single entrance caves
+[Wild] Connections can go from overworld to overworld, or inside to inside
+[Chaos] Entrance and exits are decoupled.
+[Insane] Combines chaos and wild, anything goes anywhere, there is no god.
+[Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location
 If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances."""),
             Setting('shufflejunk', 'Entrances', 'j', 'Shuffle itemless entrances', default=False,
                 description="Caves/houses without items are also randomized when entranceshuffle is set"),

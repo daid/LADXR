@@ -272,7 +272,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     if not args.romdebugmode:
         patches.core.addFrameCounter(rom, len(item_list))
 
-    patches.core.warpHome(rom, settings.overworld == "dungeonchain")  # Needs to be done after setting the start location.
+    patches.core.warpHome(rom, settings.overworld == "dungeonchain" or settings.entranceshuffle in ("chaos", "insane", "madness"))  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), settings)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)
