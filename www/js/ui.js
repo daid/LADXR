@@ -5,6 +5,18 @@ var spoilerContent;
 
 function ID(s) { return document.getElementById(s); }
 
+function getShareLink() {
+    var result = document.location;
+    if (ID("seed").value == "") {
+        ID("seed").value = data.seed;
+        updateSettingsString();
+        result = document.location;
+        ID("seed").value = "";
+        updateSettingsString();
+    }
+    return result
+}
+
 async function seedComplete(data) {
     ID("generatingdialog").checked = false;
 
@@ -18,15 +30,7 @@ async function seedComplete(data) {
         if (ID("seedSpan"))
             ID("seedSpan").innerText = data.seed;
         if (ID("shareseed")) {
-            if (ID("seed").value != "") {
-                ID("shareseed").value = document.location;
-            } else {
-                ID("seed").value = data.seed;
-                updateSettingsString();
-                ID("shareseed").value = document.location;
-                ID("seed").value = "";
-                updateSettingsString();
-            }
+            ID("shareseed").value = getShareLink();
         }
 
         spoilerContent = data.spoiler
