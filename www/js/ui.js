@@ -10,7 +10,7 @@ function getShareLink(data) {
     if (ID("seed").value == "") {
         ID("seed").value = data.seed;
         updateSettingsString();
-        result = document.location;
+        result = document.location.toString();
         ID("seed").value = "";
         updateSettingsString();
     }
