@@ -271,8 +271,8 @@ async function startRomGeneration()
     await postToWorker(data);
 }
 
-function getShareLink() {
-    return document.location.origin + document.location.pathname + "?=" + encrypt("<" + ID("seedSpan").innerText + ">" + randomsettings);
+function getShareLink(data) {
+    return document.location.origin + document.location.pathname + "?=" + encrypt("<" + data.seed + ">" + randomsettings);
 }
 
 updateMysteryOptions("Lc0L aLh0Lg0LH0AaaAgah!9s!9H!9I!1T!8W!9R!9Zd3Zt0ZgaD aDs3DL5DN5DK5Dk2r!2u!3E aEs2ES1Em0Ew0Ec0Ei0EM0j!3a!0w!3B aBsaBrab absabraG8aG75G65G50G40G30G20G10G01GO1GR0G<0G>5GS5Gb3GB0Gm5Gs5P aPc1Pp1Pk1m ami1m11ml1X aXO2XH2X10taatnat ag aga1gs0O aOD1ON1OC1OR0o aoD1oO1oB1q!0")

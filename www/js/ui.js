@@ -5,7 +5,7 @@ var spoilerContent;
 
 function ID(s) { return document.getElementById(s); }
 
-function getShareLink() {
+function getShareLink(data) {
     var result = document.location;
     if (ID("seed").value == "") {
         ID("seed").value = data.seed;
@@ -30,7 +30,7 @@ async function seedComplete(data) {
         if (ID("seedSpan"))
             ID("seedSpan").innerText = data.seed;
         if (ID("shareseed")) {
-            ID("shareseed").value = getShareLink();
+            ID("shareseed").value = getShareLink(data);
         }
 
         spoilerContent = data.spoiler
