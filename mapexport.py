@@ -250,13 +250,13 @@ for(var e of document.getElementsByTagName("img")) {
         if map_id is None:
             room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
             room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
-        elif map_id == 6:
+        elif map_id == 6 or map_id == 7:
             room.attribute_bank = 0x23
             room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2]
             room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2 + 1] << 8
         else:
-            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) + map_id * 2]
-            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) + map_id * 2 + 1] << 8
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) * 2 + map_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) * 2 + map_id * 2 + 1] << 8
 
         if room_id < 0x100:
             index = self.__rom.banks[0x21][0x02EF + room_id] * 2
@@ -272,7 +272,6 @@ for(var e of document.getElementsByTagName("img")) {
                 room.palette_addr = self.__rom.banks[0x21][0x043F + index] | (self.__rom.banks[0x21][0x0440 + index] << 8)
         else:
             room.palette_addr = self.__rom.banks[0x21][0x02B1] | (self.__rom.banks[0x21][0x02B2] << 8)
-        print(hex(room_id), hex(room.palette_addr), hex(map_id) if map_id is not None else None)
 
         self.__json_data["rooms"][room_id] = room.to_json()
         self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
@@ -301,6 +300,10 @@ for(var e of document.getElementsByTagName("img")) {
             metatiles = self.__rom.banks[0x08][0x03B0:0x03B0+0x400]
             if "indoor1_metatiles" not in self.__json_data:
                 self.__json_data["indoor1_metatiles"] = [n for n in metatiles]
+            if 0xDB in room.tiles or 0xDC in room.tiles: # We have switch block tiles, so we need to update the tiles for those
+                for n in range(4):
+                    tileset[4 + n] = (0x0C << 10) + 0x280 + n
+                    tileset[8 + n] = (0x0C << 10) + 0x288 + n
         attributes = self.__rom.banks[room.attribute_bank][room.attribute_addr-0x4000:room.attribute_addr-0x4000+0x400]
         if (room.attribute_bank << 16) | room.attribute_addr not in self.__json_data["attributes"]:
             self.__json_data["attributes"][(room.attribute_bank << 16) | room.attribute_addr] = [n for n in attributes]
