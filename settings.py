@@ -228,11 +228,11 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 aesthetic=True),
             Setting('linkspalette', 'User options', 'C', "Link's color",
                 options=[('-1', '-', 'Normal'), ('0', '0', 'Green'), ('1', '1', 'Yellow'), ('2', '2', 'Red'), ('3', '3', 'Blue'),
-                         ('4', '4', '?? A'), ('5', '5', '?? B'), ('6', '6', '?? C'), ('7', '7', '?? D')], default='-1', aesthetic=True,
+                         ('4', '4', 'Inverted Red'), ('5', '5', 'Inverted Blue'), ('6', '6', '?? C'), ('7', '7', '?? D')], default='-1', aesthetic=True,
                 description="""Allows you to force a certain color on link.
 [Normal] color of link depends on the tunic.
 [Green/Yellow/Red/Blue] forces link into one of these colors.
-[?? A/B/C/D] colors of link are usually inverted and color depends on the area you are in."""),
+[?? C/D] colors of link are usually inverted and color depends on the area you are in."""),
             Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable')], default='',
                 description="""
 [Random] Randomizes overworld and dungeon music'
