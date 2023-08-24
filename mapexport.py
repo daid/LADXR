@@ -10,7 +10,7 @@ class Room:
         self.tiles = None
         self.main_tileset_id = None
         self.animation_tileset_id = None
-        self.palette_id = None
+        self.palette_addr = None
         self.attribute_bank = None
         self.attribute_addr = None
 
@@ -46,6 +46,8 @@ class MapExport:
                     self.room_map_info(warp.room).map_id = warp.map_nr
                 if warp.warp_type == 2:
                     self.room_map_info(warp.room).sidescroll = True
+        self.room_map_info(0x1FF).sidescroll = True
+        self.room_map_info(0x2E8).sidescroll = True
 
     def export_all(self, w=16, h=16, *, dungeons=True):
         os.makedirs("_map/img", exist_ok=True)
@@ -121,7 +123,7 @@ function updateTooltip(e) {
 
     tooltip.innerText = `Room ID: ${h2(room.n)}
         Tileset: ${h2(room.main_tileset_id)}
-        Palette: ${h2(room.palette_id)}
+        Palette: ${h2(room.palette_addr)}
         Animation set: ${h2(room.animation_tileset_id)}
         Attribute data: ${h2(room.attribute_bank)}:${h2(room.attribute_addr)}
         
@@ -203,13 +205,7 @@ for(var e of document.getElementsByTagName("img")) {
 
         return subtiles
 
-    def getPalette(self, palette_index):
-        if palette_index < 0x100:
-            palette_addr = self.__rom.banks[0x21][0x02B1 + palette_index * 2]
-            palette_addr |= self.__rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
-        else:
-            palette_addr = self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2]
-            palette_addr |= self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2 + 1] << 8
+    def getPalette(self, palette_addr):
         palette_addr -= 0x4000
 
         palette = []
@@ -263,11 +259,20 @@ for(var e of document.getElementsByTagName("img")) {
             room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) + map_id * 2 + 1] << 8
 
         if room_id < 0x100:
-            room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
+            index = self.__rom.banks[0x21][0x02EF + room_id] * 2
+            room.palette_addr = self.__rom.banks[0x21][0x02B1 + index] | (self.__rom.banks[0x21][0x02B2 + index] << 8)
         elif map_id is not None:
-            room.palette_id = 0x100 + map_id
+            if map_id < 9:
+                room.palette_addr = self.__rom.banks[0x21][0x03EF + map_id*2] | (self.__rom.banks[0x21][0x03F0 + map_id*2] << 8)
+            elif map_id == 0xFF:
+                room.palette_addr = 0x67D0
+            else:
+                lookup_addr = self.__rom.banks[0x21][0x0413 + (map_id - 10)*2] | (self.__rom.banks[0x21][0x0414 + (map_id - 10)*2] << 8)
+                index = self.__rom.banks[0x21][lookup_addr - 0x4000 + (room_id & 0xFF)] * 2
+                room.palette_addr = self.__rom.banks[0x21][0x043F + index] | (self.__rom.banks[0x21][0x0440 + index] << 8)
         else:
-            room.palette_id = 0x100
+            room.palette_addr = self.__rom.banks[0x21][0x02B1] | (self.__rom.banks[0x21][0x02B2] << 8)
+        print(hex(room_id), hex(room.palette_addr), hex(map_id) if map_id is not None else None)
 
         self.__json_data["rooms"][room_id] = room.to_json()
         self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
@@ -306,10 +311,10 @@ for(var e of document.getElementsByTagName("img")) {
                 tile_nr = room.tiles[x + y * 10]
                 metatile = metatiles[tile_nr*4:tile_nr*4+4]
                 attrtile = attributes[tile_nr*4:tile_nr*4+4]
-                self.drawSubtile(result, x*16, y*16, tileset[metatile[0]], attrtile[0], room.palette_id)
-                self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_id)
-                self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_id)
-                self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_id)
+                self.drawSubtile(result, x*16, y*16, tileset[metatile[0]], attrtile[0], room.palette_addr)
+                self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_addr)
+                self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_addr)
+                self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_addr)
         for x, y, type_id in re.entities:
             draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
             draw.text((x * 16 + 2, y * 16 + 1), "%02X" % (type_id))
@@ -319,10 +324,10 @@ for(var e of document.getElementsByTagName("img")) {
             draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id), fill=0)
         return result
 
-    def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_id):
-        if (subtile_id, attr, palette_id) not in self.__tile_cache:
+    def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_addr):
+        if (subtile_id, attr, palette_addr) not in self.__tile_cache:
             result = PIL.Image.new("RGB", (8, 8))
-            palette = self.getPalette(palette_id)[(attr&7)*4:(attr&7)*4+4]
+            palette = self.getPalette(palette_addr)[(attr&7)*4:(attr&7)*4+4]
             addr = (subtile_id&0x3FF)<<4
             tile_data = self.__rom.banks[subtile_id >> 10][addr:addr+0x10]
             for y in range(8):
@@ -341,8 +346,8 @@ for(var e of document.getElementsByTagName("img")) {
                     if b & bit:
                         v |= 0x02
                     result.putpixel((x,y), palette[v])
-            self.__tile_cache[(subtile_id, attr, palette_id)] = result
-        img.paste(self.__tile_cache[(subtile_id, attr, palette_id)], (ox, oy))
+            self.__tile_cache[(subtile_id, attr, palette_addr)] = result
+        img.paste(self.__tile_cache[(subtile_id, attr, palette_addr)], (ox, oy))
 
     def exportMetaTiles(self, f, name, main_set, animation_set, condition_func):
         condition = lambda n: condition_func(n) and (n < 0x80 or n >= 0xF0)
