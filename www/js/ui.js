@@ -180,7 +180,7 @@ function buildUI(filter_function) {
             last_cat = s.category;
         }
         html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
-        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description}">`;
+        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description.trim()}">`;
         html += `<label for='${s.key}'>${s.label}:</label>`;
         var opts = s.options
         if (typeof(s.default) == 'boolean') {
