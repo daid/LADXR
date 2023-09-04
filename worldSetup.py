@@ -153,7 +153,8 @@ class WorldSetup:
         if settings.overworld in {"random", "dungeonchain"}:
             return
         if settings.overworld == "dungeondive":
-            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
+            self.entrance_mapping = {"d%d" % (n): "d%d:inside" % (n) for n in range(9)}
+            self.entrance_mapping.update({"d%d:inside" % (n): "d%d" % (n) for n in range(9)})
         if settings.randomstartlocation and settings.entranceshuffle == "none":
             start_location = start_locations[rnd.randrange(len(start_locations))]
             if start_location != "start_house":
