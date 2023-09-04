@@ -6,8 +6,7 @@ from worldSetup import ENTRANCE_INFO
 
 class World:
     def __init__(self, options, world_setup, r):
-        self.overworld_entrance = {}
-        self.indoor_location = {}
+        self.entrances = {}
 
         mabe_village = Location()
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, r.bush)  # well
@@ -28,10 +27,10 @@ class World:
         self._addEntrance("papahl_house_right", mabe_village, papahl_house, None)
         self._addEntrance("rooster_grave", mabe_village, rooster_cave, COUNT(POWER_BRACELET, 2))
         self._addEntranceRequirementExit("rooster_grave", None) # if exiting, you do not need l2 bracelet
-        self._addEntrance("madambowwow", mabe_village, None, None)
-        self._addEntrance("ulrira", mabe_village, None, None)
-        self._addEntrance("mabe_phone", mabe_village, None, None)
-        self._addEntrance("library", mabe_village, None, None)
+        self._addEntrance("madambowwow", mabe_village, Location(), None)
+        self._addEntrance("ulrira", mabe_village, Location(), None)
+        self._addEntrance("mabe_phone", mabe_village, Location(), None)
+        self._addEntrance("library", mabe_village, Location(), None)
         self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_KEY)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
@@ -108,7 +107,7 @@ class World:
         swamp_chest = Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
-        self._addEntrance("writes_phone", swamp, None, None)
+        self._addEntrance("writes_phone", swamp, Location(), None)
 
         writes_hut_outside = Location().connect(swamp, OR(FEATHER, ROOSTER))  # includes the cave behind the hut
         writes_house = Location()
@@ -125,7 +124,7 @@ class World:
         graveyard = Location().connect(forest, OR(FEATHER, ROOSTER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             graveyard.add(OwlStatue(0x035))  # Moblin cave owl
-        self._addEntrance("photo_house", graveyard, None, None)
+        self._addEntrance("photo_house", graveyard, Location(), None)
         self._addEntrance("d0", graveyard, None, POWER_BRACELET)
         self._addEntranceRequirementExit("d0", None) # if exiting, you do not need bracelet
         ghost_grave = Location().connect(forest, POWER_BRACELET)
@@ -144,10 +143,10 @@ class World:
         ukuku_prairie = Location().connect(mabe_village, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x07B, TRADING_ITEM_STICK)), TRADING_ITEM_BANANAS)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x087, TRADING_ITEM_HONEYCOMB)), TRADING_ITEM_STICK)
-        self._addEntrance("prairie_left_phone", ukuku_prairie, None, None)
-        self._addEntrance("prairie_right_phone", ukuku_prairie, None, None)
+        self._addEntrance("prairie_left_phone", ukuku_prairie, Location(), None)
+        self._addEntrance("prairie_right_phone", ukuku_prairie, Location(), None)
         self._addEntrance("prairie_left_cave1", ukuku_prairie, Location().add(Chest(0x2CD)), None) # cave next to town
-        self._addEntrance("prairie_left_fairy", ukuku_prairie, None, BOMB)
+        self._addEntrance("prairie_left_fairy", ukuku_prairie, Location(), BOMB)
         self._addEntranceRequirementExit("prairie_left_fairy", None) # if exiting, you do not need bombs
 
         prairie_left_cave2 = Location()  # Bomb cave
@@ -173,7 +172,7 @@ class World:
 
         left_bay_area = Location()
         left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER))
-        self._addEntrance("prairie_low_phone", left_bay_area, None, None)
+        self._addEntrance("prairie_low_phone", left_bay_area, Location(), None)
 
         Location().add(Seashell(0x0E9)).connect(left_bay_area, r.bush)  # same screen as mermaid statue
         tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.bush))  # tiny island
@@ -234,7 +233,7 @@ class World:
         else:
             next_to_castle.connect(ukuku_prairie, None)
         next_to_castle.connect(ukuku_prairie, FLIPPERS)
-        self._addEntrance("castle_phone", next_to_castle, None, None)
+        self._addEntrance("castle_phone", next_to_castle, Location(), None)
         castle_secret_entrance_left = Location()
         castle_secret_entrance_right = Location().connect(castle_secret_entrance_left, FEATHER)
         castle_courtyard = Location()
@@ -267,11 +266,11 @@ class World:
         mermaid_statue = Location()
         mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, HOOKSHOT))
         mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFYING_GLASS))
-        self._addEntrance("animal_phone", animal_village, None, None)
-        self._addEntrance("animal_house1", animal_village, None, None)
-        self._addEntrance("animal_house2", animal_village, None, None)
+        self._addEntrance("animal_phone", animal_village, Location(), None)
+        self._addEntrance("animal_house1", animal_village, Location(), None)
+        self._addEntrance("animal_house2", animal_village, Location(), None)
         self._addEntrance("animal_house3", animal_village, goathouse, None)
-        self._addEntrance("animal_house4", animal_village, None, None)
+        self._addEntrance("animal_house4", animal_village, Location(), None)
         self._addEntrance("animal_house5", animal_village, cookhouse, None)
         animal_village.connect(bay_water, FLIPPERS)
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
@@ -308,7 +307,7 @@ class World:
         self._addEntrance("armos_temple", armos_maze, armos_temple, None)
 
         armos_fairy_entrance = Location().connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
-        self._addEntrance("armos_fairy", armos_fairy_entrance, None, BOMB)
+        self._addEntrance("armos_fairy", armos_fairy_entrance, Location(), BOMB)
         self._addEntranceRequirementExit("armos_fairy", None) # if exiting, you do not need bombs
 
         d6_connector_left = Location()
@@ -358,7 +357,7 @@ class World:
         outside_mambo = Location().connect(d4_entrance, FLIPPERS)
         inside_mambo = Location()
         mambo = Location().add(Song(0x2FD)).connect(inside_mambo, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
-        self._addEntrance("mambo", outside_mambo, inside_mambo, None) 
+        self._addEntrance("mambo", outside_mambo, inside_mambo, None)
 
         # Raft game.
         raft_house = Location()
@@ -381,7 +380,7 @@ class World:
             raft_game.add(OwlStatue(0x5D))
 
         outside_rooster_house = Location().connect(lower_right_taltal, OR(FLIPPERS, ROOSTER))
-        self._addEntrance("rooster_house", outside_rooster_house, None, None)
+        self._addEntrance("rooster_house", outside_rooster_house, Location(), None)
         bird_cave = Location()
         bird_key = Location().add(BirdKey())
         bird_cave.connect(bird_key, OR(AND(FEATHER, COUNT(POWER_BRACELET, 2)), ROOSTER))
@@ -420,7 +419,7 @@ class World:
         self._addEntrance("right_taltal_connector4", right_taltal_connector_outside2, right_taltal_connector3, None)
         self._addEntrance("right_taltal_connector5", right_taltal_connector_outside2, right_taltal_connector4, None)
         self._addEntrance("right_taltal_connector6", d7_platau, right_taltal_connector4, None)
-        self._addEntrance("right_fairy", right_taltal_connector_outside2, None, BOMB)
+        self._addEntrance("right_fairy", right_taltal_connector_outside2, Location(), BOMB)
         self._addEntranceRequirementExit("right_fairy", None) # if exiting, you do not need bombs
         self._addEntrance("d7", d7_tower, None, None)
         if options.logic != "casual": # D7 area ledge drops
@@ -459,7 +458,7 @@ class World:
             d8_entrance.connect(writes_hut_outside, None, one_way=True) # Jump down the ledge
             d8_entrance.connect(outside_fire_cave, None, one_way=True) # Jump down the other ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
-        self._addEntrance("phone_d8", d8_entrance, None, None)
+        self._addEntrance("phone_d8", d8_entrance, Location(), None)
         self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
         self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
@@ -625,33 +624,33 @@ class World:
         self.windfish = windfish
 
     def _addEntrance(self, name, outside, inside, requirement):
-        assert name not in self.overworld_entrance, "Duplicate entrance: %s" % name
+        assert name not in self.entrances, "Duplicate entrance: %s" % name
         assert name in ENTRANCE_INFO
-        self.overworld_entrance[name] = EntranceExterior(outside, requirement)
-        self.indoor_location[name] = inside
+        self.entrances[name] = EntranceExterior(outside, requirement)
+        self.entrances[f"{name}:inside"] = EntranceExterior(inside, None)
 
     def _addEntranceRequirement(self, name, requirement):
-        assert name in self.overworld_entrance
-        self.overworld_entrance[name].addRequirement(requirement)
+        assert name in self.entrances
+        self.entrances[name].addRequirement(requirement)
 
     def _addEntranceRequirementEnter(self, name, requirement):
-        assert name in self.overworld_entrance
-        self.overworld_entrance[name].addEnterRequirement(requirement)
+        assert name in self.entrances
+        self.entrances[name].addEnterRequirement(requirement)
 
     def _addEntranceRequirementExit(self, name, requirement):
-        assert name in self.overworld_entrance
-        self.overworld_entrance[name].addExitRequirement(requirement)
+        assert name in self.entrances
+        self.entrances[name].addExitRequirement(requirement)
 
     def updateIndoorLocation(self, name, location):
-        assert name in self.indoor_location
-        assert self.indoor_location[name] is None
-        self.indoor_location[name] = location
+        name = f"{name}:inside"
+        assert name in self.entrances, name
+        assert self.entrances[name].location is None
+        self.entrances[name].location = location
 
 
 class DungeonDiveOverworld:
     def __init__(self, options, r):
-        self.overworld_entrance = {}
-        self.indoor_location = {}
+        self.entrances = {}
 
         start_house = Location().add(StartItem())
         Location().add(ShopItem(0)).connect(start_house, COUNT("RUPEES", 200))
@@ -669,7 +668,7 @@ class DungeonDiveOverworld:
         windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         self.start = start_house
-        self.overworld_entrance = {
+        self.entrances = {
             "d1": EntranceExterior(start_house, None),
             "d2": EntranceExterior(start_house, None),
             "d3": EntranceExterior(start_house, None),
@@ -679,13 +678,22 @@ class DungeonDiveOverworld:
             "d7": EntranceExterior(start_house, None),
             "d8": EntranceExterior(start_house, None),
             "d0": EntranceExterior(start_house, None),
+            "d1:inside": EntranceExterior(None, None),
+            "d2:inside": EntranceExterior(None, None),
+            "d3:inside": EntranceExterior(None, None),
+            "d4:inside": EntranceExterior(None, None),
+            "d5:inside": EntranceExterior(None, None),
+            "d6:inside": EntranceExterior(None, None),
+            "d7:inside": EntranceExterior(None, None),
+            "d8:inside": EntranceExterior(None, None),
+            "d0:inside": EntranceExterior(None, None),
         }
         self.egg = egg
         self.nightmare = nightmare
         self.windfish = windfish
 
     def updateIndoorLocation(self, name, location):
-        self.indoor_location[name] = location
+        self.entrances[f"{name}:inside"].location = location
 
 
 class DungeonChain:
