@@ -176,11 +176,12 @@ function buildUI(filter_function) {
         if (filter_function && !filter_function(s)) continue;
         if (last_cat != s.category) {
             if (last_cat != "") html += `</div>`;
-            html += `<div class="row"><div class="col-sm-12"><h1>${s.category}</h1></div>`
+            html += `<div class="row category-${s.category.replaceAll(' ','_')}">`
+            html += `<div class="col-sm-12"><h1>${s.category}</h1></div>`
             last_cat = s.category;
         }
         html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
-        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description.trim()}">`;
+        html += `<div class="inputcontainer tooltip bottom option-${s.key}" aria-label="${s.description.trim()}">`;
         html += `<label for='${s.key}'>${s.label}:</label>`;
         var opts = s.options
         if (typeof(s.default) == 'boolean') {
@@ -217,6 +218,39 @@ function buildUI(filter_function) {
             };
         }
     }
+
+    // disable non-aesthetic options when loading race seed
+    if (ID('race').value == 'true' && ID('seed').value) {
+        for(var s of options) { 
+            if (s.aesthetic) continue;
+            var input = document.querySelector(`.option-${s.key} input, .option-${s.key} select`);
+            if(input)
+                input.setAttribute('disabled', true);
+        }
+
+        // indicate fully disabled categories
+        var categories = []
+        for(var s of options) {
+            if (!categories.includes(s.category))
+                categories.push(s.category);
+        }
+        for(var s of options) {
+            if (!s.aesthetic) continue;
+            if (categories.includes(s.category))
+                categories.splice(categories.indexOf(s.category), 1);
+        }
+        for(var c of categories) {
+            var category = document.querySelector(`.category-${c.replaceAll(' ', '_')}`);
+            if (category) {
+                ID('settings').append(category) // send to the bottom of settings so unlocked categories rise to top
+                category.style.opacity = 0.8;
+            }
+            var h1 = document.querySelector(`.category-${c.replaceAll(' ', '_')} h1`);
+            if (h1)
+                h1.innerHTML = '&#128274; ' + h1.innerHTML; // prepend 🔒 emoji
+        }
+    }
+
     updateGfxModImage();
     updateSettingsString();
     updateForm();
