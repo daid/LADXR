@@ -123,6 +123,11 @@ function updateSettingsString() {
         } else if (s.default != e.value) {
             sss += s.short_key + e.value + ">";
         }
+        if(s.key == 'seed' || (s.default == e.value || (s.default && e.value=='true') || (!s.default && e.value=='false'))) {
+            e.style['font-weight'] = 'normal'
+        } else {
+            e.style['font-weight'] = 'bold'
+        }
     }
     document.location.hash = sss;
     return sss;
