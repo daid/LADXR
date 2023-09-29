@@ -181,7 +181,7 @@ function buildUI(filter_function) {
             last_cat = s.category;
         }
         html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
-        html += `<div class="inputcontainer tooltip bottom option-${s.key}" aria-label="${s.description.trim()}">`;
+        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description.trim()}">`;
         html += `<label for='${s.key}'>${s.label}:</label>`;
         var opts = s.options
         if (typeof(s.default) == 'boolean') {
@@ -223,7 +223,7 @@ function buildUI(filter_function) {
     if (ID('race').value == 'true' && ID('seed').value) {
         for(var s of options) { 
             if (s.aesthetic) continue;
-            var input = document.querySelector(`.option-${s.key} input, .option-${s.key} select`);
+            var input = ID(s.key)
             if(input)
                 input.setAttribute('disabled', true);
         }
