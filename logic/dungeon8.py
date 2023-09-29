@@ -68,7 +68,7 @@ class Dungeon8:
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
             vire_drop_key.connect(entrance_left, BOMB) # use bombs to kill rolling bones and vire
             bottom_right.connect(slime_chest, r.tight_jump) # diagonal jump over the pits to reach rolling rock / zamboni
-            gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD, MAGIC_POWDER)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
+            gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
             slime_chest.connect(entrance, AND(r.attack_hookshot_powder, POWER_BRACELET))  # kill vire with powder or bombs 
         
