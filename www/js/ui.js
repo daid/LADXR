@@ -109,7 +109,9 @@ function updateGfxModImage() {
 }
 
 function updateSettingsString(filter_function) {
-    document.location.hash = generateSettingsString(filter_function);
+    var sss = generateSettingsString(filter_function);
+    document.location.hash = sss;
+    return sss;
 }
 
 function generateSettingsString(filter_function) {
