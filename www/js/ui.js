@@ -117,7 +117,7 @@ function updateSettingsString(filter_function) {
 function generateSettingsString(filter_function) {
     var sss = "";
     for(var s of options) {
-        if (filter_function && !filter_function(s)) continue;
+        if (filter_function && typeof filter_function === 'function' && !filter_function(s)) continue;
         var e = ID(s.key);
         if (!e || s.short_key === undefined) continue;
         if (typeof(s.default) == 'boolean') {
