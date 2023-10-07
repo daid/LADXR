@@ -29,6 +29,10 @@
             <input id="shareseed" style="flex-grow: 1; margin-right: 0px" readonly/>
             <button id="shareseedbutton" style="margin-left: 0px" onclick="ID('shareseed').select(); navigator.clipboard.writeText(ID('shareseed').value); alert('Link copied to clipboard', 'LADXR')"><span class="icon-link"></span></button>
         </p>
+        <p class="section" style="display:flex; align-items:center;">
+            <input id="lock-share-link" type="checkbox" onchange="toggleShareLock(this)">
+            <label for="lock-share-link">Lock settings in share link</label>
+        </p>
     </div>
 </div>
 <input type="checkbox" id="errordialog" class="modal">

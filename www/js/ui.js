@@ -6,14 +6,20 @@ var spoilerContent;
 function ID(s) { return document.getElementById(s); }
 
 function getShareLink(data) {
+    var url = new URL(document.location);
     var seedProvided = !ID("seed").value == "";
     if(!seedProvided)
         ID("seed").value = data.seed;
-    var hash = '#' + generateSettingsString(function(s) { return !s.aesthetic; });
+    url.hash = generateSettingsString(function(s) { return !s.aesthetic; });
     if(!seedProvided)
         ID("seed").value = "";
-    var l = document.location;
-    return l.origin + l.pathname + l.search + hash;
+    return url.toString();
+}
+
+function toggleShareLock(checkbox) {
+    var url = new URL(ID("shareseed").value);
+    url.search = checkbox.checked ? 'locked' : '';
+    ID("shareseed").value = url.toString();
 }
 
 async function seedComplete(data) {
@@ -229,15 +235,13 @@ function buildUI(filter_function) {
         }
     }
 
-    // disable non-aesthetic options when loading race seed
-    if (ID('race').value == 'true' && ID('seed').value) {
-        for(var s of options) { 
+    if (document.location.searchParams && document.location.searchParams.has('locked')) {
+        for(var s of options) {
             if (s.aesthetic) continue;
-            var input = ID(s.key)
+            var input = ID(s.key);
             if(input)
                 input.setAttribute('disabled', true);
         }
-
         // indicate fully disabled categories
         var categories = []
         for(var s of options) {
