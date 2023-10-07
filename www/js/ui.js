@@ -235,7 +235,7 @@ function buildUI(filter_function) {
         }
     }
 
-    if (document.location.searchParams && document.location.searchParams.has('locked')) {
+    if (new URLSearchParams(document.location.search).has('locked')) {
         for(var s of options) {
             if (s.aesthetic) continue;
             var input = ID(s.key);
@@ -257,7 +257,6 @@ function buildUI(filter_function) {
             var category = document.querySelector(`.category-${c.replaceAll(' ', '_')}`);
             if (category) {
                 ID('settings').append(category) // send to the bottom of settings so unlocked categories rise to top
-                category.style.opacity = 0.8;
             }
             var h1 = document.querySelector(`.category-${c.replaceAll(' ', '_')} h1`);
             if (h1)
