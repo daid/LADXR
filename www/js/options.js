@@ -105,7 +105,7 @@ var options =
   "category": "Items",
   "short_key": "s",
   "label": "Randomize hidden seashells",
-  "description": "Randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)",
+  "description": "Randomizes the secret sea shells hiding in the ground/trees. (chests are always randomized)",
   "multiworld": true,
   "aesthetic": false,
   "default": true
@@ -454,7 +454,7 @@ var options =
   "category": "Gameplay",
   "short_key": "X",
   "label": "Hard mode",
-  "description": "\n[Oracle] Less iframes and heath from drops. Bombs damage yourself. Water damages you without flippers. No piece of power or acorn.\n[Hero] Switch version hero mode, double damage, no heart/fairy drops.\n[One hit KO] You die on a single hit, always.",
+  "description": "\n[Oracle] Less iframes and health from drops. Bombs damage yourself. Water damages you without flippers. No piece of power or acorn.\n[Hero] Switch version hero mode, double damage, no heart/fairy drops.\n[One hit KO] You die on a single hit, always.",
   "multiworld": true,
   "aesthetic": false,
   "default": "none",
