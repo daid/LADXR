@@ -6,15 +6,14 @@ var spoilerContent;
 function ID(s) { return document.getElementById(s); }
 
 function getShareLink(data) {
-    var result = document.location;
-    if (ID("seed").value == "") {
+    var seedProvided = !ID("seed").value == "";
+    if(!seedProvided)
         ID("seed").value = data.seed;
-        updateSettingsString();
-        result = document.location.toString();
+    var hash = '#' + generateSettingsString(function(s) { return !s.aesthetic; });
+    if(!seedProvided)
         ID("seed").value = "";
-        updateSettingsString();
-    }
-    return result
+    var l = document.location;
+    return l.origin + l.pathname + l.search + hash;
 }
 
 async function seedComplete(data) {
@@ -109,9 +108,16 @@ function updateGfxModImage() {
     }
 }
 
-function updateSettingsString() {
+function updateSettingsString(filter_function) {
+    var sss = generateSettingsString(filter_function);
+    document.location.hash = sss;
+    return sss;
+}
+
+function generateSettingsString(filter_function) {
     var sss = "";
     for(var s of options) {
+        if (filter_function && typeof filter_function === 'function' && !filter_function(s)) continue;
         var e = ID(s.key);
         if (!e || s.short_key === undefined) continue;
         if (typeof(s.default) == 'boolean') {
@@ -123,8 +129,12 @@ function updateSettingsString() {
         } else if (s.default != e.value) {
             sss += s.short_key + e.value + ">";
         }
+        if(s.key == 'seed' || (s.default == e.value || (s.default && e.value=='true') || (!s.default && e.value=='false'))) {
+            e.style['font-weight'] = 'normal'
+        } else {
+            e.style['font-weight'] = 'bold'
+        }
     }
-    document.location.hash = sss;
     return sss;
 }
 
