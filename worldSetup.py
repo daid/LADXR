@@ -183,6 +183,10 @@ class WorldSetup:
             mains = [x for x in entrancePool if x not in islands]
             main = rnd.choice(mains)
 
+            if self.inside_to_outside:
+                if island.endswith(":inside") != main.endswith(":inside"):
+                    continue
+
             if not self.one_on_one:
                 self._addConnectionTowards(mains, rnd, island)
             elif self.keep_two_way:
@@ -192,6 +196,23 @@ class WorldSetup:
 
         if self.inaccessibleEntrances(settings, entrancePool):
             raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        self._checkEntranceRules()
+
+    def _checkEntranceRules(self):
+        if self.inside_to_outside:
+            for k, v in self.entrance_mapping.items():
+                if k.endswith(":inside"):
+                    assert not v.endswith(":inside"), f"inside-to-outside rule violated: {k}->{v}"
+                else:
+                    assert v.endswith(":inside"), f"inside-to-outside rule violated: {k}->{v}"
+        if self.keep_two_way:
+            for k, v in self.entrance_mapping.items():
+                assert self.entrance_mapping[v] == k, f"keep-two-way rule violated: {k}->{v}"
+        if self.one_on_one:
+            found = set()
+            for k, v in self.entrance_mapping.items():
+                assert v not in found, f"one-on-one rule violated: {k}->{v}"
+                found.add(v)
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
