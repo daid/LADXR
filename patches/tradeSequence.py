@@ -67,6 +67,7 @@ def patchYipYip(rom):
         ldh  a, [$FFF8] ; room status
         and  $20
         jr   z, tradeNotDone
+        nop ; align the code with another jump for the credits
         ld   de, $59C8 ; yipyip with ribbon
 tradeNotDone:
     """), fill_nop=True)
