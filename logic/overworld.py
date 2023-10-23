@@ -18,7 +18,8 @@ class World:
         Location().add(DroppedKey(0x1E4)).connect(rooster_cave, AND(OCARINA, SONG3))
 
         papahl_house = Location()
-        papahl_house.connect(Location().add(TradeSequenceItem(0x2A6, TRADING_ITEM_RIBBON)), TRADING_ITEM_YOSHI_DOLL)
+        mamasha_trade = Location().add(TradeSequenceItem(0x2A6, TRADING_ITEM_RIBBON))
+        papahl_house.connect(mamasha_trade, TRADING_ITEM_YOSHI_DOLL)
 
         trendy_shop = Location()
         trendy_shop.connect(Location().add(TradeSequenceItem(0x2A0, TRADING_ITEM_YOSHI_DOLL)), FOUND("RUPEES", 50))
@@ -489,6 +490,7 @@ class World:
             fire_cave_bottom.connect(fire_cave_top, AND(r.damage_boost, PEGASUS_BOOTS), one_way=True) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':
+            papahl_house.connect(mamasha_trade, r.bomb_trigger) # use a bomb trigger to trade with mamasha without having yoshi doll
             self._addEntranceRequirementEnter("dream_hut", r.hookshot_clip) # clip past the rocks in front of dream hut
             dream_hut_right.connect(dream_hut_left, r.super_jump_feather) # super jump
             forest.connect(swamp, r.bomb_trigger)  # bomb trigger tarin
