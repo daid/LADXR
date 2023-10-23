@@ -31,7 +31,7 @@ class Dungeon6:
             lower_right_owl = Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, KEY6) # top right chest horseheads
+        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), KEY6) # top right chest horseheads (assumes weapon from killing wizrobes or bomb from blowing up wall, and having a way to get past the mini thwomps)
         boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(KEY6, HOOKSHOT))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
@@ -45,6 +45,7 @@ class Dungeon6:
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(left_side, AND(POWER_BRACELET, r.super_jump_feather), one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
             lower_right_side.connect(center_2_and_upper_right_side, r.super_jump, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
+            center_1.connect(miniboss, AND(r.bomb_trigger, OR(r.boots_dash_2d, FEATHER)) # bomb trigger the elephant statue after the miniboss
             center_2_and_upper_right_side.connect(center_1, AND(POWER_BRACELET, r.shaq_jump), one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
             boss_key.connect(lower_right_side, r.super_jump_feather) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
