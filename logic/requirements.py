@@ -302,6 +302,7 @@ class RequirementsSettings:
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = ROOSTER
+        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
 
         self.boss_requirements = [
             SWORD,  # D1 boss
