@@ -74,6 +74,7 @@ class Dungeon8:
         
         if options.logic == 'glitched' or options.logic == 'hell':
             sparks_chest.connect(entrance_left, r.pit_buffer_itemless) # 1 pit buffer across the pit. 
+            entrance_up.connect(bottomright_pot_chest, r.super_jump_boots, one_way = True) # underground section with fire balls jumping up out of lava. Use boots superjump off left wall to jump over the pot blocking the way
             lower_center.connect(entrance_up, r.sideways_block_push) # sideways block push in peahat room to get past keyblock
             miniboss_entrance.connect(lower_center, AND(BOMB, r.bookshot)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
             miniboss_entrance.connect(lower_center, AND(BOMB, r.super_jump_feather, FOUND(KEY8, 7))) # same as above, but without clipping past the keyblock
