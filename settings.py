@@ -226,6 +226,9 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
             Setting('gfxmod', 'User options', 'c', 'Graphics', options=gfx_options, default='',
                 description='Generally affects at least Link\'s sprite, but can alter any graphics in the game',
                 aesthetic=True),
+            Setting('follower', 'User options', 'x', 'Follower', options=[('', '', 'None'), ('fox', 'f', 'Fox'), ('navi', 'n', 'Navi')], default='',
+                description='Gives you a pet follower in the game.',
+                aesthetic=True),
             Setting('linkspalette', 'User options', 'C', "Link's color",
                 options=[('-1', '-', 'Normal'), ('0', '0', 'Green'), ('1', '1', 'Yellow'), ('2', '2', 'Red'), ('3', '3', 'Blue'),
                          ('4', '4', 'Inverted Red'), ('5', '5', 'Inverted Blue'), ('6', '6', '?? C'), ('7', '7', '?? D')], default='-1', aesthetic=True,
@@ -244,10 +247,10 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
         self.__multiworld_settings = []
 
         # Make sure all short keys are unique
-        short_keys = set()
+        short_keys = {}
         for s in self.__all:
-            assert s.short_key not in short_keys, s.label
-            short_keys.add(s.short_key)
+            assert s.short_key not in short_keys, f"{s.label}: {short_keys[s.short_key].label}"
+            short_keys[s.short_key] = s
 
     @property
     def multiworld(self):  # returns the amount of multiworld players.

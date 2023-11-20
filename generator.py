@@ -39,6 +39,7 @@ import patches.droppedKey
 import patches.goldenLeaf
 import patches.songs
 import patches.bowwow
+import patches.follower
 import patches.desert
 import patches.reduceRNG
 import patches.madBatter
@@ -157,7 +158,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     else:
         # Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-    patches.bowwow.fixBowwow(rom, everywhere=settings.bowwow != 'normal')
+    patches.bowwow.fixBowwow(rom)
+    patches.follower.patchFollowerCreation(rom, bowwow_everywhere=settings.bowwow != 'normal', extra_spawn=settings.follower)
     if settings.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)

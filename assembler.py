@@ -1074,6 +1074,10 @@ def const(name: str, value: int) -> None:
 
 def resetConsts() -> None:
     CONST_MAP.clear()
+    for line in open(os.path.join(os.path.dirname(__file__), "assembler.const"), "rt"):
+        if ":" in line:
+            value, _, key = line.strip().partition(":")
+            CONST_MAP[key.upper()] = int(value, 16)
 
 
 def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[Dict[str, int]] = None) -> bytes:
@@ -1134,6 +1138,9 @@ def allOpcodesTest() -> None:
                 except Exception as e:
                     print("%s\t\t|%r|\t%s" % (code, e, num))
                     print(op)
+
+
+resetConsts()
 
 
 if __name__ == "__main__":
