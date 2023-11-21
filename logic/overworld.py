@@ -76,7 +76,7 @@ class World:
         forest = Location().connect(mabe_village, r.bush) # forest stretches all the way from the start town to the witch hut
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET)  # chest at start forest with 2 zols
         forest_heartpiece = Location().add(HeartPiece(0x044))  # next to the forest, surrounded by pits
-        forest.connect(forest_heartpiece, OR(BOOMERANG, FEATHER, HOOKSHOT, ROOSTER), one_way=True)
+        forest.connect(forest_heartpiece, OR(BOOMERANG, FEATHER, HOOKSHOT, AND(ROOSTER, POWER_BRACELET)), one_way=True)
 
         witch_hut = Location().connect(Location().add(Witch()), TOADSTOOL)
         self._addEntrance("witch", forest, witch_hut, None)
@@ -99,30 +99,30 @@ class World:
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
         hookshot_cave = Location()
-        hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
+        hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET)))
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
-        swamp = Location().connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
+        swamp = Location().connect(forest, AND(OR(MAGIC_POWDER, FEATHER, AND(ROOSTER, POWER_BRACELET)), r.bush))
         swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
-        swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER))
+        swamp.connect(forest_toadstool, OR(FEATHER, AND(ROOSTER, POWER_BRACELET)))
         swamp_chest = Location().add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
         self._addEntrance("writes_phone", swamp, None, None)
 
-        writes_hut_outside = Location().connect(swamp, OR(FEATHER, ROOSTER))  # includes the cave behind the hut
+        writes_hut_outside = Location().connect(swamp, OR(FEATHER, AND(ROOSTER, POWER_BRACELET)))  # includes the cave behind the hut
         writes_house = Location()
         writes_house.connect(Location().add(TradeSequenceItem(0x2a8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
         self._addEntrance("writes_house", writes_hut_outside, writes_house, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             writes_hut_outside.add(OwlStatue(0x11))
         writes_cave = Location()
-        writes_cave_left_chest = Location().add(Chest(0x2AE)).connect(writes_cave, OR(FEATHER, ROOSTER, HOOKSHOT)) # 1st chest in the cave behind the hut
+        writes_cave_left_chest = Location().add(Chest(0x2AE)).connect(writes_cave, OR(FEATHER, AND(ROOSTER, POWER_BRACELET), HOOKSHOT)) # 1st chest in the cave behind the hut
         Location().add(Chest(0x2AF)).connect(writes_cave, POWER_BRACELET)  # 2nd chest in the cave behind the hut.
         self._addEntrance("writes_cave_left", writes_hut_outside, writes_cave, None)
         self._addEntrance("writes_cave_right", writes_hut_outside, writes_cave, None)
 
-        graveyard = Location().connect(forest, OR(FEATHER, ROOSTER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
+        graveyard = Location().connect(forest, OR(FEATHER, AND(ROOSTER, POWER_BRACELET), POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             graveyard.add(OwlStatue(0x035))  # Moblin cave owl
         self._addEntrance("photo_house", graveyard, None, None)
@@ -133,7 +133,7 @@ class World:
         graveyard.connect(forest_heartpiece, OR(BOOMERANG, HOOKSHOT), one_way=True) # grab the heart piece surrounded by pits from the north
 
         graveyard_cave_left = Location()
-        graveyard_cave_right = Location().connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
+        graveyard_cave_right = Location().connect(graveyard_cave_left, OR(FEATHER, AND(ROOSTER, POWER_BRACELET)))
         graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard_cave_right, OR(AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER), ROOSTER))  # grave cave
         self._addEntrance("graveyard_cave_left", ghost_grave, graveyard_cave_left, POWER_BRACELET)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
@@ -157,9 +157,9 @@ class World:
         self._addEntranceRequirementExit("prairie_left_cave2", None) # if exiting, you do not need bombs
 
         mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
-        self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
+        self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), AND(ROOSTER, POWER_BRACELET)), OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET)), POWER_BRACELET))
 
-        dungeon3_entrance = Location().connect(ukuku_prairie, OR(FEATHER, ROOSTER, FLIPPERS))
+        dungeon3_entrance = Location().connect(ukuku_prairie, OR(FEATHER, AND(ROOSTER, POWER_BRACELET), FLIPPERS))
         self._addEntrance("d3", dungeon3_entrance, None, SLIME_KEY)
         self._addEntranceRequirementExit("d3", None) # if exiting, you do not need to open the door
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
@@ -168,15 +168,15 @@ class World:
         prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.bush))  # next to lv3
         seashell_mansion_bush = Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)
         Location().add(Seashell(0x0A4)).connect(ukuku_prairie, PEGASUS_BOOTS)  # smash into tree next to phonehouse
-        self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER)) # left of the castle, 5 holes turned into 3
+        self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), OR(AND(FEATHER, PEGASUS_BOOTS), AND(ROOSTER, POWER_BRACELET))) # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(ukuku_prairie, POWER_BRACELET)  # under the rock
 
         left_bay_area = Location()
-        left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER))
+        left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), AND(ROOSTER, POWER_BRACELET)))
         self._addEntrance("prairie_low_phone", left_bay_area, None, None)
 
         Location().add(Seashell(0x0E9)).connect(left_bay_area, r.bush)  # same screen as mermaid statue
-        tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.bush))  # tiny island
+        tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, AND(ROOSTER, POWER_BRACELET)), r.bush))  # tiny island
 
         prairie_plateau = Location()  # prairie plateau at the owl statue
         if options.owlstatues == "both" or options.owlstatues == "overworld":
@@ -184,8 +184,8 @@ class World:
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
 
         prairie_cave = Location()
-        prairie_cave_secret_exit = Location().connect(prairie_cave, OR(FEATHER, ROOSTER), one_way=True)
-        prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True) # bomb walls are one-way        
+        prairie_cave_secret_exit = Location().connect(prairie_cave, OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), one_way=True)
+        prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, OR(FEATHER, AND(ROOSTER, POWER_BRACELET))), one_way=True) # bomb walls are one-way
         self._addEntrance("prairie_right_cave_top", ukuku_prairie, prairie_cave, None)
         self._addEntrance("prairie_right_cave_bottom", left_bay_area, prairie_cave, None)
         self._addEntrance("prairie_right_cave_high", prairie_plateau, prairie_cave_secret_exit, None)
@@ -194,8 +194,8 @@ class World:
         bay_madbatter_connector_exit = Location().connect(bay_madbatter_connector_entrance, FLIPPERS)
         bay_madbatter_connector_outside = Location()
         bay_madbatter = Location().connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
-        self._addEntrance("prairie_madbatter_connector_entrance", left_bay_area, bay_madbatter_connector_entrance, AND(OR(FEATHER, ROOSTER), OR(SWORD, MAGIC_ROD, BOOMERANG)))
-        self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), r.bush)) # if exiting, you can pick up the bushes by normal means
+        self._addEntrance("prairie_madbatter_connector_entrance", left_bay_area, bay_madbatter_connector_entrance, AND(OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), OR(SWORD, MAGIC_ROD, BOOMERANG)))
+        self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), r.bush)) # if exiting, you can pick up the bushes by normal means
         self._addEntrance("prairie_madbatter_connector_exit", bay_madbatter_connector_outside, bay_madbatter_connector_exit, None)
         self._addEntrance("prairie_madbatter", bay_madbatter_connector_outside, bay_madbatter, None)
 
@@ -219,7 +219,7 @@ class World:
         richard_house = Location()
         richard_cave = Location().connect(richard_house, COUNT(GOLD_LEAF, 5))
         richard_cave.connect(richard_house, None, one_way=True) # can exit richard's cave even without leaves
-        richard_cave_chest = Location().add(Chest(0x2C8)).connect(richard_cave, OR(FEATHER, HOOKSHOT, ROOSTER))
+        richard_cave_chest = Location().add(Chest(0x2C8)).connect(richard_cave, OR(FEATHER, HOOKSHOT, AND(ROOSTER, POWER_BRACELET)))
         richard_maze = Location()
         self._addEntrance("richard_house", ukuku_prairie, richard_house, None)
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
@@ -274,7 +274,7 @@ class World:
         self._addEntrance("animal_house4", animal_village, None, None)
         self._addEntrance("animal_house5", animal_village, cookhouse, None)
         animal_village.connect(bay_water, FLIPPERS)
-        animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
+        animal_village.connect(ukuku_prairie, OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET)))
         animal_village_connector_left = Location()
         animal_village_connector_right = Location().connect(animal_village_connector_left, PEGASUS_BOOTS)
         self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.pit_bush) # passage under river blocked by bush
@@ -290,7 +290,7 @@ class World:
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
         self._addEntranceRequirementExit("animal_cave", None) # if exiting, you do not need bombs
-        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
+        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), AND(ROOSTER, POWER_BRACELET)))  # cave in the upper right of animal town
 
         desert_cave = Location()
         self._addEntrance("desert_cave", desert, desert_cave, None)
@@ -312,7 +312,7 @@ class World:
         self._addEntranceRequirementExit("armos_fairy", None) # if exiting, you do not need bombs
 
         d6_connector_left = Location()
-        d6_connector_right = Location().connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
+        d6_connector_right = Location().connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), AND(ROOSTER, POWER_BRACELET)))
         d6_entrance = Location()
         d6_entrance.connect(bay_water, FLIPPERS, one_way=True)
         d6_armos_island = Location().connect(bay_water, FLIPPERS)
@@ -327,8 +327,8 @@ class World:
         obstacle_cave_entrance = Location()
         obstacle_cave_inside = Location().connect(obstacle_cave_entrance, SWORD)
         obstacle_cave_inside.connect(obstacle_cave_entrance, FEATHER, one_way=True) # can get past the rock room from right to left pushing blocks and jumping over the pit
-        obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, OR(HOOKSHOT, ROOSTER))  # chest at obstacles
-        obstacle_cave_exit = Location().connect(obstacle_cave_inside, OR(PEGASUS_BOOTS, ROOSTER))
+        obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET)))  # chest at obstacles
+        obstacle_cave_exit = Location().connect(obstacle_cave_inside, OR(PEGASUS_BOOTS, AND(ROOSTER, POWER_BRACELET)))
 
         lower_right_taltal = Location()
         self._addEntrance("obstacle_cave_entrance", windfish_egg, obstacle_cave_entrance, POWER_BRACELET)
@@ -346,7 +346,7 @@ class World:
         below_right_taltal = Location().connect(windfish_egg, POWER_BRACELET)
         below_right_taltal.add(KeyLocation("ANGLER_KEYHOLE"))
         below_right_taltal.connect(bay_water, FLIPPERS)
-        below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
+        below_right_taltal.connect(next_to_castle, AND(ROOSTER, POWER_BRACELET)) # fly from staircase to staircase on the north side of the moat
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
 
         heartpiece_swim_cave = Location().connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
@@ -380,15 +380,15 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             raft_game.add(OwlStatue(0x5D))
 
-        outside_rooster_house = Location().connect(lower_right_taltal, OR(FLIPPERS, ROOSTER))
+        outside_rooster_house = Location().connect(lower_right_taltal, OR(FLIPPERS, AND(ROOSTER, POWER_BRACELET)))
         self._addEntrance("rooster_house", outside_rooster_house, None, None)
         bird_cave = Location()
         bird_key = Location().add(BirdKey())
-        bird_cave.connect(bird_key, OR(AND(FEATHER, COUNT(POWER_BRACELET, 2)), ROOSTER))
+        bird_cave.connect(bird_key, OR(AND(FEATHER, COUNT(POWER_BRACELET, 2)), AND(ROOSTER, POWER_BRACELET)))
         if options.logic != "casual":
             bird_cave.connect(lower_right_taltal, None, one_way=True)  # Drop in a hole at bird cave
         self._addEntrance("bird_cave", outside_rooster_house, bird_cave, None)
-        bridge_seashell = Location().add(Seashell(0x00C)).connect(outside_rooster_house, AND(OR(FEATHER, ROOSTER), POWER_BRACELET))  # seashell right of rooster house, there is a hole in the bridge
+        bridge_seashell = Location().add(Seashell(0x00C)).connect(outside_rooster_house, AND(OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), POWER_BRACELET))  # seashell right of rooster house, there is a hole in the bridge
 
         multichest_cave = Location()
         multichest_cave_secret = Location().connect(multichest_cave, None, one_way=True) # bomb walls are one-way
@@ -397,7 +397,7 @@ class World:
         if options.logic != "casual":
             water_cave_hole.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
         multichest_outside = Location().add(Chest(0x01D))  # chest after multichest puzzle outside
-        self._addEntrance("multichest_left", lower_right_taltal, multichest_cave, OR(FLIPPERS, ROOSTER))
+        self._addEntrance("multichest_left", lower_right_taltal, multichest_cave, OR(FLIPPERS, AND(ROOSTER, POWER_BRACELET)))
         self._addEntrance("multichest_right", water_cave_hole, multichest_cave, None)
         self._addEntrance("multichest_top", multichest_outside, multichest_cave_secret, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
@@ -407,7 +407,7 @@ class World:
         right_taltal_connector_outside1 = Location()
         right_taltal_connector2 = Location()
         right_taltal_connector3 = Location()
-        right_taltal_connector2.connect(right_taltal_connector3, AND(OR(FEATHER, ROOSTER), HOOKSHOT), one_way=True)
+        right_taltal_connector2.connect(right_taltal_connector3, AND(OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), HOOKSHOT), one_way=True)
         right_taltal_connector_outside2 = Location()
         right_taltal_connector4 = Location()
         d7_platau = Location()
@@ -427,13 +427,13 @@ class World:
             d7_platau.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
             d7_platau.connect(right_taltal_connector_outside1, None, one_way=True)
 
-        mountain_bridge_staircase = Location().connect(outside_rooster_house, OR(HOOKSHOT, ROOSTER)) # cross bridges to staircase
+        mountain_bridge_staircase = Location().connect(outside_rooster_house, OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET))) # cross bridges to staircase
         if options.logic != "casual":  # ledge drop
             mountain_bridge_staircase.connect(windfish_egg, None, one_way=True)
 
         left_right_connector_cave_entrance = Location()
         left_right_connector_cave_exit = Location()
-        left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, OR(HOOKSHOT, ROOSTER), one_way=True)  # pass through the underground passage to left side
+        left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, OR(HOOKSHOT, AND(ROOSTER, POWER_BRACELET)), one_way=True)  # pass through the underground passage to left side
         taltal_boulder_zone = Location()
         self._addEntrance("left_to_right_taltalentrance", mountain_bridge_staircase, left_right_connector_cave_entrance, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
         self._addEntrance("left_taltal_entrance", taltal_boulder_zone, left_right_connector_cave_exit, None)
@@ -478,7 +478,7 @@ class World:
             graveyard_heartpiece.connect(graveyard_cave_right, AND(r.wall_clip, OR(HOOKSHOT, BOOMERANG))) # push bottom block, wall clip and hookshot/boomerang corner to grab item
             
             self._addEntranceRequirement("mamu", AND(r.wall_clip, FEATHER, POWER_BRACELET)) # can clear the gaps at the start with just feather, can reach bottom left sign with a well timed jump while wall clipped
-            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
+            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(OR(FEATHER, AND(ROOSTER, POWER_BRACELET)), OR(MAGIC_POWDER, BOMB))) # use bombs or powder to get rid of a bush on the other side by jumping across and placing the bomb/powder before you fall into the pit
             crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.boots_jump) # jump across horizontal 4 gap to heart piece
@@ -541,7 +541,7 @@ class World:
             d7_platau.connect(water_cave_hole, None, one_way=True) # use save and quit menu to gain control while falling to dodge the water cave hole
             mountain_bridge_staircase.connect(outside_rooster_house, AND(r.boots_jump, r.pit_buffer)) # cross bridge to staircase with pit buffer to clip bottom wall and jump across. added boots_jump to not require going through this section with just feather
             bird_key.connect(bird_cave, r.hookshot_jump)  # hookshot jump across the big pits room
-            right_taltal_connector2.connect(right_taltal_connector3, OR(r.pit_buffer, ROOSTER), one_way=True) # trigger a quick fall on the screen above the exit by transitioning down on the leftmost/rightmost pit and then buffering sq menu for control while in the air. or pick up the rooster while dropping off the ledge at exit
+            right_taltal_connector2.connect(right_taltal_connector3, OR(r.pit_buffer, AND(ROOSTER, POWER_BRACELET)), one_way=True) # trigger a quick fall on the screen above the exit by transitioning down on the leftmost/rightmost pit and then buffering sq menu for control while in the air. or pick up the rooster while dropping off the ledge at exit
             left_right_connector_cave_exit.connect(left_right_connector_cave_entrance, AND(HOOKSHOT, r.super_jump_feather), one_way=True)  # pass through the passage in reverse using a superjump to get out of the dead end
             obstacle_cave_inside.connect(mountain_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger from boots crystal cave
             self._addEntranceRequirement("d8", OR(r.bomb_trigger, AND(OCARINA, SONG3))) # bomb trigger the head and walk through, or play the ocarina song 3 and walk through
