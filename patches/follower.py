@@ -8,6 +8,31 @@ def patchFollowerCreation(rom, *, bowwow_everywhere=False, extra_spawn=""):
     ldh  a, [hIsSideScrolling]
     and  a
     ret  nz
+    
+spawnRooster:
+    ld   a, [$DB7B]
+    and  a
+    jr   z, .end
+    ld   a, [wIsIndoor] 
+    and  a
+    jr   z, .excludedRoomsEnd
+
+    ldh  a, [hMapId] 
+    cp   $16 ; MAP_S_FACE_SHRINE 
+    jr   z, .end
+    cp   $14 ; MAP_KANALET 
+    jr   z, .end
+    cp   $13 ; MAP_DREAM_SHRINE 
+    jr   z, .end
+    cp   $FF ; MAP_COLOR_DUNGEON 
+    jr   z, .end
+    cp   $0A ; all maps below MAP_CAVE_B (includes dungeons) 
+    jr   c, .end
+
+.excludedRoomsEnd:
+    ld   c, $D5
+    call spawnFollowerEntity
+.end:
 
 spawnMarin:
     ld   a, [wIsMarinFollowingLink] 
