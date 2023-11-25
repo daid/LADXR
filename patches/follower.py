@@ -194,6 +194,8 @@ spawnFollowerEntity: ; param: c = entity ID
         patchNaviFollower(rom)
     if extra_spawn == "ghost":
         patchGhostFollower(rom)
+    if extra_spawn == "yipyip":
+        patchYipYipFollower(rom)
 
 
 def patchFoxFollower(rom):
@@ -721,3 +723,150 @@ def patchGhostFollower(rom):
     rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
     # Graphics in high VRAM bank
     rom.banks[0x3F][0x3660:0x36E0] = rom.banks[0x32][0x1800:0x1880]
+
+
+def patchYipYipFollower(rom):
+    # Sprite variants
+    rom.patch(0x19, 0x1DF8, 0x1E10, ("E60AE80A" + "EA0AEC0A" + "E82AE62A" + "EC2AEA2A" + "00000000" + "00000000"))
+    # Main entity code
+    rom.patch(0x19, 0x1E18, 0x20B3, ASM("""
+    YipYipEntityHandler:
+        ld   hl, $C360 ; wEntitiesHealthTable
+        add  hl, bc
+        ld   [hl], $4C
+
+        ld   hl, $C380 ; wEntitiesDirectionTable
+        add  hl, bc
+        ld   a, [hl]
+        and  a
+        jr   nz, .jr_48EE
+
+        ldh  a, [$FFF1] ; hActiveEntitySpriteVariant
+        add  $02
+        ldh  [$FFF1], a
+
+    .jr_48EE:
+        ld   de, $5DF8 ; DogSpriteVariants
+        call $3BC0 ; RenderActiveEntitySpritesPair
+        call $7D3D ; ReturnIfNonInteractive_19
+        call $0C56 ; DecrementEntityIgnoreHitsCountdown
+        call $7DF1 ; AddEntityZSpeedToPos_19
+        ld   hl, $C320 ; wEntitiesSpeedZTable
+        add  hl, bc
+        dec  [hl]
+        dec  [hl]
+        ld   hl, $C310 ; wEntitiesPosZTable
+        add  hl, bc
+        ld   a, [hl]
+        and  $80
+        ldh  [$FFE8], a ; hMultiPurposeG
+        jr   z, .jr_4914
+        ld   [hl], b
+        ld   hl, $C320 ; wEntitiesSpeedZTable
+        add  hl, bc
+        ld   [hl], b
+    .jr_4914:
+
+        ldh  a, [$FFF0] ; hActiveEntityState
+        rst  0
+    ._00: dw DogState0Handler
+    ._01: dw DogState1Handler
+
+    Data_RandomSpeed:
+        db   $04, $08, $0C, $08
+    Data_RandomOffset:
+        db   $00, $01, $01, $02, $00, $FF, $FF, $FE
+
+    DogState0Handler:
+        xor  a
+        call $3B0C ; SetEntitySpriteVariant
+        call $0C05 ; GetEntityTransitionCountdown
+        jr   nz, .jr_49D8
+
+        ; Move towards link at a random speed
+        call $280D ; GetRandomByte
+        and  $03
+        ld   e, a
+        ld   d, b
+        ld   hl, Data_RandomSpeed
+        add  hl, de
+        ld   a, [hl]
+        call $3BAA ; ApplyVectorTowardsLink_trampoline
+
+        call $280D ; GetRandomByte
+        and  $07
+        ld   e, a
+        ld   d, b
+        ld   hl, Data_RandomOffset
+        add  hl, de
+        ld   a, [hl]
+        ld   hl, $C240 ; wEntitiesSpeedXTable
+        add  hl, bc
+        add  a, [hl]
+        ld   [hl], a
+        swap a
+        rra
+        and  $04
+        ld   hl, $C380 ; wEntitiesDirectionTable
+        add  hl, bc
+        ld   [hl], a
+        call $280D ; GetRandomByte
+        and  $07
+        ld   e, a
+        ld   hl, Data_RandomOffset
+        add  hl, de
+        ld   a, [hl]
+        ld   hl, $C250 ; wEntitiesSpeedYTable
+        add  hl, bc
+        add  a, [hl]
+        ld   [hl], a
+
+        call $0C05 ; GetEntityTransitionCountdown
+        call $280D ; GetRandomByte
+        and  $1F
+        add  $30
+        ld   [hl], a
+        call $3B12 ; IncrementEntityState
+
+    .jr_49D8:
+        jp   func_019_49FD
+
+    DogState1Handler:
+        call $7DB8 ; UpdateEntityPosWithSpeed_19
+        call $3B23
+        ldh  a, [$FFE8] ; hMultiPurposeG
+        and  a
+        jr   z, func_019_49FD
+
+        call $0C05 ; GetEntityTransitionCountdown
+        jr   nz, .jr_49F2
+
+        ld   [hl], $18
+        call $3B12 ; IncrementEntityState
+        ld   [hl], b
+        ret
+
+    .jr_49F2:
+        ld   hl, $C320 ; wEntitiesSpeedZTable
+        add  hl, bc
+        ld   [hl], $08
+        ld   hl, $C310 ; wEntitiesPosZTable
+        add  hl, bc
+        inc  [hl]
+
+    func_019_49FD:
+        ldh  a, [$FFE7] ; hFrameCounter
+        rra
+        rra
+        rra
+        and  $01
+        jp   $3B0C ; SetEntitySpriteVariant
+
+    """, 0x5E18), fill_nop=True)
+
+    # Load followers in dungeons, caves, etc
+    rom.patch(0x03, 0x03C5, "00", "02")  # ignore in dungeons for kill-all triggers
+    rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
+    rom.patch(0x03, 0x00FB + 0x00D4, "00", "80")  # hitbox flags
+    # Graphics in high VRAM bank
+    rom.banks[0x3F][0x3660:0x36E0] = rom.banks[0x32][0x2100:0x2180]
