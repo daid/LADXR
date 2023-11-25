@@ -192,6 +192,8 @@ spawnFollowerEntity: ; param: c = entity ID
         patchFoxFollower(rom)
     if extra_spawn == "navi":
         patchNaviFollower(rom)
+    if extra_spawn == "ghost":
+        patchGhostFollower(rom)
 
 
 def patchFoxFollower(rom):
@@ -636,3 +638,86 @@ GhostEntity:
 ....131.
 .....11.
 ........""", ".132")
+
+
+def patchGhostFollower(rom):
+    # Sprite variants
+    rom.patch(0x19, 0x1DF8, 0x1E10, ("E60BE80B" + "EA0BEC0B" + "E82BE62B" + "EC2BEA2B" + "00000000" + "00000000"))
+    # Main entity code
+    rom.patch(0x19, 0x1E18, 0x20B3, ASM("""
+    GhostEntityHandler:
+        ldh  a, [hFrameCounter]
+        swap a
+        and  1
+        ld   hl, hActiveEntitySpriteVariant
+        or   [hl]
+        ld   [hl], a
+
+        ldh  a, [hFrameCounter]
+        add  c 
+        and  $01
+        jr   nz, .skipDraw
+        ld   de, $5DF8 ; DogSpriteVariants
+        call $3BC0 ; RenderActiveEntitySpritesPair
+    .skipDraw:
+
+        ldh  a, [$FFE7]
+        rra
+        rra
+        rra
+        and  $07
+        ld   e, a
+        ld   d, b
+        ld   hl, GhostZPositionTable
+        add  hl, de
+        ld   a, [hl]
+        sub  $04
+        ld   hl, $C310 ; wEntitiesPosZTable  
+        add  hl, bc
+        ld   [hl], a
+
+        call $7E0B ; entityLinkPositionXDifference
+
+        push af
+        rlca
+        rlca
+        and  $02
+        xor  $02
+        call $3B0C ; SetEntitySpriteVariant    
+        pop  af
+
+        add  $18
+        cp   $30
+        jr   nc, .move
+
+        ldh  a, [hLinkPositionY]
+        push af
+        add  $0C
+        ldh  [$FF99], a ; hLinkPositionY 
+        call $7E1B ; entityLinkPositionYDifference  
+        ld   e, a
+        pop  af
+        ldh  [$FF99], a ; hLinkPositionY
+        ld   a, e
+        add  $18
+        cp   $30
+        jr   c, .noMove
+    .move:
+
+        ld   a, $08
+        call $3BAA ; ApplyVectorTowardsLink_trampoline  
+        call $7DB8 ; UpdateEntityPosWithSpeed_19
+
+    .noMove:
+        ret
+
+    GhostZPositionTable:
+        db   $10, $11, $12, $13, $13, $12, $11, $10
+
+    """, 0x5E18), fill_nop=True)
+
+    # Load followers in dungeons, caves, etc
+    rom.patch(0x03, 0x03C5, "00", "02")  # ignore in dungeons for kill-all triggers
+    rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
+    # Graphics in high VRAM bank
+    rom.banks[0x3F][0x3660:0x36E0] = rom.banks[0x32][0x1800:0x1880]

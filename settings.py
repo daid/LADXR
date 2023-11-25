@@ -226,7 +226,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
             Setting('gfxmod', 'User options', 'c', 'Graphics', options=gfx_options, default='',
                 description='Generally affects at least Link\'s sprite, but can alter any graphics in the game',
                 aesthetic=True),
-            Setting('follower', 'User options', 'x', 'Follower', options=[('', '', 'None'), ('fox', 'f', 'Fox'), ('navi', 'n', 'Navi')], default='',
+            Setting('follower', 'User options', 'x', 'Follower', options=[('', '', 'None'), ('fox', 'f', 'Fox'), ('navi', 'n', 'Navi'), ('ghost', 'g', 'Ghost')], default='',
                 description='Gives you a pet follower in the game.',
                 aesthetic=True),
             Setting('linkspalette', 'User options', 'C', "Link's color",

@@ -36,6 +36,7 @@ FF98:hLinkPositionX
 FF99:hLinkPositionY
 FFA2:hLinkPositionZ
 FF9E:hLinkDirection
+FFE7:hFrameCounter
 FFEC:hActiveEntityVisualPosY
 FFEE:hActiveEntityPosX
 FFEF:hActiveEntityPosY
