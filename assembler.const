@@ -19,6 +19,7 @@ C280:wEntitiesStatusTable
 C290:wEntitiesStateTable
 C2E0:wEntitiesTransitionCountdownTable
 C2F0:wEntitiesPrivateCountdown1Table
+C300:wEntitiesPrivateCountdown2Table
 C310:wEntitiesPosZTable
 C3A0:wEntitiesTypeTable
 C3B0:wEntitiesSpriteVariantTable

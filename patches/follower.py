@@ -78,6 +78,21 @@ spawnMarin:
     add  hl, de
     ld   [hl], $0C
 
+    ; If on room $A4 (bottom of the well),
+    ; make Marin being dropped from above, and trigger the photo
+    ldh  a, [hMapRoom]
+    cp   $A4
+    jr   nz, .end
+    ldh  a, [hMapId]
+    cp   $11 ; MAP_CAVE_C
+    jr   nz, .end
+    ld   a, $08 ; JINGLE_FALL_DOWN
+    ldh  [hJingle], a
+    ld   [$C167], a
+    ld   hl, wEntitiesPrivateCountdown2Table
+    add  hl, de
+    ld   [hl], $79
+
 .end:
 
 spawnBowwow:
