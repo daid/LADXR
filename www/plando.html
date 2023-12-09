@@ -91,6 +91,10 @@ async function startRomGeneration()
         args.push("--spoilerformat");
         args.push(e.value);
     }
+    e = ID("seed");
+    if (e && e.value != "") {
+        args.push("-sseed=" + e.value);
+    }
 
     e = ID("plan");
     if (e && e.value != "") {
