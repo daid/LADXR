@@ -158,6 +158,8 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 description='Randomizes the dungeon bosses that each dungeon has'),
             Setting('miniboss', 'Gameplay', 'b', 'Miniboss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon minibosses that each dungeon has'),
+            Setting('enemies', 'Gameplay', 'e', 'Enemizer', options=[('default', '', 'None'), ('overworld', 'o', 'Overworld')], default='default',
+                description='Randomizes the dungeon minibosses that each dungeon has'),
             Setting('goal', 'Gameplay', 'G', 'Goal', options=[('8', '8', '8 instruments'), ('7', '7', '7 instruments'), ('6', '6', '6 instruments'),
                                                          ('5', '5', '5 instruments'), ('4', '4', '4 instruments'), ('3', '3', '3 instruments'),
                                                          ('2', '2', '2 instruments'), ('1', '1', '1 instrument'), ('0', '0', 'No instruments'),

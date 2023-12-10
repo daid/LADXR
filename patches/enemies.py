@@ -2,6 +2,8 @@ from roomEditor import RoomEditor, Object, ObjectWarp, ObjectHorizontal
 from assembler import ASM
 from locations import constants
 from typing import List
+import entityData
+import random
 
 
 # Room containing the boss
@@ -479,3 +481,124 @@ def doubleTrouble(rom):
             re.removeEntities(0x87)
             re.entities += [(2, 2, 0x87), (1, 1, 0x87)]
             re.store(rom)
+
+
+def randomizeEnemies(rom, seed):
+    LOGIC_IMPORTANT_ROOMS = [0x24, 0xE2, 0xF2, 0x5A, 0x58]
+    ENEMY_TYPES = {
+        0x09,  # ENTITY_OCTOROK                       equ $09
+        0x0B,  # ENTITY_MOBLIN                        equ $0B
+        0x0D,  # ENTITY_TEKTITE                       equ $0D
+        0x0E,  # ENTITY_LEEVER                        equ $0E
+        0x0F,  # ENTITY_ARMOS_STATUE                  equ $0F
+        0x12,  # ENTITY_GHINI                         equ $12
+        0x14,  # ENTITY_MOBLIN_SWORD                  equ $14
+        0x15,  # ENTITY_ANTI_FAIRY                    equ $15
+        0x16,  # ENTITY_POLS_VOICE                    equ $18
+        0x17,  # ENTITY_KEESE                         equ $19
+        0x1A,  # ENTITY_STALFOS_AGGRESSIVE            equ $1A
+        0x1B,  # ENTITY_ZOL                           equ $1B
+        0x1C,  # ENTITY_GEL                           equ $1C
+        0x1E,  # ENTITY_STALFOS_EVASIVE               equ $1E
+        0x1F,  # ENTITY_GIBDO                         equ $1F
+        0x21,  # ENTITY_WIZROBE                       equ $21
+        0x23,  # ENTITY_LIKE_LIKE                     equ $23
+        0x24,  # ENTITY_IRON_MASK                     equ $24
+        0x28,  # ENTITY_MIMIC                         equ $28
+        0x29,  # ENTITY_MINI_MOLDORM                  equ $29
+        0x55,  # ENTITY_BOUNCING_BOMBITE              equ $55
+        0x56,  # ENTITY_TIMER_BOMBITE                 equ $56
+        0x57,  # ENTITY_PAIRODD                       equ $57
+        0x91,  # ENTITY_ANTI_KIRBY                    equ $91
+        0x99,  # ENTITY_WATER_TEKTITE                 equ $99
+        0x9B,  # ENTITY_HIDING_ZOL                    equ $9B
+        0x9C,  # ENTITY_STAR                          equ $9C
+        0x9F,  # ENTITY_GOOMBA                        equ $9F
+        0xA0,  # ENTITY_PEAHAT                        equ $A0
+        0xA1,  # ENTITY_SNAKE                         equ $A1
+        0xAE,  # ENTITY_WINGED_OCTOROK                equ $AE
+        0xB9,  # ENTITY_BUZZ_BLOB                     equ $B9
+        0xBA,  # ENTITY_BOMBER                        equ $BA
+        0xBB,  # ENTITY_BUSH_CRAWLER                  equ $BB
+        0xBD,  # ENTITY_VIRE                          equ $BD
+        0xC6,  # ENTITY_SAND_CRAB                     equ $C6
+        0xCC,  # ENTITY_FISH                          equ $CC
+        0xE3,  # ENTITY_POKEY                         equ $E3
+        0xF2,  # ENTITY_FLYING_HOPPER_BOMBS           equ $F2
+        0xF3,  # ENTITY_HOPPER                        equ $F3
+        0xEC,  # ENTITY_COLOR_GHOUL_RED               equ $EC
+        0xED,  # ENTITY_COLOR_GHOUL_GREEN             equ $ED
+        0xEE,  # ENTITY_COLOR_GHOUL_BLUE              equ $EE
+    }
+
+    enemy_types_list = list(ENEMY_TYPES)
+    enemy_types_list.sort()
+    rng = random.Random(seed)
+    for n in range(0x100):
+        if n in LOGIC_IMPORTANT_ROOMS:
+            continue
+        re = RoomEditor(rom, n)
+        replacements = {}
+        sprite_data = [None, None, None, None]
+        for x, y, e in re.entities:
+            if e in ENEMY_TYPES:
+                replacements[e] = None
+            elif e in entityData.SPRITE_DATA:
+                data = entityData.SPRITE_DATA[e]
+                if callable(data):
+                    data = data(re)
+                if data is not None:
+                    for m in range(0, len(data), 2):
+                        idx, value = data[m:m + 2]
+                        if isinstance(value, int):
+                            value = {value}
+                        if sprite_data[idx] is None:
+                            sprite_data[idx] = value
+                        else:
+                            sprite_data[idx] = sprite_data[idx].intersection(value)
+        if not replacements:
+            continue
+        for obj in re.objects:
+            if obj.type_id == 0xC5 and n < 0x100: # Pushable Gravestone
+                sprite_data[3] = {0x82}
+        for e in sorted(replacements.keys()):
+            while True:
+                pick = rng.choice(enemy_types_list)
+                data = entityData.SPRITE_DATA[pick]
+                if callable(data):
+                    data = data(re)
+                if data is not None:
+                    valid = True
+                    for m in range(0, len(data), 2):
+                        idx, value = data[m:m + 2]
+                        if isinstance(value, int):
+                            value = {value}
+                        if sprite_data[idx] is not None and not sprite_data[idx].intersection(value):
+                            valid = False
+                            break
+                    if not valid:
+                        continue
+                    for m in range(0, len(data), 2):
+                        idx, value = data[m:m + 2]
+                        if isinstance(value, int):
+                            value = {value}
+                        if sprite_data[idx] is not None:
+                            sprite_data[idx] = sprite_data[idx].intersection(value)
+                        else:
+                            sprite_data[idx] = value
+                replacements[e] = pick
+                break
+        re.entities = [(x, y, replacements.get(e, e)) for x, y, e in re.entities]
+        re.store(rom)
+
+    # For the ghouls, they check if the doors in the dungeon are locked. But we want to check if that event is valid as well.
+    rom.patch(0x36, 0x23DD, ASM("ld a, [$C190]"), ASM("call $7F00"))
+    rom.patch(0x36, 0x3F00, "00" * 16, ASM("""
+        ld a, [$C18E] ;wRoomEvent
+        and $E0
+        cp  $20 ; open locked doors
+        ld  a, $01
+        ret nz
+        ld a, [$C190]
+        ret
+    """), fill_nop=True)

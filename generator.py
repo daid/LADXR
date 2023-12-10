@@ -270,6 +270,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
+    if settings.enemies == "overworld":
+        patches.enemies.randomizeEnemies(rom, seed)
 
     if not args.romdebugmode:
         patches.core.addFrameCounter(rom, len(item_list))
