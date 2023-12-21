@@ -238,10 +238,11 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Normal] color of link depends on the tunic.
 [Green/Yellow/Red/Blue] forces link into one of these colors.
 [?? C/D] colors of link are usually inverted and color depends on the area you are in."""),
-            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable')], default='',
+            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable'), ('shifted', 's', 'Tone shifted')], default='',
                 description="""
 [Random] Randomizes overworld and dungeon music'
-[Disable] no music in the whole game""",
+[Disable] no music in the whole game
+[Tone shifted] Tone shifts the musics, making it sound different""",
                 aesthetic=True),
         ]
         self.__by_key = {s.key: s for s in self.__all}

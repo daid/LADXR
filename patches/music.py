@@ -25,3 +25,15 @@ def randomizeMusic(rom, rnd):
 def noMusic(rom):
     rom.patch(0x1B, 0x001E, ASM("ld hl, $D368\nldi a, [hl]"), ASM("xor a"), fill_nop=True)
     rom.patch(0x1E, 0x001E, ASM("ld hl, $D368\nldi a, [hl]"), ASM("xor a"), fill_nop=True)
+
+def shiftedMusic(rom):
+    for n in range(18 * 4 + 2):
+        freq = rom.banks[0x1B][0x09C2 + n * 2] | (rom.banks[0x1B][0x09C3 + n * 2] << 8)
+        freq = max(0x20, min(int((freq - 8) * 0.95), 0x7FF))
+        rom.banks[0x1B][0x09C2 + n * 2] = freq & 0xFF
+        rom.banks[0x1B][0x09C3 + n * 2] = (freq >> 8) & 0xFF
+
+        freq = rom.banks[0x1E][0x09BF + n * 2] | (rom.banks[0x1E][0x09C0 + n * 2] << 8)
+        freq = max(0x20, min(int((freq - 8) * 0.95), 0x7FF))
+        rom.banks[0x1E][0x09BF + n * 2] = freq & 0xFF
+        rom.banks[0x1E][0x09C0 + n * 2] = (freq >> 8) & 0xFF

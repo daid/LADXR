@@ -186,6 +186,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.music.randomizeMusic(rom, rnd)
     elif settings.music == 'off':
         patches.music.noMusic(rom)
+    elif settings.music == 'shifted':
+        patches.music.shiftedMusic(rom)
     if settings.noflash:
         patches.aesthetics.removeFlashingLights(rom)
     if settings.hardmode == "oracle":
