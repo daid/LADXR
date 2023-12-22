@@ -72,7 +72,7 @@ INFO = {
     ),
     "d8": EntranceInfo(
         items={None: 6, KEY8: 7, MAP8: 1, COMPASS8: 1, STONE_BEAK8: 1, NIGHTMARE_KEY8: 1, HEART_CONTAINER: 1, INSTRUMENT8: 1},
-        logic=lambda c, w, r: Dungeon8(c, w, r, back_entrance_heartpiece=False).entrance
+        logic=lambda c, w, r: Dungeon8(c, w, r, back_entrance_heartpiece=None).entrance
     ),
 
     "writes_cave_left": EntranceInfo(

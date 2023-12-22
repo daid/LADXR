@@ -29,6 +29,8 @@ class Logic:
             world = mapgen.LogicGenerator(configuration_options, world_setup, r, world_setup.map)
         elif configuration_options.overworld == "dungeonchain":
             world = overworld.DungeonChain(configuration_options, r)
+        elif configuration_options.overworld == "alttp":
+            world = overworld.ALttP(configuration_options, world_setup, r)
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
@@ -52,9 +54,19 @@ class Logic:
             world.updateIndoorLocation("d5", dungeon5.Dungeon5(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d6", dungeon6.Dungeon6(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d7", dungeon7.Dungeon7(configuration_options, world_setup, r).entrance)
-            world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
-            world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
+            if configuration_options.overworld != "alttp":
+                world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
+                world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
+            else:
+                world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r, back_entrance_heartpiece=0x0E0).entrance)
 
+        if configuration_options.overworld in {"alttp"}:
+            world_setup.entrance_mapping = {}
+            for k, v in world.entrances.items():
+                if k.endswith(":inside"):
+                    world_setup.entrance_mapping[k] = k[:-7]
+                else:
+                    world_setup.entrance_mapping[k] = f"{k}:inside"
         if configuration_options.overworld not in {"dungeonchain", "random"}:
             for k in world.entrances.keys():
                 assert k in world_setup.entrance_mapping, k

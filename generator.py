@@ -52,6 +52,7 @@ import patches.bingo
 import patches.maze
 import patches.multiworld
 import patches.tradeSequence
+import patches.alttp
 import hints
 
 
@@ -171,6 +172,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.dungeon.patchDungeonChain(rom, logic.world_setup)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
+    elif settings.overworld == 'alttp':
+        patches.overworld.patchOverworldTilesets(rom)
+        patches.alttp.patch(rom)
     elif settings.overworld == 'random':
         patches.overworld.patchOverworldTilesets(rom)
         mapgen.store_map(rom, logic.world.map)
@@ -264,7 +268,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if settings.overworld not in {"dungeondive", "dungeonchain", "random"}:
+    if settings.overworld not in {"dungeondive", "dungeonchain", "random", "alttp"}:
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):

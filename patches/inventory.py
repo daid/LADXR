@@ -211,15 +211,17 @@ def moreSlots(rom):
     ##  Patch the toadstool as a different item
     rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")  # Which tiles are used for the toadstool
     rom.patch(0x20, 0x1C8A, "9C659C" "C19CC5", "90927F" "91937F")  # Which tiles are used for the rooster
+    rom.patch(0x20, 0x1C90, "9D219D" "259D81", "057F7F" "047F7F")  # Which tiles are used for the hammer
     rom.patch(0x20, 0x1C6C, "927F7F" "937F7F", "127F7F" "137F7F")  # Which tiles are used for the feather (to make space for rooster)
     rom.patch(0x20, 0x1C66, "907F7F" "917F7F", "107F7F" "117F7F")  # Which tiles are used for the ocarina (to make space for rooster)
 
     # Move the inventory tile numbers to a higher address, so there is space for the table above it.
-    rom.banks[0x20][0x1C34:0x1C94] = rom.banks[0x20][0x1C30:0x1C90]
-    rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C34"))
-    rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C37"))
+    rom.banks[0x20][0x1C36:0x1C9C] = rom.banks[0x20][0x1C30:0x1C96]
+    rom.patch(0x20, 0x1CDB, ASM("ld hl, $5C30"), ASM("ld hl, $5C36"))
+    rom.patch(0x20, 0x1D0D, ASM("ld hl, $5C33"), ASM("ld hl, $5C39"))
     rom.patch(0x20, 0x1C30, "7F7F", "0A0B")  # Toadstool tile attributes
     rom.patch(0x20, 0x1C32, "7F7F", "0101")  # Rooster tile attributes
+    rom.patch(0x20, 0x1C34, "7F7F", "4B4B")  # Hammer tile attributes
     rom.patch(0x20, 0x1C28, "0303", "0B0B")  # Feather tile attributes (due to rooster)
     rom.patch(0x20, 0x1C26, "0202", "0A0A")  # Ocarina tile attributes (due to rooster)
 
@@ -242,12 +244,21 @@ def moreSlots(rom):
         dw $1383 ; Boomerang
         dw $1498 ; Toadstool
         dw RoosterUse ; Rooster
+        dw HammerUse
 RoosterUse:
     ld   a, $01
     ld   [$DB7B], a ; has rooster
     call $3958 ; spawn followers
     xor  a
     ld   [$DB7B], a ; has rooster
+    ret
+HammerUse:
+    ld   a, $B7
+    call $3B86 ; SpawnNewEntity_trampoline
+    ;ret  c
+    ld   hl, $C290 ; wEntitiesStateTable
+    add  hl, de
+    inc  [hl] 
     ret
     """, 0x129D), fill_nop=True)
     # Fix the graphics of the toadstool hold over your head
@@ -271,7 +282,7 @@ RoosterUse:
     """), fill_nop=True)
 
     # Patch the debug save game so it does not give a bunch of swords
-    rom.patch(0x01, 0x0673, "01010100", "0D0E0F00")
+    rom.patch(0x01, 0x0673, "01010100", "0D0E0F10")
 
     # Patch the witch to use the new toadstool instead of the old flag
     rom.patch(0x05, 0x081A, ASM("ld a, [$DB4B]"), ASM("ld a, $01"), fill_nop=True)

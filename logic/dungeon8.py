@@ -4,7 +4,7 @@ from locations.all import *
 
 
 class Dungeon8:
-    def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=True):
+    def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=0x000):
         entrance = Location(8)
         entrance_up = Location(8).connect(entrance, FEATHER)
         entrance_left = Location(8).connect(entrance, r.attack_hookshot_no_bomb) # past hinox
@@ -46,8 +46,8 @@ class Dungeon8:
         up_left.connect(entrance_left, None, one_way=True) # path from up_left to entrance_left by dropping of the ledge in torch room 
         Location(8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
         up_left.connect(upper_center, None, one_way=True) # use the outside path of the dungeon to get to the right side
-        if back_entrance_heartpiece:
-            Location().add(HeartPiece(0x000)).connect(up_left, None)  # Outside the dungeon on the platform
+        if back_entrance_heartpiece is not None:
+            Location().add(HeartPiece(back_entrance_heartpiece)).connect(up_left, None)  # Outside the dungeon on the platform
         Location(8).add(DroppedKey(0x241)).connect(up_left, BOW) # lava statue
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)

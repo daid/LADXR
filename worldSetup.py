@@ -150,7 +150,7 @@ class WorldSetup:
                     done.add(pick)
 
     def pickEntrances(self, settings, rnd):
-        if settings.overworld in {"random", "dungeonchain"}:
+        if settings.overworld in {"random", "dungeonchain", "alttp"}:
             return
         if settings.overworld == "dungeondive":
             self.entrance_mapping = {"d%d" % (n): "d%d:inside" % (n) for n in range(9)}

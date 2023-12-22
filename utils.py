@@ -17,6 +17,7 @@ _NAMES = {
     MAGIC_POWDER: "Magic Powder",
     BOOMERANG: "Boomerang",
     ROOSTER: "Flying Rooster",
+    HAMMER: "Hammer",
 
     FLIPPERS: "Flippers",
     SLIME_KEY: "Slime key",
