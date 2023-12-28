@@ -175,29 +175,29 @@ for(var e of document.getElementsByTagName("img")) {
 
         subtiles = [0] * 0x100
         for n in range(0x20, 0x80):
-            subtiles[n] = (0x0D << 10) + n - 0x20
+            subtiles[n] = (0x2D << 10) + n - 0x20
         if main_tileset != 0xFF:
             for n in range(0x00, 0x10):
-                subtiles[n] = (0x0D << 10) + 0x100 + main_tileset * 0x10+n
+                subtiles[n] = (0x2D << 10) + 0x100 + main_tileset * 0x10+n
         for n in range(0x10, 0x20):
-            subtiles[n] = (0x0D << 10) + 0x200 + n
+            subtiles[n] = (0x2D << 10) + 0x200 + n
         for n in range(0xF0, 0x100):
-            subtiles[n] = (0x12 << 10) + 0x380 + n - 0xF0
+            subtiles[n] = (0x32 << 10) + 0x380 + n - 0xF0
 
         if rmi.map_id is not None:
             if rmi.sidescroll:
                 for n in range(0x00, 0x80):
-                    subtiles[n] = (0x0D << 10) + n + 0x300
+                    subtiles[n] = (0x2D << 10) + n + 0x300
             else:
                 wall_tiles_ptr = (self.__rom.banks[0x20][0x05A9 + rmi.map_id] - 0x40) << 4
                 if rmi.map_id == 0xFF:
                     wall_tiles_ptr = (0x4A - 0x40) << 4
                 for n in range(0x20, 0x40):
-                    subtiles[n] = (0x0D << 10) + n - 0x20 + wall_tiles_ptr
+                    subtiles[n] = (0x2D << 10) + n - 0x20 + wall_tiles_ptr
 
                 floor_tiles_ptr = (self.__rom.banks[0x20][0x0589 + rmi.map_id] - 0x40) << 4
                 for n in range(0x10, 0x20):
-                    subtiles[n] = (0x0D << 10) + n - 0x10 + floor_tiles_ptr
+                    subtiles[n] = (0x2D << 10) + n - 0x10 + floor_tiles_ptr
 
         addr = (0x000, 0x000, 0x2B0, 0x2C0, 0x2D0, 0x2E0, 0x2F0, 0x2D0, 0x300, 0x310, 0x320, 0x2A0, 0x330, 0x350, 0x360, 0x340, 0x370)[animation_id]
         for n in range(0x6C, 0x70):
