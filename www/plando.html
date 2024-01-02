@@ -83,7 +83,7 @@ async function startRomGeneration()
 {
     ID("generatingdialog").checked = true;
     randomGenerationString();
-    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
+    var buffer = getRomArray();
     var args = ["--short", ID('settingsString').value];
     var data = {"input.gbc": buffer, "args": args, "id": 0};
     var e = ID("spoilerformat");
