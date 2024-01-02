@@ -268,7 +268,11 @@ function checkStoredRom()
             }
         }
     }
-    catch(e){}
+    catch(e)
+    {
+        console.log("Error while loading stored ROM:")
+        console.log(e);
+    }
 }
 
 function updateForm()
@@ -320,7 +324,11 @@ function updateForm()
                     for(var b of a) { s += String.fromCharCode(b); }
                     localStorage.setItem("ladx_rom", btoa(s));
                 }
-                catch(e){}
+                catch(e)
+                {
+                    console.log("Error while storing ROM:")
+                    console.log(e);
+                }
             }
         });
     }
