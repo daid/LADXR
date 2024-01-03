@@ -105,7 +105,7 @@ async function startRomGeneration()
 {
     ID("generatingdialog").checked = true;
     //randomGenerationString();
-    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
+    var buffer = getRomArray();
     var args = ["--short", updateSettingsString()];
     var e = ID("spoilerformat");
     if (e && e.value != 'none') {

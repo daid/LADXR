@@ -255,7 +255,7 @@ async function startRomGeneration()
 {
     ID("generatingdialog").checked = true;
     randomGenerationString();
-    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
+    var buffer = getRomArray();
     if (ID("randomsettings").style.display != "none")
         randomsettings = randomizeSettings();
     var args = ["--short", updateSettingsString() + randomsettings];
