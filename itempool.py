@@ -241,6 +241,8 @@ class ItemPool:
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
+            if settings.owlstatues == 'dungeon':
+                self.remove(RUPEES_20, 3)  # Remove color dungeon owls
         elif not settings.rooster:
             self.remove(ROOSTER)
             self.add(RUPEES_50)
