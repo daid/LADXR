@@ -4,6 +4,7 @@ from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
+import cavegen
 
 
 class Error(Exception):
@@ -30,7 +31,8 @@ start_locations = [
 
 class WorldSetup:
     def __init__(self):
-        self.entrance_mapping = {k: k for k in ENTRANCE_INFO.keys()}
+        self.entrance_mapping = {k: f"{k}:inside" for k in ENTRANCE_INFO.keys()}
+        self.entrance_mapping.update({f"{k}:inside": k for k in ENTRANCE_INFO.keys()})
         self.boss_mapping = list(range(9))
         self.miniboss_mapping = {
             # Main minibosses
@@ -46,20 +48,24 @@ class WorldSetup:
         self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
+        self.cavegen = None
         self.dungeon_chain = None
+        self.inside_to_outside = True
+        self.keep_two_way = True
+        self.one_on_one = True
 
     def getEntrancePool(self, settings, connectorsOnly=False):
         entrances = []
 
         if connectorsOnly:
-            if settings.entranceshuffle in ("split", "mixed"):
+            if settings.entranceshuffle in {"split", "mixed", "wild", "chaos", "insane", "madness"}:
                 entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "connector"]
-            
+            entrances += [f"{k}:inside" for k in entrances]
             return entrances
 
         if settings.dungeonshuffle and settings.entranceshuffle == "none":
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type == "dungeon"]
-        if settings.entranceshuffle in ("simple", "split", "mixed"):
+        if settings.entranceshuffle in {"simple", "split", "mixed", "wild", "chaos", "insane", "madness"}:
             types = {"single"}
             if settings.tradequest:
                 types.add("trade")
@@ -73,46 +79,101 @@ class WorldSetup:
                 types.add("start")
             if settings.dungeonshuffle:
                 types.add("dungeon")
-            if settings.entranceshuffle in ("mixed"):
+            if settings.entranceshuffle in {"mixed", "wild", "chaos", "insane", "madness"}:
                 types.add("connector")
             entrances = [k for k, v in ENTRANCE_INFO.items() if v.type in types]
 
+        entrances += [f"{k}:inside" for k in entrances]
         return entrances
-    
-    def swapEntrances(self, a, b):
+
+    def _swapEntrances(self, a, b):
+        # Two two two-way entrances to connect disconnecting islands
+        assert self.keep_two_way
         temp = self.entrance_mapping[a]
         self.entrance_mapping[a] = self.entrance_mapping[b]
         self.entrance_mapping[b] = temp
-    
+        self.entrance_mapping[self.entrance_mapping[a]] = a
+        self.entrance_mapping[self.entrance_mapping[b]] = b
+
+    def _injectEntrance(self, source, target):
+        # Inject an entrance into a chain of entrances with decoupled mode
+        assert not self.keep_two_way
+        to_source = None
+        for k, v in self.entrance_mapping.items():
+            if v == source:
+                to_source = k
+                break
+        assert to_source is not None
+        temp = self.entrance_mapping[target]
+        self.entrance_mapping[target] = source
+        self.entrance_mapping[to_source] = temp
+
+    def _addConnectionTowards(self, sources, rnd, target):
+        # When no one-on-one requirement is needed, we can simply disconnect
+        # one of the doulble connected entrances.
+        entrance_to = {}
+        for s in sources:
+            if self.entrance_mapping[s] not in entrance_to:
+                entrance_to[self.entrance_mapping[s]] = []
+            entrance_to[self.entrance_mapping[s]].append(s)
+        options = []
+        for k, v in entrance_to.items():
+            if len(v) > 1:
+                options += v
+        option = rnd.choice(options)
+        self.entrance_mapping[option] = target
+
     def inaccessibleEntrances(self, settings, entrancePool):
         log = logic.Logic(settings, world_setup=self)
-        return [x for x in entrancePool if log.world.overworld_entrance[x].location not in log.location_list]
+        return [x for x in entrancePool if log.world.entrances[x].location and log.world.entrances[x].location not in log.location_list]
+
+    def _randomizeEntrances(self, rnd, entrancePool):
+        unmappedEntrances = list(entrancePool)
+
+        done = set()
+        for entrance in [x for x in entrancePool]:
+            if entrance in done:
+                continue
+            while entrance not in done:
+                pick_idx = rnd.randrange(len(unmappedEntrances))
+                pick = unmappedEntrances[pick_idx]
+                if pick == entrance:
+                    if len(unmappedEntrances) < 2:
+                        raise randomizer.Error("Cannot map entrance to itself")
+                    continue
+                if self.inside_to_outside and entrance.endswith(":inside") == pick.endswith(":inside"):
+                    continue
+                if self.one_on_one:
+                    unmappedEntrances.pop(pick_idx)
+                self.entrance_mapping[entrance] = pick
+                done.add(entrance)
+                if self.keep_two_way:
+                    unmappedEntrances.remove(entrance)
+                    self.entrance_mapping[pick] = entrance
+                    done.add(pick)
 
     def pickEntrances(self, settings, rnd):
-        if settings.overworld in {"random", "dungeonchain"}:
+        if settings.overworld in {"random", "dungeonchain", "alttp"}:
             return
         if settings.overworld == "dungeondive":
-            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
+            self.entrance_mapping = {"d%d" % (n): "d%d:inside" % (n) for n in range(9)}
+            self.entrance_mapping.update({"d%d:inside" % (n): "d%d" % (n) for n in range(9)})
         if settings.randomstartlocation and settings.entranceshuffle == "none":
             start_location = start_locations[rnd.randrange(len(start_locations))]
             if start_location != "start_house":
-                self.entrance_mapping[start_location] = "start_house"
-                self.entrance_mapping["start_house"] = start_location
+                self.entrance_mapping[start_location] = "start_house:inside"
+                self.entrance_mapping["start_house:inside"] = start_location
+                self.entrance_mapping["start_house"] = f"{start_location}:inside"
+                self.entrance_mapping[f"{start_location}:inside"] = "start_house"
 
         entrancePool = self.getEntrancePool(settings)
-        unmappedEntrances = list(entrancePool)
-
-        for entrance in [x for x in entrancePool]:
-            self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
+        self._randomizeEntrances(rnd, entrancePool)
 
         if settings.entranceshuffle == 'split':
             # Shuffle connectors among themselves
             # entrancePool is intentionally overwritten so we're only swapping connectors
             entrancePool = self.getEntrancePool(settings, connectorsOnly=True)
-            unmappedEntrances = list(entrancePool)
-
-            for entrance in entrancePool.copy():
-                self.entrance_mapping[entrance] = unmappedEntrances.pop(rnd.randrange(len(unmappedEntrances)))
+            self._randomizeEntrances(rnd, entrancePool)
 
         # Make sure all entrances in the pool are accessible
         for _ in range(1000):
@@ -122,12 +183,39 @@ class WorldSetup:
                 break
 
             island = rnd.choice(islands)
-            main = rnd.choice([x for x in entrancePool if x not in islands])
+            mains = [x for x in entrancePool if x not in islands]
+            main = rnd.choice(mains)
 
-            self.swapEntrances(island, main)
-        
+            if self.inside_to_outside:
+                if island.endswith(":inside") != main.endswith(":inside"):
+                    continue
+
+            if not self.one_on_one:
+                self._addConnectionTowards(mains, rnd, island)
+            elif self.keep_two_way:
+                self._swapEntrances(island, main)
+            else:
+                self._injectEntrance(island, main)
+
         if self.inaccessibleEntrances(settings, entrancePool):
-            raise Error("Failed to make all entrances accessible after a bunch of retries")
+            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+        self._checkEntranceRules()
+
+    def _checkEntranceRules(self):
+        if self.inside_to_outside:
+            for k, v in self.entrance_mapping.items():
+                if k.endswith(":inside"):
+                    assert not v.endswith(":inside"), f"inside-to-outside rule violated: {k}->{v}"
+                else:
+                    assert v.endswith(":inside"), f"inside-to-outside rule violated: {k}->{v}"
+        if self.keep_two_way:
+            for k, v in self.entrance_mapping.items():
+                assert self.entrance_mapping[v] == k, f"keep-two-way rule violated: {k}->{v}"
+        if self.one_on_one:
+            found = set()
+            for k, v in self.entrance_mapping.items():
+                assert v not in found, f"one-on-one rule violated: {k}->{v}"
+                found.add(v)
 
     def randomize(self, settings, rnd):
         if settings.boss != "default":
@@ -175,13 +263,32 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         if settings.overworld == "dungeonchain":
-            self.dungeon_chain = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-            rnd.shuffle(self.dungeon_chain)
-            self.dungeon_chain = self.dungeon_chain[:5]
+            self._buildDungeonChain(rnd)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
+        self.inside_to_outside = settings.entranceshuffle not in {"wild", "insane", "madness"}
+        self.keep_two_way = settings.entranceshuffle not in {"chaos", "insane", "madness"}
+        self.one_on_one = settings.entranceshuffle not in {"madness"}
         self.pickEntrances(settings, rnd)
+
+    def _buildDungeonChain(self, rnd):
+        # Build a chain of 5 dungeons
+        self.dungeon_chain = [1, 2, 3, 4, 5, 6, 7, 8]
+        if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
+            self.dungeon_chain.append(0)
+        rnd.shuffle(self.dungeon_chain)
+        self.dungeon_chain = self.dungeon_chain[:5]
+        # Check if we randomly replace one of the dungeons with a cavegen
+        if rnd.randrange(0, 100) < 80:
+            self.cavegen = cavegen.Generator(rnd)
+            self.cavegen.generate()
+            # cavegen.dump("cave.svg", self.cavegen.start)
+            self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
+        # Check if we want a random extra insert.
+        if rnd.randrange(0, 100) < 80:
+            inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]
+            self.dungeon_chain.insert(rnd.randint(1, 4), rnd.choice(inserts))
 
     def loadFromRom(self, rom):
         import patches.overworld

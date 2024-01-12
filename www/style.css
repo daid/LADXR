@@ -55,3 +55,6 @@ header .logo {
     text-align: center;
     display: block;
 }
+select option {
+    font-weight: normal;
+}

@@ -262,7 +262,7 @@ class RequirementsSettings:
         self.attack_hookshot_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
         self.attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
-        self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(OR(MAGIC_ROD, MAGIC_POWDER), HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic
+        self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(MAGIC_ROD, HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic rod
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
@@ -302,6 +302,7 @@ class RequirementsSettings:
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = ROOSTER
+        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
 
         self.boss_requirements = [
             SWORD,  # D1 boss

@@ -8,6 +8,7 @@ from . import dungeon6
 from . import dungeon7
 from . import dungeon8
 from . import dungeonColor
+from . import dungeonChain
 from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
@@ -32,6 +33,8 @@ class Logic:
             world = mapgen.LogicGenerator(configuration_options, world_setup, r, world_setup.map)
         elif configuration_options.overworld == "dungeonchain":
             world = overworld.DungeonChain(configuration_options, r)
+        elif configuration_options.overworld == "alttp":
+            world = overworld.ALttP(configuration_options, world_setup, r)
         else:
             world = overworld.World(configuration_options, world_setup, r)
 
@@ -46,9 +49,7 @@ class Logic:
             world.updateIndoorLocation("d8", dungeon8.NoDungeon8(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d0", dungeonColor.NoDungeonColor(configuration_options, world_setup, r).entrance)
         elif configuration_options.overworld == "dungeonchain":
-            dungeon_constructors = [dungeon1.Dungeon1, dungeon2.Dungeon2, dungeon3.Dungeon3, dungeon4.Dungeon4, dungeon5.Dungeon5, dungeon6.Dungeon6, dungeon7.Dungeon7, dungeon8.Dungeon8, dungeonColor.DungeonColor]
-            for index in world_setup.dungeon_chain:
-                world.chain(dungeon_constructors[index](configuration_options, world_setup, r))
+            dungeonChain.construct(configuration_options, world_setup=world_setup, world=world, requirements_settings=r)
         elif configuration_options.overworld != "random":
             world.updateIndoorLocation("d1", dungeon1.Dungeon1(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d2", dungeon2.Dungeon2(configuration_options, world_setup, r).entrance)
@@ -57,23 +58,52 @@ class Logic:
             world.updateIndoorLocation("d5", dungeon5.Dungeon5(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d6", dungeon6.Dungeon6(configuration_options, world_setup, r).entrance)
             world.updateIndoorLocation("d7", dungeon7.Dungeon7(configuration_options, world_setup, r).entrance)
-            world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
-            world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
+            if configuration_options.overworld != "alttp":
+                world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r).entrance)
+                world.updateIndoorLocation("d0", dungeonColor.DungeonColor(configuration_options, world_setup, r).entrance)
+            else:
+                world.updateIndoorLocation("d8", dungeon8.Dungeon8(configuration_options, world_setup, r, back_entrance_heartpiece=0x0E0).entrance)
 
+        if configuration_options.overworld in {"alttp"}:
+            world_setup.entrance_mapping = {}
+            for k, v in world.entrances.items():
+                if k.endswith(":inside"):
+                    world_setup.entrance_mapping[k] = k[:-7]
+                else:
+                    world_setup.entrance_mapping[k] = f"{k}:inside"
         if configuration_options.overworld not in {"dungeonchain", "random"}:
-            for k in world.overworld_entrance.keys():
+            for k in world.entrances.keys():
                 assert k in world_setup.entrance_mapping, k
             for k in world_setup.entrance_mapping.keys():
-                assert k in world.overworld_entrance, k
+                assert k in world.entrances, k
 
-            for entrance, indoor in world_setup.entrance_mapping.items():
-                exterior = world.overworld_entrance[entrance]
-                if world.indoor_location[indoor] is not None:
-                    exterior.location.connect(world.indoor_location[indoor], exterior.requirement)
-                    if exterior.enterIsSet():
-                        exterior.location.connect(world.indoor_location[indoor], exterior.one_way_enter_requirement, one_way=True)
-                    if exterior.exitIsSet():
-                        world.indoor_location[indoor].connect(exterior.location, exterior.one_way_exit_requirement, one_way=True)
+            for source, target in world_setup.entrance_mapping.items():
+                se = world.entrances[source]
+                if not se.location:
+                    continue
+                te = world.entrances[target]
+                empty_cycle_targets = {target}
+                while te.location is None:
+                    # If the target is empty, we need to check if we can get from that empty location to somewhere else.
+                    assert te.requirement is None
+                    assert not te.enterIsSet()
+                    assert not te.exitIsSet()
+                    target = world_setup.entrance_mapping[target]
+                    if target in empty_cycle_targets:
+                        break
+                    empty_cycle_targets.add(target)
+                    te = world.entrances[target]
+                if te.location and te.location != se.location:
+                    if se.requirement is not None and te.requirement is not None:
+                        se.location.connect(te.location, AND(se.requirement, te.requirement), one_way=True)
+                    elif se.requirement is not None:
+                        se.location.connect(te.location, se.requirement, one_way=True)
+                    else:
+                        se.location.connect(te.location, te.requirement, one_way=True)
+                    if se.enterIsSet():
+                        se.location.connect(te.location, se.one_way_enter_requirement, one_way=True)
+                    if te.exitIsSet():
+                        se.location.connect(te.location, te.one_way_exit_requirement, one_way=True)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
@@ -101,8 +131,8 @@ class Logic:
         if configuration_options.dungeon_items == 'keysy':
             for n in range(9):
                 for count in range(9):
-                    world.start.add(KeyLocation("KEY%d" % (n + 1)))
-                world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n + 1)))
+                    world.start.add(KeyLocation("KEY%d" % (n)))
+                world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n)))
 
         self.world = world
         self.start = world.start
@@ -167,7 +197,7 @@ class MultiworldLogic:
                     world_setup = WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
-                    if options.entranceshuffle not in ("split", "mixed") or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
+                    if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
                         break
 
             for ii in world.iteminfo_list:

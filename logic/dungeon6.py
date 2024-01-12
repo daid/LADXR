@@ -7,7 +7,7 @@ class Dungeon6:
     def __init__(self, options, world_setup, r, *, raft_game_chest=True):
         entrance = Location(6)
         Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
-        Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
+        elephants_heart_chest = Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6)
 
@@ -31,27 +31,29 @@ class Dungeon6:
             lower_right_owl = Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, KEY6) # top right chest horseheads
+        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), KEY6)) # top right chest horseheads (assumes weapon from killing wizrobes or bomb from blowing up wall, and having a way to get past the mini thwomps)
         boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(KEY6, HOOKSHOT))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, r.boss_requirements[world_setup.boss_mapping[5]]))
+        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, r.boss_requirements[world_setup.boss_mapping[5]])) # hidden assumption to kill wizrobe
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
             center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2), r.boots_dash_2d)) # use a boots dash to get over the platforms
             
         if options.logic == 'glitched' or options.logic == 'hell':
+            elephants_heart_chest.connect(entrance, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
             entrance.connect(left_side, AND(POWER_BRACELET, r.super_jump_feather), one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
             lower_right_side.connect(center_2_and_upper_right_side, r.super_jump, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
+            center_1.connect(miniboss, AND(r.bomb_trigger, OR(r.boots_dash_2d, FEATHER))) # bomb trigger the elephant statue after the miniboss
             center_2_and_upper_right_side.connect(center_1, AND(POWER_BRACELET, r.shaq_jump), one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
             boss_key.connect(lower_right_side, r.super_jump_feather) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
 
         if options.logic == 'hell':
             entrance.connect(left_side, AND(POWER_BRACELET, r.boots_superhop), one_way=True) # can boots superhop off the top right corner in 3 wizrobe raised blocks room
             medicine_chest.connect(lower_right_side, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
-            center_1.connect(miniboss, AND(r.damage_boost, COUNT(POWER_BRACELET, 2))) # use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
+            center_1.connect(miniboss, AND(r.damage_boost, OR(r.bomb_trigger, COUNT(POWER_BRACELET, 2)))) # use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
             lower_right_side.connect(center_2_and_upper_right_side, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
             
         self.entrance = entrance

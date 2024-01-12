@@ -20,8 +20,15 @@
         <label for="seeddonedialog" class="modal-close" ></label>
         <h3 class="section">Seed generation complete!</h3>
         <p class="section">Seed: <span id="seedSpan">...</span></p>
-        <p class="section"><button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button></p>
-        <p class="section"><a id="magpieLink">Open in Magpie</a></p>
+        <p class="section">
+            <button id="spoilerButton" class="primary large" onclick="downloadSpoilers()">Download Spoiler Log</button>
+            <a class="button large primary" style="" id="magpieLink">Open in Magpie</a>
+        </p>
+        <p class="section" style="display: flex; align-items: center;">
+            Share:
+            <input id="shareseed" style="flex-grow: 1; margin-right: 0px" readonly/>
+            <button id="shareseedbutton" style="margin-left: 0px" onclick="ID('shareseed').select(); navigator.clipboard.writeText(ID('shareseed').value); alert('Link copied to clipboard', 'LADXR')"><span class="icon-link"></span></button>
+        </p>
     </div>
 </div>
 <input type="checkbox" id="errordialog" class="modal">

@@ -327,6 +327,10 @@ def buildMaze(rnd):
     for n in range(50):
         all_options = set(ALL_SIGN_OPTION_TILES)
         signs = [(27, 84)]
+        for y in range(84 // 8 * 8, 84 // 8 * 8 + 8):
+            for x in range(27 // 10 * 10, 27 // 10 * 10 + 10):
+                if (x, y) in all_options:
+                    all_options.remove((x, y))
         directions = []
         while len(signs) < 20:
             cx, cy = signs[-1]

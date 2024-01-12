@@ -39,7 +39,7 @@ class EntranceInfo:
 INFO = {
     "start_house": EntranceInfo(items={None: 1}, logic=lambda c, w, r: Location().add(StartItem())),
     "d0": EntranceInfo(
-        items={None: 2, KEY9: 3, MAP9: 1, COMPASS9: 1, STONE_BEAK9: 1, NIGHTMARE_KEY9: 1},
+        items={None: 2, KEY0: 3, MAP0: 1, COMPASS0: 1, STONE_BEAK0: 1, NIGHTMARE_KEY0: 1},
         logic=lambda c, w, r: DungeonColor(c, w, r).entrance
     ),
     "d1": EntranceInfo(
@@ -72,7 +72,7 @@ INFO = {
     ),
     "d8": EntranceInfo(
         items={None: 6, KEY8: 7, MAP8: 1, COMPASS8: 1, STONE_BEAK8: 1, NIGHTMARE_KEY8: 1, HEART_CONTAINER: 1, INSTRUMENT8: 1},
-        logic=lambda c, w, r: Dungeon8(c, w, r, back_entrance_heartpiece=False).entrance
+        logic=lambda c, w, r: Dungeon8(c, w, r, back_entrance_heartpiece=None).entrance
     ),
 
     "writes_cave_left": EntranceInfo(

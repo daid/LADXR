@@ -40,11 +40,11 @@ DEFAULT_ITEM_POOL = {
     GEL: 4,
     MESSAGE: 1,
 
-    COMPASS1: 1, COMPASS2: 1, COMPASS3: 1, COMPASS4: 1, COMPASS5: 1, COMPASS6: 1, COMPASS7: 1, COMPASS8: 1, COMPASS9: 1,
-    KEY1: 3, KEY2: 5, KEY3: 9, KEY4: 5, KEY5: 3, KEY6: 3, KEY7: 3, KEY8: 7, KEY9: 3,
-    MAP1: 1, MAP2: 1, MAP3: 1, MAP4: 1, MAP5: 1, MAP6: 1, MAP7: 1, MAP8: 1, MAP9: 1,
-    NIGHTMARE_KEY1: 1, NIGHTMARE_KEY2: 1, NIGHTMARE_KEY3: 1, NIGHTMARE_KEY4: 1, NIGHTMARE_KEY5: 1, NIGHTMARE_KEY6: 1, NIGHTMARE_KEY7: 1, NIGHTMARE_KEY8: 1, NIGHTMARE_KEY9: 1,
-    STONE_BEAK1: 1, STONE_BEAK2: 1, STONE_BEAK3: 1, STONE_BEAK4: 1, STONE_BEAK5: 1, STONE_BEAK6: 1, STONE_BEAK7: 1, STONE_BEAK8: 1, STONE_BEAK9: 1,
+    COMPASS1: 1, COMPASS2: 1, COMPASS3: 1, COMPASS4: 1, COMPASS5: 1, COMPASS6: 1, COMPASS7: 1, COMPASS8: 1, COMPASS0: 1,
+    KEY1: 3, KEY2: 5, KEY3: 9, KEY4: 5, KEY5: 3, KEY6: 3, KEY7: 3, KEY8: 7, KEY0: 3,
+    MAP1: 1, MAP2: 1, MAP3: 1, MAP4: 1, MAP5: 1, MAP6: 1, MAP7: 1, MAP8: 1, MAP0: 1,
+    NIGHTMARE_KEY1: 1, NIGHTMARE_KEY2: 1, NIGHTMARE_KEY3: 1, NIGHTMARE_KEY4: 1, NIGHTMARE_KEY5: 1, NIGHTMARE_KEY6: 1, NIGHTMARE_KEY7: 1, NIGHTMARE_KEY8: 1, NIGHTMARE_KEY0: 1,
+    STONE_BEAK1: 1, STONE_BEAK2: 1, STONE_BEAK3: 1, STONE_BEAK4: 1, STONE_BEAK5: 1, STONE_BEAK6: 1, STONE_BEAK7: 1, STONE_BEAK8: 1, STONE_BEAK0: 1,
     
     INSTRUMENT1: 1, INSTRUMENT2: 1, INSTRUMENT3: 1, INSTRUMENT4: 1, INSTRUMENT5: 1, INSTRUMENT6: 1, INSTRUMENT7: 1, INSTRUMENT8: 1,
 
@@ -139,10 +139,10 @@ class ItemPool:
             self.removeRupees(14)
 
             for n in range(9):
-                self.remove("MAP%d" % (n + 1))
-                self.remove("COMPASS%d" % (n + 1))
-                self.add("KEY%d" % (n + 1))
-                self.add("NIGHTMARE_KEY%d" % (n +1))
+                self.remove(f"MAP{n}")
+                self.remove(f"COMPASS{n}")
+                self.add(f"KEY{n}")
+                self.add(f"NIGHTMARE_KEY{n}")
         elif settings.itempool == 'pain':
             self.add(BAD_HEART_CONTAINER, 12)
             self.remove(BLUE_TUNIC)
@@ -151,19 +151,19 @@ class ItemPool:
             self.remove(HEART_PIECE, 4)
         elif settings.itempool == 'keyup':
             for n in range(9):
-                self.remove("MAP%d" % (n + 1))
-                self.remove("COMPASS%d" % (n + 1))
-                self.add("KEY%d" % (n +1))
-                self.add("NIGHTMARE_KEY%d" % (n +1))
+                self.remove(f"MAP{n}")
+                self.remove(f"COMPASS{n}")
+                self.add(f"KEY{n}")
+                self.add(f"NIGHTMARE_KEY{n}")
             if settings.owlstatues in ("none", "overworld"):
                 for n in range(9):
-                    self.remove("STONE_BEAK%d" % (n + 1))
-                    self.add("KEY%d" % (n +1))
+                    self.remove(f"STONE_BEAK{n}")
+                    self.add(f"KEY{n}")
 
         if settings.dungeon_items == 'keysy':
             for n in range(9):
                 for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
-                    item_name = "%s%d" % (item_name, n + 1)
+                    item_name = "%s%d" % (item_name, n)
                     if item_name in self.__pool:
                         self.add(RUPEES_20, self.__pool[item_name])
                         self.remove(item_name, self.__pool[item_name])
@@ -209,6 +209,40 @@ class ItemPool:
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
+        elif settings.overworld == "alttp":
+            self.remove(BLUE_TUNIC)
+            self.remove(RED_TUNIC)
+            self.remove(TAIL_KEY)
+            self.remove(SLIME_KEY)
+            self.remove(ANGLER_KEY)
+            self.remove(BIRD_KEY)
+            self.remove(SLIME_KEY)
+            self.remove(FACE_KEY)
+            self.remove(BOWWOW)
+            self.remove(SONG2)
+            self.remove(ROOSTER)
+            self.remove(GOLD_LEAF, 5)
+            self.remove(HEART_PIECE, 8)
+            self.remove("MEDICINE2")
+            self.remove("RAFT")
+            self.remove("ANGLER_KEYHOLE")
+            self.remove(SEASHELL, 4)
+            self.remove(MEDICINE, 3)
+            self.remove(RUPEES_50, 5)
+            self.add(RUPEES_200, 1)
+            self.add(HAMMER)
+            for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
+                self.remove(f"{item_name}0", self.get(f"{item_name}0"))
+            self.remove(TRADING_ITEM_BANANAS)
+            self.remove(TRADING_ITEM_STICK)
+            self.remove(TRADING_ITEM_PINEAPPLE)
+            self.remove(TRADING_ITEM_BROOM)
+            self.remove(TRADING_ITEM_FISHING_HOOK)
+            self.remove(TRADING_ITEM_NECKLACE)
+            self.remove(TRADING_ITEM_SCALE)
+            self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
+            if settings.owlstatues == 'dungeon':
+                self.remove(RUPEES_20, 3)  # Remove color dungeon owls
         elif not settings.rooster:
             self.remove(ROOSTER)
             self.add(RUPEES_50)
@@ -216,7 +250,7 @@ class ItemPool:
         if settings.overworld == "nodungeons":
             for n in range(9):
                 for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
-                    self.remove(f"{item_name}{n+1}", self.get(f"{item_name}{n+1}"))
+                    self.remove(f"{item_name}{n}", self.get(f"{item_name}{n}"))
             if self.get(BLUE_TUNIC) > 0:
                 self.remove(BLUE_TUNIC)
             else:
@@ -231,28 +265,43 @@ class ItemPool:
         if settings.overworld == "dungeonchain":
             self.__pool = {}
             required_item_count = 1  # Start item
-            key_counts = [3, 5, 9, 5, 3, 3, 3, 7, 3]
-            item_counts = [3, 3, 4, 4, 5, 7, 4, 7, 0]
-            required_items_per_dungeon = [
-                {FEATHER, SHIELD, BOMB},
-                {POWER_BRACELET, FEATHER},
-                {POWER_BRACELET, PEGASUS_BOOTS},
-                {SHIELD, FLIPPERS, FEATHER, PEGASUS_BOOTS, BOMB},
-                {HOOKSHOT, FEATHER, BOMB, POWER_BRACELET, FLIPPERS},
-                {POWER_BRACELET, POWER_BRACELET+"2", BOMB, FEATHER, HOOKSHOT},
-                {POWER_BRACELET, SHIELD, SHIELD+"2", BOMB, HOOKSHOT},
-                {MAGIC_ROD, BOMB, FEATHER, POWER_BRACELET, HOOKSHOT},
-                {POWER_BRACELET, HOOKSHOT}
-            ]
+            key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
+            item_counts = {
+                1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1, "cavegen": 0,
+            }
+            if logic.world_setup.cavegen:
+                item_counts["cavegen"] = logic.world_setup.cavegen.get_reward_count()
+            if settings.owlstatues in {'both', 'dungeon'}:
+                for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
+                    item_counts[idx] += count
+            required_items_per_dungeon = {
+                1: {FEATHER, SHIELD, BOMB},
+                2: {POWER_BRACELET, FEATHER},
+                3: {POWER_BRACELET, PEGASUS_BOOTS},
+                4: {SHIELD, FLIPPERS, FEATHER, PEGASUS_BOOTS, BOMB},
+                5: {HOOKSHOT, FEATHER, BOMB, POWER_BRACELET, FLIPPERS},
+                6: {POWER_BRACELET, POWER_BRACELET+"2", BOMB, FEATHER, HOOKSHOT},
+                7: {POWER_BRACELET, SHIELD, SHIELD+"2", BOMB, HOOKSHOT},
+                8: {MAGIC_ROD, BOMB, FEATHER, POWER_BRACELET, HOOKSHOT},
+                0: {POWER_BRACELET, HOOKSHOT},
+                "shop": {RUPEES_100, RUPEES_200, RUPEES_500},
+                "mamu": {RUPEES_100, RUPEES_200, OCARINA},
+                "trendy": {RUPEES_50},
+                "dream": {PEGASUS_BOOTS},
+                "chestcave": set(),
+                "cavegen": {BOMB},
+            }
             required_items = {SWORD, BOW, MAGIC_POWDER}
             for dungeon_idx in logic.world_setup.dungeon_chain:
-                self.add(f"KEY{dungeon_idx+1}", key_counts[dungeon_idx])
-                self.add(f"NIGHTMARE_KEY{dungeon_idx + 1}")
-                self.add(f"MAP{dungeon_idx + 1}")
-                self.add(f"COMPASS{dungeon_idx + 1}")
-                self.add(f"STONE_BEAK{dungeon_idx + 1}")
-                if dungeon_idx != 8:
-                    self.add(HEART_CONTAINER)
+                if isinstance(dungeon_idx, int):
+                    self.add(f"KEY{dungeon_idx}", key_counts[dungeon_idx])
+                    self.add(f"NIGHTMARE_KEY{dungeon_idx}")
+                    self.add(f"MAP{dungeon_idx}")
+                    self.add(f"COMPASS{dungeon_idx}")
+                    self.add(f"STONE_BEAK{dungeon_idx}")
+                    if 1 <= dungeon_idx <= 8:
+                        self.add(HEART_CONTAINER)
                 required_item_count += item_counts[dungeon_idx]
                 required_items.update(required_items_per_dungeon[dungeon_idx])
             for item in required_items:
@@ -266,9 +315,12 @@ class ItemPool:
             max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
             for n in range(3):
                 pick = rnd.choice(major_additions)
-                if pick not in required_items and required_item_count > 0:
+                if pick not in required_items or pick in {SWORD, SHIELD} and required_item_count > 0:
                     self.add(pick)
                     required_item_count -= 1
+                    major_additions.remove(pick)
+                    if not major_additions:
+                        break
             for n in range(required_item_count // 3):
                 pick = rnd.choice(minor_additions)
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
