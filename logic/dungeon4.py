@@ -50,7 +50,7 @@ class Dungeon4:
             after_double_lock.connect(entrance, r.tight_jump) # jump across the corners
             dungeon4_puddle_before_crossroads.connect(after_double_lock, r.tight_jump) # With a tight jump feather is enough to cross the puddle without flippers
             center_puddle_chest.connect(before_miniboss, r.tight_jump) # With a tight jump feather is enough to cross the puddle without flippers
-            miniboss = Location(4).connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
+            miniboss.connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
             to_the_nightmare_key.connect(left_water_area, r.tight_jump) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
             before_boss.connect(left_water_area, r.tight_jump) # jump to the bottom right corner of boss door room
             
