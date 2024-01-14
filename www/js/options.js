@@ -208,6 +208,11 @@ var options =
     "label": "Small keys"
    },
    {
+    "key": "nightmarekeys",
+    "short": "n",
+    "label": "Nightmare keys"
+   },
+   {
     "key": "localkeys",
     "short": "L",
     "label": "Map/Compass/Beaks"

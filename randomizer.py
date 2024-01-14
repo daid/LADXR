@@ -61,7 +61,7 @@ class Randomizer:
 
         if settings.multiworld:
             item_placer = MultiworldItemPlacer(self.__logic, settings.forwardfactor if settings.forwardfactor > 0.0 else 0.5, settings.accessibility, settings.multiworld)
-        elif settings.dungeon_items in {'', 'localkeys'} or settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
+        elif settings.dungeon_items in {'', 'localkeys', 'nightmarekeys'} or settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
             item_placer = RandomItemPlacer(self.__logic, settings.accessibility)

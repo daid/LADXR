@@ -125,6 +125,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Gift], You get a random gift of any item, and the boomerang is shuffled."""),
             Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
                                                                           ('smallkeys', 's', 'Small keys'),
+                                                                          ('nightmarekeys', 'n', 'Nightmare keys'),
                                                                           ('localkeys', 'L', 'Map/Compass/Beaks'),
                                                                           ('localnightmarekey', 'N', 'MCB + SmallKeys'),
                                                                           ('keysanity', 'K', 'Keysanity'),
