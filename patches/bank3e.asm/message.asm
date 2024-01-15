@@ -143,7 +143,7 @@ ItemNamePointers:
     dw ItemNameZol ; 0x54
     dw ItemNameZol ; 0x55
     dw ItemNameZol ; 0x56
-    dw ItemNameNone ; 0x57
+    dw ItemNameHammer ; 0x57
     dw ItemNameNone ; 0x58
     dw ItemNameNone ; 0x59
     dw ItemNameNone ; 0x5a
@@ -298,6 +298,8 @@ ItemNameMessage:
     db m"Got ... nothing?", $ff
 ItemNameZol:
     db m"LOL, ZOL!", $ff
+ItemNameHammer:
+    db m"Got a HAMMER!", $ff
 ItemNameKey1:
     db m"Got a {KEY1}", $ff
 ItemNameKey2:

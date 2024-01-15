@@ -2,8 +2,25 @@
 
 var worker;
 var spoilerContent;
+var romArray;
+var storedRomArray;
 
 function ID(s) { return document.getElementById(s); }
+
+function getShareLink(data) {
+    var seedProvided = !ID("seed").value == "";
+    if(!seedProvided)
+        ID("seed").value = data.seed;
+    var hash = '#' + generateSettingsString(function(s) { return !s.aesthetic; });
+    if(!seedProvided)
+        ID("seed").value = "";
+    var l = document.location;
+    return l.origin + l.pathname + l.search + hash;
+}
+
+function getRomArray() {
+    return romArray;
+}
 
 async function seedComplete(data) {
     ID("generatingdialog").checked = false;
@@ -18,15 +35,7 @@ async function seedComplete(data) {
         if (ID("seedSpan"))
             ID("seedSpan").innerText = data.seed;
         if (ID("shareseed")) {
-            if (ID("seed").value != "") {
-                ID("shareseed").value = document.location;
-            } else {
-                ID("seed").value = data.seed;
-                updateSettingsString();
-                ID("shareseed").value = document.location;
-                ID("seed").value = "";
-                updateSettingsString();
-            }
+            ID("shareseed").value = getShareLink(data);
         }
 
         spoilerContent = data.spoiler
@@ -105,9 +114,16 @@ function updateGfxModImage() {
     }
 }
 
-function updateSettingsString() {
+function updateSettingsString(filter_function) {
+    var sss = generateSettingsString(filter_function);
+    document.location.hash = sss;
+    return sss;
+}
+
+function generateSettingsString(filter_function) {
     var sss = "";
     for(var s of options) {
+        if (filter_function && typeof filter_function === 'function' && !filter_function(s)) continue;
         var e = ID(s.key);
         if (!e || s.short_key === undefined) continue;
         if (typeof(s.default) == 'boolean') {
@@ -119,8 +135,12 @@ function updateSettingsString() {
         } else if (s.default != e.value) {
             sss += s.short_key + e.value + ">";
         }
+        if(s.key == 'seed' || (s.default == e.value || (s.default && e.value=='true') || (!s.default && e.value=='false'))) {
+            e.style['font-weight'] = 'normal'
+        } else {
+            e.style['font-weight'] = 'bold'
+        }
     }
-    document.location.hash = sss;
     return sss;
 }
 
@@ -176,7 +196,7 @@ function buildUI(filter_function) {
             last_cat = s.category;
         }
         html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
-        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description}">`;
+        html += `<div class="inputcontainer tooltip bottom" aria-label="${s.description.trim()}">`;
         html += `<label for='${s.key}'>${s.label}:</label>`;
         var opts = s.options
         if (typeof(s.default) == 'boolean') {
@@ -215,15 +235,50 @@ function buildUI(filter_function) {
     }
     updateGfxModImage();
     updateSettingsString();
-    updateForm();
+    checkStoredRom();
+    if (!storedRomArray) updateForm();
 
     ID("rom").onchange = updateForm
 
     ID("submitbutton").onclick = startRomGeneration;
 }
 
+function checkStoredRom()
+{
+    try
+    {
+        var storedRom = localStorage.getItem("ladx_rom");
+        if (storedRom)
+        {
+            var bin = atob(storedRom);
+            var array = new Uint8Array(bin.length);
+            for (var k = 0; k < bin.length; k++)
+            {
+                array[k] = bin.charCodeAt(k);
+            }
+            if (getRomChecksum(array) == 89122269)
+            {
+                romArray = array;
+                storedRomArray = array;
+                setValidRom(true, "ROM has been loaded");
+            }
+            else
+            {
+                localStorage.removeItem("ladx_rom");
+            }
+        }
+    }
+    catch(e)
+    {
+        console.log("Error while loading stored ROM:")
+        console.log(e);
+    }
+}
+
 function updateForm()
 {
+    romArray = storedRomArray;
+
     var rom = ID("rom");
 
     if (rom.files.length < 1)
@@ -242,8 +297,7 @@ function updateForm()
     {
         rom.files[0].arrayBuffer().then(function(buffer) {
             var a = new Uint8Array(buffer);
-            var checksum = 0;
-            for(var b of a) { checksum += b; }
+            var checksum = getRomChecksum(a);
             console.log("Checksum: " + rom.files[0].name + ": " + checksum);
             if (checksum != 89122269)
             {
@@ -262,7 +316,19 @@ function updateForm()
             }
             else
             {
+                romArray = a;
                 setValidRom(true);
+                try
+                {
+                    var s = "";
+                    for(var b of a) { s += String.fromCharCode(b); }
+                    localStorage.setItem("ladx_rom", btoa(s));
+                }
+                catch(e)
+                {
+                    console.log("Error while storing ROM:")
+                    console.log(e);
+                }
             }
         });
     }
@@ -270,7 +336,7 @@ function updateForm()
 
 function setValidRom(valid, msg)
 {
-    ID("submitbutton").disabled = !valid;
+    ID("submitbutton").disabled = !valid && !storedRomArray;
     if (valid)
         ID("romlabel").classList.remove("selectromwarning");
     else
@@ -281,13 +347,19 @@ function setValidRom(valid, msg)
         ID("romlabel").innerHTML = "Select input ROM";
 }
 
+function getRomChecksum(array)
+{
+    var checksum = 0;
+    for(var b of array) { checksum += b; }
+    return checksum;
+}
+
 async function startRomGeneration()
 {
     ID("generatingdialog").checked = true;
     randomGenerationString();
-    var buffer = new Uint8Array(await document.getElementById("rom").files[0].arrayBuffer());
     var args = ["--short", updateSettingsString()];
-    var data = {"input.gbc": buffer, "args": args, "id": 0};
+    var data = {"input.gbc": romArray, "args": args, "id": 0};
     var e = ID("spoilerformat");
     if (e && e.value != 'none') {
         args.push("--spoilerformat");

@@ -163,7 +163,7 @@ GiveItemFromChest:
     dw StartZolDrop ; $54 ; Seashell disguise
     dw StartZolDrop ; $55 ; Medicine disguise
     dw StartZolDrop ; $56 ; Bomb disguise
-    dw NoItem ; $57
+    dw AddHammer ; $57
     dw NoItem ; $58
     dw NoItem ; $59
     dw NoItem ; $5A
@@ -419,6 +419,11 @@ ChestWithCurrentDungeonItem:
 
 AddToadstool:
     ld   d, $0E
+    call $3E6B ; Give Inventory
+    ret
+
+AddHammer:
+    ld   d, $10
     call $3E6B ; Give Inventory
     ret
 
@@ -871,6 +876,7 @@ ItemSpriteTable:
     db $9E, $14 ; $54 ; Seashell disguise
     db $A0, $14 ; $55 ; Medicine disguise
     db $80, $15 ; $56 ; Bomb disguise
+    db $04, $4C       ; Hammer
 
 LargeItemSpriteTable:
     db $AC, $02, $AC, $22 ; heart piece
@@ -918,7 +924,7 @@ ItemMessageTable:
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     ; $40
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
-    db $0F, $C9, $C9, $C9, $C9, $C9, $C9, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    db $0F, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80

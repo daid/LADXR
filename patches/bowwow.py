@@ -2,7 +2,7 @@ from assembler import ASM
 from roomEditor import RoomEditor
 
 
-def fixBowwow(rom, everywhere=False):
+def fixBowwow(rom):
     ### BowWow patches
     rom.patch(0x03, 0x1E0E, ASM("ld [$DB56], a"), "", fill_nop=True)  # Do not mark BowWow as kidnapped after we complete dungeon 1.
     rom.patch(0x15, 0x06B6, ASM("ld a, [$DB56]\ncp $80"), ASM("xor a"), fill_nop=True)  # always load the moblin boss
@@ -74,36 +74,16 @@ def fixBowwow(rom, everywhere=False):
     rom.patch(0x05, 0x0485, ASM("ld a, [$D151]"), ASM("ld a, [wBowwowChain + $18]"))
     rom.patch(0x05, 0x04A4, ASM("ld a, [$D150]"), ASM("ld a, [wBowwowChain + $17]"))
 
-    # Patch the bowwow create code to call our custom check of we are in swamp function.
-    if everywhere:
-        # Load followers in dungeons, caves, etc
-        rom.patch(0x01, 0x1FC1, ASM("ret z"), "", fill_nop=True)
-        rom.patch(0x01, 0x1FC4, ASM("ret z"), "", fill_nop=True)
-        rom.patch(0x01, 0x1FC7, ASM("ret z"), "", fill_nop=True)
-        rom.patch(0x01, 0x1FCA, ASM("ret c"), "", fill_nop=True)  # dungeon
-        # rom.patch(0x01, 0x1FBC, ASM("ret nz"), "", fill_nop=True)  # sidescroller: TOFIX this breaks fishing minigame reward
-    else:
-        # Patch the bowwow create code to call our custom check of we are in swamp function.
-        rom.patch(0x01, 0x211F, ASM("ldh a, [$FFF6]\ncp $A7\nret z\nld a, [$DB56]\ncp $01\njr nz, $36"), ASM("""
-            ld a, $07
-            rst 8
-            ld  a, e
-            and a
-            ret z
-        """), fill_nop=True)
-        # Patch bowwow to not stay around when we move from map to map
-        rom.patch(0x05, 0x0049, 0x0054, ASM("""
-            cp   [hl]
-            jr   z, Continue
-            ld   hl, $C280
-            add  hl, bc
-            ld   [hl], b
-            ret
+    # Patch bowwow to not stay around when we move from map to map
+    rom.patch(0x05, 0x0049, 0x0054, ASM("""
+        cp   [hl]
+        jr   z, Continue
+        ld   hl, $C280
+        add  hl, bc
+        ld   [hl], b
+        ret
 Continue:
         """), fill_nop=True)
-
-    # Patch marin follower code to also call bowwow follower after it is done
-    rom.patch(0x01, 0x2103, ASM("jr z, $12\nldh a, [$FF98]"), ASM("jp $611F"), fill_nop=True)
 
     # Patch madam meow meow to not take bowwow
     rom.patch(0x06, 0x1BD7, ASM("ld a, [$DB66]\nand $02"), ASM("ld a, $00\nand $02"), fill_nop=True)

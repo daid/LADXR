@@ -4,7 +4,7 @@ from locations.all import *
 
 
 class Dungeon8:
-    def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=True):
+    def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=0x000):
         entrance = Location(8)
         entrance_up = Location(8).connect(entrance, FEATHER)
         entrance_left = Location(8).connect(entrance, r.attack_hookshot_no_bomb) # past hinox
@@ -46,8 +46,8 @@ class Dungeon8:
         up_left.connect(entrance_left, None, one_way=True) # path from up_left to entrance_left by dropping of the ledge in torch room 
         Location(8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
         up_left.connect(upper_center, None, one_way=True) # use the outside path of the dungeon to get to the right side
-        if back_entrance_heartpiece:
-            Location().add(HeartPiece(0x000)).connect(up_left, None)  # Outside the dungeon on the platform
+        if back_entrance_heartpiece is not None:
+            Location().add(HeartPiece(back_entrance_heartpiece)).connect(up_left, None)  # Outside the dungeon on the platform
         Location(8).add(DroppedKey(0x241)).connect(up_left, BOW) # lava statue
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
@@ -68,12 +68,13 @@ class Dungeon8:
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
             vire_drop_key.connect(entrance_left, BOMB) # use bombs to kill rolling bones and vire
             bottom_right.connect(slime_chest, r.tight_jump) # diagonal jump over the pits to reach rolling rock / zamboni
-            gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD, MAGIC_POWDER)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
+            gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
             slime_chest.connect(entrance, AND(r.attack_hookshot_powder, POWER_BRACELET))  # kill vire with powder or bombs 
         
         if options.logic == 'glitched' or options.logic == 'hell':
             sparks_chest.connect(entrance_left, r.pit_buffer_itemless) # 1 pit buffer across the pit. 
+            entrance_up.connect(bottomright_pot_chest, r.super_jump_boots, one_way = True) # underground section with fire balls jumping up out of lava. Use boots superjump off left wall to jump over the pot blocking the way
             lower_center.connect(entrance_up, r.sideways_block_push) # sideways block push in peahat room to get past keyblock
             miniboss_entrance.connect(lower_center, AND(BOMB, r.bookshot)) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs
             miniboss_entrance.connect(lower_center, AND(BOMB, r.super_jump_feather, FOUND(KEY8, 7))) # same as above, but without clipping past the keyblock

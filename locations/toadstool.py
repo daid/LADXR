@@ -3,8 +3,8 @@ from .items import *
 
 
 class Toadstool(DroppedKey):
-    def __init__(self):
-        super().__init__(0x050)
+    def __init__(self, room=0x050):
+        super().__init__(room)
 
     def configure(self, options):
         if not options.witch:

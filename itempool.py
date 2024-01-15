@@ -209,6 +209,40 @@ class ItemPool:
             self.remove(TRADING_ITEM_NECKLACE)
             self.remove(TRADING_ITEM_SCALE)
             self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
+        elif settings.overworld == "alttp":
+            self.remove(BLUE_TUNIC)
+            self.remove(RED_TUNIC)
+            self.remove(TAIL_KEY)
+            self.remove(SLIME_KEY)
+            self.remove(ANGLER_KEY)
+            self.remove(BIRD_KEY)
+            self.remove(SLIME_KEY)
+            self.remove(FACE_KEY)
+            self.remove(BOWWOW)
+            self.remove(SONG2)
+            self.remove(ROOSTER)
+            self.remove(GOLD_LEAF, 5)
+            self.remove(HEART_PIECE, 8)
+            self.remove("MEDICINE2")
+            self.remove("RAFT")
+            self.remove("ANGLER_KEYHOLE")
+            self.remove(SEASHELL, 4)
+            self.remove(MEDICINE, 3)
+            self.remove(RUPEES_50, 5)
+            self.add(RUPEES_200, 1)
+            self.add(HAMMER)
+            for item_name in {KEY, NIGHTMARE_KEY, MAP, COMPASS, STONE_BEAK}:
+                self.remove(f"{item_name}0", self.get(f"{item_name}0"))
+            self.remove(TRADING_ITEM_BANANAS)
+            self.remove(TRADING_ITEM_STICK)
+            self.remove(TRADING_ITEM_PINEAPPLE)
+            self.remove(TRADING_ITEM_BROOM)
+            self.remove(TRADING_ITEM_FISHING_HOOK)
+            self.remove(TRADING_ITEM_NECKLACE)
+            self.remove(TRADING_ITEM_SCALE)
+            self.remove(TRADING_ITEM_MAGNIFYING_GLASS)
+            if settings.owlstatues == 'dungeon':
+                self.remove(RUPEES_20, 3)  # Remove color dungeon owls
         elif not settings.rooster:
             self.remove(ROOSTER)
             self.add(RUPEES_50)
@@ -281,9 +315,12 @@ class ItemPool:
             max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
             for n in range(3):
                 pick = rnd.choice(major_additions)
-                if pick not in required_items and required_item_count > 0:
+                if pick not in required_items or pick in {SWORD, SHIELD} and required_item_count > 0:
                     self.add(pick)
                     required_item_count -= 1
+                    major_additions.remove(pick)
+                    if not major_additions:
+                        break
             for n in range(required_item_count // 3):
                 pick = rnd.choice(minor_additions)
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):

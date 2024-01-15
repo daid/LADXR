@@ -59,7 +59,7 @@ def readEntrances(rom):
             if warp.room == other_info.target:
                 result[key] = f"{other_key}:inside"
             if warp.room == other_info.room:
-                result[key] = f"{other_key}"
+                result[key] = other_key
 
         re = RoomEditor(rom, info.target)
         warp = re.getWarps()[0]

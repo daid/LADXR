@@ -48,7 +48,7 @@ class Randomizer:
                         continue
                 random.setstate(self.rnd.getstate())
                 self.__logic = logic.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("split", "mixed", "wild", "chaos", "insane") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
+                if settings.entranceshuffle not in ("split", "mixed", "wild", "chaos", "insane", "madness") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
                     break
 
         if self.plan:
@@ -347,7 +347,7 @@ class ForwardItemPlacer(ItemPlacer):
                 for rup in [RUPEES_20, RUPEES_50, RUPEES_100, RUPEES_200, RUPEES_500]:
                     if rup in self._item_pool:
                         req_items.append(rup)
-        else:
+        if not req_items:
             req_items = [item for item in sorted(self._item_pool.keys())]
 
         if self.__verbose:
