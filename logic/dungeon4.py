@@ -31,7 +31,7 @@ class Dungeon4:
         left_water_area.add(DungeonChest(0x168))  # key chest near the puzzle
         miniboss = Location(4).connect(before_miniboss, AND(KEY4, FOUND(KEY4, 5), r.miniboss_requirements[world_setup.miniboss_mapping[3]])) 
         terrace_zols_chest = Location(4).connect(before_miniboss, FLIPPERS) # flippers to move around miniboss through 5 tile room
-        miniboss = Location(4).connect(terrace_zols_chest, POWER_BRACELET, one_way=True) # reach flippers chest through the miniboss room
+        miniboss.connect(terrace_zols_chest, POWER_BRACELET, one_way=True) # reach flippers chest through the miniboss room
         terrace_zols_chest.add(DungeonChest(0x160))  # flippers chest
         terrace_zols_chest.connect(left_water_area, r.attack_hookshot_powder, one_way=True) # can move from flippers chest south to push the block to left area
         
@@ -50,7 +50,7 @@ class Dungeon4:
             after_double_lock.connect(entrance, r.tight_jump) # jump across the corners
             dungeon4_puddle_before_crossroads.connect(after_double_lock, r.tight_jump) # With a tight jump feather is enough to cross the puddle without flippers
             center_puddle_chest.connect(before_miniboss, r.tight_jump) # With a tight jump feather is enough to cross the puddle without flippers
-            miniboss = Location(4).connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
+            miniboss.connect(terrace_zols_chest, None, one_way=True) # reach flippers chest through the miniboss room without pulling the lever
             to_the_nightmare_key.connect(left_water_area, r.tight_jump) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
             before_boss.connect(left_water_area, r.tight_jump) # jump to the bottom right corner of boss door room
             
