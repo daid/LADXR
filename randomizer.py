@@ -64,7 +64,7 @@ class Randomizer:
         elif settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
-            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_items, settings.accessibility)
+            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_items, settings.owlstatues, settings.accessibility)
         for item, count in self.readItemPool(settings, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
@@ -229,9 +229,10 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
-    def __init__(self, logic: logic.Logic, dungeon_item_setting: str, accessibility: str) -> None:
+    def __init__(self, logic: logic.Logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
         super().__init__(logic, accessibility)
         self.dungeon_item_setting = dungeon_item_setting
+        self.owl_statue_setting = owl_statue_setting
 
     def run(self, rnd: random.Random) -> None:
         assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
@@ -239,6 +240,8 @@ class RandomItemPlacer(ItemPlacer):
 
         # Place keys that are restricted to their dungeon first to avoid running out of valid spots
         dungeon_keys = []
+        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_item_setting in {'', 'keysy', 'smallkeys', 'nightmarekeys'}:
+            dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("STONE_BEAK")]
         if self.dungeon_item_setting in {'', 'localkeys', 'nightmarekeys'}:
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("KEY")]
         if self.dungeon_item_setting in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
