@@ -168,7 +168,9 @@ class World:
         prairie_island_seashell = Location().add(Seashell(0x0A6)).connect(ukuku_prairie, AND(FLIPPERS, r.bush))  # next to lv3
         seashell_mansion_bush = Location().add(Seashell(0x08B)).connect(ukuku_prairie, r.bush)
         Location().add(Seashell(0x0A4)).connect(ukuku_prairie, PEGASUS_BOOTS)  # smash into tree next to phonehouse
-        self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER)) # left of the castle, 5 holes turned into 3
+        self._addEntrance("castle_jump_cave", ukuku_prairie, Location().add(Chest(0x1FD)), ROOSTER)
+        if not options.rooster:
+            self._addEntranceRequirement("castle_jump_cave", AND(FEATHER, PEGASUS_BOOTS)) # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(ukuku_prairie, POWER_BRACELET)  # under the rock
 
         left_bay_area = Location()
@@ -384,7 +386,9 @@ class World:
         self._addEntrance("rooster_house", outside_rooster_house, None, None)
         bird_cave = Location()
         bird_key = Location().add(BirdKey())
-        bird_cave.connect(bird_key, OR(AND(FEATHER, COUNT(POWER_BRACELET, 2)), ROOSTER))
+        bird_cave.connect(bird_key, ROOSTER)
+        if not options.rooster:
+            bird_cave.connect(bird_key, AND(FEATHER, COUNT(POWER_BRACELET, 2))) # elephant statue added
         if options.logic != "casual":
             bird_cave.connect(lower_right_taltal, None, one_way=True)  # Drop in a hole at bird cave
         self._addEntrance("bird_cave", outside_rooster_house, bird_cave, None)
@@ -486,7 +490,8 @@ class World:
             
             d6_connector_left.connect(d6_connector_right, AND(OR(FLIPPERS, PEGASUS_BOOTS), FEATHER))  # jump the gap in underground passage to d6 left side to skip hookshot
             obstacle_cave_exit.connect(obstacle_cave_inside, AND(FEATHER, r.hookshot_over_pit), one_way=True) # one way from right exit to middle, jump past the obstacle, and use hookshot to pull past the double obstacle
-            bird_key.connect(bird_cave, COUNT(POWER_BRACELET, 2))  # corner walk past the one pit on the left side to get to the elephant statue
+            if not options.rooster:
+                bird_key.connect(bird_cave, COUNT(POWER_BRACELET, 2))  # corner walk past the one pit on the left side to get to the elephant statue
             fire_cave_bottom.connect(fire_cave_top, AND(r.damage_boost, PEGASUS_BOOTS), one_way=True) # flame skip
 
         if options.logic == 'glitched' or options.logic == 'hell':

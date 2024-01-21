@@ -155,7 +155,7 @@ var options =
   "category": "Items",
   "short_key": "R",
   "label": "Add the rooster",
-  "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. Any rooster spot is accessible without rooster by other means.",
+  "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.",
   "multiworld": true,
   "aesthetic": false,
   "default": true

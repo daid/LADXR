@@ -117,7 +117,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
             Setting('witch', 'Items', 'W', 'Randomize item given by the witch', default=True,
                 description='Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool'),
             Setting('rooster', 'Items', 'R', 'Add the rooster', default=True,
-                description='Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. Any rooster spot is accessible without rooster by other means.'),
+                description='Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.'),
             Setting('boomerang', 'Items', 'Z', 'Boomerang trade', options=[('default', 'd', 'Normal'), ('trade', 't', 'Trade'), ('gift', 'g', 'Gift')], default='gift',
                 description="""
 [Normal], requires magnifier to get the boomerang.
