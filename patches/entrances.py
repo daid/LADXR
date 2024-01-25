@@ -66,6 +66,9 @@ def readEntrances(rom):
         for other_key, other_info in ENTRANCE_INFO.items():
             if warp.room == other_info.target:
                 result[f"{key}:inside"] = f"{other_key}:inside"
-            if warp.room == other_info.room:
+            if (warp.room == other_info.room
+                and (other_info.x == None
+                     or (other_info.x == warp.target_x
+                         and other_info.y == warp.target_y))):
                 result[f"{key}:inside"] = other_key
     return result
