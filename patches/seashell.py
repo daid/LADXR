@@ -62,3 +62,45 @@ def upgradeMansion(rom):
         ld   a, [$DAE9]
         and  $10
     """))
+
+    # Do not reset seashell counter
+    rom.patch(0x19, 0x3700, ASM("ld [wSeashellsCount], a"), "", fill_nop=True)
+    # Prevent missing out on a reward or getting the last reward multiple times
+    rom.patch(0x19, 0x31CA, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
+    rom.patch(0x19, 0x3215, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
+    rom.patch(0x19, 0x32A2, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
+    rom.patch(0x19, 0x38B3, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
+    # This is using free space in bank 0x19 because we need to return a value in A when called
+    rom.patch(0x19, 0x3F30, 0x3F60, ASM("""
+    ; Maybe pretend like we have fewer seashells to prevent skipping a reward,
+    ; or to prevent giving the final reward multiple times
+        ld   a, [$DAE9] ; event flags for seashell mansion
+        ld   d, a
+        ld   a, [wSeashellsCount]
+        bit  4, d ; got 20 shells prize
+        jr   nz, limit0
+        bit  5, d ; got 5 shells prize
+        jr   z, limit5
+        bit  6, d ; got 10 shells prize
+        ret  nz
+    limit10:
+        cp   $10
+        ret  c
+        ld   a, $10
+        ret
+    limit5:
+        cp   $05
+        ret  c
+        ld   a, $05
+        ret
+    limit0:
+        xor  a
+        ret
+    """), fill_nop=True)
+    # Give item after 5 or 10 seashells
+    rom.patch(0x19, 0x38C0, 0x38CB, ASM("""
+        ld   b, a
+        ld   a, $11 ; HandleSeashellMansionItem
+        rst  8
+        ret
+    """), fill_nop=True)

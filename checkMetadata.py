@@ -204,6 +204,8 @@ checkMetadataTable = {
     "0x0A6": CheckMetadata("Outside D3 Island Bush", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/00A6.GIF
     "0x08B": CheckMetadata("East of Seashell Mansion Bush", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/008B.GIF
     "0x0A4": CheckMetadata("East of Mabe Tree Bonk", "Ukuku Prairie"), #http://artemis251.fobby.net/zelda/maps/overworld/00A4.GIF
+    "0x2E9-0": CheckMetadata("Seashell Mansion 5 Bonus", "Ukuku Prairie"),
+    "0x2E9-1": CheckMetadata("Seashell Mansion 10 Bonus", "Ukuku Prairie"),
     "0x2E9": CheckMetadata("Seashell Mansion", "Ukuku Prairie"),
     "0x1FD": CheckMetadata("Boots Pit", "Kanalet Castle"), #http://artemis251.fobby.net/zelda/maps/underworld1/01FD.GIF
     "0x0B9": CheckMetadata("Rock Seashell", "Donut Plains"), #http://artemis251.fobby.net/zelda/maps/overworld/00B9.GIF
