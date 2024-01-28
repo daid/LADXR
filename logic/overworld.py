@@ -901,7 +901,7 @@ class ALttP:
 
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", mountain_top_right, animal_village_bombcave, BOMB)
-        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
+        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, OR(HOOKSHOT, BOOMERANG)), ROOSTER))  # cave in the upper right of animal town
         self._addEntrance("d3", mountain_top_right, None, AND(COUNT(POWER_BRACELET, 2), HAMMER))
 
         left_right_connector_cave_entrance = Location()
