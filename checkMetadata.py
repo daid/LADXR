@@ -252,6 +252,7 @@ checkMetadataTable = {
     "0x2FD": CheckMetadata("Manbo's Mambo", "Tal Tal Heights"),
     "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
     "0x1E4": CheckMetadata("Rooster", "Mabe Village"),
+    "0x025": CheckMetadata("Outside Five Chest Game", "Death Mountain"),
 
     "0x2A0-Trade": CheckMetadata("Trendy Game", "Mabe Village"),
     "0x2A6-Trade": CheckMetadata("Papahl's Wife", "Mabe Village"),
