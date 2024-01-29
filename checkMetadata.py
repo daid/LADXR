@@ -261,7 +261,7 @@ checkMetadataTable = {
     "0x0D4": CheckMetadata("Outside Flame Cave", "Desert"),
     "0x011": CheckMetadata("Toadstool", "Lost Woods"),
     "0x0BF": CheckMetadata("Peg Rock", "Eastern Palace"),
-    "0x05D": CheckMetadata("Witch Bush", "Eastern Hyrule"),
+    "0x0E0": CheckMetadata("Turtle Rock", "Desert Shelf"),
 
     "0x2A0-Trade": CheckMetadata("Trendy Game", "Mabe Village"),
     "0x2A6-Trade": CheckMetadata("Papahl's Wife", "Mabe Village"),
