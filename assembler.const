@@ -6,6 +6,10 @@
 3CE6:RenderActiveEntitySpritesRect
 3B86:SpawnNewEntity_trampoline
 
+7FA3:ReturnIfNonInteractive_04
+
+7A3A:ReturnIfNonInteractive_05
+
 7CF0:PushLinkOutOfEntity_07
 7EA4:ClearEntityStatus_07
 
@@ -13,6 +17,7 @@
 7D36:PushLinkOutOfEntity_18
 
 C19B:wLinkAttackStepAnimationCountdown
+C1BD:wDidBossIntro
 C200:wEntitiesPosXTable
 C210:wEntitiesPosYTable
 C280:wEntitiesStatusTable
