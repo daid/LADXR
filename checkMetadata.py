@@ -253,6 +253,16 @@ checkMetadataTable = {
     "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
     "0x1E4": CheckMetadata("Rooster", "Mabe Village"),
 
+    #LttP overworld checks
+    "0x025": CheckMetadata("Outside Five Chest Game", "Death Mountain"),
+    "0x04A": CheckMetadata("Bush", "Graveyard"),
+    "0x0C7": CheckMetadata("Peg Rock", "Swamp"),
+    "0x0B0": CheckMetadata("Digging Game", "Kakariko Village"),
+    "0x0D4": CheckMetadata("Outside Flame Cave", "Desert"),
+    "0x011": CheckMetadata("Toadstool", "Lost Woods"),
+    "0x0BF": CheckMetadata("Peg Rock", "Eastern Palace"),
+    "0x0E0": CheckMetadata("Turtle Rock", "Desert Shelf"),
+
     "0x2A0-Trade": CheckMetadata("Trendy Game", "Mabe Village"),
     "0x2A6-Trade": CheckMetadata("Papahl's Wife", "Mabe Village"),
     "0x2B2-Trade": CheckMetadata("YipYip", "Mabe Village"),
