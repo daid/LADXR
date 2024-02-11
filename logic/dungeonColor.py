@@ -31,9 +31,11 @@ class DungeonColor:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             room2.connect(entrance, r.throw_pot) # throw pots at enemies
+            room2_weapon.connect(room2, r.attack_hookshot_no_bomb) # knock the karakoro into the pit without picking them up. 
             pre_boss.connect(room6, r.tight_jump) # before the boss, jump past raised blocks without boots
 
         if options.logic == 'hell':
+            room2_weapon.connect(room2, r.attack_hookshot) # also have a bomb as option to knock the karakoro into the pit without bracelet 
             room2_weapon.connect(room2, r.shield_bump) # shield bump karakoro into the holes
             room4karakoro.connect(room4, r.shield_bump) # shield bump karakoro into the holes
             
