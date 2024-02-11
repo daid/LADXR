@@ -6,7 +6,7 @@ from locations.all import *
 class Dungeon6:
     def __init__(self, options, world_setup, r, *, raft_game_chest=True):
         entrance = Location(6)
-        Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(BOMB, BOW, MAGIC_ROD, COUNT(POWER_BRACELET, 2))) # 50 rupees
+        Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # 50 rupees
         elephants_heart_chest = Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6)
@@ -15,9 +15,9 @@ class Dungeon6:
         bracelet_chest = Location(6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER))
 
         # left side
-        Location(6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD))) # 3 wizrobes raised blocks dont need to hit the switch
+        Location(6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, r.attack_wizrobe)) # 3 wizrobes raised blocks dont need to hit the switch
         left_side = Location(6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOOMERANG)))
-        Location(6).add(DroppedKey(0x1B4)).connect(left_side, OR(BOMB, BOW, MAGIC_ROD)) # 2 wizrobe drop key
+        Location(6).add(DroppedKey(0x1B4)).connect(left_side, OR(r.attack_wizrobe, BOW)) # 2 wizrobe drop key, allow bow as only 2
         top_left = Location(6).add(DungeonChest(0x1B0)).connect(left_side, COUNT(POWER_BRACELET, 2)) # top left chest horseheads
         if raft_game_chest:
             Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
@@ -25,18 +25,18 @@ class Dungeon6:
         # right side
         to_miniboss = Location(6).connect(entrance, KEY6)
         miniboss = Location(6).connect(to_miniboss, AND(BOMB, r.miniboss_requirements[world_setup.miniboss_mapping[5]]))
-        lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(OR(BOMB, BOW, MAGIC_ROD), COUNT(POWER_BRACELET, 2))) # waterway key
+        lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # waterway key
         medicine_chest = Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) # ledge chest medicine
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             lower_right_owl = Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), KEY6)) # top right chest horseheads (assumes weapon from killing wizrobes or bomb from blowing up wall, and having a way to get past the mini thwomps)
+        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.attack_pols_voice, KEY6)) # top right chest horseheads (assumesand having a way to get past the mini thwomps)
         boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(KEY6, HOOKSHOT))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, r.boss_requirements[world_setup.boss_mapping[5]])) # hidden assumption to kill wizrobe
+        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, OR(r.attack_hookshot, SHIELD), r.boss_requirements[world_setup.boss_mapping[5]]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
