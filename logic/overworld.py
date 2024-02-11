@@ -486,6 +486,7 @@ class World:
             crow_gold_leaf.connect(castle_courtyard, POWER_BRACELET) # bird on tree at left side kanalet, can use both rocks to kill the crow removing the kill requirement
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.boots_jump) # jump across horizontal 4 gap to heart piece
+            animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, FEATHER, BOOMERANG))  # use jump + boomerang to grab the item from below the ledge
             desert_lanmola.connect(desert, BOMB) # use bombs to kill lanmola
             
             d6_connector_left.connect(d6_connector_right, AND(OR(FLIPPERS, PEGASUS_BOOTS), FEATHER))  # jump the gap in underground passage to d6 left side to skip hookshot
@@ -901,7 +902,7 @@ class ALttP:
 
         animal_village_bombcave = Location()
         self._addEntrance("animal_cave", mountain_top_right, animal_village_bombcave, BOMB)
-        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, OR(HOOKSHOT, BOOMERANG)), ROOSTER))  # cave in the upper right of animal town
+        animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
         self._addEntrance("d3", mountain_top_right, None, AND(COUNT(POWER_BRACELET, 2), HAMMER))
 
         left_right_connector_cave_entrance = Location()
