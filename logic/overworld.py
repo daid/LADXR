@@ -262,9 +262,7 @@ class World:
         Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
         castle_top_outside = Location()
         castle_top_inside = Location()
-        outside_castle_main_entrance = Location()
-        castle_frontdoor.connect(outside_castle_main_entrance, r.bush)
-        self._addEntrance("castle_main_entrance", outside_castle_main_entrance, castle_inside, None)
+        self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, None)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
         Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
