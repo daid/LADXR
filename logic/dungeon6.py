@@ -31,8 +31,8 @@ class Dungeon6:
             lower_right_owl = Location(6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.attack_pols_voice, KEY6)) # top right chest horseheads
-        boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(KEY6, HOOKSHOT))
+        center_2_and_upper_right_side = Location(6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.attack_pols_voice, KEY6, FOUND(KEY6, 2)) # top right chest horseheads
+        boss_key = Location(6).add(DungeonChest(0x1B6)).connect(center_2_and_upper_right_side, AND(HOOKSHOT, KEY6, FOUND(KEY6, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
@@ -41,7 +41,7 @@ class Dungeon6:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
             center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2), r.boots_dash_2d)) # use a boots dash to get over the platforms
-            center_2_and_upper_right_side.connect(center_1, AND(COUNT(POWER_BRACELET, 2), r.damage_boost, r.attack_pols_voice, KEY6)) # damage_boost past the mini_thwomps
+            center_2_and_upper_right_side.connect(center_1, AND(COUNT(POWER_BRACELET, 2), r.damage_boost, r.attack_pols_voice, FOUND(KEY6, 3))) # damage_boost past the mini_thwomps
             
         if options.logic == 'glitched' or options.logic == 'hell':
             elephants_heart_chest.connect(entrance, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
