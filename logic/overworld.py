@@ -306,8 +306,8 @@ class World:
         Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]])
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
-	outside_armos_cave = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
-	outside_armos_temple = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_cave = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_temple = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
         self._addEntrance("armos_maze_cave", outside_armos_cave, Location().add(Chest(0x2FC)), None)
         self._addEntrance("armos_temple", outside_armos_temple, armos_temple, None)
 
