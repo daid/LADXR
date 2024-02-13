@@ -54,6 +54,7 @@ import patches.multiworld
 import patches.tradeSequence
 import patches.alttp
 import hints
+import locations.keyLocation
 
 
 # Function to generate a final rom, this patches the rom with all required patches
@@ -125,7 +126,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
+    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
         patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
     if settings.witch:
@@ -282,7 +283,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.enemies.randomizeEnemies(rom, seed)
 
     if not args.romdebugmode:
-        patches.core.addFrameCounter(rom, len(item_list))
+        patches.core.addFrameCounter(rom, len([spot for spot in item_list if type(spot) != locations.keyLocation.KeyLocation]))
 
     patches.core.warpHome(rom, settings.overworld == "dungeonchain" or settings.entranceshuffle in ("chaos", "insane", "madness"))  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), settings)

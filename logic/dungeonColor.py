@@ -10,7 +10,7 @@ class DungeonColor:
         room2.add(DungeonChest(0x314))  # key
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(0).add(OwlStatue(0x308), OwlStatue(0x30F)).connect(room2, STONE_BEAK0)
-        room2_weapon = Location(0).connect(room2, r.attack_hookshot)
+        room2_weapon = Location(0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET))
         room2_weapon.add(DungeonChest(0x311))  # stone beak
         room2_lights = Location(0).connect(room2, OR(r.attack_hookshot, SHIELD))
         room2_lights.add(DungeonChest(0x30F))  # compass chest
@@ -20,7 +20,7 @@ class DungeonColor:
         room3 = Location(0).connect(room2, AND(KEY0, FOUND(KEY0, 2), r.miniboss_requirements[world_setup.miniboss_mapping["c1"]])) # After the miniboss
         room4 = Location(0).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
         room4.add(DungeonChest(0x306))  # map
-        room4karakoro = Location(0).add(DroppedKey(0x307)).connect(room4, r.attack_hookshot)  # require item to knock Karakoro enemies into shell
+        room4karakoro = Location(0).add(DroppedKey(0x307)).connect(room4, AND(r.attack_hookshot, POWER_BRACELET))  # require item to knock Karakoro enemies into shell
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0)
         room5 = Location(0).connect(room4, OR(r.attack_hookshot, SHIELD)) # lights room
@@ -31,9 +31,11 @@ class DungeonColor:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             room2.connect(entrance, r.throw_pot) # throw pots at enemies
+            room2_weapon.connect(room2, r.attack_hookshot_no_bomb) # knock the karakoro into the pit without picking them up. 
             pre_boss.connect(room6, r.tight_jump) # before the boss, jump past raised blocks without boots
 
         if options.logic == 'hell':
+            room2_weapon.connect(room2, r.attack_hookshot) # also have a bomb as option to knock the karakoro into the pit without bracelet 
             room2_weapon.connect(room2, r.shield_bump) # shield bump karakoro into the holes
             room4karakoro.connect(room4, r.shield_bump) # shield bump karakoro into the holes
             
