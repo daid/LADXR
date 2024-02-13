@@ -50,7 +50,7 @@ class Dungeon6:
             lower_right_side.connect(center_2_and_upper_right_side, r.super_jump, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
             center_1.connect(miniboss, AND(r.bomb_trigger, OR(r.boots_dash_2d, FEATHER))) # bomb trigger the elephant statue after the miniboss
             center_2_and_upper_right_side.connect(center_1, AND(POWER_BRACELET, r.shaq_jump), one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
-            boss_key.connect(lower_right_side, r.super_jump_feather) # superjump from waterway to the left. POWER_BRACELET is implied from lower_right_side
+            boss_key.connect(lower_right_side, AND(POWER_BRACELET, r.super_jump_feather)) # superjump from waterway to the left.
 
         if options.logic == 'hell':
             entrance.connect(left_side, AND(POWER_BRACELET, r.boots_superhop), one_way=True) # can boots superhop off the top right corner in 3 wizrobe raised blocks room
