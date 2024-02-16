@@ -318,8 +318,10 @@ class World:
         Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]])
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
-        self._addEntrance("armos_maze_cave", armos_maze, Location().add(Chest(0x2FC)), None)
-        self._addEntrance("armos_temple", armos_maze, armos_temple, None)
+        outside_armos_cave = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_temple = Location().connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        self._addEntrance("armos_maze_cave", outside_armos_cave, Location().add(Chest(0x2FC)), None)
+        self._addEntrance("armos_temple", outside_armos_temple, armos_temple, None)
 
         armos_fairy_entrance = Location().connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
         self._addEntrance("armos_fairy", armos_fairy_entrance, Location(), BOMB)
@@ -507,7 +509,9 @@ class World:
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.boots_jump) # jump across horizontal 4 gap to heart piece
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, FEATHER, BOOMERANG))  # use jump + boomerang to grab the item from below the ledge
             desert_lanmola.connect(desert, BOMB) # use bombs to kill lanmola
-            
+
+            armos_maze.connect(outside_armos_cave, None) # dodge the armos statues by activating them and running
+            armos_maze.connect(outside_armos_temple, None) # dodge the armos statues by activating them and running
             d6_connector_left.connect(d6_connector_right, AND(OR(FLIPPERS, PEGASUS_BOOTS), FEATHER))  # jump the gap in underground passage to d6 left side to skip hookshot
             obstacle_cave_exit.connect(obstacle_cave_inside, AND(FEATHER, r.hookshot_over_pit), one_way=True) # one way from right exit to middle, jump past the obstacle, and use hookshot to pull past the double obstacle
             if not options.rooster:
