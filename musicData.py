@@ -92,23 +92,31 @@ class MusicData:
         return sc
 
     def _read_channel_block(self, base_addr, channel_type):
-        wave_data = {}
+        block = []
         addr = base_addr
         while self._rb[addr-0x4000] != 0:
             if self._rb[addr-0x4000] == 0x9B: # Loop
                 addr += 1
+                block.append((0x9B, self._rb[addr-0x4000]))
             elif self._rb[addr-0x4000] == 0x9D and channel_type == 3: # Set waveform (channel 3)
                 wave_ptr = self._get_ptr(addr + 1)
-                wave_data[wave_ptr] = self._get_block(wave_ptr, 16)
+                wave_data = self._get_block(wave_ptr, 16)
                 addr += 3
+                block.append((0x9D, self._rb[addr-0x4000], wave_data))
             elif self._rb[addr-0x4000] == 0x9D: # Set envelope duty (channel 1/2)
                 addr += 3
+                block.append((0x9D, self._rb[addr-0x4000-2], self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
             elif self._rb[addr-0x4000] == 0x9E: # Set speed
                 addr += 2
+                block.append((0x9E, self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
             elif self._rb[addr-0x4000] == 0x9F: # Set transpose
                 addr += 1
+                block.append((0x9F, self._rb[addr-0x4000]))
+            else:
+                block.append((self._rb[addr-0x4000],))
             addr += 1
-        return self._get_block(base_addr, addr - base_addr + 1), wave_data
+        self._get_block(base_addr, addr - base_addr + 1)
+        return block
 
     def _alloc(self, size: int) -> int:
         for idx, (addr, bsize) in enumerate(self.__blocks):
@@ -134,22 +142,16 @@ class MusicData:
                 return channel.addr
             assert channel.loop is None or channel.next is None
             channel_data = b''
-            for block, wave_data in channel.blocks:
-                if channel_type == 3 and wave_data:
-                    wave_data = {k: store_block(w) for k, w in wave_data.items()}
-                    idx = 0
-                    while idx < len(block):
-                        if block[idx] == 0x9B: # Loop
-                            idx += 1
-                        elif block[idx] == 0x9D: # Set waveform (channel 3)
-                            block = block[:idx+1] + struct.pack("<H", wave_data[struct.unpack("<H", block[idx+1:idx+3])[0]]) + block[idx+3:]
-                            idx += 3
-                        elif block[idx] == 0x9E: # Set speed
-                            idx += 2
-                        elif block[idx] == 0x9F: # Set transpose
-                            idx += 1
-                        idx += 1
-                addr = store_block(block)
+            for block in channel.blocks:
+                bin_block = bytearray()
+                for op in block:
+                    if op[0] == 0x9D and channel_type == 3:
+                        addr = store_block(op[2])
+                        bin_block += struct.pack("<BHB", 0x9D, addr, op[1])
+                    else:
+                        for c in op:
+                            bin_block.append(c)
+                addr = store_block(bytes(bin_block))
                 channel_data += struct.pack("<H", addr)
             if channel.loop is not None:
                 channel_data += struct.pack('<HH', 0xFFFF, len(channel.blocks) - channel.loop)
