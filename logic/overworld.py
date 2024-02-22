@@ -243,6 +243,7 @@ class World:
         castle_frontdoor = Location().connect(castle_courtyard, r.bush)
         castle_frontdoor.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
         self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, r.pit_bush)
+        self._addEntranceRequirementExit("castle_secret_entrance", None) # leaving doesn't require pit_bush
         self._addEntrance("castle_secret_exit", castle_courtyard, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
