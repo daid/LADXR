@@ -61,10 +61,10 @@ class Randomizer:
 
         if settings.multiworld:
             item_placer = MultiworldItemPlacer(self.__logic, settings.forwardfactor if settings.forwardfactor > 0.0 else 0.5, settings.accessibility, settings.multiworld)
-        elif settings.dungeon_items in {'', 'localkeys'} or settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
+        elif settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
-            item_placer = RandomItemPlacer(self.__logic, settings.accessibility)
+            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_items, settings.owlstatues, settings.accessibility)
         for item, count in self.readItemPool(settings, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
@@ -168,6 +168,12 @@ class ItemPlacer:
         if self._item_pool[item] == 0:
             del self._item_pool[item]
 
+    def getItemListWithMultiplicity(self) -> List[str]:
+        item_list = []
+        for item, count in self._item_pool.items():
+            item_list += [item for _ in range(count)]
+        return item_list
+
     def addSpot(self, spot: locations.itemInfo.ItemInfo) -> None:
         self._spots.append(spot)
 
@@ -223,14 +229,35 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
+    def __init__(self, logic: logic.Logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
+        super().__init__(logic, accessibility)
+        self.dungeon_item_setting = dungeon_item_setting
+        self.owl_statue_setting = owl_statue_setting
+
     def run(self, rnd: random.Random) -> None:
         assert sum(self._item_pool.values()) == len(self._spots), "%d != %d" % (sum(self._item_pool.values()), len(self._spots))
         assert self.logicStillValid(), "Sanity check failed: %s" % (self.logicStillValid(verbose=True))
 
+        # Place keys that are restricted to their dungeon first to avoid running out of valid spots
+        dungeon_keys = []
+        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_item_setting in {'', 'keysy', 'smallkeys', 'nightmarekeys'}:
+            dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("STONE_BEAK")]
+        if self.dungeon_item_setting in {'', 'localkeys', 'nightmarekeys'}:
+            dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("KEY")]
+        if self.dungeon_item_setting in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
+            dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("NIGHTMARE_KEY")]
+        rnd.shuffle(dungeon_keys)
+
         bail_counter = 0
         while self._item_pool:
             assert sum(self._item_pool.values()) == len(self._spots)
-            if not self.__placeItem(rnd):
+            if dungeon_keys:
+                success = self.placeSpecificItem(dungeon_keys[0], rnd)
+                if success:
+                    dungeon_keys.pop(0)
+            else:
+                success = self.__placeItem(rnd)
+            if not success:
                 bail_counter += 1
                 if bail_counter > 10:
                     raise Error("Failed to place an item for a bunch of retries")
@@ -244,6 +271,24 @@ class RandomItemPlacer(ItemPlacer):
         if not options:
             return False
         item = rnd.choice(options)
+
+        spot.item = item
+        self.removeItem(item)
+        self.removeSpot(spot)
+
+        if not self.logicStillValid():
+            spot.item = None
+            self.addItem(item)
+            self.addSpot(spot)
+            #print("Failed to place:", item)
+            return False
+        #print("Placed:", item)
+        return True
+
+    def placeSpecificItem(self, item: str, rnd: random.Random) -> bool:
+        # Random placement of a given item
+        spot_options = [spot for spot in self._spots if item in spot.getOptions()]
+        spot = rnd.choice(spot_options)
 
         spot.item = item
         self.removeItem(item)
