@@ -536,7 +536,7 @@ BINGO_GOALS = [
     Goal("Open the Kanalet Castle gate", checkMemoryMask("$D879", "$10"), TileInfo(0xE8A, 0xE9A, 0xE8A, 0xE9A)),
     Goal("Read the mural in Southern Face Shrine", checkMemoryMask("$DA6F", "$40"), TileInfo(0x1950, colormap=[2, 3, 1, 0])),
     Goal("Let Marin sing for the walrus", checkMemoryMask("$D8FD", "$20"), TileInfo(0x16E1, 0x16E8, 0x16E3, 0x16EA, colormap=[2, 3, 1, 0]), group="walrus"),
-    WalrusWaterGoal("Play a song for the walrus after Marin left", TileInfo(0x170A, colormap=[2, 3, 1, 0]), group="walrus2"),
+    WalrusWaterGoal("Play a song for the walrus after Marin left", TileInfo(0x170A, colormap=[2, 3, 1, 0]), group="walrus"),
     Goal("Get cursed by the 3 Mad Batters", checkMemoryMask(("$D9E0", "$D9E1", "$D9E2"), "$20"), TileInfo(0x1870, colormap=[2, 3, 1, 0])),
     VacuumMouthGoal("Get sucked in by a Vacuum Mouth", TileInfo(0xA6C, flipH=True)),
 
