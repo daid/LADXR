@@ -353,7 +353,12 @@ def ClearTrendyGameGoal(description, tile_info, group=None):
 def WalrusWaterGoal(description, tile_info, group=None):
     check_code, set_code = getUnusedBitFlag()
     return Goal(description, check_code, tile_info, group=group, extra_patches=[
-        (0x18, 0x1908, 0x190D, ASM(set_code)),
+        (0x18, 0x190D, ASM("call $0C05"), ASM("call $7FDE")),
+        (0x18, 0x3FE9, "00" * 9, ASM("""
+            call $0C05
+            %s
+            ret
+        """ % (set_code)))
     ])
 
 
