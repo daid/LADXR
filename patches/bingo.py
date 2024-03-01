@@ -4,6 +4,8 @@ from assembler import ASM
 from locations.constants import *
 from utils import formatText
 
+REQUIRED_ROWS = {"bingo": 1, "bingo-double": 2, "bingo-triple": 3, "bingo-full": 12}
+
 # Few unused rooms that we can use the room status variables for to store data.
 UNUSED_ROOMS = [0x15D, 0x17E, 0x17F, 0x1AD]
 next_bit_flag_index = 0
@@ -756,7 +758,7 @@ checkGoalDone:
     ret  nz
 
     call checkAnyGoal
-    ret  nz
+    ret  c
 
     ; Goal done, give a message and goto state to finish the game
     ld   a, $04
@@ -910,81 +912,34 @@ setZ:
     ret
 
 checkAnyGoal:
-#IF {mode}
-    call goalcheck_0
-    ret  nz
-    call goalcheck_1
-    ret  nz
-    call goalcheck_2
-    ret  nz
-    call goalcheck_3
-    ret  nz
-    call goalcheck_4
-    ret  nz
-    call goalcheck_5
-    ret  nz
-    call goalcheck_6
-    ret  nz
-    call goalcheck_7
-    ret  nz
-    call goalcheck_8
-    ret  nz
-    call goalcheck_9
-    ret  nz
-    call goalcheck_10
-    ret  nz
-    call goalcheck_11
-    ret  nz
-    call goalcheck_12
-    ret  nz
-    call goalcheck_13
-    ret  nz
-    call goalcheck_14
-    ret  nz
-    call goalcheck_15
-    ret  nz
-    call goalcheck_16
-    ret  nz
-    call goalcheck_17
-    ret  nz
-    call goalcheck_18
-    ret  nz
-    call goalcheck_19
-    ret  nz
-    call goalcheck_20
-    ret  nz
-    call goalcheck_21
-    ret  nz
-    call goalcheck_22
-    ret  nz
-    call goalcheck_23
-    ret  nz
-    call goalcheck_24
-    ret
-#ELSE
+    xor  a
+    push af
     call checkGoalRow1
-    ret  z
+    {inc_counter}
     call checkGoalRow2
-    ret  z
+    {inc_counter}
     call checkGoalRow3
-    ret  z
+    {inc_counter}
     call checkGoalRow4
-    ret  z
+    {inc_counter}
     call checkGoalRow5
-    ret  z
+    {inc_counter}
     call checkGoalCol1
-    ret  z
+    {inc_counter}
     call checkGoalCol2
-    ret  z
+    {inc_counter}
     call checkGoalCol3
-    ret  z
+    {inc_counter}
     call checkGoalCol4
-    ret  z
+    {inc_counter}
     call checkGoalCol5
-    ret  z
+    {inc_counter}
     call checkGoalDiagonal0
-    ret  z
+    {inc_counter}
     call checkGoalDiagonal1
+    {inc_counter}
+    pop  af
+    cp   {req_rows}
     ret
 
 checkGoalRow1:
@@ -1130,10 +1085,9 @@ checkGoalDiagonal1:
     ret  nz
     call goalcheck_20
     ret
-#ENDIF
 
 messageTable:
-""".format(mode=1 if mode == "bingo-full" else 0) +
+""".format(inc_counter="jr nz, 3 \n pop de \n inc d \n push de", req_rows=REQUIRED_ROWS[mode]) +
     "\n".join(["dw message_%d" % (n) for n in range(25)]) + "\n" +
     "\n".join(["message_%d:\n  db m\"%s\"" % (n, goal.description) for n, goal in
                enumerate(goals)]) + "\n" +
