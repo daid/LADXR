@@ -88,7 +88,7 @@ class Dungeon8:
             if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell)) # underground section past mimics, boots bonking across the gap to the ladder
-            entrance.connect(bottomright_pot_chest, r.super_jump_sword, one_way=True) # use NW zamboni staircase backwards, subpixel manip for superjump past the pots
+            entrance.connect(bottomright_pot_chest, r.shaq_jump, one_way=True) # use NW zamboni staircase backwards, and get a naked shaq jump off the bottom wall in the bottom right corner to pass by the pot
             gibdos_drop_key.connect(upper_center, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             medicine_chest.connect(upper_center, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss.connect(miniboss_entrance, AND(r.boots_bonk_2d_hell, r.miniboss_requirements[world_setup.miniboss_mapping[7]])) # get through 2d section with boots bonks
