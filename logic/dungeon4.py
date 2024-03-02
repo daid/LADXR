@@ -5,32 +5,33 @@ from locations.all import *
 
 class Dungeon4:
     def __init__(self, options, world_setup, r):
-        entrance = Location(4)
+        entrance = Location(4, name="D4 Entrance")
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
         right_of_entrance = Location(4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot_powder)) # 1 zol 2 spike beetles 1 spark chest
         Location(4).add(DungeonChest(0x17B)).connect(right_of_entrance, AND(SHIELD, SWORD)) # room with key chest
-        rightside_crossroads = Location(4).connect(entrance, AND(FEATHER, PEGASUS_BOOTS))  # 2 key chests on the right.
+        rightside_crossroads = Location(4, name="D4 Crossroads East").connect(entrance, AND(FEATHER, PEGASUS_BOOTS))  # 2 key chests on the right.
         pushable_block_chest = Location(4).add(DungeonChest(0x171)).connect(rightside_crossroads, BOMB) # lower chest
         puddle_crack_block_chest = Location(4).add(DungeonChest(0x165)).connect(rightside_crossroads, OR(BOMB, FLIPPERS)) # top right chest
         
-        double_locked_room = Location(4).connect(right_of_entrance, AND(KEY4, FOUND(KEY4, 5)), one_way=True)
+        double_locked_room = Location(4, name="D4 Double Locked Room").connect(right_of_entrance, AND(KEY4, FOUND(KEY4, 5)), one_way=True)
         right_of_entrance.connect(double_locked_room, KEY4, one_way=True)
-        after_double_lock = Location(4).connect(double_locked_room, AND(KEY4, FOUND(KEY4, 4), OR(FEATHER, FLIPPERS)), one_way=True)
+        after_double_lock = Location(4, name="D4 Crossroads South").connect(double_locked_room, AND(KEY4, FOUND(KEY4, 4), OR(FEATHER, FLIPPERS)), one_way=True)
         double_locked_room.connect(after_double_lock, AND(KEY4, FOUND(KEY4, 2), OR(FEATHER, FLIPPERS)), one_way=True)
         
         dungeon4_puddle_before_crossroads = Location(4).add(DungeonChest(0x175)).connect(after_double_lock, FLIPPERS)
-        north_crossroads = Location(4).connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS))
-        before_miniboss = Location(4).connect(north_crossroads, AND(KEY4, FOUND(KEY4, 3)))
+        north_crossroads = Location(4, name="D4 Crossroads North").connect(after_double_lock, AND(FEATHER, PEGASUS_BOOTS))
+        before_miniboss = Location(4, name="D4 Before Miniboss").connect(north_crossroads, AND(KEY4, FOUND(KEY4, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4)
         sidescroller_key = Location(4).add(DroppedKey(0x169)).connect(before_miniboss, AND(r.attack_hookshot_powder, FLIPPERS))  # key that drops in the hole and needs swim to get
         center_puddle_chest = Location(4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS)  # chest with 50 rupees
-        left_water_area = Location(4).connect(before_miniboss, OR(FEATHER, FLIPPERS)) # area left with zol chest and 5 symbol puzzle (water area)
+        left_water_area = Location(4, name="D4 Tile Puzzle").connect(before_miniboss, OR(FEATHER, FLIPPERS)) # area left with zol chest and 5 symbol puzzle (water area)
         left_water_area.add(DungeonChest(0x16D))  # gel chest
         left_water_area.add(DungeonChest(0x168))  # key chest near the puzzle
-        miniboss = Location(4).connect(before_miniboss, AND(KEY4, FOUND(KEY4, 5), r.miniboss_requirements[world_setup.miniboss_mapping[3]])) 
-        terrace_zols_chest = Location(4).connect(before_miniboss, FLIPPERS) # flippers to move around miniboss through 5 tile room
+        miniboss_room = Location(4, name="D4 Miniboss Room").connect(before_miniboss, AND(KEY4, FOUND(KEY4, 5)))
+        miniboss = Location(4, name="D4 After Miniboss").connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[3]]) 
+        terrace_zols_chest = Location(4, name="D4 After Flippers").connect(before_miniboss, FLIPPERS) # flippers to move around miniboss through 5 tile room
         miniboss.connect(terrace_zols_chest, POWER_BRACELET, one_way=True) # reach flippers chest through the miniboss room
         terrace_zols_chest.add(DungeonChest(0x160))  # flippers chest
         terrace_zols_chest.connect(left_water_area, r.attack_hookshot_powder, one_way=True) # can move from flippers chest south to push the block to left area
@@ -38,8 +39,9 @@ class Dungeon4:
         to_the_nightmare_key = Location(4).connect(left_water_area, AND(FEATHER, OR(FLIPPERS, PEGASUS_BOOTS)))  # 5 symbol puzzle (does not need flippers with boots + feather)
         to_the_nightmare_key.add(DungeonChest(0x176))
 
-        before_boss = Location(4).connect(before_miniboss, AND(r.attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
-        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(before_boss, AND(NIGHTMARE_KEY4, r.boss_requirements[world_setup.boss_mapping[3]]))
+        before_boss = Location(4, name="D4 Before Boss").connect(before_miniboss, AND(r.attack_hookshot, FLIPPERS, KEY4, FOUND(KEY4, 5)))
+        boss_room = Location(4, name="D4 Boss Room").connect(before_boss, NIGHTMARE_KEY4)
+        boss = Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[3]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             sidescroller_key.connect(before_miniboss, BOOMERANG) # fall off the bridge and boomerang downwards before hitting the water to grab the item
@@ -75,7 +77,7 @@ class Dungeon4:
 
 class NoDungeon4:
     def __init__(self, options, world_setup, r):
-        entrance = Location(4)
+        entrance = Location(4, name="D4 Entrance")
         Location(4).add(HeartContainer(0x166), Instrument(0x162)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[3]])
 

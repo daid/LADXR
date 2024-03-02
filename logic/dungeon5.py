@@ -5,35 +5,37 @@ from locations.all import *
 
 class Dungeon5:
     def __init__(self, options, world_setup, r):
-        entrance = Location(5)
+        entrance = Location(5, name="D5 Entrance")
         start_hookshot_chest = Location(5).add(DungeonChest(0x1A0)).connect(entrance, HOOKSHOT)
         compass = Location(5).add(DungeonChest(0x19E)).connect(entrance, r.attack_hookshot_powder)
         fourth_stalfos_area = Location(5).add(DroppedKey(0x181)).connect(compass, AND(SWORD, FEATHER)) # crystal rocks can only be broken by sword
 
-        area2 = Location(5).connect(entrance, KEY5)
+        area2 = Location(5, name="D5 After First Key").connect(entrance, KEY5)
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(5).add(OwlStatue(0x19A)).connect(area2, STONE_BEAK5)
         Location(5).add(DungeonChest(0x19B)).connect(area2, r.attack_hookshot_powder)  # map chest
         blade_trap_chest = Location(5).add(DungeonChest(0x197)).connect(area2, HOOKSHOT)  # key chest on the left
-        pre_gohma = Location(5).connect(area2, HOOKSHOT) # area top left before keyblock gohma
-        post_gohma = Location(5).connect(pre_gohma, AND(r.miniboss_requirements[world_setup.miniboss_mapping[4]], KEY5, FOUND(KEY5,2))) # staircase after gohma
-        staircase_before_boss = Location(5).connect(post_gohma, AND(HOOKSHOT, FEATHER)) # bottom right section pits room before boss door. Path via gohma
-        after_keyblock_boss = Location(5).connect(staircase_before_boss, AND(KEY5, FOUND(KEY5, 3))) # top right section pits room before boss door
+        pre_gohma = Location(5, name="D5 Before Miniboss").connect(area2, HOOKSHOT) # area top left before keyblock gohma
+        gohma = Location(5, name="D5 Miniboss Room").connect(pre_gohma, AND(KEY5, FOUND(KEY5,2)))
+        post_gohma = Location(5, name="D5 After Miniboss").connect(gohma, r.miniboss_requirements[world_setup.miniboss_mapping[4]]) # staircase after gohma
+        staircase_before_boss = Location(5, name="D5 Before Boss Keyblock").connect(post_gohma, AND(HOOKSHOT, FEATHER)) # bottom right section pits room before boss door. Path via gohma
+        after_keyblock_boss = Location(5, name="D5 After Boss Keyblock").connect(staircase_before_boss, AND(KEY5, FOUND(KEY5, 3))) # top right section pits room before boss door
         after_stalfos = Location(5).add(DungeonChest(0x196)).connect(area2, AND(SWORD, BOMB)) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             butterfly_owl = Location(5).add(OwlStatue(0x18A)).connect(after_stalfos, AND(FEATHER, STONE_BEAK5))
         else:
             butterfly_owl = None
         after_stalfos.connect(staircase_before_boss, AND(FEATHER, r.attack_hookshot_powder), one_way=True) # pathway from stalfos to staircase: past butterfly room and push the block
-        north_of_crossroads = Location(5).connect(after_stalfos, FEATHER)
+        north_of_crossroads = Location(5, name="D5 Crossroads North").connect(after_stalfos, FEATHER)
         first_bridge_chest = Location(5).add(DungeonChest(0x18E)).connect(north_of_crossroads, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # south of bridge
         north_bridge_chest = Location(5).add(DungeonChest(0x188)).connect(north_of_crossroads, HOOKSHOT) # north bridge chest 50 rupees
         east_bridge_chest = Location(5).add(DungeonChest(0x18F)).connect(north_of_crossroads, HOOKSHOT) # east bridge chest small key
-        third_arena = Location(5).connect(north_of_crossroads, AND(SWORD, BOMB)) # can beat 3rd m.stalfos
+        third_arena = Location(5, name="D5 Master Stalfos 3").connect(north_of_crossroads, AND(SWORD, BOMB)) # can beat 3rd m.stalfos
         stone_tablet = Location(5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, r.attack_skeleton))  # stone tablet
         boss_key = Location(5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
-        before_boss = Location(5).connect(after_keyblock_boss, HOOKSHOT) 
-        boss = Location(5).add(HeartContainer(0x185), Instrument(0x182)).connect(before_boss, AND(r.boss_requirements[world_setup.boss_mapping[4]], NIGHTMARE_KEY5))
+        before_boss = Location(5, name="D5 Before Boss").connect(after_keyblock_boss, HOOKSHOT) 
+        boss_room = Location(5, name="D5 Boss Room").connect(before_boss, NIGHTMARE_KEY5)
+        boss = Location(5).add(HeartContainer(0x185), Instrument(0x182)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[4]])
 
         # When we can reach the stone tablet chest, we can also reach the final location of master stalfos
         m_stalfos_drop = Location(5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB)) # can reach fourth arena from entrance with feather and sword
@@ -86,7 +88,7 @@ class Dungeon5:
 
 class NoDungeon5:
     def __init__(self, options, world_setup, r):
-        entrance = Location(5)
+        entrance = Location(5, name="D5 Entrance")
         Location(5).add(HeartContainer(0x185), Instrument(0x182)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[4]])
 

@@ -5,9 +5,9 @@ from locations.all import *
 
 class Dungeon8:
     def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=0x000):
-        entrance = Location(8)
-        entrance_up = Location(8).connect(entrance, FEATHER)
-        entrance_left = Location(8).connect(entrance, r.attack_hookshot_no_bomb) # past hinox
+        entrance = Location(8, name="D8 Entrance")
+        entrance_up = Location(8, name="D8 North of Entrance").connect(entrance, FEATHER)
+        entrance_left = Location(8, name="D8 After Hinox").connect(entrance, r.attack_hookshot_no_bomb) # past hinox
 
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
@@ -26,18 +26,19 @@ class Dungeon8:
         bottomright_pot_chest = Location(8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
 
         map_chest = Location(8).add(DungeonChest(0x24F)).connect(entrance_up, None) # use the zamboni to get to the push blocks
-        lower_center = Location(8).connect(entrance_up, KEY8)
-        upper_center = Location(8).connect(lower_center, AND(KEY8, FOUND(KEY8, 2)))
+        lower_center = Location(8, name="D8 After Lava Keyblock").connect(entrance_up, KEY8)
+        upper_center = Location(8, name="D8 Dodongo Area").connect(lower_center, AND(KEY8, FOUND(KEY8, 2)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(8).add(OwlStatue(0x245)).connect(upper_center, STONE_BEAK8)
         gibdos_drop_key = Location(8).add(DroppedKey(0x23E)).connect(upper_center, r.attack_gibdos) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         medicine_chest = Location(8).add(DungeonChest(0x235)).connect(upper_center, AND(FEATHER, HOOKSHOT))  # medicine chest
 
-        middle_center_1 = Location(8).connect(upper_center, BOMB)
-        middle_center_2 = Location(8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
-        middle_center_3 = Location(8).connect(middle_center_2, KEY8)
-        miniboss_entrance = Location(8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 7))) # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
-        miniboss = Location(8).connect(miniboss_entrance, AND(FEATHER, r.miniboss_requirements[world_setup.miniboss_mapping[7]]))  # feather for 2d section, sword to kill
+        middle_center_1 = Location(8, name="D8 Dark East").connect(upper_center, BOMB)
+        middle_center_2 = Location(8, name="D8 Dark Center").connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
+        middle_center_3 = Location(8, name="D8 Dark West").connect(middle_center_2, KEY8)
+        miniboss_entrance = Location(8, name="D8 Miniboss Stairs").connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 7))) # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
+        miniboss_room = Location(8, name="D8 Miniboss Room").connect(miniboss_entrance, FEATHER) # feather for 2d section
+        miniboss = Location(8).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[7]])
         miniboss.add(DungeonChest(0x237)) # fire rod chest
 
         up_left = Location(8).connect(upper_center, AND(r.attack_hookshot_powder, AND(KEY8, FOUND(KEY8, 4))))
@@ -53,7 +54,7 @@ class Dungeon8:
             Location(8).add(OwlStatue(0x241)).connect(up_left, STONE_BEAK8)
         Location(8).add(DungeonChest(0x23A)).connect(up_left, HOOKSHOT) # ledge chest left of boss door
 
-        top_left_stairs = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
+        top_left_stairs = Location(8, name="D8 Before Cueball").connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
         top_left_stairs.connect(up_left, None, one_way=True) # jump down from the staircase to the right
         nightmare_key = Location(8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8, FOUND(KEY8, 7)))
 
@@ -61,8 +62,9 @@ class Dungeon8:
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
         middle_center_2.connect(up_left, AND(BOMB, FEATHER), one_way=True) # does this even skip a key? both middle_center_2 and up_left come from upper_center with 1 extra key
 
-        bossdoor = Location(8).connect(entrance_up, AND(FEATHER, MAGIC_ROD))
-        boss = Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(bossdoor, AND(NIGHTMARE_KEY8, r.boss_requirements[world_setup.boss_mapping[7]]))
+        bossdoor = Location(8, name="D8 Before Boss Door").connect(entrance_up, AND(FEATHER, MAGIC_ROD))
+        boss_room = Location(8, name="D8 Boss Room").connect(bossdoor, NIGHTMARE_KEY8)
+        boss = Location(8).add(HeartContainer(0x234), Instrument(0x230)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[7]])
         
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
@@ -91,7 +93,7 @@ class Dungeon8:
             entrance.connect(bottomright_pot_chest, r.super_jump_sword, one_way=True) # use NW zamboni staircase backwards, subpixel manip for superjump past the pots
             gibdos_drop_key.connect(upper_center, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             medicine_chest.connect(upper_center, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
-            miniboss.connect(miniboss_entrance, AND(r.boots_bonk_2d_hell, r.miniboss_requirements[world_setup.miniboss_mapping[7]])) # get through 2d section with boots bonks
+            miniboss_room.connect(miniboss_entrance, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
             top_left_stairs.connect(map_chest, AND(r.jesus_buffer, r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
             nightmare_key.connect(top_left_stairs, AND(r.boots_bonk_pit, SWORD, FOUND(KEY8, 7))) # use a boots bonk to cross the lava in cueball room
             bottom_right.connect(entrance_up, AND(POWER_BRACELET, r.jesus_buffer), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
@@ -103,7 +105,7 @@ class Dungeon8:
 
 class NoDungeon8:
     def __init__(self, options, world_setup, r):
-        entrance = Location(8)
+        entrance = Location(8, name="D8 Entrance")
         boss = Location(8).add(HeartContainer(0x234)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[7]])
         instrument = Location(8).add(Instrument(0x230)).connect(boss, FEATHER) # jump over the lava to get to the instrument

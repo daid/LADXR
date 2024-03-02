@@ -5,7 +5,7 @@ from locations.all import *
 
 class Dungeon6:
     def __init__(self, options, world_setup, r, *, raft_game_chest=True):
-        entrance = Location(6)
+        entrance = Location(6, name="D6 Entrance")
         Location(6).add(DungeonChest(0x1CF)).connect(entrance, OR(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # 50 rupees
         elephants_heart_chest = Location(6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -23,8 +23,9 @@ class Dungeon6:
             Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
 
         # right side
-        to_miniboss = Location(6).connect(entrance, KEY6)
-        miniboss = Location(6).connect(to_miniboss, AND(BOMB, r.miniboss_requirements[world_setup.miniboss_mapping[5]]))
+        to_miniboss = Location(6, name="D6 Before Miniboss").connect(entrance, KEY6)
+        miniboss_room = Location(6, name="D6 Miniboss Room").connect(to_miniboss, BOMB)
+        miniboss = Location(6, name="D6 After Miniboss").connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[5]])
         lower_right_side = Location(6).add(DungeonChest(0x1BE)).connect(entrance, AND(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # waterway key
         medicine_chest = Location(6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) # ledge chest medicine
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -37,7 +38,8 @@ class Dungeon6:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(center_1, AND(NIGHTMARE_KEY6, OR(r.attack_hookshot, SHIELD), r.boss_requirements[world_setup.boss_mapping[5]]))
+        boss_room = Location(6, name="D6 Boss Room").connect(center_1, AND(NIGHTMARE_KEY6, OR(r.attack_hookshot, SHIELD)))
+        boss = Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[5]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
@@ -64,7 +66,7 @@ class Dungeon6:
 
 class NoDungeon6:
     def __init__(self, options, world_setup, r):
-        entrance = Location(6)
+        entrance = Location(6, name="D6 Entrance")
         Location(6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[5]])
         self.entrance = entrance
