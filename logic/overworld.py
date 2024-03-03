@@ -8,20 +8,20 @@ class World:
     def __init__(self, options, world_setup, r):
         self.entrances = {}
 
-        mabe_village = Location(name="Mabe Village")
+        mabe_village = Location("Mabe Village")
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, r.bush)  # well
         Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
         Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
-        rooster_cave = Location(name="Rooster Cave")
+        rooster_cave = Location("Rooster Cave")
         Location().add(DroppedKey(0x1E4)).connect(rooster_cave, AND(OCARINA, SONG3))
 
-        papahl_house = Location(name="Papahl House")
+        papahl_house = Location("Papahl House")
         mamasha_trade = Location().add(TradeSequenceItem(0x2A6, TRADING_ITEM_RIBBON))
         papahl_house.connect(mamasha_trade, TRADING_ITEM_YOSHI_DOLL)
 
-        trendy_shop = Location(name="Trendy Shop")
+        trendy_shop = Location("Trendy Shop")
         trendy_shop.connect(Location().add(TradeSequenceItem(0x2A0, TRADING_ITEM_YOSHI_DOLL)), FOUND("RUPEES", 50))
 
         self._addEntrance("papahl_house_left", mabe_village, papahl_house, None)
@@ -36,30 +36,30 @@ class World:
         self._addEntrance("d1", mabe_village, None, TAIL_KEY)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
 
-        start_house = Location(name="Start House").add(StartItem())
+        start_house = Location("Start House").add(StartItem())
         self._addEntrance("start_house", mabe_village, start_house, None)
 
-        shop = Location(name="Shop")
+        shop = Location("Shop")
         Location().add(ShopItem(0)).connect(shop, COUNT("RUPEES", 200))
         Location().add(ShopItem(1)).connect(shop, COUNT("RUPEES", 980))
         self._addEntrance("shop", mabe_village, shop, None)
 
-        dream_hut = Location(name="Dream Hut")
+        dream_hut = Location("Dream Hut")
         dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD)
         if options.logic != "casual":
             dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER))
         dream_hut_left = Location().add(Chest(0x2BE)).connect(dream_hut_right, PEGASUS_BOOTS)
         self._addEntrance("dream_hut", mabe_village, dream_hut, POWER_BRACELET)
 
-        kennel = Location(name="Kennel").connect(Location().add(Seashell(0x2B2)), SHOVEL)  # in the kennel
+        kennel = Location("Kennel").connect(Location().add(Seashell(0x2B2)), SHOVEL)  # in the kennel
         kennel.connect(Location().add(TradeSequenceItem(0x2B2, TRADING_ITEM_DOG_FOOD)), TRADING_ITEM_RIBBON)
         self._addEntrance("kennel", mabe_village, kennel, None)
 
-        sword_beach = Location(name="Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.attack_hookshot))
-        banana_seller = Location(name="Banana Seller")
+        sword_beach = Location("Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.attack_hookshot))
+        banana_seller = Location("Banana Seller")
         banana_seller.connect(Location().add(TradeSequenceItem(0x2FE, TRADING_ITEM_BANANAS)), TRADING_ITEM_DOG_FOOD)
         self._addEntrance("banana_seller", sword_beach, banana_seller, r.bush)
-        boomerang_cave = Location(name="Boomerang Cave")
+        boomerang_cave = Location("Boomerang Cave")
         if options.boomerang == 'trade':
             Location().add(BoomerangGuy()).connect(boomerang_cave, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL))
         elif options.boomerang == 'gift':
@@ -67,81 +67,81 @@ class World:
         self._addEntrance("boomerang_cave", sword_beach, boomerang_cave, BOMB)
         self._addEntranceRequirementExit("boomerang_cave", None) # if exiting, you do not need bombs
 
-        sword_beach_to_ghost_hut = Location(name="Sword Beach to Ghost House").add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
-        ghost_hut_outside = Location(name="Outside Ghost House").connect(sword_beach_to_ghost_hut, POWER_BRACELET)
-        ghost_hut_inside = Location(name="Ghost House").connect(Location().add(Seashell(0x1E3)), POWER_BRACELET)
+        sword_beach_to_ghost_hut = Location("Sword Beach to Ghost House").add(Chest(0x0E5)).connect(sword_beach, POWER_BRACELET)
+        ghost_hut_outside = Location("Outside Ghost House").connect(sword_beach_to_ghost_hut, POWER_BRACELET)
+        ghost_hut_inside = Location("Ghost House").connect(Location().add(Seashell(0x1E3)), POWER_BRACELET)
         self._addEntrance("ghost_house", ghost_hut_outside, ghost_hut_inside, None)
 
         ## Forest area
-        forest = Location(name="Forest").connect(mabe_village, r.bush) # forest stretches all the way from the start town to the witch hut
+        forest = Location("Forest").connect(mabe_village, r.bush) # forest stretches all the way from the start town to the witch hut
         Location().add(Chest(0x071)).connect(forest, POWER_BRACELET)  # chest at start forest with 2 zols
-        forest_heartpiece = Location(name="Forest Heart Piece").add(HeartPiece(0x044))  # next to the forest, surrounded by pits
+        forest_heartpiece = Location("Forest Heart Piece").add(HeartPiece(0x044))  # next to the forest, surrounded by pits
         forest.connect(forest_heartpiece, OR(BOOMERANG, FEATHER, HOOKSHOT, ROOSTER), one_way=True)
 
-        witch_hut = Location(name="Witch's Hut").connect(Location().add(Witch()), TOADSTOOL)
+        witch_hut = Location("Witch's Hut").connect(Location().add(Witch()), TOADSTOOL)
         self._addEntrance("witch", forest, witch_hut, None)
-        crazy_tracy_hut = Location(name="Outside Crazy Tracy's House").connect(forest, POWER_BRACELET)
-        crazy_tracy_hut_inside = Location(name="Crazy Tracy's House")
+        crazy_tracy_hut = Location("Outside Crazy Tracy's House").connect(forest, POWER_BRACELET)
+        crazy_tracy_hut_inside = Location("Crazy Tracy's House")
         Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
         start_house.connect(crazy_tracy_hut, AND(OCARINA, SONG2), one_way=True) # Manbo's Mambo into the pond outside Tracy
 
-        forest_madbatter = Location(name="Forest Mad Batter")
+        forest_madbatter = Location("Forest Mad Batter")
         Location().add(MadBatter(0x1E1)).connect(forest_madbatter, MAGIC_POWDER)
         self._addEntrance("forest_madbatter", forest, forest_madbatter, POWER_BRACELET)
         self._addEntranceRequirementExit("forest_madbatter", None) # if exiting, you do not need bracelet
 
-        forest_cave = Location(name="Forest Cave")
+        forest_cave = Location("Forest Cave")
         Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
         log_cave_heartpiece = Location().add(HeartPiece(0x2AB)).connect(forest_cave, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         forest_toadstool = Location().add(Toadstool())
         self._addEntrance("toadstool_entrance", forest, forest_cave, None)
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
-        hookshot_cave = Location(name="Hookshot Cave")
+        hookshot_cave = Location("Hookshot Cave")
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
-        swamp = Location(name="Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
+        swamp = Location("Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
         swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
         swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER))
-        swamp_chest = Location(name="Swamp Chest").add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
+        swamp_chest = Location("Swamp Chest").add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         self._addEntrance("d2", swamp, None, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
         self._addEntrance("writes_phone", swamp, None, None)
 
-        writes_hut_outside = Location(name="Outside Write's House").connect(swamp, OR(FEATHER, ROOSTER))  # includes the cave behind the hut
-        writes_house = Location(name="Write's House")
+        writes_hut_outside = Location("Outside Write's House").connect(swamp, OR(FEATHER, ROOSTER))  # includes the cave behind the hut
+        writes_house = Location("Write's House")
         writes_house.connect(Location().add(TradeSequenceItem(0x2a8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
         self._addEntrance("writes_house", writes_hut_outside, writes_house, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             writes_hut_outside.add(OwlStatue(0x11))
-        writes_cave = Location(name="Write's Cave")
+        writes_cave = Location("Write's Cave")
         writes_cave_left_chest = Location().add(Chest(0x2AE)).connect(writes_cave, OR(FEATHER, ROOSTER, HOOKSHOT)) # 1st chest in the cave behind the hut
         Location().add(Chest(0x2AF)).connect(writes_cave, POWER_BRACELET)  # 2nd chest in the cave behind the hut.
         self._addEntrance("writes_cave_left", writes_hut_outside, writes_cave, None)
         self._addEntrance("writes_cave_right", writes_hut_outside, writes_cave, None)
 
-        graveyard = Location(name="Graveyard").connect(forest, OR(FEATHER, ROOSTER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
+        graveyard = Location("Graveyard").connect(forest, OR(FEATHER, ROOSTER, POWER_BRACELET))  # whole area from the graveyard up to the moblin cave
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             graveyard.add(OwlStatue(0x035))  # Moblin cave owl
         self._addEntrance("photo_house", graveyard, None, None)
         self._addEntrance("d0", graveyard, None, POWER_BRACELET)
         self._addEntranceRequirementExit("d0", None) # if exiting, you do not need bracelet
-        ghost_grave = Location(name="Ghost Grave").connect(forest, POWER_BRACELET)
+        ghost_grave = Location("Ghost Grave").connect(forest, POWER_BRACELET)
         Location().add(Seashell(0x074)).connect(ghost_grave, AND(r.bush, SHOVEL))  # next to grave cave, digging spot
         graveyard.connect(forest_heartpiece, OR(BOOMERANG, HOOKSHOT), one_way=True) # grab the heart piece surrounded by pits from the north
 
-        graveyard_cave_left = Location(name="Graveyard Cave West")
-        graveyard_cave_right = Location(name="Graveyard Cave East").connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
+        graveyard_cave_left = Location("Graveyard Cave West")
+        graveyard_cave_right = Location("Graveyard Cave East").connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
         graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard_cave_right, OR(AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER), ROOSTER))  # grave cave
         self._addEntrance("graveyard_cave_left", ghost_grave, graveyard_cave_left, POWER_BRACELET)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
-        moblin_cave = Location(name="Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
+        moblin_cave = Location("Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
         self._addEntrance("moblin_cave", graveyard, moblin_cave, None)
 
         # "Ukuku Prairie"
-        ukuku_prairie = Location(name="Ukuku Prairie").connect(mabe_village, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
+        ukuku_prairie = Location("Ukuku Prairie").connect(mabe_village, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x07B, TRADING_ITEM_STICK)), TRADING_ITEM_BANANAS)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x087, TRADING_ITEM_HONEYCOMB)), TRADING_ITEM_STICK)
         self._addEntrance("prairie_left_phone", ukuku_prairie, None, None)
@@ -150,16 +150,16 @@ class World:
         self._addEntrance("prairie_left_fairy", ukuku_prairie, None, BOMB)
         self._addEntranceRequirementExit("prairie_left_fairy", None) # if exiting, you do not need bombs
 
-        prairie_left_cave2 = Location(name="Boots 'n' Bomb Cave")  # Bomb cave
+        prairie_left_cave2 = Location("Boots 'n' Bomb Cave")  # Bomb cave
         Location().add(Chest(0x2F4)).connect(prairie_left_cave2, PEGASUS_BOOTS)
         Location().add(HeartPiece(0x2E5)).connect(prairie_left_cave2, AND(BOMB, PEGASUS_BOOTS))
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
         self._addEntranceRequirementExit("prairie_left_cave2", None) # if exiting, you do not need bombs
 
-        mamu = Location(name="Mamu").connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
+        mamu = Location("Mamu").connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
 
-        dungeon3_entrance = Location(name="Outside D3").connect(ukuku_prairie, OR(FEATHER, ROOSTER, FLIPPERS))
+        dungeon3_entrance = Location("Outside D3").connect(ukuku_prairie, OR(FEATHER, ROOSTER, FLIPPERS))
         self._addEntrance("d3", dungeon3_entrance, None, SLIME_KEY)
         self._addEntranceRequirementExit("d3", None) # if exiting, you do not need to open the door
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
@@ -173,84 +173,84 @@ class World:
             self._addEntranceRequirement("castle_jump_cave", AND(FEATHER, PEGASUS_BOOTS)) # left of the castle, 5 holes turned into 3
         Location().add(Seashell(0x0B9)).connect(ukuku_prairie, POWER_BRACELET)  # under the rock
 
-        left_bay_area = Location(name="Western Bay")
+        left_bay_area = Location("Western Bay")
         left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER))
         self._addEntrance("prairie_low_phone", left_bay_area, None, None)
 
         Location().add(Seashell(0x0E9)).connect(left_bay_area, r.bush)  # same screen as mermaid statue
         tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.bush))  # tiny island
 
-        prairie_plateau = Location(name="Bay Plateau")  # prairie plateau at the owl statue
+        prairie_plateau = Location("Bay Plateau")  # prairie plateau at the owl statue
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             prairie_plateau.add(OwlStatue(0x0A8))
         Location().add(Seashell(0x0A8)).connect(prairie_plateau, SHOVEL)  # at the owl statue
 
-        prairie_cave = Location(name="Bay Cliff Cave")
-        prairie_cave_secret_exit = Location(name="Bay Cliff to Plateau").connect(prairie_cave, OR(FEATHER, ROOSTER), one_way=True)
+        prairie_cave = Location("Bay Cliff Cave")
+        prairie_cave_secret_exit = Location("Bay Cliff to Plateau").connect(prairie_cave, OR(FEATHER, ROOSTER), one_way=True)
         prairie_cave.connect(prairie_cave_secret_exit, AND(BOMB, OR(FEATHER, ROOSTER)), one_way=True) # bomb walls are one-way        
         self._addEntrance("prairie_right_cave_top", ukuku_prairie, prairie_cave, None)
         self._addEntrance("prairie_right_cave_bottom", left_bay_area, prairie_cave, None)
         self._addEntrance("prairie_right_cave_high", prairie_plateau, prairie_cave_secret_exit, None)
 
-        bay_madbatter_connector_entrance = Location(name="Bay Batter Tunnel Entrance")
-        bay_madbatter_connector_exit = Location(name="Bay Batter Tunnel Exit").connect(bay_madbatter_connector_entrance, FLIPPERS)
-        bay_madbatter_connector_outside = Location(name="Outside Bay Batter")
-        bay_madbatter = Location(name="Bay Batter").connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
+        bay_madbatter_connector_entrance = Location("Bay Batter Tunnel Entrance")
+        bay_madbatter_connector_exit = Location("Bay Batter Tunnel Exit").connect(bay_madbatter_connector_entrance, FLIPPERS)
+        bay_madbatter_connector_outside = Location("Outside Bay Batter")
+        bay_madbatter = Location("Bay Batter").connect(Location().add(MadBatter(0x1E0)), MAGIC_POWDER)
         self._addEntrance("prairie_madbatter_connector_entrance", left_bay_area, bay_madbatter_connector_entrance, AND(OR(FEATHER, ROOSTER), OR(SWORD, MAGIC_ROD, BOOMERANG)))
         self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(OR(FEATHER, ROOSTER), r.bush)) # if exiting, you can pick up the bushes by normal means
         self._addEntrance("prairie_madbatter_connector_exit", bay_madbatter_connector_outside, bay_madbatter_connector_exit, None)
         self._addEntrance("prairie_madbatter", bay_madbatter_connector_outside, bay_madbatter, None)
 
-        seashell_mansion = Location(name="Seashell Mansion")
+        seashell_mansion = Location("Seashell Mansion")
         if options.goal != "seashells":
             Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
         else:
             seashell_mansion.add(DroppedKey(0x2E9))
         self._addEntrance("seashell_mansion", ukuku_prairie, seashell_mansion, None)
 
-        bay_water = Location(name="Bay Water")
+        bay_water = Location("Bay Water")
         bay_water.connect(ukuku_prairie, FLIPPERS)
         bay_water.connect(left_bay_area, FLIPPERS)
         fisher_under_bridge = Location().add(TradeSequenceItem(0x2F5, TRADING_ITEM_NECKLACE))
         fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FEATHER, FLIPPERS))
         bay_water.connect(Location().add(TradeSequenceItem(0x0C9, TRADING_ITEM_SCALE)), AND(TRADING_ITEM_NECKLACE, FLIPPERS))
-        d5_entrance = Location(name="Outside D5").connect(bay_water, FLIPPERS)
+        d5_entrance = Location("Outside D5").connect(bay_water, FLIPPERS)
         self._addEntrance("d5", d5_entrance, None, None)
 
         # Richard
-        richard_house = Location(name="Richard's Villa")
-        richard_cave = Location(name="Richard's Cave").connect(richard_house, COUNT(GOLD_LEAF, 5))
+        richard_house = Location("Richard's Villa")
+        richard_cave = Location("Richard's Cave").connect(richard_house, COUNT(GOLD_LEAF, 5))
         richard_cave.connect(richard_house, None, one_way=True) # can exit richard's cave even without leaves
         richard_cave_chest = Location().add(Chest(0x2C8)).connect(richard_cave, OR(FEATHER, HOOKSHOT, ROOSTER))
-        richard_maze = Location(name="Pothole Maze")
+        richard_maze = Location("Pothole Maze")
         self._addEntrance("richard_house", ukuku_prairie, richard_house, None)
         self._addEntrance("richard_maze", richard_maze, richard_cave, None)
-        slime_key_area = Location(name="Near Slime Key").connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG))
+        slime_key_area = Location("Near Slime Key").connect(richard_maze, OR(SWORD, AND(MAGIC_POWDER, MAX_POWDER_UPGRADE), MAGIC_ROD, POWER_BRACELET, BOOMERANG))
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             Location().add(OwlStatue(0x0C6)).connect(slime_key_area, None)
         Location().add(SlimeKey()).connect(slime_key_area, SHOVEL)
 
-        next_to_castle = Location(name="Next to Kanalet")
+        next_to_castle = Location("Next to Kanalet")
         if options.tradequest:
             ukuku_prairie.connect(next_to_castle, TRADING_ITEM_BANANAS, one_way=True) # can only give bananas from ukuku prairie side
         else:
             next_to_castle.connect(ukuku_prairie, None)
         next_to_castle.connect(ukuku_prairie, FLIPPERS)
         self._addEntrance("castle_phone", next_to_castle, None, None)
-        castle_secret_entrance_left = Location(name="Kanalet Tunnel West")
-        castle_secret_entrance_right = Location(name="Kanalet Tunnel East").connect(castle_secret_entrance_left, FEATHER)
-        castle_courtyard = Location(name="Kanalet Courtyard")
-        castle_frontdoor = Location(name="Kanalet Front Door").connect(castle_courtyard, r.bush)
+        castle_secret_entrance_left = Location("Kanalet Tunnel West")
+        castle_secret_entrance_right = Location("Kanalet Tunnel East").connect(castle_secret_entrance_left, FEATHER)
+        castle_courtyard = Location("Kanalet Courtyard")
+        castle_frontdoor = Location("Kanalet Front Door").connect(castle_courtyard, r.bush)
         castle_frontdoor.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
         self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, r.pit_bush)
         self._addEntranceRequirementExit("castle_secret_entrance", None) # leaving doesn't require pit_bush
         self._addEntrance("castle_secret_exit", castle_courtyard, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
-        castle_inside = Location(name="Inside Kanalet")
+        castle_inside = Location("Inside Kanalet")
         Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
-        castle_top_outside = Location(name="Outside Top of Kanalet")
-        castle_top_inside = Location(name="Inside Top of Kanalet")
+        castle_top_outside = Location("Outside Top of Kanalet")
+        castle_top_inside = Location("Inside Top of Kanalet")
         self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, r.bush)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
@@ -261,13 +261,13 @@ class World:
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
         castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)
 
-        animal_village = Location(name="Animal Village")
+        animal_village = Location("Animal Village")
         animal_village.connect(Location().add(TradeSequenceItem(0x0CD, TRADING_ITEM_FISHING_HOOK)), TRADING_ITEM_BROOM)
-        cookhouse = Location(name="Bear Chef's House")
+        cookhouse = Location("Bear Chef's House")
         cookhouse.connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HONEYCOMB)
-        goathouse = Location(name="Goat's House")
+        goathouse = Location("Goat's House")
         goathouse.connect(Location().add(TradeSequenceItem(0x2D9, TRADING_ITEM_LETTER)), TRADING_ITEM_HIBISCUS)
-        mermaid_statue = Location(name="Inside Mermaid Statue")
+        mermaid_statue = Location("Inside Mermaid Statue")
         mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, HOOKSHOT))
         mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFYING_GLASS))
         self._addEntrance("animal_phone", animal_village, None, None)
@@ -278,70 +278,70 @@ class World:
         self._addEntrance("animal_house5", animal_village, cookhouse, None)
         animal_village.connect(bay_water, FLIPPERS)
         animal_village.connect(ukuku_prairie, OR(HOOKSHOT, ROOSTER))
-        animal_village_connector_left = Location(name="Under the River West")
-        animal_village_connector_right = Location(name="Under the River East").connect(animal_village_connector_left, PEGASUS_BOOTS)
+        animal_village_connector_left = Location("Under the River West")
+        animal_village_connector_right = Location("Under the River East").connect(animal_village_connector_left, PEGASUS_BOOTS)
         self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.pit_bush) # passage under river blocked by bush
         self._addEntrance("animal_to_prairie_connector", animal_village, animal_village_connector_right, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_village.add(OwlStatue(0x0DA))
         Location().add(Seashell(0x0DA)).connect(animal_village, SHOVEL)  # owl statue at the water
-        desert = Location(name="Desert").connect(animal_village, r.bush)  # Note: We moved the walrus blocking the desert.
+        desert = Location("Desert").connect(animal_village, r.bush)  # Note: We moved the walrus blocking the desert.
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             desert.add(OwlStatue(0x0CF))
         desert_lanmola = Location().add(AnglerKey()).connect(desert, r.attack_hookshot_no_bomb)
 
-        animal_village_bombcave = Location(name="Bomb Arrow Cave")
+        animal_village_bombcave = Location("Bomb Arrow Cave")
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
         self._addEntranceRequirementExit("animal_cave", None) # if exiting, you do not need bombs
         animal_village_bombcave_heartpiece = Location().add(HeartPiece(0x2E6)).connect(animal_village_bombcave, OR(AND(BOMB, FEATHER, HOOKSHOT), ROOSTER))  # cave in the upper right of animal town
 
-        desert_cave = Location(name="Desert Cave")
+        desert_cave = Location("Desert Cave")
         self._addEntrance("desert_cave", desert, desert_cave, None)
         desert.connect(desert_cave, None, one_way=True) # Drop down the sinkhole
 
         Location().add(HeartPiece(0x1E8)).connect(desert_cave, BOMB)  # above the quicksand cave
         Location().add(Seashell(0x0FF)).connect(desert, POWER_BRACELET) # bottom right corner of the map
 
-        armos_maze = Location(name="Armos Maze").connect(animal_village, POWER_BRACELET)
-        armos_temple = Location(name="Southern Shrine")
+        armos_maze = Location("Armos Maze").connect(animal_village, POWER_BRACELET)
+        armos_temple = Location("Southern Shrine")
         Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]])
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
-        outside_armos_cave = Location(name="Outside Armos Maze Cave").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
-        outside_armos_temple = Location(name="Outside Southern Shrine").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_cave = Location("Outside Armos Maze Cave").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_temple = Location("Outside Southern Shrine").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
         self._addEntrance("armos_maze_cave", outside_armos_cave, Location().add(Chest(0x2FC)), None)
         self._addEntrance("armos_temple", outside_armos_temple, armos_temple, None)
 
-        armos_fairy_entrance = Location(name="Outside D6 Fairy").connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
+        armos_fairy_entrance = Location("Outside D6 Fairy").connect(bay_water, FLIPPERS).connect(animal_village, POWER_BRACELET)
         self._addEntrance("armos_fairy", armos_fairy_entrance, None, BOMB)
         self._addEntranceRequirementExit("armos_fairy", None) # if exiting, you do not need bombs
 
-        d6_connector_left = Location(name="To D6 West")
-        d6_connector_right = Location(name="To D6 East").connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
-        d6_entrance = Location(name="Outside D6")
+        d6_connector_left = Location("To D6 West")
+        d6_connector_right = Location("To D6 East").connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
+        d6_entrance = Location("Outside D6")
         d6_entrance.connect(bay_water, FLIPPERS, one_way=True)
-        d6_armos_island = Location(name="Armos Island").connect(bay_water, FLIPPERS)
+        d6_armos_island = Location("Armos Island").connect(bay_water, FLIPPERS)
         self._addEntrance("d6_connector_entrance", d6_armos_island, d6_connector_right, None)
         self._addEntrance("d6_connector_exit", d6_entrance, d6_connector_left, None)
         self._addEntrance("d6", d6_entrance, None, FACE_KEY)
         self._addEntranceRequirementExit("d6", None) # if exiting, you do not need to open the dungeon
 
-        windfish_egg = Location(name="Outside the Egg").connect(swamp, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
+        windfish_egg = Location("Outside the Egg").connect(swamp, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
         windfish_egg.connect(graveyard, None, one_way=True) # Ledge jump
 
-        obstacle_cave_entrance = Location(name="Mountain Access Entrance")
-        obstacle_cave_inside = Location(name="Mountain Access Inside").connect(obstacle_cave_entrance, SWORD)
+        obstacle_cave_entrance = Location("Mountain Access Entrance")
+        obstacle_cave_inside = Location("Mountain Access Inside").connect(obstacle_cave_entrance, SWORD)
         obstacle_cave_inside.connect(obstacle_cave_entrance, FEATHER, one_way=True) # can get past the rock room from right to left pushing blocks and jumping over the pit
         obstacle_cave_inside_chest = Location().add(Chest(0x2BB)).connect(obstacle_cave_inside, OR(HOOKSHOT, ROOSTER))  # chest at obstacles
-        obstacle_cave_exit = Location(name="Mountain Access Exit").connect(obstacle_cave_inside, OR(PEGASUS_BOOTS, ROOSTER))
+        obstacle_cave_exit = Location("Mountain Access Exit").connect(obstacle_cave_inside, OR(PEGASUS_BOOTS, ROOSTER))
 
-        lower_right_taltal = Location(name="Lower Tal Tal")
+        lower_right_taltal = Location("Lower Tal Tal")
         self._addEntrance("obstacle_cave_entrance", windfish_egg, obstacle_cave_entrance, POWER_BRACELET)
         self._addEntrance("obstacle_cave_outside_chest", Location().add(Chest(0x018)), obstacle_cave_inside, None)
         self._addEntrance("obstacle_cave_exit", lower_right_taltal, obstacle_cave_exit, None)
 
         papahl_cave = Location().add(Chest(0x28A))
-        papahl = Location(name="Papahl's Ledge").connect(lower_right_taltal, None, one_way=True)
+        papahl = Location("Papahl's Ledge").connect(lower_right_taltal, None, one_way=True)
         hibiscus_item = Location().add(TradeSequenceItem(0x019, TRADING_ITEM_HIBISCUS))
         papahl.connect(hibiscus_item, TRADING_ITEM_PINEAPPLE, one_way=True)
         self._addEntrance("papahl_entrance", lower_right_taltal, papahl_cave, None)
@@ -354,27 +354,27 @@ class World:
         below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
 
-        heartpiece_swim_cave = Location(name="Damp Cave").connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
+        heartpiece_swim_cave = Location("Damp Cave").connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
         self._addEntrance("heartpiece_swim_cave", below_right_taltal, heartpiece_swim_cave, FLIPPERS)  # cave next to level 4
-        d4_entrance = Location(name="Outside D4").connect(below_right_taltal, FLIPPERS)
+        d4_entrance = Location("Outside D4").connect(below_right_taltal, FLIPPERS)
         lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
         self._addEntrance("d4", d4_entrance, None, ANGLER_KEY)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
-        outside_mambo = Location(name="Outside Manbo").connect(d4_entrance, FLIPPERS)
-        inside_mambo = Location(name="Manbo's Cave")
+        outside_mambo = Location("Outside Manbo").connect(d4_entrance, FLIPPERS)
+        inside_mambo = Location("Manbo's Cave")
         mambo = Location().add(Song(0x2FD)).connect(inside_mambo, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
         self._addEntrance("mambo", outside_mambo, inside_mambo, None)
 
         # Raft game.
-        raft_house = Location(name="Raft House")
+        raft_house = Location("Raft House")
         Location().add(KeyLocation("RAFT")).connect(raft_house, COUNT("RUPEES", 100))
-        raft_return_upper = Location(name="Raft Return North")
-        raft_return_lower = Location(name="Raft Return South").connect(raft_return_upper, None, one_way=True)
-        outside_raft_house = Location(name="Outside Raft House").connect(below_right_taltal, HOOKSHOT).connect(below_right_taltal, FLIPPERS, one_way=True)
+        raft_return_upper = Location("Raft Return North")
+        raft_return_lower = Location("Raft Return South").connect(raft_return_upper, None, one_way=True)
+        outside_raft_house = Location("Outside Raft House").connect(below_right_taltal, HOOKSHOT).connect(below_right_taltal, FLIPPERS, one_way=True)
         raft_game = Location()
         raft_game.connect(outside_raft_house, "RAFT")
         raft_game.add(Chest(0x05C), Chest(0x05D)) # Chests in the rafting game
-        raft_exit = Location(name="Raft Exit")
+        raft_exit = Location("Raft Exit")
         if options.logic != "casual":  # use raft to reach north armos maze entrances without flippers
             raft_game.connect(raft_exit, None, one_way=True)
             raft_game.connect(armos_fairy_entrance, None, one_way=True)
@@ -385,9 +385,9 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             raft_game.add(OwlStatue(0x5D))
 
-        outside_rooster_house = Location(name="Outside Rooster House").connect(lower_right_taltal, OR(FLIPPERS, ROOSTER))
+        outside_rooster_house = Location("Outside Rooster House").connect(lower_right_taltal, OR(FLIPPERS, ROOSTER))
         self._addEntrance("rooster_house", outside_rooster_house, None, None)
-        bird_cave = Location(name="Bird Cave")
+        bird_cave = Location("Bird Cave")
         bird_key = Location().add(BirdKey())
         bird_cave.connect(bird_key, ROOSTER)
         if not options.rooster:
@@ -397,10 +397,10 @@ class World:
         self._addEntrance("bird_cave", outside_rooster_house, bird_cave, None)
         bridge_seashell = Location().add(Seashell(0x00C)).connect(outside_rooster_house, AND(OR(FEATHER, ROOSTER), POWER_BRACELET))  # seashell right of rooster house, there is a hole in the bridge
 
-        multichest_cave = Location(name="5 Chest Game Tunnel")
-        multichest_cave_secret = Location(name="To 5 Chest Game").connect(multichest_cave, None, one_way=True) # bomb walls are one-way
+        multichest_cave = Location("5 Chest Game Tunnel")
+        multichest_cave_secret = Location("To 5 Chest Game").connect(multichest_cave, None, one_way=True) # bomb walls are one-way
         multichest_cave.connect(multichest_cave_secret, BOMB, one_way=True)
-        water_cave_hole = Location(name="Near Hole to Damp Cave")  # Location with the hole that drops you onto the hearth piece under water
+        water_cave_hole = Location("Near Hole to Damp Cave")  # Location with the hole that drops you onto the hearth piece under water
         if options.logic != "casual":
             water_cave_hole.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
         multichest_outside = Location().add(Chest(0x01D))  # chest after multichest puzzle outside
@@ -410,15 +410,15 @@ class World:
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             water_cave_hole.add(OwlStatue(0x1E)) # owl statue below d7
 
-        right_taltal_connector1 = Location(name="Outer Rainbow Cave")
-        right_taltal_connector_outside1 = Location(name="Rainbow Ledge")
-        right_taltal_connector2 = Location(name="Inner Rainbow Cave Entrance")
-        right_taltal_connector3 = Location(name="Inner Rainbow Cave Exit")
+        right_taltal_connector1 = Location("Outer Rainbow Cave")
+        right_taltal_connector_outside1 = Location("Rainbow Ledge")
+        right_taltal_connector2 = Location("Inner Rainbow Cave Entrance")
+        right_taltal_connector3 = Location("Inner Rainbow Cave Exit")
         right_taltal_connector2.connect(right_taltal_connector3, AND(OR(FEATHER, ROOSTER), HOOKSHOT), one_way=True)
-        right_taltal_connector_outside2 = Location(name="After Rainbow Caves")
-        right_taltal_connector4 = Location(name="Path to D7")
-        d7_platau = Location(name="D7 Plateau")
-        d7_tower = Location(name="D7 Tower")
+        right_taltal_connector_outside2 = Location("After Rainbow Caves")
+        right_taltal_connector4 = Location("Path to D7")
+        d7_platau = Location("D7 Plateau")
+        d7_tower = Location("D7 Tower")
         d7_platau.connect(d7_tower, AND(POWER_BRACELET, BIRD_KEY), one_way=True)
         d7_tower.connect(d7_platau, None, one_way=True)
         self._addEntrance("right_taltal_connector1", water_cave_hole, right_taltal_connector1, None)
@@ -434,34 +434,34 @@ class World:
             d7_platau.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
             d7_platau.connect(right_taltal_connector_outside1, None, one_way=True)
 
-        mountain_bridge_staircase = Location(name="Bridge Towards D8").connect(outside_rooster_house, OR(HOOKSHOT, ROOSTER)) # cross bridges to staircase
+        mountain_bridge_staircase = Location("Bridge Towards D8").connect(outside_rooster_house, OR(HOOKSHOT, ROOSTER)) # cross bridges to staircase
         if options.logic != "casual":  # ledge drop
             mountain_bridge_staircase.connect(windfish_egg, None, one_way=True)
 
-        left_right_connector_cave_entrance = Location(name="Path to West Tal Tal Entrance")
-        left_right_connector_cave_exit = Location(name="Path to West Tal Tal Exit")
+        left_right_connector_cave_entrance = Location("Path to West Tal Tal Entrance")
+        left_right_connector_cave_exit = Location("Path to West Tal Tal Exit")
         left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, OR(HOOKSHOT, ROOSTER), one_way=True)  # pass through the underground passage to left side
-        taltal_boulder_zone = Location(name="Falling Rocks")
+        taltal_boulder_zone = Location("Falling Rocks")
         self._addEntrance("left_to_right_taltalentrance", mountain_bridge_staircase, left_right_connector_cave_entrance, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
         self._addEntrance("left_taltal_entrance", taltal_boulder_zone, left_right_connector_cave_exit, None)
         mountain_heartpiece = Location().add(HeartPiece(0x2BA)) # heartpiece in connecting cave
         left_right_connector_cave_entrance.connect(mountain_heartpiece, BOMB, one_way=True)  # in the connecting cave from right to left. one_way to prevent access to left_side_mountain via glitched logic
 
         taltal_boulder_zone.add(Chest(0x004)) # top of falling rocks hill
-        taltal_madbatter = Location(name="Mountain Mad Batter").connect(Location().add(MadBatter(0x1E2)), MAGIC_POWDER)
+        taltal_madbatter = Location("Mountain Mad Batter").connect(Location().add(MadBatter(0x1E2)), MAGIC_POWDER)
         self._addEntrance("madbatter_taltal", taltal_boulder_zone, taltal_madbatter, POWER_BRACELET)
         self._addEntranceRequirementExit("madbatter_taltal", None) # if exiting, you do not need bracelet
 
-        outside_fire_cave = Location(name="Outside Fire Cave")
+        outside_fire_cave = Location("Outside Fire Cave")
         if options.logic != "casual":
             outside_fire_cave.connect(writes_hut_outside, None, one_way=True)  # Jump down the ledge
         taltal_boulder_zone.connect(outside_fire_cave, None, one_way=True)
-        fire_cave_bottom = Location(name="Fire Cave South")
-        fire_cave_top = Location(name="Fire Cave North").connect(fire_cave_bottom, COUNT(SHIELD, 2))
+        fire_cave_bottom = Location("Fire Cave South")
+        fire_cave_top = Location("Fire Cave North").connect(fire_cave_bottom, COUNT(SHIELD, 2))
         self._addEntrance("fire_cave_entrance", outside_fire_cave, fire_cave_bottom, BOMB)
         self._addEntranceRequirementExit("fire_cave_entrance", None) # if exiting, you do not need bombs
 
-        d8_entrance = Location(name="Outside D8")
+        d8_entrance = Location("Outside D8")
         if options.logic != "casual":
             d8_entrance.connect(writes_hut_outside, None, one_way=True) # Jump down the ledge
             d8_entrance.connect(outside_fire_cave, None, one_way=True) # Jump down the other ledge
@@ -470,8 +470,8 @@ class World:
         self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
         self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
-        nightmare = Location(name="Nightmare")
-        windfish = Location(name="Windfish").connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        nightmare = Location("Nightmare")
+        windfish = Location("Windfish").connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             hookshot_cave.connect(hookshot_cave_chest, r.boots_jump) # boots jump the gap to the chest

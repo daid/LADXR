@@ -5,25 +5,25 @@ from locations.all import *
 
 class Dungeon1:
     def __init__(self, options, world_setup, r):
-        entrance = Location(1, name="D1 Entrance")
+        entrance = Location("D1 Entrance", dungeon=1)
         entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))
-        Location(1).add(DroppedKey(0x116)).connect(entrance, OR(BOMB, r.push_hardhat)) # hardhat beetles (can kill with bomb)
-        Location(1).add(DungeonChest(0x10D)).connect(entrance, OR(r.attack_hookshot_powder, SHIELD)) # moldorm spawn chest
-        stalfos_keese_room = Location(1).add(DungeonChest(0x114)).connect(entrance, AND(OR(r.attack_skeleton, SHIELD),r.attack_hookshot_powder)) # 2 stalfos 2 keese room
-        Location(1).add(DungeonChest(0x10C)).connect(entrance, BOMB) # hidden seashell room
-        dungeon1_upper_left = Location(1, name="D1 Upper Left").connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
+        Location(dungeon=1).add(DroppedKey(0x116)).connect(entrance, OR(BOMB, r.push_hardhat)) # hardhat beetles (can kill with bomb)
+        Location(dungeon=1).add(DungeonChest(0x10D)).connect(entrance, OR(r.attack_hookshot_powder, SHIELD)) # moldorm spawn chest
+        stalfos_keese_room = Location(dungeon=1).add(DungeonChest(0x114)).connect(entrance, AND(OR(r.attack_skeleton, SHIELD),r.attack_hookshot_powder)) # 2 stalfos 2 keese room
+        Location(dungeon=1).add(DungeonChest(0x10C)).connect(entrance, BOMB) # hidden seashell room
+        dungeon1_upper_left = Location("D1 Upper Left", dungeon=1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(1).add(OwlStatue(0x103), OwlStatue(0x104)).connect(dungeon1_upper_left, STONE_BEAK1)
-        feather_chest = Location(1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, SHIELD)  # feather location, behind spike enemies. can shield bump into pit (only shield works)
-        boss_key = Location(1).add(DungeonChest(0x108)).connect(entrance, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # boss key
-        dungeon1_right_side = Location(1, name="D1 Right Side").connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
+            Location(dungeon=1).add(OwlStatue(0x103), OwlStatue(0x104)).connect(dungeon1_upper_left, STONE_BEAK1)
+        feather_chest = Location(dungeon=1).add(DungeonChest(0x11D)).connect(dungeon1_upper_left, SHIELD)  # feather location, behind spike enemies. can shield bump into pit (only shield works)
+        boss_key = Location(dungeon=1).add(DungeonChest(0x108)).connect(entrance, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # boss key
+        dungeon1_right_side = Location("D1 Right Side", dungeon=1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(1).add(OwlStatue(0x10A)).connect(dungeon1_right_side, STONE_BEAK1)
-        dungeon1_3_of_a_kind = Location(1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(r.attack_hookshot_no_bomb, SHIELD)) # three of a kind, shield stops the suit from changing
-        dungeon1_miniboss_room = Location(1, name="D1 Miniboss Room").connect(dungeon1_right_side, FEATHER)
-        dungeon1_miniboss = Location(1, name="D1 After Miniboss").connect(dungeon1_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]])
-        dungeon1_boss_room = Location(1, name="D1 Boss Room").connect(dungeon1_miniboss, NIGHTMARE_KEY1)
-        boss = Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss_room, r.boss_requirements[world_setup.boss_mapping[0]])
+            Location(dungeon=1).add(OwlStatue(0x10A)).connect(dungeon1_right_side, STONE_BEAK1)
+        dungeon1_3_of_a_kind = Location(dungeon=1).add(DungeonChest(0x10A)).connect(dungeon1_right_side, OR(r.attack_hookshot_no_bomb, SHIELD)) # three of a kind, shield stops the suit from changing
+        dungeon1_miniboss_room = Location("D1 Miniboss Room", dungeon=1).connect(dungeon1_right_side, FEATHER)
+        dungeon1_miniboss = Location("D1 After Miniboss", dungeon=1).connect(dungeon1_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]])
+        dungeon1_boss_room = Location("D1 Boss Room", dungeon=1).connect(dungeon1_miniboss, NIGHTMARE_KEY1)
+        boss = Location(dungeon=1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss_room, r.boss_requirements[world_setup.boss_mapping[0]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             stalfos_keese_room.connect(entrance, r.attack_hookshot_powder) # stalfos jump away when you press a button.
@@ -43,7 +43,7 @@ class Dungeon1:
 
 class NoDungeon1:
     def __init__(self, options, world_setup, r):
-        entrance = Location(1, name="D1 Entrance")
-        Location(1).add(HeartContainer(0x106), Instrument(0x102)).connect(entrance, r.boss_requirements[
+        entrance = Location("D1 Entrance", dungeon=1)
+        Location(dungeon=1).add(HeartContainer(0x106), Instrument(0x102)).connect(entrance, r.boss_requirements[
             world_setup.boss_mapping[0]])
         self.entrance = entrance
