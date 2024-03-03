@@ -64,6 +64,8 @@ class Dungeon3:
             dungeon3_reverse_eye.connect(entrance, r.hookshot_over_pit) # hookshot the chest to get to the right side
             dungeon3_north_key_drop.connect(area_up, r.throw_pot) # use pots to kill the enemies
             dungeon3_south_key_drop.connect(area_down, r.throw_pot) # use pots to kill enemies
+            area_up.connect(dungeon3_raised_blocks_north, r.throw_pot, one_way=True) # use pots to hit the switch
+            area_up.connect(dungeon3_raised_blocks_east, AND(r.throw_pot, r.attack_hookshot_powder), one_way=True) # use pots to hit the switch
 
         if options.logic == 'glitched' or options.logic == 'hell':
             area2.connect(dungeon3_raised_blocks_east, AND(r.attack_hookshot_powder, r.super_jump_feather), one_way=True) # use superjump to get over the bottom left block
