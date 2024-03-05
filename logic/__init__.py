@@ -26,6 +26,7 @@ class Logic:
             requirements_settings = RequirementsSettings(configuration_options)
 
         r = requirements_settings
+        self.requirements_settings = requirements_settings
 
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options, r)
