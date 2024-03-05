@@ -55,3 +55,12 @@ class Location:
 
     def __repr__(self):
         return "<%s:%s:%d:%d:%d>" % (self.__class__.__name__, self.dungeon, len(self.items), len(self.simple_connections), len(self.gated_connections))
+
+    def friendlyName(self):
+        if self.name:
+            return self.name
+
+        if self.items:
+            return self.items[0].nameId
+        
+        return ''
