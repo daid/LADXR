@@ -298,7 +298,7 @@ class RequirementsSettings:
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
         self.hookshot_spam_pit = HOOKSHOT # use hookshot with spam to cross 1 tile gaps
         self.hookshot_clip = HOOKSHOT # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
-        self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
+        self.hookshot_clip_block = HOOKSHOT # use hookshot through moving blocks, or spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
         self.hookshot_over_pit = HOOKSHOT # use hookshot while over a pit to reach certain areas (see d3 vacuum room, d5 north of crossroads for example)
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
