@@ -81,8 +81,8 @@ hasNoBombs:
 
     # We do not have enough room at the shovel/bow buy entry to handle this
     # So jump to a bit where we have some more space to work, as there is some dead code in the shop.
-    rom.patch(0x04, 0x3AA9, 0x3AAE, ASM("jp $7AC3"), fill_nop=True)
-    rom.patch(0x04, 0x3AC3, 0x3AD8, ASM("""
+    rom.patch(0x04, 0x3AA9, 0x3AAE, ASM("jp $7AC0"), fill_nop=True)
+    rom.patch(0x04, 0x3AC0, 0x3AD8, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C5]
         ldh  [$FFF1], a
@@ -113,6 +113,7 @@ hasNoBombs:
     # Patch shop item graphics rendering to use some new code at the end of the bank.
     rom.patch(0x04, 0x3B91, 0x3BAC, ASM("""
         call $7FD0
+        jr   $16 ; skip over the NOP's
     """), fill_nop=True)
     rom.patch(0x04, 0x3BD3, 0x3BE3, ASM("""
         jp   $7FD0
