@@ -363,7 +363,7 @@ class World:
         self._addEntrance("papahl_exit", papahl, papahl_cave, None)
 
         # D4 entrance and related things
-        below_right_taltal = Location().connect(windfish_egg, POWER_BRACELET)
+        below_right_taltal = Location('Near D4 Keyhole').connect(windfish_egg, POWER_BRACELET)
         below_right_taltal.add(KeyLocation("ANGLER_KEYHOLE"))
         below_right_taltal.connect(bay_water, FLIPPERS)
         below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
