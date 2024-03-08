@@ -263,13 +263,17 @@ class RequirementsSettings:
         self.attack_hookshot_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
         self.attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
-        self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(OR(MAGIC_ROD, MAGIC_POWDER), HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic
+        self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(MAGIC_ROD, HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic rod
+        self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)) # BOW works, but isn't as reliable as it needs 4 arrows.
+        self.attack_wizrobe = OR(BOMB, MAGIC_ROD) # BOW works, but isn't as reliable as it needs 4 arrows.
+        self.stun_wizrobe = OR(BOOMERANG, MAGIC_POWDER, HOOKSHOT)
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         # add trick directory here
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
+        self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
         self.super_jump = AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # boots dash into wall for unclipped superjump
@@ -304,6 +308,7 @@ class RequirementsSettings:
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
+        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
 
         self.boss_requirements = [
             SWORD,  # D1 boss
@@ -349,18 +354,18 @@ class RequirementsSettings:
             self.attack_no_boomerang.remove(BOMB)
             self.attack_skeleton.remove(BOMB)
             self.attack_gibdos.remove(BOMB)
-        if options.logic == "hard":
+            
+        if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
             self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
-        if options.logic == "glitched":
-            self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
-            self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
+            self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
+            self.attack_wizrobe = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
+            
+        if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
+            
         if options.logic == "hell":
-            self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
-            self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
-            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob

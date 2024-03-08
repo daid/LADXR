@@ -3,6 +3,8 @@ from utils import formatText, setReplacementName
 from roomEditor import RoomEditor
 import entityData
 import os
+import json
+import struct
 
 
 def imageTo2bpp(filename, *, tileheight=None, colormap=None):
@@ -45,13 +47,32 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     return result
 
 
+def patchGraphics(rom, graphics_data):
+    header, size = struct.unpack("<II", graphics_data[:8])
+    if header == 0xDEADBEEF and size < 1024:
+        header = graphics_data[8:8+size]
+        graphics_data = graphics_data[1024:]
+        for info in json.loads(header):
+            updateGraphics(rom, info["addr"] // 0x4000, info["addr"] & 0x3FFF, graphics_data[:info["size"]])
+            graphics_data = graphics_data[info["size"]:]
+            if info.get("patch") == "extlink":
+                enableExtendedLinkSprites(rom)
+            if info.get("patch") == "pinkbatman":
+                for n in range(16):
+                    rom.banks[0x19][0x0FDC + n * 2] |= 6
+                rom.banks[0x21][0x0824] = 0x1B
+    else:
+        # Old style graphics, just fixed bin at 0x2C
+        updateGraphics(rom, 0x2C, 0, graphics_data)
+
+
 def updateGraphics(rom, bank, offset, data):
     if offset + len(data) > 0x4000:
         updateGraphics(rom, bank, offset, data[:0x4000-offset])
         updateGraphics(rom, bank + 1, 0, data[0x4000 - offset:])
     else:
         rom.banks[bank][offset:offset+len(data)] = data
-        if bank < 0x34:
+        if 0x20 <= bank < 0x34:
             rom.banks[bank-0x20][offset:offset + len(data)] = data
 
 
@@ -64,9 +85,9 @@ def gfxMod(rom, filename):
 
     ext = os.path.splitext(filename)[1].lower()
     if ext == ".bin":
-        updateGraphics(rom, 0x2C, 0, open(filename, "rb").read())
+        patchGraphics(rom, open(filename, "rb").read())
     elif ext in (".png", ".bmp"):
-        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF]))
+        patchGraphics(rom, imageTo2bpp(filename, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF]))
     elif ext == ".json":
         import json
         data = json.load(open(filename, "rt"))
@@ -77,33 +98,70 @@ def gfxMod(rom, filename):
             if "name" in patch:
                 setReplacementName(patch["item"], patch["name"])
     else:
-        updateGraphics(rom, 0x2C, 0, imageTo2bpp(filename))
+        patchGraphics(rom, imageTo2bpp(filename))
+    # createGfxImage(rom, "tmp.png")
 
 
 def createGfxImage(rom, filename):
     import PIL.Image
     bank_count = 10
-    img = PIL.Image.new("P", (32 * 8, 32 * 8 * bank_count))
+    info = [
+        {"addr": 0x2C * 0x4000, "size": bank_count * 0x4000},
+        {"addr": 0x0C * 0x4000 + 0x1800, "size": 0x80 * 0x40, "patch": "extlink"},
+    ]
+    infoblock = json.dumps(info, separators=(',', ':')).encode('ascii')
+    infoblock = struct.pack("<II", 0xDEADBEEF, len(infoblock)) + infoblock
+    data = infoblock + bytes(1024 - len(infoblock))
+
+    def reversebits(n):
+        n = ((n & 0x55) << 1) | ((n & 0xAA) >> 1)
+        n = ((n & 0x33) << 2) | ((n & 0xCC) >> 2)
+        n = ((n & 0x0F) << 4) | ((n & 0xF0) >> 4)
+        return n
+
+    for bank_nr in range(bank_count):
+        data += rom.banks[0x2C + bank_nr]
+    for n in range(0x80):
+        idx1 = rom.banks[0x20][0x1319 + n * 2]
+        attr1 = rom.banks[0x20][0x1407 + n * 2]
+        idx2 = rom.banks[0x20][0x131A + n * 2]
+        attr2 = rom.banks[0x20][0x1408 + n * 2]
+        sprite1 = rom.banks[0x2C][0x1800 + idx1 * 16:0x1800 + idx1 * 16 + 32]
+        sprite2 = rom.banks[0x2C][0x1800 + idx2 * 16:0x1800 + idx2 * 16 + 32]
+        if attr1 & 0x20:
+            sprite1 = bytes(reversebits(b) for b in sprite1)
+        if attr1 & 0x40:
+            sprite1 = b''.join(sprite1[30-n*2:32-n*2] for n in range(16))
+        if attr2 & 0x20:
+            sprite2 = bytes(reversebits(b) for b in sprite2)
+        if attr2 & 0x40:
+            sprite2 = b''.join(sprite2[30-n*2:32-n*2] for n in range(16))
+        if n in {0x02, 0x03, 0x08, 0x09, 0x0C, 0x0D, 0x5A, 0x5D} or n > 0x76:
+            sprite1 = bytes(32)
+            sprite2 = bytes(32)
+        data += sprite1 + sprite2
+    data = data[:0x1C00] + bytes(0x1000) + data[0x2C00:]  # Wipe out the player sprites, as they are moved to end of graphics.
+
+    assert len(data) - 1024 == sum(i["size"] for i in info), f'{len(data) - 1024} ~= {sum(i["size"] for i in info)}'
+    img = PIL.Image.new("P", (32 * 8, len(data) // 64))
     img.putpalette((
         128, 0, 128,
         0, 0, 0,
         128, 128, 128,
         255, 255, 255,
     ))
-    for bank_nr in range(bank_count):
-        bank = rom.banks[0x2C + bank_nr]
-        for tx in range(32):
-            for ty in range(16):
-                for y in range(16):
-                    a = bank[tx * 32 + ty * 32 * 32 + y * 2]
-                    b = bank[tx * 32 + ty * 32 * 32 + y * 2 + 1]
-                    for x in range(8):
-                        c = 0
-                        if a & (0x80 >> x):
-                            c |= 1
-                        if b & (0x80 >> x):
-                            c |= 2
-                        img.putpixel((tx*8+x, bank_nr * 32 * 8 + ty*16+y), c)
+    for tx in range(32):
+        for ty in range(len(data) // 1024):
+            for y in range(16):
+                a = data[tx * 32 + ty * 32 * 32 + y * 2]
+                b = data[tx * 32 + ty * 32 * 32 + y * 2 + 1]
+                for x in range(8):
+                    c = 0
+                    if a & (0x80 >> x):
+                        c |= 1
+                    if b & (0x80 >> x):
+                        c |= 2
+                    img.putpixel((tx*8+x, ty*16+y), c)
     img.save(filename)
 
 
@@ -170,99 +228,10 @@ def noText(rom):
 
 def reduceMessageLengths(rom, rnd):
     # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
-    rom.texts[0x01] = formatText(rnd.choice([
-        "Let's a go!",
-        "Remember, sword goes on A!",
-        "Remember, sword goes on B!",
-        "It's pronounced Hydrocity Zone.",
-        "Avoid the heart piece of shame!",
-        "Marin? No, this is Zelda. Welcome to Hyrule",
-        "Why are you in my bed?",
-        "This is not a Mario game!",
-        "MuffinJets was here...",
-        "Wait, I thought Daid was French!",
-        "Is it spicefather or spaceotter?",
-        "kbranch finally took a break!",
-        "Pink Batman knows that trick, ask them!",
-        "Baby seed ahead.",
-        "Abandon all hope ye who enter here...",
-        "Link... Open your eyes...\nWait, you're #####?",
-        "Remember, there are no bugs in LADX.",
-        "#####, #####, you got to wake up!\nDinner is ready.",
-        "Go find the stepladder.",
-        "Pizza power!",
-        "Eastmost peninsula is the secret.",
-        "There is no cow level.",
-        "You cannot lift rocks with your bear hands.",
-        "Don't worry, the doghouse was patched.",
-        "The carpet whale isn't real, it can't hurt you.",
-        "Isn't this a demake of Phantom Hourglass?",
-        "GGs to TGH for WR.",
-        "Go try the LAS rando!",
-        "Go try the Oracles rando!",
-        "Go try Archipelago!",
-        "Go try touching grass!",
-        "Please leave my house.",
-        "Trust me, this will be a 2 hour seed, max.",
-        "This is still better than doing Dampe dungeons.",
-        "They say that Marin can be found here."
-        "Stalfos are such boneheads.",
-        "90% bug-free!",
-        "404 Marin.personality not found.",
-        "Idk man, works on my machine.",
-        "Hey guys, did you know that Vaporeon",
-        "Trans rights!",
-        "Support gay rights!\nAnd their lefts!",
-        "Snake? Snake?! SNAAAAKE!!!",
-        "Oh, you chose THESE settings?",
-        "As seen on TV!",
-        "May contain nuts.",
-        "Limited edition!",
-        "May contain RNG.",
-        "Reticulating splines!", 
-        "Keyboard compatible!",
-        "Teetsuuuuoooo!",
-        "Kaaneeeedaaaa!",
-        "Learn about allyship!",
-        "[This Marin text left intentionally blank.]",
-        "'Autological' is!",
-        "Technoblade never dies!",
-        "Thank you, CrystalSaver!",
-        "Wait, LADX has a rando?",
-        "https://tinyurl.com/ladxr",
-        "Wait, how many Pokemon are there now?",
-        "GOOD EMU",
-        "Good luck finding the feather.",
-        "Good luck finding the bracelets.",
-        "Good luck finding the boots.",
-        "Good luck finding your swords.",
-        "Good luck finding the flippers.",
-        "Good luck finding the rooster.",
-        "Good luck finding the hookshot.",
-        "Good luck finding the magic rod.",
-        "It's not a fire rod.\nIt's a magic rod, it shoots magic.",
-        "You should check the Seashell Mansion.",
-        "Mt. Tamaranch",
-        "WIND FISH IN NAME ONLY, FOR IT IS NEITHER.",
-        "Use Magpie!",
-        "What is the #text-suggestions channel for?",
-        "Ribbit! Ribbit! I'm Marin, on vocals!",
-        "Try this rando at ladxr.daid.eu!",
-        "He turned himself into a carpet whale!",
-        "Which came first, the whale or the egg?",
-        "Glan - Known Death and Taxes appreciator.",
-        "Pokemon number 591.",
-        "Would you?",
-        "Sprinkle the desert skulls.",
-        "Please don't curse in my Christian LADXR seed.",
-        "... ... ... \n... ...smash.",
-        "How was bedwetting practice?",
-        "The Oracles decomp project is going well!",
-        "#####, how do I download RAM?",
-        "Is this a delayed April Fool's Joke?",
-        "Dayoman is close to getting 120% in 1:20!",
-        "Play as if your footage will go in a\nSummoning Salt video."
-    ]))
+    lines = open(os.path.join(os.path.dirname(__file__), "marin.txt"), "rb").readlines()
+    while lines[-1].strip() == b'':
+        lines.pop(-1)
+    rom.texts[0x01] = formatText(rnd.choice(lines).strip().decode("unicode_escape"))
 
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText("You've got a Guardian Acorn!")
@@ -324,6 +293,30 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0xed] = formatText("You've got the Mirror Shield! You can now turnback the beams you couldn't block before!")
     rom.texts[0xee] = formatText("You've got a more Powerful {POWER_BRACELET}! Now you can almost lift a whale!")
     rom.texts[0xf0] = formatText("Want to go on a raft ride for a hundred {RUPEES}?", ask="Yes No Way")
+
+
+def enableExtendedLinkSprites(rom):
+    # Instead of loading flipped sprites from a lookup table (bank20) in graphics bank 2C,
+    # Load the graphics from bank 0C and index directly by hLinkAnimationState
+    rom.patch(0x20, 0x14FA, 0x155F, ASM("""
+    ; Convert hLinkAnimationState into a tile number offset
+    ld   b, a
+    ld   c, 0
+    srl  b
+    rr   c
+    srl  b
+    rr   c
+    ld   hl, $5800
+    add  hl, bc
+    ld   c, l
+    ld   b, h
+    ld   hl, $8000
+    ld   d, $40
+    call $1D0A ; CopyLinkTilesPair
+    ret
+    """), fill_nop=True)
+    rom.patch(0x00, 0x1D0C, ASM("call $0B0B"), "", fill_nop=True)
+    rom.patch(0x00, 0x1DE5, ASM("ld [hl], $23"), ASM("ld [hl], $03"))  # Fix the diving sprite
 
 
 def allowColorDungeonSpritesEverywhere(rom):

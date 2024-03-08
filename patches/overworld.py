@@ -162,7 +162,10 @@ def exportOverworld(rom):
             json.dump(data, open("%s/overworld/export/%02X.json" % (path, room_index), "wt"))
 
         if not os.path.exists("%s/overworld/export/%s" % (path, image_filename)):
-            tilemap = rom.banks[0x2F][tileset_index*0x100:tileset_index*0x100+0x200]
+            if tileset_index == 0x0F:
+                tilemap = bytearray([0x00, 0x55, 0xAA, 0x00] * 4 * 32)
+            else:
+                tilemap = rom.banks[0x2F][tileset_index*0x100:tileset_index*0x100+0x200]
             tilemap += rom.banks[0x2C][0x1200:0x1800]
             tilemap += rom.banks[0x2C][0x0800:0x1000]
             anim_addr = {2: 0x2B00, 3: 0x2C00, 4: 0x2D00, 5: 0x2E00, 6: 0x2F00, 7: 0x2D00, 8: 0x3000, 9: 0x3100, 10: 0x3200, 11: 0x2A00, 12: 0x3300, 13: 0x3500, 14: 0x3600, 15: 0x3400, 16: 0x3700}.get(room.animation_id, 0x0000)

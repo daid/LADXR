@@ -67,6 +67,7 @@ class Dungeon5:
             post_gohma.connect(pre_gohma, AND(r.sideways_block_push, POWER_BRACELET)) # Sideways block push + pick up pots to reach post_gohma
             staircase_before_boss.connect(post_gohma, r.boots_jump) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_stalfos.connect(staircase_before_boss, r.super_jump_sword) # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
+            after_stalfos.connect(staircase_before_boss, r.zoomerang) # use zoomerang dashing left to get an unclipped boots superjump off the right wall over the block. reverse is push block
             after_stalfos.connect(area2, SWORD) # knock master stalfos down 255 times (about 23 minutes)
             north_bridge_chest.connect(north_of_crossroads, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, r.boots_bonk_pit) # get to first chest via the north chest with pit buffering
@@ -80,6 +81,7 @@ class Dungeon5:
             before_boss.connect(after_stalfos, r.super_jump_sword) # cross pits room from bottom left to top left by unclipped superjump on bottom wall on top of side wall, then jump across            
 
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon5:

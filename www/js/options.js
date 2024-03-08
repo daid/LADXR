@@ -155,7 +155,7 @@ var options =
   "category": "Items",
   "short_key": "R",
   "label": "Add the rooster",
-  "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. Any rooster spot is accessible without rooster by other means.",
+  "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.",
   "multiworld": true,
   "aesthetic": false,
   "default": true
@@ -206,6 +206,11 @@ var options =
     "key": "smallkeys",
     "short": "s",
     "label": "Small keys"
+   },
+   {
+    "key": "nightmarekeys",
+    "short": "n",
+    "label": "Nightmare keys"
    },
    {
     "key": "localkeys",
@@ -367,6 +372,16 @@ var options =
     "key": "bingo",
     "short": "b",
     "label": "Bingo!"
+   },
+   {
+    "key": "bingo-double",
+    "short": "d",
+    "label": "Double Bingo!"
+   },
+   {
+    "key": "bingo-triple",
+    "short": "t",
+    "label": "Triple Bingo!"
    },
    {
     "key": "bingo-full",

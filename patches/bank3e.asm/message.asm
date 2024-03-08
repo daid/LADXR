@@ -99,7 +99,7 @@ ItemNamePointers:
     dw ItemNameKey6
     dw ItemNameKey7
     dw ItemNameKey8
-    dw ItemNameKey9
+    dw ItemNameKey0
     dw ItemNameMap1
     dw ItemNameMap2
     dw ItemNameMap3
@@ -108,7 +108,7 @@ ItemNamePointers:
     dw ItemNameMap6
     dw ItemNameMap7
     dw ItemNameMap8
-    dw ItemNameMap9
+    dw ItemNameMap0
     dw ItemNameCompass1
     dw ItemNameCompass2
     dw ItemNameCompass3
@@ -117,7 +117,7 @@ ItemNamePointers:
     dw ItemNameCompass6
     dw ItemNameCompass7
     dw ItemNameCompass8
-    dw ItemNameCompass9
+    dw ItemNameCompass0
     dw ItemNameStoneBeak1
     dw ItemNameStoneBeak2
     dw ItemNameStoneBeak3
@@ -126,7 +126,7 @@ ItemNamePointers:
     dw ItemNameStoneBeak6
     dw ItemNameStoneBeak7
     dw ItemNameStoneBeak8
-    dw ItemNameStoneBeak9
+    dw ItemNameStoneBeak0
     dw ItemNameNightmareKey1
     dw ItemNameNightmareKey2
     dw ItemNameNightmareKey3
@@ -135,7 +135,7 @@ ItemNamePointers:
     dw ItemNameNightmareKey6
     dw ItemNameNightmareKey7
     dw ItemNameNightmareKey8
-    dw ItemNameNightmareKey9
+    dw ItemNameNightmareKey0
     dw ItemNameToadstool
     dw ItemNameZol ; 0x51
     dw ItemNameZol ; 0x52
@@ -143,7 +143,7 @@ ItemNamePointers:
     dw ItemNameZol ; 0x54
     dw ItemNameZol ; 0x55
     dw ItemNameZol ; 0x56
-    dw ItemNameNone ; 0x57
+    dw ItemNameHammer ; 0x57
     dw ItemNameNone ; 0x58
     dw ItemNameNone ; 0x59
     dw ItemNameNone ; 0x5a
@@ -298,6 +298,8 @@ ItemNameMessage:
     db m"Got ... nothing?", $ff
 ItemNameZol:
     db m"LOL, ZOL!", $ff
+ItemNameHammer:
+    db m"Got a HAMMER!", $ff
 ItemNameKey1:
     db m"Got a {KEY1}", $ff
 ItemNameKey2:
@@ -314,8 +316,8 @@ ItemNameKey7:
     db m"Got a {KEY7}", $ff
 ItemNameKey8:
     db m"Got a {KEY8}", $ff
-ItemNameKey9:
-    db m"Got a {KEY9}", $ff
+ItemNameKey0:
+    db m"Got a {KEY0}", $ff
 ItemNameMap1:
     db m"Got the {MAP1}", $ff
 ItemNameMap2:
@@ -332,8 +334,8 @@ ItemNameMap7:
     db m"Got the {MAP7}", $ff
 ItemNameMap8:
     db m"Got the {MAP8}", $ff
-ItemNameMap9:
-    db m"Got the {MAP9}", $ff
+ItemNameMap0:
+    db m"Got the {MAP0}", $ff
 ItemNameCompass1:
     db m"Got the {COMPASS1}", $ff
 ItemNameCompass2:
@@ -350,8 +352,8 @@ ItemNameCompass7:
     db m"Got the {COMPASS7}", $ff
 ItemNameCompass8:
     db m"Got the {COMPASS8}", $ff
-ItemNameCompass9:
-    db m"Got the {COMPASS9}", $ff
+ItemNameCompass0:
+    db m"Got the {COMPASS0}", $ff
 ItemNameStoneBeak1:
     db m"Got the {STONE_BEAK1}", $ff
 ItemNameStoneBeak2:
@@ -368,8 +370,8 @@ ItemNameStoneBeak7:
     db m"Got the {STONE_BEAK7}", $ff
 ItemNameStoneBeak8:
     db m"Got the {STONE_BEAK8}", $ff
-ItemNameStoneBeak9:
-    db m"Got the {STONE_BEAK9}", $ff
+ItemNameStoneBeak0:
+    db m"Got the {STONE_BEAK0}", $ff
 ItemNameNightmareKey1:
     db m"Got the {NIGHTMARE_KEY1}", $ff
 ItemNameNightmareKey2:
@@ -386,7 +388,7 @@ ItemNameNightmareKey7:
     db m"Got the {NIGHTMARE_KEY7}", $ff
 ItemNameNightmareKey8:
     db m"Got the {NIGHTMARE_KEY8}", $ff
-ItemNameNightmareKey9:
-    db m"Got the {NIGHTMARE_KEY9}", $ff
+ItemNameNightmareKey0:
+    db m"Got the {NIGHTMARE_KEY0}", $ff
 ItemNameToadstool:
     db m"Got the {TOADSTOOL}", $ff

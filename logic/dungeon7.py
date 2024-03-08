@@ -60,6 +60,7 @@ class Dungeon7:
             pre_boss.connect(final_pillar, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
         
         self.entrance = entrance
+        self.final_room = boss
 
 
 class NoDungeon7:

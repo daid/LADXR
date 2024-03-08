@@ -39,6 +39,7 @@ import patches.droppedKey
 import patches.goldenLeaf
 import patches.songs
 import patches.bowwow
+import patches.follower
 import patches.desert
 import patches.reduceRNG
 import patches.madBatter
@@ -51,7 +52,9 @@ import patches.bingo
 import patches.maze
 import patches.multiworld
 import patches.tradeSequence
+import patches.alttp
 import hints
+import locations.keyLocation
 
 
 # Function to generate a final rom, this patches the rom with all required patches
@@ -123,13 +126,15 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys'):
+    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
         patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
     if settings.witch:
         patches.witch.updateWitch(rom)
     patches.softlock.fixAll(rom)
-    patches.maptweaks.tweakMap(rom)
+    if not settings.rooster:
+        patches.maptweaks.tweakMap(rom)
+        patches.maptweaks.tweakBirdKeyRoom(rom)
     patches.chest.fixChests(rom)
     patches.shop.fixShop(rom)
     patches.rooster.patchRooster(rom)
@@ -157,15 +162,22 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     else:
         # Monkey bridge patch, always have the bridge there.
         rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
-    patches.bowwow.fixBowwow(rom, everywhere=settings.bowwow != 'normal')
+    patches.bowwow.fixBowwow(rom)
+    patches.follower.patchFollowerCreation(rom, bowwow_everywhere=settings.bowwow != 'normal', extra_spawn=settings.follower)
     if settings.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
     patches.desert.desertAccess(rom)
     if settings.overworld == 'dungeondive':
         patches.overworld.patchOverworldTilesets(rom)
         patches.overworld.createDungeonOnlyOverworld(rom)
+    elif settings.overworld == 'dungeonchain':
+        patches.shop.changeShopPrices(rom, 200, 500)
+        patches.dungeon.patchDungeonChain(rom, logic.world_setup)
     elif settings.overworld == 'nodungeons':
         patches.dungeon.patchNoDungeons(rom)
+    elif settings.overworld == 'alttp':
+        patches.overworld.patchOverworldTilesets(rom)
+        patches.alttp.patch(rom)
     elif settings.overworld == 'random':
         patches.overworld.patchOverworldTilesets(rom)
         mapgen.store_map(rom, logic.world.map)
@@ -181,6 +193,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.music.randomizeMusic(rom, rnd)
     elif settings.music == 'off':
         patches.music.noMusic(rom)
+    elif settings.music == 'shifted':
+        patches.music.shiftedMusic(rom)
     if settings.noflash:
         patches.aesthetics.removeFlashingLights(rom)
     if settings.hardmode == "oracle":
@@ -209,7 +223,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         rom.patch(0, 0x0003, "00", "01")
 
     # Patch the sword check on the shopkeeper turning around.
-    if settings.steal == 'never':
+    if settings.steal == 'never' or settings.overworld == "dungeonchain":
         rom.patch(4, 0x36F9, "FA4EDB", "3E0000")
     elif settings.steal == 'always':
         rom.patch(4, 0x36F9, "FA4EDB", "3E0100")
@@ -244,7 +258,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     if world_setup.goal == "raft":
         patches.goal.setRaftGoal(rom)
-    elif world_setup.goal in ("bingo", "bingo-full"):
+    elif world_setup.goal in ("bingo", "bingo-double", "bingo-triple", "bingo-full"):
         patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, world_setup.goal)
     elif world_setup.goal == "maze":
         patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
@@ -257,7 +271,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
-    if settings.overworld not in {"dungeondive", "random"}:
+    if settings.overworld not in {"dungeondive", "dungeonchain", "random", "alttp"}:
         patches.entrances.changeEntrances(rom, world_setup.entrance_mapping)
     for spot in item_list:
         if spot.item and spot.item.startswith("*"):
@@ -265,11 +279,13 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         spot.patch(rom, spot.item)
     patches.enemies.changeBosses(rom, world_setup.boss_mapping)
     patches.enemies.changeMiniBosses(rom, world_setup.miniboss_mapping)
+    if settings.enemies == "overworld":
+        patches.enemies.randomizeEnemies(rom, seed)
 
     if not args.romdebugmode:
-        patches.core.addFrameCounter(rom, len(item_list))
+        patches.core.addFrameCounter(rom, len([spot for spot in item_list if type(spot) != locations.keyLocation.KeyLocation]))
 
-    patches.core.warpHome(rom)  # Needs to be done after setting the start location.
+    patches.core.warpHome(rom, settings.overworld == "dungeonchain" or settings.entranceshuffle in ("chaos", "insane", "madness"))  # Needs to be done after setting the start location.
     patches.titleScreen.setRomInfo(rom, binascii.hexlify(seed).decode("ascii").upper(), settings)
     patches.endscreen.updateEndScreen(rom)
     patches.aesthetics.updateSpriteData(rom)

@@ -17,3 +17,29 @@ def fixPhotographer(rom):
     # Allow bridge photo with follower
     rom.patch(0x36, 0x004D, ASM("call nz, $3F8D"), "", fill_nop=True)
     rom.patch(0x36, 0x006D, ASM("ret nz"), "", fill_nop=True) # Checks if any entity is alive
+    # Allow Marin photos after she sang for the walrus
+    rom.patch(0x36, 0x3101, ASM("ld a, [$DB73]"), ASM("call $7F10"))
+    rom.patch(0x36, 0x312D, ASM("ld a, [$DB73]"), ASM("call $7F10"))
+    rom.patch(0x36, 0x01F4, ASM("ld a, [$DB73]"), ASM("call $7F10"))
+    rom.patch(0x36, 0x3F10, "00" * 16, ASM("""
+        ld  a, [$DB73]
+        and a
+        ret nz
+        ld  a, [$D8FD]
+        and $20 ; check if walrus is gone
+        ret
+    """), fill_nop=True)
+    # Well photo is taken as soon as Link lands if Marin isn't there
+    rom.patch(0x36, 0x0236, ASM("ldh a, [$FF9D] \n cp $6A"), ASM("call $7F20"), fill_nop=True)
+    rom.patch(0x36, 0x3F20, "00" * 32, ASM("""
+        ld  a, [$DB73]
+        and a
+        jr  z, noMarinFollower
+        ldh a, [$FF9D]
+        cp  $6A
+        ret
+    noMarinFollower:
+        ldh a, [$FFA2]
+        and a ; check if Link landed on the ground
+        ret
+    """), fill_nop=True)

@@ -4,6 +4,8 @@ from assembler import ASM
 from locations.constants import *
 from utils import formatText
 
+REQUIRED_ROWS = {"bingo": 1, "bingo-double": 2, "bingo-triple": 3, "bingo-full": 12}
+
 # Few unused rooms that we can use the room status variables for to store data.
 UNUSED_ROOMS = [0x15D, 0x17E, 0x17F, 0x1AD]
 next_bit_flag_index = 0
@@ -157,6 +159,53 @@ def checkMemoryMask(location, mask):
     """ % (location, mask)
 
 
+def checkCountMemoryNotZero(locations, min, max=255):
+    code = "ld e, $00"
+    for location in locations:
+        code += """
+            ld  a, [%s]
+            and a
+            jr  z, 1
+            inc e
+        """ % (location)
+    code += """
+        ld a, e
+        cp %s
+        jp c, clearZ
+    """ % (min)
+    if 0 <= max < 255:
+        code += """
+            cp %s
+            jp nc, clearZ
+        """ % (max + 1)
+    code += "jp setZ"
+    return code
+
+
+def checkCountMemoryMasks(checks, min, max=255):
+    code = "ld e, $00"
+    for check in checks:
+        (location, mask) = check
+        code += """
+            ld  a, [%s]
+            and %s
+            jr  z, 1
+            inc e
+        """ % (location, mask)
+    code += """
+        ld a, e
+        cp %s
+        jp c, clearZ
+    """ % (min)
+    if 0 <= max < 255:
+        code += """
+            cp %s
+            jp nc, clearZ
+        """ % (max + 1)
+    code += "jp setZ"
+    return code
+
+
 def checkForSeashellsCode(count):
     return """
         ld  a, [wSeashellsCount]
@@ -204,15 +253,34 @@ def InventoryGoal(item, *, memory_location=None, msg=None, group=None):
     return Goal(msg, code, ITEM_TILES[item], group=group)
 
 
-def KillGoal(description, entity_id, tile_info):
+def KillGoal(description, entity_id, tile_info, extra_check=None, extra_value=0, group=None):
     check_code, set_code = getUnusedBitFlag()
-    return Goal(description, check_code, tile_info, kill_code="""
+    kill_code = """
         cp  $%02x
         jr  nz, skip_%02x
+    """ % (entity_id, entity_id)
+    if extra_check == "State1":
+        kill_code += """
+            ld  hl, $C2B0
+            add hl, bc
+            ld  a, [hl]
+            and a
+            jr  nz, skip_%02x
+        """ % (entity_id)
+    elif extra_check == "Direction":
+        kill_code += """
+            ld  hl, $C380
+            add hl, bc
+            ld  a, [hl]
+            cp  $%02x
+            jr  nz, skip_%02x
+        """ % (extra_value, entity_id)
+    kill_code += """
         %s
         jp  done
     skip_%02x:
-    """ % (entity_id, entity_id, set_code, entity_id))
+    """ % (set_code, entity_id)
+    return Goal(description, check_code, tile_info, kill_code=kill_code, group=group)
 
 
 def MonkeyGoal(description, tile_info):
@@ -247,12 +315,74 @@ def KillDethlGoal(description, tile_info):
     ])
 
 
-def FishDaPondGoal(description, tile_info):
+def FishDaPondGoal(description, tile_info, group=None):
     check_code, set_code = getUnusedBitFlag()
-    return Goal(description, check_code, tile_info, extra_patches=[
+    return Goal(description, check_code, tile_info, group=group, extra_patches=[
         (0x04, 0x21F7, 0x21FC, ASM(set_code)),
     ])
 
+
+def ClearTrendyGameGoal(description, tile_info, group=None):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, group=group, extra_patches=[
+        (0x04, 0x33AB, ASM("ld hl, $C440"), ASM("jp $7B96")),
+        # running low on space in bank 4, now using some NOP's from the shop patches
+        (0x04, 0x3B96, "00" * 22, ASM("""
+            ld  hl, $C440
+            inc [hl]
+        ; check if we just picked up the last remaining item
+            ld  a, [hl]
+            ld  d, a
+            ld  e, $06
+            ld  hl, $C390
+            ld  a, [hl]
+            and a
+            jr  z, dollItemAvailable
+            dec e
+        dollItemAvailable:
+            ld  a, d
+            cp  e
+            ret c
+            jp  $7BD6
+        """)),
+        (0x04, 0x3BD6, "00" * 6, ASM("""
+            %s
+            ret
+        """ % (set_code)))
+    ])
+
+
+def WalrusWaterGoal(description, tile_info, group=None):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, group=group, extra_patches=[
+        (0x18, 0x190D, ASM("call $0C05"), ASM("call $7FDE")),
+        (0x18, 0x3FE9, "00" * 9, ASM("""
+            call $0C05
+            %s
+            ret
+        """ % (set_code)))
+    ])
+
+
+def VacuumMouthGoal(description, tile_info, group=None):
+    check_code, set_code = getUnusedBitFlag()
+    return Goal(description, check_code, tile_info, group=group, extra_patches=[
+        (0x04, 0x28D1, ASM("ldh [$FFF3], a \n ret"), ASM("jp $7A76")),
+        (0x04, 0x3A76, "00" * 8, ASM("""
+            ldh [$FFF3], a
+            %s
+            ret
+        """ % (set_code)))
+    ])
+
+
+PHOTO_CHECKS = (("$DC0C", "$01"),("$DC0C", "$02"),("$DC0C", "$04"),("$DC0C", "$08"),
+                ("$DC0C", "$10"),("$DC0C", "$20"),("$DC0C", "$40"),("$DC0C", "$80"),
+                ("$DC0D", "$01"),("$DC0D", "$02"),("$DC0D", "$04"),("$DC0D", "$08"))
+MAP_ADDRESSES = ("$DB16", "$DB1B", "$DB20", "$DB25", "$DB2A", "$DB2F", "$DB34", "$DB39", "$DBDA")
+COMPASS_ADDRESSES = ("$DB17", "$DB1C", "$DB21", "$DB26", "$DB2B", "$DB30", "$DB35", "$DB3A", "$DBDB")
+BEAK_ADDRESSES = ("$DB18", "$DB1D", "$DB22", "$DB27", "$DB2C", "$DB31", "$DB36", "$DB3B", "$DBDC")
+OW_KEY_CHECKS = (("$D8D3", "$10"), ("$D8B5", "$10"), ("$D82B", "$10"), ("$D88C", "$10"), ("$D80E", "$10"))
 
 BINGO_GOALS = [
     InventoryGoal(BOOMERANG),
@@ -270,7 +400,9 @@ BINGO_GOALS = [
     # InventoryGoal(MAGIC_POWDER),
     InventoryGoal(TOADSTOOL, msg="Have the {TOADSTOOL}", group="witch"),
     Goal("Find the L2 {SHIELD}", checkMemoryEqualCode("$DB44", "2"), TileInfo(0x86, 0x87, 0x06, 0xB2)),
-    Goal("Find 10 Secret Seashells", checkForSeashellsCode(10), ITEM_TILES[SEASHELL]),
+    Goal("Find 5 Secret Seashells", checkForSeashellsCode(0x05), ITEM_TILES[SEASHELL], group="seashells"),
+    Goal("Find 10 Secret Seashells", checkForSeashellsCode(0x10), ITEM_TILES[SEASHELL], group="seashells"),
+    Goal("Find 15 Secret Seashells", checkForSeashellsCode(0x15), ITEM_TILES[SEASHELL], group="seashells"),
     Goal("Find the L2 {SWORD}", checkMemoryEqualCode("$DB4E", "2"), TileInfo(0x84, 0x85, 0x06, 0xB2)),
     Goal("Find the {TAIL_KEY}", checkMemoryNotZero("$DB11"), TileInfo(0xC0, shift4=True)),
     Goal("Find the {SLIME_KEY}", checkMemoryNotZero("$DB15"), TileInfo(0x28E, shift4=True)),
@@ -324,10 +456,12 @@ BINGO_GOALS = [
     # {"description": "Talk to all Owl Statues in Color Dungeon"},
     # {"description": "Defeat 2 Sets of 3-Of-A-Kind (D1, D7)"},
     # {"description": "Stand 6 HorseHeads in D6"},
-    Goal("Find the 5 Golden Leaves", checkMemoryEqualGreater("wGoldenLeaves", "5"), ITEM_TILES[GOLD_LEAF]),
+    Goal("Find 3 of the Golden Leaves", checkMemoryEqualGreater("wGoldenLeaves", "3"), ITEM_TILES[GOLD_LEAF], group="leaves"),
+    Goal("Find 4 of the Golden Leaves", checkMemoryEqualGreater("wGoldenLeaves", "4"), ITEM_TILES[GOLD_LEAF], group="leaves"),
+    Goal("Find the 5 Golden Leaves", checkMemoryEqualGreater("wGoldenLeaves", "5"), ITEM_TILES[GOLD_LEAF], group="leaves"),
     # {"description": "Defeat Mad Bomber (outside Kanalet Castle)"},
     # {"description": "Totaka's Song in Richard's Villa"},
-    Goal("Get the Yoshi Doll", checkMemoryMask("$DAA0", "$20"), TileInfo(0x9A)),
+    Goal("Win the Yoshi Doll item in the Trendy Game", checkMemoryMask("$DAA0", "$20"), TileInfo(0x9A), group="trendy"),
     # {"description": "Save Papahl on the mountain"},
     Goal("Give the banana to Kiki", checkMemoryMask("$D87B", "$20"), TileInfo(0x1670, colormap=[2, 3, 1, 0])),
     Goal("Have 99 or less rupees", checkMemoryEqualCode("$DB5D", "0"), TileInfo(0xA6, 0xA7, shift4=True), group="rupees"),
@@ -339,8 +473,8 @@ BINGO_GOALS = [
          TileInfo(0x2400, 0x0D11, 0x2400, 0x2401, flipH=True, colormap=[2, 3, 1, 0])),
     Goal("Got the Blue Tunic", checkMemoryMask("wCollectedTunics", "2"),
          TileInfo(0x2400, 0x0D01, 0x2400, 0x2401, flipH=True, colormap=[2, 3, 1, 0])),
-    Goal("Buy the first shop item", checkMemoryMask("$DAA1", "$10"), TileInfo(0x0880, colormap=[2, 3, 1, 0])),
-    Goal("Buy the second shop item", checkMemoryMask("$DAA1", "$20"), TileInfo(0x0880, colormap=[2, 3, 1, 0])),
+    Goal("Buy the first shop item", checkMemoryMask("$DAA1", "$10"), TileInfo(0x0880, colormap=[2, 3, 1, 0]), group="shop"),
+    Goal("Buy the second shop item", checkMemoryMask("$DAA1", "$20"), TileInfo(0x0880, colormap=[2, 3, 1, 0]), group="shop"),
     Goal("Find the {INSTRUMENT1}", checkMemoryMask("$DB65", "2"), TileInfo(0x1500, colormap=[2, 3, 1, 0])),
     Goal("Find the {INSTRUMENT2}", checkMemoryMask("$DB66", "2"), TileInfo(0x1504, colormap=[2, 3, 1, 0])),
     Goal("Find the {INSTRUMENT3}", checkMemoryMask("$DB67", "2"), TileInfo(0x1508, colormap=[2, 3, 1, 0])),
@@ -379,17 +513,14 @@ BINGO_GOALS = [
     Goal("Got photo 10: Richard at Kanalet Castle", checkMemoryMask("$DC0D", "$02"), TileInfo(0x15B0, 0x0D0F, colormap=[2, 3, 1, 0])),
     Goal("Got photo 11: Ghost", checkMemoryMask("$DC0D", "$04"), TileInfo(0x1980, 0x0D0F, colormap=[2, 3, 1, 0])),
     Goal("Got photo 12: Close Call", checkMemoryMask("$DC0D", "$08"), TileInfo(0x0FED, 0x0D0F, 0x0FED, 0x0FFD)),
-    # {"description": "Collect 4 Pictures", "group": "pics"},
-    # {"description": "Collect 5 Pictures", "group": "pics"},
-    # {"description": "Collect 6 Pictures", "group": "pics"},
     Goal("Open the 4 Overworld Warp Holes", checkMemoryMask(("$D801", "$D82C", "$D895", "$D8EC"), "$80"),
          TileInfo(0x3E, 0x3E, 0x3E, 0x3E, colormap=[2, 1, 3, 0])),
     Goal("Finish the Raft Minigame", checkMemoryMask("$D87F", "$80"), TileInfo(0x087C, flipH=True, colormap=[2, 3, 1, 0])),
     Goal("Kill the Ball and Chain Trooper", checkMemoryMask("$DAC6", "$10"), TileInfo(0x09A4, colormap=[2, 3, 1, 0])),
     Goal("Destroy all Pillars with the Ball", checkMemoryMask(("$DA14", "$DA15", "$DA18", "$DA19"), "$20"),
          TileInfo(0x166C, flipH=True)),
-    FishDaPondGoal("Fish the pond empty", TileInfo(0x0A00, colormap=[2, 3, 1, 0])),
-    KillGoal("Kill the Anti-Kirby", 0x91, TileInfo(0x1550, colormap=[2, 3, 1, 0])),
+    FishDaPondGoal("Fish the pond empty", TileInfo(0x0A00, colormap=[2, 3, 1, 0]), group="fishing"),
+    KillGoal("Kill an Anti-Kirby", 0x91, TileInfo(0x1550, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a Rolling Bones", 0x81, TileInfo(0x0AB6, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a Hinox", 0x89, TileInfo(0x1542, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a Stone Hinox", 0xF4, TileInfo(0x2482, colormap=[2, 3, 1, 0])),
@@ -400,6 +531,61 @@ BINGO_GOALS = [
     Goal("Save Marin on the Mountain Bridge", checkMemoryMask("$D808", "$10"), TileInfo(0x1A6C, colormap=[2, 3, 1, 0])),
     Goal("Save Raccoon Tarin", checkMemoryMask("$D851", "$10"), TileInfo(0x1888, colormap=[2, 3, 1, 0])),
     Goal("Trade the {TOADSTOOL} with the witch", checkMemoryMask("$DAA2", "$20"), TileInfo(0x0A30, colormap=[2, 3, 1, 0]), group="witch"),
+
+    Goal("Beat the Color Dungeon", checkMemoryMask("$DDE1", "$10"), TileInfo(0x20, 0x21, 0x6, 0xB0, colormap=[2, 3, 1, 0])),
+    Goal("Solve the 3 statue puzzles in Color Dungeon", checkMemoryMask(("$DDEF", "$DDE8", "$DDEA"), "$10"),
+         TileInfo(0x2470, flipH=True, colormap=[2, 3, 1, 0])),
+    Goal("Enter the secret rupee room in Color Dungeon ", checkMemoryMask("$DDF3", "$80"), TileInfo(0xA6, 0xA7, 0xA6, 0xB0)),
+    Goal("Play the Chest Game", checkMemoryMask("$DAF2", "$10"), TileInfo(0x160, 0x170, 0x160, 0x170, flipH=True)),
+    Goal("Get the item in the fishing pond", checkMemoryMask("$DAB1", "$10"),
+         TileInfo(0xA00, 0xA01, 0xAC, 0xAD, flipH=True, colormap=[2, 3, 1, 0]), group="fishing"),
+    ClearTrendyGameGoal("Empty out the Trendy Game", TileInfo(0x890, flipH=True, colormap=[2, 3, 1, 0]), group="trendy"),
+    Goal("Open the Kanalet Castle gate", checkMemoryMask("$D879", "$10"), TileInfo(0xE8A, 0xE9A, 0xE8A, 0xE9A)),
+    Goal("Read the mural in Southern Face Shrine", checkMemoryMask("$DA6F", "$40"), TileInfo(0x1950, colormap=[2, 3, 1, 0])),
+    Goal("Let Marin sing for the walrus", checkMemoryMask("$D8FD", "$20"), TileInfo(0x16E1, 0x16E8, 0x16E3, 0x16EA, colormap=[2, 3, 1, 0]), group="walrus"),
+    WalrusWaterGoal("Play a song for the walrus after Marin left", TileInfo(0x170A, colormap=[2, 3, 1, 0]), group="walrus"),
+    Goal("Get cursed by the 3 Mad Batters", checkMemoryMask(("$D9E0", "$D9E1", "$D9E2"), "$20"), TileInfo(0x1870, colormap=[2, 3, 1, 0])),
+    VacuumMouthGoal("Get sucked in by a Vacuum Mouth", TileInfo(0xA6C, flipH=True)),
+
+    Goal("Collect 4 Maps", checkCountMemoryNotZero(MAP_ADDRESSES, 4), TileInfo(0x1BD0, shift4=True), group="total maps"),
+    Goal("Collect 5 Maps", checkCountMemoryNotZero(MAP_ADDRESSES, 5), TileInfo(0x1BD0, shift4=True), group="total maps"),
+    Goal("Collect 6 Maps", checkCountMemoryNotZero(MAP_ADDRESSES, 6), TileInfo(0x1BD0, shift4=True), group="total maps"),
+    Goal("Collect 4 Compasses", checkCountMemoryNotZero(COMPASS_ADDRESSES, 4), TileInfo(0x1BD2, shift4=True), group="total compasses"),
+    Goal("Collect 5 Compasses", checkCountMemoryNotZero(COMPASS_ADDRESSES, 5), TileInfo(0x1BD2, shift4=True), group="total compasses"),
+    Goal("Collect 6 Compasses", checkCountMemoryNotZero(COMPASS_ADDRESSES, 6), TileInfo(0x1BD2, shift4=True), group="total compasses"),
+    Goal("Collect 4 Stone Beaks", checkCountMemoryNotZero(BEAK_ADDRESSES, 4), TileInfo(0x1BD4, shift4=True), group="total beaks"),
+    Goal("Collect 5 Stone Beaks", checkCountMemoryNotZero(BEAK_ADDRESSES, 5), TileInfo(0x1BD4, shift4=True), group="total beaks"),
+    Goal("Collect 6 Stone Beaks", checkCountMemoryNotZero(BEAK_ADDRESSES, 6), TileInfo(0x1BD4, shift4=True), group="total beaks"),
+
+    Goal("Collect 4 photos", checkCountMemoryMasks(PHOTO_CHECKS, 4), TileInfo(0x3008, colormap=[2, 3, 1, 0]), group="total photos"),
+    Goal("Collect 6 photos", checkCountMemoryMasks(PHOTO_CHECKS, 6), TileInfo(0x3008, colormap=[2, 3, 1, 0]), group="total photos"),
+    Goal("Collect 8 photos", checkCountMemoryMasks(PHOTO_CHECKS, 8), TileInfo(0x3008, colormap=[2, 3, 1, 0]), group="total photos"),
+
+    Goal("Learn 2 songs", checkCountMemoryMasks((("$DB49", "$04"), ("$DB49", "$02"), ("$DB49", "$01")), 2), TileInfo(0x4E90, 0x4E91, 0x1A0E, 0x1A0F)),
+    Goal("Find 3 instruments", checkCountMemoryMasks(((str(0xDB65 + i), "$02") for i in range(8)), 3),
+         TileInfo(0x1500, 0x1501, 0x1504, 0x1505, colormap=[2, 3, 1, 0]), group="total instruments"),
+    Goal("Find 4 instruments", checkCountMemoryMasks(((str(0xDB65 + i), "$02") for i in range(8)), 4),
+         TileInfo(0x1500, 0x1501, 0x1504, 0x1505, colormap=[2, 3, 1, 0]), group="total instruments"),
+    Goal("Find 5 instruments", checkCountMemoryMasks(((str(0xDB65 + i), "$02") for i in range(8)), 5),
+         TileInfo(0x1500, 0x1501, 0x1504, 0x1505, colormap=[2, 3, 1, 0]), group="total instruments"),
+    Goal("Activate 3 dungeon warps", checkCountMemoryMasks(((str(0xDB65 + i), "$01") for i in range(8)), 3),
+         TileInfo(0x25, 0x24, 0x1E, 0x1F, colormap=[2, 3, 1, 0]), group="total minibosses"),
+    Goal("Activate 4 dungeon warps", checkCountMemoryMasks(((str(0xDB65 + i), "$01") for i in range(8)), 4),
+         TileInfo(0x25, 0x24, 0x1E, 0x1F, colormap=[2, 3, 1, 0]), group="total minibosses"),
+    Goal("Activate 5 dungeon warps", checkCountMemoryMasks(((str(0xDB65 + i), "$01") for i in range(8)), 5),
+         TileInfo(0x25, 0x24, 0x1E, 0x1F, colormap=[2, 3, 1, 0]), group="total minibosses"),
+    Goal("Use 2 keys on the overworld", checkCountMemoryMasks(OW_KEY_CHECKS, 2), TileInfo(0xF08, 0xF18, 0xF09, 0xF19), group="ow keys"),
+    Goal("Use 3 keys on the overworld", checkCountMemoryMasks(OW_KEY_CHECKS, 3), TileInfo(0xF08, 0xF18, 0xF09, 0xF19), group="ow keys"),
+    Goal("Use 4 keys on the overworld", checkCountMemoryMasks(OW_KEY_CHECKS, 4), TileInfo(0xF08, 0xF18, 0xF09, 0xF19), group="ow keys"),
+
+    KillGoal("Kill an Armos Statue", 0x0F, TileInfo(0xEA6, 0xEB6, 0xEA7, 0xEB7)),
+    KillGoal("Kill a Pokey", 0xE3, TileInfo(0x8C4, flipH=True, colormap=[2, 3, 1, 0]), extra_check="State1"),
+    KillGoal("Kill a Piranha Plant", 0xA2, TileInfo(0x1640, flipH=True, colormap=[2, 3, 1, 0])),
+    KillGoal("Kill a Wizzrobe", 0x21, TileInfo(0x950, flipH=True, colormap=[2, 3, 1, 0])),
+    KillGoal("Kill a group of Three-of-a-Kinds (hearts)", 0x90, TileInfo(0x1594, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=0, group="3-of-a-kind"),
+    KillGoal("Kill a group of Three-of-a-Kinds (diamonds)", 0x90, TileInfo(0x1590, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=1, group="3-of-a-kind"),
+    KillGoal("Kill a group of Three-of-a-Kinds (spades)", 0x90, TileInfo(0x1598, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=2, group="3-of-a-kind"),
+    KillGoal("Kill a group of Three-of-a-Kinds (clubs)", 0x90, TileInfo(0x159C, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=3, group="3-of-a-kind"),
 ]
 
 
@@ -456,9 +642,15 @@ def setBingoGoal(rom, goals, mode):
     rom.patch(0x21, 0x36EE, ASM("dw $7C00, $7C00, $7C00, $7C00"), ASM("dw $7FFF, $56b5, $294a, $0000"))
     rom.patch(0x21, 0x36F6, ASM("dw $7C00, $7C00, $7C00, $7C00"), ASM("dw $43f0, $32ac, $1946, $0000"))
 
-    # Patch the face shrine mural handler stage 4, we want to jump to bank 0x0C, which normally contains
+    # Patch the face shrine mural handler stage 4, we want to jump to bank 0x0D, which normally contains
     # DMG graphics, but gives us a lot of room for our own code and graphics.
     rom.patch(0x01, 0x2B81, 0x2B99, ASM("""
+        ldh  a, [$FFF7]
+        cp   $16
+        jr   nz, notFaceShrineMural
+        ld   hl, $DA6F
+        set  6, [hl] ; set a flag for use in a bingo goal
+    notFaceShrineMural:
         ld   a,  $0D
         ld   hl, $4000
         push hl
@@ -566,7 +758,7 @@ checkGoalDone:
     ret  nz
 
     call checkAnyGoal
-    ret  nz
+    ret  c
 
     ; Goal done, give a message and goto state to finish the game
     ld   a, $04
@@ -720,81 +912,34 @@ setZ:
     ret
 
 checkAnyGoal:
-#IF {mode}
-    call goalcheck_0
-    ret  nz
-    call goalcheck_1
-    ret  nz
-    call goalcheck_2
-    ret  nz
-    call goalcheck_3
-    ret  nz
-    call goalcheck_4
-    ret  nz
-    call goalcheck_5
-    ret  nz
-    call goalcheck_6
-    ret  nz
-    call goalcheck_7
-    ret  nz
-    call goalcheck_8
-    ret  nz
-    call goalcheck_9
-    ret  nz
-    call goalcheck_10
-    ret  nz
-    call goalcheck_11
-    ret  nz
-    call goalcheck_12
-    ret  nz
-    call goalcheck_13
-    ret  nz
-    call goalcheck_14
-    ret  nz
-    call goalcheck_15
-    ret  nz
-    call goalcheck_16
-    ret  nz
-    call goalcheck_17
-    ret  nz
-    call goalcheck_18
-    ret  nz
-    call goalcheck_19
-    ret  nz
-    call goalcheck_20
-    ret  nz
-    call goalcheck_21
-    ret  nz
-    call goalcheck_22
-    ret  nz
-    call goalcheck_23
-    ret  nz
-    call goalcheck_24
-    ret
-#ELSE
+    xor  a
+    push af
     call checkGoalRow1
-    ret  z
+    {inc_counter}
     call checkGoalRow2
-    ret  z
+    {inc_counter}
     call checkGoalRow3
-    ret  z
+    {inc_counter}
     call checkGoalRow4
-    ret  z
+    {inc_counter}
     call checkGoalRow5
-    ret  z
+    {inc_counter}
     call checkGoalCol1
-    ret  z
+    {inc_counter}
     call checkGoalCol2
-    ret  z
+    {inc_counter}
     call checkGoalCol3
-    ret  z
+    {inc_counter}
     call checkGoalCol4
-    ret  z
+    {inc_counter}
     call checkGoalCol5
-    ret  z
+    {inc_counter}
     call checkGoalDiagonal0
-    ret  z
+    {inc_counter}
     call checkGoalDiagonal1
+    {inc_counter}
+    pop  af
+    cp   {req_rows}
     ret
 
 checkGoalRow1:
@@ -940,10 +1085,9 @@ checkGoalDiagonal1:
     ret  nz
     call goalcheck_20
     ret
-#ENDIF
 
 messageTable:
-""".format(mode=1 if mode == "bingo-full" else 0) +
+""".format(inc_counter="jr nz, 3 \n pop de \n inc d \n push de", req_rows=REQUIRED_ROWS[mode]) +
     "\n".join(["dw message_%d" % (n) for n in range(25)]) + "\n" +
     "\n".join(["message_%d:\n  db m\"%s\"" % (n, goal.description) for n, goal in
                enumerate(goals)]) + "\n" +

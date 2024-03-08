@@ -160,9 +160,9 @@ class SpoilerLog:
             "inaccessibleItems": [item.__dict__ for item in self.inaccessibleItems or []],
             "options": {s.key: s.value for s in self.settings},
             "entrances":
-                {entrance: target for entrance, target in self.logic.world_setup.entrance_mapping.items() if entrance != target}
+                {entrance: target for entrance, target in self.logic.world_setup.entrance_mapping.items() if f"{entrance}:inside" != target and entrance != f"{target}:inside"}
                 if isinstance(self.logic, logic.Logic) else [
-                    {entrance: target for entrance, target in world.world_setup.entrance_mapping.items() if entrance != target} for world in self.logic.worlds
+                    {entrance: target for entrance, target in world.world_setup.entrance_mapping.items() if f"{entrance}:inside" != target and entrance != f"{target}:inside"} for world in self.logic.worlds
                 ],
             "seed": self.seed
         }, indent="  ")
@@ -180,12 +180,12 @@ class SpoilerLog:
         if not self.testOnly:
             if isinstance(self.logic, logic.Logic):
                 for entrance, target in sorted(self.logic.world_setup.entrance_mapping.items()):
-                    if entrance != target:
+                    if f"{entrance}:inside" != target and entrance != f"{target}:inside":
                         lines.append("Entrance: %s -> %s" % (entrance, target))
             elif isinstance(self.logic, logic.MultiworldLogic):
                 for index, world in enumerate(self.logic.worlds):
                     for entrance, target in sorted(world.world_setup.entrance_mapping.items()):
-                        if entrance != target:
+                        if f"{entrance}:inside" != target and entrance != f"{target}:inside":
                             lines.append("P%d Entrance: %s -> %s" % (index + 1, entrance, target))
             lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.sphere if x.sphere is not None else sys.maxsize, x.area, x.locationName))]
 

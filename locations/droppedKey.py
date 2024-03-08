@@ -5,7 +5,7 @@ from .constants import *
 class DroppedKey(ItemInfo):
     OPTIONS = [POWER_BRACELET, SHIELD, BOW, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, OCARINA,
         FEATHER, SHOVEL, MAGIC_POWDER, BOMB, SWORD, FLIPPERS, MAGNIFYING_LENS, MEDICINE,
-        TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY, ROOSTER,
+        TAIL_KEY, ANGLER_KEY, FACE_KEY, BIRD_KEY, GOLD_LEAF, SLIME_KEY, ROOSTER, HAMMER,
         RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500,
         SEASHELL, GEL, BOOMERANG, HEART_PIECE, ARROWS_10, SINGLE_ARROW,
         MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
@@ -60,7 +60,7 @@ class DroppedKey(ItemInfo):
         raise ValueError("Could not find chest contents in ROM (0x%02x)" % (value))
 
     def __repr__(self):
-        if self._location and self._location.dungeon:
+        if self._location and self._location.dungeon is not None:
             return "%s:%03x:%d" % (self.__class__.__name__, self.room, self._location.dungeon)
         else:
             return "%s:%03x" % (self.__class__.__name__, self.room)

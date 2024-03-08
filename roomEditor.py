@@ -146,6 +146,9 @@ class RoomEditor:
     def hasEntity(self, type_id):
         return any(map(lambda e: e[2] == type_id, self.entities))
 
+    def hasObject(self, type_id):
+        return any(map(lambda o: o.type_id == type_id, self.objects))
+
     def changeObject(self, x, y, new_type):
         for obj in self.objects:
             if obj.x == x and obj.y == y:
@@ -192,7 +195,7 @@ class RoomEditor:
         self.palette_index = 0x01
         
         data = json.load(open(filename))
-        
+        result = {}
         for prop in data.get("properties", []):
             if prop["name"] == "palette":
                 self.palette_index = int(prop["value"], 16)
@@ -205,6 +208,8 @@ class RoomEditor:
                 self.attribset = (int(bank, 16), int(addr, 16) + 0x4000)
 
         tiles = [0] * 80
+        hidden_tile_objects = []
+        override_tile_objects = []
         for layer in data["layers"]:
             if "data" in layer:
                 for n in range(80):
@@ -221,9 +226,14 @@ class RoomEditor:
                         type_id = entityData.NAME.index(obj["name"])
                         self.addEntity(x, y, type_id)
                     elif obj["type"] == "hidden_tile":
-                        self.objects.append(Object(x, y, int(obj["name"], 16)))
-        self.buildObjectList(tiles, reduce_size=True)
-        return data
+                        hidden_tile_objects.append(Object(x, y, int(obj["name"], 16)))
+                    elif obj["type"] == "override_tile":
+                        override_tile_objects.append(Object(x, y, int(obj["name"], 16)))
+                    elif obj["type"] == "warp_exit":
+                        result[f"warp_exit_{obj['name']}"] = (x * 16 + 8, y * 16 + 16)
+        self.buildObjectList(tiles, reduce_size=not isinstance(self.room, int) or self.room < 0x100)
+        self.objects = hidden_tile_objects + self.objects + override_tile_objects
+        return result
 
     def getTileArray(self):
         if self.room < 0x100:
@@ -508,6 +518,55 @@ class RoomEditor:
                 if obj in {0xE1, 0xE2, 0xE3, 0xBA, 0xC6}:  # Entrances should never be horizontal/vertical lists
                     w = 1
                     h = 1
+                if not is_overworld:
+                    if obj == 0x2D and tiles[x + 1 + y * 10] == 0x2E:  # Key door
+                        obj = 0xEC
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x2F and tiles[x + 1 + y * 10] == 0x30:
+                        obj = 0xED
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x31 and tiles[x + (y + 1) * 10] == 0x32:
+                        obj = 0xEE
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x33 and tiles[x + (y + 1) * 10] == 0x34:
+                        obj = 0xEF
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x35 and tiles[x + 1 + y * 10] == 0x36:  # closed door
+                        obj = 0xF0
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x37 and tiles[x + 1 + y * 10] == 0x38:
+                        obj = 0xF1
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x39 and tiles[x + (y + 1) * 10] == 0x3A:
+                        obj = 0xF2
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x3B and tiles[x + (y + 1) * 10] == 0x3C:
+                        obj = 0xF3
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x43 and tiles[x + 1 + y * 10] == 0x44:  # open door
+                        obj = 0xF4
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x8C and tiles[x + 1 + y * 10] == 0x08:
+                        obj = 0xF5
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x09 and tiles[x + (y + 1) * 10] == 0x0A:
+                        obj = 0xF6
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0x0B and tiles[x + (y + 1) * 10] == 0x0C:
+                        obj = 0xF7
+                        tiles[x + (y + 1) * 10] = -1
+                    elif obj == 0xA4 and tiles[x + 1 + y * 10] == 0xA5:  # boss door
+                        obj = 0xF8
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0xAF and tiles[x + 1 + y * 10] == 0xB0:  # stairs door
+                        obj = 0xF9
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0xB1 and tiles[x + 1 + y * 10] == 0xB2:  # flipwall door
+                        obj = 0xFA
+                        tiles[x + 1 + y * 10] = -1
+                    elif obj == 0x45 and tiles[x + 1 + y * 10] == 0x46:  # one way arrow
+                        obj = 0xFB
+                        tiles[x + 1 + y * 10] = -1
                 if w > h:
                     for n in range(w):
                         tiles[x + n + y * 10] = -1

@@ -10,7 +10,7 @@ class Room:
         self.tiles = None
         self.main_tileset_id = None
         self.animation_tileset_id = None
-        self.palette_id = None
+        self.palette_addr = None
         self.attribute_bank = None
         self.attribute_addr = None
 
@@ -18,211 +18,12 @@ class Room:
         return self.__dict__
 
 
-class RenderedMap:
-    WALL_UP = 0x01
-    WALL_DOWN = 0x02
-    WALL_LEFT = 0x04
-    WALL_RIGHT = 0x08
-
-    def __init__(self, floor_object, overworld=False):
-        self.objects = {}
-        self.overworld = overworld
-
-        for y in range(8):
-            for x in range(10):
-                self.objects[(x, y)] = floor_object
-
-    def addWalls(self, flags):
-        for x in range(0, 10):
-            if flags & RenderedMap.WALL_UP:
-                self.placeObject(x, 0, 0x21)
-            if flags & RenderedMap.WALL_DOWN:
-                self.placeObject(x, 7, 0x22)
-        for y in range(0, 8):
-            if flags & RenderedMap.WALL_LEFT:
-                self.placeObject(0, y, 0x23)
-            if flags & RenderedMap.WALL_RIGHT:
-                self.placeObject(9, y, 0x24)
-        if flags & RenderedMap.WALL_LEFT and flags & RenderedMap.WALL_UP:
-            self.placeObject(0, 0, 0x25)
-        if flags & RenderedMap.WALL_RIGHT and flags & RenderedMap.WALL_UP:
-            self.placeObject(9, 0, 0x26)
-        if flags & RenderedMap.WALL_LEFT and flags & RenderedMap.WALL_DOWN:
-            self.placeObject(0, 7, 0x27)
-        if flags & RenderedMap.WALL_RIGHT and flags & RenderedMap.WALL_DOWN:
-            self.placeObject(9, 7, 0x28)
-
-    def placeObject(self, x, y, type_id):
-        if self.overworld:
-            if type_id == 0xF5:
-                if self.getObject(x, y) in (0x28, 0x29, 0x83, 0x90):
-                    self.placeObject(x, y, 0x29)
-                else:
-                    self.placeObject(x, y, 0x25)
-                if self.getObject(x + 1, y) in (0x27, 0x2A, 0x82, 0x90):
-                    self.placeObject(x + 1, y, 0x2A)
-                else:
-                    self.placeObject(x + 1, y, 0x26)
-                if self.getObject(x, y + 1) in (0x26, 0x2A):
-                    self.placeObject(x, y + 1, 0x2A)
-                elif self.getObject(x, y + 1) == 0x90:
-                    self.placeObject(x, y + 1, 0x82)
-                else:
-                    self.placeObject(x, y + 1, 0x27)
-                if self.getObject(x + 1, y + 1) in (0x25, 0x29):
-                    self.placeObject(x + 1, y + 1, 0x29)
-                elif self.getObject(x + 1, y + 1) == 0x90:
-                    self.placeObject(x + 1, y + 1, 0x83)
-                else:
-                    self.placeObject(x + 1, y + 1, 0x28)
-            elif type_id == 0xF6: # two door house
-                self.placeObject(x + 0, y, 0x55)
-                self.placeObject(x + 1, y, 0x5A)
-                self.placeObject(x + 2, y, 0x5A)
-                self.placeObject(x + 3, y, 0x5A)
-                self.placeObject(x + 4, y, 0x56)
-                self.placeObject(x + 0, y + 1, 0x57)
-                self.placeObject(x + 1, y + 1, 0x59)
-                self.placeObject(x + 2, y + 1, 0x59)
-                self.placeObject(x + 3, y + 1, 0x59)
-                self.placeObject(x + 4, y + 1, 0x58)
-                self.placeObject(x + 0, y + 2, 0x5B)
-                self.placeObject(x + 1, y + 2, 0xE2)
-                self.placeObject(x + 2, y + 2, 0x5B)
-                self.placeObject(x + 3, y + 2, 0xE2)
-                self.placeObject(x + 4, y + 2, 0x5B)
-            elif type_id == 0xF7:  # large house
-                self.placeObject(x + 0, y, 0x55)
-                self.placeObject(x + 1, y, 0x5A)
-                self.placeObject(x + 2, y, 0x56)
-                self.placeObject(x + 0, y + 1, 0x57)
-                self.placeObject(x + 1, y + 1, 0x59)
-                self.placeObject(x + 2, y + 1, 0x58)
-                self.placeObject(x + 0, y + 2, 0x5B)
-                self.placeObject(x + 1, y + 2, 0xE2)
-                self.placeObject(x + 2, y + 2, 0x5B)
-            elif type_id == 0xF8:  # catfish
-                self.placeObject(x + 0, y, 0xB6)
-                self.placeObject(x + 1, y, 0xB7)
-                self.placeObject(x + 2, y, 0x66)
-                self.placeObject(x + 0, y + 1, 0x67)
-                self.placeObject(x + 1, y + 1, 0xE3)
-                self.placeObject(x + 2, y + 1, 0x68)
-            elif type_id == 0xF9:  # palace door
-                self.placeObject(x + 0, y, 0xA4)
-                self.placeObject(x + 1, y, 0xA5)
-                self.placeObject(x + 2, y, 0xA6)
-                self.placeObject(x + 0, y + 1, 0xA7)
-                self.placeObject(x + 1, y + 1, 0xE3)
-                self.placeObject(x + 2, y + 1, 0xA8)
-            elif type_id == 0xFA:   # stone pig head
-                self.placeObject(x + 0, y, 0xBB)
-                self.placeObject(x + 1, y, 0xBC)
-                self.placeObject(x + 0, y + 1, 0xBD)
-                self.placeObject(x + 1, y + 1, 0xBE)
-            elif type_id == 0xFB:  # palmtree
-                if x == 15:
-                    self.placeObject(x + 1, y + 1, 0xB7)
-                    self.placeObject(x + 1, y + 2, 0xCE)
-                else:
-                    self.placeObject(x + 0, y, 0xB6)
-                    self.placeObject(x + 0, y + 1, 0xCD)
-                    self.placeObject(x + 1, y + 0, 0xB7)
-                    self.placeObject(x + 1, y + 1, 0xCE)
-            elif type_id == 0xFC:  # square "hill with hole" (seen near lvl4 entrance)
-                self.placeObject(x + 0, y, 0x2B)
-                self.placeObject(x + 1, y, 0x2C)
-                self.placeObject(x + 2, y, 0x2D)
-                self.placeObject(x + 0, y + 1, 0x37)
-                self.placeObject(x + 1, y + 1, 0xE8)
-                self.placeObject(x + 2, y + 1, 0x38)
-                self.placeObject(x - 1, y + 2, 0x0A)
-                self.placeObject(x + 0, y + 2, 0x33)
-                self.placeObject(x + 1, y + 2, 0x2F)
-                self.placeObject(x + 2, y + 2, 0x34)
-                self.placeObject(x + 0, y + 3, 0x0A)
-                self.placeObject(x + 1, y + 3, 0x0A)
-                self.placeObject(x + 2, y + 3, 0x0A)
-                self.placeObject(x + 3, y + 3, 0x0A)
-            elif type_id == 0xFD:  # small house
-                self.placeObject(x + 0, y, 0x52)
-                self.placeObject(x + 1, y, 0x52)
-                self.placeObject(x + 2, y, 0x52)
-                self.placeObject(x + 0, y + 1, 0x5B)
-                self.placeObject(x + 1, y + 1, 0xE2)
-                self.placeObject(x + 2, y + 1, 0x5B)
-            else:
-                self.objects[(x & 15), (y & 15)] = type_id
-        else:
-            if type_id == 0xEC:  # key door
-                self.placeObject(x, y, 0x2D)
-                self.placeObject(x + 1, y, 0x2E)
-            elif type_id == 0xED:
-                self.placeObject(x, y, 0x2F)
-                self.placeObject(x + 1, y, 0x30)
-            elif type_id == 0xEE:
-                self.placeObject(x, y, 0x31)
-                self.placeObject(x, y + 1, 0x32)
-            elif type_id == 0xEF:
-                self.placeObject(x, y, 0x33)
-                self.placeObject(x, y + 1, 0x34)
-            elif type_id == 0xF0:  # closed door
-                self.placeObject(x, y, 0x35)
-                self.placeObject(x + 1, y, 0x36)
-            elif type_id == 0xF1:
-                self.placeObject(x, y, 0x37)
-                self.placeObject(x + 1, y, 0x38)
-            elif type_id == 0xF2:
-                self.placeObject(x, y, 0x39)
-                self.placeObject(x, y + 1, 0x3A)
-            elif type_id == 0xF3:
-                self.placeObject(x, y, 0x3B)
-                self.placeObject(x, y + 1, 0x3C)
-            elif type_id == 0xF4:  # open door
-                self.placeObject(x, y, 0x43)
-                self.placeObject(x + 1, y, 0x44)
-            elif type_id == 0xF5:
-                self.placeObject(x, y, 0x8C)
-                self.placeObject(x + 1, y, 0x08)
-            elif type_id == 0xF6:
-                self.placeObject(x, y, 0x09)
-                self.placeObject(x, y + 1, 0x0A)
-            elif type_id == 0xF7:
-                self.placeObject(x, y, 0x0B)
-                self.placeObject(x, y + 1, 0x0C)
-            elif type_id == 0xF8:  # boss door
-                self.placeObject(x, y, 0xA4)
-                self.placeObject(x + 1, y, 0xA5)
-            elif type_id == 0xF9:  # stairs door
-                self.placeObject(x, y, 0xAF)
-                self.placeObject(x + 1, y, 0xB0)
-            elif type_id == 0xFA:  # flipwall
-                self.placeObject(x, y, 0xB1)
-                self.placeObject(x + 1, y, 0xB2)
-            elif type_id == 0xFB:  # one way arrow
-                self.placeObject(x, y, 0x45)
-                self.placeObject(x + 1, y, 0x46)
-            elif type_id == 0xFC:  # entrance
-                self.placeObject(x + 0, y, 0xB3)
-                self.placeObject(x + 1, y, 0xB4)
-                self.placeObject(x + 2, y, 0xB4)
-                self.placeObject(x + 3, y, 0xB5)
-                self.placeObject(x + 0, y + 1, 0xB6)
-                self.placeObject(x + 1, y + 1, 0xB7)
-                self.placeObject(x + 2, y + 1, 0xB8)
-                self.placeObject(x + 3, y + 1, 0xB9)
-                self.placeObject(x + 0, y + 2, 0xBA)
-                self.placeObject(x + 1, y + 2, 0xBB)
-                self.placeObject(x + 2, y + 2, 0xBC)
-                self.placeObject(x + 3, y + 2, 0xBD)
-            elif type_id == 0xFD:  # entrance
-                self.placeObject(x, y, 0xC1)
-                self.placeObject(x + 1, y, 0xC2)
-            else:
-                self.objects[(x & 15), (y & 15)] = type_id
-
-    def getObject(self, x, y):
-        return self.objects.get(((x & 15), (y & 15)), None)
+class RoomMapInfo:
+    def __init__(self):
+        self.x = None
+        self.y = None
+        self.map_id = None
+        self.sidescroll = False
 
 
 class MapExport:
@@ -237,6 +38,16 @@ class MapExport:
             "overworld_physics_flag": [n for n in self.__rom.banks[8][0x0AD4:0x0AD4+0x100]],
             "indoor1_physics_flag": [n for n in self.__rom.banks[8][0x0BD4:0x0BD4 + 0x100]],
         }
+        for n in range(0x316):
+            if n == 0x2FF:
+                continue
+            for warp in RoomEditor(rom, n).getWarps():
+                if warp.warp_type > 0:
+                    self.room_map_info(warp.room).map_id = warp.map_nr
+                if warp.warp_type == 2:
+                    self.room_map_info(warp.room).sidescroll = True
+        self.room_map_info(0x1FF).sidescroll = True
+        self.room_map_info(0x2E8).sidescroll = True
 
     def export_all(self, w=16, h=16, *, dungeons=True):
         os.makedirs("_map/img", exist_ok=True)
@@ -245,7 +56,7 @@ class MapExport:
         f.write("<img src='img/overworld.png'><br><br>")
 
         if dungeons:
-            for n in (0,1,2,3,4,5,6,7, 10): # skipping 11, color dungeon now
+            for n in (0,1,2,3,4,5,6,7, 10, 11):
                 addr = 0x0220 + n * 8 * 8
                 result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
                 map_data = {}
@@ -260,11 +71,22 @@ class MapExport:
                         if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
                             continue
                         map_data[x+y*16] = room
-                        self.__room_map_info[room] = (x, y, n)
-                        result.paste(self.buildRoom(room, n), (x * 161, y * 129))
+                        self.room_map_info(room).x = x
+                        self.room_map_info(room).y = y
+                        if self.room_map_info(room).map_id is None:
+                            self.room_map_info(room).map_id = n if n < 11 else 0xFF
+                        result.paste(self.buildRoom(room), (x * 161, y * 129))
                 self.__json_data["maps"][f"dungeon_{n}"] = map_data
                 result.save(f"_map/img/dungeon_{n}.png")
                 f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
+            for n in range(1, 3):
+                result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
+                for y in range(16):
+                    for x in range(16):
+                        if n != 2 or x != 15 or y != 15:
+                            result.paste(self.buildRoom(n << 8 | y << 4 | x), (x * 161, y * 129))
+                result.save(f"_map/img/underworld_{n}.png")
+                f.write(f"<img src='img/underworld_{n}.png' underworld='{n}'><br><br>")
 
         f.write("<script>var data = ")
         f.write(json.dumps(self.__json_data))
@@ -272,14 +94,15 @@ class MapExport:
 function h2(n) { if (n < 16) return "0x0" + n.toString(16); return "0x" + n.toString(16); }
 function updateTooltip(e) {
     var map = e.target.getAttribute("map")
+    var underworld = e.target.getAttribute("underworld") || 0
     var tooltip = document.getElementById("tooltip");
-    tooltip.style.display = 'None'; 
+    tooltip.style.display = 'None';
     var roomx = Math.floor(e.offsetX / 161);
     var roomy = Math.floor(e.offsetY / 129);
     var tilex = Math.floor((e.offsetX - roomx * 161) / 16)
     var tiley = Math.floor((e.offsetY - roomy * 129) / 16)
     if (tilex < 0 || tilex > 9 || tiley < 0 || tiley > 7) return;
-    var room = data.rooms[roomx + roomy*16];
+    var room = data.rooms[roomx + roomy*16 + underworld*256];
     if (map !== null) {
         var room_id = data.maps[map][roomx + roomy*16];
         if (room_id === undefined) return;
@@ -300,7 +123,7 @@ function updateTooltip(e) {
 
     tooltip.innerText = `Room ID: ${h2(room.n)}
         Tileset: ${h2(room.main_tileset_id)}
-        Palette: ${h2(room.palette_id)}
+        Palette: ${h2(room.palette_addr)}
         Animation set: ${h2(room.animation_tileset_id)}
         Attribute data: ${h2(room.attribute_bank)}:${h2(room.attribute_addr)}
         
@@ -332,50 +155,6 @@ for(var e of document.getElementsByTagName("img")) {
 }
         """)
         f.write("</script><div id='tooltip' style='position:absolute; background-color: white; padding: 4px; border: solid black 1px; white-space: nowrap'>X</div><div style='height:300px'></div>")
-        return
-        self.exportMetaTiles(f, "_map/img/metatiles_main.png", 0x0F, 0, lambda n: n >= 32 and (n < 0x6C or n >= 0x70))
-        for n in (0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3E):
-            self.exportMetaTiles(f, "_map/img/metatiles_%02x.png" % (n), n, 0, lambda n: n < 32)
-        for n in range(2, 17):
-            self.exportMetaTiles(f, "_map/img/metatiles_anim_%02x.png" % (n), 0x0F, n, lambda n: n >= 0x6C and n < 0x70)
-
-        for n in (0,1,2,3,4,5,6,7, 10, 11):
-            addr = 0x0220 + n * 8 * 8
-            result = PIL.Image.new("L", (8 * 20 * 8, 8 * 16 * 8))
-            for y in range(8):
-                for x in range(8):
-                    room = rom.banks[0x14][addr] + 0x100
-                    if n > 5:
-                        room += 0x100
-                    if n == 11:
-                        room += 0x100
-                    addr += 1
-                    if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
-                        continue
-                    self.__room_map_info[room] = (x, y, n)
-                    result.paste(self.exportRoom(room), (x * 20 * 8, y * 16 * 8))
-            result.save("_map/img/dungeon_%d.png" % (n))
-            f.write("<img src='img/dungeon_%d.png'><br><br>" % (n))
-
-        result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
-        for n in range(0x100):
-            if n + 0x100 in self.__room_map_info:
-                continue
-            x = n % 0x10
-            y = n // 0x10
-            result.paste(self.exportRoom(n + 0x100), (x * 20 * 8, y * 16 * 8))
-        result.save("_map/img/caves1.png")
-        f.write("<img src='img/caves1.png'><br><br>")
-        result = PIL.Image.new("L", (16 * 20 * 8, 16 * 16 * 8))
-        for n in range(0x0FF):
-            if n + 0x200 in self.__room_map_info:
-                continue
-            x = n % 0x10
-            y = n // 0x10
-            result.paste(self.exportRoom(n + 0x200), (x * 20 * 8, y * 16 * 8))
-        result.save("_map/img/caves2.png")
-        f.write("<img src='img/caves2.png'>")
-        f.close()
 
     def getOverworldTileset(self, main_tileset, animation_id):
         subtiles = [0] * 0x100
@@ -391,30 +170,42 @@ for(var e of document.getElementsByTagName("img")) {
             subtiles[n] = (0x2C << 10) + addr + n - 0x6C
         return subtiles
 
-    def getIndoorTileset(self, main_tileset, animation_id):
+    def getIndoorTileset(self, room_id, main_tileset, animation_id):
+        rmi = self.room_map_info(room_id)
+
         subtiles = [0] * 0x100
         for n in range(0x20, 0x80):
-            subtiles[n] = (0x0D << 10) + n - 0x20
+            subtiles[n] = (0x2D << 10) + n - 0x20
         if main_tileset != 0xFF:
             for n in range(0x00, 0x10):
-                subtiles[n] = (0x0D << 10) + 0x100 + main_tileset * 0x10+n
+                subtiles[n] = (0x2D << 10) + 0x100 + main_tileset * 0x10+n
         for n in range(0x10, 0x20):
-            subtiles[n] = (0x0D << 10) + 0x200 + n
+            subtiles[n] = (0x2D << 10) + 0x200 + n
         for n in range(0xF0, 0x100):
-            subtiles[n] = (0x12 << 10) + 0x380 + n - 0xF0
+            subtiles[n] = (0x32 << 10) + 0x380 + n - 0xF0
+
+        if rmi.map_id is not None:
+            if rmi.sidescroll:
+                for n in range(0x00, 0x80):
+                    subtiles[n] = (0x2D << 10) + n + 0x300
+            else:
+                wall_tiles_ptr = (self.__rom.banks[0x20][0x05A9 + rmi.map_id] - 0x40) << 4
+                if rmi.map_id == 0xFF:
+                    wall_tiles_ptr = (0x4A - 0x40) << 4
+                for n in range(0x20, 0x40):
+                    subtiles[n] = (0x2D << 10) + n - 0x20 + wall_tiles_ptr
+
+                floor_tiles_ptr = (self.__rom.banks[0x20][0x0589 + rmi.map_id] - 0x40) << 4
+                for n in range(0x10, 0x20):
+                    subtiles[n] = (0x2D << 10) + n - 0x10 + floor_tiles_ptr
 
         addr = (0x000, 0x000, 0x2B0, 0x2C0, 0x2D0, 0x2E0, 0x2F0, 0x2D0, 0x300, 0x310, 0x320, 0x2A0, 0x330, 0x350, 0x360, 0x340, 0x370)[animation_id]
         for n in range(0x6C, 0x70):
             subtiles[n] = (0x2C << 10) + addr + n - 0x6C
+
         return subtiles
 
-    def getPalette(self, palette_index):
-        if palette_index < 0x100:
-            palette_addr = self.__rom.banks[0x21][0x02B1 + palette_index * 2]
-            palette_addr |= self.__rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
-        else:
-            palette_addr = self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2]
-            palette_addr |= self.__rom.banks[0x21][0x03EF + (palette_index - 0x100) * 2 + 1] << 8
+    def getPalette(self, palette_addr):
         palette_addr -= 0x4000
 
         palette = []
@@ -436,7 +227,8 @@ for(var e of document.getElementsByTagName("img")) {
                 result.paste(self.buildRoom(x + y * 16), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
         return result
 
-    def buildRoom(self, room_id, map_id=None):
+    def buildRoom(self, room_id):
+        map_id = self.room_map_info(room_id).map_id
         re = RoomEditor(self.__rom, room_id)
 
         room = Room(room_id)
@@ -455,12 +247,31 @@ for(var e of document.getElementsByTagName("img")) {
             room.attribute_bank = 0x23
         else:
             room.attribute_bank = 0x24
-        room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
-        room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
-        if room_id < 0x100:
-            room.palette_id = self.__rom.banks[0x21][0x02EF + room_id]
+        if map_id is None:
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + room_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + room_id * 2 + 1] << 8
+        elif map_id == 6 or map_id == 7:
+            room.attribute_bank = 0x23
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2 + 1] << 8
         else:
-            room.palette_id = 0x100 + map_id
+            room.attribute_addr = self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) * 2 + map_id * 2]
+            room.attribute_addr |= self.__rom.banks[0x1A][0x1E76 + (room_id & 0xF00) * 2 + map_id * 2 + 1] << 8
+
+        if room_id < 0x100:
+            index = self.__rom.banks[0x21][0x02EF + room_id] * 2
+            room.palette_addr = self.__rom.banks[0x21][0x02B1 + index] | (self.__rom.banks[0x21][0x02B2 + index] << 8)
+        elif map_id is not None:
+            if map_id < 9:
+                room.palette_addr = self.__rom.banks[0x21][0x03EF + map_id*2] | (self.__rom.banks[0x21][0x03F0 + map_id*2] << 8)
+            elif map_id == 0xFF:
+                room.palette_addr = 0x67D0
+            else:
+                lookup_addr = self.__rom.banks[0x21][0x0413 + (map_id - 10)*2] | (self.__rom.banks[0x21][0x0414 + (map_id - 10)*2] << 8)
+                index = self.__rom.banks[0x21][lookup_addr - 0x4000 + (room_id & 0xFF)] * 2
+                room.palette_addr = self.__rom.banks[0x21][0x043F + index] | (self.__rom.banks[0x21][0x0440 + index] << 8)
+        else:
+            room.palette_addr = self.__rom.banks[0x21][0x02B1] | (self.__rom.banks[0x21][0x02B2] << 8)
 
         self.__json_data["rooms"][room_id] = room.to_json()
         self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
@@ -485,10 +296,14 @@ for(var e of document.getElementsByTagName("img")) {
             if "overworld_metatiles" not in self.__json_data:
                 self.__json_data["overworld_metatiles"] = [n for n in metatiles]
         else:
-            tileset = self.getIndoorTileset(room.main_tileset_id, room.animation_tileset_id)
+            tileset = self.getIndoorTileset(room_id, room.main_tileset_id, room.animation_tileset_id)
             metatiles = self.__rom.banks[0x08][0x03B0:0x03B0+0x400]
             if "indoor1_metatiles" not in self.__json_data:
                 self.__json_data["indoor1_metatiles"] = [n for n in metatiles]
+            if 0xDB in room.tiles or 0xDC in room.tiles: # We have switch block tiles, so we need to update the tiles for those
+                for n in range(4):
+                    tileset[4 + n] = (0x0C << 10) + 0x280 + n
+                    tileset[8 + n] = (0x0C << 10) + 0x288 + n
         attributes = self.__rom.banks[room.attribute_bank][room.attribute_addr-0x4000:room.attribute_addr-0x4000+0x400]
         if (room.attribute_bank << 16) | room.attribute_addr not in self.__json_data["attributes"]:
             self.__json_data["attributes"][(room.attribute_bank << 16) | room.attribute_addr] = [n for n in attributes]
@@ -499,10 +314,10 @@ for(var e of document.getElementsByTagName("img")) {
                 tile_nr = room.tiles[x + y * 10]
                 metatile = metatiles[tile_nr*4:tile_nr*4+4]
                 attrtile = attributes[tile_nr*4:tile_nr*4+4]
-                self.drawSubtile(result, x*16, y*16, tileset[metatile[0]], attrtile[0], room.palette_id)
-                self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_id)
-                self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_id)
-                self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_id)
+                self.drawSubtile(result, x*16, y*16, tileset[metatile[0]], attrtile[0], room.palette_addr)
+                self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_addr)
+                self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_addr)
+                self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_addr)
         for x, y, type_id in re.entities:
             draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
             draw.text((x * 16 + 2, y * 16 + 1), "%02X" % (type_id))
@@ -512,10 +327,10 @@ for(var e of document.getElementsByTagName("img")) {
             draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id), fill=0)
         return result
 
-    def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_id):
-        if (subtile_id, attr, palette_id) not in self.__tile_cache:
+    def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_addr):
+        if (subtile_id, attr, palette_addr) not in self.__tile_cache:
             result = PIL.Image.new("RGB", (8, 8))
-            palette = self.getPalette(palette_id)[(attr&7)*4:(attr&7)*4+4]
+            palette = self.getPalette(palette_addr)[(attr&7)*4:(attr&7)*4+4]
             addr = (subtile_id&0x3FF)<<4
             tile_data = self.__rom.banks[subtile_id >> 10][addr:addr+0x10]
             for y in range(8):
@@ -534,8 +349,8 @@ for(var e of document.getElementsByTagName("img")) {
                     if b & bit:
                         v |= 0x02
                     result.putpixel((x,y), palette[v])
-            self.__tile_cache[(subtile_id, attr, palette_id)] = result
-        img.paste(self.__tile_cache[(subtile_id, attr, palette_id)], (ox, oy))
+            self.__tile_cache[(subtile_id, attr, palette_addr)] = result
+        img.paste(self.__tile_cache[(subtile_id, attr, palette_addr)], (ox, oy))
 
     def exportMetaTiles(self, f, name, main_set, animation_set, condition_func):
         condition = lambda n: condition_func(n) and (n < 0x80 or n >= 0xF0)
@@ -568,148 +383,6 @@ for(var e of document.getElementsByTagName("img")) {
         result.save(name)
         f.write("%s<br><img src='%s'><br><br>" % (name[5:], name[5:]))
 
-    def exportRoom(self, room_nr):
-        re = RoomEditor(self.__rom, room_nr)
-
-        if room_nr < 0x100:
-            tile_info_offset = self.__rom.banks[0x1A].find(b'\x7C\x7C\x7C\x7C\x7D\x7D\x7D\x7D')
-            tile_info = self.__rom.banks[0x1A][tile_info_offset:tile_info_offset + 0x100 * 4]
-        else:
-            tile_info_offset = self.__rom.banks[0x08].find(b'\x7F\x7F\x7F\x7F\x7E\x7E\x7E\x7E')
-            tile_info = self.__rom.banks[0x08][tile_info_offset:tile_info_offset+0x100*4]
-
-        if room_nr >= 0x100:
-            rendered_map = RenderedMap(re.floor_object & 0x0F)
-        else:
-            rendered_map = RenderedMap(re.floor_object, True)
-        def objHSize(type_id):
-            if type_id == 0xF5:
-                return 2
-            return 1
-        def objVSize(type_id):
-            if type_id == 0xF5:
-                return 2
-            return 1
-        if room_nr >= 0x100:
-            if re.floor_object & 0xF0 == 0x00:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_RIGHT | RenderedMap.WALL_UP | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x10:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_RIGHT | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x20:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_UP | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x30:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_RIGHT | RenderedMap.WALL_UP)
-            if re.floor_object & 0xF0 == 0x40:
-                rendered_map.addWalls(RenderedMap.WALL_RIGHT | RenderedMap.WALL_UP | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x50:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x60:
-                rendered_map.addWalls(RenderedMap.WALL_RIGHT | RenderedMap.WALL_DOWN)
-            if re.floor_object & 0xF0 == 0x70:
-                rendered_map.addWalls(RenderedMap.WALL_RIGHT | RenderedMap.WALL_UP)
-            if re.floor_object & 0xF0 == 0x80:
-                rendered_map.addWalls(RenderedMap.WALL_LEFT | RenderedMap.WALL_UP)
-        for obj in re.objects:
-            if isinstance(obj, ObjectWarp):
-                pass
-            elif isinstance(obj, ObjectHorizontal):
-                for n in range(0, obj.count):
-                    rendered_map.placeObject(obj.x + n * objHSize(obj.type_id), obj.y, obj.type_id)
-            elif isinstance(obj, ObjectVertical):
-                for n in range(0, obj.count):
-                    rendered_map.placeObject(obj.x, obj.y + n * objVSize(obj.type_id), obj.type_id)
-            else:
-                rendered_map.placeObject(obj.x, obj.y, obj.type_id)
-
-        tiles = [0] * 20 * 16
-        for y in range(8):
-            for x in range(10):
-                obj = rendered_map.objects[(x, y)]
-                tiles[x*2 + y*2*20] = tile_info[obj*4]
-                tiles[x*2+1 + y*2*20] = tile_info[obj*4+1]
-                tiles[x*2 + (y*2+1)*20] = tile_info[obj*4+2]
-                tiles[x*2+1 + (y*2+1)*20] = tile_info[obj*4+3]
-
-        if room_nr < 0x100:
-            sub_tileset_offset = self.__rom.banks[0x20][0x2E73 + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)] << 4
-            if self.__rom.banks[0x3F][0x3F00 + room_nr]:  # If we have the the per room tileset patch, use that data
-                sub_tileset_offset = self.__rom.banks[0x3F][0x3F00 + room_nr] << 4
-            tilemap = self.__tiles[0x0f][sub_tileset_offset:sub_tileset_offset+0x20]
-            tilemap += self.__tiles[0x0c][0x120:0x180]
-            tilemap += self.__tiles[0x0c][0x080:0x100]
-        else:
-            # TODO: The whole indoor tileset loading seems complex...
-            tileset_nr = self.__rom.banks[0x20][0x2eB3 + room_nr - 0x100]
-            tilemap = [None] * 0x100
-            tilemap[0x20:0x80] = self.__tiles[0x0D][0x000:0x060]
-            if tileset_nr != 0xFF:
-                tilemap[0x00:0x10] = self.__tiles[0x0D][0x100 + tileset_nr * 0x10:0x110 + tileset_nr * 0x10]
-            tilemap[0x10:0x20] = self.__tiles[0x0D][0x210:0x220]
-            tilemap[0xF0:0x100] = self.__tiles[0x12][0x380:0x390]
-
-        if re.animation_id == 2:
-            addr = 0x2B0
-        elif re.animation_id == 3:
-            addr = 0x2C0
-        elif re.animation_id == 4:
-            addr = 0x2D0
-        elif re.animation_id == 5:
-            addr = 0x2E0
-        elif re.animation_id == 6:
-            addr = 0x2F0
-        elif re.animation_id == 7:
-            addr = 0x2D0
-        elif re.animation_id == 8:
-            addr = 0x300
-        elif re.animation_id == 9:
-            addr = 0x310
-        elif re.animation_id == 10:
-            addr = 0x320
-        elif re.animation_id == 11:
-            addr = 0x2A0
-        elif re.animation_id == 12:
-            addr = 0x330
-        elif re.animation_id == 13:
-            addr = 0x350
-        elif re.animation_id == 14:
-            addr = 0x360
-        elif re.animation_id == 15:
-            addr = 0x340
-        elif re.animation_id == 16:
-            addr = 0x370
-        else:
-            print(hex(room_nr), re.animation_id)
-            addr = 0x000
-        tilemap[0x6C:0x70] = self.__tiles[0x0c][addr:addr+4]
-
-        assert len(tilemap) == 0x100
-
-        result = PIL.Image.new('L', (8 * 20, 8 * 16))
-        draw = PIL.ImageDraw.Draw(result)
-        for y in range(16):
-            for x in range(20):
-                tile = tilemap[tiles[x+y*20]]
-                if tile is not None:
-                    result.paste(tile, (x * 8, y * 8))
-        warp_pos = []
-        for y in range(8):
-            for x in range(10):
-                # draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (rendered_map.objects[(x, y)]))
-                # physics_flags = self.__rom.banks[8][0x0AD4 + rendered_map.objects[(x, y)]]
-                # if physics_flags != 0:
-                #     draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (physics_flags))
-                if rendered_map.objects[(x, y)] in (0xE1, 0xE2, 0xE3, 0xBA, 0xD5, 0xA8, 0xBE, 0xCB):
-                    warp_pos.append((x, y))
-        for x, y, type_id in re.entities:
-            draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
-            draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id))
-        y = 8
-        for obj in re.objects:
-            if isinstance(obj, ObjectWarp):
-                draw.text((8, y), "W%d:%02x:%03x:%d,%d" % (obj.warp_type, obj.map_nr, obj.room, obj.target_x, obj.target_y))
-                y += 16
-        return result
-
     def getTiles(self, bank_nr):
         bank = self.__rom.banks[bank_nr]
         buffer = bytearray(b'\x00' * 16 * 16)
@@ -727,3 +400,8 @@ for(var e of document.getElementsByTagName("img")) {
                     buffer[x+y*8] = v
             result.append(PIL.Image.frombytes('L', (8, 8), bytes(buffer)))
         return result
+
+    def room_map_info(self, room):
+        if room not in self.__room_map_info:
+            self.__room_map_info[room] = RoomMapInfo()
+        return self.__room_map_info[room]

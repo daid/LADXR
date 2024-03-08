@@ -47,7 +47,7 @@ class Setting:
             for option_key, option_short, option_label in self.options:
                 if self.value == option_key:
                     return option_short
-        return self.value + ">"
+        return str(self.value) + ">"
 
     def toJson(self):
         result = {
@@ -72,6 +72,8 @@ class Settings:
         gfx_options = [('', '', 'Default')]
         gfx_path = os.path.join(os.path.dirname(__file__), "gfx")
         for filename in sorted(os.listdir(gfx_path)):
+            if filename in {"template.png", "template_extended.png"}:
+                continue
             if filename.endswith(".bin"):
                 gfx_options.append((filename, filename + ">", filename[:-4]))
             if filename.endswith(".png") and not filename.endswith(".bin.png"):
@@ -115,7 +117,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
             Setting('witch', 'Items', 'W', 'Randomize item given by the witch', default=True,
                 description='Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool'),
             Setting('rooster', 'Items', 'R', 'Add the rooster', default=True,
-                description='Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. Any rooster spot is accessible without rooster by other means.'),
+                description='Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.'),
             Setting('boomerang', 'Items', 'Z', 'Boomerang trade', options=[('default', 'd', 'Normal'), ('trade', 't', 'Trade'), ('gift', 'g', 'Gift')], default='gift',
                 description="""
 [Normal], requires magnifier to get the boomerang.
@@ -123,6 +125,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Gift], You get a random gift of any item, and the boomerang is shuffled."""),
             Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
                                                                           ('smallkeys', 's', 'Small keys'),
+                                                                          ('nightmarekeys', 'n', 'Nightmare keys'),
                                                                           ('localkeys', 'L', 'Map/Compass/Beaks'),
                                                                           ('localnightmarekey', 'N', 'MCB + SmallKeys'),
                                                                           ('keysanity', 'K', 'Keysanity'),
@@ -136,11 +139,15 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
                 description='Randomize where your starting house is located'),
             Setting('dungeonshuffle', 'Entrances', 'u', 'Dungeon shuffle', default=False,
                 description='Randomizes the dungeon that each dungeon entrance leads to'),
-            Setting('entranceshuffle', 'Entrances', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed")], default='none',
+            Setting('entranceshuffle', 'Entrances', 'E', 'Entrance randomizer', options=[("none", '', "Default"), ("simple", 's', "Simple"), ("split", 'S', "Split"), ("mixed", 'm', "Mixed"), ("wild", 'w', "Wild"), ("chaos", "c", "Chaos"), ("insane", 'i', "Insane"), ("madness", 'M', "Madness")], default='none',
                 description="""Randomizes where overworld entrances lead to.
 [Simple] single entrance caves that contain items are randomized
 [Split] Connector caves are also randomized, in a separate pool from single entrance caves
 [Mixed] Connector caves are also randomized, in the same pool as single entrance caves
+[Wild] Connections can go from overworld to overworld, or inside to inside
+[Chaos] Entrance and exits are decoupled.
+[Insane] Combines chaos and wild, anything goes anywhere, there is no god.
+[Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location
 If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances."""),
             Setting('shufflejunk', 'Entrances', 'j', 'Shuffle itemless entrances', default=False,
                 description="Caves/houses without items are also randomized when entranceshuffle is set"),
@@ -152,12 +159,15 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 description='Randomizes the dungeon bosses that each dungeon has'),
             Setting('miniboss', 'Gameplay', 'b', 'Miniboss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon minibosses that each dungeon has'),
+            Setting('enemies', 'Gameplay', 'e', 'Enemizer', options=[('default', '', 'None'), ('overworld', 'o', 'Overworld')], default='default',
+                description='Randomizes which enemies are placed'),
             Setting('goal', 'Gameplay', 'G', 'Goal', options=[('8', '8', '8 instruments'), ('7', '7', '7 instruments'), ('6', '6', '6 instruments'),
                                                          ('5', '5', '5 instruments'), ('4', '4', '4 instruments'), ('3', '3', '3 instruments'),
                                                          ('2', '2', '2 instruments'), ('1', '1', '1 instrument'), ('0', '0', 'No instruments'),
                                                          ('open', 'O', 'Egg already open'), ('random', 'R', 'Random instrument count'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
+                                                         ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
                                                          ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='8',
                 description="""Changes the goal of the game.
 [1-8 instruments], number of instruments required to open the egg.
@@ -167,6 +177,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.
 [Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.
 [Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!
+[Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!
 [Bingo-25] Bingo, but need to fill the whole bingo card to win!
 [Sign Maze] Go on a long trip on the overworld sign maze to open the egg."""),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
@@ -193,10 +204,11 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Never] you can never steal from the shop."""),
             Setting('bowwow', 'Special', 'g', 'Good boy mode', options=[('normal', '', 'Disabled'), ('always', 'a', 'Enabled'), ('swordless', 's', 'Enabled (swordless)')], default='normal',
                 description='Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'),
-            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('random', 'R', 'Randomized')], default='normal',
+            Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('dungeonchain', 'C', 'Dungeon chain'), ('random', 'R', 'Randomized'), ('alttp', 'A', 'ALttP')], default='normal',
                 description="""
 [Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.
 [No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
+[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.
 [Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
@@ -219,17 +231,21 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
             Setting('gfxmod', 'User options', 'c', 'Graphics', options=gfx_options, default='',
                 description='Generally affects at least Link\'s sprite, but can alter any graphics in the game',
                 aesthetic=True),
+            Setting('follower', 'User options', 'x', 'Follower', options=[('', '', 'None'), ('fox', 'f', 'Fox'), ('navi', 'n', 'Navi'), ('ghost', 'g', 'Ghost'), ('yipyip', 'y', 'YipYip')], default='',
+                description='Gives you a pet follower in the game.',
+                aesthetic=True),
             Setting('linkspalette', 'User options', 'C', "Link's color",
                 options=[('-1', '-', 'Normal'), ('0', '0', 'Green'), ('1', '1', 'Yellow'), ('2', '2', 'Red'), ('3', '3', 'Blue'),
-                         ('4', '4', '?? A'), ('5', '5', '?? B'), ('6', '6', '?? C'), ('7', '7', '?? D')], default='-1', aesthetic=True,
+                         ('4', '4', 'Inverted Red'), ('5', '5', 'Inverted Blue'), ('6', '6', '?? C'), ('7', '7', '?? D')], default='-1', aesthetic=True,
                 description="""Allows you to force a certain color on link.
 [Normal] color of link depends on the tunic.
 [Green/Yellow/Red/Blue] forces link into one of these colors.
-[?? A/B/C/D] colors of link are usually inverted and color depends on the area you are in."""),
-            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable')], default='',
+[?? C/D] colors of link are usually inverted and color depends on the area you are in."""),
+            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable'), ('shifted', 's', 'Tone shifted')], default='',
                 description="""
 [Random] Randomizes overworld and dungeon music'
-[Disable] no music in the whole game""",
+[Disable] no music in the whole game
+[Tone shifted] Tone shifts the musics, making it sound different""",
                 aesthetic=True),
         ]
         self.__by_key = {s.key: s for s in self.__all}
@@ -237,10 +253,10 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
         self.__multiworld_settings = []
 
         # Make sure all short keys are unique
-        short_keys = set()
+        short_keys = {}
         for s in self.__all:
-            assert s.short_key not in short_keys, s.label
-            short_keys.add(s.short_key)
+            assert s.short_key not in short_keys, f"{s.label}: {short_keys[s.short_key].label}"
+            short_keys[s.short_key] = s
 
     @property
     def multiworld(self):  # returns the amount of multiworld players.
@@ -282,7 +298,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                             break
                 else:
                     end_of_param = value.find(">", index)
-                    setting.value = value[index:end_of_param]
+                    setting.set(value[index:end_of_param])
                     index = end_of_param + 1
 
     def getShortString(self):
@@ -306,7 +322,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 print("Warning: %s (setting adjusted automatically)" % message)
                 setattr(self, setting, new_value)
 
-        if self.goal in ("bingo", "bingo-full"):
+        if self.goal in ("bingo", "bingo-double", "bingo-triple", "bingo-full"):
             req("overworld", "normal", "Bingo goal does not work with dungeondive")
             req("accessibility", "all", "Bingo goal needs 'all' accessibility")
             dis("steal", "never", "default", "With bingo goal, stealing should be allowed")
@@ -315,10 +331,16 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
         if self.goal == "maze":
             req("overworld", "normal", "Maze goal does not work with dungeondive")
             req("accessibility", "all", "Maze goal needs 'all' accessibility")
+        if self.itempool == "pain":
+            req("heartpiece", True, "Path of pain removes heart pieces")
         if self.overworld == "dungeondive":
-            dis("goal", "seashells", "8", "Dungeon dive does not work with seashell goal")
+            dis("owlstatues", "overworld", "", "Dungeon dive does not work with owl statues in overworld")
+            dis("owlstatues", "both", "dungeon", "Dungeon dive does not work with owl statues in overworld")
+            if (self.itempool == "pain") & (self.owlstatues == ""):
+                req("accessibility", "goal", "Dungeon dive does not leave enough rupees in itempool for all accessibility")
         if self.overworld == "nodungeons":
-            dis("goal", "seashells", "8", "No dungeons does not work with seashell goal")
+            dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
+            dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
         if self.overworld == "random":
             self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
 

@@ -12,6 +12,7 @@ function jsprint(...args)
 async function loadPyodideAndPackages() {
     self.pyodide = await loadPyodide();
     console.log("Loading ladxr.tar.gz");
+    await self.pyodide.loadPackage("pillow")
     await self.pyodide.unpackArchive(await(await fetch("ladxr.tar.gz")).arrayBuffer(), "gztar");
     self.pyodide.runPython("import js;import builtins;builtins.print = js.jsprint;");
     self.pyladxr = self.pyodide.pyimport("main");
