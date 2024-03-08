@@ -374,6 +374,16 @@ var options =
     "label": "Bingo!"
    },
    {
+    "key": "bingo-double",
+    "short": "d",
+    "label": "Double Bingo!"
+   },
+   {
+    "key": "bingo-triple",
+    "short": "t",
+    "label": "Triple Bingo!"
+   },
+   {
     "key": "bingo-full",
     "short": "B",
     "label": "Bingo-25!"
