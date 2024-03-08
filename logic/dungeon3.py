@@ -51,7 +51,7 @@ class Dungeon3:
         pre_boss = Location(dungeon=3).connect(towards_boss4, AND(r.attack_no_boomerang, FEATHER, PEGASUS_BOOTS))
         pre_boss.add(DroppedKey(0x15B))
 
-        boss_room = Location(3, "D3 Boss Room").connect(pre_boss, NIGHTMARE_KEY3)
+        boss_room = Location("D3 Boss Room", dungeon=3).connect(pre_boss, NIGHTMARE_KEY3)
         boss = Location(dungeon=3).add(HeartContainer(0x15A), Instrument(0x159)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[2]])
 
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
