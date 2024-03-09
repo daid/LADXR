@@ -581,7 +581,8 @@ class World:
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer_boots) # multiple pit buffers to bonk across the bottom wall
             left_bay_area.connect(ukuku_prairie, r.hookshot_clip_block, one_way=True) # clip through the donuts blocking the path next to prairie plateau cave by hookshotting up and killing the two moblins that way which clips you further up two times. This is enough to move right
             tiny_island.connect(left_bay_area, AND(r.jesus_buffer, r.boots_bonk_pit, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)
-            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(r.pit_buffer_boots, OR(MAGIC_POWDER, BOMB, SWORD, MAGIC_ROD, BOOMERANG))) # Boots bonk across the bottom wall, then remove one of the bushes to get on land
+            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(r.pit_buffer_boots, OR(MAGIC_POWDER, SWORD, MAGIC_ROD, BOOMERANG))) # Boots bonk across the bottom wall, then remove one of the bushes to get on land
+            self._addEntranceRequirement("prairie_madbatter_connector_entrance", AND(r.pit_buffer, r.hookshot_spam_pit, r.bush)) # hookshot spam to cross one pit at the top, then buffer until on top of the bush to be able to break it
             self._addEntranceRequirementExit("prairie_madbatter_connector_entrance", AND(r.pit_buffer_boots, r.bush)) # if exiting, you can pick up the bushes by normal means and boots bonk across the bottom wall
 
             # bay_water connectors, only left_bay_area, ukuku_prairie and animal_village have to be connected with jesus jumps. below_right_taltal, d6_armos_island and armos_fairy_entrance are accounted for via ukuku prairie in glitch logic
