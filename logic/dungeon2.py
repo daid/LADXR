@@ -14,7 +14,7 @@ class Dungeon2:
         Location(2).add(DungeonChest(0x137)).connect(dungeon2_r2, AND(KEY2, FOUND(KEY2, 5), OR(r.rear_attack, r.rear_attack_range)))  # compass chest
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(2).add(OwlStatue(0x133)).connect(dungeon2_r2, STONE_BEAK2)
-        dungeon2_r3 = Location(2).add(DungeonChest(0x138)).connect(dungeon2_r2, r.attack_hookshot)  # first chest with key, can hookshot the switch in previous room
+        dungeon2_r3 = Location(2).add(DungeonChest(0x138)).connect(dungeon2_r2, r.hit_switch)  # first chest with key, can hookshot the switch in previous room
         dungeon2_r4 = Location(2).add(DungeonChest(0x139)).connect(dungeon2_r3, FEATHER)  # button spawn chest
         if options.logic == "casual":
             shyguy_key_drop = Location(2).add(DroppedKey(0x134)).connect(dungeon2_r3, AND(FEATHER, OR(r.rear_attack, r.rear_attack_range)))  # shyguy drop key
