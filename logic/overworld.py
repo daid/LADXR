@@ -529,7 +529,6 @@ class World:
             fisher_under_bridge.connect(bay_water, AND(r.bomb_trigger, AND(FEATHER, FLIPPERS))) # up-most left wall is a pit: bomb trigger with it. If photographer is there, clear that first which is why feather is required logically
             animal_village.connect(ukuku_prairie, r.jesus_jump) # jesus jump
             below_right_taltal.connect(next_to_castle, r.jesus_jump) # jesus jump (north of kanalet castle phonebooth)
-            below_right_taltal.connect(next_to_castle, r.jesus_buffer, one_way=True) # face right, boots bonk and get far enough left to jesus buffer / boots bonk across the bottom wall to the stairs
             #animal_village_connector_right.connect(animal_village_connector_left, AND(r.text_clip, FEATHER)) # text clip past the obstacles (can go both ways), feather to wall clip the obstacle without triggering text
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(r.bomb_trigger, OR(HOOKSHOT, FEATHER, r.boots_bonk_pit))) # bomb trigger from right side, corner walking top right pit is stupid so hookshot or boots added
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave,  r.pit_buffer) # villa buffer across the pits
@@ -598,6 +597,7 @@ class World:
 
 			#TODO: add jesus rooster to trick list
             
+            below_right_taltal.connect(next_to_castle, r.jesus_buffer, one_way=True) # face right, boots bonk and get far enough left to jesus buffer / boots bonk across the bottom wall to the stairs
             crow_gold_leaf.connect(castle_courtyard, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, r.super_jump_feather)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_connector_right.connect(animal_village_connector_left, r.shaq_jump) # shaq jump off the obstacle to get through 
