@@ -31,7 +31,7 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, r.super_jump_feather)  # super jump
-            dungeon1_miniboss_room.connect(dungeon1_right_side, OR(r.damage_boost, r.pit_buffer)) # damage boost or buffer pause over the pit to cross or mushroom
+            dungeon1_miniboss_room.connect(dungeon1_right_side, OR(r.damage_boost, r.pit_buffer_itemless)) # damage boost or buffer pause over the pit to cross or mushroom
         
         if options.logic == 'hell':
             feather_chest.connect(dungeon1_upper_left, SWORD)  # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
