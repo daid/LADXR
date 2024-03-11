@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Sets up a small web server that hosts the LADXR web UI, and opens
 the main page a browser.
 """
@@ -60,7 +62,7 @@ class LADXRHandler(http.server.SimpleHTTPRequestHandler):
             # Create the tgz file in a temporary directory and serve it
             with tempfile.TemporaryDirectory() as dirname:
                 src = BASE_DIR
-                dest = os.path.join(dirname, 'ladxr.targ.gz')
+                dest = os.path.join(dirname, 'ladxr.tar.gz')
                 with tarfile.open(dest, 'w:gz') as tar:
                     tar.add(src, arcname='')
 
