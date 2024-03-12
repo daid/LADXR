@@ -379,9 +379,9 @@ def VacuumMouthGoal(description, tile_info, group=None):
 PHOTO_CHECKS = (("$DC0C", "$01"),("$DC0C", "$02"),("$DC0C", "$04"),("$DC0C", "$08"),
                 ("$DC0C", "$10"),("$DC0C", "$20"),("$DC0C", "$40"),("$DC0C", "$80"),
                 ("$DC0D", "$01"),("$DC0D", "$02"),("$DC0D", "$04"),("$DC0D", "$08"))
-MAP_ADDRESSES = ("$DB16", "$DB1B", "$DB20", "$DB25", "$DB2A", "$DB2F", "$DB34", "$DB39", "$DBDA")
-COMPASS_ADDRESSES = ("$DB17", "$DB1C", "$DB21", "$DB26", "$DB2B", "$DB30", "$DB35", "$DB3A", "$DBDB")
-BEAK_ADDRESSES = ("$DB18", "$DB1D", "$DB22", "$DB27", "$DB2C", "$DB31", "$DB36", "$DB3B", "$DBDC")
+MAP_ADDRESSES = ("$DB16", "$DB1B", "$DB20", "$DB25", "$DB2A", "$DB2F", "$DB34", "$DB39", "$DDDA")
+COMPASS_ADDRESSES = ("$DB17", "$DB1C", "$DB21", "$DB26", "$DB2B", "$DB30", "$DB35", "$DB3A", "$DDDB")
+BEAK_ADDRESSES = ("$DB18", "$DB1D", "$DB22", "$DB27", "$DB2C", "$DB31", "$DB36", "$DB3B", "$DDDC")
 OW_KEY_CHECKS = (("$D8D3", "$10"), ("$D8B5", "$10"), ("$D82B", "$10"), ("$D88C", "$10"), ("$D80E", "$10"))
 
 BINGO_GOALS = [
