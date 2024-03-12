@@ -860,6 +860,16 @@ chooseSquare:
 
     ld   a, $C9 
     call $2385 ; open dialog 
+    ld   a, [wCursorY]
+    cp   $03
+    ld   a, [$C19F]
+    jr   nc, .top
+    or   $80
+    jr  .bottom
+.top:
+    and  $7F
+.bottom:
+    ld   [$C19F], a ; dialog position depends on the selected row
     ld   a, $03
     ld   [wState], a
     ret
@@ -870,6 +880,11 @@ waitDialogDone:
     ret  nz
     ld   a, $02 ; choose square
     ld   [wState], a
+    ret
+
+exitMural:
+    ld   hl, $DB96 ;gameplay subtype 
+    inc  [hl]
     ret
 
 finishGame:
@@ -886,11 +901,6 @@ finishGame:
     ld   [$DB96], a 
     inc  a
     ld   [$DB95], a
-    ret
-
-exitMural:
-    ld   hl, $DB96 ;gameplay subtype 
-    inc  [hl]
     ret
 
 multiA24:
