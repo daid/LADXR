@@ -66,12 +66,12 @@ def upgradeMansion(rom):
     # Do not reset seashell counter
     rom.patch(0x19, 0x3700, ASM("ld [wSeashellsCount], a"), "", fill_nop=True)
     # Prevent missing out on a reward or getting the last reward multiple times
-    rom.patch(0x19, 0x31CA, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
-    rom.patch(0x19, 0x3215, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
-    rom.patch(0x19, 0x32A2, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
-    rom.patch(0x19, 0x38B3, ASM("ld a, [wSeashellsCount]"), ASM("call $7F30"))
+    rom.patch(0x19, 0x31CA, ASM("ld a, [wSeashellsCount]"), ASM("call $7F50"))
+    rom.patch(0x19, 0x3215, ASM("ld a, [wSeashellsCount]"), ASM("call $7F50"))
+    rom.patch(0x19, 0x32A2, ASM("ld a, [wSeashellsCount]"), ASM("call $7F50"))
+    rom.patch(0x19, 0x38B3, ASM("ld a, [wSeashellsCount]"), ASM("call $7F50"))
     # This is using free space in bank 0x19 because we need to return a value in A when called
-    rom.patch(0x19, 0x3F30, "00" * 0x30, ASM("""
+    rom.patch(0x19, 0x3F50, "00" * 0x30, ASM("""
     ; Maybe pretend like we have fewer seashells to prevent skipping a reward,
     ; or to prevent giving the final reward multiple times
         ld   a, [$DAE9] ; event flags for seashell mansion
