@@ -11,7 +11,10 @@ class Dungeon8:
 
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
-        Location(8).add(DungeonChest(0x25C)).connect(entrance_left, r.attack_hookshot) # eye magnet chest
+        eye_magnet_chest = Location(8).add(DungeonChest(0x25C)) # eye magnet chest bottom left below rolling bones
+        eye_magnet_chest.connect(entrance_left, OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, r.attack_hookshot))) # damageless roller should be default
+        if options.hardmode != "ohko":
+            eye_magnet_chest.connect(entrance_left, r.attack_hookshot) # can take a hit
         vire_drop_key = Location(8).add(DroppedKey(0x24C)).connect(entrance_left, r.attack_hookshot_no_bomb) # vire drop key
         sparks_chest = Location(8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
@@ -66,7 +69,7 @@ class Dungeon8:
         
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
-            vire_drop_key.connect(entrance_left, BOMB) # use bombs to kill rolling bones and vire
+            up_left.connect(vire_drop_key, BOMB, one_way=True) # use bombs to kill rolling bones and vire, do not allow pathway through hinox with just bombs, as not enough bombs are available
             bottom_right.connect(slime_chest, r.tight_jump) # diagonal jump over the pits to reach rolling rock / zamboni
             gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
             up_left.connect(lower_center, AND(BOMB, FEATHER)) # blow up hidden walls from peahat room -> dark room -> eye statue room
@@ -88,7 +91,7 @@ class Dungeon8:
             if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell)) # underground section past mimics, boots bonking across the gap to the ladder
-            entrance.connect(bottomright_pot_chest, r.super_jump_sword, one_way=True) # use NW zamboni staircase backwards, subpixel manip for superjump past the pots
+            entrance.connect(bottomright_pot_chest, r.shaq_jump, one_way=True) # use NW zamboni staircase backwards, and get a naked shaq jump off the bottom wall in the bottom right corner to pass by the pot
             gibdos_drop_key.connect(upper_center, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             medicine_chest.connect(upper_center, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss.connect(miniboss_entrance, AND(r.boots_bonk_2d_hell, r.miniboss_requirements[world_setup.miniboss_mapping[7]])) # get through 2d section with boots bonks

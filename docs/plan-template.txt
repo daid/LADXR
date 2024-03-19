@@ -13,8 +13,6 @@ Location:0x0CD-Trade:
 Location:0x0A8: 
 ;Donut Plains - Rock Seashell
 Location:0x0B9: 
-;Face Shrine - Raft Chest
-Location:0x06C: 
 ;Goponga Swamp - MrWrite
 Location:0x2A8-Trade: 
 ;Goponga Swamp - Swampy Chest
@@ -109,6 +107,8 @@ Location:0x0C6:
 Location:0x2C8: 
 ;Rapids Ride - East
 Location:0x05D: 
+;Rapids Ride - Outside D6 Chest
+Location:0x06C: 
 ;Rapids Ride - West
 Location:0x05C: 
 ;Southern Face Shrine - Armos Knight
@@ -121,8 +121,6 @@ Location:0x1F2:
 Location:0x2FD: 
 ;Tal Tal Heights - Moblin Cave
 Location:0x2E2: 
-;Tal Tal Heights - Papahl
-Location:0x019-Trade: 
 ;Tal Tal Mountains - Access Tunnel Bombable Heart Piece
 Location:0x2BA: 
 ;Tal Tal Mountains - Access Tunnel Exterior
@@ -135,10 +133,14 @@ Location:0x27A:
 Location:0x00C: 
 ;Tal Tal Mountains - Mad Batter
 Location:0x1E2: 
+;Tal Tal Mountains - Outside D8 Heart Piece
+Location:0x000: 
 ;Tal Tal Mountains - Outside Five Chest Game
 Location:0x01D: 
 ;Tal Tal Mountains - Outside Mad Batter
 Location:0x004: 
+;Tal Tal Mountains - Papahl
+Location:0x019-Trade: 
 ;Tal Tal Mountains - Paphl Cave
 Location:0x28A: 
 ;Toronbo Shores - Banana Sale
@@ -151,8 +153,6 @@ Location:0x0D2:
 Location:0x0F2: 
 ;Toronbo Shores - West of Ghost House Chest
 Location:0x0E5: 
-;Turtle Rock - Outside Heart Piece
-Location:0x000: 
 ;Ukuku Prairie - Boots 'n' Bomb Cave Bombable Wall
 Location:0x2E5: 
 ;Ukuku Prairie - Boots 'n' Bomb Cave Chest
