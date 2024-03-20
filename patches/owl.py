@@ -115,7 +115,17 @@ sprite:
 
 def upgradeDungeonOwlStatues(rom):
     # Call our custom handler after the check for the stone beak
-    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$FFF7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\nret"), fill_nop=True)
+    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$FFF7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\njp $7FF2"), fill_nop=True)
+    rom.patch(0x18, 0x3FF2, "00" * 14, ASM("""
+        xor  a
+        cp   d
+        ret  z
+    ; already got item, display text instead
+        ldh  a, [$FFF7]
+        cp   $FF
+        jp   nz, $5EAD
+        jp   $5EA8
+    """), fill_nop=True)
 
 def upgradeOverworldOwlStatues(rom):
     # Replace the code that handles signs/owl statues on the overworld
@@ -138,7 +148,10 @@ def upgradeOverworldOwlStatues(rom):
         jr   nz, skip
 
         ld   a, $09
-        rst 8
+        rst  8
+        xor  a
+        cp   d
+        jr   nz, $20 ; already got item, display text instead
         jp   $20CF
 skip:
     """), fill_nop=True)
