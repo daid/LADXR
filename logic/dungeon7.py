@@ -27,7 +27,7 @@ class Dungeon7:
         bottomleftF2_area.connect(mirror_shield_chest, AND(KEY7, FOUND(KEY7, 3)), one_way = True) # reach mirror shield chest from hinox area by opening keyblock
         toprightF1_chest = Location(dungeon=7).add(DungeonChest(0x204)).connect(bottomleftF2_area, r.attack_hookshot)  # chest on the F1 right ledge. Added attack_hookshot since switch needs to be hit to get back up
         final_pillar_area = Location(dungeon=7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT))  # chest that needs to spawn to get to the last pillar
-        final_pillar = Location(dungeon=7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
+        final_pillar = Location("D7 Final Pillar", dungeon=7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar
 
         beamos_horseheads_area = Location("D7 After Boss Door", dungeon=7).connect(final_pillar, NIGHTMARE_KEY7) # area behind boss door
         beamos_horseheads = Location(dungeon=7).add(DungeonChest(0x220)).connect(beamos_horseheads_area, POWER_BRACELET) # 100 rupee chest / medicine chest (DX) behind boss door
