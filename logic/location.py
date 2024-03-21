@@ -56,11 +56,16 @@ class Location:
     def __repr__(self):
         return "<%s:%s:%d:%d:%d>" % (self.__class__.__name__, self.dungeon, len(self.items), len(self.simple_connections), len(self.gated_connections))
 
-    def friendlyName(self):
+    def friendlyName(self, recurse=True):
         if self.name:
             return self.name
 
         if self.items:
             return self.items[0].nameId
         
-        return ''
+        if recurse:
+            uniqueConnections = {x[0].friendlyName(recurse=False) for x in self.simple_connections + self.gated_connections}
+            
+            return 'Unnamed - ' + ','.join(uniqueConnections)
+        
+        return 'Unnamed'
