@@ -61,11 +61,15 @@ class Dungeon4:
         
         if options.logic == 'hell':
             rightside_crossroads.connect(entrance, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into the wall of the first pit, then boots bonk across the center, hookshot to get to the rightmost pit to a second villa buffer on the rightmost pit
+            rightside_crossroads.connect(after_double_lock, AND(OR(BOMB, BOW), r.hookshot_clip_block)) # split zols for more entities, and clip through the block against the right wall
             pushable_block_chest.connect(rightside_crossroads, AND(r.sideways_block_push, OR(r.jesus_buffer, r.jesus_jump))) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
             after_double_lock.connect(double_locked_room, AND(FOUND(KEY4, 4), r.pit_buffer_boots), one_way=True) # use boots bonks to cross the water gaps
-            north_crossroads.connect(entrance, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
             after_double_lock.connect(entrance, r.pit_buffer_boots) # boots bonk + pit buffer to the bottom
+            after_double_lock.connect(entrance, AND(r.pit_buffer, r.hookshot_spam_pit)) # hookshot spam over the first pit of crossroads, then buffer down
             dungeon4_puddle_before_crossroads.connect(after_double_lock, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk across the water bottom wall to the bottom left corner, then hookshot up
+            north_crossroads.connect(entrance, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into wall of the first pit, then boots bonk towards the top and hookshot spam to get across (easier with Piece of Power)
+            before_miniboss.connect(north_crossroads, AND(r.shaq_jump, r.hookshot_clip_block)) # push block left of keyblock up, then shaq jump off the left wall and pause buffer to land on keyblock. 
+            before_miniboss.connect(north_crossroads, AND(OR(BOMB, BOW), r.hookshot_clip_block)) # split zol for more entities, and clip through the block left of keyblock by hookshot spam
             to_the_nightmare_key.connect(left_water_area, AND(FLIPPERS, r.boots_bonk)) # Use flippers for puzzle and boots bonk to get through 2d section
             before_boss.connect(left_water_area, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             

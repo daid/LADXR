@@ -240,7 +240,7 @@ class WorldSetup:
             self.goal = rnd.randint(-1, 8)
         elif settings.goal == 'open':
             self.goal = -1
-        elif settings.goal in {"seashells", "bingo", "bingo-full"}:
+        elif settings.goal in {"seashells", "bingo", "bingo-double", "bingo-triple", "bingo-full"}:
             self.goal = settings.goal
         elif settings.goal in {"maze"}:
             self.goal = settings.goal
@@ -256,7 +256,7 @@ class WorldSetup:
             self.goal = rnd.randint(int(a), int(b))
         else:
             self.goal = int(settings.goal)
-        if self.goal in {"bingo", "bingo-full"}:
+        if self.goal in {"bingo", "bingo-double", "bingo-triple", "bingo-full"}:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         if settings.overworld == "dungeonchain":

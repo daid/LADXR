@@ -1,11 +1,9 @@
 HandleOwlStatue:
     call GetRoomStatusAddressInHL
-    ld   a, [hl]
-    and  $20
+    bit  5, [hl]
+    ld   d, $01
     ret  nz
-    ld   a, [hl]
-    or   $20
-    ld   [hl], a
+    set  5, [hl]
 
     ld   hl, $7B16
     call OffsetPointerByRoomNumber
@@ -13,6 +11,7 @@ HandleOwlStatue:
     ldh  [$FFF1], a
     call ItemMessage
     call GiveItemFromChest
+    ld   d, $00
     ret
 
 

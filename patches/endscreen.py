@@ -1,5 +1,6 @@
 from assembler import ASM
 import os
+import random
 
 
 def updateEndScreen(rom):
@@ -21,7 +22,7 @@ def updateEndScreen(rom):
     ldh  [$FF40], a
     
     ld  hl, $8000
-    ld  de, $5000
+    ld  de, $4400
 copyLoop:
     ld  a, [de]
     inc de
@@ -33,7 +34,7 @@ copyLoop:
     ldh [$FF4F], a
 
     ld  hl, $8000
-    ld  de, $6000
+    ld  de, $5400
 copyLoop2:
     ld  a, [de]
     inc de
@@ -42,27 +43,25 @@ copyLoop2:
     jr  z, copyLoop2
 
     ld  hl, $9800
-    ld  de, $0190
-clearLoop1:
-    xor a
+    ld  de, $4400 + (20 * 18 * $10)
+    ld  b, 18
+copyAttrLoop2:
+    ld  c, 20
+copyAttrLoop1:
+    ld  a, [de]
+    inc de
     ldi [hl], a
-    dec de
-    ld  a, d
-    or  e
-    jr  nz, clearLoop1
-
-    ld  de, $0190
-clearLoop2:
-    ld  a, $08
-    ldi [hl], a
-    dec de
-    ld  a, d
-    or  e
-    jr  nz, clearLoop2
+    dec c
+    jr  nz, copyAttrLoop1
+    push de
+    ld   de, 32 - 20
+    add  hl, de
+    pop  de
+    dec b
+    jr  nz, copyAttrLoop2
 
     xor  a
     ldh  [$FF4F], a
-
 
     ld  hl, $9800
     ld  de, $000C
@@ -95,31 +94,20 @@ loadLoop2:
 
     ; Load palette
     ld   hl, $DC10
-    ld   a, $00
+    ld   de, $4400 + (20 * 18 * $10) + 20 * 18
+    ld   c, 4 * 8 * 2
+.copyPalLoop:
+    ld   a, [de]
+    inc  de
     ldi  [hl], a
-    ld   a, $00
-    ldi  [hl], a
-
-    ld   a, $ad
-    ldi  [hl], a
-    ld   a, $35
-    ldi  [hl], a
-
-    ld   a, $94
-    ldi  [hl], a
-    ld   a, $52
-    ldi  [hl], a
-
-    ld   a, $FF
-    ldi  [hl], a
-    ld   a, $7F
-    ldi  [hl], a
+    dec  c
+    jr   nz, .copyPalLoop
 
     ld   a, $00
     ld   [$DDD3], a
     ld   a, $04
     ld   [$DDD4], a
-    ld   a, $81
+    ld   a, $01
     ld   [$DDD1], a
 
     ; Enable LCD
@@ -132,6 +120,8 @@ loadLoop2:
     ldh [$FF97], a
     ret
     """), fill_nop=True)
-    
-    data = open(os.path.join(os.path.dirname(__file__), "nyan.bin"), "rb").read()
-    rom.banks[0x3F][0x1000:0x1000+len(data)] = data
+
+    cats = [f for f in os.listdir(os.path.join(os.path.dirname(__file__), "cats")) if f.endswith(".bin")]
+    data = open(os.path.join(os.path.dirname(__file__), "cats", random.choice(cats)), "rb").read()
+    assert len(data) < 0x2400
+    rom.banks[0x3F][0x0400:0x0400+len(data)] = data

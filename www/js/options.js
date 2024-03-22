@@ -208,6 +208,11 @@ var options =
     "label": "Small keys"
    },
    {
+    "key": "nightmarekeys",
+    "short": "n",
+    "label": "Nightmare keys"
+   },
+   {
     "key": "localkeys",
     "short": "L",
     "label": "Map/Compass/Beaks"
@@ -367,6 +372,16 @@ var options =
     "key": "bingo",
     "short": "b",
     "label": "Bingo!"
+   },
+   {
+    "key": "bingo-double",
+    "short": "d",
+    "label": "Double Bingo!"
+   },
+   {
+    "key": "bingo-triple",
+    "short": "t",
+    "label": "Triple Bingo!"
    },
    {
     "key": "bingo-full",

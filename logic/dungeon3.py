@@ -20,8 +20,8 @@ class Dungeon3:
             Location(3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
         dungeon3_raised_blocks_north = Location(3).add(DungeonChest(0x14C)) # chest locked behind raised blocks near staircase
         dungeon3_raised_blocks_east = Location(3).add(DungeonChest(0x150)) # chest locked behind raised blocks next to slime chest
-        area_up.connect(dungeon3_raised_blocks_north, r.attack_hookshot, one_way=True) # hit switch to reach north chest
-        area_up.connect(dungeon3_raised_blocks_east, r.attack_hookshot, one_way=True) # hit switch to reach east chest
+        area_up.connect(dungeon3_raised_blocks_north, r.hit_switch, one_way=True) # hit switch to reach north chest
+        area_up.connect(dungeon3_raised_blocks_east, r.hit_switch, one_way=True) # hit switch to reach east chest
         
         area_left = Location(3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
         area_left_key_drop = Location(3).add(DroppedKey(0x155)).connect(area_left, r.attack_hookshot) # west key drop (no longer requires feather to get across hole), can use boomerang to knock owls into pit
@@ -64,6 +64,8 @@ class Dungeon3:
             dungeon3_reverse_eye.connect(entrance, r.hookshot_over_pit) # hookshot the chest to get to the right side
             dungeon3_north_key_drop.connect(area_up, r.throw_pot) # use pots to kill the enemies
             dungeon3_south_key_drop.connect(area_down, r.throw_pot) # use pots to kill enemies
+            area_up.connect(dungeon3_raised_blocks_north, r.throw_pot, one_way=True) # use pots to hit the switch
+            area_up.connect(dungeon3_raised_blocks_east, AND(r.throw_pot, r.attack_hookshot_powder), one_way=True) # use pots to hit the switch
 
         if options.logic == 'glitched' or options.logic == 'hell':
             area2.connect(dungeon3_raised_blocks_east, AND(r.attack_hookshot_powder, r.super_jump_feather), one_way=True) # use superjump to get over the bottom left block

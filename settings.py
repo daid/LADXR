@@ -125,6 +125,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Gift], You get a random gift of any item, and the boomerang is shuffled."""),
             Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
                                                                           ('smallkeys', 's', 'Small keys'),
+                                                                          ('nightmarekeys', 'n', 'Nightmare keys'),
                                                                           ('localkeys', 'L', 'Map/Compass/Beaks'),
                                                                           ('localnightmarekey', 'N', 'MCB + SmallKeys'),
                                                                           ('keysanity', 'K', 'Keysanity'),
@@ -166,6 +167,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                                                          ('open', 'O', 'Egg already open'), ('random', 'R', 'Random instrument count'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
+                                                         ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
                                                          ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='8',
                 description="""Changes the goal of the game.
 [1-8 instruments], number of instruments required to open the egg.
@@ -175,6 +177,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.
 [Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.
 [Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!
+[Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!
 [Bingo-25] Bingo, but need to fill the whole bingo card to win!
 [Sign Maze] Go on a long trip on the overworld sign maze to open the egg."""),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
@@ -319,7 +322,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 print("Warning: %s (setting adjusted automatically)" % message)
                 setattr(self, setting, new_value)
 
-        if self.goal in ("bingo", "bingo-full"):
+        if self.goal in ("bingo", "bingo-double", "bingo-triple", "bingo-full"):
             req("overworld", "normal", "Bingo goal does not work with dungeondive")
             req("accessibility", "all", "Bingo goal needs 'all' accessibility")
             dis("steal", "never", "default", "With bingo goal, stealing should be allowed")

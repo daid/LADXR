@@ -114,7 +114,6 @@ checkMetadataTable = {
     "0x1B3": CheckMetadata("Switch, Star Above Statues Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B3.GIF
     "0x1B4": CheckMetadata("Two Wizzrobe Key", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B4.GIF
     "0x1B0": CheckMetadata("Top Left Horse Heads Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B0.GIF
-    "0x06C": CheckMetadata("Raft Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/overworld/006C.GIF
     "0x1BE": CheckMetadata("Water Tektite Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01BE.GIF
     "0x1D1": CheckMetadata("Four Wizzrobe Ledge Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01D1.GIF
     "0x1D7-Owl": CheckMetadata("Blade Trap Owl", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01D7.GIF
@@ -156,7 +155,6 @@ checkMetadataTable = {
     "0x237": CheckMetadata("Magic Rod Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0237.GIF
     "0x240": CheckMetadata("Beamos Blocked Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0240.GIF
     "0x23D": CheckMetadata("Dodongo Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/023D.GIF
-    "0x000": CheckMetadata("Outside Heart Piece", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/overworld/0000.GIF
     "0x241": CheckMetadata("Lava Arrow Statue Key", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0241.GIF
     "0x241-Owl": CheckMetadata("Lava Arrow Statue Owl", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/0241.GIF
     "0x23A": CheckMetadata("West of Boss Door Ledge Chest", "Turtle Rock"), #http://artemis251.fobby.net/zelda/maps/underworld2/023A.GIF
@@ -236,6 +234,7 @@ checkMetadataTable = {
     "0x05C": CheckMetadata("West", "Rapids Ride"), #http://artemis251.fobby.net/zelda/maps/overworld/005C.GIF
     "0x05D": CheckMetadata("East", "Rapids Ride"), #http://artemis251.fobby.net/zelda/maps/overworld/005D.GIF
     "0x05D-Owl": CheckMetadata("Owl", "Rapids Ride"), #http://artemis251.fobby.net/zelda/maps/overworld/005D.GIF
+    "0x06C": CheckMetadata("Outside D6 Chest", "Rapids Ride"), #http://artemis251.fobby.net/zelda/maps/overworld/006C.GIF
     "0x01E-Owl": CheckMetadata("Outside D7 Owl", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/overworld/001E.GIF
     "0x00C": CheckMetadata("Bridge Rock", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/overworld/000C.GIF
     "0x2F2": CheckMetadata("Five Chest Game", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/underworld2/02F2.GIF
@@ -243,6 +242,7 @@ checkMetadataTable = {
     "0x004": CheckMetadata("Outside Mad Batter", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/overworld/0004.GIF
     "0x1E2": CheckMetadata("Mad Batter", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/underworld1/01E2.GIF
     "0x2BA": CheckMetadata("Access Tunnel Bombable Heart Piece", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/underworld2/02BA.GIF
+    "0x000": CheckMetadata("Outside D8 Heart Piece", "Tal Tal Mountains"), #http://artemis251.fobby.net/zelda/maps/overworld/0000.GIF
     "0x0F2": CheckMetadata("Sword on the Beach", "Toronbo Shores"), #http://artemis251.fobby.net/zelda/maps/overworld/00F2.GIF
     "0x050": CheckMetadata("Toadstool", "Mysterious Woods"), #http://artemis251.fobby.net/zelda/maps/overworld/0050.GIF
     "0x0CE": CheckMetadata("Lanmola", "Yarna Desert"), #http://artemis251.fobby.net/zelda/maps/overworld/00CE.GIF
@@ -253,6 +253,16 @@ checkMetadataTable = {
     "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
     "0x1E4": CheckMetadata("Rooster", "Mabe Village"),
 
+    #LttP overworld checks
+    "0x025": CheckMetadata("Outside Five Chest Game", "Death Mountain"),
+    "0x04A": CheckMetadata("Bush", "Graveyard"),
+    "0x0C7": CheckMetadata("Peg Rock", "Swamp"),
+    "0x0B0": CheckMetadata("Digging Game", "Kakariko Village"),
+    "0x0D4": CheckMetadata("Outside Flame Cave", "Desert"),
+    "0x011": CheckMetadata("Toadstool", "Lost Woods"),
+    "0x0BF": CheckMetadata("Peg Rock", "Eastern Palace"),
+    "0x0E0": CheckMetadata("Turtle Rock", "Desert Shelf"),
+
     "0x2A0-Trade": CheckMetadata("Trendy Game", "Mabe Village"),
     "0x2A6-Trade": CheckMetadata("Papahl's Wife", "Mabe Village"),
     "0x2B2-Trade": CheckMetadata("YipYip", "Mabe Village"),
@@ -260,7 +270,7 @@ checkMetadataTable = {
     "0x07B-Trade": CheckMetadata("Kiki", "Ukuku Prairie"),
     "0x087-Trade": CheckMetadata("Honeycomb", "Ukuku Prairie"),
     "0x2D7-Trade": CheckMetadata("Bear Cook", "Animal Village"),
-    "0x019-Trade": CheckMetadata("Papahl", "Tal Tal Heights"),
+    "0x019-Trade": CheckMetadata("Papahl", "Tal Tal Mountains"),
     "0x2D9-Trade": CheckMetadata("Goat", "Animal Village"),
     "0x2A8-Trade": CheckMetadata("MrWrite", "Goponga Swamp"),
     "0x0CD-Trade": CheckMetadata("Grandma", "Animal Village"),
