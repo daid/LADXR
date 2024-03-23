@@ -271,6 +271,7 @@ class RequirementsSettings:
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
+        self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
         # add trick directory here
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
         self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
@@ -337,6 +338,8 @@ class RequirementsSettings:
         }
 
         # Adjust for options
+        if not options.tradequest:
+            self.shuffled_magnifier = True # completing trade quest not required
         if options.hardmode == "ohko":
             self.miniboss_requirements["ROLLING_BONES"] = OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, self.attack_hookshot)) # should not deal with roller damage
         if options.bowwow != "normal":

@@ -158,10 +158,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
     if settings.tradequest:
-        patches.tradeSequence.patchTradeSequence(rom, settings.boomerang)
+        patches.tradeSequence.patchTradeSequence(rom, settings)
     else:
-        # Monkey bridge patch, always have the bridge there.
-        rom.patch(0x00, 0x333D, assembler.ASM("bit 4, e\njr Z, $05"), b"", fill_nop=True)
+        patches.tradeSequence.unrequiredTradeSequence(rom)
     patches.bowwow.fixBowwow(rom)
     patches.follower.patchFollowerCreation(rom, bowwow_everywhere=settings.bowwow != 'normal', extra_spawn=settings.follower)
     if settings.bowwow != 'normal':
