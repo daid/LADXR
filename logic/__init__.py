@@ -109,7 +109,7 @@ class Logic:
             pass  # Dungeon chain has no egg, so no egg requirement.
         elif world_setup.goal == "seashells":
             world.nightmare.connect(world.egg, COUNT(SEASHELL, 20))
-        elif world_setup.goal in ("raft", "bingo", "bingo-full", "maze"):
+        elif world_setup.goal in ("raft", "bingo", "bingo-double", "bingo-triple", "bingo-full", "maze"):
             world.nightmare.connect(world.egg, egg_trigger)
         elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
             world.nightmare.connect(world.egg, AND(egg_trigger, *["INSTRUMENT%s" % c for c in world_setup.goal[1:]]))

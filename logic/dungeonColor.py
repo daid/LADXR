@@ -27,7 +27,7 @@ class DungeonColor:
             Location(dungeon=0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0)
         room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.attack_hookshot, SHIELD)) # lights room
         room6 = Location("D0 Room Before Boss", dungeon=0).connect(room5, AND(KEY0, FOUND(KEY0, 3))) # room with switch and nightmare door
-        pre_boss = Location("D0 Outside Boss Door", dungeon=0).connect(room6, OR(r.attack_hookshot, AND(PEGASUS_BOOTS, FEATHER)))  # before the boss, require item to hit switch or jump past raised blocks
+        pre_boss = Location("D0 Outside Boss Door", dungeon=0).connect(room6, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER)))  # before the boss, require item to hit switch or jump past raised blocks
         boss_room = Location("D0 Boss Room", dungeon=0).connect(pre_boss, NIGHTMARE_KEY0)
         boss = Location(dungeon=0).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[8]])
         boss.add(TunicFairy(0), TunicFairy(1))

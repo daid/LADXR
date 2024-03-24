@@ -258,7 +258,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     if world_setup.goal == "raft":
         patches.goal.setRaftGoal(rom)
-    elif world_setup.goal in ("bingo", "bingo-full"):
+    elif world_setup.goal in ("bingo", "bingo-double", "bingo-triple", "bingo-full"):
         patches.bingo.setBingoGoal(rom, world_setup.bingo_goals, world_setup.goal)
     elif world_setup.goal == "maze":
         patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
