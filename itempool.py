@@ -35,7 +35,7 @@ DEFAULT_ITEM_POOL = {
     RUPEES_200: 3,
     RUPEES_50: 19,
 
-    SEASHELL: 24,
+    SEASHELL: 26,
     MEDICINE: 3,
     GEL: 4,
     MESSAGE: 1,
@@ -121,6 +121,9 @@ class ItemPool:
         elif settings.hpmode == 'extralow':
             self.add(RUPEES_20, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+        
+        if settings.goal == 'seashells':
+            self.remove(SEASHELL, 2)
 
         if settings.itempool == 'casual':
             self.add(SWORD)

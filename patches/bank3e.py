@@ -56,6 +56,7 @@ def addBank3E(rom, seed, settings):
     # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
     # 3E:3800-3B16: DroppedKey item types
     # 3E:3B16-3E2C: Owl statue or trade quest items
+    # 3E:3E30-3E32: 5 and 10 seashell rewards
 
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)

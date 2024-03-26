@@ -1,7 +1,7 @@
 from .beachSword import BeachSword
 from .chest import Chest, DungeonChest
 from .droppedKey import DroppedKey
-from .seashell import Seashell, SeashellMansion
+from .seashell import Seashell, SeashellMansionBonus, SeashellMansion
 from .heartContainer import HeartContainer
 from .owlStatue import OwlStatue
 from .madBatter import MadBatter

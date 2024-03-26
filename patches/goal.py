@@ -29,7 +29,7 @@ def setRequiredInstrumentCount(rom, count):
         jp   $7F2B ; jump to the end of the bank, where there is some space for code.
     """), fill_nop=True)
     # Add some code at the end of the bank, as we do not have enough space to do this "in place"
-    rom.patch(0x19, 0x3F2B, "0000000000000000000000000000000000000000000000000000", ASM("""
+    rom.patch(0x19, 0x3F2B, "00" * 26, ASM("""
         ld   d, $00
         ld   e, $08
         ld   hl, $DB65 ; start of has instrument memory
@@ -47,7 +47,7 @@ noinc:
         jp   c, $4C1A ; not enough instruments
         jp   $4C0B    ; enough instruments
     """ % (count)), fill_nop=True)
-    rom.patch(0x19, 0x3FE0, "0000000000000000000000000000000000000000000000000000", ASM("""
+    rom.patch(0x19, 0x3FE0, "00" * 26, ASM("""
     ; Entry point of render code
         ld   hl, $DB65  ; table of having instruments
         push bc
@@ -70,7 +70,7 @@ def setSpecificInstruments(rom, instruments):
     for n in range(2, len(instruments)):
         code += f"ld l, $65 + {instruments[n] - 1}\nand [hl]\n"
     code += "and $02\njp z, $4C1A\njp $4C0B"
-    rom.patch(0x19, 0x3F2B, "0000000000000000000000000000000000000000000000000000", ASM(code), fill_nop=True)
+    rom.patch(0x19, 0x3F2B, "00" * 26, ASM(code), fill_nop=True)
     rom.patch(0x19, 0x0BFE, 0x0C0B, ASM("jp $7F2B"), fill_nop=True)
 
 

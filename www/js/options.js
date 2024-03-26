@@ -105,7 +105,7 @@ var options =
   "category": "Items",
   "short_key": "s",
   "label": "Randomize hidden seashells",
-  "description": "Randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)",
+  "description": "Randomizes the secret sea shells hiding in the ground/trees/mansion. (chests are always randomized)",
   "multiworld": true,
   "aesthetic": false,
   "default": true
