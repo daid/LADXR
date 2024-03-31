@@ -293,6 +293,7 @@ class World:
         animal_village_connector_left = Location("Under the River West")
         animal_village_connector_right = Location("Under the River East").connect(animal_village_connector_left, PEGASUS_BOOTS)
         self._addEntrance("prairie_to_animal_connector", ukuku_prairie, animal_village_connector_left, r.pit_bush) # passage under river blocked by bush
+        self._addEntranceRequirementExit("prairie_to_animal_connector", None) # leaving doesn't require pit_bush
         self._addEntrance("animal_to_prairie_connector", animal_village, animal_village_connector_right, None)
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             animal_village.add(OwlStatue(0x0DA))
@@ -461,7 +462,8 @@ class World:
         left_right_connector_cave_exit = Location("Path to West Tal Tal Exit")
         left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, OR(HOOKSHOT, ROOSTER), one_way=True)  # pass through the underground passage to left side
         taltal_boulder_zone = Location("Falling Rocks")
-        self._addEntrance("left_to_right_taltalentrance", mountain_bridge_staircase, left_right_connector_cave_entrance, OR(BOMB, BOOMERANG, MAGIC_POWDER, MAGIC_ROD, SWORD))
+        self._addEntrance("left_to_right_taltalentrance", mountain_bridge_staircase, left_right_connector_cave_entrance, r.pit_bush)
+        self._addEntranceRequirementExit("left_to_right_taltalentrance", None) # leaving doesn't require pit_bush
         self._addEntrance("left_taltal_entrance", taltal_boulder_zone, left_right_connector_cave_exit, None)
         mountain_heartpiece = Location().add(HeartPiece(0x2BA)) # heartpiece in connecting cave
         left_right_connector_cave_entrance.connect(mountain_heartpiece, BOMB, one_way=True)  # in the connecting cave from right to left. one_way to prevent access to left_side_mountain via glitched logic
