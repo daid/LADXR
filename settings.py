@@ -107,7 +107,7 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
             Setting('heartpiece', 'Items', 'h', 'Randomize heart pieces', default=True,
                 description='Includes heart pieces in the item pool'),
             Setting('seashells', 'Items', 's', 'Randomize hidden seashells', default=True,
-                description='Randomizes the secret sea shells hiding in the ground/trees. (chest are always randomized)'),
+                description='Randomizes the secret sea shells hiding in the ground/trees/mansion. (chests are always randomized)'),
             Setting('heartcontainers', 'Items', 'H', 'Randomize heart containers', default=True,
                 description='Includes boss heart container drops in the item pool'),
             Setting('instruments', 'Items', 'I', 'Randomize instruments', default=False,

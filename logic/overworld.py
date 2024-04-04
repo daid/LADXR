@@ -215,6 +215,8 @@ class World:
 
         seashell_mansion = Location("Seashell Mansion")
         if options.goal != "seashells":
+            Location().add(SeashellMansionBonus(0)).connect(seashell_mansion, COUNT(SEASHELL, 5))
+            Location().add(SeashellMansionBonus(1)).connect(seashell_mansion, COUNT(SEASHELL, 10))
             Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
         else:
             seashell_mansion.add(DroppedKey(0x2E9))
@@ -767,7 +769,12 @@ class ALttP:
         self._addEntrance("start_house", start_area, start_house, None)
         Location().add(Song(0x092)).connect(start_area, AND(OCARINA, r.bush))  # Marins song
         seashell_mansion = Location()
-        Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
+        if options.goal != "seashells":
+            Location().add(SeashellMansionBonus(0)).connect(seashell_mansion, COUNT(SEASHELL, 5))
+            Location().add(SeashellMansionBonus(1)).connect(seashell_mansion, COUNT(SEASHELL, 10))
+            Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
+        else:
+            seashell_mansion.add(DroppedKey(0x2E9))
         self._addEntrance("seashell_mansion", start_area, seashell_mansion, None)
 
         start_area.add(Seashell(0x4A))
