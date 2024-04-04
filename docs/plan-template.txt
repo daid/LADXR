@@ -175,6 +175,10 @@ Location:0x0A6:
 Location:0x0A5: 
 ;Ukuku Prairie - Seashell Mansion
 Location:0x2E9: 
+;Ukuku Prairie - Seashell Mansion 5 Bonus
+Location:0x2E9-0: 
+;Ukuku Prairie - Seashell Mansion 10 Bonus
+Location:0x2E9-1: 
 ;Yarna Desert - Bomb Arrow Cave
 Location:0x2E6: 
 ;Yarna Desert - Cave Under Lanmola

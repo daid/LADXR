@@ -67,9 +67,9 @@ class World:
         self._addEntrance("banana_seller", outside_banana_seller, banana_seller, None)
         boomerang_cave = Location("Boomerang Cave")
         if options.boomerang == 'trade':
-            Location().add(BoomerangGuy()).connect(boomerang_cave, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL))
+            Location().add(BoomerangGuy()).connect(boomerang_cave, AND(r.shuffled_magnifier, OR(BOOMERANG, HOOKSHOT, MAGIC_ROD, PEGASUS_BOOTS, FEATHER, SHOVEL)))
         elif options.boomerang == 'gift':
-            Location().add(BoomerangGuy()).connect(boomerang_cave, None)
+            Location().add(BoomerangGuy()).connect(boomerang_cave, r.shuffled_magnifier)
         self._addEntrance("boomerang_cave", sword_beach, boomerang_cave, BOMB)
         self._addEntranceRequirementExit("boomerang_cave", None) # if exiting, you do not need bombs
 
@@ -215,6 +215,8 @@ class World:
 
         seashell_mansion = Location("Seashell Mansion")
         if options.goal != "seashells":
+            Location().add(SeashellMansionBonus(0)).connect(seashell_mansion, COUNT(SEASHELL, 5))
+            Location().add(SeashellMansionBonus(1)).connect(seashell_mansion, COUNT(SEASHELL, 10))
             Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
         else:
             seashell_mansion.add(DroppedKey(0x2E9))
@@ -767,7 +769,12 @@ class ALttP:
         self._addEntrance("start_house", start_area, start_house, None)
         Location().add(Song(0x092)).connect(start_area, AND(OCARINA, r.bush))  # Marins song
         seashell_mansion = Location()
-        Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
+        if options.goal != "seashells":
+            Location().add(SeashellMansionBonus(0)).connect(seashell_mansion, COUNT(SEASHELL, 5))
+            Location().add(SeashellMansionBonus(1)).connect(seashell_mansion, COUNT(SEASHELL, 10))
+            Location().add(SeashellMansion(0x2E9)).connect(seashell_mansion, COUNT(SEASHELL, 20))
+        else:
+            seashell_mansion.add(DroppedKey(0x2E9))
         self._addEntrance("seashell_mansion", start_area, seashell_mansion, None)
 
         start_area.add(Seashell(0x4A))
