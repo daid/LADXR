@@ -98,11 +98,12 @@ class Randomizer:
                     sfname = "LADXR_Multiworld_%d.%s" % (settings.multiworld, extension)
                     log.output(sfname, z)
         else:
-            rom = generator.generateRom(args, settings, self.seed, self.__logic, rnd=self.rnd)
-            filename = args.output_filename
-            if filename is None:
-                filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
-            rom.save(filename, name="LADXR")
+            if args.input_filename != "SKIP_ROM_GENERATION":
+                rom = generator.generateRom(args, settings, self.seed, self.__logic, rnd=self.rnd)
+                filename = args.output_filename
+                if filename is None:
+                    filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
+                rom.save(filename, name="LADXR")
 
             if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
                 log = spoilerLog.SpoilerLog(settings, args, [rom])
