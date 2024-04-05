@@ -177,7 +177,7 @@ class ItemPool:
             self.remove(MAX_ARROWS_UPGRADE)
             self.remove(MAX_BOMBS_UPGRADE)
             self.remove(MAX_POWDER_UPGRADE)
-            self.remove(SEASHELL, 24)
+            self.remove(SEASHELL, 26)
             self.remove(TAIL_KEY)
             self.remove(SLIME_KEY)
             self.remove(ANGLER_KEY)
