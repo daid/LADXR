@@ -13,7 +13,8 @@ class OwlStatue(ItemInfo):
         INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8,
         TRADING_ITEM_YOSHI_DOLL, TRADING_ITEM_RIBBON, TRADING_ITEM_DOG_FOOD, TRADING_ITEM_BANANAS, TRADING_ITEM_STICK,
         TRADING_ITEM_HONEYCOMB,TRADING_ITEM_PINEAPPLE, TRADING_ITEM_HIBISCUS, TRADING_ITEM_LETTER, TRADING_ITEM_BROOM,
-        TRADING_ITEM_FISHING_HOOK,TRADING_ITEM_NECKLACE,TRADING_ITEM_SCALE,TRADING_ITEM_MAGNIFYING_GLASS
+        TRADING_ITEM_FISHING_HOOK,TRADING_ITEM_NECKLACE,TRADING_ITEM_SCALE,TRADING_ITEM_MAGNIFYING_GLASS,
+        TAIL_CAVE_OPENED, KEY_CAVERN_OPENED, ANGLER_TUNNEL_OPENED, FACE_SHRINE_OPENED, CASTLE_GATE_OPENED, EAGLE_TOWER_OPENED
     ]
 
     def configure(self, options):
@@ -28,8 +29,9 @@ class OwlStatue(ItemInfo):
 
     def patch(self, rom, option, *, multiworld=None):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
-            if self._location.dungeon == int(option[-1]) and multiworld is not None:
-                option = option[:-1]
+            if not option.endswith("OPENED"):
+                if self._location.dungeon == int(option[-1]) and multiworld is not None:
+                    option = option[:-1]
         rom.banks[0x3E][self.room + 0x3B16] = CHEST_ITEMS[option]
 
     def read(self, rom):

@@ -136,6 +136,13 @@ _NAMES = {
     TRADING_ITEM_NECKLACE: "Necklace",
     TRADING_ITEM_SCALE: "Scale",
     TRADING_ITEM_MAGNIFYING_GLASS: "Magnifying Lens",
+
+    TAIL_CAVE_OPENED: "Tail Cave open",
+    KEY_CAVERN_OPENED: "Key Cavern open",
+    ANGLER_TUNNEL_OPENED: "Angler Tunnel open",
+    FACE_SHRINE_OPENED: "Face Shrine open",
+    CASTLE_GATE_OPENED: "Castle Gate open",
+    EAGLE_TOWER_OPENED: "Eagle Tower open"
 }
 
 
