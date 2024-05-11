@@ -1,4 +1,5 @@
-from logic import Location, PEGASUS_BOOTS, SHOVEL
+from logic.location import Location
+from locations.items import PEGASUS_BOOTS, SHOVEL
 from .base import LocationBase
 from ..tileset import solid_tiles, open_tiles, walkable_tiles
 from roomEditor import RoomEditor
