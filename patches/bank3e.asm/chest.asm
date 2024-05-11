@@ -770,11 +770,11 @@ ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
     ldh  a, [$FFF1]
-    cp   $80
-    jr   nc, .bigItem
+    cp   $58
+    jr   nc, .pastLolZol
     cp   $51
     ret  nc   ; no message on LOL-ZOL item
-.bigItem:
+.pastLolZol:
     ld   d, $00
     ld   e, a
     ld   hl, ItemMessageTable
