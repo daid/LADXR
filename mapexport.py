@@ -52,11 +52,12 @@ class MapExport:
     def export_all(self, w=16, h=16, *, dungeons=True):
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
-        self.buildOverworld(w, h).save("_map/img/overworld.png")
-        f.write("<img src='img/overworld.png'><br><br>")
+        if not isinstance(dungeons, int):
+            self.buildOverworld(w, h).save("_map/img/overworld.png")
+            f.write("<img src='img/overworld.png'><br><br>")
 
         if dungeons:
-            for n in (0,1,2,3,4,5,6,7, 10, 11):
+            for n in (dungeons,) if isinstance(dungeons, int) else (0,1,2,3,4,5,6,7, 10, 11):
                 addr = 0x0220 + n * 8 * 8
                 result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
                 map_data = {}
@@ -79,14 +80,15 @@ class MapExport:
                 self.__json_data["maps"][f"dungeon_{n}"] = map_data
                 result.save(f"_map/img/dungeon_{n}.png")
                 f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
-            for n in range(1, 3):
-                result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
-                for y in range(16):
-                    for x in range(16):
-                        if n != 2 or x != 15 or y != 15:
-                            result.paste(self.buildRoom(n << 8 | y << 4 | x), (x * 161, y * 129))
-                result.save(f"_map/img/underworld_{n}.png")
-                f.write(f"<img src='img/underworld_{n}.png' underworld='{n}'><br><br>")
+            if not isinstance(dungeons, int):
+                for n in range(1, 3):
+                    result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
+                    for y in range(16):
+                        for x in range(16):
+                            if n != 2 or x != 15 or y != 15:
+                                result.paste(self.buildRoom(n << 8 | y << 4 | x), (x * 161, y * 129))
+                    result.save(f"_map/img/underworld_{n}.png")
+                    f.write(f"<img src='img/underworld_{n}.png' underworld='{n}'><br><br>")
 
         f.write("<script>var data = ")
         f.write(json.dumps(self.__json_data))

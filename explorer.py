@@ -1,5 +1,4 @@
-from logic import AND, OR, COUNT, FOUND
-from logic.requirements import isConsumable
+from logic.requirements import AND, OR, COUNT, FOUND, isConsumable
 from checkMetadata import checkMetadataTable
 
 
