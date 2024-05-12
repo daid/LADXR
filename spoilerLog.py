@@ -161,7 +161,7 @@ class SpoilerLog:
             "options": {s.key: s.value for s in self.settings},
             "entrances":
                 {entrance: target for entrance, target in self.logic.world_setup.entrance_mapping.items() if f"{entrance}:inside" != target and entrance != f"{target}:inside"}
-                if isinstance(self.logic, logic.Logic) else [
+                if isinstance(self.logic, logic.main.Logic) else [
                     {entrance: target for entrance, target in world.world_setup.entrance_mapping.items() if f"{entrance}:inside" != target and entrance != f"{target}:inside"} for world in self.logic.worlds
                 ],
             "seed": self.seed
@@ -178,11 +178,11 @@ class SpoilerLog:
     def __repr__(self):
         lines = []
         if not self.testOnly:
-            if isinstance(self.logic, logic.Logic):
+            if isinstance(self.logic, logic.main.Logic):
                 for entrance, target in sorted(self.logic.world_setup.entrance_mapping.items()):
                     if f"{entrance}:inside" != target and entrance != f"{target}:inside":
                         lines.append("Entrance: %s -> %s" % (entrance, target))
-            elif isinstance(self.logic, logic.MultiworldLogic):
+            elif isinstance(self.logic, logic.main.MultiworldLogic):
                 for index, world in enumerate(self.logic.worlds):
                     for entrance, target in sorted(world.world_setup.entrance_mapping.items()):
                         if f"{entrance}:inside" != target and entrance != f"{target}:inside":

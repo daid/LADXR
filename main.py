@@ -2,7 +2,7 @@ import binascii
 from romTables import ROMWithTables
 import json
 import randomizer
-import logic
+import logic.main
 import spoilerLog
 import argparse
 from settings import Settings
@@ -101,7 +101,7 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         import worldSetup
         ws = worldSetup.WorldSetup()
         ws.goal = settings.goal
-        iteminfo_list = logic.Logic(settings, world_setup=ws).iteminfo_list
+        iteminfo_list = logic.main.Logic(settings, world_setup=ws).iteminfo_list
         for ii in sorted(iteminfo_list, key=lambda n: (n.location.dungeon if n.location.dungeon else -1, repr(n.metadata))):
             if len(ii.OPTIONS) > 1:
                 f.write(";%r\n" % (ii.metadata))
