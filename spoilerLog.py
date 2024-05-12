@@ -1,6 +1,6 @@
 import sys
 import json
-import logic
+import logic.main
 import explorer
 import patches.witch
 from settings import Settings
@@ -79,9 +79,9 @@ class SpoilerLog:
             world_setups.append(world_setup)
 
         if len(world_setups) == 1:
-            self.logic = logic.Logic(self.settings, world_setup=world_setups[0])
+            self.logic = logic.main.Logic(self.settings, world_setup=world_setups[0])
         else:
-            self.logic = logic.MultiworldLogic(self.settings, world_setups=world_setups)
+            self.logic = logic.main.MultiworldLogic(self.settings, world_setups=world_setups)
 
         self._loadItems(self.settings, roms)
     
