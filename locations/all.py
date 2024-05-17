@@ -22,5 +22,6 @@ from .instrument import Instrument
 from .fishingMinigame import FishingMinigame
 from .keyLocation import KeyLocation
 from .tradeSequence import TradeSequenceItem
+from .keyhole import KeyHole
 
 from .items import *

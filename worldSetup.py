@@ -1,5 +1,6 @@
 import patches.enemies
-import logic
+import logic.main
+import randomizer
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
@@ -124,7 +125,7 @@ class WorldSetup:
         self.entrance_mapping[option] = target
 
     def inaccessibleEntrances(self, settings, entrancePool):
-        log = logic.Logic(settings, world_setup=self)
+        log = logic.main.Logic(settings, world_setup=self)
         return [x for x in entrancePool if log.world.entrances[x].location and log.world.entrances[x].location not in log.location_list]
 
     def _randomizeEntrances(self, rnd, entrancePool):

@@ -14,6 +14,7 @@ class World:
         Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
         Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
+        Location().add(KeyHole(0x0D3, TAIL_CAVE_OPENED)).connect(mabe_village, TAIL_KEY)  # Marins song
         rooster_cave = Location("Rooster Cave")
         Location().add(DroppedKey(0x1E4)).connect(rooster_cave, AND(OCARINA, SONG3))
 
@@ -35,7 +36,7 @@ class World:
         self._addEntrance("mabe_phone", mabe_village, Location(), None)
         self._addEntrance("library", mabe_village, Location(), None)
         self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
-        self._addEntrance("d1", mabe_village, None, TAIL_KEY)
+        self._addEntrance("d1", mabe_village, None, TAIL_CAVE_OPENED)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
 
         start_house = Location("Start House").add(StartItem())
@@ -154,6 +155,7 @@ class World:
         ukuku_prairie = Location("Ukuku Prairie").connect(mabe_village, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x07B, TRADING_ITEM_STICK)), TRADING_ITEM_BANANAS)
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x087, TRADING_ITEM_HONEYCOMB)), TRADING_ITEM_STICK)
+        ukuku_prairie.connect(Location().add(KeyHole(0x0B5, KEY_CAVERN_OPENED)), SLIME_KEY)
         self._addEntrance("prairie_left_phone", ukuku_prairie, Location(), None)
         self._addEntrance("prairie_right_phone", ukuku_prairie, Location(), None)
         self._addEntrance("prairie_left_cave1", ukuku_prairie, Location().add(Chest(0x2CD)), None) # cave next to town
@@ -170,7 +172,7 @@ class World:
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
 
         dungeon3_entrance = Location("Outside D3").connect(ukuku_prairie, OR(FEATHER, ROOSTER, FLIPPERS))
-        self._addEntrance("d3", dungeon3_entrance, None, SLIME_KEY)
+        self._addEntrance("d3", dungeon3_entrance, None, KEY_CAVERN_OPENED)
         self._addEntranceRequirementExit("d3", None) # if exiting, you do not need to open the door
         Location().add(Seashell(0x0A5)).connect(dungeon3_entrance, SHOVEL)  # above lv3
         dungeon3_entrance.connect(ukuku_prairie, None, one_way=True) # jump down ledge back to ukuku_prairie
@@ -255,14 +257,14 @@ class World:
         castle_secret_entrance_right = Location("Kanalet Tunnel East").connect(castle_secret_entrance_left, FEATHER)
         castle_courtyard = Location("Kanalet Courtyard")
         castle_frontdoor = Location("Kanalet Front Door").connect(castle_courtyard, r.bush)
-        castle_frontdoor.connect(ukuku_prairie, "CASTLE_BUTTON") # the button in the castle connector allows access to the castle grounds in ER
+        castle_frontdoor.connect(ukuku_prairie, CASTLE_GATE_OPENED) # the button in the castle connector allows access to the castle grounds in ER
         self._addEntrance("castle_secret_entrance", next_to_castle, castle_secret_entrance_right, r.pit_bush)
         self._addEntranceRequirementExit("castle_secret_entrance", None) # leaving doesn't require pit_bush
         self._addEntrance("castle_secret_exit", castle_courtyard, castle_secret_entrance_left, None)
 
         Location().add(HeartPiece(0x078)).connect(bay_water, FLIPPERS)  # in the moat of the castle
         castle_inside = Location("Inside Kanalet")
-        Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
+        Location().add(KeyHole(0x2C3, CASTLE_GATE_OPENED)).connect(castle_inside, None)
         castle_top_outside = Location("Outside Top of Kanalet")
         castle_top_inside = Location("Inside Top of Kanalet")
         self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, None)
@@ -335,10 +337,11 @@ class World:
         d6_connector_right = Location("To D6 East").connect(d6_connector_left, OR(AND(HOOKSHOT, OR(FLIPPERS, AND(FEATHER, PEGASUS_BOOTS))), ROOSTER))
         d6_entrance = Location("Outside D6")
         d6_entrance.connect(bay_water, FLIPPERS, one_way=True)
+        d6_entrance.connect(Location().add(KeyHole(0x08C, FACE_SHRINE_OPENED)), FACE_KEY)
         d6_armos_island = Location("Armos Island").connect(bay_water, FLIPPERS)
         self._addEntrance("d6_connector_entrance", d6_armos_island, d6_connector_right, None)
         self._addEntrance("d6_connector_exit", d6_entrance, d6_connector_left, None)
-        self._addEntrance("d6", d6_entrance, None, FACE_KEY)
+        self._addEntrance("d6", d6_entrance, None, FACE_SHRINE_OPENED)
         self._addEntranceRequirementExit("d6", None) # if exiting, you do not need to open the dungeon
 
         windfish_egg = Location("Outside the Egg").connect(swamp, POWER_BRACELET).connect(graveyard, POWER_BRACELET)
@@ -367,7 +370,7 @@ class World:
 
         # D4 entrance and related things
         below_right_taltal = Location('Near D4 Keyhole').connect(windfish_egg, POWER_BRACELET)
-        below_right_taltal.add(KeyLocation("ANGLER_KEYHOLE"))
+        below_right_taltal.connect(Location().add(KeyHole(0x02B, ANGLER_TUNNEL_OPENED)), ANGLER_KEY)
         below_right_taltal.connect(bay_water, FLIPPERS)
         below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
         lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
@@ -377,8 +380,8 @@ class World:
         below_right_taltal.connect(outside_swim_cave, FLIPPERS)
         self._addEntrance("heartpiece_swim_cave", outside_swim_cave, heartpiece_swim_cave, None)  # cave next to level 4
         d4_entrance = Location("Outside D4").connect(below_right_taltal, FLIPPERS)
-        lower_right_taltal.connect(d4_entrance, AND(ANGLER_KEY, "ANGLER_KEYHOLE"), one_way=True)
-        self._addEntrance("d4", d4_entrance, None, ANGLER_KEY)
+        lower_right_taltal.connect(d4_entrance, ANGLER_TUNNEL_OPENED, one_way=True)
+        self._addEntrance("d4", d4_entrance, None, ANGLER_TUNNEL_OPENED)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
         outside_mambo = Location("Outside Manbo").connect(d4_entrance, FLIPPERS)
         inside_mambo = Location("Manbo's Cave")
@@ -441,7 +444,8 @@ class World:
         right_taltal_connector4 = Location("Path to D7")
         d7_platau = Location("D7 Plateau")
         d7_tower = Location("D7 Tower")
-        d7_platau.connect(d7_tower, AND(POWER_BRACELET, BIRD_KEY), one_way=True)
+        d7_platau.connect(Location().add(KeyHole(0x00E, EAGLE_TOWER_OPENED)), AND(POWER_BRACELET, BIRD_KEY))
+        d7_platau.connect(d7_tower, EAGLE_TOWER_OPENED, one_way=True)
         d7_tower.connect(d7_platau, None, one_way=True)
         self._addEntrance("right_taltal_connector1", water_cave_hole, right_taltal_connector1, None)
         self._addEntrance("right_taltal_connector2", right_taltal_connector_outside1, right_taltal_connector1, None)
@@ -838,7 +842,7 @@ class ALttP:
         self._addEntrance("castle_secret_entrance", start_area, castle_secret_entrance_right, r.pit_bush)
         self._addEntrance("castle_secret_exit", castle_courtyard_secret, castle_secret_entrance_left, None)
         castle_inside = Location()
-        Location().add(KeyLocation("CASTLE_BUTTON")).connect(castle_inside, None)
+        Location().add(KeyHole(0x2C3, CASTLE_GATE_OPENED)).connect(castle_inside, None)
         castle_top_outside = Location()
         castle_top_inside = Location()
         self._addEntrance("castle_main_entrance", castle_courtyard, castle_inside, None)

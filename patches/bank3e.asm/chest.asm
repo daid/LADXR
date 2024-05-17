@@ -164,12 +164,12 @@ GiveItemFromChest:
     dw StartZolDrop ; $55 ; Medicine disguise
     dw StartZolDrop ; $56 ; Bomb disguise
     dw AddHammer ; $57
-    dw NoItem ; $58
-    dw NoItem ; $59
-    dw NoItem ; $5A
-    dw NoItem ; $5B
-    dw NoItem ; $5C
-    dw NoItem ; $5D
+    dw OpenTailCave ; $58
+    dw OpenKeyCavern ; $59
+    dw OpenAnglerTunnel ; $5A
+    dw OpenFaceShrine ; $5B
+    dw OpenCastleGate ; $5C
+    dw OpenEagleTower ; $5D
     dw NoItem ; $5E
     dw NoItem ; $5F
     dw NoItem ; $60
@@ -732,6 +732,31 @@ GiveTradeItem14:
     set  5, [hl]
     ret
 
+OpenTailCave:
+    ld   hl, $D800 + $D3
+    set  4, [hl]
+    ret
+OpenKeyCavern:
+    ld   hl, $D800 + $B5
+    set  4, [hl]
+    ret
+OpenAnglerTunnel:
+    ld   hl, $D800 + $2B
+    set  4, [hl]
+    ret
+OpenFaceShrine:
+    ld   hl, $D800 + $8C
+    set  4, [hl]
+    ret
+OpenCastleGate:
+    ld   hl, $D800 + $79
+    set  4, [hl]
+    ret
+OpenEagleTower:
+    ld   hl, $D800 + $0E
+    set  4, [hl]
+    ret
+
 ItemMessageMultiworld:
     ; Check our "item is for other player" flag
     ld   hl, $7300
@@ -745,11 +770,11 @@ ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
     ldh  a, [$FFF1]
-    cp   $80
-    jr   nc, .bigItem
+    cp   $58
+    jr   nc, .pastLolZol
     cp   $51
     ret  nc   ; no message on LOL-ZOL item
-.bigItem:
+.pastLolZol:
     ld   d, $00
     ld   e, a
     ld   hl, ItemMessageTable
@@ -877,6 +902,12 @@ ItemSpriteTable:
     db $A0, $14 ; $55 ; Medicine disguise
     db $80, $15 ; $56 ; Bomb disguise
     db $04, $4C       ; Hammer
+    db $30, $1D        ; TAIL_CAVE_OPENED
+    db $4E, $1D        ; KEY_CAVERN_OPENED
+    db $32, $1D        ; ANGLER_TUNNEL_OPENED
+    db $34, $1D        ; FACE_SHRINE_OPENED
+    db $3A, $1D        ; CASTLE_GATE_OPENED
+    db $36, $1D        ; EAGLE_TOWER_OPENED
 
 LargeItemSpriteTable:
     db $AC, $02, $AC, $22 ; heart piece
@@ -924,7 +955,7 @@ ItemMessageTable:
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     ; $40
     db $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
-    db $0F, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $00, $00, $00, $00, $00, $00, $00, $00
+    db $0F, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9, $C9
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
     ; $80

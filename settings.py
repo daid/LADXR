@@ -212,6 +212,8 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
+            Setting('keyholesanity', 'Special', 'K', 'Keyhole sanity', default=False,
+                description='Makes the overworld keyholes give rewards and turns opening dungeons into findable items'),
             Setting('superweapons', 'Special', 'q', 'Enable super weapons', default=False,
                 description='All items will be more powerful, faster, harder, bigger stronger. You name it.'),
             Setting('quickswap', 'User options', 'Q', 'Quickswap', options=[('none', '', 'Disabled'), ('a', 'a', 'Swap A button'), ('b', 'b', 'Swap B button')], default='none',

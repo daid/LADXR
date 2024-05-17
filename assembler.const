@@ -53,4 +53,5 @@ FFF3:hWaveSfx
 FFF4:hNoiseSfx
 FFF6:hMapRoom
 FFF7:hMapId
+FFF8:hRoomStatus
 FFF9:hIsSideScrolling

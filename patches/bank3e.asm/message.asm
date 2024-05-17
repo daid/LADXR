@@ -144,12 +144,12 @@ ItemNamePointers:
     dw ItemNameZol ; 0x55
     dw ItemNameZol ; 0x56
     dw ItemNameHammer ; 0x57
-    dw ItemNameNone ; 0x58
-    dw ItemNameNone ; 0x59
-    dw ItemNameNone ; 0x5a
-    dw ItemNameNone ; 0x5b
-    dw ItemNameNone ; 0x5c
-    dw ItemNameNone ; 0x5d
+    dw M"Tail Cave opened!" ; 0x58
+    dw M"Key Cavern opened!" ; 0x59
+    dw M"Angler Tunnel opened!" ; 0x5a
+    dw M"Face Shrine opened!" ; 0x5b
+    dw M"Castle gate opened!" ; 0x5c
+    dw M"Eagle tower opened!" ; 0x5d
     dw ItemNameNone ; 0x5e
     dw ItemNameNone ; 0x5f
     dw ItemNameNone ; 0x60

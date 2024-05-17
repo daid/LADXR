@@ -63,7 +63,8 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_SCALE: 1,
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
-    "MEDICINE2": 1, "RAFT": 1, "ANGLER_KEYHOLE": 1, "CASTLE_BUTTON": 1
+    "MEDICINE2": 1, "RAFT": 1,
+    TAIL_CAVE_OPENED: 1, KEY_CAVERN_OPENED: 1, ANGLER_TUNNEL_OPENED: 1, FACE_SHRINE_OPENED: 1, CASTLE_GATE_OPENED: 1, EAGLE_TOWER_OPENED: 1
 }
 
 
@@ -196,8 +197,12 @@ class ItemPool:
             self.remove(GEL, 2)
             self.remove("MEDICINE2")
             self.remove("RAFT")
-            self.remove("ANGLER_KEYHOLE")
-            self.remove("CASTLE_BUTTON")
+            self.remove(TAIL_CAVE_OPENED)
+            self.remove(KEY_CAVERN_OPENED)
+            self.remove(ANGLER_TUNNEL_OPENED)
+            self.remove(FACE_SHRINE_OPENED)
+            self.remove(CASTLE_GATE_OPENED)
+            self.remove(EAGLE_TOWER_OPENED)
             self.remove(TRADING_ITEM_YOSHI_DOLL)
             self.remove(TRADING_ITEM_RIBBON)
             self.remove(TRADING_ITEM_DOG_FOOD)
@@ -228,7 +233,11 @@ class ItemPool:
             self.remove(HEART_PIECE, 8)
             self.remove("MEDICINE2")
             self.remove("RAFT")
-            self.remove("ANGLER_KEYHOLE")
+            self.remove(TAIL_CAVE_OPENED)
+            self.remove(KEY_CAVERN_OPENED)
+            self.remove(ANGLER_TUNNEL_OPENED)
+            self.remove(FACE_SHRINE_OPENED)
+            self.remove(EAGLE_TOWER_OPENED)
             self.remove(SEASHELL, 4)
             self.remove(MEDICINE, 3)
             self.remove(RUPEES_50, 5)

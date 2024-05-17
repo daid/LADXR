@@ -31,6 +31,8 @@ def upgradeMadBatter(rom):
         rst 8
         ; Force the dialog at the bottom
         ld  a, [$C19F]
+        and a
+        ret z ; no dialog, skip
         or  $80
         ld  [$C19F], a
     """), fill_nop=True)

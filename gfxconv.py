@@ -5,15 +5,23 @@ import argparse
 
 def convert_endscreen(input_filename, output_filename):
     img = PIL.Image.open(input_filename).convert("RGBA")
-    img = img.convert("P", dither=PIL.Image.FLOYDSTEINBERG, palette=PIL.Image.ADAPTIVE, colors=16).convert("RGBA")
+    img = img.convert("P", dither=PIL.Image.FLOYDSTEINBERG, palette=PIL.Image.ADAPTIVE, colors=16)
+    pal_values = img.getpalette()
+    def pal_diff(a, b):
+        return sum(abs(pal_values[a * 3 + n] - pal_values[b * 3 + n]) for n in range(3))
     assert img.size == (160, 144)
     for y in range(18):
         for x in range(20):
             tile = img.crop((x * 8, y * 8, x * 8 + 8, y * 8 + 8))
-            tile = tile.convert("P", dither=PIL.Image.FLOYDSTEINBERG, palette=PIL.Image.ADAPTIVE, colors=4)
-            img.paste(tile, (x * 8, y * 8))
+            while len(tile.getcolors()) > 4:
+                replace_color = sorted(tile.getcolors())[0][1]
+                target_color = None
+                for _, idx in sorted(tile.getcolors())[1:]:
+                    if target_color is None or pal_diff(replace_color, idx) < pal_diff(replace_color, target_color):
+                        target_color = idx
+                tile.putdata(bytes(tile.getdata()).replace(bytes([replace_color]), bytes([target_color])))
+                img.paste(tile, (x * 8, y * 8))
     img = img.convert("P")
-    pal_values = img.getpalette()
     pal_counts = [{}, {}, {}, {}]
     for y in range(18):
         for x in range(20):
@@ -29,6 +37,11 @@ def convert_endscreen(input_filename, output_filename):
             if set(search_pal).issubset(set(pal)):
                 if best is None or best[1] < counts:
                     best = (pal, counts)
+        if best is None:
+            for pal, counts in pal_counts[3].items():
+                if len(set(search_pal).intersection(set(pal))) > 1:
+                    if best is None or best[1] < counts:
+                        best = (pal, counts)
         return best[0]
     def find_worst_pal():
         best = None
@@ -53,7 +66,7 @@ def convert_endscreen(input_filename, output_filename):
             mismatch2 = tuple(sorted(n for n in set(pal).difference(set(match_pal))))
             diff = 0
             for a, b in zip(mismatch1, mismatch2):
-                diff += sum(abs(pal_values[a * 3 + n] - pal_values[b * 3 + n]) for n in range(3))
+                diff += pal_diff(a, b)
             if best_diff is None or best_diff[1] > diff:
                 best_diff = pal, diff, tuple(zip(mismatch1, mismatch2))
         return best_diff[0], best_diff[2]
@@ -98,7 +111,7 @@ def convert_endscreen(input_filename, output_filename):
             for by in range(8):
                 a, b = 0, 0
                 for bx in range(8):
-                    n = pal_dict[data[bx + by * 8]]
+                    n = pal_dict.get(data[bx + by * 8], 0)
                     if n & 1:
                         a |= 0x80 >> bx
                     if n & 2:

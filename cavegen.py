@@ -75,7 +75,7 @@ HAZARD_ENTITIES = {
     "STAR": [(-1, -1, 0x9C)],
     "GOOMBA": [(-1, -1, 0x9F), (-1, -1, 0x9F), (-1, -1, 0x9F)],
     "PEAHAT": [(-1, -1, 0xA0), (-1, -1, 0xA0)],
-    "SNAKE": [(-1, -1, 0xA0), (-1, -1, 0xA0), (-1, -1, 0xA0)],
+    "SNAKE": [(-1, -1, 0xA1), (-1, -1, 0xA1), (-1, -1, 0xA1)],
     "WINGED_OCTOROCK": [(-1, -1, 0xAE), (-1, -1, 0xAE)],
     "BOMBER": [(-1, -1, 0xBA)],
     "VIRE": [(-1, -1, 0xBD)],
