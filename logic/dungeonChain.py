@@ -10,6 +10,7 @@ from . import dungeonColor
 from .location import Location
 from locations.all import *
 from .requirements import *
+import cavegen
 
 
 def construct(configuration_options, *, world_setup, world, requirements_settings):
@@ -18,8 +19,8 @@ def construct(configuration_options, *, world_setup, world, requirements_setting
         "shop": Shop, "mamu": Mamu, "trendy": Trendy, "dream": DreamShrine, "chestcave": ChestCave,
     })
     for index in world_setup.dungeon_chain:
-        if index == "cavegen":
-            world.chain(CaveGen(configuration_options, world_setup, requirements_settings))
+        if isinstance(index, cavegen.Generator):
+            world.chain(CaveGen(configuration_options, world_setup, requirements_settings, index))
         else:
             world.chain(dungeon_constructors[index](configuration_options, world_setup, requirements_settings))
 
@@ -69,18 +70,23 @@ class ChestCave:
 
 
 class CaveGen:
-    def __init__(self, configuration_options, world_setup, requirements_settings):
+    def __init__(self, configuration_options, world_setup, requirements_settings, random_cave):
         self.requirements_settings = requirements_settings
         self.entrance = Location()
-        self._add_room(self.entrance, world_setup.cavegen.start)
+        self._add_room(self.entrance, random_cave.start)
 
     def _add_room(self, location, room):
+        if room.template.logic:
+            location = Location().connect(location, room.template.logic)
         if room.type == "end":
             self.final_room = location
-        elif room.type == "chest":
-            location.add(Chest(room.room_id))
-        elif room.type == "miniboss":
-            location = Location().connect(location, self.requirements_settings.miniboss_requirements[room.hazard])
+        elif room.type == "reward":
+            if room.template.type == "chest":
+                location.add(Chest(room.room_id))
+            elif room.template.type == "item":
+                location.add(DroppedKey(room.room_id))
+            else:
+                raise RuntimeError(f"Reward room with no suitable template type? {room.template.type}")
         for c in room.connections:
             next_location = location
             if c.type == "bomb":

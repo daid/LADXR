@@ -56,25 +56,7 @@ import patches.alttp
 import hints
 import locations.keyLocation
 
-
-# Function to generate a final rom, this patches the rom with all required patches
-def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
-    print("Loading: %s" % (args.input_filename))
-    rom = ROMWithTables(open(args.input_filename, 'rb'))
-
-    pymods = []
-    if args.pymod:
-        for pymod in args.pymod:
-            spec = importlib.util.spec_from_loader(pymod, importlib.machinery.SourceFileLoader(pymod, pymod))
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            pymods.append(module)
-    for pymod in pymods:
-        pymod.prePatch(rom)
-
-    if settings.gfxmod:
-        patches.aesthetics.gfxMod(rom, os.path.join(os.path.dirname(__file__), "gfx", settings.gfxmod))
-
+def romCorePatches(rom, hardmode=False):
     assembler.resetConsts()
     assembler.const("INV_SIZE", 16)
     assembler.const("wHasFlippers", 0xDB3E)
@@ -103,12 +85,11 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.const("wLinkSpawnDelay", 0xDE13)
 
     #assembler.const("HARDWARE_LINK", 1)
-    assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
+    assembler.const("HARD_MODE", 1 if hardmode else 0)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
-    if multiworld is not None:
-        patches.save.singleSaveSlot(rom)
+
     patches.phone.patchPhone(rom)
     patches.photographer.fixPhotographer(rom)
     patches.core.bugfixWrittingWrongRoomStatus(rom)
@@ -119,22 +100,15 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.easyColorDungeonAccess(rom)
     patches.owl.removeOwlEvents(rom)
     patches.enemies.fixArmosKnightAsMiniboss(rom)
-    patches.bank3e.addBank3E(rom, seed, settings)
+    patches.bank3e.addBank3E(rom)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
     patches.core.fixMarinFollower(rom)
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
-        patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
-    if settings.witch:
-        patches.witch.updateWitch(rom)
     patches.softlock.fixAll(rom)
-    if not settings.rooster:
-        patches.maptweaks.tweakMap(rom)
-        patches.maptweaks.tweakBirdKeyRoom(rom)
     patches.chest.fixChests(rom)
     patches.shop.fixShop(rom)
     patches.rooster.patchRooster(rom)
@@ -145,10 +119,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.tarin.updateTarin(rom)
     patches.fishingMinigame.updateFinishingMinigame(rom)
     patches.health.upgradeHealthContainers(rom)
-    if settings.owlstatues in ("dungeon", "both"):
-        patches.owl.upgradeDungeonOwlStatues(rom)
-    if settings.owlstatues in ("overworld", "both"):
-        patches.owl.upgradeOverworldOwlStatues(rom)
     patches.goldenLeaf.fixGoldenLeaf(rom)
     patches.heartPiece.fixHeartPiece(rom)
     patches.seashell.fixSeashell(rom)
@@ -157,11 +127,52 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)
     patches.songs.upgradeMamu(rom)
+    # patches.reduceRNG.slowdownThreeOfAKind(rom)
+    patches.reduceRNG.fixHorseHeads(rom)
+    patches.bomb.onlyDropBombsWhenHaveBombs(rom)
+    patches.aesthetics.noSwordMusic(rom)
+    patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
+    patches.bowwow.fixBowwow(rom)
+
+# Function to generate a final rom, this patches the rom with all required patches
+def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
+    print("Loading: %s" % (args.input_filename))
+    rom = ROMWithTables(open(args.input_filename, 'rb'))
+
+    pymods = []
+    if args.pymod:
+        for pymod in args.pymod:
+            spec = importlib.util.spec_from_loader(pymod, importlib.machinery.SourceFileLoader(pymod, pymod))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            pymods.append(module)
+    for pymod in pymods:
+        pymod.prePatch(rom)
+
+    if settings.gfxmod:
+        patches.aesthetics.gfxMod(rom, os.path.join(os.path.dirname(__file__), "gfx", settings.gfxmod))
+
+    romCorePatches(rom, settings.hardmode != "none")
+    patches.bank3e.finishBank3E(rom, seed, settings)
+    patches.aesthetics.reduceMessageLengths(rom, rnd)
+
+    if multiworld is not None:
+        patches.save.singleSaveSlot(rom)
+    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
+        patches.inventory.advancedInventorySubscreen(rom)
+    if settings.witch:
+        patches.witch.updateWitch(rom)
+    if not settings.rooster:
+        patches.maptweaks.tweakMap(rom)
+        patches.maptweaks.tweakBirdKeyRoom(rom)
+    if settings.owlstatues in ("dungeon", "both"):
+        patches.owl.upgradeDungeonOwlStatues(rom)
+    if settings.owlstatues in ("overworld", "both"):
+        patches.owl.upgradeOverworldOwlStatues(rom)
     if settings.tradequest:
         patches.tradeSequence.patchTradeSequence(rom, settings)
     else:
         patches.tradeSequence.unrequiredTradeSequence(rom)
-    patches.bowwow.fixBowwow(rom)
     patches.follower.patchFollowerCreation(rom, bowwow_everywhere=settings.bowwow != 'normal', extra_spawn=settings.follower)
     if settings.bowwow != 'normal':
         patches.bowwow.bowwowMapPatches(rom)
@@ -182,12 +193,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         mapgen.store_map(rom, logic.world.map)
     if settings.dungeon_items == 'keysy':
         patches.dungeon.removeKeyDoors(rom)
-    # patches.reduceRNG.slowdownThreeOfAKind(rom)
-    patches.reduceRNG.fixHorseHeads(rom)
-    patches.bomb.onlyDropBombsWhenHaveBombs(rom)
-    patches.aesthetics.noSwordMusic(rom)
-    patches.aesthetics.reduceMessageLengths(rom, rnd)
-    patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
     if settings.music == 'random':
         patches.music.randomizeMusic(rom, rnd)
     elif settings.music == 'off':

@@ -482,7 +482,7 @@ noChange:
                 elif values[idx] == value:
                     pass
                 else:
-                    assert False, "Room: %03x cannot load graphics for entity: %02x (Index: %d Failed: %s, Active: %s)" % (room_nr, entity, idx, value, values[idx])
+                    assert False, "Room: %03x cannot load graphics for entity: %02x (Index: %d Failed: %s, Active: %s, entities: %s)" % (room_nr, entity, idx, value, values[idx], [f"{e:02x}:{entityData.NAME[e]}" for x, y, e in r.entities])
 
         data = bytearray()
         for v in values:

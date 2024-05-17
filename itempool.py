@@ -1,4 +1,5 @@
 from locations.items import *
+import cavegen
 
 
 DEFAULT_ITEM_POOL = {
@@ -280,10 +281,9 @@ class ItemPool:
             key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
             item_counts = {
                 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
-                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1, "cavegen": 0,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
             }
-            if logic.world_setup.cavegen:
-                item_counts["cavegen"] = logic.world_setup.cavegen.get_reward_count()
+            required_items = {SWORD, BOW, MAGIC_POWDER}
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
@@ -302,20 +302,24 @@ class ItemPool:
                 "trendy": {RUPEES_50},
                 "dream": {PEGASUS_BOOTS},
                 "chestcave": set(),
-                "cavegen": {BOMB},
             }
-            required_items = {SWORD, BOW, MAGIC_POWDER}
             for dungeon_idx in logic.world_setup.dungeon_chain:
-                if isinstance(dungeon_idx, int):
-                    self.add(f"KEY{dungeon_idx}", key_counts[dungeon_idx])
-                    self.add(f"NIGHTMARE_KEY{dungeon_idx}")
-                    self.add(f"MAP{dungeon_idx}")
-                    self.add(f"COMPASS{dungeon_idx}")
-                    self.add(f"STONE_BEAK{dungeon_idx}")
-                    if 1 <= dungeon_idx <= 8:
-                        self.add(HEART_CONTAINER)
-                required_item_count += item_counts[dungeon_idx]
-                required_items.update(required_items_per_dungeon[dungeon_idx])
+                if not isinstance(dungeon_idx, cavegen.Generator):
+                    if isinstance(dungeon_idx, int):
+                        self.add(f"KEY{dungeon_idx}", key_counts[dungeon_idx])
+                        self.add(f"NIGHTMARE_KEY{dungeon_idx}")
+                        self.add(f"MAP{dungeon_idx}")
+                        self.add(f"COMPASS{dungeon_idx}")
+                        self.add(f"STONE_BEAK{dungeon_idx}")
+                        if 1 <= dungeon_idx <= 8:
+                            self.add(HEART_CONTAINER)
+                    required_item_count += item_counts[dungeon_idx]
+                    required_items.update(required_items_per_dungeon[dungeon_idx])
+                else:
+                    required_item_count += dungeon_idx.get_reward_count()
+                    while dungeon_idx.get_logic_requirements(required_items):
+                        new_items = list(sorted(dungeon_idx.get_logic_requirements(required_items)))
+                        required_items.add(rnd.choice(new_items))
             for item in required_items:
                 if item.endswith("2"):
                     item = item[:-1]
@@ -339,7 +343,7 @@ class ItemPool:
                     self.add(pick)
                     required_item_count -= 1
 
-            assert required_item_count >= 0
+            assert required_item_count >= 0, f"Need more items then I can place... shortage: {required_item_count}"
             while required_item_count > 0:
                 pick = rnd.choice(junk_items)
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):

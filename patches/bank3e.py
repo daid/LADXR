@@ -9,7 +9,7 @@ def hasBank3E(rom):
 
 # Bank $3E is used for large chunks of custom code.
 #   Mainly for new chest and dropped items handling.
-def addBank3E(rom, seed, settings):
+def addBank3E(rom):
     # No default text for getting the bow, so use an unused slot.
     rom.texts[0x89] = formatText("Found the {BOW}!")
     rom.texts[0xD9] = formatText("Found the {BOOMERANG}!")  # owl text slot reuse
@@ -61,6 +61,7 @@ def addBank3E(rom, seed, settings):
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
 
+def finishBank3E(rom, seed, settings):
     shortSeed = seed[:0x20]
     rom.patch(0x3E, 0x2F00, "00" * len(shortSeed), binascii.hexlify(shortSeed))
 

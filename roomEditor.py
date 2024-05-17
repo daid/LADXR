@@ -499,7 +499,10 @@ class RoomEditor:
         for n in tiles:
             if n < 0x0F or is_overworld:
                 counts[n] = counts.get(n, 0) + 1
-        self.floor_object = max(counts, key=counts.get)
+        if len(counts) > 0:
+            self.floor_object = max(counts, key=counts.get)
+        else:
+            self.floor_object = 5
         for y in range(8) if is_overworld else range(1, 7):
             for x in range(10) if is_overworld else range(1, 9):
                 if tiles[x + y * 10] == self.floor_object:

@@ -45,7 +45,6 @@ class WorldSetup:
         self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
-        self.cavegen = None
         self.dungeon_chain = None
         self.inside_to_outside = True
         self.keep_two_way = True
@@ -270,22 +269,36 @@ class WorldSetup:
         self.pickEntrances(settings, rnd)
 
     def _buildDungeonChain(self, rnd):
+        print("New dungeon chain")
         # Build a chain of 5 dungeons
         self.dungeon_chain = [1, 2, 3, 4, 5, 6, 7, 8]
-        if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
-            self.dungeon_chain.append(0)
+        # if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
+        #     self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
         self.dungeon_chain = self.dungeon_chain[:5]
         # Check if we randomly replace one of the dungeons with a cavegen
-        if rnd.randrange(0, 100) < 80:
-            self.cavegen = cavegen.Generator(rnd)
-            self.cavegen.generate()
-            # cavegen.dump("cave.svg", self.cavegen.start)
-            self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
+        if rnd.randrange(0, 100) < 80 or True:
+            position = rnd.randint(0, len(self.dungeon_chain) - 2)
+            random_cave = cavegen.Generator(rnd)
+            random_cave.generate()
+            # cavegen.dump("cave.svg", random_cave.start)
+            self.dungeon_chain[position] = random_cave
+        # TMP, fill all dungeons with caves!
+        for n in range(len(self.dungeon_chain)):
+            if isinstance(self.dungeon_chain[n], int):
+                random_cave = cavegen.Generator(rnd, map_id=self.dungeon_chain[n]-1)
+                random_cave.generate()
+                self.dungeon_chain[n] = random_cave
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:
             inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]
             self.dungeon_chain.insert(rnd.randint(1, 4), rnd.choice(inserts))
+        
+        # Prevent cavegen in dungeons from getting messed up by boss randomization
+        for chain in self.dungeon_chain:
+            if isinstance(chain, cavegen.Generator) and chain.map_id < 8:
+                self.boss_mapping[chain.map_id] = chain.map_id
+                del self.miniboss_mapping[chain.map_id]
 
     def loadFromRom(self, rom):
         import patches.overworld

@@ -49,15 +49,16 @@ class MapExport:
         self.room_map_info(0x1FF).sidescroll = True
         self.room_map_info(0x2E8).sidescroll = True
 
-    def export_all(self, w=16, h=16, *, dungeons=True):
+    def export_all(self, w=16, h=16, *, dungeons=True, specific_dungeon=None):
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
-        if not isinstance(dungeons, int):
+        if specific_dungeon is None:
             self.buildOverworld(w, h).save("_map/img/overworld.png")
             f.write("<img src='img/overworld.png'><br><br>")
 
-        if dungeons:
-            for n in (dungeons,) if isinstance(dungeons, int) else (0,1,2,3,4,5,6,7, 10, 11):
+        if dungeons or specific_dungeon is not None:
+            for n in (specific_dungeon,) if specific_dungeon is not None else (0,1,2,3,4,5,6,7, 10, 11):
+                print(n)
                 addr = 0x0220 + n * 8 * 8
                 result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
                 map_data = {}
@@ -76,11 +77,12 @@ class MapExport:
                         self.room_map_info(room).y = y
                         if self.room_map_info(room).map_id is None:
                             self.room_map_info(room).map_id = n if n < 11 else 0xFF
-                        result.paste(self.buildRoom(room), (x * 161, y * 129))
+                        if room != 0x3FF:
+                            result.paste(self.buildRoom(room), (x * 161, y * 129))
                 self.__json_data["maps"][f"dungeon_{n}"] = map_data
                 result.save(f"_map/img/dungeon_{n}.png")
                 f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
-            if not isinstance(dungeons, int):
+            if specific_dungeon is None:
                 for n in range(1, 3):
                     result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
                     for y in range(16):
