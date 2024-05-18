@@ -254,6 +254,12 @@ checkMetadataTable = {
     "0x2FD": CheckMetadata("Manbo's Mambo", "Tal Tal Heights"),
     "0x2FB": CheckMetadata("Mamu", "Ukuku Prairie"),
     "0x1E4": CheckMetadata("Rooster", "Mabe Village"),
+    "0x0D3": CheckMetadata("Tail Cave Keyhole", "Toronbo Shores"),
+    "0x0B5": CheckMetadata("Key Cavern Keyhole", "Ukuku Prairie"),
+    "0x2C3": CheckMetadata("Kanalet Gate Button", "Kanalet Castle"),
+    "0x08C": CheckMetadata("Face Shrine Keyhole", "Southern Face Shrine"),
+    "0x02B": CheckMetadata("Angler's Tunnel Keyhole", "Tal Tal Heights"),
+    "0x00E": CheckMetadata("Eagle's Tower Keyhole", "Tal Tal Mountains"),
 
     #LttP overworld checks
     "0x025": CheckMetadata("Outside Five Chest Game", "Death Mountain"),
