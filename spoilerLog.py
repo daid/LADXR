@@ -4,7 +4,7 @@ import logic.main
 import explorer
 import patches.witch
 from settings import Settings
-from worldSetup import WorldSetup
+import worldSetup
 
 
 class RaceRomException(Exception):
@@ -74,7 +74,7 @@ class SpoilerLog:
 
         world_setups = []
         for rom in roms:
-            world_setup = WorldSetup()
+            world_setup = worldSetup.WorldSetup()
             world_setup.loadFromRom(rom)
             world_setups.append(world_setup)
 

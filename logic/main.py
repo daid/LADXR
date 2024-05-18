@@ -13,7 +13,7 @@ from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from locations.keyLocation import KeyLocation
-from worldSetup import WorldSetup
+import worldSetup
 import itempool
 import mapgen
 
@@ -195,7 +195,7 @@ class MultiworldLogic:
                 world = Logic(options, world_setup=world_setups[n])
             else:
                 for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                    world_setup = WorldSetup()
+                    world_setup = worldSetup.WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
                     if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
