@@ -73,11 +73,13 @@ class CaveGen:
     def __init__(self, configuration_options, world_setup, requirements_settings, random_cave):
         self.requirements_settings = requirements_settings
         self.entrance = Location()
+        self.dungeon = random_cave.map_id + 1 if random_cave.map_id < 8 else None
+        self.total_keys = 0
         self._add_room(self.entrance, random_cave.start)
 
     def _add_room(self, location, room):
         if room.template.logic:
-            location = Location().connect(location, room.template.logic)
+            location = Location(dungeon=self.dungeon).connect(location, room.template.logic)
         if room.type == "end":
             self.final_room = location
         elif room.type == "reward":
@@ -90,5 +92,8 @@ class CaveGen:
         for c in room.connections:
             next_location = location
             if c.type == "bomb":
-                next_location = Location().connect(location, BOMB)
+                next_location = Location(dungeon=self.dungeon).connect(location, BOMB)
+            if c.type == "key":
+                self.total_keys += 1
+                next_location = Location(dungeon=self.dungeon).connect(location, AND(f"KEY{self.dungeon}", FOUND(F"KEY{self.dungeon}", self.total_keys)))
             self._add_room(next_location, c.target)

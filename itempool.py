@@ -283,25 +283,25 @@ class ItemPool:
                 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
                 "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
             }
-            required_items = {SWORD, BOW, MAGIC_POWDER}
+            required_items = {SWORD: 1, BOW: 1, MAGIC_POWDER: 1}
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
             required_items_per_dungeon = {
-                1: {FEATHER, SHIELD, BOMB},
-                2: {POWER_BRACELET, FEATHER},
-                3: {POWER_BRACELET, PEGASUS_BOOTS},
-                4: {SHIELD, FLIPPERS, FEATHER, PEGASUS_BOOTS, BOMB},
-                5: {HOOKSHOT, FEATHER, BOMB, POWER_BRACELET, FLIPPERS},
-                6: {POWER_BRACELET, POWER_BRACELET+"2", BOMB, FEATHER, HOOKSHOT},
-                7: {POWER_BRACELET, SHIELD, SHIELD+"2", BOMB, HOOKSHOT},
-                8: {MAGIC_ROD, BOMB, FEATHER, POWER_BRACELET, HOOKSHOT},
-                0: {POWER_BRACELET, HOOKSHOT},
-                "shop": {RUPEES_100, RUPEES_200, RUPEES_500},
-                "mamu": {RUPEES_100, RUPEES_200, OCARINA},
-                "trendy": {RUPEES_50},
-                "dream": {PEGASUS_BOOTS},
-                "chestcave": set(),
+                1: {FEATHER: 1, SHIELD: 1, BOMB: 1},
+                2: {POWER_BRACELET: 1, FEATHER: 1},
+                3: {POWER_BRACELET: 1, PEGASUS_BOOTS: 1},
+                4: {SHIELD: 1, FLIPPERS: 1, FEATHER: 1, PEGASUS_BOOTS: 1, BOMB: 1},
+                5: {HOOKSHOT: 1, FEATHER: 1, BOMB: 1, POWER_BRACELET: 1, FLIPPERS: 1},
+                6: {POWER_BRACELET: 2, BOMB: 1, FEATHER: 1, HOOKSHOT: 1},
+                7: {POWER_BRACELET: 1, SHIELD: 2, BOMB: 1, HOOKSHOT: 1},
+                8: {MAGIC_ROD: 1, BOMB: 1, FEATHER: 1, POWER_BRACELET: 1, HOOKSHOT: 1},
+                0: {POWER_BRACELET: 1, HOOKSHOT: 1},
+                "shop": {RUPEES_100: 1, RUPEES_200: 1, RUPEES_500: 1},
+                "mamu": {RUPEES_100: 1, RUPEES_200: 1, OCARINA: 1},
+                "trendy": {RUPEES_50: 1},
+                "dream": {PEGASUS_BOOTS: 1},
+                "chestcave": {},
             }
             for dungeon_idx in logic.world_setup.dungeon_chain:
                 if not isinstance(dungeon_idx, cavegen.Generator):
@@ -314,24 +314,30 @@ class ItemPool:
                         if 1 <= dungeon_idx <= 8:
                             self.add(HEART_CONTAINER)
                     required_item_count += item_counts[dungeon_idx]
-                    required_items.update(required_items_per_dungeon[dungeon_idx])
+                    for item, amount in required_items_per_dungeon[dungeon_idx].items():
+                        required_items[item] = max(required_items.get(item, 0), amount)
                 else:
                     required_item_count += dungeon_idx.get_reward_count()
                     while dungeon_idx.get_logic_requirements(required_items):
                         new_items = list(sorted(dungeon_idx.get_logic_requirements(required_items)))
-                        required_items.add(rnd.choice(new_items))
-            for item in required_items:
-                if item.endswith("2"):
-                    item = item[:-1]
-                self.add(item)
-                required_item_count -= 1
+                        add = rnd.choice(new_items)
+                        required_items[add] = required_items.get(add, 0) + 1
+                    if dungeon_idx.map_id < 8 and rnd.randrange(0, 100) < 50:
+                        required_items[HEART_CONTAINER] = required_items.get(HEART_CONTAINER, 0) + 1
+                    if required_item_count > sum(required_items.values()) and dungeon_idx.map_id < 8:
+                        required_items[f"MAP{dungeon_idx.map_id+1}"] = 1
+                    if required_item_count > sum(required_items.values()) and dungeon_idx.map_id < 8:
+                        required_items[f"COMPASS{dungeon_idx.map_id+1}"] = 1
+            for item, amount in required_items.items():
+                self.add(item, amount)
+                required_item_count -= amount
             major_additions = [SWORD, FEATHER, HOOKSHOT, BOW, BOMB, MAGIC_POWDER, MAGIC_ROD, PEGASUS_BOOTS, POWER_BRACELET, SHIELD, BOOMERANG]
             minor_additions = [BOMB, MAGIC_POWDER, BLUE_TUNIC, RED_TUNIC, MAX_ARROWS_UPGRADE, MAX_BOMBS_UPGRADE, MAX_POWDER_UPGRADE, MEDICINE]
             junk_items = [RUPEES_100, RUPEES_20, RUPEES_50, SEASHELL, GEL, MESSAGE]
             max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
             for n in range(3):
                 pick = rnd.choice(major_additions)
-                if pick not in required_items or pick in {SWORD, SHIELD} and required_item_count > 0:
+                if (pick not in required_items or pick in {SWORD, SHIELD}) and required_item_count > 0:
                     self.add(pick)
                     required_item_count -= 1
                     major_additions.remove(pick)

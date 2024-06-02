@@ -159,8 +159,12 @@ def patchDungeonChain(rom, world_setup):
             rom.banks[0x14][0x0DF3 + chain_step.map_id] = chain_step.start.room_id & 0xFF
             rom.banks[0x14][0x0E41 + chain_step.map_id] = chain_step.start.x + chain_step.start.y * 8
         for xy in range(8 * 8):
+            # if chain_step.map_id < 8:
+            #     rom.banks[0x02][0x2479 + chain_step.map_id * 8 * 8 + xy] = 0x7D
             rom.banks[0x14][0x0220 + chain_step.map_id * 8 * 8 + xy] = 0
         for room in chain_step.all_rooms:
+            # if chain_step.map_id < 8:
+            #     rom.banks[0x02][0x2479 + chain_step.map_id * 8 * 8 + xy] = 0xED if room.template.type == "chest" else 0xEF
             rom.banks[0x14][0x0220 + chain_step.map_id * 8 * 8 + room.x + room.y * 8] = room.room_id & 0xFF
             rom.banks[0x14][0x0000 + room.room_id - 0x100] = room.template.event
             re = RoomEditor(rom, room.room_id)
