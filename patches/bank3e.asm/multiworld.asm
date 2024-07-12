@@ -144,7 +144,7 @@ LinkSpawnSlime:
     ld   hl, wZolSpawnCount
     dec  [hl]
 
-    call $280D
+    call $280D ; GetRandomByte
     and  $03
     ld   [wLinkSpawnDelay], a
     ret
@@ -174,7 +174,7 @@ LinkSpawnCucco:
     ld   hl, wCuccoSpawnCount
     dec  [hl]
 
-    call $280D
+    call $280D ; GetRandomByte
     and  $07
     ld   [wLinkSpawnDelay], a
     ret
@@ -204,7 +204,7 @@ LinkSpawnBomb:
     ld   hl, wDropBombSpawnCount
     dec  [hl]
 
-    call $280D
+    call $280D ; GetRandomByte
     and  $1F
     ld   [wLinkSpawnDelay], a
     ret
@@ -213,13 +213,13 @@ placeRandom:
     ; Place somewhere random
     ld   hl, $C200
     add  hl, de
-    call $280D ; random number
+    call $280D ; GetRandomByte
     and  $7F
     add  a, $08
     ld   [hl], a
     ld   hl, $C210
     add  hl, de
-    call $280D ; random number
+    call $280D ; GetRandomByte
     and  $3F
     add  a, $20
     ld   [hl], a
@@ -230,7 +230,7 @@ SpecialRandomTeleport:
     ; Warp data
     ld   [$D401], a
     ld   [$D402], a
-    call $280D ; random number
+    call $280D ; GetRandomByte
     ld   [$D403], a
     ld   hl, RandomTeleportPositions
     ld   d, $00

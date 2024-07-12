@@ -135,7 +135,7 @@ def upgradeOverworldOwlStatues(rom):
         jr   z, $2B
         cp   $D4
         jr   z, $27
-        ld   a, [$DB73]
+        ld   a, [wIsMarinFollowingLink]
         and  a
         jr   z, $08
         ld   a, $78

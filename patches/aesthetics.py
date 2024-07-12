@@ -325,7 +325,7 @@ def allowColorDungeonSpritesEverywhere(rom):
     # Patch the spriteset loading code to load the 4 entries from the normal table instead of skipping this for color dungeon specific exception weirdness
     rom.patch(0x00, 0x0DA4, ASM("jr nc, $05"), ASM("jr nc, $41"))
     rom.patch(0x00, 0x0DE5, ASM("""
-        ldh  a, [$FFF7]
+        ldh  a, [hMapId]
         cp   $FF
         jr   nz, $06
         ld a, $01
@@ -424,7 +424,7 @@ def updateSpriteData(rom):
     and  a
     jr   nz, noChange
 
-    ldh  a, [$FFF6] ; hMapRoom
+    ldh  a, [hMapRoom]
     cp   $C9
     jr   nz, sirenRoomEnd
     ld   a, [$D8C9] ; wOverworldRoomStatus + ROOM_OW_SIREN
@@ -434,7 +434,7 @@ def updateSpriteData(rom):
     jp   $0DFE
 
 sirenRoomEnd:
-    ldh  a, [$FFF6] ; hMapRoom
+    ldh  a, [hMapRoom]
     cp   $D8
     jr   nz, noChange
     ld   a, [$D8FD] ; wOverworldRoomStatus + ROOM_OW_WALRUS 

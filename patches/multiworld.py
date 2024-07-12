@@ -35,22 +35,22 @@ def addMultiworldShop(rom, this_player, player_count):
     # Patch Ghost to work as a multiworld shop
     rom.patch(0x19, 0x1E18, 0x20B0, ASM("""
     ld   a, $01
-    ld   [$C50A], a ; this stops link from using items
+    ld   [wBlockItemUsage], a ; this stops link from using items
 
-    ldh  a, [$FFEE] ; X
+    ldh  a, [hActiveEntityPosX] ; X
     cp   $08
     ; Jump to other code which is placed on the old owl code. As we do not have enough space here.
     jp   z, shopItemsHandler
 
 ;Draw shopkeeper
     ld   de, OwnerSpriteData
-    call $3BC0 ; render sprite pair
-    ldh  a, [$FFE7] ; frame counter
+    call RenderActiveEntitySpritesPair ; render sprite pair
+    ldh  a, [hFrameCounter] ; frame counter
     swap a
     and  $01
     call $3B0C ; set sprite variant
 
-    ldh  a, [$FFF0]
+    ldh  a, [hActiveEntityState]
     and  a
     jr   nz, checkTalkingResult
 
@@ -81,11 +81,11 @@ shopItemsHandler:
     ld   h, $00
 loop:
     ; First load links position to render the item at
-    ldh  a, [$FF98] ; LinkX
-    ldh  [$FFEE], a ; X
-    ldh  a, [$FF99] ; LinkY
+    ldh  a, [hLinkPositionX] ; LinkX
+    ldh  [hActiveEntityPosX], a ; X
+    ldh  a, [hLinkPositionY] ; LinkY
     sub  $0E
-    ldh  [$FFEC], a ; Y
+    ldh  [hActiveEntityVisualPosY], a ; Y
     ; Check if this is the item we have picked up
     ld   a, [$C509] ; picked up item in shop
     dec  a
@@ -95,17 +95,17 @@ loop:
     ld   a, h
     swap a
     add  a, $20
-    ldh  [$FFEE], a ; X
+    ldh  [hActiveEntityPosX], a ; X
     ld   a, $30
-    ldh  [$FFEC], a ; Y
+    ldh  [hActiveEntityVisualPosY], a ; Y
 .renderCarry:
     ld   a, h
     push hl
-    ldh  [$FFF1], a ; variant
+    ldh  [hActiveEntitySpriteVariant], a ; variant
     cp   $03
     jr   nc, .singleSprite
     ld   de, ItemsDualSpriteData
-    call $3BC0 ; render sprite pair
+    call RenderActiveEntitySpritesPair ; render sprite pair
     jr   .renderDone
 .singleSprite:
     ld   de, ItemsSingleSpriteData
@@ -144,15 +144,15 @@ loop:
     ret
 
 checkForPickup:
-    ldh  a, [$FF9E] ; direction
+    ldh  a, [hLinkDirection]
     cp   $02
     ret  nz
-    ldh  a, [$FF99] ; LinkY
+    ldh  a, [hLinkPositionY] ; LinkY
     cp   $48
     ret  nc
 
     ld   a, $13
-    ldh  [$FFF2], a ; play SFX
+    ldh  [hJingle], a ; play SFX
 
     ld   a, [$C509] ; picked up shop item
     and  a

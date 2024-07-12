@@ -85,7 +85,7 @@ def disablePhotoPrint(rom):
 
 def fixMarinFollower(rom):
     # Allow opening of D0 with marin
-    rom.patch(0x02, 0x3402, ASM("ld a, [$DB73]"), ASM("xor a"), fill_nop=True)
+    rom.patch(0x02, 0x3402, ASM("ld a, [wIsMarinFollowingLink]"), ASM("xor a"), fill_nop=True)
     # Instead of uselessly checking for sidescroller rooms for follower spawns, check for color dungeon instead
     rom.patch(0x01, 0x1FCB, 0x1FD3, ASM("cp $FF\nret z"), fill_nop=True)
     # Do not load marin graphics in color dungeon
