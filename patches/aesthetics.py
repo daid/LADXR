@@ -183,7 +183,7 @@ def removeNagMessages(rom):
 
 
 def removeLowHPBeep(rom):
-    rom.patch(2,  0x233A, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
+    rom.patch(2,  0x233A, ASM("ld hl, hWaveSfx\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
 
 
 def slowLowHPBeep(rom):
@@ -192,7 +192,7 @@ def slowLowHPBeep(rom):
 
 def removeFlashingLights(rom):
     # Remove the switching between two backgrounds at mamu, always show the spotlights.
-    rom.patch(0x00, 0x01EB, ASM("ldh a, [$FFE7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
+    rom.patch(0x00, 0x01EB, ASM("ldh a, [hFrameCounter]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
     # Remove flashing colors from shopkeeper killing you after stealing and the mad batter giving items.
     rom.patch(0x24, 0x3B77, ASM("push bc"), ASM("ret"))
 

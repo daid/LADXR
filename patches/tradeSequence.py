@@ -55,7 +55,7 @@ tradeDone:
         jp   $2373  ; OpenDialogInTable1
 requestTrade:
         ld   a, $2B ; Dialog about kids, after trade is done
-        call $3B12; IncrementEntityState 
+        call IncrementEntityState 
         jp   $2373  ; OpenDialogInTable1
     """), fill_nop=True)
     rom.patch(0x18, 0x0EB4, 0x0EBD, ASM("ld hl, wTradeSequenceItem\nres 0, [hl]"), fill_nop=True)  # Take the trade item
@@ -284,9 +284,9 @@ def patchSharedCode(rom):
         and  a
         jr   z, notSideScroll
         
-        ldh  a, [$FFEC]; hActiveEntityVisualPosY
+        ldh  a, [hActiveEntityVisualPosY]
         add  a, $02
-        ldh  [$FFEC], a 
+        ldh  [hActiveEntityVisualPosY], a 
 notSideScroll:
         ; Render sprite
         ld   a, $0F
@@ -302,7 +302,7 @@ notSideScroll:
         call $7F7F
         xor  a ; we need to exit with A=00    
     """), fill_nop=True)
-    rom.patch(0x07, 0x3F7F, "00" * 7, ASM("ldh a, [$FFF8]\nor $20\nldh [$FFF8], a\nret"))
+    rom.patch(0x07, 0x3F7F, "00" * 7, ASM("ldh a, [hRoomStatus]\nor $20\nldh [hRoomStatus], a\nret"))
 
 
 def patchVarious(rom, settings):
@@ -310,7 +310,7 @@ def patchVarious(rom, settings):
     rom.patch(0x18, 0x09F3, 0x0A02, ASM("""
         ld   a, [wTradeSequenceItem2]
         and  $20 ; MAGNIFYING_GLASS
-        jp   z, $7F08 ; ClearEntityStatusBank18 
+        jp   z, ClearEntityStatus_18
     """), fill_nop=True)
     rom.patch(0x03, 0x0B6D, 0x0B75, ASM("""
         ld   a, [wTradeSequenceItem2]
@@ -389,7 +389,7 @@ def unrequiredTradeSequence(rom):
     rom.patch(0x18, 0x09F3, ASM("""
         ld   a, [$DB40]
         cp   $0E
-        jp   nz, $7F08 ; ClearEntityStatusBank18 
+        jp   nz, ClearEntityStatus_18
     """), "", fill_nop=True)
     rom.patch(0x03, 0x0B6D, ASM("""
         ld   a, [$DB40]

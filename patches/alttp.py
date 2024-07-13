@@ -355,7 +355,7 @@ LiftableStatueState1And2Handler:
 jr_019_4185:
     ldh  [hMultiPurposeG], a
     ld   a, $9D ; ENTITY_LIFTABLE_STATUE 
-    call $3B86 ; SpawnNewEntity_trampoline  
+    call SpawnNewEntity_trampoline
     jr   c, jr_019_41E2
 
     ld   hl, $C2B0 ; wEntitiesPrivateState1Table  
@@ -371,9 +371,9 @@ jr_019_4185:
     ld   c, a
     ld   hl, Data_019_4165
     add  hl, bc
-    ldh  a, [$FFD7] ; hMultiPurpose0 
+    ldh  a, [hMultiPurpose0]
     add  [hl]
-    ld   hl, $C200 ; wEntitiesPosXTable  
+    ld   hl, wEntitiesPosXTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_416B
@@ -390,23 +390,23 @@ jr_019_4185:
     ld   hl, Data_019_4171
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C240 ; wEntitiesSpeedXTable  
+    ld   hl, wEntitiesSpeedXTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_4177
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C250 ; wEntitiesSpeedYTable  
+    ld   hl, wEntitiesSpeedYTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_417D
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C320 ; wEntitiesSpeedZTable  
+    ld   hl, wEntitiesSpeedZTable
     add  hl, de
     ld   [hl], a
     pop  bc
-    ldh  a, [$FFE8] ; hMultiPurposeG 
+    ldh  a, [hMultiPurposeG]
     inc  a
     cp   $04
     jr   nz, jr_019_4185
@@ -465,9 +465,9 @@ PegDestroyed:
     ld   a, $0B
     ldh  [hJingle], a
     ldh  a, [hActiveEntityPosX]
-    ldh  [$FFD7], a ; hMultiPurpose0  
+    ldh  [hMultiPurpose0], a
     ldh  a, [hActiveEntityVisualPosY] 
-    ldh  [$FFD8], a ;  hMultiPurpose1 
+    ldh  [hMultiPurpose1], a
     ld   a, $02 ; TRANSCIENT_VFX_POOF 
     call $0CC7 ; AddTranscientVfx
     call ClearEntityStatus_07
@@ -733,7 +733,7 @@ def patchTurtleRockEntrance(rom):
     and  1
     ret  z
 
-    ld   a, [$DB4A] ; wSelectedSongIndex 
+    ld   a, [wSelectedSongIndex]
     cp   $02
     ret  nz
 

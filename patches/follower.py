@@ -309,7 +309,7 @@ def patchFoxFollower(rom):
     DogState0Handler:
         xor  a
         call $3B0C ; SetEntitySpriteVariant
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         jr   nz, .jr_49D8
 
         ; Move towards link at a random speed
@@ -329,14 +329,14 @@ def patchFoxFollower(rom):
         ld   hl, Data_RandomOffset
         add  hl, de
         ld   a, [hl]
-        ld   hl, $C240 ; wEntitiesSpeedXTable
+        ld   hl, wEntitiesSpeedXTable
         add  hl, bc
         add  a, [hl]
         ld   [hl], a
         swap a
         rra
         and  $04
-        ld   hl, $C380 ; wEntitiesDirectionTable
+        ld   hl, wEntitiesDirectionTable
         add  hl, bc
         ld   [hl], a
         call GetRandomByte
@@ -345,7 +345,7 @@ def patchFoxFollower(rom):
         ld   hl, Data_RandomOffset
         add  hl, de
         ld   a, [hl]
-        ld   hl, $C250 ; wEntitiesSpeedYTable
+        ld   hl, wEntitiesSpeedYTable
         add  hl, bc
         add  a, [hl]
         ld   [hl], a
@@ -355,7 +355,7 @@ def patchFoxFollower(rom):
         and  $1F
         add  $30
         ld   [hl], a
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
 
     .jr_49D8:
         jp   func_019_49FD
@@ -371,15 +371,15 @@ def patchFoxFollower(rom):
         jr   nz, .jr_49F2
 
         ld   [hl], $18
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
         ld   [hl], b
         ret
 
     .jr_49F2:
-        ld   hl, $C320 ; wEntitiesSpeedZTable
+        ld   hl, wEntitiesSpeedZTable
         add  hl, bc
         ld   [hl], $08
-        ld   hl, $C310 ; wEntitiesPosZTable
+        ld   hl, wEntitiesPosZTable
         add  hl, bc
         inc  [hl]
 
@@ -392,17 +392,17 @@ def patchFoxFollower(rom):
         jp   $3B0C ; SetEntitySpriteVariant
 
     DogState2Handler:
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         jr   nz, .jr_4A23
 
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
         ld   a, $24
         call $3BAA ; ApplyVectorTowardsLink_trampoline
-        ld   hl, $C320 ; wEntitiesSpeedZTable
+        ld   hl, wEntitiesSpeedZTable
         add  hl, bc
         ld   [hl], $18
         call $7E0B ; entityLinkPositionXDifference
-        ld   hl, $C380 ; wEntitiesDirectionTable
+        ld   hl, wEntitiesDirectionTable
         add  hl, bc
         ld   a, e
         ld   [hl], a
@@ -424,13 +424,13 @@ def patchFoxFollower(rom):
         ld   hl, $C340 ; wEntitiesPhysicsFlagsTable
         add  hl, bc
         ld   [hl], $92 ; 2 | ENTITY_PHYSICS_SHADOW | ENTITY_PHYSICS_HARMLESS
-        ldh  a, [$FFE8] ; hMultiPurposeG
+        ldh  a, [hMultiPurposeG]
         and  a
         jr   z, .ret_4A4F
 
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
         ld   [hl], b
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         ld   [hl], $20
 
     .ret_4A4F:
@@ -449,7 +449,7 @@ def patchFoxFollower(rom):
         cp   3
         jp   nc, $7E61; ClearEntityStatus_19
         ld   a, $2D ; JINGLE_GHOST_PRESENCE 
-        ldh  [$FFF2], a ; hJingle 
+        ldh  [hJingle], a ; hJingle 
         jp   $7E61; ClearEntityStatus_19
 
     .active:
@@ -458,7 +458,7 @@ def patchFoxFollower(rom):
         and  $01
         jr   nz, .skipDraw
         ld   de, $5DF8 ; DogSpriteVariants
-        call $3BC0 ; RenderActiveEntitySpritesPair
+        call RenderActiveEntitySpritesPair
     .skipDraw:
 
         ldh  a, [hFrameCounter]
@@ -472,7 +472,7 @@ def patchFoxFollower(rom):
         add  hl, de
         ld   a, [hl]
         sub  $04
-        ld   hl, $C310 ; wEntitiesPosZTable  
+        ld   hl, wEntitiesPosZTable
         add  hl, bc
         ld   [hl], a
 
@@ -493,11 +493,11 @@ def patchFoxFollower(rom):
         ldh  a, [hLinkPositionY]
         push af
         add  $0C
-        ldh  [$FF99], a ; hLinkPositionY 
+        ldh  [hLinkPositionY], a
         call $7E1B ; entityLinkPositionYDifference  
         ld   e, a
         pop  af
-        ldh  [$FF99], a ; hLinkPositionY
+        ldh  [hLinkPositionY], a
         ld   a, e
         add  $18
         cp   $30
@@ -517,7 +517,7 @@ def patchFoxFollower(rom):
         and  1
         jr   z, .noSong
 
-        ld   a, [$DB4A] ; wSelectedSongIndex 
+        ld   a, [wSelectedSongIndex]
         cp   $02
         jr   nz, .noSong
 
@@ -675,7 +675,7 @@ def patchGhostFollower(rom):
         and  $01
         jr   nz, .skipDraw
         ld   de, $5DF8 ; DogSpriteVariants
-        call $3BC0 ; RenderActiveEntitySpritesPair
+        call RenderActiveEntitySpritesPair
     .skipDraw:
 
         ldh  a, [hFrameCounter]
@@ -710,11 +710,11 @@ def patchGhostFollower(rom):
         ldh  a, [hLinkPositionY]
         push af
         add  $0C
-        ldh  [$FF99], a ; hLinkPositionY 
+        ldh  [hLinkPositionY], a
         call $7E1B ; entityLinkPositionYDifference  
         ld   e, a
         pop  af
-        ldh  [$FF99], a ; hLinkPositionY
+        ldh  [hLinkPositionY], a
         ld   a, e
         add  $18
         cp   $30
@@ -795,7 +795,7 @@ def patchYipYipFollower(rom):
     DogState0Handler:
         xor  a
         call $3B0C ; SetEntitySpriteVariant
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         jr   nz, .jr_49D8
 
         ; Move towards link at a random speed
@@ -815,14 +815,14 @@ def patchYipYipFollower(rom):
         ld   hl, Data_RandomOffset
         add  hl, de
         ld   a, [hl]
-        ld   hl, $C240 ; wEntitiesSpeedXTable
+        ld   hl, wEntitiesSpeedXTable
         add  hl, bc
         add  a, [hl]
         ld   [hl], a
         swap a
         rra
         and  $04
-        ld   hl, $C380 ; wEntitiesDirectionTable
+        ld   hl, wEntitiesDirectionTable
         add  hl, bc
         ld   [hl], a
         call GetRandomByte
@@ -831,17 +831,17 @@ def patchYipYipFollower(rom):
         ld   hl, Data_RandomOffset
         add  hl, de
         ld   a, [hl]
-        ld   hl, $C250 ; wEntitiesSpeedYTable
+        ld   hl, wEntitiesSpeedYTable
         add  hl, bc
         add  a, [hl]
         ld   [hl], a
 
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         call GetRandomByte
         and  $1F
         add  $30
         ld   [hl], a
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
 
     .jr_49D8:
         jp   func_019_49FD
@@ -849,23 +849,23 @@ def patchYipYipFollower(rom):
     DogState1Handler:
         call $7DB8 ; UpdateEntityPosWithSpeed_19
         call $3B23
-        ldh  a, [$FFE8] ; hMultiPurposeG
+        ldh  a, [hMultiPurposeG]
         and  a
         jr   z, func_019_49FD
 
-        call $0C05 ; GetEntityTransitionCountdown
+        call GetEntityTransitionCountdown
         jr   nz, .jr_49F2
 
         ld   [hl], $18
-        call $3B12 ; IncrementEntityState
+        call IncrementEntityState
         ld   [hl], b
         ret
 
     .jr_49F2:
-        ld   hl, $C320 ; wEntitiesSpeedZTable
+        ld   hl, wEntitiesSpeedZTable
         add  hl, bc
         ld   [hl], $08
-        ld   hl, $C310 ; wEntitiesPosZTable
+        ld   hl, wEntitiesPosZTable
         add  hl, bc
         inc  [hl]
 

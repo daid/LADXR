@@ -14,7 +14,7 @@ loop:
         dec  e
         inc  hl
         jr   nz, loop
-        jp   $3F8D ; unload entity
+        jp   UnloadEntity ; unload entity
 resume:
         jp   $608C
     """), fill_nop=True)

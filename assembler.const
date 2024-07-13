@@ -2,9 +2,9 @@
 0C05:GetEntityTransitionCountdown
 280D:GetRandomByte
 3B12:IncrementEntityState
+3B86:SpawnNewEntity_trampoline
 3BC0:RenderActiveEntitySpritesPair
 3CE6:RenderActiveEntitySpritesRect
-3B86:SpawnNewEntity_trampoline
 3F8D:UnloadEntity
 
 7FA3:ReturnIfNonInteractive_04
@@ -66,9 +66,9 @@ DE04:wFarcallReturnBank
 FF98:hLinkPositionX
 FF99:hLinkPositionY
 FFA2:hLinkPositionZ
-FFA1:hLinkInteractiveMotionBlocked
 FF9D:hLinkAnimationState
 FF9E:hLinkDirection
+FFA1:hLinkInteractiveMotionBlocked
 FFCB:hPressedButtonsMask
 FFD7:hMultiPurpose0
 FFD8:hMultiPurpose1

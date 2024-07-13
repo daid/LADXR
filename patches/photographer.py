@@ -15,7 +15,7 @@ def fixPhotographer(rom):
     # Allow bowwow photo with follower
     rom.patch(0x36, 0x31DA, ASM("jp nz, $7288"), "", fill_nop=True)
     # Allow bridge photo with follower
-    rom.patch(0x36, 0x004D, ASM("call nz, $3F8D"), "", fill_nop=True)
+    rom.patch(0x36, 0x004D, ASM("call nz, UnloadEntity"), "", fill_nop=True)
     rom.patch(0x36, 0x006D, ASM("ret nz"), "", fill_nop=True) # Checks if any entity is alive
     # Allow Marin photos after she sang for the walrus
     rom.patch(0x36, 0x3101, ASM("ld a, [wIsMarinFollowingLink]"), ASM("call $7F10"))
@@ -30,12 +30,12 @@ def fixPhotographer(rom):
         ret
     """), fill_nop=True)
     # Well photo is taken as soon as Link lands if Marin isn't there
-    rom.patch(0x36, 0x0236, ASM("ldh a, [$FF9D] \n cp $6A"), ASM("call $7F20"), fill_nop=True)
+    rom.patch(0x36, 0x0236, ASM("ldh a, [hLinkAnimationState] \n cp $6A"), ASM("call $7F20"), fill_nop=True)
     rom.patch(0x36, 0x3F20, "00" * 32, ASM("""
         ld  a, [wIsMarinFollowingLink]
         and a
         jr  z, noMarinFollower
-        ldh a, [$FF9D]
+        ldh a, [hLinkAnimationState]
         cp  $6A
         ret
     noMarinFollower:

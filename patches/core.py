@@ -25,23 +25,23 @@ def fixWrongWarp(rom):
 
 def bugfixBossroomTopPush(rom):
     rom.patch(0x14, 0x14D9, ASM("""
-        ldh  a, [$FF99]
+        ldh  a, [hLinkPositionY]
         dec  a
-        ldh  [$FF99], a
+        ldh  [hLinkPositionY], a
     """), ASM("""
         jp   $7F80
     """), fill_nop=True)
     rom.patch(0x14, 0x3F80, "00" * 0x80, ASM("""
-        ldh  a, [$FF99]
+        ldh  a, [hLinkPositionY]
         cp   $50
         jr   nc, up
 down:
         inc  a
-        ldh  [$FF99], a
+        ldh  [hLinkPositionY], a
         jp   $54DE
 up:
         dec  a
-        ldh  [$FF99], a
+        ldh  [hLinkPositionY], a
         jp   $54DE
     """), fill_nop=True)
 
@@ -238,11 +238,11 @@ noWrapDown:
         ld   a, $%02x ; Y
         ld   [$D405], a
 
-        ldh  a, [$FF98]
+        ldh  a, [hLinkPositionX]
         swap a
         and  $0F
         ld   e, a
-        ldh  a, [$FF99]
+        ldh  a, [hLinkPositionY]
         sub  $08
         and  $F0
         or   e
@@ -252,7 +252,7 @@ noWrapDown:
         ld   [$DB96], a
         
         ; Clear all entity status, so they are no longer rendered.
-        ld   hl, $C280
+        ld   hl, wEntitiesStatusTable
         xor  a
         ld   [$C18E], a ; clear wRoomEvent so minibosses
         ld   c, 16

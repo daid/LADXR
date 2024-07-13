@@ -55,15 +55,15 @@ def addMultiworldShop(rom, this_player, player_count):
     jr   nz, checkTalkingResult
 
     call $7CA2 ; prevent link from moving into the sprite
-    call $7CF0 ; check if talking to NPC
+    call PushLinkOutOfEntity_07 ; check if talking to NPC
     call c, talkHandler ; talk handling
     ret
 
 checkTalkingResult:
-    ld   a, [$C19F]
+    ld   a, [wDialogState]
     and  a
     ret  nz ; still taking
-    call $3B12 ; increase entity state
+    call IncrementEntityState
     ld   [hl], $00
     ld   a, [$C177] ; dialog selection
     and  a
@@ -135,7 +135,7 @@ loop:
     call $0CAF ; reset spin attack...
 
     ; Check if we are trying to exit the shop and so drop our item.
-    ldh  a, [$FF99]
+    ldh  a, [hLinkPositionY]
     cp   $78
     ret  c
     xor  a
@@ -158,7 +158,7 @@ checkForPickup:
     and  a
     jr   nz, .drop
 
-    ldh  a, [$FF98] ; LinkX
+    ldh  a, [hLinkPositionX] ; LinkX
     sub  $08
     swap a
     and  $07
@@ -205,16 +205,16 @@ talkHandler:
     dec  hl
     ld   a, $fe
     ld   [hl], a
-    ld   de, $FFEF
+    ld   de, hActiveEntityPosY
     add  hl, de
-    ldh  a, [$FFEE]
+    ldh  a, [hActiveEntityPosX]
     swap a
     and  $0F
     add  a, $30
     ld   [hl], a
     ld   a, $C9
     call $2385 ; open dialog
-    call $3B12 ; increase entity state
+    call IncrementEntityState
     ret
 
 appendString:
@@ -291,7 +291,7 @@ TalkResultHandler:
     ld  hl, $DDFE
     ld  a, [$C509] ; currently picked up item 
     ldi [hl], a
-    ldh a, [$FFEE]   ; X position of NPC
+    ldh a, [hActiveEntityPosX]   ; X position of NPC
     ldi [hl], a
     ld  hl, $DDF7
     set 2, [hl]

@@ -410,7 +410,7 @@ SignEntityHandler:
     jr   z, .standingSign
     
     ; Flying sign
-    ldh  a, [$FFE7] ; hFrameCounter
+    ldh  a, [hFrameCounter]
     rra
     rra
     rra
@@ -421,21 +421,21 @@ SignEntityHandler:
     add  hl, de
     ld   a, [hl]
 
-    ld   hl, $C310 ; wEntitiesPosZTable
+    ld   hl, wEntitiesPosZTable
     add  hl, bc
     ld   [hl], a
 
-    ldh  a, [$FFE7] ; hFrameCounter
+    ldh  a, [hFrameCounter]
     and  $08
     ld   e, a
     ld   d, b
     ld   hl, wingSprites
     add  hl, de
     ld   c, $02
-    call $3CE6 ; RenderActiveEntitySpritesRect
+    call RenderActiveEntitySpritesRect
 
     ld   de, flyingSpriteData
-    call $3BC0 ; RenderActiveEntitySpritesPair
+    call RenderActiveEntitySpritesPair
 
     call $3B5A ; CheckLinkCollisionWithEnemy_trampoline  
     ret  nc
@@ -443,7 +443,7 @@ SignEntityHandler:
     and  a
     ret  z
 
-    ld   a, [$C19F]  ; wDialogState  
+    ld   a, [wDialogState]
     ld   hl, $C14F ; wInventoryAppearing  
     or   [hl]
     ld   hl, $C134 ; wDialogCooldown
@@ -461,7 +461,7 @@ SignEntityHandler:
 
 .standingSign:
     ld   de, spriteData
-    call $3BC0 ; RenderActiveEntitySpritesPair
+    call RenderActiveEntitySpritesPair
 
     ; Check collision and prevent link from moving on the sprite.
     call $3B5A ; CheckLinkCollisionWithEnemy_trampoline  
@@ -471,7 +471,7 @@ SignEntityHandler:
     call $178E ; ClearLinkPositionIncrement  
 .noCollision:
 
-    ld   a, [$C19F]  ; wDialogState  
+    ld   a, [wDialogState]
     ld   hl, $C14F ; wInventoryAppearing  
     or   [hl]
     ld   hl, $C134 ; wDialogCooldown
@@ -486,19 +486,19 @@ SignEntityHandler:
     and  $10 ; J_A
     ret  z
     
-    ldh  a, [$FF9E] ; hLinkDirection
+    ldh  a, [hLinkDirection]
     cp   $02
     ret  nz
     
-    ldh  a, [$FF98] ; hLinkPositionX 
-    ld   hl, $FFEE ; hActiveEntityPosX  
+    ldh  a, [hLinkPositionX] 
+    ld   hl, hActiveEntityPosX
     sub  [hl]
     add  a, $08
     cp   $10
     ret  nc
 
-    ldh  a, [$FF99] ; hLinkPositionY 
-    ld   hl, $FFEF ; hActiveEntityPosY  
+    ldh  a, [hLinkPositionY]
+    ld   hl, hActiveEntityPosY
     sub  [hl]
     sub  a, $08
     cp   $04
@@ -525,14 +525,14 @@ correctSign:
 endSign:
     ld   hl, $B020
     dec  [hl]
-    ld   hl, $C280 ; wEntitiesStatusTable
+    ld   hl, wEntitiesStatusTable
     add  hl, bc
     ld   [hl], b
 
     ld   a, $DE
-    call $3B86 ; SpawnNewEntity_trampoline  
+    call SpawnNewEntity_trampoline
     ret  c
-    ld   hl, $C290 ; wEntitiesStateTable
+    ld   hl, wEntitiesStateTable
     add  hl, de
     ld   a, $01
     ld   [hl], a
@@ -547,7 +547,7 @@ wrongSign:
     jr   z, firstSign
 
     ld   a, $1D   ; JINGLE_WRONG_ANSWER
-    ldh  [$FFF2], a ; hJingle
+    ldh  [hJingle], a ; hJingle
     ld   a, $AD
     call $2373 ; OpenDialogInTable1
     ret
@@ -571,7 +571,7 @@ wingSprites:
     db   $00, $FC, $22, $00, $00, $0C, $22, $20, $00, $FC, $22, $40, $00, $0C, $22, $60
 
 getSignData:
-    ld   hl, $C3E0 ; wEntitiesRoomTable
+    ld   hl, wEntitiesRoomTable
     add  hl, bc
     ld   l, [hl]
     ld   h, $78 ; sign data table at 7800, one byte per room.
@@ -579,7 +579,7 @@ getSignData:
     ret
 
 getSignNumber:
-    ld   hl, $C3E0 ; wEntitiesRoomTable
+    ld   hl, wEntitiesRoomTable
     add  hl, bc
     ld   l, [hl]
     ld   h, $79 ; sign number table at 7900, one byte per room.
