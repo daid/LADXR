@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -30,7 +30,7 @@ jobs:
         cd multiworld
         pyinstaller --clean -y client.py -n multiworldclient
     - name: Upload windows dist build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: multiworld-client-windows
         path: multiworld/dist/multiworldclient
