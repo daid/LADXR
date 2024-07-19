@@ -53,6 +53,7 @@ import patches.maze
 import patches.multiworld
 import patches.tradeSequence
 import patches.alttp
+import patches.colorBook
 import hints
 import locations.keyLocation
 
@@ -185,6 +186,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
+    patches.colorBook.fixColorBook(rom)
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
