@@ -267,14 +267,15 @@ def patchMermaid(rom):
 
 def patchMermaidStatue(rom):
     rom.patch(0x18, 0x095D, 0x0962, "", fill_nop=True)
-    rom.patch(0x18, 0x0966, 0x097A, ASM("""
+    rom.patch(0x18, 0x0966, 0x0971, ASM("""
         ld   a, [wTradeSequenceItem2]
         and  $10 ; scale
         ret  z
         ldh  a, [$FFF8]
-        and  $20
+        and  $20 ; ROOM_STATUS_EVENT_2
         ret  nz
     """), fill_nop=True)
+    rom.patch(0x18, 0x0971, 0x097A, ASM("ld hl, wTradeSequenceItem2\nres 4, [hl]"), fill_nop=True)  # Take the trade item
 
 
 def patchSharedCode(rom):
