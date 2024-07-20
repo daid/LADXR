@@ -52,6 +52,7 @@ D47C:wActivePowerUp
 D711:wRoomObjects
 DB43:wPowerBraceletLevel
 DB44:wShieldLevel
+DB48:wTarinFlag
 DB4A:wSelectedSongIndex
 DB4B:wHasToadstool
 DB4C:wMagicPowderCount
