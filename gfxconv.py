@@ -133,7 +133,7 @@ def convert_endscreen(input_filename, output_filename):
     open(output_filename, "wb").write(all_tile_data + all_attr_data + all_pal_data)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='Convert a png to a bin file')
     parser.add_argument('input_file', type=str)
     parser.add_argument('output_file', type=str)
@@ -144,3 +144,7 @@ if __name__ == "__main__":
     else:
         data = patches.aesthetics.imageTo2bpp(args.input_file, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF])
         open(args.output_file, "wb").write(data)
+
+
+if __name__ == "__main__":
+    main()
