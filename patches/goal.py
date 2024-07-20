@@ -14,7 +14,7 @@ def setRequiredInstrumentCount(rom, count):
 
     # TODO: Music bugs out at the end, unless you have all instruments.
     rom.patch(0x19, 0x0B79, None, "0000")  # always spawn all instruments, we need the last one as that handles opening the egg.
-    rom.patch(0x19, 0x0BF4, ASM("jp $3BC0"), ASM("jp $7FE0")) # instead of rendering the instrument, jump to the code below.
+    rom.patch(0x19, 0x0BF4, ASM("jp RenderActiveEntitySpritesPair"), ASM("jp $7FE0")) # instead of rendering the instrument, jump to the code below.
     rom.patch(0x19, 0x0BFE, ASM("""
         ; Normal check fo all instruments
         ld   e, $08
@@ -51,14 +51,14 @@ noinc:
     ; Entry point of render code
         ld   hl, $DB65  ; table of having instruments
         push bc
-        ldh  a, [$FFF1]
+        ldh  a, [hActiveEntitySpriteVariant]
         ld   c, a
         add  hl, bc
         pop  bc
         ld   a, [hl]
         and  $02        ; check if we have this instrument
         ret  z
-        jp   $3BC0 ; jump to render code
+        jp   RenderActiveEntitySpritesPair ; jump to render code
     """), fill_nop=True)
 
 
@@ -83,10 +83,10 @@ def setSeashellGoal(rom, count):
     re.store(rom)
 
     rom.patch(0x19, 0x0ACB, 0x0C21, ASM("""
-        ldh  a, [$FFF8] ; room status
+        ldh  a, [hRoomStatus]
         and  $10
         ret  nz
-        ldh  a, [$FFF0] ; active entity state
+        ldh  a, [hActiveEntityState]
         rst  0
         dw   state0, state1, state2, state3, state4
 
@@ -94,13 +94,13 @@ state0:
         ld   a, [$C124] ; room transition state
         and  a
         ret  nz
-        ldh  a, [$FF99]  ; link position Y
+        ldh  a, [hLinkPositionY]  ; link position Y
         cp   $70
         ret  nc
-        jp   $3B12  ; increase entity state
+        jp   IncrementEntityState
 
 state1:
-        call $0C05 ; get entity transition countdown
+        call GetEntityTransitionCountdown ; get entity transition countdown
         jr   nz, renderShells
         ld   [hl], $10
         call renderShells
@@ -109,7 +109,7 @@ state1:
         add  hl, bc
         ld   a, [wSeashellsCount]
         cp   [hl]
-        jp   z, $3B12  ; increase entity state
+        jp   z, IncrementEntityState
         ld   a, [hl]   ; increase the amount of compared shells
         inc  a
         daa
@@ -118,7 +118,7 @@ state1:
         add  hl, bc
         inc  [hl] ; increase amount of displayed shells
         ld   a, $2B
-        ldh  [$FFF4], a ; SFX
+        ldh  [hNoiseSfx], a ; SFX
         ret
 
 state2:
@@ -126,19 +126,19 @@ state2:
         cp   $%02d
         jr   c, renderShells
         ; got enough shells
-        call $3B12 ; increase entity state
-        call $0C05 ; get entity transition countdown
+        call IncrementEntityState
+        call GetEntityTransitionCountdown ; get entity transition countdown
         ld   [hl], $40
         jp   renderShells
 
 state3:
         ld   a, $23
-        ldh  [$FFF2], a ; SFX: Dungeon opened
+        ldh  [hJingle], a ; SFX: Dungeon opened
         ld   hl, $D806 ; egg room status
         set  4, [hl]
         ld   a, [hl]
-        ldh  [$FFF8], a ; current room status
-        call $3B12 ; increase entity state
+        ldh  [hRoomStatus], a
+        call IncrementEntityState
 
         ld   a, $00
         jp   $4C2E
@@ -158,7 +158,7 @@ renderShells:
         ret  z
         ld   c, a
         ld   hl, spriteRect
-        call $3CE6 ; RenderActiveEntitySpritesRect
+        call RenderActiveEntitySpritesRect
         ret
 
 spriteRect:
@@ -272,32 +272,32 @@ def setRaftGoal(rom):
         and a
         ret nz
         ; Check if we are moving off the bottom of the map
-        ldh a, [$FF99]
+        ldh a, [hLinkPositionY]
         cp  $7D
         ret c
         ; Move link back so it does not move off the map
         ld  a, $7D
-        ldh [$FF99], a
+        ldh [hLinkPositionY], a
         
         xor a
         ld  e, a
         ld  d, a
 
 raftSearchLoop:
-        ld  hl, $C280
+        ld  hl, wEntitiesStatusTable
         add hl, de
         ld  a, [hl]
         and a
         jr  z, .skipEntity
         
-        ld  hl, $C3A0
+        ld  hl, wEntitiesTypeTable
         add hl, de
         ld  a, [hl]
         cp  $6A
         jr  nz, .skipEntity
 
         ; Raft found, check if near the bottom of the screen.
-        ld  hl, $C210
+        ld  hl, wEntitiesPosYTable
         add hl, de
         ld  a, [hl]
         cp  $70

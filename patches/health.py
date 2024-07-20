@@ -14,7 +14,7 @@ def upgradeHealthContainers(rom):
 
     rom.patch(0x03, 0x19DC, ASM("""
         ld   de, $59D8
-        call $3BC0
+        call RenderActiveEntitySpritesPair
     """), ASM("""
         ld   a, $05  ; renderHeartPiece
         rst  8

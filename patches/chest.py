@@ -13,7 +13,7 @@ def fixChests(rom):
         push af
         ld   a, [$C501]
         ld   e, a
-        ld   hl, $C2F0
+        ld   hl, wEntitiesPrivateCountdown1Table
         add  hl, de
         ld   [hl], $38
         pop af

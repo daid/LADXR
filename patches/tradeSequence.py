@@ -23,7 +23,7 @@ def patchTradeSequence(rom, settings):
 def patchTrendy(rom):
     # Trendy game yoshi
     rom.patch(0x04, 0x3502, 0x350F, ASM("""
-        ldh  a, [$FFF8] ; room status
+        ldh  a, [hRoomStatus] ; room status
         and  a, $20
         jp   nz, $6D7A ; clear entity
         ; Render sprite
@@ -31,16 +31,16 @@ def patchTrendy(rom):
         rst  8
         ; Reset the sprite variant, else the code gets confused
         xor  a
-        ldh  [$FFF1], a ; sprite variant
+        ldh  [hActiveEntitySpriteVariant], a ; sprite variant
     """), fill_nop=True)
-    rom.patch(0x04, 0x2E80, ASM("ldh a, [$FFF8]"), ASM("ld a, $10"))  # Prevent marin cutscene from triggering, as that locks the game now.
+    rom.patch(0x04, 0x2E80, ASM("ldh a, [hRoomStatus]"), ASM("ld a, $10"))  # Prevent marin cutscene from triggering, as that locks the game now.
     rom.patch(0x04, 0x3622, 0x3627, "", fill_nop=True)  # Dont set the trade item
 
 
 def patchPapahlsWife(rom):
     # Rewrite how the first dialog is generated.
     rom.patch(0x18, 0x0E7A, 0x0EA8, ASM("""
-        ldh  a, [$FFF8] ; room status
+        ldh  a, [hRoomStatus] ; room status
         and  a, $20
         jr   nz, tradeDone
         
@@ -55,7 +55,7 @@ tradeDone:
         jp   $2373  ; OpenDialogInTable1
 requestTrade:
         ld   a, $2B ; Dialog about kids, after trade is done
-        call $3B12; IncrementEntityState 
+        call IncrementEntityState 
         jp   $2373  ; OpenDialogInTable1
     """), fill_nop=True)
     rom.patch(0x18, 0x0EB4, 0x0EBD, ASM("ld hl, wTradeSequenceItem\nres 0, [hl]"), fill_nop=True)  # Take the trade item
@@ -64,7 +64,7 @@ requestTrade:
 def patchYipYip(rom):
     # Change how the decision is made to draw yipyip with a ribbon
     rom.patch(0x06, 0x1A2C, 0x1A36, ASM("""
-        ldh  a, [$FFF8] ; room status
+        ldh  a, [hRoomStatus] ; room status
         and  $20
         jr   z, tradeNotDone
         nop ; align the code with another jump for the credits
@@ -90,7 +90,7 @@ def patchBananasSchule(rom):
     rom.patch(0x19, 0x2DF0, 0x2DF9, ASM("ld hl, wTradeSequenceItem\nres 2, [hl]"), fill_nop=True)  # Take the trade item
     # Don't render bananas, render whatever item we give
     rom.patch(0x19, 0x2EF1, 0x2EFD, ASM("""
-        ldh  a, [$FFF8]
+        ldh  a, [hRoomStatus]
         and  $20
         jr   nz, skip
         ld a, $0F
@@ -134,7 +134,7 @@ def patchTarin(rom):
         jr  z, $14 
     """))
     # Honeycomb, change rendering
-    rom.patch(0x07, 0x0CB6, ASM("ld de, $4C93\ncall $3BC0"), ASM("ld a, $0F\nrst 8"), fill_nop=True)
+    rom.patch(0x07, 0x0CB6, ASM("ld de, $4C93\ncall RenderActiveEntitySpritesPair"), ASM("ld a, $0F\nrst 8"), fill_nop=True)
 
     # Something about tarin changing messages or not showing up depending on the trade sequence
     rom.patch(0x05, 0x0BFF, 0x0C07, "", fill_nop=True)  # Just ignore the trade sequence
@@ -171,10 +171,10 @@ def patchBear(rom):
 
 
 def patchPapahl(rom):
-    rom.patch(0x07, 0x0A21, 0x0A30, ASM("call $7EA4"), fill_nop=True)  # Never show indoor papahl
+    rom.patch(0x07, 0x0A21, 0x0A30, ASM("call ClearEntityStatus_07"), fill_nop=True)  # Never show indoor papahl
     # Render the bag condition
     rom.patch(0x07, 0x0A81, 0x0A88, ASM("""
-        ldh a, [$FFF8] ; current room status
+        ldh a, [hRoomStatus] ; current room status
         and $20
         nop
         jr  nz, $18
@@ -196,7 +196,7 @@ def patchPapahl(rom):
 
 def patchGoatMrWrite(rom): # The goat and mrwrite are the same entity
     rom.patch(0x18, 0x0BF1, 0x0BF8, ASM("""
-        ldh  a, [$FFF8]
+        ldh  a, [hRoomStatus]
         and  $20
         nop
         jr   nz, $03
@@ -221,7 +221,7 @@ def patchGoatMrWrite(rom): # The goat and mrwrite are the same entity
 def patchGrandmaUlrira(rom):
     rom.patch(0x18, 0x0D2C, ASM("jr z, $02"), "", fill_nop=True)  # Always show up in animal village
     rom.patch(0x18, 0x0D3C, 0x0D51, ASM("""
-        ldh  a, [$FFF8]
+        ldh  a, [hRoomStatus]
         and  $20
         jp   nz, $4D58
     """), fill_nop=True)
@@ -271,7 +271,7 @@ def patchMermaidStatue(rom):
         ld   a, [wTradeSequenceItem2]
         and  $10 ; scale
         ret  z
-        ldh  a, [$FFF8]
+        ldh  a, [hRoomStatus]
         and  $20
         ret  nz
     """), fill_nop=True)
@@ -280,13 +280,13 @@ def patchMermaidStatue(rom):
 def patchSharedCode(rom):
     # Trade item render code override.
     rom.patch(0x07, 0x1535, 0x1575, ASM("""
-        ldh  a, [$FFF9] 
+        ldh  a, [hIsSideScrolling] 
         and  a
         jr   z, notSideScroll
         
-        ldh  a, [$FFEC]; hActiveEntityVisualPosY
+        ldh  a, [hActiveEntityVisualPosY]
         add  a, $02
-        ldh  [$FFEC], a 
+        ldh  [hActiveEntityVisualPosY], a 
 notSideScroll:
         ; Render sprite
         ld   a, $0F
@@ -302,7 +302,7 @@ notSideScroll:
         call $7F7F
         xor  a ; we need to exit with A=00    
     """), fill_nop=True)
-    rom.patch(0x07, 0x3F7F, "00" * 7, ASM("ldh a, [$FFF8]\nor $20\nldh [$FFF8], a\nret"))
+    rom.patch(0x07, 0x3F7F, "00" * 7, ASM("ldh a, [hRoomStatus]\nor $20\nldh [hRoomStatus], a\nret"))
 
 
 def patchVarious(rom, settings):
@@ -310,12 +310,12 @@ def patchVarious(rom, settings):
     rom.patch(0x18, 0x09F3, 0x0A02, ASM("""
         ld   a, [wTradeSequenceItem2]
         and  $20 ; MAGNIFYING_GLASS
-        jp   z, $7F08 ; ClearEntityStatusBank18 
+        jp   z, ClearEntityStatus_18
     """), fill_nop=True)
     rom.patch(0x03, 0x0B6D, 0x0B75, ASM("""
         ld   a, [wTradeSequenceItem2]
         and  $20 ; MAGNIFYING_GLASS
-        jp   z, $3F8D ; UnloadEntity 
+        jp   z, UnloadEntity 
     """), fill_nop=True)
     # Mimic invisibility
     rom.patch(0x19, 0x2AC0, ASM("""
@@ -363,7 +363,7 @@ mermaidStatueCave:
     rom.patch(0x18, 0x219E, 0x21A6, "", fill_nop=True)
     # Shift the magnifier 8 pixels
     rom.patch(0x03, 0x0F68, 0x0F6F, ASM("""
-        ldh a, [$FFF6] ; map room
+        ldh a, [hMapRoom] ; map room
         cp  $97 ; check if we are in the magnifier room
         jp  z, $4F83
     """), fill_nop=True)
@@ -389,12 +389,12 @@ def unrequiredTradeSequence(rom):
     rom.patch(0x18, 0x09F3, ASM("""
         ld   a, [$DB40]
         cp   $0E
-        jp   nz, $7F08 ; ClearEntityStatusBank18 
+        jp   nz, ClearEntityStatus_18
     """), "", fill_nop=True)
     rom.patch(0x03, 0x0B6D, ASM("""
         ld   a, [$DB40]
         cp   $0E
-        jp   nz, $3F8D ; UnloadEntity 
+        jp   nz, UnloadEntity 
     """), "", fill_nop=True)
     # Always have the boomerang trade guy enabled (magnifier not needed)
     rom.patch(0x19, 0x05EC, ASM("ld a, [wTradeSequenceItem]\ncp $0E"), ASM("ld a, $0E\ncp $0E"), fill_nop=True)  # show the guy

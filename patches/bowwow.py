@@ -4,10 +4,10 @@ from roomEditor import RoomEditor
 
 def fixBowwow(rom):
     ### BowWow patches
-    rom.patch(0x03, 0x1E0E, ASM("ld [$DB56], a"), "", fill_nop=True)  # Do not mark BowWow as kidnapped after we complete dungeon 1.
-    rom.patch(0x15, 0x06B6, ASM("ld a, [$DB56]\ncp $80"), ASM("xor a"), fill_nop=True)  # always load the moblin boss
-    rom.patch(0x03, 0x182D, ASM("ld a, [$DB56]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblins if the chest is not opened
-    rom.patch(0x07, 0x3947, ASM("ld a, [$DB56]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblin with sword if the chest is not opened
+    rom.patch(0x03, 0x1E0E, ASM("ld [wIsBowWowFollowingLink], a"), "", fill_nop=True)  # Do not mark BowWow as kidnapped after we complete dungeon 1.
+    rom.patch(0x15, 0x06B6, ASM("ld a, [wIsBowWowFollowingLink]\ncp $80"), ASM("xor a"), fill_nop=True)  # always load the moblin boss
+    rom.patch(0x03, 0x182D, ASM("ld a, [wIsBowWowFollowingLink]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblins if the chest is not opened
+    rom.patch(0x07, 0x3947, ASM("ld a, [wIsBowWowFollowingLink]\ncp $80"), ASM("ld a, [$DAE2]\nand $10"))  # load the cave moblin with sword if the chest is not opened
 
     # Modify the moblin cave to contain a chest at the end, which contains bowwow
     re = RoomEditor(rom, 0x2E2)
@@ -38,7 +38,7 @@ def fixBowwow(rom):
         ASM("ld a, $4E\njr nz, $02\nld a, $7E\nld [de], a\ninc de\nld a, $00"),
         ASM("ld a, $5E\nld [de], a\ninc de\nld a, $08"), fill_nop=True)
     # Never load the bowwow tiles in the first VRAM bank, as we do not need them.
-    rom.patch(0x00, 0x2EB0, ASM("ld a, [$DB56]\ncp $01\nld a, $A4\njr z, $18"), "", fill_nop=True)
+    rom.patch(0x00, 0x2EB0, ASM("ld a, [wIsBowWowFollowingLink]\ncp $01\nld a, $A4\njr z, $18"), "", fill_nop=True)
 
     # Patch the location where bowwow stores chain X/Y positions so it does not conflict with a lot of other things
     rom.patch(0x05, 0x00BE, ASM("ld hl, $D100"), ASM("ld hl, wBowwowChain"))
@@ -78,7 +78,7 @@ def fixBowwow(rom):
     rom.patch(0x05, 0x0049, 0x0054, ASM("""
         cp   [hl]
         jr   z, Continue
-        ld   hl, $C280
+        ld   hl, wEntitiesStatusTable
         add  hl, bc
         ld   [hl], b
         ret
@@ -89,13 +89,13 @@ Continue:
     rom.patch(0x06, 0x1BD7, ASM("ld a, [$DB66]\nand $02"), ASM("ld a, $00\nand $02"), fill_nop=True)
 
     # Patch kiki not to react to bowwow, as bowwow is not with link at this map
-    rom.patch(0x07, 0x18A8, ASM("ld a, [$DB56]\ncp $01"), ASM("ld a, $00\ncp $01"), fill_nop=True)
+    rom.patch(0x07, 0x18A8, ASM("ld a, [wIsBowWowFollowingLink]\ncp $01"), ASM("ld a, $00\ncp $01"), fill_nop=True)
 
     # Patch the color dungeon entrance not to check for bowwow
-    rom.patch(0x02, 0x340D, ASM("ld hl, $DB56\nor [hl]"), "", fill_nop=True)
+    rom.patch(0x02, 0x340D, ASM("ld hl, wIsBowWowFollowingLink\nor [hl]"), "", fill_nop=True)
 
     # Patch richard to ignore bowwow
-    rom.patch(0x06, 0x006C, ASM("ld a, [$DB56]"), ASM("xor a"), fill_nop=True)
+    rom.patch(0x06, 0x006C, ASM("ld a, [wIsBowWowFollowingLink]"), ASM("xor a"), fill_nop=True)
 
     # Patch to modify how bowwow eats enemies, normally it just unloads them, but we call our handler in bank 3E
     rom.patch(0x05, 0x03A0, 0x03A8, ASM("""
@@ -107,7 +107,7 @@ Continue:
         pop  bc
         ret
     """), fill_nop=True)
-    rom.patch(0x05, 0x0387, ASM("ld a, $03\nldh [$FFF2], a"), "", fill_nop=True)  # remove the default chomp sfx
+    rom.patch(0x05, 0x0387, ASM("ld a, $03\nldh [hJingle], a"), "", fill_nop=True)  # remove the default chomp sfx
 
     # Various enemies
     rom.banks[0x14][0x1218 + 0xC5] = 0x01  # Urchin
@@ -129,7 +129,7 @@ Continue:
     rom.banks[0x14][0x1218 + 0x90] = 0x01  # Three of a kind (screw these guys)
     rom.banks[0x14][0x1218 + 0x18] = 0x01  # Pols voice
     rom.banks[0x14][0x1218 + 0x50] = 0x01  # Boo buddy
-    rom.banks[0x14][0x1218 + 0xA2] = 0x01  # Pirana plant
+    rom.banks[0x14][0x1218 + 0xA2] = 0x01  # Piranha plant
     rom.banks[0x14][0x1218 + 0x52] = 0x01  # Tractor device
     rom.banks[0x14][0x1218 + 0x53] = 0x01  # Tractor device (D3)
     rom.banks[0x14][0x1218 + 0x55] = 0x01  # Bounding bombite

@@ -22,7 +22,7 @@ def fixGoldenLeaf(rom):
     """))
 
     # Patch all over the place to move the golden leafs to a different memory location.
-    # We use $DB6D (dungeon 9 status), but we could also use $DB7A (which is only used by the ghost)
+    # We use $DB6D (dungeon 9 status), but we could also use $DB7A (wGhostSeeksGrave, which is only used by the ghost)
     rom.patch(0x00, 0x2D17, ASM("ld a, [$DB15]"), ASM("ld a, $06"), fill_nop=True)  # Always load the slime tiles
     rom.patch(0x02, 0x3005, ASM("cp $06"), ASM("cp $01"), fill_nop=True)  # Instead of checking for 6 leaves a the keyhole, just check for the key
     rom.patch(0x20, 0x1AD1, ASM("ld a, [$DB15]"), ASM("ld a, [wGoldenLeaves]"))  # For the status screen, load the number of leafs from the proper memory
