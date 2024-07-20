@@ -57,6 +57,7 @@ DB4C:wMagicPowderCount
 DB56:wIsBowWowFollowingLink
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
+DB7D:wBoomerangTradedItem
 DBA5:wIsIndoor
 DE01:wFarcallBank
 DE02:wFarcallAdressHigh
