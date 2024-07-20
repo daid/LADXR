@@ -42,7 +42,7 @@ def upgradeMarin(rom):
         ld   hl, $DB49
         set  2, [hl]
         xor  a
-        ld   [$DB4A], a
+        ld   [wSelectedSongIndex], a
     """), ASM("""
         ; Mark Marin as done.
         ld   a, [$D892]
@@ -51,11 +51,11 @@ def upgradeMarin(rom):
     """), fill_nop=True)
 
 
-    # Show the right item instead of the ocerina
+    # Show the right item instead of the ocarina
     rom.patch(0x05, 0x11B3, ASM("""
         ld   de, $515F
         xor  a
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -73,7 +73,7 @@ def upgradeMarin(rom):
     """), fill_nop=True)
 
     # Load marin singing even if you have the marin date
-    rom.patch(0x03, 0x0A91, ASM("jp nz, $3F8D"), "", fill_nop=True)
+    rom.patch(0x03, 0x0A91, ASM("jp nz, UnloadEntity"), "", fill_nop=True)
     rom.patch(0x05, 0x0E6E, ASM("jp nz, $7B4B"), "", fill_nop=True)
 
 
@@ -87,11 +87,11 @@ def upgradeManbo(rom):
         and  $20
     """), fill_nop=True)
 
-    # Show the right item instead of the ocerina
+    # Show the right item instead of the ocarina
     rom.patch(0x18, 0x0786, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         jp   $3C77
     """), ASM("""
         ld   a, $0C
@@ -102,7 +102,7 @@ def upgradeManbo(rom):
     # Patch to replace song giving to give the right item
     rom.patch(0x18, 0x0757, ASM("""
         ld   a, $01
-        ld   [$DB4A], a
+        ld   [wSelectedSongIndex], a
         ld   hl, $DB49
         set  1, [hl]
     """), ASM("""
@@ -129,11 +129,11 @@ def upgradeMamu(rom):
         and  $10
     """), fill_nop=True)
 
-    # Show the right item instead of the ocerina
+    # Show the right item instead of the ocarina
     rom.patch(0x18, 0x0299, ASM("""
         ld   de, $474D
         xor  a
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         call $3C77
     """), ASM("""
         ld   a, $0C
@@ -143,7 +143,7 @@ def upgradeMamu(rom):
     # Patch given an item
     rom.patch(0x18, 0x0270, ASM("""
         ld   a, $02
-        ld   [$DB4A], a
+        ld   [wSelectedSongIndex], a
         ld   hl, $DB49
         set  0, [hl]
     """), ASM("""

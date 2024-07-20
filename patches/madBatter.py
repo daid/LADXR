@@ -14,14 +14,14 @@ def upgradeMadBatter(rom):
     rom.patch(0x18, 0x101E, 0x1051, ASM("""
         ; Mad batter rooms are E0,E1 and E2, load the item type from a table in the rom
         ; which only has 3 entries, and store it where bank 3E wants it.
-        ldh a, [$FFF6] ; current room
+        ldh a, [hMapRoom] ; current room
         and $0F
         ld  d, $00
         ld  e, a
         ld  hl, $4F90
         add hl, de
         ld  a, [hl]
-        ldh [$FFF1], a
+        ldh [hActiveEntitySpriteVariant], a
     
         ; Give item
         ld  a, $06 ; giveItemMultiworld
@@ -30,11 +30,11 @@ def upgradeMadBatter(rom):
         ld  a, $0A ; showMessageMultiworld
         rst 8
         ; Force the dialog at the bottom
-        ld  a, [$C19F]
+        ld  a, [wDialogState]
         and a
         ret z ; no dialog, skip
         or  $80
-        ld  [$C19F], a
+        ld  [wDialogState], a
     """), fill_nop=True)
     # Setup the default items
     rom.patch(0x18, 0x0F90, "406060", "848586")

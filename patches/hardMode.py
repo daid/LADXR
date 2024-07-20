@@ -7,7 +7,7 @@ def oracleMode(rom):
 
     # Make bomb explosions damage you.
     rom.patch(0x03, 0x2618, ASM("""
-        ld   hl, $C440
+        ld   hl, wEntitiesPrivateState4Table
         add  hl, bc
         ld   a, [hl]
         and  a

@@ -12,7 +12,7 @@ def selectToSwitchSongs(rom):
 def songSelectAfterOcarinaSelect(rom):
     rom.patch(0x20, 0x2002, ASM("ld [$DB00], a"), ASM("call $5F96"))
     rom.patch(0x20, 0x1FE0, ASM("ld [$DB01], a"), ASM("call $5F9B"))
-    # Remove the code that opens the ocerina on cursor movement, but use it to insert code
+    # Remove the code that opens the ocarina on cursor movement, but use it to insert code
     # for opening the menu on item select
     rom.patch(0x20, 0x1F93, 0x1FB2, ASM("""
         jp $5FB2
@@ -60,7 +60,7 @@ def songSelectAfterOcarinaSelect(rom):
         ld  a, [$C1B5]
         and a
         ret nz
-        ldh a, [$FFE7] ; frame counter
+        ldh a, [hFrameCounter]
         and $10
         ret nz 
     """), fill_nop=True)
@@ -254,9 +254,9 @@ RoosterUse:
     ret
 HammerUse:
     ld   a, $B7
-    call $3B86 ; SpawnNewEntity_trampoline
+    call SpawnNewEntity_trampoline
     ;ret  c
-    ld   hl, $C290 ; wEntitiesStateTable
+    ld   hl, wEntitiesStateTable
     add  hl, de
     inc  [hl] 
     ret
@@ -275,7 +275,7 @@ HammerUse:
         ld   d, $0C
         call $6472
         ld   a, $01
-        ld   [$DB4B], a
+        ld   [wHasToadstool], a
     """), ASM("""
         ld   d, $0E
         call $6472
@@ -285,7 +285,7 @@ HammerUse:
     rom.patch(0x01, 0x0673, "01010100", "0D0E0F10")
 
     # Patch the witch to use the new toadstool instead of the old flag
-    rom.patch(0x05, 0x081A, ASM("ld a, [$DB4B]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x05, 0x081A, ASM("ld a, [wHasToadstool]"), ASM("ld a, $01"), fill_nop=True)
     rom.patch(0x05, 0x082A, ASM("cp $0C"), ASM("cp $0E"))
     rom.patch(0x05, 0x083E, ASM("cp $0C"), ASM("cp $0E"))
 
@@ -338,10 +338,10 @@ def advancedInventorySubscreen(rom):
     rom.patch(0x20, 0x19DE, ASM("ldh a, [$FFFE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
 
     rom.patch(0x20, 0x3F00, "00" * 0x100, ASM("""
-        ld   a, [$DBA5] ; isIndoor
+        ld   a, [wIsIndoor]
         and  a
         jr   z, RenderKeysCounts
-        ldh  a, [$FFF7]   ; mapNr
+        ldh  a, [hMapId]   ; mapNr
         cp   $FF
         jr   z, RenderDungeonFix
         cp   $06
