@@ -34,7 +34,7 @@ def patchTrendy(rom):
         ldh  [hActiveEntitySpriteVariant], a ; sprite variant
     """), fill_nop=True)
     rom.patch(0x04, 0x2E80, ASM("ldh a, [hRoomStatus]"), ASM("ld a, $10"))  # Prevent marin cutscene from triggering, as that locks the game now.
-    rom.patch(0x04, 0x3622, 0x3627, "", fill_nop=True)  # Dont set the trade item
+    rom.patch(0x04, 0x3622, 0x3627, "", fill_nop=True)  # Don't set the trade item
 
 
 def patchPapahlsWife(rom):
@@ -272,8 +272,11 @@ def patchMermaidStatue(rom):
         and  $10 ; scale
         ret  z
         ldh  a, [hRoomStatus]
-        and  $20
+        and  $20 ; ROOM_STATUS_EVENT_2
         ret  nz
+                                        
+        ld hl, wTradeSequenceItem2
+        res 4, [hl] ; take the trade item
     """), fill_nop=True)
 
 
