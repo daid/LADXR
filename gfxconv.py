@@ -133,12 +133,12 @@ def convert_endscreen(input_filename, output_filename):
     open(output_filename, "wb").write(all_tile_data + all_attr_data + all_pal_data)
 
 
-def main():
+def main(mainargs=None):
     parser = argparse.ArgumentParser(description='Convert a png to a bin file')
     parser.add_argument('input_file', type=str)
     parser.add_argument('output_file', type=str)
     parser.add_argument('--endscreen', dest="endscreen", action="store_true", help="Convert image to cats.bin")
-    args = parser.parse_args()
+    args = parser.parse_args(mainargs)
     if args.endscreen:
         convert_endscreen(args.input_file, args.output_file)
     else:
