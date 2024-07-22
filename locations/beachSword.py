@@ -21,8 +21,8 @@ class BeachSword(DroppedKey):
         re.store(rom)
 
         # Prevent shield drops from the like-like from turning into swords.
-        rom.patch(0x03, 0x1B9C, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-        rom.patch(0x03, 0x244D, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
+        rom.patch(0x03, 0x1B9C, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+        rom.patch(0x03, 0x244D, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
 
     def read(self, rom: ROM) -> str:
         re = RoomEditor(rom, 0x0F2)

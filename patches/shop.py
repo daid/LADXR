@@ -52,7 +52,7 @@ checkForSecondKeyItem:
 checkForShield:
         inc  de
         ; Check if we have the shield or the bow to see if we need to remove certain entries from the shop
-        ld   a, [$DB44]
+        ld   a, [wShieldLevel]
         and  a
         jr   z, hasNoShieldLevel
         ld   a, $03

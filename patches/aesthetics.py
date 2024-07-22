@@ -168,10 +168,10 @@ def createGfxImage(rom, filename):
 def noSwordMusic(rom):
     # Skip no-sword music override
     # Instead of loading the sword level, we put the value 1 in the A register, indicating we have a sword.
-    rom.patch(2, 0x0151, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(2, 0x3AEF, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(3, 0x0996, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(3, 0x0B35, ASM("ld a, [$DB44]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(2, 0x0151, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(2, 0x3AEF, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(3, 0x0996, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(3, 0x0B35, ASM("ld a, [wShieldLevel]"), ASM("ld a, $01"), fill_nop=True)
 
 
 def removeNagMessages(rom):
