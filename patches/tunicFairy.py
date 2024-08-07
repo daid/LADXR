@@ -8,7 +8,7 @@ def upgradeTunicFairy(rom):
     rom.texts[0x0CD] = formatText("Got the {BLUE_TUNIC}! You can change Tunics at the phone booths.")
 
     rom.patch(0x36, 0x111C, 0x1133, ASM("""
-        call $3B12
+        call IncrementEntityState
         ld  a, [$DDE1]
         and $10
         jr  z, giveItems
@@ -22,7 +22,7 @@ giveItems:
     """), fill_nop=True)
     rom.patch(0x36, 0x1139, 0x1144, ASM("""
         ld  a, [$51BF]
-        ldh [$FFF1], a
+        ldh [hActiveEntitySpriteVariant], a
         ld  a, $02
         rst 8
         ld  a, $03
@@ -31,19 +31,19 @@ giveItems:
 
     rom.patch(0x36, 0x1162, 0x1192, ASM("""
         ld  a, [$51C0]
-        ldh [$FFF1], a
+        ldh [hActiveEntitySpriteVariant], a
         ld  a, $02
         rst 8
         ld  a, $03
         rst 8
-        call $3B12
+        call IncrementEntityState
         ret
     """), fill_nop=True)
 
     rom.patch(0x36, 0x119D, 0x11A2, "", fill_nop=True)
     rom.patch(0x36, 0x11B5, 0x11BE, ASM("""
         ; Skip to the end ignoring all the tunic giving animation.
-        call $3B12
+        call IncrementEntityState
         ld   [hl], $09
     """), fill_nop=True)
 

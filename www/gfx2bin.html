@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<input type="checkbox" id="generatingdialog" class="modal">
+<div>
+    <div class="card">
+        <h3 class="section"><span class="spinner" style="margin: 0 10 0 0"></span>Randomizing...</h3>
+        <p class="section" id="generatingtext">Working magic...</p>
+    </div>
+</div>
+
+<div class="container" id="settings">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Input image">
+            <input type="file" id="image" name="image" style="display:none" accept=".png"/>
+            <label style="width:100%; box-sizing: border-box; text-align: center" for="image" class="button" id="imagelabel">Select input image</label>
+        </div>
+        <div class="col-sm-12 col-md-6 tooltip bottom" aria-label="Let's go!">
+            <input style="width:100%" id="submitbutton" type="submit" value="png2bin!" disabled/>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.js"></script>
+<script>"use strict";
+function ID(s) { return document.getElementById(s); }
+ID("image").onchange = function() {
+    ID("submitbutton").disabled = false;
+}
+var pyodide;
+var pyladxr;
+ID("submitbutton").onclick = async function() {
+    if (!pyladxr) {
+        pyodide = await loadPyodide();
+        console.log("Loading ladxr.tar.gz");
+        await pyodide.loadPackage("pillow")
+        await pyodide.unpackArchive(await(await fetch("js/ladxr.tar.gz")).arrayBuffer(), "gztar");
+        pyladxr = pyodide.pyimport("gfxconv");
+    }
+    var buffer = await ID("image").files[0].arrayBuffer();
+    pyodide.FS.writeFile("/input.png", new Uint8Array(buffer));
+    pyladxr.main(["/input.png", "/output.bin"]);
+    var output = pyodide.FS.readFile("/output.bin");
+    var blob = new Blob([output], {type: "application/octet-stream"});
+    var element = document.createElement('a');
+    element.href = window.URL.createObjectURL(blob);
+    element.download = "output.bin";
+    element.click();
+}
+
+</script>
+</body>
+</html>

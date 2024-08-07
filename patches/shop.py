@@ -37,7 +37,7 @@ skipSubRoutine:
         ld   de, $C505
         
         ; Check if we want to load a key item into the shop.
-        ldh  a, [$FFF8]
+        ldh  a, [hRoomStatus]
         bit  4, a
         jr   nz, checkForSecondKeyItem
         ld   a, $01
@@ -52,7 +52,7 @@ checkForSecondKeyItem:
 checkForShield:
         inc  de
         ; Check if we have the shield or the bow to see if we need to remove certain entries from the shop
-        ld   a, [$DB44]
+        ld   a, [wShieldLevel]
         and  a
         jr   z, hasNoShieldLevel
         ld   a, $03
@@ -76,7 +76,7 @@ hasNoBow:
 hasNoBombs:
 
         pop  bc
-        call $3B12 ; increase entity state
+        call IncrementEntityState
     """, 0x7839), fill_nop=True)
 
     # We do not have enough room at the shovel/bow buy entry to handle this
@@ -85,7 +85,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3AC0, 0x3AD8, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C5]
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         ld   a, $02
         rst  8
         ; Update the room status to mark first item as bought
@@ -99,7 +99,7 @@ hasNoBombs:
     rom.patch(0x04, 0x3A91, 0x3AA9, ASM("""
         ; Call our chest item giving code.
         ld   a, [$77C6]
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         ld   a, $02
         rst  8
         ; Update the room status to mark second item as bought
@@ -123,7 +123,7 @@ hasNoBombs:
         and  a
         jr   nz, notShovel
         ld   a, [$77C5]
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         ld   a, $01
         rst  8
         ret
@@ -131,7 +131,7 @@ notShovel:
         cp   $04
         jr   nz, notBow
         ld   a, [$77C6]
-        ldh  [$FFF1], a
+        ldh  [hActiveEntitySpriteVariant], a
         ld   a, $01
         rst  8
         ret
@@ -140,7 +140,7 @@ notBow:
         jr   nz, notArrows
         ; Load arrow graphics and render then as a dual sprite
         ld   de, $7B58
-        call $3BC0
+        call RenderActiveEntitySpritesPair
         ret
 notArrows:
         ; Load the normal graphics

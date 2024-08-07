@@ -11,7 +11,10 @@ from locations.seashell import Seashell
 from locations.shop import ShopItem
 from locations.droppedKey import DroppedKey
 from locations.witch import Witch
+from locations.keyLocation import KeyLocation
 from locations.items import *
+from logic.requirements import *
+from logic.location import Location
 from logic.dungeon1 import Dungeon1
 from logic.dungeon2 import Dungeon2
 from logic.dungeon3 import Dungeon3

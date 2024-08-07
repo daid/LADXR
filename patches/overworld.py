@@ -68,7 +68,7 @@ def createDungeonOnlyOverworld(rom):
                 other.store(rom)
 
                 if obj.room == 0x1F5:
-                    # Patch the boomang guy exit
+                    # Patch the boomerang guy exit
                     other = RoomEditor(rom, "Alt1F5")
                     other.getWarps()[0].room = n
                     other.getWarps()[0].target_x = e.x * 16 + 8

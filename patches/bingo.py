@@ -269,7 +269,7 @@ def KillGoal(description, entity_id, tile_info, extra_check=None, extra_value=0,
         """ % (entity_id)
     elif extra_check == "Direction":
         kill_code += """
-            ld  hl, $C380
+            ld  hl, wEntitiesDirectionTable
             add hl, bc
             ld  a, [hl]
             cp  $%02x
@@ -325,10 +325,10 @@ def FishDaPondGoal(description, tile_info, group=None):
 def ClearTrendyGameGoal(description, tile_info, group=None):
     check_code, set_code = getUnusedBitFlag()
     return Goal(description, check_code, tile_info, group=group, extra_patches=[
-        (0x04, 0x33AB, ASM("ld hl, $C440"), ASM("jp $7B96")),
+        (0x04, 0x33AB, ASM("ld hl, wEntitiesPrivateState4Table"), ASM("jp $7B96")),
         # running low on space in bank 4, now using some NOP's from the shop patches
         (0x04, 0x3B96, "00" * 22, ASM("""
-            ld  hl, $C440
+            ld  hl, wEntitiesPrivateState4Table
             inc [hl]
         ; check if we just picked up the last remaining item
             ld  a, [hl]
@@ -355,9 +355,9 @@ def ClearTrendyGameGoal(description, tile_info, group=None):
 def WalrusWaterGoal(description, tile_info, group=None):
     check_code, set_code = getUnusedBitFlag()
     return Goal(description, check_code, tile_info, group=group, extra_patches=[
-        (0x18, 0x190D, ASM("call $0C05"), ASM("call $7FDE")),
+        (0x18, 0x190D, ASM("call GetEntityTransitionCountdown"), ASM("call $7FDE")),
         (0x18, 0x3FE9, "00" * 9, ASM("""
-            call $0C05
+            call GetEntityTransitionCountdown
             %s
             ret
         """ % (set_code)))
@@ -367,9 +367,9 @@ def WalrusWaterGoal(description, tile_info, group=None):
 def VacuumMouthGoal(description, tile_info, group=None):
     check_code, set_code = getUnusedBitFlag()
     return Goal(description, check_code, tile_info, group=group, extra_patches=[
-        (0x04, 0x28D1, ASM("ldh [$FFF3], a \n ret"), ASM("jp $7A76")),
+        (0x04, 0x28D1, ASM("ldh [hWaveSfx], a \n ret"), ASM("jp $7A76")),
         (0x04, 0x3A76, "00" * 8, ASM("""
-            ldh [$FFF3], a
+            ldh [hWaveSfx], a
             %s
             ret
         """ % (set_code)))
@@ -391,7 +391,7 @@ BINGO_GOALS = [
     InventoryGoal(PEGASUS_BOOTS),
     InventoryGoal(FEATHER),
     InventoryGoal(POWER_BRACELET),
-    Goal("Find the L2 {POWER_BRACELET}", checkMemoryEqualCode("$DB43", "2"), TileInfo(0x82, 0x83, 0x06, 0xB2)),
+    Goal("Find the L2 {POWER_BRACELET}", checkMemoryEqualCode("wPowerBraceletLevel", "2"), TileInfo(0x82, 0x83, 0x06, 0xB2)),
     InventoryGoal(FLIPPERS, memory_location="wHasFlippers"),
     InventoryGoal(OCARINA),
     InventoryGoal(MEDICINE, memory_location="wHasMedicine", msg="Have the {MEDICINE}"),
@@ -399,11 +399,11 @@ BINGO_GOALS = [
     InventoryGoal(SHOVEL),
     # InventoryGoal(MAGIC_POWDER),
     InventoryGoal(TOADSTOOL, msg="Have the {TOADSTOOL}", group="witch"),
-    Goal("Find the L2 {SHIELD}", checkMemoryEqualCode("$DB44", "2"), TileInfo(0x86, 0x87, 0x06, 0xB2)),
+    Goal("Find the L2 {SHIELD}", checkMemoryEqualCode("wShieldLevel", "2"), TileInfo(0x86, 0x87, 0x06, 0xB2)),
     Goal("Find 5 Secret Seashells", checkForSeashellsCode(0x05), ITEM_TILES[SEASHELL], group="seashells"),
     Goal("Find 10 Secret Seashells", checkForSeashellsCode(0x10), ITEM_TILES[SEASHELL], group="seashells"),
     Goal("Find 15 Secret Seashells", checkForSeashellsCode(0x15), ITEM_TILES[SEASHELL], group="seashells"),
-    Goal("Find the L2 {SWORD}", checkMemoryEqualCode("$DB4E", "2"), TileInfo(0x84, 0x85, 0x06, 0xB2)),
+    Goal("Find the L2 {SWORD}", checkMemoryEqualCode("wSwordLevel", "2"), TileInfo(0x84, 0x85, 0x06, 0xB2)),
     Goal("Find the {TAIL_KEY}", checkMemoryNotZero("$DB11"), TileInfo(0xC0, shift4=True)),
     Goal("Find the {SLIME_KEY}", checkMemoryNotZero("$DB15"), TileInfo(0x28E, shift4=True)),
     Goal("Find the {ANGLER_KEY}", checkMemoryNotZero("$DB12"), TileInfo(0xC2, shift4=True)),
@@ -645,7 +645,7 @@ def setBingoGoal(rom, goals, mode):
     # Patch the face shrine mural handler stage 4, we want to jump to bank 0x0D, which normally contains
     # DMG graphics, but gives us a lot of room for our own code and graphics.
     rom.patch(0x01, 0x2B81, 0x2B99, ASM("""
-        ldh  a, [$FFF7]
+        ldh  a, [hMapId]
         cp   $16
         jr   nz, notFaceShrineMural
         ld   hl, $DA6F
@@ -862,20 +862,20 @@ chooseSquare:
     call $2385 ; open dialog 
     ld   a, [wCursorY]
     cp   $03
-    ld   a, [$C19F]
+    ld   a, [wDialogState]
     jr   nc, .top
     or   $80
     jr  .bottom
 .top:
     and  $7F
 .bottom:
-    ld   [$C19F], a ; dialog position depends on the selected row
+    ld   [wDialogState], a ; dialog position depends on the selected row
     ld   a, $03
     ld   [wState], a
     ret
 
 waitDialogDone:
-    ld   a, [$C19F] ; dialog state
+    ld   a, [wDialogState]
     and  a
     ret  nz
     ld   a, $02 ; choose square
@@ -888,7 +888,7 @@ exitMural:
     ret
 
 finishGame:
-    ld   a, [$C19F] ; dialog state
+    ld   a, [wDialogState]
     and  a
     ret  nz
     

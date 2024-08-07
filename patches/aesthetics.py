@@ -168,10 +168,10 @@ def createGfxImage(rom, filename):
 def noSwordMusic(rom):
     # Skip no-sword music override
     # Instead of loading the sword level, we put the value 1 in the A register, indicating we have a sword.
-    rom.patch(2, 0x0151, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(2, 0x3AEF, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(3, 0x0996, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
-    rom.patch(3, 0x0B35, ASM("ld a, [$DB44]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(2, 0x0151, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(2, 0x3AEF, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(3, 0x0996, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(3, 0x0B35, ASM("ld a, [wShieldLevel]"), ASM("ld a, $01"), fill_nop=True)
 
 
 def removeNagMessages(rom):
@@ -183,7 +183,7 @@ def removeNagMessages(rom):
 
 
 def removeLowHPBeep(rom):
-    rom.patch(2,  0x233A, ASM("ld hl, $FFF3\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
+    rom.patch(2,  0x233A, ASM("ld hl, hWaveSfx\nld [hl], $04"), b"", fill_nop=True) # Remove health beep
 
 
 def slowLowHPBeep(rom):
@@ -192,7 +192,7 @@ def slowLowHPBeep(rom):
 
 def removeFlashingLights(rom):
     # Remove the switching between two backgrounds at mamu, always show the spotlights.
-    rom.patch(0x00, 0x01EB, ASM("ldh a, [$FFE7]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
+    rom.patch(0x00, 0x01EB, ASM("ldh a, [hFrameCounter]\nrrca\nand $80"), ASM("ld a, $80"), fill_nop=True)
     # Remove flashing colors from shopkeeper killing you after stealing and the mad batter giving items.
     rom.patch(0x24, 0x3B77, ASM("push bc"), ASM("ret"))
 
@@ -325,7 +325,7 @@ def allowColorDungeonSpritesEverywhere(rom):
     # Patch the spriteset loading code to load the 4 entries from the normal table instead of skipping this for color dungeon specific exception weirdness
     rom.patch(0x00, 0x0DA4, ASM("jr nc, $05"), ASM("jr nc, $41"))
     rom.patch(0x00, 0x0DE5, ASM("""
-        ldh  a, [$FFF7]
+        ldh  a, [hMapId]
         cp   $FF
         jr   nz, $06
         ld a, $01
@@ -424,7 +424,7 @@ def updateSpriteData(rom):
     and  a
     jr   nz, noChange
 
-    ldh  a, [$FFF6] ; hMapRoom
+    ldh  a, [hMapRoom]
     cp   $C9
     jr   nz, sirenRoomEnd
     ld   a, [$D8C9] ; wOverworldRoomStatus + ROOM_OW_SIREN
@@ -434,7 +434,7 @@ def updateSpriteData(rom):
     jp   $0DFE
 
 sirenRoomEnd:
-    ldh  a, [$FFF6] ; hMapRoom
+    ldh  a, [hMapRoom]
     cp   $D8
     jr   nz, noChange
     ld   a, [$D8FD] ; wOverworldRoomStatus + ROOM_OW_WALRUS 

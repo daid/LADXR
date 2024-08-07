@@ -1,6 +1,7 @@
 import PIL.Image
 import struct
 import argparse
+import patches.aesthetics
 
 
 def convert_endscreen(input_filename, output_filename):
@@ -132,9 +133,18 @@ def convert_endscreen(input_filename, output_filename):
     open(output_filename, "wb").write(all_tile_data + all_attr_data + all_pal_data)
 
 
-if __name__ == "__main__":
+def main(mainargs=None):
     parser = argparse.ArgumentParser(description='Convert a png to a bin file')
     parser.add_argument('input_file', type=str)
     parser.add_argument('output_file', type=str)
-    args = parser.parse_args()
-    convert_endscreen(args.input_file, args.output_file)
+    parser.add_argument('--endscreen', dest="endscreen", action="store_true", help="Convert image to cats.bin")
+    args = parser.parse_args(mainargs)
+    if args.endscreen:
+        convert_endscreen(args.input_file, args.output_file)
+    else:
+        data = patches.aesthetics.imageTo2bpp(args.input_file, colormap=[0x800080, 0x000000, 0x808080, 0xFFFFFF])
+        open(args.output_file, "wb").write(data)
+
+
+if __name__ == "__main__":
+    main()

@@ -229,25 +229,25 @@ def patchDungeonChain(rom, world_setup):
     # Do not lock the color dungeon final room door.
     rom.patch(0x14, 0x0201, "24", "00")
     # Fix that the music stays on boss defeated after killing the boss and switching map.
-    rom.patch(0x03, 0x23B9, ASM("ld [$D46C], a"), "", fill_nop=True)
+    rom.patch(0x03, 0x23B9, ASM("ld [wBossDefeated], a"), "", fill_nop=True)
 
     # Patch the yarna bones code into an entity that handles the two doors in a single room for us
     rom.patch(0x15, 0x043F, 0x0492, ASM("""
     ; Prevent changing the warp when we are entering the dream bed
-    ld  a, [$C11C] ; wLinkMotionState
+    ld  a, [wLinkMotionState]
     cp  3 ; LINK_MOTION_MAP_FADE_OUT
     ret z
     
-    ldh a, [$FFA2] ; linkZ
+    ldh a, [hLinkPositionZ] ; linkZ
     cp  $70
     jr  nz, linkNotFallingIn
     ld  a, $30
-    ldh [$FF98], a ; linkX
+    ldh [hLinkPositionX], a ; linkX
     ld  a, $78
-    ldh [$FF99], a ; linkY
+    ldh [hLinkPositionY], a ; linkY
 linkNotFallingIn:
 
-    ldh a, [$FF98] ; linkX
+    ldh a, [hLinkPositionX] ; linkX
     cp  $50
     ld  de, $D401 ; warp0 data
     jr  nc, rightSide
@@ -268,7 +268,7 @@ copyWarpData:
     jr  nz, .loop
     pop bc
     
-    ldh a, [$FFEE] ; active entity X
+    ldh a, [hActiveEntityPosX] ; active entity X
     cp  $10
     ret c
     ; If we use fake exit tiles, make sure the tiles are proper exits

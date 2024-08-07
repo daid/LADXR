@@ -149,7 +149,7 @@ def patch(rom):
             other.store(rom)
 
             if obj.room == 0x1F5:
-                # Patch the boomang guy exit
+                # Patch the boomerang guy exit
                 other = RoomEditor(rom, "Alt1F5")
                 other.getWarps()[0].room = n
                 other.getWarps()[0].target_x = target_x
@@ -199,20 +199,20 @@ SpriteData: ; Needs to be 4 bytes!
     db   $F0, $05, $F2, $05
 
 LiftableStatueEntityHandler:
-    ldh  a, [$FFEA] ; hActiveEntityStatus
+    ldh  a, [hActiveEntityStatus]
     cp   8 ; ENTITY_STATUS_THROWN
     jr   nz, .notThrown
     ld   a, $05
-    ldh  [$FFEA], a
+    ldh  [hActiveEntityStatus], a
 .notThrown:
 
     ld   de, SpriteData
-    call $3BC0 ; RenderActiveEntitySpritesPair 
+    call RenderActiveEntitySpritesPair 
     call $3CD9
     call $7D96 ; ReturnIfNonInteractive_07
     call $0C56 ; DecrementEntityIgnoreHitsCountdown  
     call $3B70
-    ldh  a, [$FFF0] ; hActiveEntityState 
+    ldh  a, [hActiveEntityState]
     rst  0
     dw LiftableStatueState0Handler
     dw LiftableStatueState1And2Handler
@@ -220,7 +220,7 @@ LiftableStatueEntityHandler:
 
 LiftableStatueState0Handler:
     call $3B23
-    call $7CF0 ; PushLinkOutOfEntity_07
+    call PushLinkOutOfEntity_07
     call $7E5D ; entityLinkPositionXDifference -> func_007_7E5D  
     add  $10
     cp   $20
@@ -231,7 +231,7 @@ LiftableStatueState0Handler:
     cp   $30
     jp   nc, label_019_411C
 
-    ld   a, [$C19B] ; wLinkAttackStepAnimationCountdown  
+    ld   a, [wLinkAttackStepAnimationCountdown]
     and  a
     jp   nz, label_019_411C
 
@@ -239,7 +239,7 @@ LiftableStatueState0Handler:
     cp   $03 ; INVENTORY_POWER_BRACELET
     jr   nz, .jr_40A0
 
-    ldh  a, [$FFCB] ; hPressedButtonsMask 
+    ldh  a, [hPressedButtonsMask] 
     and  $20 ; J_B
     jr   nz, jr_019_40AD
 
@@ -250,7 +250,7 @@ LiftableStatueState0Handler:
     cp   $03 ; INVENTORY_POWER_BRACELET
     jr   nz, label_019_411C
 
-    ldh  a, [$FFCB] ; hPressedButtonsMask 
+    ldh  a, [hPressedButtonsMask]
     and  $10 ; J_A
     jr   z, label_019_411C
 
@@ -260,18 +260,18 @@ jr_019_40AD:
     jr   nz, label_019_411C
 
     ld   a, $01
-    ldh  [$FFA1], a ; hLinkInteractiveMotionBlocked 
+    ldh  [hLinkInteractiveMotionBlocked], a 
     ld   [$C3CF], a
-    ldh  a, [$FF9E] ; hLinkDirection
+    ldh  a, [hLinkDirection]
     ld   e, a
     ld   d, $00
     ld   hl, $1F51 ; LinkDirectionToLinkAnimationState_2  
     add  hl, de
     ld   a, [hl]
-    ldh  [$FF9D], a ; hLinkAnimationState 
+    ldh  [hLinkAnimationState], a 
     ld   hl, $1F55
     add  hl, de
-    ldh  a, [$FFCB] ; hPressedButtonsMask 
+    ldh  a, [hPressedButtonsMask]
     and  [hl]
     jr   z, label_019_411C
 
@@ -283,44 +283,44 @@ jr_019_40AD:
     add  hl, de
     ld   a, [hl]
     ld   [$C13B], a
-    ld   hl, $FF9D ; hLinkAnimationState  
+    ld   hl, hLinkAnimationState
     inc  [hl]
-    ld   a, [$DB43] ; wPowerBraceletLevel  
+    ld   a, [wPowerBraceletLevel]
     cp   $02
     jr   nz, label_019_411C
 
     ld   e, $08
-    ld   a, [$D47C] ; wActivePowerUp  
+    ld   a, [wActivePowerUp]
     and  a
     jr   z, .jr_40F4
 
     ld   e, $03
 
 .jr_40F4:
-    ld   hl, $C3D0 ; wEntitiesInertiaTable  
+    ld   hl, wEntitiesInertiaTable
     add  hl, bc
     inc  [hl]
     ld   a, [hl]
     cp   e
     jr   c, ret_019_4122
 
-    call $3B12 ; IncrementEntityState  
+    call IncrementEntityState  
     ld   [hl], $02
-    ld   hl, $C280 ; wEntitiesStatusTable  
+    ld   hl, wEntitiesStatusTable
     add  hl, bc
     ld   [hl], $07
-    ld   hl, $C490 ; wEntitiesLiftedTable  
+    ld   hl, wEntitiesLiftedTable 
     add  hl, bc
     ld   [hl], b
-    ldh  a, [$FF9E] ; hLinkDirection 
-    ld   [$C15D], a
-    call $0C05 ; GetEntityTransitionCountdown  
+    ldh  a, [hLinkDirection]
+    ld   [$C15D], a ; unnamed direction value
+    call GetEntityTransitionCountdown  
     ld   [hl], $02
-    ld   hl, $FFF3 ; hWaveSfx  
+    ld   hl, hWaveSfx
     ld   [hl], $02 ; WAVE_SFX_LIFT_UP 
 
 label_019_411C:
-    ld   hl, $C3D0 ; wEntitiesInertiaTable  
+    ld   hl, wEntitiesInertiaTable
     add  hl, bc
     ld   [hl], b
     ret
@@ -332,17 +332,17 @@ LiftableStatueState1And2Handler:
     call $7E0A ; UpdateEntityPosWithSpeed_07 
     call $7E43 ; AddEntityZSpeedToPos_07 
     call $3B23
-    ld   hl, $C320 ; wEntitiesSpeedZTable  
+    ld   hl, wEntitiesSpeedZTable
     add  hl, bc
     dec  [hl]
     dec  [hl]
-    ld   hl, $C2A0 ; wEntitiesCollisionsTable  
+    ld   hl, wEntitiesCollisionsTable
     add  hl, bc
     ld   a, [hl]
     and  $0F
     jr   nz, .jr_4143
 
-    ld   hl, $C310 ; wEntitiesPosZTable  
+    ld   hl, wEntitiesPosZTable  
     add  hl, bc
     ld   a, [hl]
     and  $80
@@ -353,9 +353,9 @@ LiftableStatueState1And2Handler:
     ld   a, $00
 
 jr_019_4185:
-    ldh  [$FFE8], a ; hMultiPurposeG 
+    ldh  [hMultiPurposeG], a
     ld   a, $9D ; ENTITY_LIFTABLE_STATUE 
-    call $3B86 ; SpawnNewEntity_trampoline  
+    call SpawnNewEntity_trampoline
     jr   c, jr_019_41E2
 
     ld   hl, $C2B0 ; wEntitiesPrivateState1Table  
@@ -367,60 +367,60 @@ jr_019_4185:
     add  hl, de
     ld   [hl], $C1 ; 1 | ENTITY_PHYSICS_HARMLESS | ENTITY_PHYSICS_PROJECTILE_NOCLIP 
     push bc
-    ldh  a, [$FFE8] ; hMultiPurposeG 
+    ldh  a, [hMultiPurposeG] 
     ld   c, a
     ld   hl, Data_019_4165
     add  hl, bc
-    ldh  a, [$FFD7] ; hMultiPurpose0 
+    ldh  a, [hMultiPurpose0]
     add  [hl]
-    ld   hl, $C200 ; wEntitiesPosXTable  
+    ld   hl, wEntitiesPosXTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_416B
     add  hl, bc
-    ldh  a, [$FFD8] ; hMultiPurpose1 
+    ldh  a, [hMultiPurpose1]
     add  [hl]
-    ld   hl, $C210 ; wEntitiesPosYTable  
+    ld   hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ldh  a, [$FFDA] ; hMultiPurpose3 
-    ld   hl, $C310 ; wEntitiesPosZTable  
+    ld   hl, wEntitiesPosZTable  
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_4171
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C240 ; wEntitiesSpeedXTable  
+    ld   hl, wEntitiesSpeedXTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_4177
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C250 ; wEntitiesSpeedYTable  
+    ld   hl, wEntitiesSpeedYTable
     add  hl, de
     ld   [hl], a
     ld   hl, Data_019_417D
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C320 ; wEntitiesSpeedZTable  
+    ld   hl, wEntitiesSpeedZTable
     add  hl, de
     ld   [hl], a
     pop  bc
-    ldh  a, [$FFE8] ; hMultiPurposeG 
+    ldh  a, [hMultiPurposeG]
     inc  a
     cp   $04
     jr   nz, jr_019_4185
 
 jr_019_41E2:
     ld   a, $29 ; NOISE_SFX_BREAK
-    ldh  [$FFF4], a  ; hNoiseSfx
-    ldh  a, [$FFEE] ; hActiveEntityPosX 
-    ldh  [$FFD7], a ; hMultiPurpose0  
-    ldh  a, [$FFEC] ; hActiveEntityVisualPosY 
-    ldh  [$FFD8], a ;  hMultiPurpose1 
+    ldh  [hNoiseSfx], a
+    ldh  a, [hActiveEntityPosX] 
+    ldh  [hMultiPurpose0], a
+    ldh  a, [hActiveEntityVisualPosY] 
+    ldh  [hMultiPurpose1], a
     ld   a, $02 ; TRANSCIENT_VFX_POOF 
     call $0CC7 ; AddTranscientVfx  
-    jp   $7EA4 ; ClearEntityStatus_07
+    jp   ClearEntityStatus_07
 
 Data_019_4165:
     db   $00, $08, $00, $08
@@ -465,9 +465,9 @@ PegDestroyed:
     ld   a, $0B
     ldh  [hJingle], a
     ldh  a, [hActiveEntityPosX]
-    ldh  [$FFD7], a ; hMultiPurpose0  
+    ldh  [hMultiPurpose0], a
     ldh  a, [hActiveEntityVisualPosY] 
-    ldh  [$FFD8], a ;  hMultiPurpose1 
+    ldh  [hMultiPurpose1], a
     ld   a, $02 ; TRANSCIENT_VFX_POOF 
     call $0CC7 ; AddTranscientVfx
     call ClearEntityStatus_07
@@ -733,7 +733,7 @@ def patchTurtleRockEntrance(rom):
     and  1
     ret  z
 
-    ld   a, [$DB4A] ; wSelectedSongIndex 
+    ld   a, [wSelectedSongIndex]
     cp   $02
     ret  nz
 

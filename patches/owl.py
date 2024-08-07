@@ -44,16 +44,16 @@ hasProperItem:
     
     ; Render ghost
     ld de, sprite
-    call $3BC0
+    call RenderActiveEntitySpritesPair
 
     call $64C6 ; check if game is busy (pops this stack frame if busy)
 
-    ldh a, [$FFE7] ; frame counter
+    ldh a, [hFrameCounter]
     swap a
     and  $01
     call $3B0C ; set entity sprite variant
     call $641A ; check collision
-    ldh  a, [$FFF0] ;entity state
+    ldh  a, [hActiveEntityState]
     rst 0
     dw  waitForTalk
     dw  talking
@@ -63,26 +63,26 @@ waitForTalk:
     ret  nc
     ld   a, $C0
     call $2385 ; open dialog
-    call $3B12 ; increase entity state
+    call IncrementEntityState
     ret
 
 talking:
     ; Check if we are still talking
-    ld   a, [$C19F]
+    ld   a, [wDialogState]
     and  a
     ret  nz
-    call $3B12 ; increase entity state
+    call IncrementEntityState
     ld   [hl], $00 ; set to state 0
     ld   a, [$C177] ; get which option we selected
     and  a
     ret  nz
 
     ; Give powder
-    ld   a, [$DB4C]
+    ld   a, [wMagicPowderCount]
     cp   $10
     jr   nc, doNotGivePowder
     ld   a, $10
-    ld   [$DB4C], a
+    ld   [wMagicPowderCount], a
 doNotGivePowder:
 
     ld   a, [$DB4D]
@@ -115,13 +115,13 @@ sprite:
 
 def upgradeDungeonOwlStatues(rom):
     # Call our custom handler after the check for the stone beak
-    rom.patch(0x18, 0x1EA2, ASM("ldh a, [$FFF7]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\njp $7FF2"), fill_nop=True)
+    rom.patch(0x18, 0x1EA2, ASM("ldh a, [hMapId]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\njp $7FF2"), fill_nop=True)
     rom.patch(0x18, 0x3FF2, "00" * 14, ASM("""
         xor  a
         cp   d
         ret  z
     ; already got item, display text instead
-        ldh  a, [$FFF7]
+        ldh  a, [hMapId]
         cp   $FF
         jp   nz, $5EAD
         jp   $5EA8
@@ -135,7 +135,7 @@ def upgradeOverworldOwlStatues(rom):
         jr   z, $2B
         cp   $D4
         jr   z, $27
-        ld   a, [$DB73]
+        ld   a, [wIsMarinFollowingLink]
         and  a
         jr   z, $08
         ld   a, $78

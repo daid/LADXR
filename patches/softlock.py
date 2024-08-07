@@ -67,7 +67,7 @@ def removeBirdKeyHoleDrop(rom):
     # Prevent the cave with the bird key from dropping you in the water
     # (if you do not have flippers this would softlock you)
     rom.patch(0x02, 0x1176, ASM("""
-        ldh a, [$FFF7]
+        ldh a, [hMapId]
         cp $0A
         jr nz, $30
     """), ASM("""
@@ -85,8 +85,8 @@ def removeBirdKeyHoleDrop(rom):
 def flameThrowerShieldRequirement(rom):
     # if you somehow get a lvl3 shield or higher, it no longer works against the flamethrower, easy fix.
     rom.patch(0x03, 0x2EBA,
-        ASM("ld a, [$DB44]\ncp $02\nret nz"),  # if not shield level 2
-        ASM("ld a, [$DB44]\ncp $02\nret c"))  # if not shield level 2 or higher
+        ASM("ld a, [wShieldLevel]\ncp $02\nret nz"),  # if not shield level 2
+        ASM("ld a, [wShieldLevel]\ncp $02\nret c"))  # if not shield level 2 or higher
 
 def fixLessThen3MaxHealth(rom):
     # The table that starts your start HP when you die is not working for less then 3 HP, and locks the game.

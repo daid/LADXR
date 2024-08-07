@@ -85,7 +85,7 @@ class KeyHole(ItemInfo):
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)
-        value = rom.banks[0x3E][self.room + 0x3800]
+        value = rom.banks[0x3E][self.room + 0x3B16]
         if GEL_DISGUISE_MIN <= value < GEL_DISGUISE_MAX:
             return GEL
         for k, v in CHEST_ITEMS.items():
