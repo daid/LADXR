@@ -159,7 +159,7 @@ class ItemPool:
                 self.remove(f"COMPASS{n}")
                 self.add(f"KEY{n}")
                 self.add(f"NIGHTMARE_KEY{n}")
-            if settings.owlstatues in ("none", "overworld"):
+            if settings.owlstatues in ("", "overworld"):
                 for n in range(9):
                     self.remove(f"STONE_BEAK{n}")
                     self.add(f"KEY{n}")
