@@ -43,6 +43,11 @@ def convert_endscreen(input_filename, output_filename):
                 if len(set(search_pal).intersection(set(pal))) > 1:
                     if best is None or best[1] < counts:
                         best = (pal, counts)
+        if best is None:
+            for pal, counts in pal_counts[3].items():
+                if len(set(search_pal).intersection(set(pal))) > 0:
+                    if best is None or best[1] < counts:
+                        best = (pal, counts)
         return best[0]
     def find_worst_pal():
         best = None
