@@ -3,7 +3,7 @@ from assembler import ASM
 
 def fixSeashell(rom):
     # Do not unload if we have the lvl2 sword.
-    rom.patch(0x03, 0x1FD3, ASM("ld a, [$DB4E]\ncp $02\njp nc, UnloadEntity"), "", fill_nop=True)
+    rom.patch(0x03, 0x1FD3, ASM("ld a, [wSwordLevel]\ncp $02\njp nc, UnloadEntity"), "", fill_nop=True)
     # Do not unload in the ghost house
     rom.patch(0x03, 0x1FE8, ASM("ldh  a, [hRoomStatus]\nand  $40\njp z, UnloadEntity"), "", fill_nop=True)
 
@@ -46,7 +46,7 @@ def upgradeMansion(rom):
     """))
     rom.patch(0x19, 0x36F5, ASM("""
         ld   a, $02
-        ld   [$DB4E], a
+        ld   [wSwordLevel], a
     """), ASM("""
         ld   a, $0E ; give item and message for current room multiworld
         rst  8
@@ -56,7 +56,7 @@ def upgradeMansion(rom):
         call $2385
     """), "", fill_nop=True)
     rom.patch(0x19, 0x31E8, ASM("""
-        ld   a, [$DB4E]
+        ld   a, [wSwordLevel]
         and  $02
     """), ASM("""
         ld   a, [$DAE9]

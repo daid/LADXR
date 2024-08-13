@@ -51,12 +51,16 @@ D46C:wBossDefeated
 D47C:wActivePowerUp
 D711:wRoomObjects
 DB43:wPowerBraceletLevel
+DB44:wShieldLevel
+DB48:wTarinFlag
 DB4A:wSelectedSongIndex
 DB4B:wHasToadstool
 DB4C:wMagicPowderCount
+DB4E:wSwordLevel
 DB56:wIsBowWowFollowingLink
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
+DB7D:wBoomerangTradedItem
 DBA5:wIsIndoor
 DE01:wFarcallBank
 DE02:wFarcallAdressHigh

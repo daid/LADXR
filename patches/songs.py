@@ -3,11 +3,11 @@ from assembler import ASM
 
 def upgradeMarin(rom):
     # Show marin outside, even without a sword.
-    rom.patch(0x05, 0x0E78, ASM("ld a, [$DB4E]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x05, 0x0E78, ASM("ld a, [wSwordLevel]"), ASM("ld a, $01"), fill_nop=True)
     # Make marin ignore the fact that you did not save the tarin yet, and allowing getting her song
     rom.patch(0x05, 0x0E87, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
     rom.patch(0x05, 0x0F73, ASM("ld a, [$D808]"), ASM("ld a, $10"), fill_nop=True)
-    rom.patch(0x05, 0x0FB0, ASM("ld a, [$DB48]"), ASM("ld a, $01"), fill_nop=True)
+    rom.patch(0x05, 0x0FB0, ASM("ld a, [wTarinFlag]"), ASM("ld a, $01"), fill_nop=True)
     # Show marin in the animal village
     rom.patch(0x03, 0x0A86, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)
     rom.patch(0x05, 0x3F2E, ASM("ld a, [$DB74]"), ASM("ld a, $01"), fill_nop=True)  # animal d0

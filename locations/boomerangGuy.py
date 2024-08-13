@@ -50,7 +50,7 @@ class BoomerangGuy(ItemInfo):
             rom.patch(0x19, 0x069C, 0x06C6, ASM("""
                 ; Mark trade as done
                 ld a, $06
-                ld [$DB7D], a
+                ld [wBoomerangTradedItem], a
 
                 ld a, [$472B]
                 ldh [hActiveEntitySpriteVariant], a
@@ -77,7 +77,7 @@ class BoomerangGuy(ItemInfo):
 
             # Ignore the trade back.
             rom.texts[0x225] = formatText("It's a secret to everybody.")
-            rom.patch(0x19, 0x0668, ASM("ld a, [$DB7D]"), ASM("ret"), fill_nop=True)
+            rom.patch(0x19, 0x0668, ASM("ld a, [wBoomerangTradedItem]"), ASM("ret"), fill_nop=True)
 
             if multiworld is not None:
                 rom.banks[0x3E][0x3300 + self.room] = multiworld
