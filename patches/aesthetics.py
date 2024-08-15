@@ -319,6 +319,116 @@ def enableExtendedLinkSprites(rom):
     rom.patch(0x00, 0x1DE5, ASM("ld [hl], $23"), ASM("ld [hl], $03"))  # Fix the diving sprite
 
 
+def allowOverworldBackgroundTileTransitions(rom):
+    rom.patch(0x00, 0x0656, 0x069E, ASM("""
+    ld   a, $2F
+    ld   [$2100], a
+    ld   a, [wTransitionZeroNeverUsed]
+    xor  $01
+    ld   [wTransitionZeroNeverUsed], a
+    ldh  [rVBK], a
+    ; run HDMA for copy
+    ld   hl, rHDMA1
+    ld   a, [hWorldTileset]
+    ; source address
+    add  a, $40
+    ld   [hl+], a
+    xor  a
+    ld   [hl+], a
+    ; target address
+    ld   a, $90
+    ld   [hl+], a
+    xor  a
+    ld   [hl+], a
+    ; amount of tiles, and start
+    ld   a, 31
+    ld   [hl], a
+    
+    ; Mark loading as done
+    xor  a
+    ldh  [rVBK], a
+    ldh  [hBGTilesLoadingStage], a
+    ldh  [hNeedsUpdatingBGTiles], a
+    ret
+
+    nop
+LoadBaseOverworldTilesImpl:
+    ld   a, $2C
+    ld   [$2100], a
+    ld   hl, $5200
+    ld   de, $9200
+    ld   bc, $600
+    call CopyData
+    ld   hl, $4F00
+    ld   de, $8F00
+    ld   bc, $100
+    jp   CopyData
+"""), fill_nop=True)
+    rom.patch(0x00, 0x2D2D, 0x2D3E, ASM("""
+    call $0681
+    ld   a, $01
+    ldh  [rVBK], a
+    call $0681
+    xor  a
+    ldh  [rVBK], a
+"""), fill_nop=True)
+
+    rom.patch(0x00, 0x074C, "00" * 27, ASM("""
+CopyObjectRowToBGAttr:
+    ld   a, [wTransitionZeroNeverUsed]
+    and  a
+    jp   z, $2214 ; normal handler 
+
+    ld   a, [wBGUpdateRegionOriginLow]
+    and  $20
+    jr   z, .lowerPartEnd
+    inc  hl
+    inc  hl
+.lowerPartEnd:
+    ld   a, [hl+]
+    or   $08
+    ld   [bc], a
+    inc  bc
+    ld   a, [hl]
+    or   $08
+    ld   [bc], a
+    inc  bc
+    ret
+"""))
+    rom.patch(0x00, 0x0767, "00" * 27, ASM("""
+CopyObjectColumnToBGAttr:
+    ld   a, [wTransitionZeroNeverUsed]
+    and  a
+    jp   z, $2224 ; normal handler 
+    ld   a, [wBGUpdateRegionOriginLow]
+    and  $01
+    jr   z, .rightHandEnd
+    inc  hl
+.rightHandEnd:
+    ld   a, [hl+]
+    or   $08
+    ld   [bc], a
+    inc  hl
+    inc  bc
+    ld   a, [hl]
+    or   $08
+    ld   [bc], a
+    inc  bc
+    ret
+"""))
+    rom.patch(0x00, 0x22BD, ASM("call $2214"), ASM("call $074C"))
+    rom.patch(0x00, 0x22EA, ASM("call $2224"), ASM("call $0767"))
+    rom.patch(0x00, 0x0782, "00" * 12, ASM("""
+        ld   a, [wTransitionZeroNeverUsed]
+        ldh  [rVBK], a
+        call CopyData
+        xor  a
+        ldh  [rVBK], a
+        ret
+    """))
+    rom.patch(0x00, 0x1C57, ASM("call CopyData"), ASM("call $0782"))
+    rom.patch(0x02, 0x3BFA, ASM("ld [wTransitionZeroNeverUsed], a"), "", fill_nop=True)
+
 def allowColorDungeonSpritesEverywhere(rom):
     # Set sprite set numbers $01-$40 to map to the color dungeon sprites
     rom.patch(0x00, 0x2E6F, "00", "15")

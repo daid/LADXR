@@ -69,6 +69,8 @@ def patch(rom):
     # Make the honeycomb not use any graphics slots.
     entityData.SPRITE_DATA[0xB3] = None
 
+    rom.patch(0x00, 0x31E8, ASM("and a, $10"), ASM("and a, $00")) # ignore the castle opening switch for now.
+
     # New Ledge updates/mountain edges
     setMetaTile(rom, 0x05, 0xD2, 0x4A, 0x4A, 0x7F, 0x7F)
     setTileAttr(rom, 0x05, 0x03, 0x03, 0x00, 0x00)

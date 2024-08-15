@@ -1,6 +1,7 @@
 0BD7:Farcall
 0C05:GetEntityTransitionCountdown
 280D:GetRandomByte
+2914:CopyData
 3B12:IncrementEntityState
 3B86:SpawnNewEntity_trampoline
 3BC0:RenderActiveEntitySpritesPair
@@ -18,6 +19,8 @@
 7D36:PushLinkOutOfEntity_18
 
 C11C:wLinkMotionState
+C127:wBGUpdateRegionOriginLow
+C12B:wTransitionZeroNeverUsed
 C19B:wLinkAttackStepAnimationCountdown
 C19F:wDialogState
 C1BD:wDidBossIntro
@@ -67,9 +70,15 @@ DE02:wFarcallAdressHigh
 DE03:wFarcallAdressLow
 DE04:wFarcallReturnBank
 
+FF4F:rVBK
+FF51:rHDMA1
+
 FF98:hLinkPositionX
 FF99:hLinkPositionY
 FFA2:hLinkPositionZ
+FF90:hNeedsUpdatingBGTiles
+FF92:hBGTilesLoadingStage
+FF94:hWorldTileset
 FF9D:hLinkAnimationState
 FF9E:hLinkDirection
 FFA1:hLinkInteractiveMotionBlocked
