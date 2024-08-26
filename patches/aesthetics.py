@@ -9,7 +9,10 @@ import struct
 
 def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
-    img = PIL.Image.open(filename)
+    if isinstance(filename, str):
+        img = PIL.Image.open(filename)
+    else:
+        img = filename
     if img.mode != "P":
         img = img.convert("P", palette=PIL.Image.ADAPTIVE, colors=4)
     remap = [0, 1, 2, 3]

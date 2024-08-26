@@ -61,10 +61,11 @@ def addBank3E(rom, seed, settings):
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)
 
-    shortSeed = seed[:0x20]
-    rom.patch(0x3E, 0x2F00, "00" * len(shortSeed), binascii.hexlify(shortSeed))
+    if seed:
+        shortSeed = seed[:0x20]
+        rom.patch(0x3E, 0x2F00, "00" * len(shortSeed), binascii.hexlify(shortSeed))
 
-    if not settings.race:
+    if settings and not settings.race:
         shortSettings = settings.getShortString().encode('utf-8')
         rom.patch(0x3E, 0x2F20, "00", binascii.hexlify(len(shortSettings).to_bytes(1, 'little')))
         rom.patch(0x3E, 0x2F21, "00" * len(shortSettings), binascii.hexlify(shortSettings))

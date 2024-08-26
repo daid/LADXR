@@ -47,7 +47,10 @@ class RoomInfo:
         else:
             if map_id < 9:
                 self.palette_index = None
-                self.palette_addr = rom.banks[0x21][0x03EF + map_id*2] | (rom.banks[0x21][0x03F0 + map_id*2] << 8)
+                addr = 0x0401 if self.sidescroll else 0x03EF
+                self.palette_addr = rom.banks[0x21][addr + map_id*2] | (rom.banks[0x21][addr + 1 + map_id*2] << 8)
+                if room_nr in {0x264, 0x265, 0x266, 0x267, 0x26A, 0x26B}:
+                    self.palette_addr = 0x2750  # Specific D8 sidescroll overrules
             else:
                 per_map_lookup_addr = rom.banks[0x21][0x0413 + (map_id - 10)*2] | (rom.banks[0x21][0x0414 + (map_id - 10)*2] << 8)
                 self.palette_index = rom.banks[0x21][per_map_lookup_addr - 0x4000 + (self.room_nr & 0xFF)]
@@ -130,13 +133,15 @@ class RoomInfo:
 
         anim_addr = (0x0000, 0x0000, 0x2B00, 0x2C00, 0x2D00, 0x2E00, 0x2F00, 0x2D00, 0x3000, 0x3100, 0x3200, 0x2A00, 0x3300, 0x3500, 0x3600, 0x3400, 0x3700)[animation_id]
         if anim_addr:
-            #TODO: This mostly works, but not for all animations, conveyer belts do something different (animation_id==7)
             for n in range(0x6C, 0x70):
                 subtiles[n] = (0x2C, anim_addr + (n - 0x6C) * 0x10)
+            if animation_id == 0x07:
+                for n in range(4):
+                    subtiles[0x0C + n] = (0x2C, 0x07C0 + n * 0x10)
 
         if False: #TODO: Switch block tiles, if indoor rooms contain tile 0xDB or 0xDC these tiles are overruled.
             for n in range(4):
-                tileset[4 + n] = (0x0C, 0x2800 + n * 0x10)
-                tileset[8 + n] = (0x0C, 0x2880 + n * 0x10)
+                tileset[4 + n] = (0x2C, 0x2800 + n * 0x10)
+                tileset[8 + n] = (0x2C, 0x2880 + n * 0x10)
 
         return subtiles
