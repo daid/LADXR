@@ -77,11 +77,16 @@ class RoomInfo:
             self.wall_tiles_ptr = 0x0A00
             self.floor_tiles_bank = 0x35
             self.floor_tiles_ptr = 0x2000
+            #TODO: This is wrong.
+            self.item_tiles_bank = 0x32
+            self.item_tiles_ptr = 0x3800
         elif self.room_nr >= 0x100:        
             self.wall_tiles_bank = 0x2D
             self.wall_tiles_ptr = rom.banks[0x20][0x05A9 + self.map_id] * 0x100 - 0x4000
             self.floor_tiles_bank = 0x2D
             self.floor_tiles_ptr = rom.banks[0x20][0x0589 + self.map_id] * 0x100 - 0x4000
+            self.item_tiles_bank = 0x32
+            self.item_tiles_ptr = rom.banks[0x20][0x05CA + self.map_id] * 0x100 - 0x4000
 
     # Get a list of 8x8 graphic tile addresses for this room.
     def getTileset(self, animation_id: int):
@@ -95,6 +100,7 @@ class RoomInfo:
             for n in range(0x80, 0x100):
                 subtiles[n] = (0x2C, n * 0x10)
         else:
+            # TODO: Color dungeon is still bit messed up (It's always color dungeon...)
             for n in range(0x20, 0x80):
                 subtiles[n] = (0x2D, (n - 0x20) * 0x10)
             if self.main_tileset_id != 0xFF:
@@ -102,25 +108,33 @@ class RoomInfo:
                     subtiles[n] = (0x2D, 0x1000 + self.main_tileset_id * 0x100 + n*0x10)
             for n in range(0x10, 0x20):
                 subtiles[n] = (0x2D, 0x2000 + n * 0x10)
-            for n in range(0xF0, 0x100):
-                subtiles[n] = (0x32, 0x3800 + (n - 0xF0) * 0x10)
+            for n in range(0x10):
+                subtiles[0xF0 + n] = (self.item_tiles_bank, self.item_tiles_ptr + n * 0x10)
 
             if self.sidescroll:
-                # TODO: This isn't proper yet.
+                sidescroll_addr = 0x3800
+                if (self.map_id == 6 or self.map_id >= 0x0A) and self.room_nr != 0x2E9:
+                    sidescroll_addr = 0x3000
                 for n in range(0x00, 0x80):
-                    subtiles[n] = (0x2D, 0x3000 + n * 0x10)
+                    subtiles[n] = (0x2D, sidescroll_addr + n * 0x10)
             else:
                 for n in range(0x20, 0x40):
                     subtiles[n] = (self.wall_tiles_bank, self.wall_tiles_ptr + (n - 0x20) * 0x10)
                 for n in range(0x10, 0x20):
                     subtiles[n] = (self.floor_tiles_bank, self.floor_tiles_ptr + (n - 0x10) * 0x10)
+            
+            # Camera shop override (still looks wrong)
+            if self.map_id == 0x10 and self.room_nr == 0x2B5:
+                for n in range(0x20):
+                    subtiles[(0xF0 + n) & 0xFF] = (0x35, 0x2600 + n * 0x10)
 
         anim_addr = (0x0000, 0x0000, 0x2B00, 0x2C00, 0x2D00, 0x2E00, 0x2F00, 0x2D00, 0x3000, 0x3100, 0x3200, 0x2A00, 0x3300, 0x3500, 0x3600, 0x3400, 0x3700)[animation_id]
         if anim_addr:
+            #TODO: This mostly works, but not for all animations, conveyer belts do something different (animation_id==7)
             for n in range(0x6C, 0x70):
                 subtiles[n] = (0x2C, anim_addr + (n - 0x6C) * 0x10)
 
-        if False: #TODO: Switch block tiles, if indoor rooms contain tile 0xDB or 0xDC
+        if False: #TODO: Switch block tiles, if indoor rooms contain tile 0xDB or 0xDC these tiles are overruled.
             for n in range(4):
                 tileset[4 + n] = (0x0C, 0x2800 + n * 0x10)
                 tileset[8 + n] = (0x0C, 0x2880 + n * 0x10)
