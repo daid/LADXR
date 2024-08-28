@@ -28,7 +28,16 @@ class RoomMapInfo:
 
 
 class MapExport:
-    def __init__(self, rom):
+    def __init__(self, rom, *, overworld=True, underworld=True, dungeons=True, entities=True, overworld_size=[0,0,16,16], use_overlay=False):
+        self.__overworld = overworld
+        self.__overworld_size = overworld_size
+        self.__use_overlay = use_overlay
+        self.__underworld = underworld
+        if isinstance(dungeons, list):
+            self.__dungeons = dungeons
+        else:
+            self.__dungeons = [0,1,2,3,4,5,6,7, 8, 10, 11] if dungeons else []
+        self.__entities = entities
         self.__rom = rom
         self.__tile_cache = {}
         self.__room_map_info = {}
@@ -47,7 +56,7 @@ class MapExport:
                     self.room_map_info(warp.room).map_id = warp.map_nr
                 if warp.warp_type == 2:
                     self.room_map_info(warp.room).sidescroll = True
-        for n in (0,1,2,3,4,5,6,7, 10, 11):
+        for n in (0,1,2,3,4,5,6,7, 8, 10, 11):
             addr = 0x0220 + n * 8 * 8
             for y in range(8):
                 for x in range(8):
@@ -84,10 +93,6 @@ class MapExport:
         self.room_map_info(0x26d).map_id = self.room_map_info(0x28F).map_id  # Unused armos temple room
         self.room_map_info(0x26e).map_id = self.room_map_info(0x28F).map_id  # Unused armos temple room
         self.room_map_info(0x26f).map_id = self.room_map_info(0x28F).map_id  # Final armos temple room
-        self.room_map_info(0x272).map_id = 8  # Egg inside
-        self.room_map_info(0x273).map_id = 8  # Egg inside
-        self.room_map_info(0x275).map_id = 8  # Egg inside
-        self.room_map_info(0x276).map_id = 8  # Egg inside
         self.room_map_info(0x277).map_id = self.room_map_info(0x27A).map_id  # Unused bird key cave
         self.room_map_info(0x278).map_id = self.room_map_info(0x27A).map_id  # Unused bird key cave
         self.room_map_info(0x279).map_id = self.room_map_info(0x27A).map_id  # Unused bird key cave
@@ -119,44 +124,43 @@ class MapExport:
             if self.room_map_info(room).map_id is None:
                 print(f"Missing map_id info for: {room:03x}")
 
-    def export_all(self, w=16, h=16, *, dungeons=True):
+    def export(self):
         os.makedirs("_map/img", exist_ok=True)
         f = open("_map/test.html", "wt")
-        if isinstance(dungeons, bool):
-            self.buildOverworld(w, h).save("_map/img/overworld.png")
+        if self.__overworld:
+            self.buildOverworld().save("_map/img/overworld.png")
             f.write("<img src='img/overworld.png'><br><br>")
 
-        if dungeons:
-            for n in (dungeons,) if not isinstance(dungeons, bool) else (0,1,2,3,4,5,6,7, 10, 11):
-                addr = 0x0220 + n * 8 * 8
-                result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
-                map_data = {}
-                for y in range(8):
-                    for x in range(8):
-                        room = self.__rom.banks[0x14][addr] + 0x100
-                        if n > 5:
-                            room += 0x100
-                        if n == 11:
-                            room += 0x100
-                        addr += 1
-                        if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
-                            continue
-                        map_data[x+y*16] = room
-                        self.room_map_info(room).x = x
-                        self.room_map_info(room).y = y
-                        result.paste(self.buildRoom(room), (x * 161, y * 129))
-                self.__json_data["maps"][f"dungeon_{n}"] = map_data
-                result.save(f"_map/img/dungeon_{n}.png")
-                f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
-            if isinstance(dungeons, bool):
-                for n in range(1, 3):
-                    result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
-                    for y in range(16):
-                        for x in range(16):
-                            if n != 2 or x != 15 or y != 15:
-                                result.paste(self.buildRoom(n << 8 | y << 4 | x), (x * 161, y * 129))
-                    result.save(f"_map/img/underworld_{n}.png")
-                    f.write(f"<img src='img/underworld_{n}.png' underworld='{n}'><br><br>")
+        for n in self.__dungeons:
+            addr = 0x0220 + n * 8 * 8
+            result = PIL.Image.new("RGB", (8 * 161, 8 * 129))
+            map_data = {}
+            for y in range(8):
+                for x in range(8):
+                    room = self.__rom.banks[0x14][addr] + 0x100
+                    if n > 5:
+                        room += 0x100
+                    if n == 11:
+                        room += 0x100
+                    addr += 1
+                    if (room & 0xFF) == 0 and (n != 11 or x != 1 or y != 3):  # ignore room nr 0, except on a very specific spot in the color dungeon.
+                        continue
+                    map_data[x+y*16] = room
+                    self.room_map_info(room).x = x
+                    self.room_map_info(room).y = y
+                    result.paste(self.buildRoom(room), (x * 161, y * 129))
+            self.__json_data["maps"][f"dungeon_{n}"] = map_data
+            result.save(f"_map/img/dungeon_{n}.png")
+            f.write(f"<img src='img/dungeon_{n}.png' map='dungeon_{n}'><br><br>")
+        if self.__underworld:
+            for n in range(1, 3):
+                result = PIL.Image.new("RGB", (16 * 161, 16 * 129))
+                for y in range(16):
+                    for x in range(16):
+                        if n != 2 or x != 15 or y != 15:
+                            result.paste(self.buildRoom(n << 8 | y << 4 | x), (x * 161, y * 129))
+                result.save(f"_map/img/underworld_{n}.png")
+                f.write(f"<img src='img/underworld_{n}.png' underworld='{n}'><br><br>")
 
         f.write("<script>var data = ")
         f.write(json.dumps(self.__json_data))
@@ -241,11 +245,12 @@ for(var e of document.getElementsByTagName("img")) {
             palette.append((r, g, b))
         return palette
 
-    def buildOverworld(self, w, h):
-        result = PIL.Image.new("RGB", (w * (20 * 8 + 1), h * (16 * 8 + 1)))
-        for y in range(h):
-            for x in range(w):
-                result.paste(self.buildRoom(x + y * 16), (x * (20 * 8 + 1), y * (16 * 8 + 1)))
+    def buildOverworld(self):
+        x0, y0, x1, y1 = self.__overworld_size
+        result = PIL.Image.new("RGB", ((x1 - x0) * (20 * 8 + 1), (y1 - y0) * (16 * 8 + 1)))
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                result.paste(self.buildRoom(x + y * 16), ((x - x0) * (20 * 8 + 1), (y - y0) * (16 * 8 + 1)))
         return result
 
     def buildRoom(self, room_id):
@@ -260,6 +265,8 @@ for(var e of document.getElementsByTagName("img")) {
         room.attribute_addr = ri.attribute_addr
         room.palette_addr = ri.palette_addr
         room.tiles = re.getTileArray()
+        if self.__use_overlay and room_id < 0x100:
+            room.tiles = list(re.overlay)
 
         self.__json_data["rooms"][room_id] = room.to_json()
         self.__json_data["rooms"][room_id]["entities"] = [{"x": x, "y": y, "type": type_id} for x, y, type_id in re.entities]
@@ -305,13 +312,14 @@ for(var e of document.getElementsByTagName("img")) {
                 self.drawSubtile(result, x*16+8, y*16, tileset[metatile[1]], attrtile[1], room.palette_addr)
                 self.drawSubtile(result, x*16, y*16+8, tileset[metatile[2]], attrtile[2], room.palette_addr)
                 self.drawSubtile(result, x*16+8, y*16+8, tileset[metatile[3]], attrtile[3], room.palette_addr)
-        for x, y, type_id in re.entities:
-            draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
-            draw.text((x * 16 + 2, y * 16 + 1), "%02X" % (type_id))
-            draw.text((x * 16 + 4, y * 16 + 1), "%02X" % (type_id))
-            draw.text((x * 16 + 2, y * 16 + 3), "%02X" % (type_id))
-            draw.text((x * 16 + 4, y * 16 + 3), "%02X" % (type_id))
-            draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id), fill=0)
+        if self.__entities:
+            for x, y, type_id in re.entities:
+                draw.rectangle([(x * 16, y * 16), (x * 16 + 15, y * 16 + 15)], outline=0)
+                draw.text((x * 16 + 2, y * 16 + 1), "%02X" % (type_id))
+                draw.text((x * 16 + 4, y * 16 + 1), "%02X" % (type_id))
+                draw.text((x * 16 + 2, y * 16 + 3), "%02X" % (type_id))
+                draw.text((x * 16 + 4, y * 16 + 3), "%02X" % (type_id))
+                draw.text((x * 16 + 3, y * 16 + 2), "%02X" % (type_id), fill=0)
         return result
 
     def drawSubtile(self, img, ox, oy, subtile_id, attr, palette_addr):

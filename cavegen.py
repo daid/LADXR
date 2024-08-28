@@ -369,4 +369,4 @@ if __name__ == "__main__":
         re.entities = []
         re.objects = []
         re.store(rom)
-    mapexport.MapExport(rom).export_all()
+    mapexport.MapExport(rom, overworld=False, underworld=False, dungeons=[10]).export()

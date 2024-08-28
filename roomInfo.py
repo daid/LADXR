@@ -14,6 +14,8 @@ class RoomInfo:
             self.main_tileset_id = rom.banks[0x20][0x2E73 + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)]
             if rom.banks[0x3F][0x3F00 + room_nr]:  # If we have the the per room tileset patch, use that data
                 self.main_tileset_id = rom.banks[0x3F][0x3F00 + room_nr]
+            elif rom.banks[0x3F][0x2F00 + room_nr]:  # Older style per-room-tileset patch
+                self.main_tileset_id = rom.banks[0x3F][0x2F00 + room_nr]
         else:
             self.main_tileset_id = rom.banks[0x20][0x2EB3 + room_nr - 0x100]
         
