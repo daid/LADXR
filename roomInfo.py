@@ -1,3 +1,4 @@
+from typing import Optional
 
 
 # Class which can read various metadata about rooms from the rom
@@ -94,12 +95,13 @@ class RoomInfo:
             self.item_tiles_ptr = rom.banks[0x20][0x05CA + self.map_id] * 0x100 - 0x4000
 
     # Get a list of 8x8 graphic tile addresses for this room.
-    def getTileset(self, animation_id: int):
+    def getTileset(self, animation_id: Optional[int]):
         subtiles = [None] * 0x100
         if self.room_nr < 0x100:
             # Overworld tiles.
-            for n in range(0, 0x20):
-                subtiles[n] = (0x2F, self.main_tileset_id * 0x100 + n * 0x10)
+            if self.main_tileset_id is not None and self.main_tileset_id != 0x0F:
+                for n in range(0, 0x20):
+                    subtiles[n] = (0x2F, self.main_tileset_id * 0x100 + n * 0x10)
             for n in range(0x20, 0x80):
                 subtiles[n] = (0x2C, 0x1000 + n * 0x10)
             for n in range(0x80, 0x100):
@@ -108,7 +110,7 @@ class RoomInfo:
             # TODO: Color dungeon is still bit messed up (It's always color dungeon...)
             for n in range(0x20, 0x80):
                 subtiles[n] = (0x2D, (n - 0x20) * 0x10)
-            if self.main_tileset_id != 0xFF:
+            if self.main_tileset_id is not None and self.main_tileset_id != 0xFF:
                 for n in range(0x00, 0x10):
                     subtiles[n] = (0x2D, 0x1000 + self.main_tileset_id * 0x100 + n*0x10)
             for n in range(0x10, 0x20):
@@ -133,13 +135,14 @@ class RoomInfo:
                 for n in range(0x20):
                     subtiles[(0xF0 + n) & 0xFF] = (0x35, 0x2600 + n * 0x10)
 
-        anim_addr = (0x0000, 0x0000, 0x2B00, 0x2C00, 0x2D00, 0x2E00, 0x2F00, 0x2D00, 0x3000, 0x3100, 0x3200, 0x2A00, 0x3300, 0x3500, 0x3600, 0x3400, 0x3700)[animation_id]
-        if anim_addr:
-            for n in range(0x6C, 0x70):
-                subtiles[n] = (0x2C, anim_addr + (n - 0x6C) * 0x10)
-            if animation_id == 0x07:
-                for n in range(4):
-                    subtiles[0x0C + n] = (0x2C, 0x07C0 + n * 0x10)
+        if animation_id is not None:
+            anim_addr = (0x0000, 0x0000, 0x2B00, 0x2C00, 0x2D00, 0x2E00, 0x2F00, 0x2D00, 0x3000, 0x3100, 0x3200, 0x2A00, 0x3300, 0x3500, 0x3600, 0x3400, 0x3700)[animation_id]
+            if anim_addr:
+                for n in range(0x6C, 0x70):
+                    subtiles[n] = (0x2C, anim_addr + (n - 0x6C) * 0x10)
+                if animation_id == 0x07:
+                    for n in range(4):
+                        subtiles[0x0C + n] = (0x2C, 0x07C0 + n * 0x10)
 
         if False: #TODO: Switch block tiles, if indoor rooms contain tile 0xDB or 0xDC these tiles are overruled.
             for n in range(4):
