@@ -86,33 +86,68 @@ def createDungeonOnlyOverworld(rom):
         re.store(rom)
 
 
-def exportOverworld(rom):
+def exportOverworld(rom, also_underworld=False):
     import PIL.Image
 
     path = os.path.dirname(__file__)
-    for room_index in list(range(0x100)) + ["Alt06", "Alt0E", "Alt1B", "Alt2B", "Alt79", "Alt8C"]:
+    for room_index in list(range(0x316 if also_underworld else 0x100)) + ["Alt06", "Alt0E", "Alt1B", "Alt2B", "Alt79", "Alt8C"]:
+        if room_index == 0x2FF:
+            continue
         room = RoomEditor(rom, room_index)
         if isinstance(room_index, int):
             room_nr = room_index
         else:
             room_nr = int(room_index[3:], 16)
-        tileset_index = rom.banks[0x3F][0x3F00 + room_nr]
-        attributedata_bank = rom.banks[0x1A][0x2476 + room_nr]
-        attributedata_addr = rom.banks[0x1A][0x1E76 + room_nr * 2]
-        attributedata_addr |= rom.banks[0x1A][0x1E76 + room_nr * 2 + 1] << 8
+        map_id = None  # TODO set map for indoor rooms
+        if room_nr >= 0x300:
+            map_id = 0xFF
+        if room_nr < 0x100:
+            tileset_index = rom.banks[0x3F][0x3F00 + room_nr]
+            attributedata_bank = rom.banks[0x1A][0x2476 + room_nr]
+            attributedata_addr = rom.banks[0x1A][0x1E76 + room_nr * 2]
+            attributedata_addr |= rom.banks[0x1A][0x1E76 + room_nr * 2 + 1] << 8
+
+            metatile_info = rom.banks[0x1A][0x2B1D:0x2B1D + 0x400]
+
+            palette_index = rom.banks[0x21][0x02EF + room_nr]
+            palette_addr = rom.banks[0x21][0x02B1 + palette_index * 2]
+            palette_addr |= rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
+        else:
+            tileset_index = rom.banks[0x20][0x2EB3 + room_nr - 0x100]
+            attributedata_bank = 0x23 if room_nr < 0x200 else 0x24
+            if map_id is None:
+                attributedata_addr = rom.banks[0x1A][0x1E76 + room_nr * 2]
+                attributedata_addr |= rom.banks[0x1A][0x1E76 + room_nr * 2 + 1] << 8
+            elif map_id == 6 or map_id == 7:
+                attributedata_bank = 0x23
+                attributedata_addr = rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2]
+                attributedata_addr |= rom.banks[0x1A][0x1E76 + 0x100 + map_id * 2 + 1] << 8
+            else:
+                attributedata_addr = rom.banks[0x1A][0x1E76 + (room_nr & 0xF00) * 2 + map_id * 2]
+                attributedata_addr |= rom.banks[0x1A][0x1E76 + (room_nr & 0xF00) * 2 + map_id * 2 + 1] << 8
+
+            metatile_info = rom.banks[0x08][0x03B0:0x03B0+0x400]
+
+            if map_id is not None:
+                if map_id < 9:
+                    palette_addr = rom.banks[0x21][0x03EF + map_id*2] | (rom.banks[0x21][0x03F0 + map_id*2] << 8)
+                elif map_id == 0xFF:
+                    palette_addr = 0x67D0
+                else:
+                    lookup_addr = rom.banks[0x21][0x0413 + (map_id - 10)*2] | (rom.banks[0x21][0x0414 + (map_id - 10)*2] << 8)
+                    index = rom.banks[0x21][lookup_addr - 0x4000 + (room_nr & 0xFF)] * 2
+                    palette_addr = rom.banks[0x21][0x043F + index] | (rom.banks[0x21][0x0440 + index] << 8)
+            else:
+                palette_addr = rom.banks[0x21][0x02B1] | (rom.banks[0x21][0x02B2] << 8)
+
+        assert attributedata_addr >= 0x4000, f"{attributedata_addr:04x} {room_nr:03x}"
         attributedata_addr -= 0x4000
-
-        metatile_info = rom.banks[0x1A][0x2B1D:0x2B1D + 0x400]
         attrtile_info = rom.banks[attributedata_bank][attributedata_addr:attributedata_addr+0x400]
-
-        palette_index = rom.banks[0x21][0x02EF + room_nr]
-        palette_addr = rom.banks[0x21][0x02B1 + palette_index * 2]
-        palette_addr |= rom.banks[0x21][0x02B1 + palette_index * 2 + 1] << 8
         palette_addr -= 0x4000
 
         hidden_warp_tiles = []
         for obj in room.objects:
-            if obj.type_id in WARP_TYPE_IDS and room.overlay[obj.x + obj.y * 10] != obj.type_id:
+            if obj.type_id in WARP_TYPE_IDS and room.overlay and room.overlay[obj.x + obj.y * 10] != obj.type_id:
                 if obj.type_id != 0xE1 or room.overlay[obj.x + obj.y * 10] != 0x53: # Ignore the waterfall 'caves'
                     hidden_warp_tiles.append(obj)
             if obj.type_id == 0xC5 and room_nr < 0x100 and room.overlay[obj.x + obj.y * 10] == 0xC4:
@@ -123,6 +158,8 @@ def exportOverworld(rom):
                 hidden_warp_tiles.append(obj)
 
         image_filename = "tiles_%02x_%02x_%02x_%02x_%04x.png" % (tileset_index, room.animation_id, palette_index, attributedata_bank, attributedata_addr)
+        if room_nr >= 0x100:
+            image_filename = f"indoor_{image_filename}"
         data = {
             "width": 10, "height": 8,
             "type": "map", "renderorder": "right-down", "tiledversion": "1.4.3", "version": 1.4,
@@ -136,7 +173,7 @@ def exportOverworld(rom):
                 }
             ],
             "layers": [{
-                "data": [n+1 for n in room.overlay],
+                "data": [n+1 for n in (room.overlay if room.overlay else room.getTileArray())],
                 "width": 10, "height": 8,
                 "id": 1, "name": "Tiles", "type": "tilelayer", "visible": True, "opacity": 1, "x": 0, "y": 0,
             }, {
@@ -159,15 +196,25 @@ def exportOverworld(rom):
         if isinstance(room_index, str):
             json.dump(data, open("%s/overworld/export/%s.json" % (path, room_index), "wt"))
         else:
-            json.dump(data, open("%s/overworld/export/%02X.json" % (path, room_index), "wt"))
+            json.dump(data, open("%s/overworld/export/%03X.json" % (path, room_index), "wt"))
 
         if not os.path.exists("%s/overworld/export/%s" % (path, image_filename)):
-            if tileset_index == 0x0F:
-                tilemap = bytearray([0x00, 0x55, 0xAA, 0x00] * 4 * 32)
+            print(f"Creating {image_filename}")
+            if room_nr < 0x100:
+                if tileset_index == 0x0F:
+                    tilemap = bytearray([0x00, 0x55, 0xAA, 0x00] * 4 * 32)
+                else:
+                    tilemap = rom.banks[0x2F][tileset_index*0x100:tileset_index*0x100+0x200]
+                tilemap += rom.banks[0x2C][0x1200:0x1800]
+                tilemap += rom.banks[0x2C][0x0800:0x1000]
             else:
-                tilemap = rom.banks[0x2F][tileset_index*0x100:tileset_index*0x100+0x200]
-            tilemap += rom.banks[0x2C][0x1200:0x1800]
-            tilemap += rom.banks[0x2C][0x0800:0x1000]
+                tilemap = bytearray([0x00, 0x55, 0xAA, 0x00] * 4 * 256)
+                tilemap[0x200:0x800] = rom.banks[0x2D][0x000:0x600]
+                if tileset_index != 0xFF:
+                    tilemap[0x000:0x100] = rom.banks[0x2D][0x1000 + tileset_index * 0x100:0x1100 + tileset_index * 0x100]
+                tilemap[0x100:0x200] = rom.banks[0x2D][0x2000:0x2100]
+                tilemap[0xF00:0x1000] = rom.banks[0x32][0x3800:0x3900]
+
             anim_addr = {2: 0x2B00, 3: 0x2C00, 4: 0x2D00, 5: 0x2E00, 6: 0x2F00, 7: 0x2D00, 8: 0x3000, 9: 0x3100, 10: 0x3200, 11: 0x2A00, 12: 0x3300, 13: 0x3500, 14: 0x3600, 15: 0x3400, 16: 0x3700}.get(room.animation_id, 0x0000)
             tilemap[0x6C0:0x700] = rom.banks[0x2C][anim_addr:anim_addr + 0x40]
 
@@ -214,13 +261,44 @@ def exportOverworld(rom):
 
     world = {
         "maps": [
-            {"fileName": "%02X.json" % (n), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128}
+            {"fileName": "%03X.json" % (n), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128}
             for n in range(0x100)
         ],
         "onlyShowAdjacentMaps": False,
         "type": "world"
     }
-    json.dump(world, open("%s/overworld/export/world.world" % (path), "wt"))
+    json.dump(world, open("%s/overworld/export/overworld.world" % (path), "wt"))
+    if also_underworld:
+        world = {
+            "maps": [{"fileName": "%03X.json" % (n+0x100), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128} for n in range(0x100)],
+            "onlyShowAdjacentMaps": False,
+            "type": "world"
+        }
+        json.dump(world, open("%s/overworld/export/underworld_1.world" % (path), "wt"))
+        world = {
+            "maps": [{"fileName": "%03X.json" % (n+0x200), "height": 128, "width": 160, "x": (n & 0x0F) * 160, "y": (n >> 4) * 128} for n in range(0xFF)],
+            "onlyShowAdjacentMaps": False,
+            "type": "world"
+        }
+        json.dump(world, open("%s/overworld/export/underworld_2.world" % (path), "wt"))
+        for map_index in range(8):
+            rooms = []
+            for y in range(8):
+                for x in range(8):
+                    addr = 0x0220 + map_index * 8 * 8
+                    room_nr = rom.banks[0x14][addr+x+y*8] + 0x100
+                    if map_index > 5:
+                        room_nr += 0x100
+                    if map_index == 11:
+                        room_nr += 0x100
+                    if (room_nr & 0xFF) != 0:
+                        rooms.append({"fileName": "%03X.json" % (room_nr), "height": 128, "width": 160, "x": x * 160, "y": y * 128})
+            world = {
+                "maps": rooms,
+                "onlyShowAdjacentMaps": False,
+                "type": "world"
+            }
+            json.dump(world, open("%s/overworld/export/map_%02x.world" % (path, map_index), "wt"))
 
 
 def isNormalOverworld(rom):

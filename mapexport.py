@@ -67,7 +67,10 @@ class MapExport:
                         room += 0x100
                     self.room_map_info(room).x = x
                     self.room_map_info(room).y = y
-                    self.room_map_info(room).map_id = n if n < 11 else 0xFF
+                    map_id = n
+                    if n == 11:
+                        map_id = 0xFF
+                    self.room_map_info(room).map_id = map_id
         self.room_map_info(0x1FF).sidescroll = True  # D4 boss
         self.room_map_info(0x2E8).sidescroll = True  # D7 boss
         self.room_map_info(0x15D).map_id = 1  # Empty unused D2 room

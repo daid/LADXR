@@ -1,10 +1,81 @@
 import json
 import entityData
+from typing import List
 
 
 WARP_TYPE_IDS = {0xE1, 0xE2, 0xE3, 0xBA, 0xA8, 0xBE, 0xCB, 0xC2, 0xC6}
 ALT_ROOM_OVERLAYS = {"Alt06": 0x1040, "Alt0E": 0x1090, "Alt1B": 0x10E0, "Alt2B": 0x1130, "Alt79": 0x1180, "Alt8C": 0x11D0}
 
+INDOOR_MACROS = {
+    # Key doors
+    0xEC: [(0, 0, 0x2D), (1, 0, 0x2E)],
+    0xED: [(0, 0, 0x2F), (1, 0, 0x30)],
+    0xEE: [(0, 0, 0x31), (0, 1, 0x32)],
+    0xEF: [(0, 0, 0x33), (0, 1, 0x34)],
+    # Closed doors
+    0xF0: [(0, 0, 0x35), (1, 0, 0x36)],
+    0xF1: [(0, 0, 0x37), (1, 0, 0x38)],
+    0xF2: [(0, 0, 0x39), (0, 1, 0x3A)],
+    0xF3: [(0, 0, 0x3B), (0, 1, 0x3C)],
+    # Open door
+    0xF4: [(0, 0, 0x43), (1, 0, 0x44)],
+    0xF5: [(0, 0, 0x8C), (1, 0, 0x08)],
+    0xF6: [(0, 0, 0x09), (0, 1, 0x0A)],
+    0xF7: [(0, 0, 0x0B), (0, 1, 0x0C)],
+
+    0xF8: [(0, 0, 0xA4), (1, 0, 0xA5)], # boss door
+    # 0xF9: [(0, 0, 0xAF), (1, 0, 0xB0)], # stairs door
+    0xFA: [(0, 0, 0xB1), (1, 0, 0xB2)], # flipwall
+    0xFB: [(0, 0, 0x45), (1, 0, 0x46)], # one way arrow
+    0xFC: [
+        (0, 0, 0xB3), (1, 0, 0xB4), (2, 0, 0xB4), (3, 0, 0xB5),
+        (0, 1, 0xB6), (1, 1, 0xB7), (2, 1, 0xB8), (3, 1, 0xB9),
+        (0, 2, 0xBA), (1, 2, 0xBB), (2, 2, 0xBC), (3, 2, 0xBD),
+    ],
+    0xFD: [(0, 0, 0xC1), (1, 0, 0xC2)],
+}
+
+
+class RoomTemplate:
+    WALL_UP = 0x01
+    WALL_DOWN = 0x02
+    WALL_LEFT = 0x04
+    WALL_RIGHT = 0x08
+
+    def __init__(self, flags):
+        self.tiles = [None] * 80
+        for x in range(0, 10):
+            if flags & RoomTemplate.WALL_UP:
+                self.tiles[x + 0 * 10] = 0x21
+            if flags & RoomTemplate.WALL_DOWN:
+                self.tiles[x + 7 * 10] = 0x22
+        for y in range(0, 8):
+            if flags & RoomTemplate.WALL_LEFT:
+                self.tiles[0 + y * 10] = 0x23
+            if flags & RoomTemplate.WALL_RIGHT:
+                self.tiles[9 + y * 10] = 0x24
+        if flags & RoomTemplate.WALL_LEFT and flags & RoomTemplate.WALL_UP:
+            self.tiles[0 + 0 * 10] = 0x25
+        if flags & RoomTemplate.WALL_RIGHT and flags & RoomTemplate.WALL_UP:
+            self.tiles[9 + 0 * 10] = 0x26
+        if flags & RoomTemplate.WALL_LEFT and flags & RoomTemplate.WALL_DOWN:
+            self.tiles[0 + 7 * 10] = 0x27
+        if flags & RoomTemplate.WALL_RIGHT and flags & RoomTemplate.WALL_DOWN:
+            self.tiles[9 + 7 * 10] = 0x28
+
+
+INDOOR_ROOM_TEMPLATES = [
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_UP | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_UP | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_UP),
+    RoomTemplate(RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_UP | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_DOWN),
+    RoomTemplate(RoomTemplate.WALL_RIGHT | RoomTemplate.WALL_UP),
+    RoomTemplate(RoomTemplate.WALL_LEFT | RoomTemplate.WALL_UP),
+    RoomTemplate(0),
+]
 
 class RoomEditor:
     def __init__(self, rom, room=None):
@@ -122,6 +193,9 @@ class RoomEditor:
                 rom.banks[0x1A][0x1E76 + new_room_nr*2+1] = self.attribset[1] >> 8
             if self.palette_index is not None:
                 rom.banks[0x21][0x02ef + new_room_nr] = self.palette_index
+        elif isinstance(new_room_nr, int) and new_room_nr >= 0x100:
+            if self.tileset_index is not None:
+                rom.banks[0x20][0x2EB3 + new_room_nr - 0x100] = self.tileset_index
 
         if isinstance(new_room_nr, int):
             entities_raw = bytearray()
@@ -168,7 +242,7 @@ class RoomEditor:
                 obj.x = new_x
                 obj.y = new_y
 
-    def getWarps(self):
+    def getWarps(self) -> List["ObjectWarp"]:
         return list(filter(lambda obj: isinstance(obj, ObjectWarp), self.objects))
 
     def updateOverlay(self, preserve_floor=False):
@@ -493,90 +567,91 @@ class RoomEditor:
                     if tiles[n] in {0x08, 0x09, 0x0C, 0x44,
                                     0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF}:
                         tiles[n] = 0x04  # Open tiles
+            counts = {}
+            for n in tiles:
+                counts[n] = counts.get(n, 0) + 1
+            self.floor_object = max(counts, key=counts.get)
+            template_tiles = [self.floor_object] * 80
+        else:
+            counts = {}
+            for n in tiles:
+                if n < 0x0F:
+                    counts[n] = counts.get(n, 0) + 1
+            if counts:
+                self.floor_object = max(counts, key=counts.get)
+            else:
+                self.floor_object = 0x0D
+
+            template_scores = {}
+            for template_index, template in enumerate(INDOOR_ROOM_TEMPLATES):
+                score = 0
+                for idx, tile in enumerate(template.tiles):
+                    if tile is None:
+                        tile = self.floor_object
+                    if tiles[idx] == tile:
+                        score += 1
+                template_scores[template_index] = score
+            template_index = max(template_scores, key=template_scores.get)
+            template_tiles = [self.floor_object] * 80
+            for idx, tile in enumerate(INDOOR_ROOM_TEMPLATES[template_index].tiles):
+                if tile is not None:
+                    template_tiles[idx] = tile
+            self.floor_object |= template_index << 4
 
         is_overworld = isinstance(self.room, str) or self.room < 0x100
-        counts = {}
-        for n in tiles:
-            if n < 0x0F or is_overworld:
-                counts[n] = counts.get(n, 0) + 1
-        self.floor_object = max(counts, key=counts.get)
-        for y in range(8) if is_overworld else range(1, 7):
-            for x in range(10) if is_overworld else range(1, 9):
-                if tiles[x + y * 10] == self.floor_object:
-                    tiles[x + y * 10] = -1
+        done = [tiles[n] == template_tiles[n] for n in range(80)]
         for y in range(8):
             for x in range(10):
                 obj = tiles[x + y * 10]
-                if obj == -1:
+                if done[x + y * 10]:
                     continue
-                w = 1
-                h = 1
-                while x + w < 10 and tiles[x + w + y * 10] == obj:
-                    w += 1
-                while y + h < 8 and tiles[x + (y + h) * 10] == obj:
-                    h += 1
-                if obj in {0xE1, 0xE2, 0xE3, 0xBA, 0xC6}:  # Entrances should never be horizontal/vertical lists
-                    w = 1
-                    h = 1
-                if not is_overworld:
-                    if obj == 0x2D and tiles[x + 1 + y * 10] == 0x2E:  # Key door
-                        obj = 0xEC
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x2F and tiles[x + 1 + y * 10] == 0x30:
-                        obj = 0xED
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x31 and tiles[x + (y + 1) * 10] == 0x32:
-                        obj = 0xEE
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0x33 and tiles[x + (y + 1) * 10] == 0x34:
-                        obj = 0xEF
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0x35 and tiles[x + 1 + y * 10] == 0x36:  # closed door
-                        obj = 0xF0
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x37 and tiles[x + 1 + y * 10] == 0x38:
-                        obj = 0xF1
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x39 and tiles[x + (y + 1) * 10] == 0x3A:
-                        obj = 0xF2
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0x3B and tiles[x + (y + 1) * 10] == 0x3C:
-                        obj = 0xF3
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0x43 and tiles[x + 1 + y * 10] == 0x44:  # open door
-                        obj = 0xF4
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x8C and tiles[x + 1 + y * 10] == 0x08:
-                        obj = 0xF5
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x09 and tiles[x + (y + 1) * 10] == 0x0A:
-                        obj = 0xF6
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0x0B and tiles[x + (y + 1) * 10] == 0x0C:
-                        obj = 0xF7
-                        tiles[x + (y + 1) * 10] = -1
-                    elif obj == 0xA4 and tiles[x + 1 + y * 10] == 0xA5:  # boss door
-                        obj = 0xF8
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0xAF and tiles[x + 1 + y * 10] == 0xB0:  # stairs door
-                        obj = 0xF9
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0xB1 and tiles[x + 1 + y * 10] == 0xB2:  # flipwall door
-                        obj = 0xFA
-                        tiles[x + 1 + y * 10] = -1
-                    elif obj == 0x45 and tiles[x + 1 + y * 10] == 0x46:  # one way arrow
-                        obj = 0xFB
-                        tiles[x + 1 + y * 10] = -1
+                # Figure out if we should do a horizontal or vertical strip.
+                xmax = x
+                for x1 in range(x + 1, 10):
+                    if done[x1 + y * 10]:
+                        break
+                    if tiles[x1 + y * 10] == obj:
+                        xmax = x1
+                ymax = y
+                for y1 in range(y + 1, 8):
+                    if done[x + y1 * 10]:
+                        break
+                    if tiles[x + y1 * 10] == obj:
+                        ymax = y1
+                w = xmax - x + 1
+                h = ymax - y + 1
+                if self.overlay and obj in {0xE1, 0xE2, 0xE3, 0xBA}:
+                    w, h = 1, 1  # Do not encode entrances into strips
                 if w > h:
                     for n in range(w):
-                        tiles[x + n + y * 10] = -1
+                        if tiles[x + n + y * 10] == obj:
+                            done[x + n + y * 10] = True
                     self.objects.append(ObjectHorizontal(x, y, obj, w))
                 elif h > 1:
                     for n in range(h):
-                        tiles[x + (y + n) * 10] = -1
+                        if tiles[x + (y + n) * 10] == obj:
+                            done[x + (y + n) * 10] = True
                     self.objects.append(ObjectVertical(x, y, obj, h))
                 else:
-                    self.objects.append(Object(x, y, obj))
+                    # Check if we might be able to place a macro
+                    macro = None
+                    if not is_overworld:
+                        for macro_id, macro_data in INDOOR_MACROS.items():
+                            if macro_data[0][2] == obj:
+                                ok = True
+                                for mx, my, mobj in macro_data:
+                                    if x + mx >= 10 or y + my >= 8 or tiles[x + mx + (y + my) * 10] != mobj:
+                                        ok = False
+                                        break
+                                if ok:
+                                    macro = macro_id
+                    if macro:
+                        self.objects.append(Object(x, y, macro))
+                        for mx, my, mobj in INDOOR_MACROS[macro]:
+                            done[x + mx + (y + my) * 10] = True
+                    else:
+                        done[x + y * 10] = True
+                        self.objects.append(Object(x, y, obj))
 
 
 class Object:

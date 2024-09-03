@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, List, Tuple
 
 
 # Class which can read various metadata about rooms from the rom
-# This is independed of the RoomEditor, which concerns itself mostly with what tiles are where.
+# This is independent of the RoomEditor, which concerns itself mostly with what tiles are where.
 #   this info instead is more about how the room is rendered.
 class RoomInfo:
     def __init__(self, rom, room_nr: int, map_id: int, sidescroll: bool):
@@ -13,7 +13,7 @@ class RoomInfo:
         # Get the tileset id, which is important for which subgraphics to load
         if room_nr < 0x100:
             self.main_tileset_id = rom.banks[0x20][0x2E73 + (room_nr & 0x0F) // 2 + ((room_nr >> 5) * 8)]
-            if rom.banks[0x3F][0x3F00 + room_nr]:  # If we have the the per room tileset patch, use that data
+            if rom.banks[0x3F][0x3F00 + room_nr]:  # If we have the per room tileset patch, use that data
                 self.main_tileset_id = rom.banks[0x3F][0x3F00 + room_nr]
             elif rom.banks[0x3F][0x2F00 + room_nr]:  # Older style per-room-tileset patch
                 self.main_tileset_id = rom.banks[0x3F][0x2F00 + room_nr]
@@ -63,7 +63,7 @@ class RoomInfo:
         if room_nr < 0x100:
             self.metatile_bank = 0x1A
             self.metatile_addr = 0x6B1D
-        elif room_nr < 0x200:
+        elif room_nr < 0x300:
             self.metatile_bank = 0x08
             self.metatile_addr = 0x43B0
         else: # color dungeon
@@ -96,7 +96,7 @@ class RoomInfo:
 
     # Get a list of 8x8 graphic tile addresses for this room.
     def getTileset(self, animation_id: Optional[int]):
-        subtiles = [None] * 0x100
+        subtiles: List[Optional[Tuple[int, int]]] = [None] * 0x100
         if self.room_nr < 0x100:
             # Overworld tiles.
             if self.main_tileset_id is not None and self.main_tileset_id != 0x0F:
