@@ -43,21 +43,25 @@ class RoomInfo:
         # Find the palette to use, this is a bit weird, and also overly complicated (most DX related stuff is)
         if room_nr < 0x100:
             self.palette_index = rom.banks[0x21][0x02EF + room_nr]
-            self.palette_addr = rom.banks[0x21][0x02B1 + self.palette_index*2] | (rom.banks[0x21][0x02B2 + self.palette_index*2] << 8)
+            self._palette_addr_table = [(rom.banks[0x21][0x02B1+n*2] | (rom.banks[0x21][0x02B1+1+n*2] << 8)) for n in range(0x1F)]
+            self._palette_addr = None
         elif room_nr >= 0x300:
             self.palette_index = None
-            self.palette_addr = 0x67D0
+            self._palette_addr_table = None
+            self._palette_addr = 0x67D0
         else:
             if map_id < 9:
                 self.palette_index = None
+                self._palette_addr_table = None
                 addr = 0x0401 if self.sidescroll else 0x03EF
-                self.palette_addr = rom.banks[0x21][addr + map_id*2] | (rom.banks[0x21][addr + 1 + map_id*2] << 8)
+                self._palette_addr = rom.banks[0x21][addr + map_id*2] | (rom.banks[0x21][addr + 1 + map_id*2] << 8)
                 if room_nr in {0x264, 0x265, 0x266, 0x267, 0x26A, 0x26B}:
-                    self.palette_addr = 0x2750  # Specific D8 sidescroll overrules
+                    self._palette_addr = 0x2750  # Specific D8 sidescroll overrules
             else:
                 per_map_lookup_addr = rom.banks[0x21][0x0413 + (map_id - 10)*2] | (rom.banks[0x21][0x0414 + (map_id - 10)*2] << 8)
                 self.palette_index = rom.banks[0x21][per_map_lookup_addr - 0x4000 + (self.room_nr & 0xFF)]
-                self.palette_addr = rom.banks[0x21][0x043F + self.palette_index*2] | (rom.banks[0x21][0x0440 + self.palette_index*2] << 8)
+                self._palette_addr_table = [(rom.banks[0x21][0x043F + n * 2] | (rom.banks[0x21][0x0440 + n * 2] << 8)) for n in range(0x23)]
+                self._palette_addr = None
 
         # 16x16 -> 8x8 metatiles info
         if room_nr < 0x100:
@@ -94,8 +98,37 @@ class RoomInfo:
             self.item_tiles_bank = 0x32
             self.item_tiles_ptr = rom.banks[0x20][0x05CA + self.map_id] * 0x100 - 0x4000
 
+    def store(self, rom):
+        if self.room_nr < 0x100:
+            rom.banks[0x3F][0x3F00 + self.room_nr] = self.main_tileset_id
+        else:
+            rom.banks[0x20][0x2EB3 + self.room_nr - 0x100] = self.main_tileset_id
+
+        if self.room_nr < 0x100:
+            rom.banks[0x1A][0x2476 + self.room_nr] = self.attribute_bank
+            rom.banks[0x1A][0x1E76 + self.room_nr * 2] = self.attribute_addr & 0xFF
+            rom.banks[0x1A][0x1E76 + self.room_nr * 2 + 1] = (self.attribute_addr >> 8) | 0x40
+
+        # Find the palette to use, this is a bit weird, and also overly complicated (most DX related stuff is)
+        if self.room_nr < 0x100:
+            rom.banks[0x21][0x02EF + self.room_nr] = self.palette_index
+        elif self.room_nr >= 0x300:
+            pass
+        else:
+            if self.map_id < 9:
+                pass
+            else:
+                per_map_lookup_addr = rom.banks[0x21][0x0413 + (self.map_id - 10) * 2] | (rom.banks[0x21][0x0414 + (self.map_id - 10) * 2] << 8)
+                rom.banks[0x21][per_map_lookup_addr - 0x4000 + (self.room_nr & 0xFF)] = self.palette_index
+
+    @property
+    def palette_addr(self):
+        if self._palette_addr is not None:
+            return self._palette_addr
+        return self._palette_addr_table[self.palette_index]
+
     # Get a list of 8x8 graphic tile addresses for this room.
-    def getTileset(self, animation_id: Optional[int]):
+    def getTileset(self, animation_id: Optional[int], switch_blocks=False):
         subtiles: List[Optional[Tuple[int, int]]] = [None] * 0x100
         if self.room_nr < 0x100:
             # Overworld tiles.
@@ -144,9 +177,9 @@ class RoomInfo:
                     for n in range(4):
                         subtiles[0x0C + n] = (0x2C, 0x07C0 + n * 0x10)
 
-        if False: #TODO: Switch block tiles, if indoor rooms contain tile 0xDB or 0xDC these tiles are overruled.
+        if switch_blocks and self.room_nr >= 0x100:
             for n in range(4):
-                tileset[4 + n] = (0x2C, 0x2800 + n * 0x10)
-                tileset[8 + n] = (0x2C, 0x2880 + n * 0x10)
+                subtiles[4 + n] = (0x2C, 0x2800 + n * 0x10)
+                subtiles[8 + n] = (0x2C, 0x2880 + n * 0x10)
 
         return subtiles
