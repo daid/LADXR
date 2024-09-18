@@ -12,10 +12,8 @@ class Dungeon8:
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
         eye_magnet_chest = Location(dungeon=8).add(DungeonChest(0x25C)) # eye magnet chest bottom left below rolling bones
-        eye_magnet_chest.connect(entrance_left, OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, r.attack_hookshot))) # damageless roller should be default
-        if options.hardmode != "ohko":
-            eye_magnet_chest.connect(entrance_left, r.attack_hookshot) # can take a hit
-        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(entrance_left, r.attack_hookshot_no_bomb) # vire drop key
+        eye_magnet_chest.connect(entrance_left, r.miniboss_requirements["ROLLING_BONES"]) # let requirements folder deal with requirements based on ohko
+        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(eye_magnet_chest, r.attack_hookshot_no_bomb) # vire drop key
         sparks_chest = Location(dungeon=8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(dungeon=8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
@@ -26,7 +24,7 @@ class Dungeon8:
             bottomright_owl = None
         slime_chest = Location(dungeon=8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(r.attack_hookshot, POWER_BRACELET)))  # chest with slime
         bottom_right = Location(dungeon=8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(r.attack_hookshot_powder, POWER_BRACELET)))) # zamboni key drop; bombs for entrance up through switch room, weapon + bracelet for NW zamboni staircase to bottom right past smasher
-        bottomright_pot_chest = Location(dungeon=8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
+        bottomright_pot_chest = Location(dungeon=8).add(DungeonChest(0x25F)).connect(bottom_right, r.miniboss_requirements["SMASHER"]) # 4 ropes pot room chest
 
         map_chest = Location(dungeon=8).add(DungeonChest(0x24F)).connect(entrance_up, None) # use the zamboni to get to the push blocks
         lower_center = Location("D8 After Lava Keyblock", dungeon=8).connect(entrance_up, KEY8)
@@ -48,7 +46,7 @@ class Dungeon8:
         entrance_up.connect(up_left, AND(FEATHER, MAGIC_ROD), one_way=True) # alternate path with fire rod through 2d section to nightmare key
         up_left.add(DungeonChest(0x240)) # beamos blocked chest
         up_left.connect(entrance_left, None, one_way=True) # path from up_left to entrance_left by dropping of the ledge in torch room 
-        Location(dungeon=8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
+        Location(dungeon=8).add(DungeonChest(0x23D)).connect(up_left, r.miniboss_requirements["DODONGO"]) # dodongo chest
         up_left.connect(upper_center, None, one_way=True) # use the outside path of the dungeon to get to the right side
         if back_entrance_heartpiece is not None:
             Location().add(HeartPiece(back_entrance_heartpiece)).connect(up_left, None)  # Outside the dungeon on the platform
@@ -59,7 +57,7 @@ class Dungeon8:
 
         top_left_stairs = Location("D8 Before Cueball", dungeon=8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
         top_left_stairs.connect(up_left, None, one_way=True) # jump down from the staircase to the right
-        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8, FOUND(KEY8, 7)))
+        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, r.miniboss_requirements["CUEBALL"], KEY8, FOUND(KEY8, 7)))
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
