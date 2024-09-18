@@ -23,7 +23,7 @@ class ROM:
                 new += b'\x00' * (len(old) - len(new))
             else:
                 assert len(old) == len(new), "Length mismatch: %d != %d (%s != %s)" % (len(old), len(new), b2h(old), b2h(new))
-            assert addr >= 0 and addr + len(old) <= 16*1024
+            assert addr >= 0 and addr + len(old) <= 16*1024, f"{addr + len(old):04x}"
             if bank[addr:addr+len(old)] != old:
                 if bank[addr:addr + len(old)] == new:
                     # Patch is already applied.

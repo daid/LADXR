@@ -59,8 +59,10 @@ C2F0:wEntitiesPrivateCountdown1Table
 C300:wEntitiesPrivateCountdown2Table
 C310:wEntitiesPosZTable
 C320:wEntitiesSpeedZTable
+C340:wEntitiesPhysicsFlagsTable
 C360:wEntitiesHealthTable
 C380:wEntitiesDirectionTable
+C390:wEntitiesPrivateState5Table
 C3A0:wEntitiesTypeTable
 C3B0:wEntitiesSpriteVariantTable
 C3D0:wEntitiesInertiaTable
@@ -142,6 +144,7 @@ FF9D:hLinkAnimationState
 FF9E:hLinkDirection
 FFA1:hLinkInteractiveMotionBlocked
 FFA3:hLinkVelocityZ
+FFA6:hAnimatedTilesFrameCount
 FFAF:hObjectUnderEntity
 FFCB:hPressedButtonsMask
 FFCD:hIntersectedObjectTop
