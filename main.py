@@ -28,8 +28,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Test the logic of the given rom, without showing anything.")
     parser.add_argument('--romdebugmode', dest="romdebugmode", action="store_true",
         help="Patch the rom so that debug mode is enabled, this creates a default save with most items and unlocks some debug features.")
-    parser.add_argument('--exportmap', dest="exportmap", action="store_true",
-        help="Export the map (many graphical mistakes)")
+    parser.add_argument('--exportmap', dest="exportmap", type=str, required=False, nargs="?", const=True,
+        help="Export the map (few graphical mistakes)")
     parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
         help="Write an unfilled plan file")
     parser.add_argument('--timeout', type=float, required=False,
@@ -88,7 +88,12 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         import mapexport
         print(f"Loading: {args.input_filename}")
         rom = ROMWithTables(open(args.input_filename, 'rb'))
-        mapexport.MapExport(rom).export_all()
+        kwargs = {}
+        if isinstance(args.exportmap, str):
+            for kv in args.exportmap.split(":"):
+                k, _, v = kv.partition("=")
+                kwargs[k] = eval(v, {}, {})
+        mapexport.MapExport(rom, **kwargs).export()
         sys.exit(0)
 
     if args.emptyplan:

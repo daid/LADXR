@@ -11,7 +11,7 @@ class World:
 
         mabe_village = Location("Mabe Village")
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, r.bush)  # well
-        Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, COUNT("RUPEES", 20)))  # fishing game, hearth piece is directly done by the minigame.
+        Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, COUNT("RUPEES", 20)))  # fishing game, heart piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
         Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
@@ -424,7 +424,7 @@ class World:
         multichest_cave = Location("5 Chest Game Tunnel")
         multichest_cave_secret = Location("To 5 Chest Game").connect(multichest_cave, None, one_way=True) # bomb walls are one-way
         multichest_cave.connect(multichest_cave_secret, BOMB, one_way=True)
-        water_cave_hole = Location("Near Hole to Damp Cave")  # Location with the hole that drops you onto the hearth piece under water
+        water_cave_hole = Location("Near Hole to Damp Cave")  # Location with the hole that drops you onto the heart piece under water
         if options.logic != "casual":
             water_cave_hole.connect(heartpiece_swim_cave, FLIPPERS, one_way=True)
         multichest_outside = Location().add(Chest(0x01D))  # chest after multichest puzzle outside

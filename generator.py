@@ -78,30 +78,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     assembler.resetConsts()
     assembler.const("INV_SIZE", 16)
-    assembler.const("wHasFlippers", 0xDB3E)
-    assembler.const("wHasMedicine", 0xDB3F)
-    assembler.const("wTradeSequenceItem", 0xDB40)  # we use it to store flags of which trade items we have
-    assembler.const("wTradeSequenceItem2", 0xDB7F)  # Normally used to store that we have exchanged the trade item, we use it to store flags of which trade items we have
-    assembler.const("wSeashellsCount", 0xDB41)
-    assembler.const("wGoldenLeaves", 0xDB42)  # New memory location where to store the golden leaf counter
-    assembler.const("wCollectedTunics", 0xDB6D)  # Memory location where to store which tunic options are available
-    assembler.const("wCustomMessage", 0xC0A0)
-    assembler.const("wBowwowChain", 0xD1E0)  # Need $1A bytes for the chain and other bowwow related memory
-
-    # We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
-    assembler.const("wLinkSyncSequenceNumber", 0xDDF6)
-    assembler.const("wLinkStatusBits", 0xDDF7)
-    assembler.const("wLinkGiveItem", 0xDDF8)
-    assembler.const("wLinkGiveItemFrom", 0xDDF9)
-    assembler.const("wLinkSendItemRoomHigh", 0xDDFA)
-    assembler.const("wLinkSendItemRoomLow", 0xDDFB)
-    assembler.const("wLinkSendItemTarget", 0xDDFC)
-    assembler.const("wLinkSendItemItem", 0xDDFD)
-
-    assembler.const("wZolSpawnCount", 0xDE10)
-    assembler.const("wCuccoSpawnCount", 0xDE11)
-    assembler.const("wDropBombSpawnCount", 0xDE12)
-    assembler.const("wLinkSpawnDelay", 0xDE13)
 
     #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
@@ -190,6 +166,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
+    if settings.overworld == "alttp":
+        # Only apply this to ALTTP right now, as it might cause issues otherwise.
+        patches.aesthetics.allowOverworldBackgroundTileTransitions(rom)
     if settings.music == 'random':
         patches.music.randomizeMusic(rom, rnd)
     elif settings.music == 'off':

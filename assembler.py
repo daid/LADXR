@@ -1077,6 +1077,7 @@ def resetConsts() -> None:
     for line in open(os.path.join(os.path.dirname(__file__), "assembler.const"), "rt"):
         if ":" in line:
             value, _, key = line.strip().partition(":")
+            key = key.split(";")[0].strip()
             CONST_MAP[key.upper()] = int(value, 16)
 
 

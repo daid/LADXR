@@ -142,6 +142,6 @@ def generate(rom_filename, w, h):
     if imggen.enabled:
         store_map(rom, the_map)
         from mapexport import MapExport
-        MapExport(rom).export_all(w, h, dungeons=False)
+        MapExport(rom, underworld=False, dungeons=False).export()
         rom.save("test.gbc")
     return the_map

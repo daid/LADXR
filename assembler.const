@@ -1,23 +1,45 @@
 0BD7:Farcall
+0BFB:GetEntitySlowTransitionCountdown
 0C05:GetEntityTransitionCountdown
+2373:OpenDialogInTable1
 280D:GetRandomByte
+2914:CopyData
+3B0C:SetEntitySpriteVariant
 3B12:IncrementEntityState
 3B86:SpawnNewEntity_trampoline
 3BC0:RenderActiveEntitySpritesPair
+3C77:RenderActiveEntitySprite
 3CE6:RenderActiveEntitySpritesRect
 3F8D:UnloadEntity
 
 7FA3:ReturnIfNonInteractive_04
 
+7B4B:ClearEntityStatus_05
 7A3A:ReturnIfNonInteractive_05
 
+4005:GetEntitySpeedYAddress_07
+7D96:ReturnIfNonInteractive_07
 7CF0:PushLinkOutOfEntity_07
+7E0A:UpdateEntityPosWithSpeed_07
+7E7D:GetEntityDirectionToLink_07
 7EA4:ClearEntityStatus_07
 
 7F08:ClearEntityStatus_18
 7D36:PushLinkOutOfEntity_18
+7DE8:ReturnIfNonInteractive_18
 
+7CA2:PushLinkOutOfEntity_19
+7D3D:ReturnIfNonInteractive_19
+7E61:ClearEntityStatus_19
+
+C0A0:wCustomMessage
 C11C:wLinkMotionState
+C124:wRoomTransitionState
+C127:wBGUpdateRegionOriginLow
+C12B:wTransitionZeroNeverUsed
+C144:wIsLinkPushing
+C146:wIsLinkInTheAir
+C16B:wTransitionSequenceCounter
 C19B:wLinkAttackStepAnimationCountdown
 C19F:wDialogState
 C1BD:wDidBossIntro
@@ -45,11 +67,21 @@ C3D0:wEntitiesInertiaTable
 C3E0:wEntitiesRoomTable
 C420:wEntitiesFlashCountdownTable
 C440:wEntitiesPrivateState4Table
+C460:wEntitiesLoadOrderTable
 C490:wEntitiesLiftedTable
 C50A:wBlockItemUsage
+D1E0:wBowwowChain ; Need $1A bytes for the chain and other bowwow related memory
 D46C:wBossDefeated
 D47C:wActivePowerUp
 D711:wRoomObjects
+D800:wOverworldRoomStatus
+D900:wIndoorARoomStatus
+DA00:wIndoorBRoomStatus
+DB3E:wHasFlippers
+DB3F:wHasMedicine
+DB40:wTradeSequenceItem ; we use it to store flags of which trade items we have
+DB41:wSeashellsCount
+DB42:wGoldenLeaves ; New memory location where to store the golden leaf counter
 DB43:wPowerBraceletLevel
 DB44:wShieldLevel
 DB48:wTarinFlag
@@ -58,22 +90,62 @@ DB4B:wHasToadstool
 DB4C:wMagicPowderCount
 DB4E:wSwordLevel
 DB56:wIsBowWowFollowingLink
+DB6D:wCollectedTunics ; Memory location where to store which tunic options are available
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
 DB7D:wBoomerangTradedItem
+DB7F:wTradeSequenceItem2 ; Normally used to store that we have exchanged the trade item, we use it to store flags of which trade items we have
+DB94:wSubtractHealthBuffer
 DBA5:wIsIndoor
+DBC7:wInvincibilityCounter
+DC50:wObjPal1
+DC58:wObjPal2
+DC60:wObjPal3
+DC68:wObjPal4
+DC70:wObjPal5
+DC78:wObjPal6
+DC80:wObjPal7
+DC88:wObjPal8
 DE01:wFarcallBank
 DE02:wFarcallAdressHigh
 DE03:wFarcallAdressLow
 DE04:wFarcallReturnBank
+DDD1:wPaletteDataFlags
+
+; We store the link info in unused color dungeon flags, so it gets preserved in the savegame.
+DDF6:wLinkSyncSequenceNumber
+DDF7:wLinkStatusBits
+DDF8:wLinkGiveItem
+DDF9:wLinkGiveItemFrom
+DDFA:wLinkSendItemRoomHigh
+DDFB:wLinkSendItemRoomLow
+DDFC:wLinkSendItemTarget
+DDFD:wLinkSendItemItem
+
+DE10:wZolSpawnCount
+DE11:wCuccoSpawnCount
+DE12:wDropBombSpawnCount
+DE13:wLinkSpawnDelay
+
+FF4F:rVBK
+FF51:rHDMA1
 
 FF98:hLinkPositionX
 FF99:hLinkPositionY
 FFA2:hLinkPositionZ
+FF90:hNeedsUpdatingBGTiles
+FF92:hBGTilesLoadingStage
+FF94:hWorldTileset
+FF9A:hLinkSpeedX
+FF9B:hLinkSpeedY
 FF9D:hLinkAnimationState
 FF9E:hLinkDirection
 FFA1:hLinkInteractiveMotionBlocked
+FFA3:hLinkVelocityZ
+FFAF:hObjectUnderEntity
 FFCB:hPressedButtonsMask
+FFCD:hIntersectedObjectTop
+FFCE:hIntersectedObjectLeft
 FFD7:hMultiPurpose0
 FFD8:hMultiPurpose1
 FFE7:hFrameCounter
