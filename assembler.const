@@ -2,6 +2,8 @@
 0BFB:GetEntitySlowTransitionCountdown
 0C05:GetEntityTransitionCountdown
 2373:OpenDialogInTable1
+237C:OpenDialogInTable2
+2385:OpenDialogInTable0
 280D:GetRandomByte
 2914:CopyData
 3B0C:SetEntitySpriteVariant
@@ -12,6 +14,7 @@
 3CE6:RenderActiveEntitySpritesRect
 3F8D:UnloadEntity
 
+7BE3:PushLinkOutOfEntity_04
 7FA3:ReturnIfNonInteractive_04
 
 7B4B:ClearEntityStatus_05
@@ -73,12 +76,18 @@ C460:wEntitiesLoadOrderTable
 C490:wEntitiesLiftedTable
 C50A:wBlockItemUsage
 D1E0:wBowwowChain ; Need $1A bytes for the chain and other bowwow related memory
+D401:wWarpStructs
+D416:wWarp0PositionTileIndex
+D417:wWarp1PositionTileIndex
+D418:wWarp2PositionTileIndex
+D419:wWarp3PositionTileIndex
 D46C:wBossDefeated
 D47C:wActivePowerUp
 D711:wRoomObjects
 D800:wOverworldRoomStatus
 D900:wIndoorARoomStatus
 DA00:wIndoorBRoomStatus
+DB00:wInventoryItems
 DB3E:wHasFlippers
 DB3F:wHasMedicine
 DB40:wTradeSequenceItem ; we use it to store flags of which trade items we have
@@ -129,6 +138,8 @@ DE11:wCuccoSpawnCount
 DE12:wDropBombSpawnCount
 DE13:wLinkSpawnDelay
 
+FF00:rP1
+FF4D:rKEY1
 FF4F:rVBK
 FF51:rHDMA1
 
