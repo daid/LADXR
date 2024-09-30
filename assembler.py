@@ -504,11 +504,11 @@ class Assembler:
             value = int(expr.value)
         else:
             self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_HIGH8, expr)
-            value = 0
+            value = 0xFF00
         if 0xFF00 <= value < 0x10000:
             self.__current_section.data.append(value & 0xFF)
         else:
-            raise AssemblerException(expr, "HRAM 8 bit value out of range")
+            raise AssemblerException(expr, "IO/HRAM address out of range")
 
     def insertRel8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
@@ -1010,7 +1010,8 @@ class Assembler:
                     assert 0 <= value <= 0xFF
                     section.data[offset] = value & 0xFF
                 elif link_type == Assembler.LINK_HIGH8:
-                    assert 0xFF00 <= value <= 0xFFFF
+                    if value < 0xFF00 or value > 0xFFFF:
+                        raise AssemblerException(expr, f"Failed to link {link_expr}, result out of range for ldh")
                     section.data[offset] = value & 0xFF
                 elif link_type == Assembler.LINK_ABS16:
                     assert section.base_address > -1, "Cannot place absolute values in a relocatable code piece"
