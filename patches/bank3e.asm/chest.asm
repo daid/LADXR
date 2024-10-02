@@ -344,7 +344,7 @@ GoldenLeaf:
     inc  [hl]
     ret
 
-AddSeaShell:
+AddSeashell:
     ld   a, [wSeashellsCount]
     inc  a
     daa
