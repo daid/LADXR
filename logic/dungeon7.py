@@ -18,7 +18,7 @@ class Dungeon7:
         bottomleftF2_area = Location("D7 Hinox Area", dungeon=7).connect(topright_pillar_area, r.hit_switch)  # area with hinox, be able to hit a switch to reach that area
         topleftF1_chest = Location(dungeon=7).add(DungeonChest(0x201)) # top left chest on F1
         bottomleftF2_area.connect(topleftF1_chest, None, one_way = True)  # drop down in left most holes of hinox room or tile room
-        Location(dungeon=7).add(DroppedKey(0x21B)).connect(bottomleftF2_area, r.attack_hookshot) # hinox drop key
+        Location(dungeon=7).add(DroppedKey(0x21B)).connect(bottomleftF2_area, r.miniboss_requirements["HINOX"]) # hinox drop key
         # Most of the dungeon can be accessed at this point.
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             bottomleft_owl = Location(dungeon=7).add(OwlStatue(0x21C)).connect(bottomleftF2_area, AND(BOMB, STONE_BEAK7))
