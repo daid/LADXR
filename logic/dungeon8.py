@@ -7,15 +7,13 @@ class Dungeon8:
     def __init__(self, options, world_setup, r, *, back_entrance_heartpiece=0x000):
         entrance = Location("D8 Entrance", dungeon=8)
         entrance_up = Location("D8 North of Entrance", dungeon=8).connect(entrance, FEATHER)
-        entrance_left = Location("D8 After Hinox", dungeon=8).connect(entrance, r.attack_hookshot_no_bomb) # past hinox
+        entrance_left = Location("D8 After Hinox", dungeon=8).connect(entrance, AND(r.miniboss_requirements["HINOX"], r.attack_hookshot_no_bomb)) # past hinox
 
         # left side
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
         eye_magnet_chest = Location(dungeon=8).add(DungeonChest(0x25C)) # eye magnet chest bottom left below rolling bones
-        eye_magnet_chest.connect(entrance_left, OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, r.attack_hookshot))) # damageless roller should be default
-        if options.hardmode != "ohko":
-            eye_magnet_chest.connect(entrance_left, r.attack_hookshot) # can take a hit
-        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(entrance_left, r.attack_hookshot_no_bomb) # vire drop key
+        eye_magnet_chest.connect(entrance_left, r.miniboss_requirements["ROLLING_BONES"]) # let requirements folder deal with requirements based on ohko
+        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(eye_magnet_chest, r.attack_hookshot_no_bomb) # vire drop key
         sparks_chest = Location(dungeon=8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER))  # chest before lvl1 miniboss
         Location(dungeon=8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD)  # key chest that spawns after creating fire
         
@@ -25,8 +23,8 @@ class Dungeon8:
         else:
             bottomright_owl = None
         slime_chest = Location(dungeon=8).add(DungeonChest(0x259)).connect(entrance, OR(FEATHER, AND(r.attack_hookshot, POWER_BRACELET)))  # chest with slime
-        bottom_right = Location(dungeon=8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(r.attack_hookshot_powder, POWER_BRACELET)))) # zamboni key drop; bombs for entrance up through switch room, weapon + bracelet for NW zamboni staircase to bottom right past smasher
-        bottomright_pot_chest = Location(dungeon=8).add(DungeonChest(0x25F)).connect(bottom_right, POWER_BRACELET) # 4 ropes pot room chest
+        bottom_right = Location(dungeon=8).add(DroppedKey(0x25A)).connect(entrance, AND(FEATHER, OR(BOMB, AND(r.attack_hookshot_powder, POWER_BRACELET, r.miniboss_requirements["SMASHER"])))) # zamboni key drop; bombs for entrance up through switch room, weapon + bracelet for NW zamboni staircase to bottom right past smasher
+        bottomright_pot_chest = Location(dungeon=8).add(DungeonChest(0x25F)).connect(bottom_right, r.miniboss_requirements["SMASHER"]) # 4 ropes pot room chest
 
         map_chest = Location(dungeon=8).add(DungeonChest(0x24F)).connect(entrance_up, None) # use the zamboni to get to the push blocks
         lower_center = Location("D8 After Lava Keyblock", dungeon=8).connect(entrance_up, KEY8)
@@ -48,7 +46,7 @@ class Dungeon8:
         entrance_up.connect(up_left, AND(FEATHER, MAGIC_ROD), one_way=True) # alternate path with fire rod through 2d section to nightmare key
         up_left.add(DungeonChest(0x240)) # beamos blocked chest
         up_left.connect(entrance_left, None, one_way=True) # path from up_left to entrance_left by dropping of the ledge in torch room 
-        Location(dungeon=8).add(DungeonChest(0x23D)).connect(up_left, BOMB) # dodongo chest
+        Location(dungeon=8).add(DungeonChest(0x23D)).connect(up_left, r.miniboss_requirements["DODONGO"]) # dodongo chest, vanilla outside pathway of the dungeon
         up_left.connect(upper_center, None, one_way=True) # use the outside path of the dungeon to get to the right side
         if back_entrance_heartpiece is not None:
             Location().add(HeartPiece(back_entrance_heartpiece)).connect(up_left, None)  # Outside the dungeon on the platform
@@ -59,7 +57,7 @@ class Dungeon8:
 
         top_left_stairs = Location("D8 Before Cueball", dungeon=8).connect(entrance_up, AND(FEATHER, MAGIC_ROD)) 
         top_left_stairs.connect(up_left, None, one_way=True) # jump down from the staircase to the right
-        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, SWORD, KEY8, FOUND(KEY8, 7)))
+        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, r.miniboss_requirements["CUE_BALL"], KEY8, FOUND(KEY8, 7)))
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"
@@ -70,7 +68,7 @@ class Dungeon8:
         boss = Location(dungeon=8).add(HeartContainer(0x234), Instrument(0x230)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[7]])
         
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            entrance_left.connect(entrance, BOMB) # use bombs to kill vire and hinox
+            entrance_left.connect(entrance, AND(r.miniboss_requirements["HINOX"], r.attack_hookshot)) # use bombs to kill vire and hinox
             up_left.connect(vire_drop_key, BOMB, one_way=True) # use bombs to kill rolling bones and vire, do not allow pathway through hinox with just bombs, as not enough bombs are available
             bottom_right.connect(slime_chest, r.tight_jump) # diagonal jump over the pits to reach rolling rock / zamboni
             gibdos_drop_key.connect(upper_center, OR(HOOKSHOT, MAGIC_ROD)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
@@ -92,14 +90,14 @@ class Dungeon8:
         if options.logic == 'hell':
             if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
-            bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell)) # underground section past mimics, boots bonking across the gap to the ladder
+            bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, r.miniboss_requirements["SMASHER"])) # underground section past mimics, boots bonking across the gap to the ladder
             entrance.connect(bottomright_pot_chest, r.shaq_jump, one_way=True) # use NW zamboni staircase backwards, and get a naked shaq jump off the bottom wall in the bottom right corner to pass by the pot
             gibdos_drop_key.connect(upper_center, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             medicine_chest.connect(upper_center, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss_room.connect(miniboss_entrance, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
             top_left_stairs.connect(map_chest, AND(r.jesus_buffer, r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
-            nightmare_key.connect(top_left_stairs, AND(r.boots_bonk_pit, SWORD, FOUND(KEY8, 7))) # use a boots bonk to cross the lava in cueball room
-            bottom_right.connect(entrance_up, AND(POWER_BRACELET, r.jesus_buffer), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
+            nightmare_key.connect(top_left_stairs, AND(r.boots_bonk_pit, r.miniboss_requirements["CUE_BALL"], FOUND(KEY8, 7))) # use a boots bonk to cross the lava in cueball room
+            bottomright_pot_chest.connect(entrance_up, AND(POWER_BRACELET, r.jesus_buffer), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
             bossdoor.connect(entrance_up, AND(r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk through 2d section
             
         self.entrance = entrance
