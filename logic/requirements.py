@@ -338,11 +338,11 @@ class RequirementsSettings:
         }
         self.enemy_requirements = {
             "HARDHAT_BEETLE":    BOMB,
-            "MINI_MOLDORM":      r.attack_hookshot_powder,
-            "KEESE":             r.attack_hookshot_powder,
-            "YELLOW_STALFOS":    r.attack_skeleton,
-            "SPIKED_BEETLE":     AND(SHIELD, r.attack_hookshot_powder),
-            "THREE_OF_A_KIND":   OR(r.attack_hookshot_no_bomb, SHIELD),
+            "MINI_MOLDORM":      self.attack_hookshot_powder,
+            "KEESE":             self.attack_hookshot_powder,
+            "YELLOW_STALFOS":    self.attack_skeleton,
+            "SPIKED_BEETLE":     AND(SHIELD, self.attack_hookshot_powder),
+            "THREE_OF_A_KIND":   OR(self.attack_hookshot_no_bomb, SHIELD),
             
             
         }
