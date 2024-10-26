@@ -26,7 +26,7 @@ class Dungeon1:
         boss = Location(dungeon=1).add(HeartContainer(0x106), Instrument(0x102)).connect(dungeon1_boss_room, r.boss_requirements[world_setup.boss_mapping[0]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            stalfos_keese_room.connect(entrance, r.enemy_requirements["KEESE"])) # stalfos jump away when you press a button.
+            stalfos_keese_room.connect(entrance, r.enemy_requirements["KEESE"]) # stalfos jump away when you press a button.
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, r.super_jump_feather)  # super jump
