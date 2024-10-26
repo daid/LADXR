@@ -336,6 +336,16 @@ class RequirementsSettings:
             "MOBLIN_KING":      SWORD,
             "ARMOS_KNIGHT":     OR(BOW, MAGIC_ROD, SWORD),
         }
+        self.enemy_requirements = {
+            "HARDHAT_BEETLE":    BOMB,
+            "MINI_MOLDORM":      r.attack_hookshot_powder,
+            "KEESE":             r.attack_hookshot_powder,
+            "YELLOW_STALFOS":    r.attack_skeleton,
+            "SPIKED_BEETLE":     AND(SHIELD, r.attack_hookshot_powder),
+            "THREE_OF_A_KIND":   OR(r.attack_hookshot_no_bomb, SHIELD),
+            
+            
+        }
 
         # Adjust for options
         if not options.tradequest:
