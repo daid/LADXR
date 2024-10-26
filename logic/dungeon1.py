@@ -27,7 +27,6 @@ class Dungeon1:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             stalfos_keese_room.connect(entrance, r.enemy_requirements["KEESE"])) # stalfos jump away when you press a button.
-            dungeon1_3_of_a_kind.connect(dungeon1_right_side, BOMB) # use timed bombs to match the 3 of a kinds
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boss_key.connect(entrance, r.super_jump_feather)  # super jump
