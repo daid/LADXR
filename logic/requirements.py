@@ -340,10 +340,15 @@ class RequirementsSettings:
             "HARDHAT_BEETLE":    BOMB,
             "MINI_MOLDORM":      self.attack_hookshot_powder,
             "KEESE":             self.attack_hookshot_powder,
+            "GREEN_STALFOS":     self.attack_skeleton,
             "YELLOW_STALFOS":    self.attack_skeleton,
             "SPIKED_BEETLE":     AND(SHIELD, self.attack_hookshot_powder),
             "THREE_OF_A_KIND":   OR(self.attack_hookshot_no_bomb, SHIELD),
-            
+            "MASK_MIMIC":        OR(self.rear_attack, self.rear_attack_range),
+            "BOO_BUDDY":         OR(BOW, MAGIC_ROD),                                # assumes no torch is nearby
+            "SHROUDED_STALFOS":  self.attack_hookshot_powder,
+            "POLS_VOICE":        OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),
+            "ZOL":               self.attack_hookshot_powder,
             
         }
 
