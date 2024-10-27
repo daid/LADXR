@@ -358,6 +358,7 @@ class RequirementsSettings:
             "MASTER_STALFOS":    AND(SWORD, BOMB),
             "STAR":              self.attack_hookshot_powder,
             "WIZROBE":           OR(BOMB, MAGIC_ROD),                               # BOW works, but isn't as reliable as it needs 4 arrows.
+            "LIKE_LIKE":         self.attack_hookshot_powder,
             
             
         }
@@ -389,7 +390,7 @@ class RequirementsSettings:
             self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
             self.enemy_requirements["POLS_VOICE"] = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
             self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
-            self.enemy_requirements["THREE_OF_A_KIND"] = OR(r.attack_hookshot_no_bomb, SHIELD)
+            self.enemy_requirements["THREE_OF_A_KIND"] = OR(self.attack_hookshot, SHIELD)  # bomb three of a kinds
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
