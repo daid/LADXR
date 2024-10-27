@@ -10,7 +10,7 @@ class Dungeon3:
         area2 = Location("D3 After Pot Door", dungeon=3).connect(entrance, POWER_BRACELET)
         Location(dungeon=3).add(DungeonChest(0x151)).connect(area2, AND(r.enemy_requirements["GEL"], r.enemy_requirements["SWORD_STALFOS"], r.enemy_requirements["BOMBITE"]))  # First chest with key
         area2.add(DungeonChest(0x14F))  # Second chest with slime
-        area3 = Location("D3 After Zol Chest", dungeon=3).connect(area2, OR(r.enemy_requirements["HIDDEN_ZOL"], PEGASUS_BOOTS)) # need to kill slimes to continue or pass through left path
+        area3 = Location("D3 After Zol Chest", dungeon=3).connect(area2, OR(r.enemy_requirements["GREEN_ZOL"], PEGASUS_BOOTS)) # need to kill slimes to continue or pass through left path
         dungeon3_zol_stalfos = Location(dungeon=3).add(DungeonChest(0x14E)).connect(area3, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["YELLOW_STALFOS"]))  # 3th chest requires killing the slime behind the crystal pillars
 
         # now we can go 4 directions,
@@ -24,20 +24,20 @@ class Dungeon3:
         area_up.connect(dungeon3_raised_blocks_east, r.hit_switch, one_way=True) # hit switch to reach east chest
         
         area_left = Location("D3 West Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
-        area_left_key_drop = Location(dungeon=3).add(DroppedKey(0x155)).connect(area_left, AND(r.enemy_requirements["HIDDEN_ZOL"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # west key drop (no longer requires feather to get across hole), can use boomerang to knock owls into pit
+        area_left_key_drop = Location(dungeon=3).add(DroppedKey(0x155)).connect(area_left, AND(r.enemy_requirements["GREEN_ZOL"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # west key drop (no longer requires feather to get across hole), can use boomerang to knock owls into pit
 
         area_down = Location("D3 South Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
-        dungeon3_south_key_drop = Location(dungeon=3).add(DroppedKey(0x158)).connect(area_down, AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["SHROUDED_STALFOS"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # south keydrop, can use boomerang to knock owls into pit
+        dungeon3_south_key_drop = Location(dungeon=3).add(DroppedKey(0x158)).connect(area_down, AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["SHROUDED_STALFOS"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # south keydrop, can use boomerang to knock owls into pit
 
         area_right = Location("D3 East Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
-        Location(dungeon=3).add(DroppedKey(0x14D)).connect(area_right, r.enemy_requirements["HIDDEN_ZOL"])  # key after the stairs.
+        Location(dungeon=3).add(DroppedKey(0x14D)).connect(area_right, r.enemy_requirements["GREEN_ZOL"])  # key after the stairs.
 
         dungeon3_nightmare_key_chest = Location(dungeon=3).add(DungeonChest(0x147)).connect(area_right, AND(BOMB, FEATHER, PEGASUS_BOOTS))  # nightmare key chest
         dungeon3_miniboss_room = Location("D3 Miniboss Room", dungeon=3).connect(area_right, AND(r.enemy_requirements["RED_ZOL"], r.enemy_requirements["GEL"]))
         dungeon3_post_dodongo_chest = Location(dungeon=3).add(DungeonChest(0x146)).connect(dungeon3_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[2]])  # boots after the miniboss
-        compass_chest = Location(dungeon=3).add(DungeonChest(0x142)).connect(area_right, AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["TIMER_BOMBITE"]))
+        compass_chest = Location(dungeon=3).add(DungeonChest(0x142)).connect(area_right, AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["TIMER_BOMBITE"]))
         dungeon3_3_bombite_room = Location(dungeon=3).add(DroppedKey(0x141)).connect(compass_chest, AND(r.enemy_requirements["BOMBITE"], BOMB)) # 3 bombite room
-        Location(dungeon=3).add(DroppedKey(0x148)).connect(area_right, AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["PAIRODD"])) # 2 zol 2 owl drop key
+        Location(dungeon=3).add(DroppedKey(0x148)).connect(area_right, AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["PAIRODD"])) # 2 zol 2 owl drop key
         Location(dungeon=3).add(DungeonChest(0x144)).connect(area_right, AND(r.enemy_requirements["GREEN_STALFOS"], r.enemy_requirements["RED_ZOL"]))  # map chest
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=3).add(OwlStatue(0x140), OwlStatue(0x147)).connect(area_right, STONE_BEAK3)
@@ -67,17 +67,17 @@ class Dungeon3:
             dungeon3_north_key_drop.connect(area_up, r.throw_pot) # use pots to kill the enemies
             dungeon3_south_key_drop.connect(area_down, r.throw_pot) # use pots to kill enemies
             area_up.connect(dungeon3_raised_blocks_north, r.throw_pot, one_way=True) # use pots to hit the switch
-            area_up.connect(dungeon3_raised_blocks_east, AND(r.throw_pot, r.enemy_requirements["HIDDEN_ZOL"]), one_way=True) # use pots to hit the switch
+            area_up.connect(dungeon3_raised_blocks_east, AND(r.throw_pot, r.enemy_requirements["GREEN_ZOL"]), one_way=True) # use pots to hit the switch
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            area2.connect(dungeon3_raised_blocks_east, AND(r.enemy_requirements["HIDDEN_ZOL"], r.super_jump_feather), one_way=True) # use superjump to get over the bottom left block
+            area2.connect(dungeon3_raised_blocks_east, AND(r.enemy_requirements["GREEN_ZOL"], r.super_jump_feather), one_way=True) # use superjump to get over the bottom left block
             area3.connect(dungeon3_raised_blocks_north, AND(OR(PEGASUS_BOOTS, r.hookshot_clip_block), r.shaq_jump), one_way=True) # use shagjump (unclipped superjump next to movable block) from north wall to get on the blocks. Instead of boots can also get to that area with a hookshot clip past the movable block
             area3.connect(dungeon3_zol_stalfos, AND(r.enemy_requirements["GEL"], r.enemy_requirements["YELLOW_STALFOS"], r.hookshot_clip_block), one_way=True) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
             dungeon3_nightmare_key_chest.connect(area_right, AND(r.super_jump_feather, BOMB)) # superjump to right side 3 gap via top wall and jump the 2 gap
             dungeon3_post_dodongo_chest.connect(area_right, AND(r.super_jump_feather, FOUND(KEY3, 6))) # superjump from keyblock path. use 2 keys to open enough blocks TODO: text skip skips 1 key
         
         if options.logic == 'hell':
-            area2.connect(dungeon3_raised_blocks_east, AND(r.enemy_requirements["HIDDEN_ZOL"], r.boots_superhop), one_way=True) # use boots superhop to get over the bottom left block
+            area2.connect(dungeon3_raised_blocks_east, AND(r.enemy_requirements["GREEN_ZOL"], r.boots_superhop), one_way=True) # use boots superhop to get over the bottom left block
             area3.connect(dungeon3_raised_blocks_north, r.boots_superhop, one_way=True) # use boots superhop off top wall or left wall to get on raised blocks
             area_up.connect(dungeon3_zol_stalfos, AND(r.super_jump_feather, r.enemy_requirements["GEL"], r.enemy_requirements["YELLOW_STALFOS"]), one_way=True) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
             area_left_key_drop.connect(area_left, r.shield_bump) # knock everything into the pit including the teleporting owls

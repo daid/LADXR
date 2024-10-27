@@ -348,8 +348,7 @@ class RequirementsSettings:
             "SWORD_STALFOS":     self.attack_hookshot_powder,
             "POLS_VOICE":        OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),          # BOW works, but isn't as reliable as it needs 4 arrows.
             "RED_ZOL":           self.attack_hookshot_powder,                       # this one can split into 2 gels when hit
-            "GREEN_ZOL":         self.attack_hookshot_powder,
-            "HIDDEN_ZOL":        self.attack_hookshot_powder,
+            "GREEN_ZOL":         self.attack_hookshot_powder,                       # Zol hiding in the ground, does not split
             "GEL":               self.attack_hookshot_powder,
             "BOMBITE":           self.attack_hookshot_powder,                       # the bouncy ones, not to be confused with TIMER_BOMBITE
             "TIMER_BOMBITE":     OR(SWORD, BOMB, SHIELD),

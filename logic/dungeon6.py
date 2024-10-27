@@ -12,7 +12,7 @@ class Dungeon6:
             Location(dungeon=6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6)
 
         # Power bracelet chest
-        bracelet_chest = Location(dungeon=6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER, r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"]))
+        bracelet_chest = Location(dungeon=6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER, r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"]))
 
         # left side
         Location(dungeon=6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, r.enemy_requirements["WIZROBE"])) # 3 wizrobes raised blocks don't need to hit the switch
@@ -38,11 +38,11 @@ class Dungeon6:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss_room = Location("D6 Boss Room", dungeon=6).connect(center_1, AND(NIGHTMARE_KEY6, OR(AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["WIZROBE"]), SHIELD)))
+        boss_room = Location("D6 Boss Room", dungeon=6).connect(center_1, AND(NIGHTMARE_KEY6, OR(AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["WIZROBE"]), SHIELD)))
         boss = Location(dungeon=6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[5]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            bracelet_chest.connect(entrance, AND(BOMB, r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # get through 2d section by "fake" jumping to the ladders
+            bracelet_chest.connect(entrance, AND(BOMB, r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # get through 2d section by "fake" jumping to the ladders
             center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2), r.boots_dash_2d)) # use a boots dash to get over the platforms
             center_2_and_upper_right_side.connect(center_1, AND(COUNT(POWER_BRACELET, 2), r.damage_boost, r.enemy_requirements["POLS_VOICE"], FOUND(KEY6, 2))) # damage_boost past the mini_thwomps
             

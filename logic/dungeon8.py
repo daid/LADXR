@@ -31,7 +31,7 @@ class Dungeon8:
         hidden_arrow_room = Location("hidden_arrow_room", dungeon=8).connect(lower_center, AND(KEY8, FOUND(KEY8, 2)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=8).add(OwlStatue(0x245)).connect(hidden_arrow_room, STONE_BEAK8)
-        upper_center = Location("D8 Dodongo Area", dungeon=8).connect(hidden_arrow_room, r.enemy_requirements["HIDDEN_ZOL"])
+        upper_center = Location("D8 Dodongo Area", dungeon=8).connect(hidden_arrow_room, r.enemy_requirements["GREEN_ZOL"])
         upper_center.connect(hidden_arrow_room, None, one_way = True) 
         gibdos_drop_key = Location(dungeon=8).add(DroppedKey(0x23E)).connect(upper_center, r.enemy_requirements["GIBDO"]) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         medicine_chest = Location(dungeon=8).add(DungeonChest(0x235)).connect(upper_center, AND(FEATHER, HOOKSHOT))  # medicine chest

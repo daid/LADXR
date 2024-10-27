@@ -21,7 +21,7 @@ class DungeonColor:
         miniboss_room2 = Location("D0 Miniboss Room 2", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 2)))
         room3 = Location("D0 After Miniboss 2", dungeon=0).connect(miniboss_room2, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]]) # After the miniboss
         room4 = Location(dungeon=0).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
-        room4_map_chest = Location(dungeon=0).add(DungeonChest(0x306)).connect(room4, AND(r.enemy_requirements["RED_ZOL"], r.enemy_requirements["HIDDEN_ZOL"]))
+        room4_map_chest = Location(dungeon=0).add(DungeonChest(0x306)).connect(room4, AND(r.enemy_requirements["RED_ZOL"], r.enemy_requirements["GREEN_ZOL"]))
         room4karakoro = Location(dungeon=0).add(DroppedKey(0x307)).connect(room4, AND(r.attack_hookshot, POWER_BRACELET))  # require item to knock Karakoro enemies into shell
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0)
