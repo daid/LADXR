@@ -494,7 +494,7 @@ class World:
             d8_entrance.connect(outside_fire_cave, None, one_way=True) # Jump down the other ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
         self._addEntrance("phone_d8", d8_entrance, None, None)
-        self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
+        self._addEntrance("d8", d8_entrance, None, r.enemy_requirements["TURTLE_ROCK_HEAD"])
         self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
         nightmare = Location("Nightmare")

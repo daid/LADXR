@@ -380,7 +380,40 @@ class RequirementsSettings:
             "SWORD_DARKNUT":     self.attack_hookshot_powder,
             "BALL_AND_CHAIN_TROOPER": self.attack_hookshot,
             "LANMOLA":           self.attack_hookshot_no_bomb,
-            "ARMOS":             OR(BOMB, BOW, MAGIC_ROD)
+            "TURTLE_ROCK_HEAD":  AND(OCARINA, SONG3, SWORD),
+            "ARMOS":             OR(BOMB, BOW, MAGIC_ROD),
+            "BOMBER":            OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "BUZZ_BLOB":         OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
+            "DACTO":             self.attack_hookshot_no_bomb,                      # graveyard crow?
+            "GHINI":             self.attack_hookshot_no_bomb,
+            "GIANT_GHINI":       self.attack_hookshot_no_bomb,
+            "LEEVER":            self.attack_hookshot_powder,
+            "MUTT":              self.fire,
+            "CUCKOO":            self.fire,
+            "OCTOROK":           self.attack_hookshot_powder,
+            "PIG_WARRIOR":       self.attack_hookshot_powder,
+            "SWORD_PIG_WARRIOR": self.attack_hookshot_powder,
+            "PINCER":            self.attack_hookshot,
+            "PIRANHA":           self.attack_hookshot_powder,
+            "POKEY":             self.attack_hookshot_powder,
+            "SAND_CRAB":         self.attack_hookshot_powder,
+            "SPINEY_BEETLE_BUSH": AND(self.bush, self.attack_hookshot_powder), 
+            "SPINEY_BEETLE_ROCK": AND(POWER_BRACELET, self.attack_hookshot_powder),   
+            "TEKTITE":           self.attack_hookshot_powder,
+            "WINGED_OCTOROK":    self.attack_hookshot_powder,
+            "ZORA":              OR(SWORD, BOOMERANG), # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water
+            "ANTI_KIRBY":        OR(BOMB, MAGIC_ROD, BOOMERANG), # double check magic rod
+            "BLOOBER":           self.attack_hookshot_powder, # 2d
+            "WINGED_BONE_PUTTER": OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "BONE_PUTTER":       OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "CHEEP_CHEEP":       self.attack_hookshot_powder, # 2d, can also "stomp"
+            "GOOMBA":            OR(FEATHER, self.attack_hookshot_powder), # can stomp, also available in 2d
+            "PEAHAT":            self.attack_hookshot_powder,
+            "PIRANHA_PLANT":     self.attack_hookshot_powder, # 2d
+            "SPARK":             BOOMERANG,                   # does not count as enemy in kill all rooms
+            "BUBBLE":            self.fire,                   # does not count as enemy in kill all rooms (also known as anti-fairy)
+            "WATER_TEKTITE":     self.attack_hookshot_powder,
+            "VACUUM_MOUTH":      SWORD,
             
         }
 
@@ -416,6 +449,11 @@ class RequirementsSettings:
             self.enemy_requirements["GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
             self.enemy_requirements["GIANT_GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
             self.enemy_requirements["LANMOLA"] = r.attack_hookshot # use bomb to kill lanmola
+            self.enemy_requirements["BOMBER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bomber
+            self.enemy_requirements["GHINI"] = r.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["GIANT_GHINI"] = r.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
+            self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
@@ -425,3 +463,4 @@ class RequirementsSettings:
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
             self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits
+            self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob
