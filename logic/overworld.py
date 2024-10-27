@@ -498,7 +498,7 @@ class World:
         self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
         nightmare = Location("Nightmare")
-        windfish = Location("Windfish").connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        windfish = Location("Windfish").connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], r.enemy_requirements["SHADOW_DETHL"]))
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             hookshot_cave.connect(hookshot_cave_chest, r.boots_jump) # boots jump the gap to the chest
@@ -662,7 +662,7 @@ class World:
             left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, AND(r.boots_jump, r.pit_buffer), one_way=True) # boots jump to bottom left corner of pits, pit buffer and jump to left
             left_right_connector_cave_exit.connect(left_right_connector_cave_entrance, AND(ROOSTER, OR(r.boots_roosterhop, r.super_jump_rooster)), one_way=True)  # pass through the passage in reverse using a boots rooster hop or rooster superjump in the one way passage area
             
-            windfish.connect(nightmare, AND(SWORD, OR(BOOMERANG, BOW, BOMB, COUNT(SWORD, 2), AND(OCARINA, OR(SONG1, SONG3))))) # sword quick kill blob, can kill dethl with bombs or sword beams, and can use ocarina to freeze one of ganon's bats to skip dethl eye phase
+            windfish.connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], AND(OCARINA, OR(SONG1, SONG3)))) # Can use ocarina to freeze one of ganon's bats to skip dethl eye phase
             
         self.start = start_house
         self.egg = windfish_egg
@@ -711,7 +711,7 @@ class DungeonDiveOverworld:
             Location().add(BoomerangGuy()).connect(start_house, BOMB)
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], r.enemy_requirements["SHADOW_DETHL"]))
 
         self.start = start_house
         self.entrances = {
@@ -747,7 +747,7 @@ class DungeonChain:
         start_house = Location().add(StartItem())
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], r.enemy_requirements["SHADOW_DETHL"]))
 
         self.start = start_house
         self.nightmare = nightmare
@@ -883,7 +883,7 @@ class ALttP:
         self._addEntrance("madbatter_taltal", start_area, taltal_madbatter, POWER_BRACELET)
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], r.enemy_requirements["SHADOW_DETHL"]))
 
         Location().add(Seashell(0xBF)).connect(start_area, AND(HAMMER, POWER_BRACELET))
         armos_maze = Location().connect(start_area, POWER_BRACELET)

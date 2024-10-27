@@ -366,9 +366,9 @@ class RequirementsSettings:
             "GREEN_CAMO_MOBLIN": self.attack_hookshot_powder,
             "RED_CAMO_MOBLIN":   self.attack_hookshot_powder,
             "BLUE_CAMO_MOBLIN":  self.attack_hookshot_powder,
-            #"GREEN_ORB_MONSTER": AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
-            #"RED_ORB_MONSTER":   AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
-            #"BLUE_ORB_MONSTER":  AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            #"GREEN_ORB_MONSTER": AND(self.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            #"RED_ORB_MONSTER":   AND(self.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            #"BLUE_ORB_MONSTER":  AND(self.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
             "SEA_URCHIN":        self.attack_hookshot,                              # does not have powder in overworld logic file as option
             "GIANT_GOPONGA_FLOWER": OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
             "GOPONGA_FLOWER": OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
@@ -381,6 +381,13 @@ class RequirementsSettings:
             "BALL_AND_CHAIN_TROOPER": self.attack_hookshot,
             "LANMOLA":           self.attack_hookshot_no_bomb,
             "TURTLE_ROCK_HEAD":  AND(OCARINA, SONG3, SWORD),
+            "SHADOW_BLOB":       MAGIC_POWDER,
+            "SHADOW_AGAHNIM":    OR(SWORD, SHOVEL),
+            "SHADOW_MOLDORM":    SWORD,
+            "SHADOW_GANON":      SWORD,
+            "SHADOW_LANMOLA":    self.attack_hookshot_no_bomb,
+            "SHADOW_DETHL":      OR(BOW, BOOMERANG),
+            
             "ARMOS":             OR(BOMB, BOW, MAGIC_ROD),
             "BOMBER":            OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
             "BUZZ_BLOB":         OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
@@ -445,13 +452,14 @@ class RequirementsSettings:
             self.enemy_requirements["POLS_VOICE"] = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
             self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
             self.enemy_requirements["THREE_OF_A_KIND"] = OR(self.attack_hookshot, SHIELD)  # bomb three of a kinds
-            self.enemy_requirements["VIRE"] = r.attack_hookshot_powder # bomb vire
+            self.enemy_requirements["VIRE"] = self.attack_hookshot_powder # bomb vire
             self.enemy_requirements["GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
             self.enemy_requirements["GIANT_GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
-            self.enemy_requirements["LANMOLA"] = r.attack_hookshot # use bomb to kill lanmola
+            self.enemy_requirements["LANMOLA"] = self.attack_hookshot # use bomb to kill lanmola
+            self.enemy_requirements["SHADOW_LANMOLA"] = self.attack_hookshot # use bomb to kill shadow lanmola
             self.enemy_requirements["BOMBER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bomber
-            self.enemy_requirements["GHINI"] = r.attack_hookshot # use bomb to kill ghini
-            self.enemy_requirements["GIANT_GHINI"] = r.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["GHINI"] = self.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["GIANT_GHINI"] = self.attack_hookshot # use bomb to kill ghini
             self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             
@@ -463,4 +471,6 @@ class RequirementsSettings:
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
             self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits
+            self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
+            self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, COUNT(SWORD,2)) # use bombs or L2 sword beams to damage dethl
             self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob
