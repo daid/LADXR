@@ -846,13 +846,13 @@ class ALttP:
         self._addEntrance("castle_main_entrance", castle_courtyard, castle_inside, None)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
-        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
-        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
+        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, AND(r.enemy_requirements["DARKNUT"], r.enemy_requirements["RED_ZOL"]))  # in the castle, kill enemies
+        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.enemy_requirements["SWORD_DARKNUT"]))  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
-        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)
+        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.enemy_requirements["BALL_AND_CHAIN_TROOPER"]), one_way=True)
 
         dream_hut = Location()
-        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD)
+        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, r.enemy_requirements["ARM_MIMIC"])
         if options.logic != "casual":
             dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER))
         Location().add(Chest(0x2BE)).connect(dream_hut_right, PEGASUS_BOOTS)
@@ -874,7 +874,7 @@ class ALttP:
         hookshot_cave = Location()
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
-        moblin_cave = Location().connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
+        moblin_cave = Location().connect(Location().add(Chest(0x2E2)), AND(r.enemy_requirements["SWORD_MOBLIN"], r.enemy_requirements["MOBLIN"], r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
         self._addEntrance("moblin_cave", forest, moblin_cave, None)
 
         ghost_hut_inside = Location().connect(Location().add(Seashell(0x1E3)), POWER_BRACELET)
