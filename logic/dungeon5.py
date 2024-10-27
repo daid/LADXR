@@ -30,8 +30,8 @@ class Dungeon5:
         first_bridge_chest = Location(dungeon=5).add(DungeonChest(0x18E)).connect(north_of_crossroads, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # south of bridge
         north_bridge_chest = Location(dungeon=5).add(DungeonChest(0x188)).connect(north_of_crossroads, HOOKSHOT) # north bridge chest 50 rupees
         east_bridge_chest = Location(dungeon=5).add(DungeonChest(0x18F)).connect(north_of_crossroads, HOOKSHOT) # east bridge chest small key
-        third_arena = Location("D5 Master Stalfos 3", dungeon=5).connect(north_of_crossroads, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["MASTER_STALFOS"])) # can beat 3rd m.stalfos
-        stone_tablet = Location(dungeon=5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, AND(r.enemy_requirements["GREEN_STALFOS"], r.enemy_requirements["YELLOW_STALFOS"])))  # stone tablet
+        third_arena = Location("D5 Master Stalfos 3", dungeon=5).connect(north_of_crossroads, AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["MASTER_STALFOS"])) # can beat 3rd m.stalfos
+        stone_tablet = Location(dungeon=5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, AND(r.enemy_requirements["HIDDEN_ZOL"], r.enemy_requirements["GREEN_STALFOS"], r.enemy_requirements["YELLOW_STALFOS"])))  # stone tablet
         boss_key = Location(dungeon=5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
         before_boss = Location("D5 Before Boss", dungeon=5).connect(after_keyblock_boss, HOOKSHOT) 
         boss_room = Location("D5 Boss Room", dungeon=5).connect(before_boss, NIGHTMARE_KEY5)

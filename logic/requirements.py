@@ -349,7 +349,8 @@ class RequirementsSettings:
             "SHROUDED_STALFOS":  self.attack_hookshot_powder,
             "SWORD_STALFOS":     self.attack_hookshot_powder,
             "POLS_VOICE":        OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),
-            "ZOL":               self.attack_hookshot_powder,
+            "RED_ZOL":           self.attack_hookshot_powder,                       # this one can split into 2 gels when hit
+            "GREEN_ZOL":         self.attack_hookshot_powder,
             "HIDDEN_ZOL":        self.attack_hookshot_powder,
             "GEL":               self.attack_hookshot_powder,
             "BOMBITE":           self.attack_hookshot_powder,                       # the bouncy ones, not to be confused with TIMER_BOMBITE

@@ -32,7 +32,7 @@ class Dungeon2:
         dungeon2_ghosts_chest = Location(dungeon=2).add(DungeonChest(0x120)).connect(dungeon2_ghosts_room, OR(r.fire, r.enemy_requirements["BOO_BUDDY"]))  # bracelet chest
         dungeon2_r6 = Location("D2 After Boo Buddies", dungeon=2).add(DungeonChest(0x122)).connect(miniboss, POWER_BRACELET)
         dungeon2_boss_key = Location(dungeon=2).add(DungeonChest(0x127)).connect(dungeon2_r6, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["SHROUDED_STALFOS"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET)))
-        dungeon2_pre_stairs_boss = Location("D2 Before Boss Stairs", dungeon=2).connect(dungeon2_r6, AND(r.enemy_requirements["ZOL"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET), POWER_BRACELET, KEY2, FOUND(KEY2, 5)))
+        dungeon2_pre_stairs_boss = Location("D2 Before Boss Stairs", dungeon=2).connect(dungeon2_r6, AND(r.enemy_requirements["RED_ZOL"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET), POWER_BRACELET, KEY2, FOUND(KEY2, 5)))
         dungeon2_post_stairs_boss = Location("D2 Boss Stairs", dungeon=2).connect(dungeon2_pre_stairs_boss, POWER_BRACELET)
         dungeon2_pre_boss = Location("D2 Outside Boss Room", dungeon=2).connect(dungeon2_post_stairs_boss, FEATHER)
         # If we can get here, we have everything for the boss. So this is also the goal room.
@@ -48,7 +48,7 @@ class Dungeon2:
             dungeon2_r4.connect(dungeon2_r3, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             dungeon2_r4.connect(shyguy_key_drop, r.rear_attack_range, one_way=True) # adjust for alternate requirements for dungeon2_r4
             miniboss_room.connect(dungeon2_r5, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section
-            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"], FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
+            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(r.hookshot_clip_block, r.enemy_requirements["RED_ZOL"], r.enemy_requirements["POLS_VOICE"], FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
             dungeon2_post_stairs_boss.connect(dungeon2_pre_stairs_boss, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
