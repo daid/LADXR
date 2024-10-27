@@ -6,13 +6,13 @@ from locations.all import *
 class DungeonColor:
     def __init__(self, options, world_setup, r):
         entrance = Location("D0 Entrance", dungeon=0)
-        room2 = Location(dungeon=0).connect(entrance, r.attack_hookshot_powder)
+        room2 = Location(dungeon=0).connect(entrance, AND(r.enemy_requirements["GREEN_CAMO_MOBLIN"], r.enemy_requirements["RED_CAMO_MOBLIN"])
         room2.add(DungeonChest(0x314))  # key
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x308), OwlStatue(0x30F)).connect(room2, STONE_BEAK0)
-        room2_weapon = Location(dungeon=0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET))
+        room2_weapon = Location(dungeon=0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET)) # throw karakoro in holes
         room2_weapon.add(DungeonChest(0x311))  # stone beak
-        room2_lights = Location(dungeon=0).connect(room2, OR(r.attack_hookshot, SHIELD))
+        room2_lights = Location(dungeon=0).connect(room2, OR(r.hit_switch, SHIELD))
         room2_lights.add(DungeonChest(0x30F))  # compass chest
         room2_lights.add(DroppedKey(0x308))
 
@@ -21,11 +21,11 @@ class DungeonColor:
         miniboss_room2 = Location("D0 Miniboss Room 2", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 2)))
         room3 = Location("D0 After Miniboss 2", dungeon=0).connect(miniboss_room2, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]]) # After the miniboss
         room4 = Location(dungeon=0).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
-        room4.add(DungeonChest(0x306))  # map
+        room4_map_chest = Location(dungeon=0).add(DungeonChest(0x306)).connect(room4, AND(r.enemy_requirements["RED_ZOL"], r.enemy_requirements["HIDDEN_ZOL"]))
         room4karakoro = Location(dungeon=0).add(DroppedKey(0x307)).connect(room4, AND(r.attack_hookshot, POWER_BRACELET))  # require item to knock Karakoro enemies into shell
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0)
-        room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.attack_hookshot, SHIELD)) # lights room
+        room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.hit_switch, SHIELD)) # lights room
         room6 = Location("D0 Room Before Boss", dungeon=0).connect(room5, AND(KEY0, FOUND(KEY0, 3))) # room with switch and nightmare door
         pre_boss = Location("D0 Outside Boss Door", dungeon=0).connect(room6, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER)))  # before the boss, require item to hit switch or jump past raised blocks
         boss_room = Location("D0 Boss Room", dungeon=0).connect(pre_boss, NIGHTMARE_KEY0)

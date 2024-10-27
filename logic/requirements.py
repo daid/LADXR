@@ -363,6 +363,12 @@ class RequirementsSettings:
             "ROPE":              self.attack_hookshot_powder,
             "GIBDO":             self.attack_gibdos,
             "ARM_MIMIC":         SWORD,
+            "GREEN_CAMO_MOBLIN": self.attack_hookshot_powder,
+            "RED_CAMO_MOBLIN":   self.attack_hookshot_powder,
+            "BLUE_CAMO_MOBLIN":  self.attack_hookshot_powder,
+            #"GREEN_ORB_MONSTER": AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            #"RED_ORB_MONSTER":   AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            #"BLUE_ORB_MONSTER":  AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
         }
 
         # Adjust for options
