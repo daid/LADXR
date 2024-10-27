@@ -48,7 +48,7 @@ class World:
         self._addEntrance("shop", mabe_village, shop, None)
 
         dream_hut = Location("Dream Hut")
-        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD)
+        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, r.enemy_requirements["ARM_MIMIC"])
         if options.logic != "casual":
             dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER))
         dream_hut_left = Location().add(Chest(0x2BE)).connect(dream_hut_right, PEGASUS_BOOTS)
@@ -60,7 +60,7 @@ class World:
         kennel.connect(Location().add(TradeSequenceItem(0x2B2, TRADING_ITEM_DOG_FOOD)), TRADING_ITEM_RIBBON)
         self._addEntrance("kennel", mabe_village, kennel, None)
 
-        sword_beach = Location("Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.attack_hookshot))
+        sword_beach = Location("Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.enemy_requirements["SEA_URCHIN"]))
         banana_seller = Location("Banana Seller")
         banana_seller.connect(Location().add(TradeSequenceItem(0x2FE, TRADING_ITEM_BANANAS)), TRADING_ITEM_DOG_FOOD)
         outside_banana_seller = Location()
@@ -112,9 +112,9 @@ class World:
         swamp = Location("Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
         swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
         swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER))
-        swamp_chest = Location("Swamp Chest").add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
+        swamp_chest = Location("Swamp Chest").add(Chest(0x034)).connect(swamp, r.enemy_requirements["GIANT_GOPONGA_FLOWER"])
         outside_d2 = Location()
-        swamp.connect(outside_d2, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG))
+        swamp.connect(outside_d2, r.enemy_requirements["GOPONGA_FLOWER"])
         self._addEntrance("d2", outside_d2, None, None)
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush)  # tail key
         self._addEntrance("writes_phone", swamp, None, None)
@@ -148,7 +148,7 @@ class World:
         ghost_grave.connect(outside_graveyard_left, POWER_BRACELET)
         self._addEntrance("graveyard_cave_left", outside_graveyard_left, graveyard_cave_left, None)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
-        moblin_cave = Location("Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
+        moblin_cave = Location("Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.enemy_requirements["SWORD_MOBLIN"], r.enemy_requirements["MOBLIN"], r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]))
         self._addEntrance("moblin_cave", graveyard, moblin_cave, None)
 
         # "Ukuku Prairie"
@@ -270,12 +270,12 @@ class World:
         self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, None)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
-        Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, OR(SWORD, BOW, MAGIC_ROD))  # mad bomber, enemy hiding in the 6 holes
-        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(POWER_BRACELET, r.attack_hookshot_no_bomb))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
-        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder)  # in the castle, kill enemies
-        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder))  # in the castle, bomb wall to show enemy
+        Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, r.enemy_requirements["MAD_BOMBER"])  # mad bomber, enemy hiding in the 6 holes
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(POWER_BRACELET, r.enemy_requirements["CROW"]))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
+        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, AND(r.enemy_requirements["DARKNUT"], r.enemy_requirements["RED_ZOL"]))  # in the castle, kill enemies
+        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.enemy_requirements["SWORD_DARKNUT"]))  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
-        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), one_way=True)
+        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.enemy_requirements["BALL_AND_CHAIN_TROOPER"]), one_way=True)
 
         animal_village = Location("Animal Village")
         animal_village.connect(Location().add(TradeSequenceItem(0x0CD, TRADING_ITEM_FISHING_HOOK)), TRADING_ITEM_BROOM)
@@ -305,7 +305,7 @@ class World:
         desert = Location("Desert").connect(animal_village, r.bush)  # Note: We moved the walrus blocking the desert.
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             desert.add(OwlStatue(0x0CF))
-        desert_lanmola = Location().add(AnglerKey()).connect(desert, r.attack_hookshot_no_bomb)
+        desert_lanmola = Location().add(AnglerKey()).connect(desert, r.enemy_requirements["LANMOLA"])
 
         animal_village_bombcave = Location("Bomb Arrow Cave")
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
@@ -324,8 +324,8 @@ class World:
         Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]])
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
-        outside_armos_cave = Location("Outside Armos Maze Cave").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
-        outside_armos_temple = Location("Outside Southern Shrine").connect(armos_maze, OR(r.attack_hookshot, SHIELD))
+        outside_armos_cave = Location("Outside Armos Maze Cave").connect(armos_maze, OR(r.enemy_requirements["ARMOS"], SWORD, BOOMERANG, HOOKSHOT, SHIELD))
+        outside_armos_temple = Location("Outside Southern Shrine").connect(armos_maze, OR(r.enemy_requirements["ARMOS"], SWORD, BOOMERANG, HOOKSHOT, SHIELD))
         self._addEntrance("armos_maze_cave", outside_armos_cave, Location().add(Chest(0x2FC)), None)
         self._addEntrance("armos_temple", outside_armos_temple, armos_temple, None)
 
@@ -505,7 +505,6 @@ class World:
             graveyard_cave_left.connect(graveyard_cave_right, r.hookshot_over_pit, one_way=True) # hookshot the block behind the stairs while over the pit
             swamp_chest.connect(swamp, r.wall_clip)  # Clip past the flower
             swamp.connect(outside_d2, AND(r.wall_clip, POWER_BRACELET), one_way=True) # clip the top wall to walk between the goponga flower and the wall
-            swamp.connect(outside_d2, COUNT(SWORD, 2)) # use l2 sword spin to kill goponga flowers
             outside_d2.connect(swamp, r.wall_clip, one_way=True) # Clip out at d2 entrance door
             swamp.connect(writes_hut_outside, r.hookshot_over_pit, one_way=True) # hookshot the sign in front of writes hut
             graveyard_heartpiece.connect(graveyard_cave_right, FEATHER) # jump to the bottom right tile around the blocks
@@ -517,7 +516,6 @@ class World:
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.boots_jump) # jump across horizontal 4 gap to heart piece
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, FEATHER, BOOMERANG))  # use jump + boomerang to grab the item from below the ledge
-            desert_lanmola.connect(desert, BOMB) # use bombs to kill lanmola
 
             armos_maze.connect(outside_armos_cave, None) # dodge the armos statues by activating them and running
             armos_maze.connect(outside_armos_temple, None) # dodge the armos statues by activating them and running

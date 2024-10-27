@@ -369,6 +369,19 @@ class RequirementsSettings:
             #"GREEN_ORB_MONSTER": AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
             #"RED_ORB_MONSTER":   AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
             #"BLUE_ORB_MONSTER":  AND(r.attack_hookshot, POWER_BRACELET),           # can not be killed on their own
+            "SEA_URCHIN":        self.attack_hookshot,                              # does not have powder in overworld logic file as option
+            "GIANT_GOPONGA_FLOWER": OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "GOPONGA_FLOWER": OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "SWORD_MOBLIN":      self.attack_hookshot_powder,
+            "MOBLIN":            self.attack_hookshot_powder,
+            "MAD_BOMBER":        OR(SWORD, BOW, MAGIC_ROD),
+            "CROW":              self.attack_hookshot_no_bomb,
+            "DARKNUT":           self.attack_hookshot_powder,
+            "SWORD_DARKNUT":     self.attack_hookshot_powder,
+            "BALL_AND_CHAIN_TROOPER": self.attack_hookshot,
+            "LANMOLA":           self.attack_hookshot_no_bomb,
+            "ARMOS":             OR(BOMB, BOW, MAGIC_ROD)
+            
         }
 
         # Adjust for options
@@ -400,6 +413,9 @@ class RequirementsSettings:
             self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
             self.enemy_requirements["THREE_OF_A_KIND"] = OR(self.attack_hookshot, SHIELD)  # bomb three of a kinds
             self.enemy_requirements["VIRE"] = r.attack_hookshot_powder # bomb vire
+            self.enemy_requirements["GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
+            self.enemy_requirements["GIANT_GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
+            self.enemy_requirements["LANMOLA"] = r.attack_hookshot # use bomb to kill lanmola
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
