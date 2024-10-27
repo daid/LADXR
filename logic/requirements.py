@@ -359,6 +359,7 @@ class RequirementsSettings:
             "IRON_MASK":         self.attack_hookshot_powder,
             "MASTER_STALFOS":    AND(SWORD, BOMB),
             "STAR":              self.attack_hookshot_powder,
+            "WIZROBE":           self.attack_wizrobe,
             
             
         }
