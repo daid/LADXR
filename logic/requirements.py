@@ -264,8 +264,6 @@ class RequirementsSettings:
         self.attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
         self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(MAGIC_ROD, HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic rod
-        self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)) # BOW works, but isn't as reliable as it needs 4 arrows.
-        self.attack_wizrobe = OR(BOMB, MAGIC_ROD) # BOW works, but isn't as reliable as it needs 4 arrows.
         self.stun_wizrobe = OR(BOOMERANG, MAGIC_POWDER, HOOKSHOT)
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
@@ -348,7 +346,7 @@ class RequirementsSettings:
             "BOO_BUDDY":         OR(BOW, MAGIC_ROD),                                # assumes no torch is nearby
             "SHROUDED_STALFOS":  self.attack_hookshot_powder,
             "SWORD_STALFOS":     self.attack_hookshot_powder,
-            "POLS_VOICE":        OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),
+            "POLS_VOICE":        OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),          # BOW works, but isn't as reliable as it needs 4 arrows.
             "RED_ZOL":           self.attack_hookshot_powder,                       # this one can split into 2 gels when hit
             "GREEN_ZOL":         self.attack_hookshot_powder,
             "HIDDEN_ZOL":        self.attack_hookshot_powder,
@@ -359,7 +357,7 @@ class RequirementsSettings:
             "IRON_MASK":         self.attack_hookshot_powder,
             "MASTER_STALFOS":    AND(SWORD, BOMB),
             "STAR":              self.attack_hookshot_powder,
-            "WIZROBE":           self.attack_wizrobe,
+            "WIZROBE":           OR(BOMB, MAGIC_ROD),                               # BOW works, but isn't as reliable as it needs 4 arrows.
             
             
         }
@@ -389,8 +387,8 @@ class RequirementsSettings:
             self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
             self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
-            self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
-            self.attack_wizrobe = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
+            self.enemy_requirements["POLS_VOICE"] = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
+            self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
             self.enemy_requirements["THREE_OF_A_KIND"] = OR(r.attack_hookshot_no_bomb, SHIELD)
             
         if options.logic == 'glitched' or options.logic == 'hell':
