@@ -347,8 +347,14 @@ class RequirementsSettings:
             "MASK_MIMIC":        OR(self.rear_attack, self.rear_attack_range),
             "BOO_BUDDY":         OR(BOW, MAGIC_ROD),                                # assumes no torch is nearby
             "SHROUDED_STALFOS":  self.attack_hookshot_powder,
+            "SWORD_STALFOS":     self.attack_hookshot_powder,
             "POLS_VOICE":        OR(BOW, BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),
             "ZOL":               self.attack_hookshot_powder,
+            "HIDDEN_ZOL":        self.attack_hookshot_powder,
+            "GEL":               self.attack_hookshot_powder,
+            "BOMBITE":           self.attack_hookshot_powder,                       # the bouncy ones, not to be confused with TIMER_BOMBITE
+            "TIMER_BOMBITE":     OR(SWORD, BOMB, SHIELD),
+            "PAIRODD":           self.attack_no_boomerang,
             
         }
 
