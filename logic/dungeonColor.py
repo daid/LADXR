@@ -6,7 +6,7 @@ from locations.all import *
 class DungeonColor:
     def __init__(self, options, world_setup, r):
         entrance = Location("D0 Entrance", dungeon=0)
-        room2 = Location(dungeon=0).connect(entrance, AND(r.enemy_requirements["GREEN_CAMO_MOBLIN"], r.enemy_requirements["RED_CAMO_MOBLIN"])
+        room2 = Location(dungeon=0).connect(entrance, AND(r.enemy_requirements["GREEN_CAMO_MOBLIN"], r.enemy_requirements["RED_CAMO_MOBLIN"]))
         room2.add(DungeonChest(0x314))  # key
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x308), OwlStatue(0x30F)).connect(room2, STONE_BEAK0)
