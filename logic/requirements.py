@@ -355,6 +355,10 @@ class RequirementsSettings:
             "BOMBITE":           self.attack_hookshot_powder,                       # the bouncy ones, not to be confused with TIMER_BOMBITE
             "TIMER_BOMBITE":     OR(SWORD, BOMB, SHIELD),
             "PAIRODD":           self.attack_no_boomerang,
+            "IRON_MASK":         self.attack_hookshot_powder,
+            "MASTER_STALFOS":    AND(SWORD, BOMB),
+            "STAR":              self.attack_hookshot_powder,
+            
             
         }
 
@@ -394,3 +398,4 @@ class RequirementsSettings:
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
+            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits
