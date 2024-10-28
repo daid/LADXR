@@ -369,7 +369,7 @@ class RequirementsSettings:
             "COLOR_SHELL_RED":         AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
             "COLOR_SHELL_BLUE":        AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
             "URCHIN":                  self.attack_hookshot,                               # does not have powder in overworld logic file as option
-            "GIANT_GOPONGA_FLOWER      ": OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "GIANT_GOPONGA_FLOWER":    OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
             "GOPONGA_FLOWER":          OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
             "MAD_BOMBER":              OR(SWORD, BOW, MAGIC_ROD),
             "CROW":                    self.attack_hookshot_no_bomb,
