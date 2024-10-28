@@ -20,7 +20,7 @@ class Dungeon5:
         post_gohma = Location("D5 After Miniboss", dungeon=5).connect(gohma, r.miniboss_requirements[world_setup.miniboss_mapping[4]]) # staircase after gohma
         staircase_before_boss = Location("D5 Before Boss Keyblock", dungeon=5).connect(post_gohma, AND(HOOKSHOT, FEATHER)) # bottom right section pits room before boss door. Path via gohma
         after_keyblock_boss = Location("D5 After Boss Keyblock", dungeon=5).connect(staircase_before_boss, AND(KEY5, FOUND(KEY5, 3))) # top right section pits room before boss door
-        after_stalfos = Location(dungeon=5).add(DungeonChest(0x196)).connect(area2, AND(r.enemy_requirements["GREEN_STALFOS"], r.enemy_requirements["YELLOW_STALFOS"], r.enemy_requirements["MASTER_STALFOS"])) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
+        after_stalfos = Location(dungeon=5).add(DungeonChest(0x196)).connect(area2, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["MASTER_STALFOS"])) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             butterfly_owl = Location(dungeon=5).add(OwlStatue(0x18A)).connect(after_stalfos, AND(FEATHER, STONE_BEAK5))
         else:
@@ -30,8 +30,8 @@ class Dungeon5:
         first_bridge_chest = Location(dungeon=5).add(DungeonChest(0x18E)).connect(north_of_crossroads, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # south of bridge
         north_bridge_chest = Location(dungeon=5).add(DungeonChest(0x188)).connect(north_of_crossroads, HOOKSHOT) # north bridge chest 50 rupees
         east_bridge_chest = Location(dungeon=5).add(DungeonChest(0x18F)).connect(north_of_crossroads, HOOKSHOT) # east bridge chest small key
-        third_arena = Location("D5 Master Stalfos 3", dungeon=5).connect(north_of_crossroads, AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["MASTER_STALFOS"])) # can beat 3rd m.stalfos
-        stone_tablet = Location(dungeon=5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, AND(r.enemy_requirements["GREEN_ZOL"], r.enemy_requirements["GREEN_STALFOS"], r.enemy_requirements["YELLOW_STALFOS"])))  # stone tablet
+        third_arena = Location("D5 Master Stalfos 3", dungeon=5).connect(north_of_crossroads, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MASTER_STALFOS"])) # can beat 3rd m.stalfos
+        stone_tablet = Location(dungeon=5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])))  # stone tablet
         boss_key = Location(dungeon=5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
         before_boss = Location("D5 Before Boss", dungeon=5).connect(after_keyblock_boss, HOOKSHOT) 
         boss_room = Location("D5 Boss Room", dungeon=5).connect(before_boss, NIGHTMARE_KEY5)

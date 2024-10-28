@@ -9,7 +9,7 @@ class Dungeon1:
         entrance.add(DungeonChest(0x113), DungeonChest(0x115), DungeonChest(0x10E))
         Location(dungeon=1).add(DroppedKey(0x116)).connect(entrance, OR(r.enemy_requirements["HARDHAT_BEETLE"], r.push_hardhat)) # hardhat beetles (can kill with bomb)
         Location(dungeon=1).add(DungeonChest(0x10D)).connect(entrance, OR(r.enemy_requirements["MINI_MOLDORM"], SHIELD)) # moldorm spawn chest
-        stalfos_keese_room = Location(dungeon=1).add(DungeonChest(0x114)).connect(entrance, AND(OR(r.enemy_requirements["YELLOW_STALFOS"], SHIELD), r.enemy_requirements["KEESE"])) # 2 stalfos 2 keese room
+        stalfos_keese_room = Location(dungeon=1).add(DungeonChest(0x114)).connect(entrance, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], SHIELD), r.enemy_requirements["KEESE"])) # 2 stalfos 2 keese room
         Location(dungeon=1).add(DungeonChest(0x10C)).connect(entrance, BOMB) # hidden seashell room
         dungeon1_upper_left = Location("D1 Upper Left", dungeon=1).connect(entrance, AND(KEY1, FOUND(KEY1, 3)))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
