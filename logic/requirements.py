@@ -267,6 +267,7 @@ class RequirementsSettings:
         self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)) # BOW works, but isn't as reliable as it needs 4 arrows.
         self.attack_wizrobe = OR(BOMB, MAGIC_ROD) # BOW works, but isn't as reliable as it needs 4 arrows.
         self.stun_wizrobe = OR(BOOMERANG, MAGIC_POWDER, HOOKSHOT)
+        self.stun_mask_mimic = OR(BOOMERANG, HOOKSHOT)
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
