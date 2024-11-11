@@ -88,6 +88,7 @@ class Dungeon8:
             up_left.connect(bossdoor, r.super_jump_feather, one_way=True) # superjump off the bottom or right wall to jump over to the boss door
 
         if options.logic == 'hell':
+            entrance_up.connect(entrance, AND(r.jesus_buffer, r.lava_swim), one_way = True) # boots bonk around the top left corner at vire, get on top of the wall to bonk to the left, and transition while slashing sword 
             if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, r.miniboss_requirements["SMASHER"])) # underground section past mimics, boots bonking across the gap to the ladder
@@ -95,6 +96,7 @@ class Dungeon8:
             gibdos_drop_key.connect(upper_center, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             medicine_chest.connect(upper_center, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk + lava buffer to the bottom wall, then bonk onto the middle section
             miniboss_room.connect(miniboss_entrance, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
+            up_left.connect(lower_center, AND(r.jesus_buffer, r.lava_swim)) # use boots bonk next to 3x peahats to get on top of lava, and transition left while slashing sword
             top_left_stairs.connect(map_chest, AND(r.jesus_buffer, r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk + lava buffer from map chest to entrance_up, then boots bonk through 2d section
             nightmare_key.connect(top_left_stairs, AND(r.boots_bonk_pit, r.miniboss_requirements["CUE_BALL"], FOUND(KEY8, 7))) # use a boots bonk to cross the lava in cueball room
             bottomright_pot_chest.connect(entrance_up, AND(POWER_BRACELET, r.jesus_buffer), one_way=True) # take staircase to NW zamboni room, boots bonk onto the lava and water buffer all the way down to push the zamboni
