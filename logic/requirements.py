@@ -276,12 +276,13 @@ class RequirementsSettings:
         # add trick directory here
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
         self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
+        self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
-        self.super_jump = AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # standard superjump for glitch logic
-        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # boots dash into wall for unclipped superjump
+        self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
+        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots dash into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
-        self.super_jump_rooster = AND(ROOSTER, OR(SWORD, BOW, MAGIC_ROD)) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
+        self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
         self.boots_superhop = AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW)) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
