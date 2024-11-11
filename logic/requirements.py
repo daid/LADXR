@@ -310,6 +310,7 @@ class RequirementsSettings:
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
+        self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
 
         self.boss_requirements = [
             SWORD,  # D1 boss
