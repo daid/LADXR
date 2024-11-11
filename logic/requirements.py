@@ -287,6 +287,7 @@ class RequirementsSettings:
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
+        self.jesus_buffer_itemless = True # Use buffers to get into positions after getting on top of liquids without needing boots or feather or rooster
         self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
