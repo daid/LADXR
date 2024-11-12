@@ -380,11 +380,12 @@ class World:
         outside_swim_cave = Location()
         below_right_taltal.connect(outside_swim_cave, FLIPPERS)
         self._addEntrance("heartpiece_swim_cave", outside_swim_cave, heartpiece_swim_cave, None)  # cave next to level 4
-        d4_entrance = Location("Outside D4").connect(below_right_taltal, FLIPPERS)
-        lower_right_taltal.connect(d4_entrance, ANGLER_TUNNEL_OPENED, one_way=True)
-        self._addEntrance("d4", d4_entrance, None, ANGLER_TUNNEL_OPENED)
+        d4_entrance_locked = Location("Outside D4 Closed").connect(below_right_taltal, FLIPPERS)
+        d4_entrance_unlocked = Location("Outside D4 Open").connect(d4_entrance_locked, ANGLER_TUNNEL_OPENED)
+        lower_right_taltal.connect(d4_entrance_unlocked, ANGLER_TUNNEL_OPENED, one_way=True)
+        self._addEntrance("d4", d4_entrance_locked, None, ANGLER_TUNNEL_OPENED)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
-        outside_mambo = Location("Outside Manbo").connect(d4_entrance, FLIPPERS)
+        outside_mambo = Location("Outside Manbo").connect(d4_entrance_locked, FLIPPERS)
         inside_mambo = Location("Manbo's Cave")
         mambo = Location().add(Song(0x2FD)).connect(inside_mambo, AND(OCARINA, FLIPPERS))  # Manbo's Mambo
         self._addEntrance("mambo", outside_mambo, inside_mambo, None)
@@ -525,6 +526,7 @@ class World:
             armos_maze.connect(outside_armos_temple, None) # dodge the armos statues by activating them and running
             d6_connector_left.connect(d6_connector_right, AND(OR(FLIPPERS, PEGASUS_BOOTS), FEATHER))  # jump the gap in underground passage to d6 left side to skip hookshot
             obstacle_cave_exit.connect(obstacle_cave_inside, AND(FEATHER, r.hookshot_over_pit), one_way=True) # one way from right exit to middle, jump past the obstacle, and use hookshot to pull past the double obstacle
+            d4_entrance_unlocked.connect(angler_tunnel_keyhole, None, one_way=True) # walk backwards into the keyhole to obtain the item
             if not options.rooster:
                 bird_key.connect(bird_cave, COUNT(POWER_BRACELET, 2))  # corner walk past the one pit on the left side to get to the elephant statue
             right_taltal_connector2.connect(right_taltal_connector3, ROOSTER, one_way=True) # jump off the ledge and grab rooster after landing on the pit
@@ -572,9 +574,11 @@ class World:
             obstacle_cave_inside_chest.connect(obstacle_cave_inside, r.pit_buffer) # jump to the rightmost pits + 1 pit buffer to jump across
             obstacle_cave_exit.connect(obstacle_cave_inside, r.pit_buffer) # 1 pit buffer above boots crystals to get past
             lower_right_taltal.connect(hibiscus_item, AND(TRADING_ITEM_PINEAPPLE, r.bomb_trigger), one_way=True) # bomb trigger papahl from below ledge, requires pineapple
+            self._addEntranceRequirementExit("d4", None) # if exiting, you can access d4_entrance_locked. From there apply jesus jumps/roosters/flippers/unlock requirements
+            d4_entrance_locked.connect(angler_tunnel_keyhole, r.jesus_jump, one_way=True) # use jesus jumps to face upwards into the keyhole from above
             
             below_right_taltal.connect(outside_swim_cave, r.jesus_jump) # jesus jump into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            outside_mambo.connect(d4_entrance, r.jesus_jump)  # jesus jump from (unlocked) d4 entrance to mambo's cave entrance
+            outside_mambo.connect(d4_entrance_locked, r.jesus_jump)  # jesus jump from d4 entrance to mambo's cave entrance
             outside_raft_house.connect(below_right_taltal, r.jesus_jump, one_way=True) # jesus jump from the ledge at raft to the staircase 1 screen south
 
             lower_right_taltal.connect(outside_multichest_left, r.jesus_jump) # jesus jump past staircase leading up the mountain 
@@ -646,13 +650,14 @@ class World:
 
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip_block, r.shaq_jump)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, r.boots_roosterhop) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
-            d4_entrance.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster 5 screens to staircase below damp cave
+            d4_entrance_locked.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster 5 screens to staircase below damp cave
+            d4_entrance_locked.connect(angler_tunnel_keyhole, OR(ROOSTER, r.jesus_buffer), one_way=True) # use boots bonk or rooster while leaving d4 to face upwards and buffer into the keyhole from above (other options are covered in d4_entrance_locked access like getting here from a different screen)
             lower_right_taltal.connect(angler_tunnel_keyhole, OR(ROOSTER, AND(r.jesus_buffer, r.midair_turn)), one_way=True) # activate angler keyhole from the back, has to face up and press up on keyblock. From top mountains, use either rooster or boots bonks to get there and use an item to face upwards. With rooster you can face up before jumping down waterfall
             middle_right_taltal.connect(angler_tunnel_keyhole, OR(ROOSTER, AND(r.jesus_buffer, r.midair_turn)), one_way=True) # activate angler keyhole from the back, has to face up and press up on keyblock. From top mountains, use either rooster or boots bonks to get there and use an item to face upwards. With rooster you can face up before jumping down waterfall
 
             lower_right_taltal.connect(below_right_taltal, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster to upper ledges, jump off, enter and exit s+q menu to regain pauses, then jesus jump 4 screens to staircase below damp cave
             below_right_taltal.connect(outside_swim_cave, r.jesus_rooster) # jesus rooster into the cave entrance after jumping down the ledge, can jesus jump back to the ladder 1 screen below
-            outside_mambo.connect(below_right_taltal, OR(r.jesus_rooster, r.jesus_jump))  # jesus jump/rooster to mambo's cave entrance
+            outside_mambo.connect(d4_entrance_locked, OR(r.jesus_rooster, r.jesus_jump))  # jesus jump/rooster to mambo's cave entrance
             if options.hardmode != "oracle": # don't take damage from drowning in water. Could get it with more health probably but standard 3 hearts is not enough
                 mambo.connect(inside_mambo, AND(OCARINA, r.bomb_trigger))  # while drowning, buffer a bomb and after it explodes, buffer another bomb out of the save and quit menu. 
             outside_raft_house.connect(below_right_taltal, r.jesus_rooster, one_way=True) # jesus rooster from the ledge at raft to the staircase 1 screen south
