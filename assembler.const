@@ -21,6 +21,9 @@
 7B4B:ClearEntityStatus_05
 7A3A:ReturnIfNonInteractive_05
 
+641A:PushLinkOutOfEntity_06
+645D:CheckLinkInteractionWithEntity_06
+
 4005:GetEntitySpeedYAddress_07
 7D96:ReturnIfNonInteractive_07
 7CF0:PushLinkOutOfEntity_07
@@ -96,17 +99,24 @@ DB41:wSeashellsCount
 DB42:wGoldenLeaves ; New memory location where to store the golden leaf counter
 DB43:wPowerBraceletLevel
 DB44:wShieldLevel
+DB46:wHasStolenFromShop
 DB48:wTarinFlag
 DB4A:wSelectedSongIndex
 DB4B:wHasToadstool
 DB4C:wMagicPowderCount
 DB4E:wSwordLevel
 DB56:wIsBowWowFollowingLink
+DB5D:wRupeeCountHigh
+DB5E:wRupeeCountLow
 DB6D:wCollectedTunics ; Memory location where to store which tunic options are available
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
 DB7D:wBoomerangTradedItem
 DB7F:wTradeSequenceItem2 ; Normally used to store that we have exchanged the trade item, we use it to store flags of which trade items we have
+DB8F:wAddRupeeBufferHigh
+DB90:wAddRupeeBufferLow
+DB91:wSubstractRupeeBufferHigh
+DB92:wSubstractRupeeBufferLow
 DB94:wSubtractHealthBuffer
 DBA5:wIsIndoor
 DBC7:wInvincibilityCounter

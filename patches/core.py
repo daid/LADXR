@@ -211,7 +211,7 @@ noWrapDown:
         x = 0x50
         y = 0x7f
 
-    rom.patch(0x01, 0x3E20, 0x4000, ASM("""
+    rom.patch(0x01, 0x3E20, "00" * 0x60, ASM("""
         ; First, handle save & quit
         cp   $01
         jp   z, $40F9

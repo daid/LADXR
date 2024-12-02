@@ -197,11 +197,15 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Hero] Switch version hero mode, double damage, no heart/fairy drops.
 [One hit KO] You die on a single hit, always."""),
             Setting('steal', 'Gameplay', 't', 'Stealing from the shop',
-                options=[('always', 'a', 'Always'), ('never', 'n', 'Never'), ('default', '', 'Normal')], default='default',
-                description="""Effects when you can steal from the shop. Stealing is bad and never in logic.
+                    options=[('always', 'a', 'Always'), ('never', 'n', 'Never'), ('default', '', 'Normal'),
+                             ('ggs', 'g', 'GGS')], default='default',
+                    description="""Effects when you can steal from the shop. Stealing is bad and never in logic.
 [Normal] requires the sword before you can steal.
-[Always] you can always steal from the shop
-[Never] you can never steal from the shop."""),
+[Always] you can always steal from the shop.
+[Never] you can never steal from the shop.
+[GGS] Glitches get stitches, do not try to rob the shopkeeper by S&Q..."""),
+            Setting('evilshop', 'Special', 'v', 'Evil shop', options=[('', '', 'Disabled'), ('enabled', 'e', 'Enabled')], default='',
+                description='Replaces the grandpa house with an evil shop, where you can sell heart pieces.'),
             Setting('bowwow', 'Special', 'g', 'Good boy mode', options=[('normal', '', 'Disabled'), ('always', 'a', 'Enabled'), ('swordless', 's', 'Enabled (swordless)')], default='normal',
                 description='Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.'),
             Setting('overworld', 'Special', 'O', 'Overworld', options=[('normal', '', 'Normal'), ('dungeondive', 'D', 'Dungeon dive'), ('nodungeons', 'N', 'No dungeons'), ('dungeonchain', 'C', 'Dungeon chain'), ('random', 'R', 'Randomized'), ('alttp', 'A', 'ALttP')], default='normal',
@@ -214,6 +218,12 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 description='Replaces the hints from owl statues with additional randomized items'),
             Setting('keyholesanity', 'Special', 'K', 'Keyhole sanity', default=False,
                 description='Makes the overworld keyholes give rewards and turns opening dungeons into findable items'),
+            Setting('shopsanity', 'Special', 'N', 'Shopsanity', options=[('', '', 'Disabled'), ('basic', 'b', 'Basic'), ('important', 'i', 'Important')], default='',
+                description='''
+Turns all the phone booths into extra shops, and lowers the prices, and allows buying the two shop items independent of each other.
+[Basic] Just extra shops
+[Important] Shops are guaranteed to have important items
+                '''),
             Setting('superweapons', 'Special', 'q', 'Enable super weapons', default=False,
                 description='All items will be more powerful, faster, harder, bigger stronger. You name it.'),
             Setting('quickswap', 'User options', 'Q', 'Quickswap', options=[('none', '', 'Disabled'), ('a', 'a', 'Swap A button'), ('b', 'b', 'Swap B button')], default='none',
