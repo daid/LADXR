@@ -344,7 +344,7 @@ GoldenLeaf:
     inc  [hl]
     ret
 
-AddSeaShell:
+AddSeashell:
     ld   a, [wSeashellsCount]
     inc  a
     daa
@@ -1111,3 +1111,11 @@ IncreaseCheckCounter:
     ldi  [hl], a
     ret  nc
     jr   .loop
+
+    ; Get our current room item and store it in $FFF1
+GetRoomItem:
+    ld   hl, $7800
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ldh  [hActiveEntitySpriteVariant], a
+    ret

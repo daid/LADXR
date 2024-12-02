@@ -126,6 +126,9 @@ class ItemPool:
         if settings.goal == 'seashells':
             self.remove(SEASHELL, 2)
 
+        if settings.shopsanity != '':
+            self.add(RUPEES_20, 16)
+
         if settings.itempool == 'casual':
             self.add(SWORD)
             self.add(FLIPPERS)

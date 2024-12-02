@@ -29,14 +29,14 @@ class Token(ExprBase):
         self.line_nr = line_nr
 
     def isA(self, kind: str, value: Optional[str] = None) -> bool:
-        return self.kind == kind and (value is None or value == self.value)
+        return self.kind == kind and (value is None or value.upper() == self.value.upper())
 
     def __repr__(self) -> str:
         return "[%s:%s:%d]" % (self.kind, self.value, self.line_nr)
 
     def asReg8(self) -> Optional[int]:
         if self.kind == 'ID':
-            return REGS8.get(str(self.value), None)
+            return REGS8.get(str(self.value).upper(), None)
         return None
 
     def copy(self):
@@ -180,7 +180,7 @@ class Tokenizer:
                     value = int(str(value)[1:], 16)
                     kind = 'NUMBER'
                 elif kind == 'ID':
-                    value = str(value).upper()
+                    value = str(value)
                 new_tokens.append(Token(kind, value, line_num))
                 if kind == 'NEWLINE':
                     line_num += 1
@@ -327,162 +327,159 @@ class Assembler:
             elif not conditional_stack[-1]:
                 while not self.__tok.pop().isA('NEWLINE'):
                     pass
-            elif start.kind == 'ID':
-                if start.value == 'DB':
-                    self.instrDB()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'DS':
-                    self.instrDS()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'DW':
-                    self.instrDW()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'LD':
-                    self.instrLD()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'LDH':
-                    self.instrLDH()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'LDI':
-                    self.instrLDI()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'LDD':
-                    self.instrLDD()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'INC':
-                    self.instrINC()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'DEC':
-                    self.instrDEC()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'ADD':
-                    self.instrADD()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'ADC':
-                    self.instrALU(0x88)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SUB':
-                    self.instrALU(0x90)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SBC':
-                    self.instrALU(0x98)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'AND':
-                    self.instrALU(0xA0)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'XOR':
-                    self.instrALU(0xA8)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'OR':
-                    self.instrALU(0xB0)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'CP':
-                    self.instrALU(0xB8)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'BIT':
-                    self.instrBIT(0x40)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RES':
-                    self.instrBIT(0x80)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SET':
-                    self.instrBIT(0xC0)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RET':
-                    self.instrRET()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'CALL':
-                    self.instrCALL()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RLC':
-                    self.instrCB(0x00)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RRC':
-                    self.instrCB(0x08)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RL':
-                    self.instrCB(0x10)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RR':
-                    self.instrCB(0x18)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SLA':
-                    self.instrCB(0x20)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SRA':
-                    self.instrCB(0x28)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SWAP':
-                    self.instrCB(0x30)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'SRL':
-                    self.instrCB(0x38)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'RST':
-                    self.instrRST()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'JP':
-                    self.instrJP()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'JR':
-                    self.instrJR()
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'PUSH':
-                    self.instrPUSHPOP(0xC5)
-                    self.__tok.expect('NEWLINE')
-                elif start.value == 'POP':
-                    self.instrPUSHPOP(0xC1)
-                    self.__tok.expect('NEWLINE')
-                elif start.value in self.SIMPLE_INSTR:
-                    self.__current_section.data.append(self.SIMPLE_INSTR[str(start.value)])
-                    self.__tok.expect('NEWLINE')
-                elif start.value in self.__macros:
-                    params = [[]]
-                    while not self.__tok.peek().isA('NEWLINE'):
-                        if self.__tok.peek().isA('OP', ','):
-                            params.append([])
-                            self.__tok.pop()
-                        else:
-                            params[-1].append(self.__tok.pop())
-                    self.__tok.pop()
-                    to_add = []
-                    concat = False
-                    for token in self.__macros[start.value]:
-                        if concat:
-                            concat = False
-                            if not to_add[-1].isA('ID'):
-                                raise AssemblerException(token, "Can only concat ID tokens")
-                            to_add[-1] = to_add[-1].copy()
-                            if token.isA('MACROARG'):
-                                argn = int(token.value[1:]) - 1
-                                if argn >= len(params):
-                                    raise AssemblerException(start, "Missing argument for macro")
-                                for p in params[int(token.value[1:]) - 1]:
-                                    to_add[-1].value += p.value
-                            else:
-                                to_add[-1].value = to_add[-1].value + token.value
-                        elif token.isA('MACROARG'):
+            elif start.isA('ID', 'DB'):
+                self.instrDB()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'DS'):
+                self.instrDS()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'DW'):
+                self.instrDW()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'LD'):
+                self.instrLD()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'LDH'):
+                self.instrLDH()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'LDI'):
+                self.instrLDI()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'LDD'):
+                self.instrLDD()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'INC'):
+                self.instrINC()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'DEC'):
+                self.instrDEC()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'ADD'):
+                self.instrADD()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'ADC'):
+                self.instrALU(0x88)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SUB'):
+                self.instrALU(0x90)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SBC'):
+                self.instrALU(0x98)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'AND'):
+                self.instrALU(0xA0)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'XOR'):
+                self.instrALU(0xA8)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'OR'):
+                self.instrALU(0xB0)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'CP'):
+                self.instrALU(0xB8)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'BIT'):
+                self.instrBIT(0x40)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RES'):
+                self.instrBIT(0x80)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SET'):
+                self.instrBIT(0xC0)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RET'):
+                self.instrRET()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'CALL'):
+                self.instrCALL()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RLC'):
+                self.instrCB(0x00)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RRC'):
+                self.instrCB(0x08)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RL'):
+                self.instrCB(0x10)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RR'):
+                self.instrCB(0x18)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SLA'):
+                self.instrCB(0x20)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SRA'):
+                self.instrCB(0x28)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SWAP'):
+                self.instrCB(0x30)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'SRL'):
+                self.instrCB(0x38)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'RST'):
+                self.instrRST()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'JP'):
+                self.instrJP()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'JR'):
+                self.instrJR()
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'PUSH'):
+                self.instrPUSHPOP(0xC5)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID', 'POP'):
+                self.instrPUSHPOP(0xC1)
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID') and start.value.upper() in self.SIMPLE_INSTR:
+                self.__current_section.data.append(self.SIMPLE_INSTR[str(start.value).upper()])
+                self.__tok.expect('NEWLINE')
+            elif start.isA('ID') and start.value in self.__macros:
+                params = [[]]
+                while not self.__tok.peek().isA('NEWLINE'):
+                    if self.__tok.peek().isA('OP', ','):
+                        params.append([])
+                        self.__tok.pop()
+                    else:
+                        params[-1].append(self.__tok.pop())
+                self.__tok.pop()
+                to_add = []
+                concat = False
+                for token in self.__macros[start.value]:
+                    if concat:
+                        concat = False
+                        if not to_add[-1].isA('ID'):
+                            raise AssemblerException(token, "Can only concat ID tokens")
+                        to_add[-1] = to_add[-1].copy()
+                        if token.isA('MACROARG'):
                             argn = int(token.value[1:]) - 1
                             if argn >= len(params):
                                 raise AssemblerException(start, "Missing argument for macro")
-                            for p in params[argn]:
-                                to_add.append(p.copy())
-                        elif token.isA('TOKENCONCAT'):
-                            concat = True
+                            for p in params[int(token.value[1:]) - 1]:
+                                to_add[-1].value += p.value
                         else:
-                            to_add.append(token.copy())
-                    self.__tok.shift(to_add)
-                elif self.__tok.peek().kind == 'LABEL':
-                    self.__tok.pop()
-                    self.addLabel(str(start.value))
-                elif self.__tok.peek().kind == 'ASSIGN':
-                    self.__tok.pop()
-                    value = self.parseExpression()
-                    if value.kind != 'NUMBER':
-                        raise AssemblerException(start, "Can only assign numbers")
-                    self.setConstant(str(start.value), int(value.value))
-                else:
-                    raise AssemblerException(start, "Syntax error")
+                            to_add[-1].value = to_add[-1].value + token.value
+                    elif token.isA('MACROARG'):
+                        argn = int(token.value[1:]) - 1
+                        if argn >= len(params):
+                            raise AssemblerException(start, "Missing argument for macro")
+                        for p in params[argn]:
+                            to_add.append(p.copy())
+                    elif token.isA('TOKENCONCAT'):
+                        concat = True
+                    else:
+                        to_add.append(token.copy())
+                self.__tok.shift(to_add)
+            elif start.isA('ID') and self.__tok.peek().kind == 'LABEL':
+                self.__tok.pop()
+                self.addLabel(str(start.value))
+            elif start.isA('ID') and self.__tok.peek().kind == 'ASSIGN':
+                self.__tok.pop()
+                value = self.parseExpression()
+                if value.kind != 'NUMBER':
+                    raise AssemblerException(start, "Can only assign numbers")
+                self.setConstant(str(start.value), int(value.value))
             else:
                 raise AssemblerException(start, "Syntax error")
 
@@ -504,11 +501,11 @@ class Assembler:
             value = int(expr.value)
         else:
             self.__current_section.link[len(self.__current_section.data)] = (Assembler.LINK_HIGH8, expr)
-            value = 0
+            value = 0xFF00
         if 0xFF00 <= value < 0x10000:
             self.__current_section.data.append(value & 0xFF)
         else:
-            raise AssemblerException(expr, "HRAM 8 bit value out of range")
+            raise AssemblerException(expr, "IO/HRAM address out of range")
 
     def insertRel8(self, expr: ExprBase) -> None:
         if expr.isA('NUMBER'):
@@ -688,8 +685,8 @@ class Assembler:
                 else:
                     self.__current_section.data.append(0xC6)
                     self.insert8(right_param)
-            elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value in REGS16A:
-                self.__current_section.data.append(0x09 | REGS16A[str(right_param.value)] << 4)
+            elif left_param.isA('ID', 'HL') and right_param.isA('ID') and isinstance(right_param, Token) and right_param.value.upper() in REGS16A:
+                self.__current_section.data.append(0x09 | REGS16A[str(right_param.value).upper()] << 4)
             elif left_param.isA('ID', 'SP'):
                 self.__current_section.data.append(0xE8)
                 self.insert8(right_param)
@@ -724,8 +721,8 @@ class Assembler:
 
     def instrPUSHPOP(self, code_value: int) -> None:
         param = self.parseParam()
-        if param.isA('ID') and isinstance(param, Token) and str(param.value) in REGS16B:
-            self.__current_section.data.append(code_value | (REGS16B[str(param.value)] << 4))
+        if param.isA('ID') and isinstance(param, Token) and str(param.value).upper() in REGS16B:
+            self.__current_section.data.append(code_value | (REGS16B[str(param.value).upper()] << 4))
         else:
             raise AssemblerException(param, "Syntax error")
 
@@ -735,8 +732,8 @@ class Assembler:
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and isinstance(condition, Token) and str(condition.value) in FLAGS:
-                self.__current_section.data.append(0x20 | FLAGS[str(condition.value)])
+            if condition.isA('ID') and isinstance(condition, Token) and str(condition.value).upper() in FLAGS:
+                self.__current_section.data.append(0x20 | FLAGS[str(condition.value).upper()])
             else:
                 raise AssemblerException(condition, "Syntax error")
         else:
@@ -766,8 +763,8 @@ class Assembler:
     def instrRET(self) -> None:
         if self.__tok.peek().isA('ID'):
             condition = self.__tok.pop()
-            if condition.isA('ID') and condition.value in FLAGS:
-                self.__current_section.data.append(0xC0 | FLAGS[str(condition.value)])
+            if condition.isA('ID') and condition.value.upper() in FLAGS:
+                self.__current_section.data.append(0xC0 | FLAGS[str(condition.value).upper()])
             else:
                 raise AssemblerException(condition, "Syntax error")
         else:
@@ -779,8 +776,8 @@ class Assembler:
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
-                self.__current_section.data.append(0xC4 | FLAGS[str(condition.value)])
+            if condition.isA('ID') and isinstance(condition, Token) and condition.value.upper() in FLAGS:
+                self.__current_section.data.append(0xC4 | FLAGS[str(condition.value).upper()])
             else:
                 raise AssemblerException(condition, "Syntax error")
         else:
@@ -793,8 +790,8 @@ class Assembler:
             self.__tok.pop()
             condition = param
             param = self.parseParam()
-            if condition.isA('ID') and isinstance(condition, Token) and condition.value in FLAGS:
-                self.__current_section.data.append(0xC2 | FLAGS[str(condition.value)])
+            if condition.isA('ID') and isinstance(condition, Token) and condition.value.upper() in FLAGS:
+                self.__current_section.data.append(0xC2 | FLAGS[str(condition.value).upper()])
             else:
                 raise AssemblerException(condition, "Syntax error")
         elif param.isA('ID', 'HL'):
@@ -1010,7 +1007,8 @@ class Assembler:
                     assert 0 <= value <= 0xFF
                     section.data[offset] = value & 0xFF
                 elif link_type == Assembler.LINK_HIGH8:
-                    assert 0xFF00 <= value <= 0xFFFF
+                    if value < 0xFF00 or value > 0xFFFF:
+                        raise AssemblerException(expr, f"Failed to link {link_expr}, result out of range for ldh")
                     section.data[offset] = value & 0xFF
                 elif link_type == Assembler.LINK_ABS16:
                     assert section.base_address > -1, "Cannot place absolute values in a relocatable code piece"
@@ -1062,7 +1060,7 @@ class Assembler:
             yield label, address + section.base_address, section.bank
 
     def getLabel(self, name: str) -> Tuple[int, int]:
-        section, offset = self.__label[name.upper()]
+        section, offset = self.__label[name]
         return section.base_address + offset, section.bank
 
 
@@ -1078,7 +1076,7 @@ def resetConsts() -> None:
         if ":" in line:
             value, _, key = line.strip().partition(":")
             key = key.split(";")[0].strip()
-            CONST_MAP[key.upper()] = int(value, 16)
+            CONST_MAP[key] = int(value, 16)
 
 
 def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[Dict[str, int]] = None) -> bytes:

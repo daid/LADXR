@@ -326,13 +326,14 @@ def allowOverworldBackgroundTileTransitions(rom):
     rom.patch(0x00, 0x0656, 0x069E, ASM("""
     ld   a, $2F
     ld   [$2100], a
-    ld   a, [wTransitionZeroNeverUsed]
+    ld   hl, wTransitionZeroNeverUsed
+    ld   a, [hl]
     xor  $01
-    ld   [wTransitionZeroNeverUsed], a
+    ld   [hl], a
     ldh  [rVBK], a
     ; run HDMA for copy
     ld   hl, rHDMA1
-    ld   a, [hWorldTileset]
+    ldh  a, [hWorldTileset]
     ; source address
     add  a, $40
     ld   [hl+], a
@@ -352,9 +353,11 @@ def allowOverworldBackgroundTileTransitions(rom):
     ldh  [rVBK], a
     ldh  [hBGTilesLoadingStage], a
     ldh  [hNeedsUpdatingBGTiles], a
-    ret
+    ;ret
 
     nop
+    jp  $078E
+    
 LoadBaseOverworldTilesImpl:
     ld   a, $2C
     ld   [$2100], a
@@ -366,7 +369,7 @@ LoadBaseOverworldTilesImpl:
     ld   de, $8F00
     ld   bc, $100
     jp   CopyData
-"""), fill_nop=True)
+"""))
     rom.patch(0x00, 0x2D2D, 0x2D3E, ASM("""
     call $0681
     ld   a, $01
@@ -428,6 +431,13 @@ CopyObjectColumnToBGAttr:
         xor  a
         ldh  [rVBK], a
         ret
+    """))
+    rom.patch(0x00, 0x078E, "00" * 11, ASM("""
+        xor  a
+        ldh  [hAnimatedTilesFrameCount], a
+        ld   a, $2C
+        ld   [$2100], a
+        jp   $1BD2
     """))
     rom.patch(0x00, 0x1C57, ASM("call CopyData"), ASM("call $0782"))
     rom.patch(0x02, 0x3BFA, ASM("ld [wTransitionZeroNeverUsed], a"), "", fill_nop=True)
