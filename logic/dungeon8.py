@@ -88,7 +88,7 @@ class Dungeon8:
             up_left.connect(bossdoor, r.super_jump_feather, one_way=True) # superjump off the bottom or right wall to jump over to the boss door
 
         if options.logic == 'hell':
-            entrance_up.connect(entrance, AND(r.jesus_buffer, r.lava_swim), one_way = True) # boots bonk around the top left corner at vire, get on top of the wall to bonk to the left, and transition while slashing sword 
+            entrance_up.connect(entrance, AND(r.jesus_buffer, r.lava_swim)) # boots bonk around the top left corner at vire, get on top of the wall to bonk to the left, and transition while slashing sword 
             if bottomright_owl:
                 bottomright_owl.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, STONE_BEAK8)) # underground section past mimics, boots bonking across the gap to the ladder
             bottomright_pot_chest.connect(entrance, AND(SWORD, POWER_BRACELET, r.boots_bonk_2d_hell, r.miniboss_requirements["SMASHER"])) # underground section past mimics, boots bonking across the gap to the ladder
