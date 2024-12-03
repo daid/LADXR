@@ -32,10 +32,10 @@ class World:
         self._addEntrance("papahl_house_right", mabe_village, papahl_house, None)
         self._addEntrance("rooster_grave", mabe_village, rooster_cave, COUNT(POWER_BRACELET, 2))
         self._addEntranceRequirementExit("rooster_grave", None) # if exiting, you do not need l2 bracelet
-        self._addEntrance("madambowwow", mabe_village, None, None)
-        self._addEntrance("ulrira", mabe_village, None, None)
+        self._addEntrance("madambowwow", mabe_village, Location(), None)
+        self._addEntrance("ulrira", mabe_village, Location(), None)
         self._addEntrance("mabe_phone", mabe_village, self._createShopSanity(options, 1, 0x2CB), None)
-        self._addEntrance("library", mabe_village, None, None)
+        self._addEntrance("library", mabe_village, Location(), None)
         self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_CAVE_OPENED)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
@@ -292,8 +292,8 @@ class World:
         mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, HOOKSHOT))
         mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFYING_GLASS))
         self._addEntrance("animal_phone", animal_village, self._createShopSanity(options, 7, 0x2E3), None)
-        self._addEntrance("animal_house1", animal_village, None, None)
-        self._addEntrance("animal_house2", animal_village, None, None)
+        self._addEntrance("animal_house1", animal_village, Location(), None)
+        self._addEntrance("animal_house2", animal_village, Location(), None)
         self._addEntrance("animal_house3", animal_village, goathouse, None)
         self._addEntrance("animal_house4", animal_village, Location(), None)
         self._addEntrance("animal_house5", animal_village, cookhouse, None)
@@ -702,7 +702,7 @@ class World:
 
     def _createShopSanity(self, options, index, room):
         if options.shopsanity == '':
-            return None
+            return Location()
         shop = Location(f"Shop_{room:03X}")
         Location().add(ShopItem(0, room=room)).connect(shop, FOUND("RUPEES", 100 + 100 * index))
         Location().add(ShopItem(1, room=room)).connect(shop, FOUND("RUPEES", 150 + 100 * index))

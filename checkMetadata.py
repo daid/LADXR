@@ -285,4 +285,22 @@ checkMetadataTable = {
     "0x2F5-Trade": CheckMetadata("Fisher", "Martha's Bay"),
     "0x0C9-Trade": CheckMetadata("Mermaid", "Martha's Bay"),
     "0x297-Trade": CheckMetadata("Mermaid Statue", "Martha's Bay"),
+
+    #Shopsanity checks
+    "0x2CB-0": CheckMetadata("Mabe Extra Shop Item 1", "Mabe Village"),
+    "0x2CB-1": CheckMetadata("Mabe Extra Shop Item 2", "Mabe Village"),
+    "0x29B-0": CheckMetadata("Swamp Shop Item 1", "Goponga Swamp"),
+    "0x29B-1": CheckMetadata("Swamp Shop Item 2", "Goponga Swamp"),
+    "0x2B4-0": CheckMetadata("Shop East of Mabe Item 1", "Koholint Prairie"),
+    "0x2B4-1": CheckMetadata("Shop East of Mabe Item 2", "Koholint Prairie"),
+    "0x29C-0": CheckMetadata("Central Koholint Shop Item 1", "Koholint Prairie"),
+    "0x29C-1": CheckMetadata("Central Koholint Shop Item 2", "Koholint Prairie"),
+    "0x29D-0": CheckMetadata("Martha's Bay Shop Item 1", "Martha's Bay"),
+    "0x29D-1": CheckMetadata("Martha's Bay Shop Item 2", "Martha's Bay"),
+    "0x2CC-0": CheckMetadata("Kanalet Shop Item 1", "Kanalet Castle"),
+    "0x2CC-1": CheckMetadata("Kanalet Shop Item 2", "Kanalet Castle"),
+    "0x2E3-0": CheckMetadata("Animal Village Shop Item 1", "Animal Village"),
+    "0x2E3-1": CheckMetadata("Animal Village Shop Item 2", "Animal Village"),
+    "0x299-0": CheckMetadata("Shop Near D8 Item 1", "Tal Tal Mountains"),
+    "0x299-1": CheckMetadata("Shop Near D8 Item 2", "Tal Tal Mountains"),
 }
