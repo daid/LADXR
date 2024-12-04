@@ -579,6 +579,7 @@ class World:
             obstacle_cave_inside_chest.connect(obstacle_cave_inside, r.pit_buffer) # jump to the rightmost pits + 1 pit buffer to jump across
             obstacle_cave_exit.connect(obstacle_cave_inside, r.pit_buffer) # 1 pit buffer above boots crystals to get past
             lower_right_taltal.connect(hibiscus_item, AND(TRADING_ITEM_PINEAPPLE, r.bomb_trigger), one_way=True) # bomb trigger papahl from below ledge, requires pineapple
+            lower_right_taltal.connect(d4_entrance_locked, r.jesus_jump, one_way=True) # jump down waterfall
             self._addEntranceRequirementExit("d4", None) # if exiting, you can access d4_entrance_locked. From there apply jesus jumps/roosters/flippers/unlock requirements
             d4_entrance_locked.connect(angler_tunnel_keyhole, r.jesus_jump, one_way=True) # use jesus jumps to face upwards into the keyhole from above
             below_right_taltal.connect(d4_entrance_locked, OR(r.super_jump_boots, HOOKSHOT), one_way=True) # superjump off bottom wall, or hookshot clip the block as it's moving up # TODO d4_connector
