@@ -370,19 +370,21 @@ class World:
 
         # D4 entrance and related things
         below_right_taltal = Location('Near D4 Keyhole').connect(windfish_egg, POWER_BRACELET)
-        angler_tunnel_keyhole = Location().add(KeyHole(0x02B, ANGLER_TUNNEL_OPENED))
-        below_right_taltal.connect(angler_tunnel_keyhole, ANGLER_KEY, one_way=True)
+        angler_tunnel_keyhole = Location('D4 Keyhole').connect(Location().add(KeyHole(0x02B, ANGLER_TUNNEL_OPENED)), ANGLER_KEY)
+        
+        d4_entrance_locked = Location("Outside D4 Closed").connect(below_right_taltal, FLIPPERS)
+        d4_entrance_unlocked = Location("Outside D4 Open").connect(d4_entrance_locked, ANGLER_TUNNEL_OPENED)
+        
+        below_right_taltal.connect(angler_tunnel_keyhole, None, one_way=True)
         below_right_taltal.connect(bay_water, FLIPPERS)
         below_right_taltal.connect(next_to_castle, ROOSTER) # fly from staircase to staircase on the north side of the moat
-        lower_right_taltal.connect(below_right_taltal, FLIPPERS, one_way=True)
+        lower_right_taltal.connect(d4_entrance_locked, FLIPPERS, one_way=True) # fall down waterfall
+        lower_right_taltal.connect(d4_entrance_unlocked, ANGLER_TUNNEL_OPENED, one_way=True) # fall down waterfall
 
         heartpiece_swim_cave = Location("Damp Cave").connect(Location().add(HeartPiece(0x1F2)), FLIPPERS)
         outside_swim_cave = Location()
         below_right_taltal.connect(outside_swim_cave, FLIPPERS)
         self._addEntrance("heartpiece_swim_cave", outside_swim_cave, heartpiece_swim_cave, None)  # cave next to level 4
-        d4_entrance_locked = Location("Outside D4 Closed").connect(below_right_taltal, FLIPPERS)
-        d4_entrance_unlocked = Location("Outside D4 Open").connect(d4_entrance_locked, ANGLER_TUNNEL_OPENED)
-        lower_right_taltal.connect(d4_entrance_unlocked, ANGLER_TUNNEL_OPENED, one_way=True)
         self._addEntrance("d4", d4_entrance_locked, None, ANGLER_TUNNEL_OPENED)
         self._addEntranceRequirementExit("d4", FLIPPERS) # if exiting, you can leave with flippers without opening the dungeon
         #self._addEntrance("d4_connector", below_right_taltal, d4_connector_right, None) # TODO d4_connector
