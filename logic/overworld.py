@@ -35,7 +35,7 @@ class World:
         self._addEntrance("madambowwow", mabe_village, Location(), None)
         self._addEntrance("ulrira", mabe_village, Location(), None)
         self._addEntrance("mabe_phone", mabe_village, self._createShopSanity(options, 1, 0x2CB), None)
-        self._addEntrance("library", mabe_village, Location(), None)
+        self._addEntrance("library", mabe_village, Location("Library"), None)
         self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_CAVE_OPENED)
         self._addEntranceRequirementExit("d1", None) # if exiting, you do not need the key
