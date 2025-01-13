@@ -8,14 +8,20 @@ var storedRomArray;
 function ID(s) { return document.getElementById(s); }
 
 function getShareLink(data) {
+    var url = new URL(document.location);
     var seedProvided = !ID("seed").value == "";
     if(!seedProvided)
         ID("seed").value = data.seed;
-    var hash = '#' + generateSettingsString(function(s) { return !s.aesthetic; });
+    url.hash = generateSettingsString(function(s) { return !s.aesthetic; });
     if(!seedProvided)
         ID("seed").value = "";
-    var l = document.location;
-    return l.origin + l.pathname + l.search + hash;
+    return url.toString();
+}
+
+function toggleShareLock(checkbox) {
+    var url = new URL(ID("shareseed").value);
+    url.search = checkbox.checked ? 'locked' : '';
+    ID("shareseed").value = url.toString();
 }
 
 function getRomArray() {
@@ -192,7 +198,8 @@ function buildUI(filter_function) {
         if (filter_function && !filter_function(s)) continue;
         if (last_cat != s.category) {
             if (last_cat != "") html += `</div>`;
-            html += `<div class="row"><div class="col-sm-12"><h1>${s.category}</h1></div>`
+            html += `<div class="row category-${s.category.replaceAll(' ','_')}">`
+            html += `<div class="col-sm-12"><h1>${s.category}</h1></div>`
             last_cat = s.category;
         }
         html += `<div class="col-sm-12 col-md-6 col-lg-4 inputcontainerparent">`;
@@ -233,6 +240,36 @@ function buildUI(filter_function) {
             };
         }
     }
+
+    if (new URLSearchParams(document.location.search).has('locked')) {
+        for(var s of options) {
+            if (s.aesthetic) continue;
+            var input = ID(s.key);
+            if(input)
+                input.setAttribute('disabled', true);
+        }
+        // indicate fully disabled categories
+        var categories = []
+        for(var s of options) {
+            if (!categories.includes(s.category))
+                categories.push(s.category);
+        }
+        for(var s of options) {
+            if (!s.aesthetic) continue;
+            if (categories.includes(s.category))
+                categories.splice(categories.indexOf(s.category), 1);
+        }
+        for(var c of categories) {
+            var category = document.querySelector(`.category-${c.replaceAll(' ', '_')}`);
+            if (category) {
+                ID('settings').append(category) // send to the bottom of settings so unlocked categories rise to top
+            }
+            var h1 = document.querySelector(`.category-${c.replaceAll(' ', '_')} h1`);
+            if (h1)
+                h1.innerHTML = '&#128274; ' + h1.innerHTML; // prepend 🔒 emoji
+        }
+    }
+
     updateGfxModImage();
     updateSettingsString();
     checkStoredRom();
