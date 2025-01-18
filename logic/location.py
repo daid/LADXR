@@ -19,38 +19,38 @@ class Location:
             self.items.append(ii)
         return self
 
-    def connect(self, other, req, *, one_way=False):
+    def connect(self, other, req, id=None, *, one_way=False):
         assert isinstance(other, Location), type(other)
 
         if isinstance(req, bool):
             if req:
-                self.connect(other, None, one_way=one_way)
+                self.connect(other, None, id, one_way=one_way)
             return
 
         if other in self.__connected_to:
             for idx, data in enumerate(self.gated_connections):
                 if data[0] == other:
                     if req is None or data[1] is None:
-                        self.gated_connections[idx] = (other, None)
+                        self.gated_connections[idx] = (other, None, id)
                     else:
-                        self.gated_connections[idx] = (other, OR(req, data[1]))
+                        self.gated_connections[idx] = (other, OR(req, data[1]), id)
                     break
             for idx, data in enumerate(self.simple_connections):
                 if data[0] == other:
                     if req is None or data[1] is None:
-                        self.simple_connections[idx] = (other, None)
+                        self.simple_connections[idx] = (other, None, id)
                     else:
-                        self.simple_connections[idx] = (other, OR(req, data[1]))
+                        self.simple_connections[idx] = (other, OR(req, data[1]), id)
                     break
         else:
             self.__connected_to.add(other)
 
             if hasConsumableRequirement(req):
-                self.gated_connections.append((other, req))
+                self.gated_connections.append((other, req), id)
             else:
-                self.simple_connections.append((other, req))
+                self.simple_connections.append((other, req), id)
         if not one_way:
-            other.connect(self, req, one_way=True)
+            other.connect(self, req, id, one_way=True)
         return self
 
     def __repr__(self):
