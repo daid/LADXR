@@ -46,9 +46,9 @@ class Location:
             self.__connected_to.add(other)
 
             if hasConsumableRequirement(req):
-                self.gated_connections.append((other, req), id)
+                self.gated_connections.append((other, req, id))
             else:
-                self.simple_connections.append((other, req), id)
+                self.simple_connections.append((other, req, id))
         if not one_way:
             other.connect(self, req, id, one_way=True)
         return self
