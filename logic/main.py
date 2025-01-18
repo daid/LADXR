@@ -169,9 +169,9 @@ class Logic:
         self.__location_set.add(location)
         for ii in location.items:
             self.iteminfo_list.append(ii)
-        for connection, requirement in location.simple_connections:
+        for connection, requirement, _ in location.simple_connections:
             self.__recursiveFindAll(connection)
-        for connection, requirement in location.gated_connections:
+        for connection, requirement, _ in location.gated_connections:
             self.__recursiveFindAll(connection)
 
 

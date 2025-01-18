@@ -33,7 +33,7 @@ class World:
         self._addEntranceRequirementExit("rooster_grave", None) # if exiting, you do not need l2 bracelet
         self._addEntrance("madambowwow", mabe_village, Location(), None)
         self._addEntrance("ulrira", mabe_village, Location(), None)
-        self._addEntrance("mabe_phone", mabe_village, self._createShopSanity(options, 1, 0x2CB), None, "")
+        self._addEntrance("mabe_phone", mabe_village, self._createShopSanity(options, 1, 0x2CB, ""), None)
         self._addEntrance("library", mabe_village, Location("Library"), None)
         self._addEntrance("trendy_shop", mabe_village, trendy_shop, r.bush)
         self._addEntrance("d1", mabe_village, None, TAIL_CAVE_OPENED)
@@ -121,7 +121,7 @@ class World:
         swamp.connect(outside_d2, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG), "")
         self._addEntrance("d2", outside_d2, None, None)
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush, "")  # tail key
-        self._addEntrance("writes_phone", swamp, self._createShopSanity(options, 2, 0x29B), None, "")
+        self._addEntrance("writes_phone", swamp, self._createShopSanity(options, 2, 0x29B, ""), None)
 
         writes_hut_outside = Location("Outside Write's House").connect(swamp, OR(FEATHER, ROOSTER), "")  # includes the cave behind the hut
         writes_house = Location("Write's House")
@@ -160,8 +160,8 @@ class World:
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x07B, TRADING_ITEM_STICK)), TRADING_ITEM_BANANAS, "")
         ukuku_prairie.connect(Location().add(TradeSequenceItem(0x087, TRADING_ITEM_HONEYCOMB)), TRADING_ITEM_STICK, "")
         ukuku_prairie.connect(Location().add(KeyHole(0x0B5, KEY_CAVERN_OPENED)), SLIME_KEY, "")
-        self._addEntrance("prairie_left_phone", ukuku_prairie, self._createShopSanity(options, 3, 0x2B4), None, "")
-        self._addEntrance("prairie_right_phone", ukuku_prairie, self._createShopSanity(options, 4, 0x29C), None, "")
+        self._addEntrance("prairie_left_phone", ukuku_prairie, self._createShopSanity(options, 3, 0x2B4, ""), None)
+        self._addEntrance("prairie_right_phone", ukuku_prairie, self._createShopSanity(options, 4, 0x29C, ""), None)
         self._addEntrance("prairie_left_cave1", ukuku_prairie, Location().add(Chest(0x2CD)), None) # cave next to town
         self._addEntrance("prairie_left_fairy", ukuku_prairie, None, BOMB)
         self._addEntranceRequirementExit("prairie_left_fairy", None) # if exiting, you do not need bombs
@@ -191,7 +191,7 @@ class World:
 
         left_bay_area = Location("Western Bay")
         left_bay_area.connect(ghost_hut_outside, OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), "")
-        self._addEntrance("prairie_low_phone", left_bay_area, self._createShopSanity(options, 5, 0x29D), None, "")
+        self._addEntrance("prairie_low_phone", left_bay_area, self._createShopSanity(options, 5, 0x29D, ""), None)
 
         Location().add(Seashell(0x0E9)).connect(left_bay_area, r.bush, "")  # same screen as mermaid statue
         tiny_island = Location().add(Seashell(0x0F8)).connect(left_bay_area, AND(OR(FLIPPERS, ROOSTER), r.bush), "")  # tiny island
@@ -256,7 +256,7 @@ class World:
         else:
             next_to_castle.connect(ukuku_prairie, None, "")
         next_to_castle.connect(ukuku_prairie, FLIPPERS, "")
-        self._addEntrance("castle_phone", next_to_castle, self._createShopSanity(options, 6, 0x2CC), None, "")
+        self._addEntrance("castle_phone", next_to_castle, self._createShopSanity(options, 6, 0x2CC, ""), None)
         castle_secret_entrance_left = Location("Kanalet Tunnel West")
         castle_secret_entrance_right = Location("Kanalet Tunnel East").connect(castle_secret_entrance_left, FEATHER, "")
         castle_courtyard = Location("Kanalet Courtyard")
@@ -290,7 +290,7 @@ class World:
         mermaid_statue = Location("Inside Mermaid Statue")
         mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, HOOKSHOT), "")
         mermaid_statue.add(TradeSequenceItem(0x297, TRADING_ITEM_MAGNIFYING_GLASS))
-        self._addEntrance("animal_phone", animal_village, self._createShopSanity(options, 7, 0x2E3), None, "")
+        self._addEntrance("animal_phone", animal_village, self._createShopSanity(options, 7, 0x2E3, ""), None)
         self._addEntrance("animal_house1", animal_village, Location(), None)
         self._addEntrance("animal_house2", animal_village, Location(), None)
         self._addEntrance("animal_house3", animal_village, goathouse, None)
@@ -505,7 +505,7 @@ class World:
             d8_entrance.connect(writes_hut_outside, None, "", one_way=True) # Jump down the ledge
             d8_entrance.connect(outside_fire_cave, None, "", one_way=True) # Jump down the other ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
-        self._addEntrance("phone_d8", d8_entrance, self._createShopSanity(options, 8, 0x299), None, "")
+        self._addEntrance("phone_d8", d8_entrance, self._createShopSanity(options, 8, 0x299, ""), None)
         self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
         self._addEntranceRequirementExit("d8", None) # if exiting, you do not need to wake the turtle
 
