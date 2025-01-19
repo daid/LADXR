@@ -407,7 +407,7 @@ class World:
         raft_return_lower = Location("Raft Return South").connect(raft_return_upper, None, id="40", one_way=True)
         outside_raft_house = Location("Outside Raft House").connect(below_right_taltal, HOOKSHOT, id="41").connect(below_right_taltal, FLIPPERS, id="42", one_way=True)
         raft_game = Location()
-        raft_game.connect(outside_raft_house, id="RAFT", id="43")
+        raft_game.connect(outside_raft_house, "RAFT", id="43")
         raft_game.add(Chest(0x05C), Chest(0x05D)) # Chests in the rafting game
         raft_exit = Location("Raft Exit")
         if options.logic != "casual":  # use raft to reach north armos maze entrances without flippers

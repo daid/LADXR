@@ -17,7 +17,7 @@ class DungeonColor:
         room2_lights.add(DroppedKey(0x308))
 
         miniboss_room1 = Location("D0 Miniboss Room 1", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 3)), id="lj")
-        Location(dungeon=0).connect(miniboss_room1, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]]).add(DungeonChest(0x302), id="lk")  # nightmare key after slime mini boss
+        Location(dungeon=0).connect(miniboss_room1, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]], id="lk").add(DungeonChest(0x302))  # nightmare key after slime mini boss
         miniboss_room2 = Location("D0 Miniboss Room 2", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 2)), id="ll")
         room3 = Location("D0 After Miniboss 2", dungeon=0).connect(miniboss_room2, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]], id="lm") # After the miniboss
         room4 = Location(dungeon=0).connect(room3, POWER_BRACELET, id="ln")  # need to lift a pot to reveal button
