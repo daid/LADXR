@@ -96,15 +96,15 @@ class Logic:
                     te = world.entrances[target]
                 if te.location and te.location != se.location:
                     if se.requirement is not None and te.requirement is not None:
-                        se.location.connect(te.location, AND(se.requirement, te.requirement), se.id, one_way=True)
+                        se.location.connect(te.location, AND(se.requirement, te.requirement), id=se.id, one_way=True)
                     elif se.requirement is not None:
-                        se.location.connect(te.location, se.requirement, se.id, one_way=True)
+                        se.location.connect(te.location, se.requirement, id=se.id, one_way=True)
                     else:
-                        se.location.connect(te.location, te.requirement, se.id, one_way=True)
+                        se.location.connect(te.location, te.requirement, id=se.id, one_way=True)
                     if se.enterIsSet():
-                        se.location.connect(te.location, se.one_way_enter_requirement, se.enter_id, one_way=True)
+                        se.location.connect(te.location, se.one_way_enter_requirement, id=se.enter_id, one_way=True)
                     if te.exitIsSet():
-                        se.location.connect(te.location, te.one_way_exit_requirement, se.exit_id, one_way=True)
+                        se.location.connect(te.location, te.one_way_exit_requirement, id=se.exit_id, one_way=True)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
