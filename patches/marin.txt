@@ -1,6 +1,6 @@
 Let's a go!
-Remember, sword goes on A!
-Remember, sword goes on B!
+Remember, sword goes on <bigA>!
+Remember, sword goes on <bigB>!
 It's pronounced Hydrocity Zone.
 Avoid the heart piece of shame!
 Marin? No, this is Zelda. Welcome to Hyrule
@@ -30,7 +30,7 @@ Go try Archipelago!
 Go try touching grass!
 Please leave my house.
 Trust me, this will be a 2 hour seed, max.
-This is still better than doing Dampe dungeons.
+This is still better than doing Damp<eacute> dungeons.
 They say that Marin can be found here.
 Stalfos are such boneheads.
 90 percent bug-free!
@@ -76,7 +76,7 @@ Try this rando at ladxr.daid.eu!
 He turned himself into a carpet whale!
 Which came first, the whale or the egg?
 Glan - Known Death and Taxes appreciator.
-Pokemon number 591.
+Pok<eacute>mon number 591.
 Would you?
 Sprinkle the desert skulls.
 Please don't curse in my Christian LADXR seed.
