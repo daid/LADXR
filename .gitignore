@@ -138,6 +138,7 @@ dmypy.json
 cython_debug/
 
 *.gbc
+*.sav
 .vscode
 LADXR_*.txt
 LADXR_*.json
