@@ -154,3 +154,4 @@ WriteToVRAM:
 #INCLUDE "message.asm"
 #INCLUDE "owl.asm"
 #INCLUDE "evilshop.asm"
+#INCLUDE "nightmareminiboss.asm"

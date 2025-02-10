@@ -315,30 +315,40 @@ class RequirementsSettings:
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
         self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
 
-        self.boss_requirements = [
-            SWORD,  # D1 boss
-            AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
-            AND(PEGASUS_BOOTS, SWORD),  # D3 boss
-            AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW)),  # D4 boss
-            AND(HOOKSHOT, SWORD),  # D5 boss
-            BOMB,  # D6 boss
-            AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
-            MAGIC_ROD,  # D8 boss
-            self.attack_hookshot_no_bomb,  # D9 boss
-        ]
+        self.boss_requirements = {
+            0: SWORD,  # D1 boss
+            1: AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
+            2: AND(PEGASUS_BOOTS, SWORD),  # D3 boss
+            3: AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW)),  # D4 boss
+            4: AND(HOOKSHOT, SWORD),  # D5 boss
+            5: BOMB,  # D6 boss
+            6: AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
+            7: MAGIC_ROD,  # D8 boss
+            8: self.attack_hookshot_no_bomb,  # D9 boss
+            "NIGHTMARE_GEL":     MAGIC_POWDER,
+            "NIGHTMARE_AGAHNIM": OR(SWORD, SHOVEL),
+            "NIGHTMARE_MOLDORM": SWORD,
+            "NIGHTMARE_GANON": AND(SWORD, PEGASUS_BOOTS),
+            "NIGHTMARE_LANMOLA": OR(SWORD, BOW),
+        }
         self.miniboss_requirements = {
-            "ROLLING_BONES":    self.attack_hookshot,
-            "HINOX":            self.attack_hookshot,
-            "DODONGO":          BOMB,
-            "CUE_BALL":         SWORD,
-            "GHOMA":            OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
-            "SMASHER":          POWER_BRACELET,
-            "GRIM_CREEPER":     self.attack_hookshot_no_bomb,
-            "BLAINO":           SWORD,
-            "AVALAUNCH":        self.attack_hookshot,
-            "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
-            "MOBLIN_KING":      SWORD,
-            "ARMOS_KNIGHT":     OR(BOW, MAGIC_ROD, SWORD),
+            "ROLLING_BONES":     self.attack_hookshot,
+            "HINOX":             self.attack_hookshot,
+            "DODONGO":           BOMB,
+            "CUE_BALL":          SWORD,
+            "GHOMA":             OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "SMASHER":           POWER_BRACELET,
+            "GRIM_CREEPER":      self.attack_hookshot_no_bomb,
+            "BLAINO":            SWORD,
+            "AVALAUNCH":         self.attack_hookshot,
+            "GIANT_BUZZ_BLOB":   MAGIC_POWDER,
+            "MOBLIN_KING":       SWORD,
+            "ARMOS_KNIGHT":      OR(BOW, MAGIC_ROD, SWORD),
+            "NIGHTMARE_GEL":     MAGIC_POWDER,
+            "NIGHTMARE_AGAHNIM": OR(SWORD, SHOVEL),
+            "NIGHTMARE_MOLDORM": SWORD,
+            "NIGHTMARE_GANON":   AND(SWORD, PEGASUS_BOOTS),
+            "NIGHTMARE_LANMOLA": OR(SWORD, BOW),
         }
 
         # Adjust for options
