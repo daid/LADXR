@@ -83,6 +83,7 @@ C460:wEntitiesLoadOrderTable
 C490:wEntitiesLiftedTable
 C4E0:wEntitiesDroppedItemTable
 C50A:wBlockItemUsage
+C509:wItemPickedUpInShop
 D1E0:wBowwowChain ; Need $1A bytes for the chain and other bowwow related memory
 D219:wFinalNightmareForm
 D368:wMusicTrackToPlay

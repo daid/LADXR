@@ -232,7 +232,7 @@ def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -
         while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + askbytes + b'\xfe'
-    return result.rstrip() + b'\xff'
+    return result.replace(b'_', b' ').rstrip() + b'\xff'
 
 
 def tileDataToString(data: bytes, key: str = " 123") -> str:

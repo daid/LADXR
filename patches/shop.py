@@ -2,7 +2,7 @@ from assembler import ASM
 from roomEditor import RoomEditor, Object, ObjectHorizontal
 
 
-def fixShop(rom, allow_both=False):
+def fixShop(rom, allow_both=False, shopsanity=False):
     # Move shield visuals to the 2nd slot, and arrow to 3th slot
     rom.patch(0x04, 0x3732 + 22, "986A027FB2B098AC01BAB1", "9867027FB2B098A801BAB1")
     rom.patch(0x04, 0x3732 + 55, "986302B1B07F98A4010A09", "986B02B1B07F98AC010A09")
@@ -169,6 +169,9 @@ notArrows:
         ld   de, $7B5A
         jp   $3C77
     """), fill_nop=True)
+
+    if shopsanity:
+        rom.patch(0x04, 0x3952, ASM("call OpenDialogInTable0"), ASM("ld a, $15\nrst 8"))
 
 
 def createShopRoom(rom, room_nr):

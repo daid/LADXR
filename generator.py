@@ -115,7 +115,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.maptweaks.tweakMap(rom)
         patches.maptweaks.tweakBirdKeyRoom(rom)
     patches.chest.fixChests(rom)
-    patches.shop.fixShop(rom, allow_both=settings.shopsanity != '')
+    patches.shop.fixShop(rom, allow_both=settings.shopsanity != '', shopsanity=settings.shopsanity != '')
     if settings.evilshop != '':
         patches.evilshop.addEvilShop(rom)
     patches.rooster.patchRooster(rom)
