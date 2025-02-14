@@ -6,18 +6,18 @@ from locations.all import *
 class Dungeon6:
     def __init__(self, options, world_setup, r, *, raft_game_chest=True):
         entrance = Location("D6 Entrance", dungeon=6)
-        Location(dungeon=6).add(DungeonChest(0x1CF)).connect(entrance, OR(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # 50 rupees
+        Location(dungeon=6).add(DungeonChest(0x1CF)).connect(entrance, OR(r.enemy_requirements["WIZROBE"], COUNT(POWER_BRACELET, 2))) # 50 rupees
         elephants_heart_chest = Location(dungeon=6).add(DungeonChest(0x1C9)).connect(entrance, COUNT(POWER_BRACELET, 2)) # 100 rupees start
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6)
 
         # Power bracelet chest
-        bracelet_chest = Location(dungeon=6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER))
+        bracelet_chest = Location(dungeon=6).add(DungeonChest(0x1CE)).connect(entrance, AND(BOMB, FEATHER, r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"]))
 
         # left side
-        Location(dungeon=6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, r.attack_wizrobe)) # 3 wizrobes raised blocks don't need to hit the switch
+        Location(dungeon=6).add(DungeonChest(0x1C0)).connect(entrance, AND(POWER_BRACELET, r.enemy_requirements["WIZROBE"])) # 3 wizrobes raised blocks don't need to hit the switch
         left_side = Location(dungeon=6).add(DungeonChest(0x1B9)).add(DungeonChest(0x1B3)).connect(entrance, AND(POWER_BRACELET, OR(BOMB, BOOMERANG)))
-        Location(dungeon=6).add(DroppedKey(0x1B4)).connect(left_side, OR(r.attack_wizrobe, BOW)) # 2 wizrobe drop key, allow bow as only 2
+        Location(dungeon=6).add(DroppedKey(0x1B4)).connect(left_side, OR(r.enemy_requirements["WIZROBE"], BOW)) # 2 wizrobe drop key, allow bow as only 2
         top_left = Location(dungeon=6).add(DungeonChest(0x1B0)).connect(left_side, COUNT(POWER_BRACELET, 2)) # top left chest horseheads
         if raft_game_chest:
             Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
@@ -26,25 +26,25 @@ class Dungeon6:
         to_miniboss = Location("D6 Before Miniboss", dungeon=6).connect(entrance, KEY6)
         miniboss_room = Location("D6 Miniboss Room", dungeon=6).connect(to_miniboss, BOMB)
         miniboss = Location("D6 After Miniboss", dungeon=6).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[5]])
-        lower_right_side = Location(dungeon=6).add(DungeonChest(0x1BE)).connect(entrance, AND(r.attack_wizrobe, COUNT(POWER_BRACELET, 2))) # waterway key
+        lower_right_side = Location(dungeon=6).add(DungeonChest(0x1BE)).connect(entrance, AND(r.enemy_requirements["WIZROBE"], COUNT(POWER_BRACELET, 2))) # waterway key
         medicine_chest = Location(dungeon=6).add(DungeonChest(0x1D1)).connect(lower_right_side, FEATHER) # ledge chest medicine
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             lower_right_owl = Location(dungeon=6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(dungeon=6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(dungeon=6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.attack_pols_voice, KEY6, FOUND(KEY6, 2))) # top right chest horseheads
+        center_2_and_upper_right_side = Location(dungeon=6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.enemy_requirements["POLS_VOICE"], KEY6, FOUND(KEY6, 2))) # top right chest horseheads
         boss_key = Location(dungeon=6).add(DungeonChest(0x1B6))
-        center_2_and_upper_right_side.connect(boss_key, AND(HOOKSHOT, POWER_BRACELET, KEY6, FOUND(KEY6, 3)), one_way=True)
+        center_2_and_upper_right_side.connect(boss_key, AND(HOOKSHOT, POWER_BRACELET, r.miniboss_requirements["DODONGO"], KEY6, FOUND(KEY6, 3)), one_way=True)
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 
-        boss_room = Location("D6 Boss Room", dungeon=6).connect(center_1, AND(NIGHTMARE_KEY6, OR(r.attack_hookshot, SHIELD)))
+        boss_room = Location("D6 Boss Room", dungeon=6).connect(center_1, AND(NIGHTMARE_KEY6, OR(AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"]), SHIELD)))
         boss = Location(dungeon=6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[5]])
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            bracelet_chest.connect(entrance, BOMB) # get through 2d section by "fake" jumping to the ladders
+            bracelet_chest.connect(entrance, AND(BOMB, r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # get through 2d section by "fake" jumping to the ladders
             center_1.connect(miniboss, AND(COUNT(POWER_BRACELET, 2), r.boots_dash_2d)) # use a boots dash to get over the platforms
-            center_2_and_upper_right_side.connect(center_1, AND(COUNT(POWER_BRACELET, 2), r.damage_boost, r.attack_pols_voice, FOUND(KEY6, 2))) # damage_boost past the mini_thwomps
+            center_2_and_upper_right_side.connect(center_1, AND(COUNT(POWER_BRACELET, 2), r.damage_boost, r.enemy_requirements["POLS_VOICE"], FOUND(KEY6, 2))) # damage_boost past the mini_thwomps
             
         if options.logic == 'glitched' or options.logic == 'hell':
             elephants_heart_chest.connect(entrance, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest

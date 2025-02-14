@@ -264,8 +264,6 @@ class RequirementsSettings:
         self.attack_no_boomerang = OR(SWORD, BOMB, BOW, MAGIC_ROD, HOOKSHOT) # teleporting owls
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
         self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(MAGIC_ROD, HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic rod
-        self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)) # BOW works, but isn't as reliable as it needs 4 arrows.
-        self.attack_wizrobe = OR(BOMB, MAGIC_ROD) # BOW works, but isn't as reliable as it needs 4 arrows.
         self.stun_wizrobe = OR(BOOMERANG, MAGIC_POWDER, HOOKSHOT)
         self.stun_mask_mimic = OR(BOOMERANG, HOOKSHOT)
         self.rear_attack = OR(SWORD, BOMB) # mimic
@@ -350,6 +348,93 @@ class RequirementsSettings:
             "NIGHTMARE_GANON":   AND(SWORD, PEGASUS_BOOTS),
             "NIGHTMARE_LANMOLA": OR(SWORD, BOW),
         }
+        self.enemy_requirements = {
+            "HARDHAT_BEETLE":          BOMB,
+            "MINI_MOLDORM":            self.attack_hookshot_powder,
+            "KEESE":                   self.attack_hookshot_powder,
+            "STALFOS_AGGRESSIVE":      self.attack_skeleton,                               # green
+            "STALFOS_EVASIVE":         self.attack_skeleton,                               # yellow
+            "SPIKED_BEETLE":           AND(SHIELD, self.attack_hookshot_powder),
+            "THREE_OF_A_KIND":         OR(self.attack_hookshot_no_bomb, SHIELD),
+            "MASKED_MIMIC_GORIYA":     OR(self.rear_attack, self.rear_attack_range),
+            "BOO_BUDDY":               OR(BOW, MAGIC_ROD),                                 # assumes no torch is nearby
+            "MOBLIN":                  self.attack_hookshot_powder,
+            "MOBLIN_SWORD":            self.attack_hookshot_powder,
+            "POLS_VOICE":              OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1)),           # BOW works, but isn't as reliable as it needs 4 arrows.
+            "ZOL":                     self.attack_hookshot_powder,                        # Red zol, can split into 2 gels when hit
+            "HIDING_ZOL":              self.attack_hookshot_powder,                        # Green zol hiding in the ground, does not split
+            "GEL":                     self.attack_hookshot_powder,
+            "BOUNCING_BOMBITE":        self.attack_hookshot_powder,                        # the bouncy ones, not to be confused with TIMER_BOMBITE
+            "TIMER_BOMBITE":           OR(SWORD, BOMB, SHIELD),                            # starts timer when hit
+            "PAIRODD":                 self.attack_no_boomerang,
+            "IRON_MASK":               self.attack_hookshot_powder,
+            "MASTER_STALFOS":          AND(SWORD, BOMB),
+            "STAR":                    self.attack_hookshot_powder,
+            "WIZROBE":                 OR(BOMB, MAGIC_ROD),                                # BOW works, but isn't as reliable as it needs 4 arrows.
+            "LIKE_LIKE":               self.attack_hookshot_powder,
+            "VIRE":                    self.attack_hookshot_no_bomb,
+            "SNAKE":                   self.attack_hookshot_powder,
+            "GIBDO":                   self.attack_gibdos,
+            "MIMIC":                   SWORD,
+            "COLOR_GHOUL_GREEN":       self.attack_hookshot_powder,
+            "COLOR_GHOUL_RED":         self.attack_hookshot_powder,
+            "COLOR_GHOUL_BLUE":        self.attack_hookshot_powder,
+            "COLOR_SHELL_GREEN":       AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
+            "COLOR_SHELL_RED":         AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
+            "COLOR_SHELL_BLUE":        AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
+            "URCHIN":                  self.attack_hookshot,                               # does not have powder in overworld logic file as option
+            "GIANT_GOPONGA_FLOWER":    OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "GOPONGA_FLOWER":          OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "MAD_BOMBER":              OR(SWORD, BOW, MAGIC_ROD),
+            "CROW":                    self.attack_hookshot_no_bomb,
+            "KNIGHT":                  self.attack_hookshot,                               # ball and chain trooper in kanalet castle
+            "DESERT_LANMOLA":          self.attack_hookshot_no_bomb,
+            "TURTLE_ROCK_HEAD":        AND(OCARINA, SONG3, SWORD),
+            "SHADOW_BLOB":             MAGIC_POWDER,
+            "SHADOW_AGAHNIM":          OR(SWORD, SHOVEL),
+            "SHADOW_MOLDORM":          SWORD,
+            "SHADOW_GANON":            SWORD,
+            "SHADOW_LANMOLA":          self.attack_hookshot_no_bomb,
+            "SHADOW_DETHL":            OR(BOW, BOOMERANG),
+            
+            "ARMOS_STATUE":            OR(BOMB, BOW, MAGIC_ROD),
+            "BOMBER":                  OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
+            "HIDING_GHINI":            self.attack_hookshot_no_bomb,
+            "GHINI":                   self.attack_hookshot_no_bomb,
+            "GIANT_GHINI":             self.attack_hookshot_no_bomb,
+            "LEEVER":                  self.attack_hookshot_powder,
+            "DOG":                     self.fire,
+            "CUCCO":                   self.fire,
+            "OCTOROK":                 self.attack_hookshot_powder,
+            "PINCER":                  self.attack_hookshot,
+            "FISH":                    self.attack_hookshot_powder,
+            "POKEY":                   self.attack_hookshot_powder,
+            "SAND_CRAB":               self.attack_hookshot_powder,
+            "BUSH_CRAWLER":            AND(self.bush, self.attack_hookshot_powder), 
+            "ROCK_CRAWLER":            AND(POWER_BRACELET, self.attack_hookshot_powder),   # NOT in disassembly, but has different requirements so?
+            "TEKTITE":                 self.attack_hookshot_powder,
+            "WINGED_OCTOROK":          self.attack_hookshot_powder,
+            "ZORA":                    OR(SWORD, BOOMERANG),                               # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water
+            "ANTI_KIRBY":              OR(BOMB, MAGIC_ROD, BOOMERANG),                     # double check magic rod
+            "BLOOPER":                 self.attack_hookshot_powder,                        # 2d
+            "FLYING_HOPPER_BOMBS":     OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "HOPPER":                  OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
+            "CHEEP_CHEEP_HORIZONTAL":  self.attack_hookshot_powder,                        # 2d, can also "stomp"
+            "CHEEP_CHEEP_VERTICAL":    self.attack_hookshot_powder,                        # 2d, can also "stomp"
+            "CHEEP_CHEEP_JUMPING":     self.attack_hookshot_powder,                        # 2d, can also "stomp"
+            "GOOMBA":                  OR(FEATHER, self.attack_hookshot_powder),           # can stomp, also available in 2d
+            "PEAHAT":                  self.attack_hookshot_powder,
+            "PIRANHA_PLANT":           self.attack_hookshot_powder,                        # 2d
+            "SPARK_COUNTER_CLOCKWISE": BOOMERANG,                                          # does not count as enemy in kill all rooms
+            "SPARK_CLOCKWISE":         BOOMERANG,                                          # does not count as enemy in kill all rooms
+            "ANTI_FAIRY":              self.fire,                                          # does not count as enemy in kill all rooms (also known as anti-fairy)
+            "WATER_TEKTITE":           self.attack_hookshot_powder, 
+            "TRACTOR_DEVICE":          SWORD,                                              # does not count as enemy in kill all rooms
+            "TRACTOR_DEVICE_REVERSE":  SWORD,                                              # does not count as enemy in kill all rooms
+            "ZOMBIE":                  self.attack_hookshot_powder,
+            
+        }
 
         # Adjust for options
         if not options.tradequest:
@@ -376,8 +461,19 @@ class RequirementsSettings:
             self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
             self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
             self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
-            self.attack_pols_voice = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
-            self.attack_wizrobe = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
+            self.enemy_requirements["POLS_VOICE"] = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
+            self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
+            self.enemy_requirements["THREE_OF_A_KIND"] = OR(self.attack_hookshot, SHIELD)  # bomb three of a kinds
+            self.enemy_requirements["VIRE"] = self.attack_hookshot_powder # bomb vire
+            self.enemy_requirements["GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
+            self.enemy_requirements["GIANT_GOPONGA_FLOWER"] = OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, COUNT(SWORD, 2)) # L2 sword spins kill goponga flowers
+            self.enemy_requirements["DESERT_LANMOLA"] = self.attack_hookshot # use bomb to kill lanmola
+            self.enemy_requirements["SHADOW_LANMOLA"] = self.attack_hookshot # use bomb to kill shadow lanmola
+            self.enemy_requirements["BOMBER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bomber
+            self.enemy_requirements["GHINI"] = self.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["GIANT_GHINI"] = self.attack_hookshot # use bomb to kill ghini
+            self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
+            self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
@@ -386,3 +482,10 @@ class RequirementsSettings:
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
+            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits
+            self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
+            self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, COUNT(SWORD,2)) # use bombs or L2 sword beams to damage dethl
+            self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob
+        
+        # add final nightmare as per the assembly, shadow forms are just forms of final nightmare
+        self.enemy_requirements["FINAL_NIGHTMARE"] = AND(self.enemy_requirements["SHADOW_BLOB"], self.enemy_requirements["SHADOW_AGAHNIM"], self.enemy_requirements["SHADOW_MOLDORM"], self.enemy_requirements["SHADOW_GANON"], self.enemy_requirements["SHADOW_LANMOLA"], self.enemy_requirements["SHADOW_DETHL"])
