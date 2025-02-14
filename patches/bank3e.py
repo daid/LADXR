@@ -53,10 +53,18 @@ def addBank3E(rom, seed, settings):
         assert section.base_address == 0x4000
         assert len(section.data) < 0x2F00
         rom.banks[section.bank][0:len(section.data)] = section.data
+    # Setup 0x13 entity handler
+    addr, bank = asm.getLabel("NightmareMinibossHandler")
+    rom.patch(0x20, 0x0000 + 0x13 * 3, "D85903", ASM(f"dw {addr}\ndb {bank}"))
+    rom.patch(0x03, 0x0013, "11", "50")  # physics flags
+    rom.patch(0x03, 0x00FB + 0x13, "01", "00")  # hitbox flags
+    rom.patch(0x03, 0x01F6 + 0x13, "00", "26")  # healthgroup
+    rom.patch(0x03, 0x02F1 + 0x13, "00", "80")  # option1
     # 3E:3300-3616: Multiworld flags per room (for both chests and dropped keys)
     # 3E:3800-3B16: DroppedKey item types
     # 3E:3B16-3E2C: Owl statue or trade quest items
     # 3E:3E30-3E32: 5 and 10 seashell rewards
+    # 3E:3E33-3EXX: Nightmare miniboss settings
 
     # Put 20 rupees in all owls by default.
     rom.patch(0x3E, 0x3B16, "00" * 0x316, "1C" * 0x316)

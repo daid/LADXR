@@ -121,7 +121,8 @@ loadLoop2:
     ret
     """), fill_nop=True)
 
-    cats = [f for f in os.listdir(os.path.join(os.path.dirname(__file__), "cats")) if f.endswith("Garfield.bin")]
-    data = open(os.path.join(os.path.dirname(__file__), "cats", random.choice(cats)), "rb").read()
-    assert len(data) < 0x2400
+    cats = [f for f in os.listdir(os.path.join(os.path.dirname(__file__), "cats"))]
+    filename = random.choice(cats)
+    data = open(os.path.join(os.path.dirname(__file__), "cats", filename), "rb").read()
+    assert len(data) < 0x2400, filename
     rom.banks[0x3F][0x0400:0x0400+len(data)] = data

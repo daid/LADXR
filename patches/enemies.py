@@ -18,30 +18,41 @@ BOSS_ROOMS = [
     0x234,
     0x300,
 ]
-BOSS_ENTITIES = [
-    (3, 2, 0x59),
-    (4, 2, 0x5C),
-    (4, 3, 0x5B),
-    None,
-    (4, 3, 0x5D),
-    (4, 3, 0x5A),
-    None,
-    (4, 3, 0x62),
-    (5, 2, 0xF9),
-]
+BOSS_ENTITIES = {
+    0: (3, 2, 0x59),
+    1: (4, 2, 0x5C),
+    2: (4, 3, 0x5B),
+    3: None,
+    4: (4, 3, 0x5D),
+    5: (4, 3, 0x5A),
+    6: None,
+    7: (4, 3, 0x62),
+    8: (5, 2, 0xF9),
+    "NIGHTMARE_GEL":     (4, 3, 0x13),
+    "NIGHTMARE_AGAHNIM": (4, 3, 0x13),
+    "NIGHTMARE_MOLDORM": (4, 3, 0x13),
+    "NIGHTMARE_GANON":   (4, 3, 0x13),
+    "NIGHTMARE_LANMOLA": (4, 3, 0x13),
+}
 MINIBOSS_ENTITIES = {
-    "ROLLING_BONES":    [(8, 3, 0x81), (6, 3, 0x82)],
-    "HINOX":            [(5, 2, 0x89)],
-    "DODONGO":          [(3, 2, 0x60), (5, 2, 0x60)],
-    "CUE_BALL":         [(1, 1, 0x8e)],
-    "GHOMA":            [(2, 1, 0x5e), (2, 4, 0x5e)],
-    "SMASHER":          [(5, 2, 0x92)],
-    "GRIM_CREEPER":     [(4, 0, 0xbc)],
-    "BLAINO":           [(5, 3, 0xbe)],
-    "AVALAUNCH":        [(5, 1, 0xf4)],
-    "GIANT_BUZZ_BLOB":  [(4, 2, 0xf8)],
-    "MOBLIN_KING":      [(5, 5, 0xe4)],
-    "ARMOS_KNIGHT":     [(4, 3, 0x88)],
+    "ROLLING_BONES":     [(8, 3, 0x81), (6, 3, 0x82)],
+    "HINOX":             [(5, 2, 0x89)],
+    "DODONGO":           [(3, 2, 0x60), (5, 2, 0x60)],
+    "CUE_BALL":          [(1, 1, 0x8e)],
+    "GHOMA":             [(2, 1, 0x5e), (2, 4, 0x5e)],
+    "SMASHER":           [(5, 2, 0x92)],
+    "GRIM_CREEPER":      [(4, 0, 0xbc)],
+    "BLAINO":            [(5, 3, 0xbe)],
+    "AVALAUNCH":         [(5, 1, 0xf4)],
+    "GIANT_BUZZ_BLOB":   [(4, 2, 0xf8)],
+    "MOBLIN_KING":       [(5, 5, 0xe4)],
+    "ARMOS_KNIGHT":      [(4, 3, 0x88)],
+    "NIGHTMARE_GEL":     [(4, 3, 0x13)],
+    "NIGHTMARE_AGAHNIM": [(4, 3, 0x13)],
+    "NIGHTMARE_MOLDORM": [(4, 3, 0x13)],
+    "NIGHTMARE_GANON":   [(4, 3, 0x13)],
+    "NIGHTMARE_LANMOLA": [(4, 3, 0x13)],
+
 }
 MINIBOSS_ROOMS = {
     0: 0x111, 1: 0x128, 2: 0x145, 3: 0x164, 4: 0x193, 5: 0x1C5, 6: 0x228, 7: 0x23F,
@@ -258,13 +269,24 @@ def changeBosses(rom, mapping: List[int]):
 
             re.store(rom)
 
+        if target == "NIGHTMARE_GEL":
+            setNightmareBoss(rom, BOSS_ROOMS[dungeon_nr], 0x80)
+        if target == "NIGHTMARE_AGAHNIM":
+            setNightmareBoss(rom, BOSS_ROOMS[dungeon_nr], 0x81)
+        if target == "NIGHTMARE_MOLDORM":
+            setNightmareBoss(rom, BOSS_ROOMS[dungeon_nr], 0x82)
+        if target == "NIGHTMARE_GANON":
+            setNightmareBoss(rom, BOSS_ROOMS[dungeon_nr], 0x83)
+        if target == "NIGHTMARE_LANMOLA":  # NOTE this one is broken, as lanmola code expects to run in sprite slot 0
+            setNightmareBoss(rom, BOSS_ROOMS[dungeon_nr], 0x84)
+
 
 def readBossMapping(rom):
     mapping = []
     for dungeon_nr in range(9):
         r = RoomEditor(rom, BOSS_ROOMS[dungeon_nr])
         if r.entities:
-            mapping.append(BOSS_ENTITIES.index(r.entities[0]))
+            mapping.append(list(BOSS_ENTITIES.keys())[list(BOSS_ENTITIES.values()).index(r.entities[0])])
         elif isinstance(r.objects[-1], ObjectWarp) and r.objects[-1].room == 0x1ef:
             mapping.append(3)
         elif isinstance(r.objects[-1], ObjectWarp) and r.objects[-1].room == 0x2f8:
@@ -372,9 +394,28 @@ def changeMiniBosses(rom, mapping):
             # Remove breaking floor tiles from the room.
             re.objects = [obj for obj in re.objects if obj.type_id != 0xDF]
         if name == "ROLLING_BONES" and target == 2:
-            # Make rolling bones pass trough walls so it does not get stuck here.
+            # Make rolling bones pass through walls so it does not get stuck here.
             rom.patch(0x03, 0x02F1 + 0x81, "84", "95")
+        if name == "NIGHTMARE_GEL":
+            setNightmareBoss(rom, MINIBOSS_ROOMS[target], 0)
+        if name == "NIGHTMARE_AGAHNIM":
+            setNightmareBoss(rom, MINIBOSS_ROOMS[target], 1)
+        if name == "NIGHTMARE_MOLDORM":
+            setNightmareBoss(rom, MINIBOSS_ROOMS[target], 2)
+        if name == "NIGHTMARE_GANON":
+            setNightmareBoss(rom, MINIBOSS_ROOMS[target], 3)
+        if name == "NIGHTMARE_LANMOLA":  # NOTE this one is broken, as lanmola code expects to run in sprite slot 0
+            setNightmareBoss(rom, MINIBOSS_ROOMS[target], 4)
+
         re.store(rom)
+
+
+def setNightmareBoss(rom, room, value):
+    count = rom.banks[0x3E][0x3E33]
+    rom.banks[0x3E][0x3E33] = count + 1
+    rom.banks[0x3E][0x3E34 + count * 3 + 0] = (room >> 8) & 0xFF
+    rom.banks[0x3E][0x3E34 + count * 3 + 1] = (room & 0xFF)
+    rom.banks[0x3E][0x3E34 + count * 3 + 2] = value
 
 
 def readMiniBossMapping(rom):

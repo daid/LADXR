@@ -265,6 +265,7 @@ class RequirementsSettings:
         self.attack_skeleton = OR(SWORD, BOMB, BOW, BOOMERANG, HOOKSHOT)  # cannot kill skeletons with the fire rod
         self.attack_gibdos = OR(SWORD, BOMB, BOW, BOOMERANG, AND(MAGIC_ROD, HOOKSHOT)) # gibdos are only stunned with hookshot, but can be burnt to jumping stalfos first with magic rod
         self.stun_wizrobe = OR(BOOMERANG, MAGIC_POWDER, HOOKSHOT)
+        self.stun_mask_mimic = OR(BOOMERANG, HOOKSHOT)
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
@@ -273,17 +274,19 @@ class RequirementsSettings:
         # add trick directory here
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
         self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
+        self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
-        self.super_jump = AND(FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # standard superjump for glitch logic
-        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, OR(SWORD, BOW, MAGIC_ROD)) # boots dash into wall for unclipped superjump
+        self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
+        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots dash into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
-        self.super_jump_rooster = AND(ROOSTER, OR(SWORD, BOW, MAGIC_ROD)) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
+        self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
         self.boots_superhop = AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW)) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
+        self.jesus_buffer_itemless = True # Use buffers to get into positions after getting on top of liquids without needing boots or feather or rooster
         self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
@@ -308,31 +311,42 @@ class RequirementsSettings:
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
+        self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
 
-        self.boss_requirements = [
-            SWORD,  # D1 boss
-            AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
-            AND(PEGASUS_BOOTS, SWORD),  # D3 boss
-            AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW)),  # D4 boss
-            AND(HOOKSHOT, SWORD),  # D5 boss
-            BOMB,  # D6 boss
-            AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
-            MAGIC_ROD,  # D8 boss
-            self.attack_hookshot_no_bomb,  # D9 boss
-        ]
+        self.boss_requirements = {
+            0: SWORD,  # D1 boss
+            1: AND(OR(SWORD, MAGIC_ROD), POWER_BRACELET),  # D2 boss
+            2: AND(PEGASUS_BOOTS, SWORD),  # D3 boss
+            3: AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW)),  # D4 boss
+            4: AND(HOOKSHOT, SWORD),  # D5 boss
+            5: BOMB,  # D6 boss
+            6: AND(OR(MAGIC_ROD, SWORD, HOOKSHOT), COUNT(SHIELD, 2)),  # D7 boss
+            7: MAGIC_ROD,  # D8 boss
+            8: self.attack_hookshot_no_bomb,  # D9 boss
+            "NIGHTMARE_GEL":     MAGIC_POWDER,
+            "NIGHTMARE_AGAHNIM": OR(SWORD, SHOVEL),
+            "NIGHTMARE_MOLDORM": SWORD,
+            "NIGHTMARE_GANON": AND(SWORD, PEGASUS_BOOTS),
+            "NIGHTMARE_LANMOLA": OR(SWORD, BOW),
+        }
         self.miniboss_requirements = {
-            "ROLLING_BONES":    self.attack_hookshot,
-            "HINOX":            self.attack_hookshot,
-            "DODONGO":          BOMB,
-            "CUE_BALL":         SWORD,
-            "GHOMA":            OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
-            "SMASHER":          POWER_BRACELET,
-            "GRIM_CREEPER":     self.attack_hookshot_no_bomb,
-            "BLAINO":           SWORD,
-            "AVALAUNCH":        self.attack_hookshot,
-            "GIANT_BUZZ_BLOB":  MAGIC_POWDER,
-            "MOBLIN_KING":      SWORD,
-            "ARMOS_KNIGHT":     OR(BOW, MAGIC_ROD, SWORD),
+            "ROLLING_BONES":     self.attack_hookshot,
+            "HINOX":             self.attack_hookshot,
+            "DODONGO":           BOMB,
+            "CUE_BALL":          SWORD,
+            "GHOMA":             OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
+            "SMASHER":           POWER_BRACELET,
+            "GRIM_CREEPER":      self.attack_hookshot_no_bomb,
+            "BLAINO":            SWORD,
+            "AVALAUNCH":         self.attack_hookshot,
+            "GIANT_BUZZ_BLOB":   MAGIC_POWDER,
+            "MOBLIN_KING":       SWORD,
+            "ARMOS_KNIGHT":      OR(BOW, MAGIC_ROD, SWORD),
+            "NIGHTMARE_GEL":     MAGIC_POWDER,
+            "NIGHTMARE_AGAHNIM": OR(SWORD, SHOVEL),
+            "NIGHTMARE_MOLDORM": SWORD,
+            "NIGHTMARE_GANON":   AND(SWORD, PEGASUS_BOOTS),
+            "NIGHTMARE_LANMOLA": OR(SWORD, BOW),
         }
         self.enemy_requirements = {
             "HARDHAT_BEETLE":          BOMB,
