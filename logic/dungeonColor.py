@@ -10,9 +10,9 @@ class DungeonColor:
         room2.add(DungeonChest(0x314))  # key
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x308), OwlStatue(0x30F)).connect(room2, STONE_BEAK0, id="lg")
-        room2_weapon = Location(dungeon=0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET), id="lh")
+        room2_weapon = Location(dungeon=0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET), id="lh") # throw karakoro in holes
         room2_weapon.add(DungeonChest(0x311))  # stone beak
-        room2_lights = Location(dungeon=0).connect(room2, OR(r.attack_hookshot, SHIELD), id="li")
+        room2_lights = Location(dungeon=0).connect(room2, OR(r.hit_switch, SHIELD), id="li")
         room2_lights.add(DungeonChest(0x30F))  # compass chest
         room2_lights.add(DroppedKey(0x308))
 
@@ -25,7 +25,7 @@ class DungeonColor:
         room4karakoro = Location(dungeon=0).add(DroppedKey(0x307)).connect(room4, AND(r.attack_hookshot, POWER_BRACELET), id="lo")  # require item to knock Karakoro enemies into shell
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0, id="lp")
-        room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.attack_hookshot, SHIELD), id="lq") # lights room
+        room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.hit_switch, SHIELD), id="lq") # lights room
         room6 = Location("D0 Room Before Boss", dungeon=0).connect(room5, AND(KEY0, FOUND(KEY0, 3)), id="lr") # room with switch and nightmare door
         pre_boss = Location("D0 Outside Boss Door", dungeon=0).connect(room6, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER)), id="ls")  # before the boss, require item to hit switch or jump past raised blocks
         boss_room = Location("D0 Boss Room", dungeon=0).connect(pre_boss, NIGHTMARE_KEY0, id="lt")

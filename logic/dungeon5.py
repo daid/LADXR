@@ -41,7 +41,7 @@ class Dungeon5:
         m_stalfos_drop = Location(dungeon=5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB), id="gj") # can reach fourth arena from entrance with feather and sword
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            blade_trap_chest.connect(area2, AND(FEATHER, r.attack_hookshot_powder), id="gk") # jump past the blade traps
+            blade_trap_chest.connect(area2_past_iron_masks, FEATHER, id="gk") # jump past the blade traps
             boss_key.connect(after_stalfos, AND(FLIPPERS, r.boots_jump), id="gl") # boots jump across
             after_stalfos.connect(after_keyblock_boss, AND(FEATHER, r.enemy_requirements["STAR"]), id="gm") # circumvent stalfos by going past gohma and backwards from boss door
             if butterfly_owl:
@@ -64,18 +64,15 @@ class Dungeon5:
         if  options.logic == 'hell':
             start_hookshot_chest.connect(entrance, r.pit_buffer_boots, id="h0") # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             fourth_stalfos_area.connect(compass, AND(r.boots_bonk_2d_hell, SWORD), id="h1") # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
-            blade_trap_chest.connect(area2, AND(r.pit_buffer_boots, r.attack_hookshot_powder), id="h2") # boots bonk + pit buffer past the blade traps
-            pre_gohma.connect(area2, AND(r.boots_jump, r.pit_buffer, r.attack_hookshot_powder), id="h3") # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across.
+            blade_trap_chest.connect(area2_past_iron_masks, r.pit_buffer_boots, id="h2") # boots bonk + pit buffer past the blade traps
+            pre_gohma.connect(area2_past_iron_masks, AND(r.boots_jump, r.pit_buffer), id="h3") # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across.
             post_gohma.connect(pre_gohma, AND(r.sideways_block_push, POWER_BRACELET), id="h4") # Sideways block push + pick up pots to reach post_gohma
             staircase_before_boss.connect(post_gohma, r.boots_jump, id="h5") # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_stalfos.connect(staircase_before_boss, AND(r.enemy_requirements["STAR"], r.super_jump_sword), id="h6") # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
             after_stalfos.connect(staircase_before_boss, AND(r.enemy_requirements["STAR"], r.zoomerang), id="h7") # use zoomerang dashing left to get an unclipped boots superjump off the right wall over the block. reverse is push block
-            after_stalfos.connect(area2, SWORD, id="h8") # knock master stalfos down 255 times (about 23 minutes)
             north_bridge_chest.connect(north_of_crossroads, r.boots_bonk_pit, id="h9") # boots bonk across the pits with pit buffering
             first_bridge_chest.connect(north_of_crossroads, r.boots_bonk_pit, id="ha") # get to first chest via the north chest with pit buffering
             east_bridge_chest.connect(first_bridge_chest, r.boots_bonk_pit, id="hb") # boots bonk across the pits with pit buffering
-            third_arena.connect(north_of_crossroads, SWORD, id="hc") # can beat 3rd m.stalfos with 255 sword spins
-            m_stalfos_drop.connect(third_arena, AND(FEATHER, SWORD), id="hd") # beat master stalfos by knocking it down 255 times x 4 (takes about 1.5h total)
             m_stalfos_drop.connect(third_arena, AND(r.boots_bonk_2d_hell, SWORD), id="he") # can reach fourth arena from entrance with pegasus boots and sword
             boss_key.connect(after_stalfos, AND(r.pit_buffer_itemless, FLIPPERS), id="hf") # pit buffer across
             if butterfly_owl:

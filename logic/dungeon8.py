@@ -13,7 +13,7 @@ class Dungeon8:
         entrance_left.add(DungeonChest(0x24D)) # zamboni room chest
         eye_magnet_chest = Location(dungeon=8).add(DungeonChest(0x25C)) # eye magnet chest bottom left below rolling bones
         eye_magnet_chest.connect(entrance_left, r.miniboss_requirements["ROLLING_BONES"], id="jl") # let requirements folder deal with requirements based on ohko
-        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(eye_magnet_chest, r.attack_hookshot_no_bomb, id="jm") # vire drop key
+        vire_drop_key = Location(dungeon=8).add(DroppedKey(0x24C)).connect(eye_magnet_chest, r.attack_hookshot_no_bomb, id="jm") # vire drop key, force no bomb for now to deal with bomb issues
         sparks_chest = Location(dungeon=8).add(DungeonChest(0x255)).connect(entrance_left, OR(HOOKSHOT, FEATHER), id="jn")  # chest before lvl1 miniboss
         Location(dungeon=8).add(DungeonChest(0x246)).connect(entrance_left, MAGIC_ROD, id="jo")  # key chest that spawns after creating fire
         
@@ -28,7 +28,7 @@ class Dungeon8:
 
         map_chest = Location(dungeon=8).add(DungeonChest(0x24F)).connect(entrance_up, None, id="jt") # use the zamboni to get to the push blocks
         lower_center = Location("D8 After Lava Keyblock", dungeon=8).connect(entrance_up, KEY8, id="ju")
-        upper_center = Location("D8 Dodongo Area", dungeon=8).connect(lower_center, AND(KEY8, FOUND(KEY8, 2)), id="jv")
+        hidden_arrow_room = Location("hidden_arrow_room", dungeon=8).connect(lower_center, AND(KEY8, FOUND(KEY8, 2)), id="jv")
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=8).add(OwlStatue(0x245)).connect(hidden_arrow_room, STONE_BEAK8, id="jw")
         upper_center = Location("D8 Dodongo Area", dungeon=8).connect(hidden_arrow_room, r.enemy_requirements["HIDING_ZOL"])
@@ -38,7 +38,7 @@ class Dungeon8:
 
         middle_center_1 = Location("D8 Dark East", dungeon=8).connect(upper_center, BOMB, id="jz")
         middle_center_2 = Location("D8 Dark Center", dungeon=8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)), id="k0")
-        middle_center_3 = Location("D8 Dark West", dungeon=8).connect(middle_center_2, AND(r.enemy_requirements["SNAKE"], id="k1")
+        middle_center_3 = Location("D8 Dark West", dungeon=8).connect(middle_center_2, AND(r.enemy_requirements["SNAKE"], KEY8), id="k1")
         miniboss_entrance = Location("D8 Miniboss Stairs", dungeon=8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 7)), id="k2") # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
         miniboss_room = Location("D8 Miniboss Room", dungeon=8).connect(miniboss_entrance, FEATHER, id="k3") # feather for 2d section
         miniboss = Location(dungeon=8).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[7]], id="k4")
