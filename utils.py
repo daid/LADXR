@@ -146,6 +146,57 @@ _NAMES = {
 }
 
 
+_CHARACTERS = {
+    b"'":  b"^",
+    b'<agrave>': b'\x80',
+    b'<acirc>' : b'\x81',
+    b'<auml>'  : b'\x82',
+    b'<egrave>': b'\x83',
+    b'<eacute>': b'\x84',
+    b'<ecirc>' : b'\x85',
+    b'<ugrave>': b'\x86',
+    b'<ucirc>' : b'\x87',
+    b'<uuml>'  : b'\x88',
+    b'<ocirc>' : b'\x89',
+    b'<ouml>'  : b'\x8A',
+    b'<ccedil>': b'\x8B',
+    b'<icirc>' : b'\x8C',
+    # b'<szlig>' : b'\x8D',
+    # b'<Auml>'  : b'\x8E',
+    # b'<Ouml>'  : b'\x8F',
+    # b'<Uuml>'  : b'\x90',
+    b'<bigA>'  : b'\xD0',
+    b'<bigB>'  : b'\xD1',
+    b'<bigC>'  : b'\xD2',
+    b'<bigD>'  : b'\xD3',
+    b'<bigE>'  : b'\xD4',
+    b'<bigF>'  : b'\xD5',
+    b'<foot>'  : b'\xDA',
+    b'<master>': b'\xDC',
+    b'<link>'  : b'\xDD',
+    b'<marin>' : b'\xDE',
+    b'<tarkin>': b'\xDF',
+    b'<yoshi>' : b'\xE0',
+    b'<ribbon>': b'\xE1',
+    b'<dogfood>':b'\xE2',
+    b'<bananas>': b'\xE3',
+    b'<stick>' : b'\xE4',
+    b'<honeycomb>': b'\xE5',
+    b'<pineapple>': b'\xE6',
+    b'<hibiscus>': b'\xE7',
+    b'<broom>' : b'\xE8',
+    b'<hook>'  : b'\xE9',
+    b'<necklace>':b'\xEA',
+    b'<scale>' : b'\xEB',
+    b'<glass>' : b'\xEC',
+    b'<letter>': b'\xED',
+    b'<dpad>'  : b'\xEE',
+    b'<arrowU>': b'\xF0',
+    b'<arrowD>': b'\xF1',
+    b'<arrowL>': b'\xF2',
+    b'<arrowR>': b'\xF3',
+}
+
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
 
@@ -153,7 +204,8 @@ def setReplacementName(key: str, value: str) -> None:
 def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
     instr = instr.format(**_NAMES)
     s = instr.encode("ascii")
-    s = s.replace(b"'", b"^").replace(b'<honeycomb>', b'\xE5')
+    for character, encodedCharacter in _CHARACTERS.items():
+        s = s.replace(character, encodedCharacter)
 
     def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
@@ -180,7 +232,7 @@ def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -
         while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + askbytes + b'\xfe'
-    return result.rstrip() + b'\xff'
+    return result.replace(b'_', b' ').rstrip() + b'\xff'
 
 
 def tileDataToString(data: bytes, key: str = " 123") -> str:

@@ -292,6 +292,7 @@ SPRITE_DATA = {
     0x10: (1, 0x42), # HIDING_GHINI
     0x11: (2, 0x8A), # GIANT_GHINI
     0x12: (1, 0x42), # GHINI
+    0x13: (0, 0xe8, 1, 0xe9, 2, 0xea, 3, 0xeb),  # BROKEN_HEART_CONTAINER (used for nightmare minibosses)
     0x14: _moblinSpriteData, # MOBLIN_SWORD
     0x15: (1, 0x91), # ANTI_FAIRY
     0x16: (1, {0x91, 0x65}), # SPARK_COUNTER_CLOCKWISE

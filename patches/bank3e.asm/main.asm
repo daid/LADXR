@@ -25,6 +25,7 @@ MainJumpTable:
         dw   GetRoomItem                          ; 12
         dw   EvilShopQuestion                     ; 13
         dw   EvilShopBuy                          ; 14
+        dw   OverrideShopMessage                  ; 15
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter
@@ -154,3 +155,4 @@ WriteToVRAM:
 #INCLUDE "message.asm"
 #INCLUDE "owl.asm"
 #INCLUDE "evilshop.asm"
+#INCLUDE "nightmareminiboss.asm"

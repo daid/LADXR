@@ -20,10 +20,8 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
         pal3 = img.getpalette()[0:12]
         pal = [(pal3[n*3] << 16) | (pal3[n*3+1] << 8) | (pal3[n*3+2]) for n in range(4)]
         for m in range(4):
-            for n in range(4):
-                if pal[n] == colormap[m]:
-                    remap[n] = m
-                    break
+            diff = [abs((pal[n] & 0xFF) - (colormap[m] & 0xFF)) + abs(((pal[n] >> 8) & 0xFF) - ((colormap[m] >> 8) & 0xFF)) + abs(((pal[n] >> 16) & 0xFF) - ((colormap[m] >> 16) & 0xFF)) for n in range(4)]
+            remap[m] = diff.index(min(diff))
     assert (img.size[0] % 8) == 0
     if tileheight is None:
         tileheight = 8 if img.size[1] == 8 else 16

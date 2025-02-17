@@ -61,6 +61,8 @@ C270:wEntitiesSpeedYAccTable
 C280:wEntitiesStatusTable
 C290:wEntitiesStateTable
 C2A0:wEntitiesCollisionsTable
+C2B0:wEntitiesPrivateState1Table
+C2C0:wEntitiesPrivateState2Table
 C2E0:wEntitiesTransitionCountdownTable
 C2F0:wEntitiesPrivateCountdown1Table
 C300:wEntitiesPrivateCountdown2Table
@@ -68,6 +70,7 @@ C310:wEntitiesPosZTable
 C320:wEntitiesSpeedZTable
 C340:wEntitiesPhysicsFlagsTable
 C360:wEntitiesHealthTable
+C370:wEntitiesUnusedTableA
 C380:wEntitiesDirectionTable
 C390:wEntitiesPrivateState5Table
 C3A0:wEntitiesTypeTable
@@ -78,8 +81,12 @@ C420:wEntitiesFlashCountdownTable
 C440:wEntitiesPrivateState4Table
 C460:wEntitiesLoadOrderTable
 C490:wEntitiesLiftedTable
+C4E0:wEntitiesDroppedItemTable
 C50A:wBlockItemUsage
+C509:wItemPickedUpInShop
 D1E0:wBowwowChain ; Need $1A bytes for the chain and other bowwow related memory
+D219:wFinalNightmareForm
+D368:wMusicTrackToPlay
 D401:wWarpStructs
 D416:wWarp0PositionTileIndex
 D417:wWarp1PositionTileIndex
@@ -223,6 +230,8 @@ FFA1:hLinkInteractiveMotionBlocked
 FFA3:hLinkVelocityZ
 FFA6:hAnimatedTilesFrameCount
 FFAF:hObjectUnderEntity
+FFB0:hDefaultMusicTrack
+FFBD:hDefaultMusicTrackAlt
 FFC0:hDMARoutine
 FFCB:hPressedButtonsMask
 FFCD:hIntersectedObjectTop

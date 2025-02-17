@@ -53,7 +53,7 @@ class World:
         self._addEntrance("shop", mabe_village, shop, None)
 
         dream_hut = Location("Dream Hut")
-        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD, id="h")
+        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, r.enemy_requirements["MIMIC"], id="h")
         if options.logic != "casual":
             dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER), id="i")
         dream_hut_left = Location().add(Chest(0x2BE)).connect(dream_hut_right, PEGASUS_BOOTS, id="j")
@@ -65,7 +65,7 @@ class World:
         kennel.connect(Location().add(TradeSequenceItem(0x2B2, TRADING_ITEM_DOG_FOOD)), TRADING_ITEM_RIBBON, id="m")
         self._addEntrance("kennel", mabe_village, kennel, None)
 
-        sword_beach = Location("Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.attack_hookshot), id="n")
+        sword_beach = Location("Sword Beach").add(BeachSword()).connect(mabe_village, OR(r.bush, SHIELD, r.enemy_requirements["URCHIN"]), id="n")
         banana_seller = Location("Banana Seller")
         banana_seller.connect(Location().add(TradeSequenceItem(0x2FE, TRADING_ITEM_BANANAS)), TRADING_ITEM_DOG_FOOD, id="o")
         outside_banana_seller = Location()
@@ -115,11 +115,11 @@ class World:
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
 
         swamp = Location("Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush), id="08")
-        swamp.connect(forest, r.bush, id="09", one_way=True) # can go backwards past Tarin
+        swamp.connect(forest, r.bush, one_way=True, id="09") # can go backwards past Tarin
         swamp.connect(forest_toadstool, OR(FEATHER, ROOSTER), id="0a")
-        swamp_chest = Location("Swamp Chest").add(Chest(0x034)).connect(swamp, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG), id="0b")
+        swamp_chest = Location("Swamp Chest").add(Chest(0x034)).connect(swamp, r.enemy_requirements["GIANT_GOPONGA_FLOWER"], id="0b")
         outside_d2 = Location()
-        swamp.connect(outside_d2, OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG), id="0c")
+        swamp.connect(outside_d2, r.enemy_requirements["GOPONGA_FLOWER"], id="0c")
         self._addEntrance("d2", outside_d2, None, None)
         forest_rear_chest = Location().add(Chest(0x041)).connect(swamp, r.bush, id="0d")  # tail key
         self._addEntrance("writes_phone", swamp, self._createShopSanity(options, 2, 0x29B, id="0e"), None)
@@ -153,7 +153,7 @@ class World:
         ghost_grave.connect(outside_graveyard_left, POWER_BRACELET, id="0q")
         self._addEntrance("graveyard_cave_left", outside_graveyard_left, graveyard_cave_left, None)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
-        moblin_cave = Location("Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]), id="0r")
+        moblin_cave = Location("Moblin Cave").connect(Location().add(Chest(0x2E2)), AND(r.enemy_requirements["MOBLIN_SWORD"], r.enemy_requirements["MOBLIN"], r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]), id="0r")
         self._addEntrance("moblin_cave", graveyard, moblin_cave, None)
 
         # "Ukuku Prairie"
@@ -275,12 +275,12 @@ class World:
         self._addEntrance("castle_main_entrance", castle_frontdoor, castle_inside, None)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
-        Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, OR(SWORD, BOW, MAGIC_ROD), id="2c")  # mad bomber, enemy hiding in the 6 holes
-        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(POWER_BRACELET, r.attack_hookshot_no_bomb), id="2d")  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
-        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder, id="2e")  # in the castle, kill enemies
-        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder), id="2f")  # in the castle, bomb wall to show enemy
+        Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, r.enemy_requirements["MAD_BOMBER"], id="2c")  # mad bomber, enemy hiding in the 6 holes
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(POWER_BRACELET, r.enemy_requirements["CROW"]), id="2d")  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
+        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, AND(r.enemy_requirements["MOBLIN"], r.enemy_requirements["ZOL"]), id="2e")  # in the castle, kill enemies
+        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.enemy_requirements["MOBLIN_SWORD"]), id="2f")  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
-        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), id="2g", one_way=True)
+        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.enemy_requirements["KNIGHT"]), id="2g", one_way=True)
 
         animal_village = Location("Animal Village")
         animal_village.connect(Location().add(TradeSequenceItem(0x0CD, TRADING_ITEM_FISHING_HOOK)), TRADING_ITEM_BROOM, id="2h")
@@ -310,7 +310,7 @@ class World:
         desert = Location("Desert").connect(animal_village, r.bush, id="2r")  # Note: We moved the walrus blocking the desert.
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             desert.add(OwlStatue(0x0CF))
-        desert_lanmola = Location().add(AnglerKey()).connect(desert, r.attack_hookshot_no_bomb, id="2s")
+        desert_lanmola = Location().add(AnglerKey()).connect(desert, r.enemy_requirements["DESERT_LANMOLA"], id="2s")
 
         animal_village_bombcave = Location("Bomb Arrow Cave")
         self._addEntrance("animal_cave", desert, animal_village_bombcave, BOMB)
@@ -329,8 +329,8 @@ class World:
         Location().add(FaceKey()).connect(armos_temple, r.miniboss_requirements[world_setup.miniboss_mapping["armos_temple"]], id="2z")
         if options.owlstatues == "both" or options.owlstatues == "overworld":
             armos_maze.add(OwlStatue(0x08F))
-        outside_armos_cave = Location("Outside Armos Maze Cave").connect(armos_maze, OR(r.attack_hookshot, SHIELD), id="30")
-        outside_armos_temple = Location("Outside Southern Shrine").connect(armos_maze, OR(r.attack_hookshot, SHIELD), id="31")
+        outside_armos_cave = Location("Outside Armos Maze Cave").connect(armos_maze, OR(r.enemy_requirements["ARMOS_STATUE"], SWORD, BOOMERANG, HOOKSHOT, SHIELD), id="30")
+        outside_armos_temple = Location("Outside Southern Shrine").connect(armos_maze, OR(r.enemy_requirements["ARMOS_STATUE"], SWORD, BOOMERANG, HOOKSHOT, SHIELD), id="31")
         self._addEntrance("armos_maze_cave", outside_armos_cave, Location().add(Chest(0x2FC)), None)
         self._addEntrance("armos_temple", outside_armos_temple, armos_temple, None)
 
@@ -507,11 +507,11 @@ class World:
             d8_entrance.connect(outside_fire_cave, None, id="50", one_way=True) # Jump down the other ledge
         self._addEntrance("fire_cave_exit", d8_entrance, fire_cave_top, None)
         self._addEntrance("phone_d8", d8_entrance, self._createShopSanity(options, 8, 0x299, id="51"), None)
-        self._addEntrance("d8", d8_entrance, None, AND(OCARINA, SONG3, SWORD))
+        self._addEntrance("d8", d8_entrance, None, r.enemy_requirements["TURTLE_ROCK_HEAD"])
         self._addEntranceRequirementExit("d8", None, id="52") # if exiting, you do not need to wake the turtle
 
         nightmare = Location("Nightmare")
-        windfish = Location("Windfish").connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)), id="53")
+        windfish = Location("Windfish").connect(nightmare, AND(r.enemy_requirements["FINAL_NIGHTMARE"]), id="53")
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             hookshot_cave.connect(hookshot_cave_chest, r.boots_jump, id="54") # boots jump the gap to the chest
@@ -689,7 +689,7 @@ class World:
             left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, AND(r.boots_jump, r.pit_buffer), id="93", one_way=True) # boots jump to bottom left corner of pits, pit buffer and jump to left
             left_right_connector_cave_exit.connect(left_right_connector_cave_entrance, AND(ROOSTER, OR(r.boots_roosterhop, r.super_jump_rooster)), id="94", one_way=True)  # pass through the passage in reverse using a boots rooster hop or rooster superjump in the one way passage area
             
-            windfish.connect(nightmare, AND(SWORD, OR(BOOMERANG, BOW, BOMB, COUNT(SWORD, 2), AND(OCARINA, OR(SONG1, SONG3)))), id="95") # sword quick kill blob, can kill dethl with bombs or sword beams, and can use ocarina to freeze one of ganon's bats to skip dethl eye phase
+            windfish.connect(nightmare, AND(r.enemy_requirements["SHADOW_BLOB"], r.enemy_requirements["SHADOW_AGAHNIM"], r.enemy_requirements["SHADOW_MOLDORM"], r.enemy_requirements["SHADOW_GANON"], r.enemy_requirements["SHADOW_LANMOLA"], AND(OCARINA, OR(SONG1, SONG3))), id="95") # Can use ocarina to freeze one of ganon's bats to skip dethl eye phase
             
         self.start = start_house
         self.egg = windfish_egg
@@ -746,7 +746,7 @@ class DungeonDiveOverworld:
             Location().add(BoomerangGuy()).connect(start_house, BOMB, id="9c")
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)), id="9d")
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["FINAL_NIGHTMARE"]), id="9d")
 
         self.start = start_house
         self.entrances = {
@@ -782,7 +782,7 @@ class DungeonChain:
         start_house = Location().add(StartItem())
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)), id="b6")
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["FINAL_NIGHTMARE"]), id="b6")
 
         self.start = start_house
         self.nightmare = nightmare
@@ -881,13 +881,13 @@ class ALttP:
         self._addEntrance("castle_main_entrance", castle_courtyard, castle_inside, None)
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
-        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, r.attack_hookshot_powder, id="a5")  # in the castle, kill enemies
-        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.attack_hookshot_powder), id="a6")  # in the castle, bomb wall to show enemy
+        Location().add(GoldLeaf(0x2D2)).connect(castle_inside, AND(r.enemy_requirements["MOBLIN"], r.enemy_requirements["ZOL"]), id="a5")  # in the castle, kill enemies
+        Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.enemy_requirements["MOBLIN_SWORD"]), id="a6")  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
-        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.attack_hookshot), id="a7", one_way=True)
+        castle_top_inside.connect(kanalet_chain_trooper, AND(POWER_BRACELET, r.enemy_requirements["KNIGHT"]), id="a7", one_way=True)
 
         dream_hut = Location()
-        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, SWORD, id="a8")
+        dream_hut_right = Location().add(Chest(0x2BF)).connect(dream_hut, r.enemy_requirements["MIMIC"], id="a8")
         if options.logic != "casual":
             dream_hut_right.connect(dream_hut, OR(BOOMERANG, HOOKSHOT, FEATHER), id="a9")
         Location().add(Chest(0x2BE)).connect(dream_hut_right, PEGASUS_BOOTS, id="aa")
@@ -909,7 +909,7 @@ class ALttP:
         hookshot_cave = Location()
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER), id="ae")
         self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
-        moblin_cave = Location().connect(Location().add(Chest(0x2E2)), AND(r.attack_hookshot_powder, r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]), id="af")
+        moblin_cave = Location().connect(Location().add(Chest(0x2E2)), AND(r.enemy_requirements["MOBLIN_SWORD"], r.enemy_requirements["MOBLIN"], r.miniboss_requirements[world_setup.miniboss_mapping["moblin_cave"]]), id="af")
         self._addEntrance("moblin_cave", forest, moblin_cave, None)
 
         ghost_hut_inside = Location().connect(Location().add(Seashell(0x1E3)), POWER_BRACELET, id="ag")
@@ -918,7 +918,7 @@ class ALttP:
         self._addEntrance("madbatter_taltal", start_area, taltal_madbatter, POWER_BRACELET)
 
         nightmare = Location()
-        windfish = Location().connect(nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)), id="ai")
+        windfish = Location().connect(nightmare, AND(r.enemy_requirements["FINAL_NIGHTMARE"]), id="ai")
 
         Location().add(Seashell(0xBF)).connect(start_area, AND(HAMMER, POWER_BRACELET), id="aj")
         armos_maze = Location().connect(start_area, POWER_BRACELET, id="ak")

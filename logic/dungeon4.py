@@ -8,8 +8,8 @@ class Dungeon4:
         entrance = Location("D4 Entrance", dungeon=4)
         entrance.add(DungeonChest(0x179))  # stone slab chest
         entrance.add(DungeonChest(0x16A))  # map chest
-        right_of_entrance = Location(dungeon=4).add(DungeonChest(0x178)).connect(entrance, AND(SHIELD, r.attack_hookshot_powder), id="ee") # 1 zol 2 spike beetles 1 spark chest
-        Location(dungeon=4).add(DungeonChest(0x17B)).connect(right_of_entrance, AND(SHIELD, SWORD), id="ef") # room with key chest
+        right_of_entrance = Location(dungeon=4).add(DungeonChest(0x178)).connect(entrance, AND(r.enemy_requirements["SPIKED_BEETLE"], r.enemy_requirements["ZOL"]), id="ee") # 1 zol 2 spike beetles 1 spark chest
+        Location(dungeon=4).add(DungeonChest(0x17B)).connect(right_of_entrance, AND(r.enemy_requirements["SPIKED_BEETLE"], r.enemy_requirements["ZOL"], SWORD), id="ef") # room with key chest
         rightside_crossroads = Location("D4 Crossroads East", dungeon=4).connect(entrance, AND(FEATHER, PEGASUS_BOOTS), id="eg")  # 2 key chests on the right.
         pushable_block_chest = Location(dungeon=4).add(DungeonChest(0x171)).connect(rightside_crossroads, BOMB, id="eh") # lower chest
         puddle_crack_block_chest = Location(dungeon=4).add(DungeonChest(0x165)).connect(rightside_crossroads, OR(BOMB, FLIPPERS), id="ei") # top right chest
@@ -24,7 +24,7 @@ class Dungeon4:
         before_miniboss = Location("D4 Before Miniboss", dungeon=4).connect(north_crossroads, AND(KEY4, FOUND(KEY4, 3)), id="ep")
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=4).add(OwlStatue(0x16F)).connect(before_miniboss, STONE_BEAK4, id="eq")
-        sidescroller_key = Location(dungeon=4).add(DroppedKey(0x169)).connect(before_miniboss, AND(r.attack_hookshot_powder, FLIPPERS), id="er")  # key that drops in the hole and needs swim to get
+        sidescroller_key = Location(dungeon=4).add(DroppedKey(0x169)).connect(before_miniboss, AND(r.enemy_requirements["ZOL"], FLIPPERS), id="er")  # key that drops in the hole and needs swim to get
         center_puddle_chest = Location(dungeon=4).add(DungeonChest(0x16E)).connect(before_miniboss, FLIPPERS, id="es")  # chest with 50 rupees
         left_water_area = Location("D4 Tile Puzzle", dungeon=4).connect(before_miniboss, OR(FEATHER, FLIPPERS), id="et") # area left with zol chest and 5 symbol puzzle (water area)
         left_water_area.add(DungeonChest(0x16D))  # gel chest
@@ -34,7 +34,7 @@ class Dungeon4:
         terrace_zols_chest = Location("D4 After Flippers", dungeon=4).connect(before_miniboss, FLIPPERS, id="ew") # flippers to move around miniboss through 5 tile room
         miniboss.connect(terrace_zols_chest, POWER_BRACELET, one_way=True, id="ex") # reach flippers chest through the miniboss room
         terrace_zols_chest.add(DungeonChest(0x160))  # flippers chest
-        terrace_zols_chest.connect(left_water_area, r.attack_hookshot_powder, one_way=True, id="ey") # can move from flippers chest south to push the block to left area
+        terrace_zols_chest.connect(left_water_area, r.enemy_requirements["ZOL"], one_way=True, id="ey") # can move from flippers chest south to push the block to left area
         
         to_the_nightmare_key = Location(dungeon=4).connect(left_water_area, AND(FEATHER, OR(FLIPPERS, PEGASUS_BOOTS)), id="ez")  # 5 symbol puzzle (does not need flippers with boots + feather)
         to_the_nightmare_key.add(DungeonChest(0x176))
@@ -44,7 +44,7 @@ class Dungeon4:
         boss = Location(dungeon=4).add(HeartContainer(0x166), Instrument(0x162)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[3]], id="f2")
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            sidescroller_key.connect(before_miniboss, BOOMERANG, id="f3") # fall off the bridge and boomerang downwards before hitting the water to grab the item
+            sidescroller_key.connect(before_miniboss, AND(r.enemy_requirements["ZOL"], BOOMERANG), id="f3") # fall off the bridge and boomerang downwards before hitting the water to grab the item
             sidescroller_key.connect(before_miniboss, AND(r.throw_pot, FLIPPERS), id="f4") # kill the zols with the pots in the room to spawn the key
             rightside_crossroads.connect(entrance, r.tight_jump, id="f5") # jump across the corners
             puddle_crack_block_chest.connect(rightside_crossroads, r.tight_jump, id="f6") # jump around the bombable block
@@ -58,7 +58,7 @@ class Dungeon4:
             
         if options.logic == 'glitched' or options.logic == 'hell':    
             pushable_block_chest.connect(rightside_crossroads, AND(r.sideways_block_push, FLIPPERS), id="fe") # sideways block push to skip bombs
-            sidescroller_key.connect(before_miniboss, AND(r.super_jump_feather, OR(r.attack_hookshot_powder, r.throw_pot)), id="ff") # superjump into the hole to grab the key while falling into the water
+            sidescroller_key.connect(before_miniboss, AND(r.super_jump_feather, OR(r.enemy_requirements["ZOL"], r.throw_pot)), id="ff") # superjump into the hole to grab the key while falling into the water
             miniboss.connect(before_miniboss, r.jesus_jump, id="fg") # use jesus jump to transition over the water left of miniboss
         
         if options.logic == 'hell':
