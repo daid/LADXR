@@ -518,7 +518,6 @@ class World:
             graveyard_cave_left.connect(graveyard_cave_right, r.hookshot_over_pit, id="55", one_way=True) # hookshot the block behind the stairs while over the pit
             swamp_chest.connect(swamp, r.wall_clip, id="56")  # Clip past the flower
             swamp.connect(outside_d2, AND(r.wall_clip, POWER_BRACELET), id="57", one_way=True) # clip the top wall to walk between the goponga flower and the wall
-            swamp.connect(outside_d2, COUNT(SWORD, 2), id="58") # use l2 sword spin to kill goponga flowers
             outside_d2.connect(swamp, r.wall_clip, id="59", one_way=True) # Clip out at d2 entrance door
             swamp.connect(writes_hut_outside, r.hookshot_over_pit, id="5a", one_way=True) # hookshot the sign in front of writes hut
             graveyard_heartpiece.connect(graveyard_cave_right, FEATHER, id="5b") # jump to the bottom right tile around the blocks
@@ -530,7 +529,6 @@ class World:
             castle_inside.connect(kanalet_chain_trooper, BOOMERANG, id="5g", one_way=True) # kill the ball and chain trooper from the left side, then use boomerang to grab the dropped item
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, r.boots_jump, id="5h") # jump across horizontal 4 gap to heart piece
             animal_village_bombcave_heartpiece.connect(animal_village_bombcave, AND(BOMB, FEATHER, BOOMERANG), id="5i")  # use jump + boomerang to grab the item from below the ledge
-            desert_lanmola.connect(desert, BOMB, id="5j") # use bombs to kill lanmola
 
             armos_maze.connect(outside_armos_cave, None, id="5k") # dodge the armos statues by activating them and running
             armos_maze.connect(outside_armos_temple, None, id="5l") # dodge the armos statues by activating them and running
