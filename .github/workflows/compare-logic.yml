@@ -1,4 +1,4 @@
-name: Python parse test
+name: Compare logic against previous commit
 
 on:
   push:
@@ -22,7 +22,8 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.13"
-    - run: compare-logic.sh
+    - run: chmod +x compare-logic.sh
+    - run: ./compare-logic.sh
     - name: Upload result
       uses: actions/upload-artifact@v4
       with:
