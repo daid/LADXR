@@ -1,7 +1,7 @@
 from .requirements import *
 from .location import Location
 from locations.all import *
-from worldSetup import ENTRANCE_INFO
+import worldSetup
 
 
 class World:
@@ -695,7 +695,7 @@ class World:
 
     def _addEntrance(self, name, outside, inside, requirement):
         assert name not in self.entrances, "Duplicate entrance: %s" % name
-        assert name in ENTRANCE_INFO
+        assert name in worldSetup.ENTRANCE_INFO
         self.entrances[name] = EntranceExterior(outside, requirement)
         self.entrances[f"{name}:inside"] = EntranceExterior(inside, None)
 
@@ -996,7 +996,7 @@ class ALttP:
 
     def _addEntrance(self, name, outside, inside, requirement):
         assert name not in self.entrances, "Duplicate entrance: %s" % name
-        assert name in ENTRANCE_INFO
+        assert name in worldSetup.ENTRANCE_INFO
         self.entrances[name] = EntranceExterior(outside, requirement)
         self.entrances[f"{name}:inside"] = EntranceExterior(inside, None)
 

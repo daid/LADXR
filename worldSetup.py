@@ -1,6 +1,6 @@
 import patches.enemies
 import logic.main
-import randomizer
+from utils import Error
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
@@ -136,7 +136,7 @@ class WorldSetup:
                 pick = unmappedEntrances[pick_idx]
                 if pick == entrance:
                     if len(unmappedEntrances) < 2:
-                        raise randomizer.Error("Cannot map entrance to itself")
+                        raise Error("Cannot map entrance to itself")
                     continue
                 if self.inside_to_outside and entrance.endswith(":inside") == pick.endswith(":inside"):
                     continue
@@ -195,7 +195,7 @@ class WorldSetup:
                 self._injectEntrance(island, main)
 
         if self.inaccessibleEntrances(settings, entrancePool):
-            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+            raise Error("Failed to make all entrances accessible after a bunch of retries")
         self._checkEntranceRules()
 
     def _checkEntranceRules(self):

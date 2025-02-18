@@ -13,15 +13,20 @@ from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from locations.keyLocation import KeyLocation
-from worldSetup import WorldSetup
+import worldSetup
 import itempool
 import mapgen
 
 
 class Logic:
-    def __init__(self, configuration_options, *, world_setup):
+    def __init__(self, configuration_options, *, world_setup, requirements_settings=None):
         self.world_setup = world_setup
-        r = RequirementsSettings(configuration_options)
+
+        if requirements_settings == None:
+            requirements_settings = RequirementsSettings(configuration_options)
+
+        r = requirements_settings
+        self.requirements_settings = requirements_settings
 
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options, r)
@@ -190,7 +195,7 @@ class MultiworldLogic:
                 world = Logic(options, world_setup=world_setups[n])
             else:
                 for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                    world_setup = WorldSetup()
+                    world_setup = worldSetup.WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
                     if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
