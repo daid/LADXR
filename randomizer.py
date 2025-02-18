@@ -19,10 +19,6 @@ import worldSetup
 from settings import Settings
 
 
-class Error(Exception):
-    pass
-
-
 class Randomizer:
     def __init__(self, args: argparse.Namespace, settings: Settings, *, seed: Optional[bytes] = None) -> None:
         self.seed = seed
@@ -155,7 +151,7 @@ class Randomizer:
 
 
 class ItemPlacer:
-    def __init__(self, logic, accessibility: str) -> None:
+    def __init__(self, logic: logic.main.Logic, accessibility: str) -> None:
         self._logic = logic
         self._item_pool: Dict[str, int] = {}
         self._spots: List[locations.itemInfo.ItemInfo] = []
@@ -230,7 +226,7 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
-    def __init__(self, logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
+    def __init__(self, logic: logic.main.Logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
         super().__init__(logic, accessibility)
         self.dungeon_item_setting = dungeon_item_setting
         self.owl_statue_setting = owl_statue_setting
@@ -344,7 +340,7 @@ class ForwardItemPlacer(ItemPlacer):
         STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8, STONE_BEAK0
     ]
 
-    def __init__(self, logic, forwardfactor: float, accessibility: str, *, verbose: bool = False) -> None:
+    def __init__(self, logic: logic.main.Logic, forwardfactor: float, accessibility: str, *, verbose: bool = False) -> None:
         super().__init__(logic, accessibility)
         for ii in logic.iteminfo_list:
             ii.weight = 1.0
@@ -428,7 +424,7 @@ class ForwardItemPlacer(ItemPlacer):
 
 
 class MultiworldItemPlacer(ForwardItemPlacer):
-    def __init__(self, logic, forwardfactor: float, accessibility: str, world_count: int) -> None:
+    def __init__(self, logic: logic.main.Logic, forwardfactor: float, accessibility: str, world_count: int) -> None:
         super().__init__(logic, forwardfactor, accessibility, verbose=True)
         self.__world_count = world_count
         self.__initial_spot_count = 0

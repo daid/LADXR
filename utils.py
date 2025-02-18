@@ -2,6 +2,10 @@ from typing import Optional
 
 from locations.items import *
 
+class Error(Exception):
+    pass
+
+
 _NAMES = {
     SWORD: "Sword",
     BOMB: "Bombs",

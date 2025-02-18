@@ -40,13 +40,13 @@ class Explorer:
         for ii in location.items:
             self.addItem(ii.item)
 
-        for target, requirements, _ in location.simple_connections:
+        for target, requirements in location.simple_connections:
             if target not in self.__visited:
                 if self.testRequirements(requirements):
                     self._visit(target)
                 else:
                     self.__todo_simple.append((target, requirements))
-        for target, requirements, _ in location.gated_connections:
+        for target, requirements in location.gated_connections:
             if target not in self.__visited:
                 self.__todo_gated.append((target, requirements))
 

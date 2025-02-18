@@ -1,15 +1,11 @@
 import patches.enemies
 import logic.main
-import randomizer
+from utils import Error
 from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
 import cavegen
-
-
-class Error(Exception):
-    pass
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -140,7 +136,7 @@ class WorldSetup:
                 pick = unmappedEntrances[pick_idx]
                 if pick == entrance:
                     if len(unmappedEntrances) < 2:
-                        raise randomizer.Error("Cannot map entrance to itself")
+                        raise Error("Cannot map entrance to itself")
                     continue
                 if self.inside_to_outside and entrance.endswith(":inside") == pick.endswith(":inside"):
                     continue
@@ -199,7 +195,7 @@ class WorldSetup:
                 self._injectEntrance(island, main)
 
         if self.inaccessibleEntrances(settings, entrancePool):
-            raise randomizer.Error("Failed to make all entrances accessible after a bunch of retries")
+            raise Error("Failed to make all entrances accessible after a bunch of retries")
         self._checkEntranceRules()
 
     def _checkEntranceRules(self):
