@@ -17,6 +17,7 @@ import mapgen
 from plan import Plan
 import worldSetup
 from settings import Settings
+from utils import Error
 
 
 class Randomizer:
