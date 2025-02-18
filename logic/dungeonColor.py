@@ -5,42 +5,67 @@ from locations.all import *
 
 class DungeonColor:
     def __init__(self, options, world_setup, r):
+        
+        #locations
         entrance = Location("D0 Entrance", dungeon=0)
-        room2 = Location(dungeon=0).connect(entrance, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]))
-        room2.add(DungeonChest(0x314))  # key
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(dungeon=0).add(OwlStatue(0x308), OwlStatue(0x30F)).connect(room2, STONE_BEAK0)
-        room2_weapon = Location(dungeon=0).connect(room2, AND(r.attack_hookshot, POWER_BRACELET)) # throw karakoro in holes
-        room2_weapon.add(DungeonChest(0x311))  # stone beak
-        room2_lights = Location(dungeon=0).connect(room2, OR(r.hit_switch, SHIELD))
-        room2_lights.add(DungeonChest(0x30F))  # compass chest
-        room2_lights.add(DroppedKey(0x308))
+        main_room = Location("D0 Main Area", dungeon=0)
+        main_room_chest1 = Location(dungeon=0).add(DungeonChest(0x30F)) # compass
+        main_room_chest2 = Location(dungeon=0).add(DungeonChest(0x311)) # beak
+        main_room_chest3 = Location(dungeon=0).add(DungeonChest(0x314)) # small key
+        main_room_drop1 = Location(dungeon=0).add(DroppedKey(0x308)) # small key
+        rupee_room = Location("D0 Secret Rupee Room", dungeon=0)
+        miniboss1_room = Location("D0 Miniboss 1", dungeon=0)
+        miniboss1_room_chest4 = Location(dungeon=0).add(DungeonChest(0x302)) # nightmare key
+        miniboss2_room = Location("D0 Miniboss 2", dungeon=0)
+        button_room = Location("D0 Hidden Button Room", dungeon=0)
+        north_room = Location("D0 North Area", dungeon=0)
+        north_room_chest5 = Location(dungeon=0).add(DungeonChest(0x306)) # map
+        north_room_drop2 = Location(dungeon=0).add(DroppedKey(0x307)) # small key
+        west_room = Location("D0 3x3 Puzzle Room", dungeon=0)
+        fourzol_room = Location("D0 Four Zol Room", dungeon=0)
+        switch_room = Location("D0 Room Before Boss", dungeon=0)
+        pre_boss = Location("D0 Outside Boss Door", dungeon=0)
+        boss_room = Location("D0 Boss Room", dungeon=0)
+        boss = Location("D0 Fairy Room", dungeon=0).add(TunicFairy(0), TunicFairy(1)) # tunics
 
-        miniboss_room1 = Location("D0 Miniboss Room 1", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 3)))
-        Location(dungeon=0).connect(miniboss_room1, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]]).add(DungeonChest(0x302))  # nightmare key after slime mini boss
-        miniboss_room2 = Location("D0 Miniboss Room 2", dungeon=0).connect(room2, AND(KEY0, FOUND(KEY0, 2)))
-        room3 = Location("D0 After Miniboss 2", dungeon=0).connect(miniboss_room2, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]]) # After the miniboss
-        room4 = Location(dungeon=0).connect(room3, POWER_BRACELET)  # need to lift a pot to reveal button
-        room4_map_chest = Location(dungeon=0).add(DungeonChest(0x306)).connect(room4, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["HIDING_ZOL"]))
-        room4karakoro = Location(dungeon=0).add(DroppedKey(0x307)).connect(room4, AND(r.attack_hookshot, POWER_BRACELET))  # require item to knock Karakoro enemies into shell
+        #owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(dungeon=0).add(OwlStatue(0x30A)).connect(room4, STONE_BEAK0)
-        room5 = Location("D0 After 3x3", dungeon=0).connect(room4, OR(r.hit_switch, SHIELD)) # lights room
-        room6 = Location("D0 Room Before Boss", dungeon=0).connect(room5, AND(KEY0, FOUND(KEY0, 3))) # room with switch and nightmare door
-        pre_boss = Location("D0 Outside Boss Door", dungeon=0).connect(room6, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER)))  # before the boss, require item to hit switch or jump past raised blocks
-        boss_room = Location("D0 Boss Room", dungeon=0).connect(pre_boss, NIGHTMARE_KEY0)
-        boss = Location(dungeon=0).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[8]])
-        boss.add(TunicFairy(0), TunicFairy(1))
+            Location(dungeon=0).add(OwlStatue(0x30F)).connect(main_room, STONE_BEAK0, id="lg") # Main Area <--> Entrance owl
+            Location(dungeon=0).add(OwlStatue(0x308)).connect(main_room, STONE_BEAK0, id="") # Main Area <--> Upper Key owl
+            Location(dungeon=0).add(OwlStatue(0x30A)).connect(west_room, STONE_BEAK0, id="lp") # 3x3 Puzzle Room <--> Puzzowl
+
+        #connections
+        main_room.connect(entrance, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), id="") # Entrance <--> Main Area
+        main_room_chest1.connect(main_room, OR(r.hit_switch, SHIELD), id="li") # Main Area <--> Entrance Chest
+        main_room_chest2.connect(main_room, AND(POWER_BRACELET, r.attack_hookshot), id="lh") # Main Area <--> Two Socket Chest
+        main_room_chest3.connect(main_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), id="lf") # Main Area <--> Lower Small Key
+        main_room_drop1.connect(main_room, OR(r.hit_switch, SHIELD), id="") # Main Area <--> Upper Small Key
+        rupee_room.connect(main_room, BOMB, id="") # Main Area <--> Secret Rupee Room
+        miniboss1_room.connect(main_room, AND(KEY0, FOUND(KEY0, 3)), id="lj") # Main Area <--> Miniboss 1
+        miniboss1_room_chest4.connect(miniboss1_room, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]], id="lk") # Miniboss 1 <--> Nightmare Key Chest
+        miniboss2_room.connect(main_room, AND(KEY0, FOUND(KEY0, 2)), id="ll") # Main Area <--> Miniboss 2
+        button_room.connect(miniboss2_room, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]], id="lm") # Miniboss 2 <--> Hidden Button Room
+        north_room.connect(button_room, POWER_BRACELET, id="")  # Hidden Button Room <--> North Area
+        north_room_chest5.connect(north_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["HIDING_ZOL"]), id="") # North Area <--> Zol Chest
+        north_room_drop2.connect(north_room, AND(r.attack_hookshot, POWER_BRACELET), id="lo") # North Area <--> Bullshit Room
+        west_room.connect(button_room, POWER_BRACELET, id="ln") # Hidden Button Room <--> 3x3 Puzzle Room
+        fourzol_room.connect(west_room, OR(r.hit_switch, SHIELD), id="lq") # 3x3 Puzzle Room <--> Four Zol Room
+        switch_room.connect(fourzol_room, AND(KEY0, FOUND(KEY0, 3)), id="lr") # Four Zol Room <--> Room Before Boss
+        pre_boss.connect(switch_room, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER)), id="ls") # Room Before Boss <--> Outside Boss Door
+        boss_room.connect(pre_boss, NIGHTMARE_KEY0, id="lt") # Outside Boss Door <--> Boss Room
+        boss.connect(boss_room, r.boss_requirements[world_setup.boss_mapping[8]], id="lu") # Boss Room <--> Fairy Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            room2.connect(entrance, r.throw_pot) # throw pots at enemies
-            room2_weapon.connect(room2, r.attack_hookshot_no_bomb) # knock the karakoro into the pit without picking them up. 
-            pre_boss.connect(room6, r.tight_jump) # before the boss, jump past raised blocks without boots
+            main_room.connect(entrance, r.throw_pot, id="lv") # throw pots to kill karakoro
+            main_room_chest3.connect(main_room, r.throw_pot, id="") # throw pots to kill camo goblin
+            north_room_chest5.connect(north_room, r.throw_pot, id="") # throw pots to kill zols
+            main_room_chest2.connect(main_room, r.attack_hookshot_no_bomb, id="lw") # knock the karakoro into the pit without picking them up
+            pre_boss.connect(switch_room, r.tight_jump, id="lx") # before the boss, jump past raised blocks with only feather
 
         if options.logic == 'hell':
-            room2_weapon.connect(room2, r.attack_hookshot) # also have a bomb as option to knock the karakoro into the pit without bracelet 
-            room2_weapon.connect(room2, r.shield_bump) # shield bump karakoro into the holes
-            room4karakoro.connect(room4, r.shield_bump) # shield bump karakoro into the holes
+            main_room_chest3.connect(main_room, r.shield_bump, id="") # shield bump camo goblins into pit
+            main_room_chest2.connect(main_room, OR(BOMB, r.shield_bump), id="lz") # shield bump or bomb two socket karakoro into the holes
+            north_room_drop2.connect(north_room, OR(BOMB, r.shield_bump), id="m0") # shield bump or bomb four socket karakoro into the holes
             
         self.entrance = entrance
         self.final_room = boss
