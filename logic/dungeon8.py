@@ -60,7 +60,7 @@ class Dungeon8:
         top_left_stairs.connect(up_left, None, one_way=True) # jump down from the staircase to the right
         stairs_ledge_chest = Location(dungeon=8).add(DungeonChest(0x23A)).connect(up_left, AND(r.enemy_requirements["VIRE"], r.enemy_requirements["SNAKE"], HOOKSHOT)) # ledge chest left of boss door
         stairs_ledge_chest.connect(top_left_stairs, HOOKSHOT, one_way = True)
-
+        
         nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, r.miniboss_requirements["CUE_BALL"], KEY8, FOUND(KEY8, 7)))
 
         # Bombing from the center dark rooms to the left so you can access more keys.

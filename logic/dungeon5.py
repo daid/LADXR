@@ -38,7 +38,7 @@ class Dungeon5:
         boss = Location(dungeon=5).add(HeartContainer(0x185), Instrument(0x182)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[4]])
 
         # When we can reach the stone tablet chest, we can also reach the final location of master stalfos
-        m_stalfos_drop = Location(dungeon=5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD, BOMB)) # can reach fourth arena from entrance with feather and sword
+        m_stalfos_drop = Location(dungeon=5).add(HookshotDrop()).connect(third_arena, AND(FEATHER, SWORD)) # can reach fourth arena from entrance with feather and sword
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             blade_trap_chest.connect(area2_past_iron_masks, FEATHER) # jump past the blade traps
