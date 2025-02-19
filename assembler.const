@@ -46,6 +46,8 @@ C127:wBGUpdateRegionOriginLow
 C12B:wTransitionZeroNeverUsed
 C144:wIsLinkPushing
 C146:wIsLinkInTheAir
+C15B:wIsUsingShield
+C166:wLinkPlayingOcarinaCountdown
 C16B:wTransitionSequenceCounter
 C19B:wLinkAttackStepAnimationCountdown
 C19F:wDialogState
@@ -95,6 +97,8 @@ D419:wWarp3PositionTileIndex
 D46C:wBossDefeated
 D47C:wActivePowerUp
 D711:wRoomObjects
+D600:wDrawCommandsSize
+D601:wDrawCommand
 D800:wOverworldRoomStatus
 D900:wIndoorARoomStatus
 DA00:wIndoorBRoomStatus
@@ -224,11 +228,15 @@ FF92:hBGTilesLoadingStage
 FF94:hWorldTileset
 FF9A:hLinkSpeedX
 FF9B:hLinkSpeedY
+FF9C:hLinkPhysicsModifier
 FF9D:hLinkAnimationState
 FF9E:hLinkDirection
 FFA1:hLinkInteractiveMotionBlocked
 FFA3:hLinkVelocityZ
 FFA6:hAnimatedTilesFrameCount
+FFAC:hStaircase
+FFAD:hStaircasePosX
+FFAE:hStaircasePosY
 FFAF:hObjectUnderEntity
 FFB0:hDefaultMusicTrack
 FFBD:hDefaultMusicTrackAlt
@@ -236,6 +244,8 @@ FFC0:hDMARoutine
 FFCB:hPressedButtonsMask
 FFCD:hIntersectedObjectTop
 FFCE:hIntersectedObjectLeft
+FFCF:hIntersectedObjectBGAddressHigh
+FFD0:hIntersectedObjectBGAddressLow
 FFD7:hMultiPurpose0
 FFD8:hMultiPurpose1
 FFD9:hMultiPurpose2
