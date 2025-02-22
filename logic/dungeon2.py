@@ -56,7 +56,7 @@ class Dungeon2:
         east_torches.connect(pitplatform_room, r.hit_switch) # East of Torches <--> Platforms & Pits Area
         pitplatform_room.connect(east_torches_chest4, r.hit_switch) # Platforms & Pits Area <--> First Switch Locked Chest
         pitplatform_room.connect(east_torches_chest5, FEATHER) # Platforms & Pits Area <--> Button Spawn Chest
-        pitplatform_room.connect(mimic_beetle_room, AND(FEATHER, r.hit_switch)) # Platforms & Pits Area <--> Mimic & Beetle Area
+        pitplatform_room.connect(mimic_beetle_room, FEATHER) # Platforms & Pits Area <--> Mimic & Beetle Area
         mimic_beetle_room.connect(passage_a_room, AND(KEY2, FOUND(KEY2, 3))) # Mimic & Beetle Area <--> Pushblock Room
         passage_a_room.connect(miniboss_room, FEATHER) # Pushblock Room <--> Miniboss Room
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[1]]) # Miniboss Room <--> After Miniboss
@@ -92,15 +92,15 @@ class Dungeon2:
             after_miniboss.connect(outside_passage_b, r.super_jump_feather) # superjump after hinox to access passage B
             
         if options.logic == 'hell':    
-            blade_room.connect(pitbeetle_room_chest2, AND(r.attack_hookshot_powder, r.boots_bonk_pit)) # use boots bonk on torch to jump over the pits
+            pitbeetle_room.connect(pitbeetle_room_chest2, r.boots_bonk_pit) # use boots bonk on torch to jump over the pits
             pitplatform_room.connect(east_torches_chest5, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             pitplatform_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             mimic_beetle_room.connect(east_torches_drop2, AND(r.rear_attack_range, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # adjust for alternate requirements for dungeon2_r4
             passage_a_room.connect(miniboss_room, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section (CHANGE TO HARD)
             #passage_a_room.connect(miniboss_room, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
-            after_miniboss.connect(vacuum_room, r.boots_bonk_pit)
+            after_miniboss.connect(vacuum_room, r.boots_bonk_pit) # boots bonk to get over 1 tile pits by owl statue
             #after_miniboss.connect(vacuum_room, r.hookshot_spam_pit) # hookshot spam to cross single tile pits by owl statue
-            passage_c_room_entrance.connect(passage_c_room, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"],)) # hookshot clip through the pot using both pol's voice
+            passage_c_room_entrance.connect(passage_c_room, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
             passage_c_room.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # change to OR, as you can get to boss door with either boots bonk or hookshot spam
             
