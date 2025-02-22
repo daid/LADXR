@@ -4,91 +4,55 @@ from locations.all import *
 
 class Dungeon2:
     def __init__(self, options, world_setup, r):
-        
-        #locations
         entrance = Location("D2 Entrance", dungeon=2)
-        entrance_chest1 = Location(dungeon=2).add(DungeonChest(0x136)) # 50 rupees
-        west_torches = Location("D2 West of Torches", dungeon=2)
-        west_torches_chest2 = Location(dungeon=2).add(DungeonChest(0x12E)) # beak
-        east_torches = Location("D2 East of Torches", dungeon=2)
-        east_torches_drop1 = Location(dungeon=2).add(DroppedKey(0x132)) # small key
-        east_torches_chest3 = Location(dungeon=2).add(DungeonChest(0x137)) # compass
-        east_torches_chest4 = Location(dungeon=2).add(DungeonChest(0x138)) # small key
-        east_torches_chest5 = Location(dungeon=2).add(DungeonChest(0x139)) # small key
-        mimic_beetle_room = Location("Mimic & Beetle Area", dungeon=2) 
-        passage_a_room = Location("D2 Pushblock Room", dungeon=2)
-        miniboss_room = Location("D2 Miniboss Room", dungeon=2)
-        passage_b_room = Location("D2 After Miniboss", dungeon=2)
-        vacuum_pre_boo = Location("Before Boos", dungeon=2)
-        vacuum_pre_boo_chest6 = Location(dungeon=2).add(DungeonChest(0x126)) # map
-        vacuum_pre_boo_chest7 = Location(dungeon=2).add(DungeonChest(0x121)) # 20 rupees
-        boo_room = Location("D2 Boo Buddies Room", dungeon=2)
-        boo_room_chest8 = Location(dungeon=2).add(DungeonChest(0x120)) # bracelet
-        north_switch_room = Location("D2 After Boo Buddies", dungeon=2)
-        north_switch_room_chest8 = Location(dungeon=2).add(DungeonChest(0x122)) # small key
-        north_switch_room_chest9 = Location(dungeon=2).add(DungeonChest(0x127)) # nightmare key
-        passage_c_room_entrance = Location("D2 Boss Passage Room Entrance", dungeon=2)
-        passage_c_room = Location("D2 Boss Passage Room", dungeon=2)
-        pre_boss_room = Location("D2 Boss Stairs", dungeon=2)
-        pre_boss = Location("D2 Outside Boss Room", dungeon=2)
-        # If we can get here, we have everything for the boss. So this is also the goal room.
-        boss_room = Location("D2 Boss Room", dungeon=2)
-        boss = Location(dungeon=2).add(HeartContainer(0x12B), Instrument(0x12a))
-        
+        Location(dungeon=2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
+        dungeon2_l2 = Location("D2 Left Door", dungeon=2).connect(entrance, AND(KEY2, FOUND(KEY2, 5)))  # towards map chest
+        dungeon2_map_chest = Location(dungeon=2).add(DungeonChest(0x12E)).connect(dungeon2_l2, AND(r.enemy_requirements["KEESE"], OR(FEATHER, HOOKSHOT)))  # map chest
+        dungeon2_r2 = Location("D2 After Torches", dungeon=2).connect(entrance, r.fire)
+        Location(dungeon=2).add(DroppedKey(0x132)).connect(dungeon2_r2, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["STALFOS_AGGRESSIVE"]))
+        Location(dungeon=2).add(DungeonChest(0x137)).connect(dungeon2_r2, AND(KEY2, FOUND(KEY2, 5), r.enemy_requirements["MASKED_MIMIC_GORIYA"]))  # compass chest
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(dungeon=2).add(OwlStatue(0x133)).connect(east_torches, STONE_BEAK2)
-            Location(dungeon=2).add(OwlStatue(0x12F)).connect(passage_a_room, STONE_BEAK2)  # owl statue is before miniboss
-            Location(dungeon=2).add(OwlStatue(0x129)).connect(passage_b_room, AND(FEATHER, STONE_BEAK2))  # owl statue after the miniboss
-
-        #connections
-
+            Location(dungeon=2).add(OwlStatue(0x133)).connect(dungeon2_r2, STONE_BEAK2)
+        dungeon2_r3 = Location(dungeon=2).add(DungeonChest(0x138)).connect(dungeon2_r2, r.hit_switch)  # first chest with key, can hookshot the switch in previous room
+        dungeon2_r4 = Location(dungeon=2).add(DungeonChest(0x139)).connect(dungeon2_r3, FEATHER)  # button spawn chest
         if options.logic == "casual":
-            Location(dungeon=2).add(DroppedKey(0x134)).connect(east_torches, AND(FEATHER, r.enemy_requirements["MASKED_MIMIC_GORIYA"]))  # shyguy drop key
+            shyguy_key_drop = Location(dungeon=2).add(DroppedKey(0x134)).connect(dungeon2_r3, AND(FEATHER, r.enemy_requirements["MASKED_MIMIC_GORIYA"]))  # shyguy drop key
         else:
-            Location(dungeon=2).add(DroppedKey(0x134)).connect(east_torches, OR(r.rear_attack, AND(FEATHER, r.enemy_requirements["MASKED_MIMIC_GORIYA"])))  # shyguy drop key
+            shyguy_key_drop = Location(dungeon=2).add(DroppedKey(0x134)).connect(dungeon2_r3, OR(r.rear_attack, AND(FEATHER, r.enemy_requirements["MASKED_MIMIC_GORIYA"])))  # shyguy drop key
+        dungeon2_r5 = Location("D2 Pushblock Room", dungeon=2).connect(dungeon2_r4, AND(KEY2, FOUND(KEY2, 3)))  # push two blocks together room with owl statue
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(dungeon=2).add(OwlStatue(0x12F)).connect(dungeon2_r5, STONE_BEAK2)  # owl statue is before miniboss
+        miniboss_room = Location("D2 Miniboss Room", dungeon=2).connect(dungeon2_r5, FEATHER)
+        miniboss = Location(dungeon=2).add(DungeonChest(0x126)).add(DungeonChest(0x121)).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[1]])  # post hinox
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            Location(dungeon=2).add(OwlStatue(0x129)).connect(miniboss, STONE_BEAK2)  # owl statue after the miniboss
 
-        entrance_chest1.connect(entrance, POWER_BRACELET) # chest at entrance
-        west_torches.connect(entrance, AND(KEY2, FOUND(KEY2, 5)))  # towards map chest
-        west_torches_chest2.connect(west_torches, AND(r.enemy_requirements["KEESE"], OR(FEATHER, HOOKSHOT))) # beak
-        east_torches.connect(entrance, r.fire)
-        east_torches_drop1.connect(east_torches, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["STALFOS_AGGRESSIVE"])) # small key
-        east_torches_chest3.connect(east_torches, AND(KEY2, FOUND(KEY2, 5), r.enemy_requirements["MASKED_MIMIC_GORIYA"]))  # compass
-        east_torches_chest4.connect(east_torches, r.hit_switch)  # first chest with key, can hookshot the switch in previous room
-        east_torches_chest5.connect(east_torches, AND(r.hit_switch, FEATHER))  # button spawn chest
-        mimic_beetle_room.connect(east_torches, AND(FEATHER, r.hit_switch))
-        passage_a_room.connect(mimic_beetle_room, AND(KEY2, FOUND(KEY2, 3)))  # push two blocks together room with owl statue
-        miniboss_room.connect(passage_a_room, FEATHER)
-        passage_b_room.connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[1]])  # post hinox
-        vacuum_pre_boo.connect(passage_a_room, FEATHER)
-        vacuum_pre_boo_chest6.connect(vacuum_pre_boo, None)
-        vacuum_pre_boo_chest7.connect(vacuum_pre_boo, None)
-        boo_room.connect(vacuum_pre_boo, AND(KEY2, FOUND(KEY2, 5)))
-        boo_room_chest8.connect(boo_room, OR(r.fire, r.enemy_requirements["BOO_BUDDY"]))
-        north_switch_room.connect(vacuum_pre_boo, POWER_BRACELET)
-        north_switch_room_chest8.connect(north_switch_room, None)
-        north_switch_room_chest9.connect(north_switch_room, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET)))
-        passage_c_room_entrance.connect(north_switch_room, AND(KEY2, FOUND(KEY2, 5)))
-        passage_c_room.connect(passage_c_room_entrance, AND(POWER_BRACELET, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))
-        pre_boss_room.connect(passage_c_room, POWER_BRACELET)
-        pre_boss.connect(pre_boss_room, FEATHER)
-        boss_room.connect(pre_boss, NIGHTMARE_KEY2)
-        boss.connect(boss_room, r.boss_requirements[world_setup.boss_mapping[1]])
-
+        dungeon2_ghosts_room = Location("D2 Boo Buddies Room", dungeon=2).connect(miniboss, AND(KEY2, FOUND(KEY2, 5)))
+        dungeon2_ghosts_chest = Location(dungeon=2).add(DungeonChest(0x120)).connect(dungeon2_ghosts_room, OR(r.fire, r.enemy_requirements["BOO_BUDDY"]))  # bracelet chest
+        dungeon2_r6 = Location("D2 After Boo Buddies", dungeon=2).add(DungeonChest(0x122)).connect(miniboss, POWER_BRACELET)
+        dungeon2_boss_key = Location(dungeon=2).add(DungeonChest(0x127)).connect(dungeon2_r6, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET)))
+        dungeon2_pre_stairs_boss = Location("D2 Before Boss Stairs", dungeon=2).connect(dungeon2_r6, AND(r.enemy_requirements["ZOL"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET), POWER_BRACELET, KEY2, FOUND(KEY2, 5)))
+        dungeon2_post_stairs_boss = Location("D2 Boss Stairs", dungeon=2).connect(dungeon2_pre_stairs_boss, POWER_BRACELET)
+        dungeon2_pre_boss = Location("D2 Outside Boss Room", dungeon=2).connect(dungeon2_post_stairs_boss, FEATHER)
+        # If we can get here, we have everything for the boss. So this is also the goal room.
+        dungeon2_boss_room = Location("D2 Boss Room", dungeon=2).connect(dungeon2_pre_boss, NIGHTMARE_KEY2)
+        dungeon2_boss = Location(dungeon=2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(dungeon2_boss_room, r.boss_requirements[world_setup.boss_mapping[1]])
+        
         if options.logic == 'glitched' or options.logic == 'hell':
-            boo_room_chest8.connect(boo_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
-            north_switch_room.connect(miniboss_room, r.super_jump_feather) # superjump to staircase next to hinox. 
+            dungeon2_ghosts_chest.connect(dungeon2_ghosts_room, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because of torches at start)
+            dungeon2_r6.connect(miniboss, r.super_jump_feather) # superjump to staircase next to hinox. 
             
         if options.logic == 'hell':    
-            west_torches_chest2.connect(west_torches, AND(r.attack_hookshot_powder, r.boots_bonk_pit)) # use boots to jump over the pits
-            east_torches_chest5.connect(east_torches_chest4, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
-            east_torches_chest5.connect(east_torches, r.rear_attack_range, one_way=True) # adjust for alternate requirements for dungeon2_r4
-            miniboss_room.connect(passage_a_room, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section
-            passage_c_room.connect(passage_c_room_entrance, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"],)) # hookshot clip through the pot using both pol's voice
-            pre_boss_room.connect(passage_c_room_entrance, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
-            pre_boss.connect(pre_boss_room, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
+            dungeon2_map_chest.connect(dungeon2_l2, AND(r.attack_hookshot_powder, r.boots_bonk_pit)) # use boots to jump over the pits
+            dungeon2_r4.connect(dungeon2_r3, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
+            dungeon2_r4.connect(shyguy_key_drop, r.rear_attack_range, one_way=True) # adjust for alternate requirements for dungeon2_r4
+            miniboss_room.connect(dungeon2_r5, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section
+            dungeon2_pre_stairs_boss.connect(dungeon2_r6, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"], FOUND(KEY2, 5))) # hookshot clip through the pot using both pol's voice
+            dungeon2_post_stairs_boss.connect(dungeon2_pre_stairs_boss, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
+            dungeon2_pre_boss.connect(dungeon2_post_stairs_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk off bottom wall + hookshot spam across the two 1 tile pits vertically
             
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = dungeon2_boss
 
 
 class NoDungeon2:
