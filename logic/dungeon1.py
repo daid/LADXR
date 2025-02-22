@@ -56,10 +56,10 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             main_room_chest5.connect(entrance, r.super_jump_feather)  # super jump
-            miniboss_room.connect(east_room, OR(r.damage_boost, r.pit_buffer_itemless)) # damage boost or buffer pause over the pit to cross or mushroom
+            miniboss_room.connect(east_room, OR(r.damage_boost, r.pit_buffer_itemless)) # damage boost or buffer or mushroom pause over the pit to cross 
         
         if options.logic == 'hell':
-            feather_room.connect(north_room, SWORD)  # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
+            feather_room.connect(north_room, SWORD) # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             main_room_chest5.connect(entrance, AND(r.damage_boost, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
             
         self.entrance = entrance
