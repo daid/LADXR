@@ -5,7 +5,7 @@ from locations.all import *
 class Dungeon2:
     def __init__(self, options, world_setup, r):
 
-        #locations
+        # locations
         entrance = Location("D2 Entrance", dungeon=2)
         entrance_chest1 = Location(dungeon=2).add(DungeonChest(0x136)) # 50 rupees
         blade_room = Location("D2 West of Torches", dungeon=2)
@@ -40,6 +40,7 @@ class Dungeon2:
         boss_room = Location("D2 Boss Room", dungeon=2)
         boss = Location(dungeon=2).add(HeartContainer(0x12B), Instrument(0x12a)) # heart container, instrument
         
+        # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=2).add(OwlStatue(0x133)).connect(east_torches, STONE_BEAK2) # East of Torches <--> Switch Owl
             Location(dungeon=2).add(OwlStatue(0x12F)).connect(passage_a_room, STONE_BEAK2)  # Pushblock Room <--> Before First Staircase Owl
@@ -76,7 +77,7 @@ class Dungeon2:
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
         boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Boss Rewards
 
-        #connections
+        # connections
         if options.logic == "casual":
             mimic_beetle_room.connect(east_torches_drop2, AND(FEATHER, r.enemy_requirements["MASKED_MIMIC_GORIYA"])) # exclude killing mimics from Spark room
         else:
