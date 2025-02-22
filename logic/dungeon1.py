@@ -49,7 +49,7 @@ class Dungeon1:
         miniboss_room.connect(east_room, FEATHER) # East Area <--> Miniboss Room
         fourblade_room.connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss
         boss_room.connect(fourblade_room, NIGHTMARE_KEY1) # After Miniboss <--> Boss Room
-        boss.connect(boss_room, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Rewards <--> Boss
+        boss.connect(boss_room, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Boss Rewards
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance_chest3.connect(entrance, r.enemy_requirements["KEESE"]) # stalfos jump away when you press a button.
