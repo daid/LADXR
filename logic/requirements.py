@@ -275,6 +275,7 @@ class RequirementsSettings:
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
         self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
+        self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots dash into wall for unclipped superjump
@@ -282,7 +283,10 @@ class RequirementsSettings:
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
         self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
-        self.boots_superhop = AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW)) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.super_bump_boots = AND(SHIELD, PEGASUS_BOOTS, self.running_turn)
+        self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
@@ -312,7 +316,8 @@ class RequirementsSettings:
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
-        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
+        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
+        self.zoomerang_buffer = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
         self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
 
         self.boss_requirements = {
