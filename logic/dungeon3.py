@@ -77,8 +77,8 @@ class Dungeon3:
         stairs_a_room.connect(north_4way, AND(KEY3, FOUND(KEY3, 8)))
         north_4way.connect(north_4way_drop3, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # north key drop
         north_4way.connect(stairs_a_room_switched, r.hit_switch, one_way=True) # hit switch to visit upstairs variant
-        stairs_a_room_switched.connect(switch_locked_chest4, None) # after hit switch get zol switch chest
-        stairs_a_room_switched.connect(swordstalfos_room_chest5, r.enemy_requirements["HIDING_ZOL"])
+        stairs_a_room_switched.connect(switch_locked_chest4, None, one_way=True) # after hit switch get zol switch chest
+        stairs_a_room_switched.connect(swordstalfos_room_chest5, r.enemy_requirements["HIDING_ZOL"], one_way=True)
 
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
@@ -108,7 +108,7 @@ class Dungeon3:
             #after_pot_door.connect(stairs_a_room, AND(PEGASUS_BOOTS, r.boots_superhop)) # not relevant since it means you have a switch hitter, but techinically correct
             swordstalfos_room.connect(swordstalfos_room_chest5, r.boots_superhop) # use boots superhop to get over the bottom left block
             stairs_a_room.connect(switch_locked_chest4, r.boots_superhop, one_way=True) # REMOVE or connect to after_pot_door instead after logic_tester passes - use boots superhop off top wall or left wall to get on raised blocks
-            stairs_a_room_switched.connect(stairs_a_room_chest3, AND(r.super_jump_feather, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
+            stairs_a_room_switched.connect(stairs_a_room_chest3, AND(r.super_jump_feather, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"]), one_way=True) # use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
             west_4way_drop2.connect(west_4way, r.shield_bump) # knock everything into the pit including the teleporting owls
             south_4way_drop1.connect(south_4way, r.shield_bump) # knock everything into the pit including the teleporting owls
             dungeon3_nightmare_key_chest.connect(area_right, AND(r.super_jump_feather, r.shield_bump)) # superjump into jumping stalfos and shield bump to right ledge
