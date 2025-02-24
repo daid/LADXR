@@ -59,7 +59,7 @@ class Dungeon1:
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # damage boost or buffer or mushroom pause over the pit to cross 
         
         if options.logic == 'hell':
-            main_room.connect(main_room_chest5, AND(r.damage_boost, FOUND(KEY1,3))) # damage boost off the hardhat to cross the pit
+            main_room.connect(main_room_chest5, AND(r.damage_boost, FOUND(KEY1, 3))) # damage boost off the hardhat to cross the pit TODO: there is no space after the comma in key count
             north_room.connect(feather_room, SWORD) # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             
         self.entrance = entrance
