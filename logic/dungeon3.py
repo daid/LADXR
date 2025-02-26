@@ -132,7 +132,7 @@ class Dungeon3:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(after_vacuum, r.hookshot_over_pit) # hookshot the chest to get to the right side
             north_4way.connect(before_a_stairs_chest5, AND(r.throw_pot), one_way=True) # after hit switch get zol switch chest
-            north_4way.connect(swordstalfos_room, AND(r.throw_pot, r.enemy_requirements["HIDING_ZOL"]), one_way=True)
+            north_4way.connect(swordstalfos_room, AND(r.throw_pot, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # hit switch with pot, and go back to stalfos pedestal chest
             south_4way.connect(south_4way_drop1, r.throw_pot) # use pots to kill enemies
             north_4way.connect(north_4way_drop3, r.throw_pot) # use pots to kill the enemies
             fenced_walkway.connect(three_bombite_room_drop_6, BOOMERANG, one_way=True) # 3 bombite room from the walkway, grab item with boomerang
