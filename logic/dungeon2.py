@@ -32,8 +32,8 @@ class Dungeon2:
         north_switch_room = Location("D2 North Switch Maze", dungeon=2)
         north_switch_room_chest8 = Location(dungeon=2).add(DungeonChest(0x122)) # small key
         north_switch_room_chest9 = Location(dungeon=2).add(DungeonChest(0x127)) # nightmare key
-        passage_c_room_entrance = Location("D2 Boss Passage Room Entrance", dungeon=2)
-        passage_c_room = Location("D2 Boss Passageway", dungeon=2)
+        pot_pol_room = Location("D2 Pots & Pols Room", dungeon=2)
+        before_c_passage = Location("D2 Boss Passageway", dungeon=2)
         pre_boss_room = Location("D2 Room Before Boss", dungeon=2)
         pre_boss = Location("D2 Outside Boss Door", dungeon=2)
         boss_room = Location("D2 Boss Room", dungeon=2)
@@ -70,9 +70,9 @@ class Dungeon2:
         before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze
         north_switch_room.connect(north_switch_room_chest8, None) # North Switch Maze <--> Second Switch Locked Chest
         north_switch_room.connect(north_switch_room_chest9, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
-        north_switch_room.connect(passage_c_room_entrance, AND(KEY2, FOUND(KEY2, 5))) # North Switch Maze <--> Boss Passageway Room Entrance
-        passage_c_room_entrance.connect(passage_c_room, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway
-        passage_c_room.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
+        north_switch_room.connect(pot_pol_room, AND(KEY2, FOUND(KEY2, 5))) # North Switch Maze <--> Boss Passageway Room Entrance
+        pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway
+        before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
         boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Boss Rewards
@@ -96,13 +96,13 @@ class Dungeon2:
             pitplatform_room.connect(pitplatform_chest5, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             pitplatform_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             mimic_beetle_room.connect(east_torches_drop2, AND(r.rear_attack_range, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # adjust for alternate requirements for dungeon2_r4
-            before_a_passage.connect(miniboss_room, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section (CHANGE TO HARD)
-            #TODO: passage_a_room.connect(miniboss_room, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
+            before_a_passage.connect(after_a_passage, r.boots_dash_2d) # TODO: Move to HARD logic -  use boots to dash over the spikes in the 2d section
+            #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
             after_miniboss.connect(vacuum_room, r.boots_bonk_pit) # boots bonk to get over 1 tile pits by owl statue
             #TODO: after_miniboss.connect(vacuum_room, r.hookshot_spam_pit) # hookshot spam to cross single tile pits by owl statue
-            passage_c_room_entrance.connect(passage_c_room, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
-            passage_c_room.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
-            pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # change to OR, as you can get to boss door with either boots bonk or hookshot spam
+            pot_pol_room.connect(before_c_passage, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
+            before_c_passage.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
+            pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: Change AND to OR - use boots bonk on south wall and again on floating walkway to get to boss door, alternatively, hookshot spam
             
         self.entrance = entrance
         self.final_room = boss

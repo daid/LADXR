@@ -17,7 +17,8 @@ class Dungeon1:
         main_room_chest4 = Location(dungeon=1).add(DungeonChest(0x10D)) # 20 rupees
         main_room_chest5 = Location(dungeon=1).add(DungeonChest(0x108)) # nightmare key
         seashell_room = Location("Hidden Bombable Wall Room", dungeon=1).add(DungeonChest(0x10C)) # seashell
-        north_room = Location("D1 North Area", dungeon=1)
+        north_room = Location("D1 North Room", dungeon=1)
+        northwest_room = Location("D1 Spiked Beetle Room", dungeon=1)
         feather_room = Location("D1 Feather Room", dungeon=1).add(DungeonChest(0x11D)) # feather
         east_room = Location("D1 Right Area", dungeon=1)
         east_room_chest6 = Location(dungeon=1).add(DungeonChest(0x10A)) # stone beak
@@ -43,7 +44,8 @@ class Dungeon1:
         entrance.connect(main_room_chest5, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # Main Area <--> Nightmare Key Chest
         main_room.connect(seashell_room, BOMB) # Main Area <--> Hidden Bombable Wall Room
         main_room.connect(north_room, AND(KEY1, FOUND(KEY1, 3))) # Main Area <--> North Area
-        north_room.connect(feather_room, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD)) # North Area <--> Feather Room
+        north_room.connect(northwest_room, None)
+        northwest_room.connect(feather_room, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD)) # North Area <--> Feather Room
         main_room.connect(east_room, AND(KEY1, FOUND(KEY1, 3))) # Main Area <--> East Area
         east_room.connect(east_room_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Right Area <--> Three of a Kind Chest
         east_room.connect(miniboss_room, FEATHER) # East Area <--> Miniboss Room
@@ -56,10 +58,10 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(main_room_chest5, r.super_jump_feather)  # super jump
-            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # damage boost or buffer or mushroom pause over the pit to cross 
+            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # TODO: check if pit buffering actually lets you past the pit? - damage boost or buffer or mushroom pause over the pit to cross 
         
         if options.logic == 'hell':
-            main_room.connect(main_room_chest5, AND(r.damage_boost, FOUND(KEY1, 3))) # damage boost off the hardhat to cross the pit TODO: there is no space after the comma in key count
+            main_room.connect(main_room_chest5, AND(r.damage_boost, FOUND(KEY1, 3))) # damage boost off the hardhat to cross the pit
             north_room.connect(feather_room, SWORD) # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             
         self.entrance = entrance

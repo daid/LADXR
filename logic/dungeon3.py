@@ -153,8 +153,9 @@ class Dungeon3:
             #TODO: west_hallway.connect(before_a_stairs_chest4, r.boots_superhop) # when the switch hasn't been hit (no key) this trick applies
             swordstalfos_entry.connect(swordstalfos_room, r.boots_superhop) # use boots superhop to get over the bottom left block
             before_a_stairs.connect(before_a_stairs_chest5, r.boots_superhop, one_way=True) # TODO: CHANGE - connect from west_hallway instead - use boots superhop off top wall or left wall to get on raised blocks
-            #TODO: before_a_stairs.connect(west_hallway, r.super_bump) # setup shaq jump off push block and use shield bump to lad to jump over the pushblock
+            #TODO: before_a_stairs.connect(west_hallway, r.super_bump) # setup shaq jump off push block and use shield bump to jump over the pushblock
             #TODO: before_a_stairs.connect(before_a_stairs_chest5, r.super_bump) # shaq jump into super bump using zols to land on pegs
+            #TODO: before_a_stairs.connect(before_a_stairs_chest4, AND(r.super_bump, OR(COUNT(SWORD, 2), MAGIC_ROD))) # shield bump into the wall in order to kill zol with L2 sword or fire rod
             north_4way.connect(before_a_stairs_chest4, AND(OR(r.hit_switch, r.throw_pot), AND(r.super_jump_feather, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])), one_way=True) #TODO: move to glitched? - use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
             west_4way.connect(west_4way_drop2, r.shield_bump) # knock everything into the pit including the teleporting owls
             south_4way.connect(south_4way_drop1, r.shield_bump) # knock everything into the pit including the teleporting owls
@@ -162,13 +163,14 @@ class Dungeon3:
             #TODO: ledge_pre_pit.connect(ledge_post_pit, r.shield_bump) # shield bump stalfos multiple times to get around pits to nightmare key
             main_room.connect(ledge_pre_pit, AND(r.super_jump_feather, r.shield_bump)) # superjump into jumping stalfos and shield bump to right ledge
             big_pit_room.connect(ledge_pre_pit, r.pit_buffer_boots) # boots bonk across the pits with pit buffering and then hookshot or shield bump to the chest
+            #TODO: big_pit_room.connect(ledge_pre_pit, r.hookshot_spam_pit) # hookshot spam to get across 3 block pit and then you can hookshot to nightmare key chest [VERYHARD] - Tracker Hell?
             #TODO: main_room.connect(towards_boss3, r.super_bump, one_way=True) # super bump off stalfos to get in between boss key block 3 and 4. it's possible to land wall clipped, leading to the next trick:
             #TODO: towards_boss3.connect(after_miniboss_room_chest8, r.super_jump_feather, one_way=True) # feather-only super jump facing right into boots chest area
             fenced_walkway.connect(three_bombite_room, AND(r.enemy_requirements["TIMER_BOMBITE"], OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs
             towards_boss4.connect(three_pairodd_room, AND(FEATHER, POWER_BRACELET)) # TODO: REMOVE and replace with or(toadstool, bracelet) # current logic was for clearing first half with bracelet, second half with feather
             #TODO: towards_boss4.connect(three_pairodd_room, r.toadstool_bounce_2d_hell) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
             towards_boss4.connect(three_pairodd_room, AND(r.enemy_requirements["PAIRODD"], r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
-            #TODO: consider logic for passageway in reverse, sould some tricks be labeles one-way? Is there different strategies for traversing this passage in reverse? Be mindful of staircase rando
+            #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
             
         #TODO: if options.nagmessages == True: # is this possible along with magpie at the moment?
             #towards_boss3.connect(towards_boss4, None)
