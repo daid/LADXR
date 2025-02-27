@@ -79,6 +79,7 @@ C3A0:wEntitiesTypeTable
 C3B0:wEntitiesSpriteVariantTable
 C3D0:wEntitiesInertiaTable
 C3E0:wEntitiesRoomTable
+C410:wEntitiesIgnoreHitsCountdownTable
 C420:wEntitiesFlashCountdownTable
 C440:wEntitiesPrivateState4Table
 C460:wEntitiesLoadOrderTable
@@ -120,6 +121,7 @@ DB56:wIsBowWowFollowingLink
 DB5D:wRupeeCountHigh
 DB5E:wRupeeCountLow
 DB6D:wCollectedTunics ; Memory location where to store which tunic options are available
+DB6B:wHasInstrument7
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
 DB7D:wBoomerangTradedItem
