@@ -77,7 +77,7 @@ class Dungeon3:
         #TODO: west_hallway.connect(before_a_stairs_chest4, AND(r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Long Hallway <--> Two Stalfos, Zol Chest
         slime_room.connect(slime_room_chest3, None) # Slime Room <--> Four Zol Chest
         slime_room.connect(swordstalfos_entry, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Sword Stalfos Room Entrance
-        swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room Entrance <--> Sword Stalfos, Keese Switch Chest
+        swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room <--> Sword Stalfos, Keese Switch Chest
         slime_room.connect(before_a_stairs, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Near First Staircase
         before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
         before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) #TODO: Remove this in favor of west hallway connection? Perhaps replace with glitched tier over-wall shield bump kill method
@@ -152,6 +152,7 @@ class Dungeon3:
             #TODO: west_hallway.connect(before_a_stairs, r.boots_superhop) # use boots superhop off top wall or left wall to get on raised blocks - keep this logic in case dungeon enemizer, maybe slime room can't be cleared with arrow or rod
             #TODO: west_hallway.connect(before_a_stairs_chest4, r.boots_superhop) # when the switch hasn't been hit (no key) this trick applies
             swordstalfos_entry.connect(swordstalfos_room, r.boots_superhop) # use boots superhop to get over the bottom left block
+            swordstalfos_entry.connect(swordstalfos_room, r.hookshot_clip_block) # facing downwards at the pushblock, spam hookshot while a keese passes by
             before_a_stairs.connect(before_a_stairs_chest5, r.boots_superhop, one_way=True) # TODO: CHANGE - connect from west_hallway instead - use boots superhop off top wall or left wall to get on raised blocks
             #TODO: before_a_stairs.connect(west_hallway, r.super_bump) # setup shaq jump off push block and use shield bump to jump over the pushblock
             #TODO: before_a_stairs.connect(before_a_stairs_chest5, r.super_bump) # shaq jump into super bump using zols to land on pegs
