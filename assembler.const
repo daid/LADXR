@@ -131,7 +131,9 @@ DB90:wAddRupeeBufferLow
 DB91:wSubstractRupeeBufferHigh
 DB92:wSubstractRupeeBufferLow
 DB94:wSubtractHealthBuffer
+DB95:wGameplayType
 DBA5:wIsIndoor
+DBAE:wIndoorRoom
 DBC7:wInvincibilityCounter
 DC50:wObjPal1
 DC58:wObjPal2
