@@ -38,7 +38,7 @@ class Dungeon4:
         after_a_passage_chest12 = Location(dungeon=4).add(DungeonChest(0x176)) # nightmare key
         before_b_passage = Location("D4 Before Boss Passageway", dungeon=4)
         outside_b_passage_keyblock = Location("D4 Outside Boss Passageway Keyblock", dungeon=4)
-        outside_b_passage_pushblock = Location("D4 Outside Boss Passageway Pushblock", dungeon=4)
+        outside_b_passage_shallows = Location("D4 Shallow Water By Boss Passageway", dungeon=4)
         after_b_passage = Location("D4 After Boss Passageway", dungeon=4)
         pre_boss_room = Location("D4 Before Boss Door", dungeon=4)
         boss_room = Location("D4 Boss Room", dungeon=4)
@@ -90,8 +90,7 @@ class Dungeon4:
         after_a_passage.connect(south_tile_puzzle, None, one_way=True) # Boss Key Ledge <--> Lower Tile Puzzle Area
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS) # Lower Tile Puzzle Area <--> Outside Boss Passageway Keyblock
         outside_b_passage_keyblock.connect(before_b_passage, AND(KEY4, FOUND(KEY4, 5))) # Outside Boss Passageway Keyblock <--> Before Boss Passageway
-        before_b_passage.connect(outside_b_passage_pushblock, None, one_way=True) # Before Boss Passageway <--> Outside Boss Passageway Pushblock
-        before_miniboss.connect(outside_b_passage_pushblock, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
+        before_miniboss.connect(outside_b_passage_shallows, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
         before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: r.attack_hookshot not required. Move it to casual  or move flippers only method to hard
         after_b_passage.connect(pre_boss_room, None) # After Boss Passageway <--> Before Boss Door
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
@@ -120,10 +119,10 @@ class Dungeon4:
             before_miniboss.connect(sidescroller_drop1, AND(r.super_jump_feather, OR(r.enemy_requirements["ZOL"], r.throw_pot))) #TODO: replace with below
             #TODO: before_miniboss.connect(sidescroller_drop1, r.super_jump_feather) # let zols drown to spawn key, superjump into pit, and press left get item
             before_miniboss.connect(north_tile_puzzle, r.jesus_jump) # use jesus jump to transition over the water left of miniboss #TODO: more granular connection
-            #TODO: before_miniboss.connect(outside_b_passage_pushblock, r.jesus_jump) # [logic prep for staircase rando] jesus jump
+            #TODO: before_miniboss.connect(outside_b_passage_shallows, r.jesus_jump) # [logic prep for staircase rando] jesus jump
             #TODO: south_tile_puzzle.connect(outside_b_passage_keyblock, r.jesus_jump) # [logic prep for staircase rando] jesus jump
             #TODO: before_a_passage.connect(after_a_passage, AND(BRACELET, r.super_poke)) # [logic prep for staircase rando] lift pots, then superjump and knockback off the peahat twice to get on ledge
-            #TODO: outside_b_passage_pushblock.connect(before_b_passage, r.super_jump_feather) # [logic prep for staircase rando]
+            #TODO: outside_b_passage_shallows.connect(before_b_passage, r.super_jump_feather) # [logic prep for staircase rando]
 
         if options.logic == 'hell':
             #TODO: entrance.connect(after_a_passage, r.super_bump, one_way=True) # wall clip and super bump off tektite to land on boss key ledge
@@ -140,7 +139,8 @@ class Dungeon4:
             north_crossroads.connect(before_miniboss, AND(OR(BOMB, BOW), r.hookshot_clip_block), one_way=True) # split zol for more entities, and clip through the block left of keyblock by hookshot spam
             #TODO: south_tile_puzzle.connect(north_tile_puzzle, r.hookshot_clip_block, one_way=True) # [logic prep for staircase rando] facing downwards at the pushblock in statue+spark room, spam hookshot while spark passes you by
             #TODO: before_miniboss.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
-            #TODO: outside_b_passage_pushblock.connect(before_b_passage, r.hookshot_clip_block) # logic prep for staircase rando
+            #TODO: outside_b_passage_shallows.connect(before_b_passage, r.hookshot_clip_block) # logic prep for staircase rando
+            #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, AND(r.jesus_buffer, TOADSTOOL)) # boots bonk to upper right of chest, buffer down, then hols left+toadstool to land on shallow water
             before_a_passage.connect(after_a_passage, AND(r.boots_bonk_2d_hell)) # Use flippers for puzzle and boots bonk to get through 2d section
             #TODO: before_a_passage.connect(after_a_passage, r.super_poke) # [logic prep for staircase rando] braceletless superjump and knockback off the peahat twice to get on ledge
             #TODO: before_a_passage.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
