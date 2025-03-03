@@ -156,7 +156,6 @@ class Dungeon3:
             before_a_stairs.connect(before_a_stairs_chest5, r.boots_superhop, one_way=True) # TODO: CHANGE - connect from west_hallway instead - use boots superhop off top wall or left wall to get on raised blocks
             #TODO: before_a_stairs.connect(west_hallway, r.super_bump) # setup shaq jump off push block and use shield bump to jump over the pushblock
             #TODO: before_a_stairs.connect(before_a_stairs_chest5, r.super_bump) # shaq jump into super bump using zols to land on pegs
-            #TODO: before_a_stairs.connect(before_a_stairs_chest4, AND(r.super_bump, OR(COUNT(SWORD, 2), MAGIC_ROD))) # shield bump into the wall in order to kill zol with L2 sword or fire rod
             north_4way.connect(before_a_stairs_chest4, AND(OR(r.hit_switch, r.throw_pot), AND(r.super_jump_feather, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])), one_way=True) #TODO: move to glitched? - use superjump near top blocks chest to get to zol without boots, keep wall clip on right wall to get a clip on left wall or use obstacles
             west_4way.connect(west_4way_drop2, r.shield_bump) # knock everything into the pit including the teleporting owls
             south_4way.connect(south_4way_drop1, r.shield_bump) # knock everything into the pit including the teleporting owls

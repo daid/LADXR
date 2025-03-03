@@ -140,7 +140,7 @@ class Dungeon4:
             #TODO: south_tile_puzzle.connect(north_tile_puzzle, r.hookshot_clip_block, one_way=True) # [logic prep for staircase rando] facing downwards at the pushblock in statue+spark room, spam hookshot while spark passes you by
             #TODO: before_miniboss.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
             #TODO: outside_b_passage_shallows.connect(before_b_passage, r.hookshot_clip_block) # logic prep for staircase rando
-            #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, AND(r.jesus_buffer, TOADSTOOL)) # boots bonk to upper right of chest, buffer down, then hols left+toadstool to land on shallow water
+            #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, AND(r.jesus_buffer, TOADSTOOL)) # boots bonk to upper right of chest, buffer down, then hold left+toadstool to land on shallow water
             before_a_passage.connect(after_a_passage, AND(r.boots_bonk_2d_hell)) # Use flippers for puzzle and boots bonk to get through 2d section
             #TODO: before_a_passage.connect(after_a_passage, r.super_poke) # [logic prep for staircase rando] braceletless superjump and knockback off the peahat twice to get on ledge
             #TODO: before_a_passage.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
