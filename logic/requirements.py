@@ -489,7 +489,7 @@ class RequirementsSettings:
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
-            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits #TODO: disable this and let it be handled in tracker hell
+            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits #TODO: disable this and let it be handled in tracker hell note: l2 sword beams can kill but obscure
             self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
             self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, COUNT(SWORD,2)) # use bombs or L2 sword beams to damage dethl
             self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob
