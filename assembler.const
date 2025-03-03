@@ -23,6 +23,7 @@
 
 641A:PushLinkOutOfEntity_06
 645D:CheckLinkInteractionWithEntity_06
+65DB:ClearEntityStatus_06
 
 4005:GetEntitySpeedYAddress_07
 7D96:ReturnIfNonInteractive_07
@@ -65,6 +66,7 @@ C290:wEntitiesStateTable
 C2A0:wEntitiesCollisionsTable
 C2B0:wEntitiesPrivateState1Table
 C2C0:wEntitiesPrivateState2Table
+C2D0:wEntitiesPrivateState3Table
 C2E0:wEntitiesTransitionCountdownTable
 C2F0:wEntitiesPrivateCountdown1Table
 C300:wEntitiesPrivateCountdown2Table
@@ -118,6 +120,7 @@ DB4B:wHasToadstool
 DB4C:wMagicPowderCount
 DB4E:wSwordLevel
 DB56:wIsBowWowFollowingLink
+DB5A:wHealth
 DB5D:wRupeeCountHigh
 DB5E:wRupeeCountLow
 DB6D:wCollectedTunics ; Memory location where to store which tunic options are available

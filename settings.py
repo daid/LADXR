@@ -185,12 +185,13 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Casual] places more inventory and key items so the seed is easier.
 [More keys] adds more small keys and extra nightmare keys so dungeons are easier.
 [Path of pain]... just find out yourself."""),
-            Setting('hpmode', 'Gameplay', 'm', 'Health mode', options=[('default', '', 'Normal'), ('inverted', 'i', 'Inverted'), ('1', '1', 'Start with 1 heart'), ('low', 'l', 'Low max')], default='default',
+            Setting('hpmode', 'Gameplay', 'm', 'Health mode', options=[('default', '', 'Normal'), ('inverted', 'i', 'Inverted'), ('1', '1', 'Start with 1 heart'), ('low', 'l', 'Low max'), ('5hit', '5', '5Hit Challenge')], default='default',
                 description="""
 [Normal} health works as you would expect.
 [Inverted] you start with 9 heart containers, but killing a boss will take a heartcontainer instead of giving one.
 [Start with 1] normal game, you just start with 1 heart instead of 3.
-[Low max] replace heart containers with heart pieces."""),
+[Low max] replace heart containers with heart pieces.
+[5 Hit Challenge] you can take 5 hits before you die, no healing, no saving."""),
             Setting('hardmode', 'Gameplay', 'X', 'Hard mode', options=[('none', '', 'Disabled'), ('oracle', 'O', 'Oracle'), ('hero', 'H', 'Hero'), ('ohko', '1', 'One hit KO')], default='none',
                 description="""
 [Oracle] Less iframes and heath from drops. Bombs damage yourself. Water damages you without flippers. No piece of power or acorn.

@@ -122,7 +122,12 @@ class ItemPool:
         elif settings.hpmode == 'extralow':
             self.add(RUPEES_20, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-        
+        elif settings.hpmode == '5hit':
+            self.add(RUPEES_20, self.get(HEART_CONTAINER))
+            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+            self.add(RUPEES_20, self.get(HEART_PIECE))
+            self.remove(HEART_PIECE, self.get(HEART_PIECE))
+
         if settings.goal == 'seashells':
             self.remove(SEASHELL, 2)
 

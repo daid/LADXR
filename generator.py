@@ -232,6 +232,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.health.setStartHealth(rom, 9)
     elif settings.hpmode == '1':
         patches.health.setStartHealth(rom, 1)
+    elif settings.hpmode == '5hit':
+        patches.health.setStartHealth(rom, 5)
+        patches.health.limitHitChallange(rom)
 
     patches.inventory.songSelectAfterOcarinaSelect(rom)
     if settings.quickswap == 'a':

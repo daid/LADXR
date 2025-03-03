@@ -31,3 +31,38 @@ def upgradeHealthContainers(rom):
         rst  8
 skip:
     """), fill_nop=True)  # add heart->remove heart on heart container
+
+
+def limitHitChallange(rom):
+    # Every hit does exactly 8 subhearts of damage
+    rom.patch(0x02, 0x2385, 0x23A2,
+        ASM("""
+            ld  hl, wSubtractHealthBuffer
+            ld  a, [hl] 
+            and a
+            ret z
+            xor a
+            ld  [hl], a
+            
+            ld  hl, wHealth
+            ld  a, [hl]
+            sub 8
+            jr  nc, noZero
+            xor a
+        noZero:
+            ld  [hl], a
+            call $6414 ; LoadHeartsCount 
+        """), fill_nop=True)
+    rom.patch(0x02, 0x2368, ASM("ld a, [wHealth]"), ASM("ld a, e"), fill_nop=True)  # Prevent getting health
+
+    # Remove BigFairy
+    rom.patch(0x06, 0x30B8, ASM("ld hl, wEntitiesPrivateState3Table"), ASM("jp ClearEntityStatus_06"))
+
+    # Prevent saving
+    rom.patch(0x01, 0x1DE6, ASM("ld a, [wHealth]"), ASM("ret"), fill_nop=True)
+
+    # Prevent medicine from working
+    rom.patch(0x02, 0x23AD, ASM("ld a, 8"), ASM("ret"), fill_nop=True)
+
+    # Prevent continue without saving from respawning you
+    rom.patch(0x01, 0x02EB, ASM("jr z, $05"), ASM("jr $05"))
