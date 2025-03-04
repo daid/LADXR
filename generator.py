@@ -198,7 +198,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':
         patches.aesthetics.slowLowHPBeep(rom)
-    if settings.lowhpbeep == 'none':
+    if settings.lowhpbeep == 'none' or settings.hardmode == 'ohko':
         patches.aesthetics.removeLowHPBeep(rom)
     if 0 <= int(settings.linkspalette):
         patches.aesthetics.forceLinksPalette(rom, int(settings.linkspalette))

@@ -59,7 +59,26 @@ def limitHitChallange(rom):
     rom.patch(0x06, 0x30B8, ASM("ld hl, wEntitiesPrivateState3Table"), ASM("jp ClearEntityStatus_06"))
 
     # Prevent saving
-    rom.patch(0x01, 0x1DE6, ASM("ld a, [wHealth]"), ASM("ret"), fill_nop=True)
+    rom.patch(0x01, 0x1DE6, 0x1E66, ASM("""
+        ld   a, [wSaveSlot]
+        sla  a
+        ld   e, a
+        ld   d, $00
+        ld   hl, $49F8 ; SaveGameTable  
+        add  hl, de
+        ld   a, [hl+]
+        ld   h, [hl]
+        ld   l, a
+        ld   de, wDeathCount - wOverworldRoomStatus ; +5 is for the prefix
+        add  hl, de
+    
+        call EnableSRAM
+        ld   a, [wDeathCount]
+        ld   [hl+], a
+        ld   a, [wDeathCount+1]
+        ld   [hl+], a
+        ret
+    """), fill_nop=True)
 
     # Prevent medicine from working
     rom.patch(0x02, 0x23AD, ASM("ld a, 8"), ASM("ret"), fill_nop=True)
