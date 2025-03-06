@@ -7,7 +7,7 @@ class Dungeon7:
     def __init__(self, options, world_setup, r):
         entrance = Location("D7 Entrance", dungeon=7)
         first_key = Location(dungeon=7).add(DroppedKey(0x210)).connect(entrance, r.enemy_requirements["LIKE_LIKE"])
-        topright_pillar_area = Location("D7 Ball Room", dungeon=7).connect(entrance, KEY7)
+        topright_pillar_area = Location("D7 Ball Room", dungeon=7).connect(entrance, FOUND(KEY7, 1))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=7).add(OwlStatue(0x216)).connect(topright_pillar_area, STONE_BEAK7)
         topright_pillar = Location(dungeon=7).add(DungeonChest(0x212)).connect(topright_pillar_area, POWER_BRACELET)  # map chest
@@ -24,7 +24,7 @@ class Dungeon7:
             bottomleft_owl = Location(dungeon=7).add(OwlStatue(0x21C)).connect(bottomleftF2_area, AND(BOMB, STONE_BEAK7))
         nightmare_key = Location(dungeon=7).add(DungeonChest(0x224)).connect(bottomleftF2_area, r.miniboss_requirements[world_setup.miniboss_mapping[6]]) # nightmare key after the miniboss
         mirror_shield_chest = Location(dungeon=7).add(DungeonChest(0x21A)).connect(bottomleftF2_area, r.hit_switch)  # mirror shield chest, need to be able to hit a switch to reach or
-        bottomleftF2_area.connect(mirror_shield_chest, AND(KEY7, FOUND(KEY7, 3)), one_way = True) # reach mirror shield chest from hinox area by opening keyblock
+        bottomleftF2_area.connect(mirror_shield_chest, FOUND(KEY7, 3), one_way = True) # reach mirror shield chest from hinox area by opening keyblock
         toprightF1_chest = Location(dungeon=7).add(DungeonChest(0x204)).connect(bottomleftF2_area, r.hit_switch)  # chest on the F1 right ledge. Added attack_hookshot since switch needs to be hit to get back up
         final_pillar_area = Location(dungeon=7).add(DungeonChest(0x21C)).connect(bottomleftF2_area, AND(BOMB, HOOKSHOT, r.enemy_requirements["THREE_OF_A_KIND"]))  # chest that needs to spawn to get to the last pillar
         final_pillar = Location("D7 Final Pillar", dungeon=7).connect(final_pillar_area, POWER_BRACELET) # decouple chest from pillar

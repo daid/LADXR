@@ -14,7 +14,7 @@ class Dungeon3:
         dungeon3_zol_stalfos = Location(dungeon=3).add(DungeonChest(0x14E)).connect(area3, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"]))  # 3th chest requires killing the slime behind the crystal pillars
 
         # now we can go 4 directions,
-        area_up = Location("D3 North Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
+        area_up = Location("D3 North Room", dungeon=3).connect(area3, FOUND(KEY3, 8))
         dungeon3_north_key_drop = Location(dungeon=3).add(DroppedKey(0x154)).connect(area_up, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # north key drop
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=3).add(OwlStatue(0x154)).connect(area_up, STONE_BEAK3)
@@ -23,13 +23,13 @@ class Dungeon3:
         area_up.connect(dungeon3_raised_blocks_north, r.hit_switch, one_way=True) # hit switch to reach north chest
         area_up.connect(dungeon3_raised_blocks_east, r.hit_switch, one_way=True) # hit switch to reach east chest
         
-        area_left = Location("D3 West Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
+        area_left = Location("D3 West Room", dungeon=3).connect(area3, FOUND(KEY3, 8))
         area_left_key_drop = Location(dungeon=3).add(DroppedKey(0x155)).connect(area_left, AND(r.enemy_requirements["HIDING_ZOL"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # west key drop (no longer requires feather to get across hole), can use boomerang to knock owls into pit
 
-        area_down = Location("D3 South Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 8)))
+        area_down = Location("D3 South Room", dungeon=3).connect(area3, FOUND(KEY3, 8))
         dungeon3_south_key_drop = Location(dungeon=3).add(DroppedKey(0x158)).connect(area_down, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # south keydrop, can use boomerang to knock owls into pit
 
-        area_right = Location("D3 East Room", dungeon=3).connect(area3, AND(KEY3, FOUND(KEY3, 4)))  # We enter the top part of the map here.
+        area_right = Location("D3 East Room", dungeon=3).connect(area3, FOUND(KEY3, 4))  # We enter the top part of the map here.
         Location(dungeon=3).add(DroppedKey(0x14D)).connect(area_right, r.enemy_requirements["HIDING_ZOL"])  # key after the stairs.
 
         dungeon3_nightmare_key_chest = Location(dungeon=3).add(DungeonChest(0x147)).connect(area_right, AND(BOMB, FEATHER, PEGASUS_BOOTS))  # nightmare key chest
@@ -42,10 +42,10 @@ class Dungeon3:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=3).add(OwlStatue(0x140), OwlStatue(0x147)).connect(area_right, STONE_BEAK3)
 
-        towards_boss1 = Location("D3 Boss Path 1", dungeon=3).connect(area_right, AND(KEY3, FOUND(KEY3, 5)))
-        towards_boss2 = Location("D3 Boss Path 2", dungeon=3).connect(towards_boss1, AND(KEY3, FOUND(KEY3, 6)))
-        towards_boss3 = Location("D3 Boss Path 3", dungeon=3).connect(towards_boss2, AND(KEY3, FOUND(KEY3, 7)))
-        towards_boss4 = Location("D3 Boss Path 4", dungeon=3).connect(towards_boss3, AND(KEY3, FOUND(KEY3, 8)))
+        towards_boss1 = Location("D3 Boss Path 1", dungeon=3).connect(area_right, FOUND(KEY3, 5))
+        towards_boss2 = Location("D3 Boss Path 2", dungeon=3).connect(towards_boss1, FOUND(KEY3, 6))
+        towards_boss3 = Location("D3 Boss Path 3", dungeon=3).connect(towards_boss2, FOUND(KEY3, 7))
+        towards_boss4 = Location("D3 Boss Path 4", dungeon=3).connect(towards_boss3, FOUND(KEY3, 8))
 
         # Just the whole area before the boss, requirements for the boss itself and the rooms before it are the same.
         pre_boss = Location(dungeon=3).connect(towards_boss4, AND(r.enemy_requirements["PAIRODD"], FEATHER, PEGASUS_BOOTS))
@@ -56,9 +56,9 @@ class Dungeon3:
 
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
-            area_left.connect(area3, KEY3)
+            area_left.connect(area3, FOUND(KEY3, 1))
             area_left_key_drop.items[0].forced_item = KEY3
-            area_down.connect(area3, KEY3)
+            area_down.connect(area3, FOUND(KEY3, 1))
             dungeon3_south_key_drop.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':

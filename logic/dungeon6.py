@@ -23,7 +23,7 @@ class Dungeon6:
             Location().add(Chest(0x06C)).connect(top_left, POWER_BRACELET)  # seashell chest in raft game
 
         # right side
-        to_miniboss = Location("D6 Before Miniboss", dungeon=6).connect(entrance, KEY6)
+        to_miniboss = Location("D6 Before Miniboss", dungeon=6).connect(entrance, FOUND(KEY6, 1))
         miniboss_room = Location("D6 Miniboss Room", dungeon=6).connect(to_miniboss, BOMB)
         miniboss = Location("D6 After Miniboss", dungeon=6).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[5]])
         lower_right_side = Location(dungeon=6).add(DungeonChest(0x1BE)).connect(entrance, AND(r.enemy_requirements["WIZROBE"], COUNT(POWER_BRACELET, 2))) # waterway key
@@ -32,9 +32,9 @@ class Dungeon6:
             lower_right_owl = Location(dungeon=6).add(OwlStatue(0x1D7)).connect(lower_right_side, AND(POWER_BRACELET, STONE_BEAK6))
 
         center_1 = Location(dungeon=6).add(DroppedKey(0x1C3)).connect(miniboss, AND(COUNT(POWER_BRACELET, 2), FEATHER)) # tile room key drop
-        center_2_and_upper_right_side = Location(dungeon=6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.enemy_requirements["POLS_VOICE"], KEY6, FOUND(KEY6, 2))) # top right chest horseheads
+        center_2_and_upper_right_side = Location(dungeon=6).add(DungeonChest(0x1B1)).connect(center_1, AND(COUNT(POWER_BRACELET, 2), PEGASUS_BOOTS, r.enemy_requirements["POLS_VOICE"], FOUND(KEY6, 2))) # top right chest horseheads
         boss_key = Location(dungeon=6).add(DungeonChest(0x1B6))
-        center_2_and_upper_right_side.connect(boss_key, AND(HOOKSHOT, POWER_BRACELET, r.miniboss_requirements["DODONGO"], KEY6, FOUND(KEY6, 3)), one_way=True)
+        center_2_and_upper_right_side.connect(boss_key, AND(HOOKSHOT, POWER_BRACELET, r.miniboss_requirements["DODONGO"], FOUND(KEY6, 3)), one_way=True)
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=6).add(OwlStatue(0x1B6)).connect(boss_key, STONE_BEAK6)
 

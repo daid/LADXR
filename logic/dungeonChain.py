@@ -29,8 +29,8 @@ class Shop:
         self.entrance = Location()
         self.final_room = self.entrance
 
-        Location().add(ShopItem(0, price=200)).connect(self.entrance, COUNT("RUPEES", 200))
-        Location().add(ShopItem(1, price=500)).connect(self.entrance, COUNT("RUPEES", 500))
+        Location().add(ShopItem(0, price=200)).connect(self.entrance, FOUND("RUPEES", 250))
+        Location().add(ShopItem(1, price=500)).connect(self.entrance, FOUND("RUPEES", 750))
 
 
 class Mamu:
@@ -38,7 +38,7 @@ class Mamu:
         self.entrance = Location()
         self.final_room = self.entrance
 
-        Location().add(Song(0x2FB)).connect(self.entrance, AND(OCARINA, COUNT("RUPEES", 300)))
+        Location().add(Song(0x2FB)).connect(self.entrance, AND(OCARINA, FOUND("RUPEES", 300)))
 
 
 class Trendy:
