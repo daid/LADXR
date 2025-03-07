@@ -20,7 +20,7 @@ class Dungeon1:
         north_room = Location("D1 North Room", dungeon=1)
         northwest_room = Location("D1 Spiked Beetle Room", dungeon=1)
         feather_room = Location("D1 Feather Room", dungeon=1).add(DungeonChest(0x11D)) # feather
-        east_room = Location("D1 Right Area", dungeon=1)
+        east_room = Location("D1 East Area", dungeon=1)
         east_room_chest6 = Location(dungeon=1).add(DungeonChest(0x10A)) # stone beak
         miniboss_room = Location("D1 Miniboss", dungeon=1)
         fourblade_room = Location("D1 After Miniboss", dungeon=1)
@@ -29,9 +29,9 @@ class Dungeon1:
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(dungeon=1).add(OwlStatue(0x103)).connect(north_room, STONE_BEAK1)
-            Location(dungeon=1).add(OwlStatue(0x104)).connect(north_room, STONE_BEAK1)
-            Location(dungeon=1).add(OwlStatue(0x10A)).connect(east_room, STONE_BEAK1)
+            Location(dungeon=1).add(OwlStatue(0x104)).connect(north_room, STONE_BEAK1) # North Room <--> Movable Block Owl
+            Location(dungeon=1).add(OwlStatue(0x103)).connect(northwest_room, STONE_BEAK1) # North Room <--> Spiked Beetle Owl
+            Location(dungeon=1).add(OwlStatue(0x10A)).connect(east_room, STONE_BEAK1) # East Area <--> Three of a Kind Owl
 
         # connections
         entrance.connect(entrance_drop1, OR(r.enemy_requirements["HARDHAT_BEETLE"], r.push_hardhat)) # Entrance <--> Hardhat Beetles Key
@@ -47,7 +47,7 @@ class Dungeon1:
         north_room.connect(northwest_room, None)
         northwest_room.connect(feather_room, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD)) # North Area <--> Feather Room
         main_room.connect(east_room, AND(KEY1, FOUND(KEY1, 3))) # Main Area <--> East Area
-        east_room.connect(east_room_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Right Area <--> Three of a Kind Chest
+        east_room.connect(east_room_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # East Area <--> Three of a Kind Chest
         east_room.connect(miniboss_room, FEATHER) # East Area <--> Miniboss Room
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss
         fourblade_room.connect(boss_room, NIGHTMARE_KEY1) # After Miniboss <--> Boss Room

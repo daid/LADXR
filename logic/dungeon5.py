@@ -5,6 +5,8 @@ from locations.all import *
 
 class Dungeon5:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D5 Entrance", dungeon=5)
         entrance_ledge = Location("D5 Entrance Ledge", dungeon=5)
         entrance_ledge_chest1 = Location(dungeon=5).add(DungeonChest(0x1A0)) # 200 rupees
@@ -55,8 +57,8 @@ class Dungeon5:
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            Location(dungeon=5).add(OwlStatue(0x19A)).connect(crystal_puddle_room, STONE_BEAK5)
-            Location(dungeon=5).add(OwlStatue(0x18A)).connect(star_room, STONE_BEAK5)
+            Location(dungeon=5).add(OwlStatue(0x19A)).connect(crystal_puddle_room, STONE_BEAK5) # Crystal River Area <--> Crystal Owl
+            Location(dungeon=5).add(OwlStatue(0x18A)).connect(star_room, STONE_BEAK5) # Star Room <--> Star Owl
 
         # connections
         entrance.connect(entrance_ledge, HOOKSHOT) # Entrance <--> Entrance Ledge
@@ -148,10 +150,11 @@ class Dungeon5:
             before_c_passage.connect(after_c_passage, r.boots_jump) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_c_passage.connect(spark_hallway, r.super_jump_sword) # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
             after_c_passage.connect(spark_hallway, r.zoomerang) # use zoomerang dashing left to get an unclipped boots superjump off the right wall over the pushblock
+            #TODO: before_d_passage.connect(after_d_passage, None) # hold the A button when itemless to bounce higher off the cheep-cheeps to cover 2-block gaps. helpful to stand on edge and pause/map buffer to catch the frame where fish starts to leap, then hold left
             #TODO: before_d_passage.connect(north_crossroads, r.boots_bonk) # boots bonk over pit
-            north_ledge.connect(north_crossroads, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
-            middle_ledge.connect(north_crossroads, r.boots_bonk_pit) # get to first chest via the north chest with pit buffering
-            east_ledge.connect(middle_ledge, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
+            north_crossroads.connect(north_ledge, r.boots_bonk_pit) # get to first chest via the north chest with pit buffering
+            north_ledge.connect(middle_ledge, r.pit_buffer_itemless, one_way=True) # itemless pit buffer down through where the bridge would be
+            middle_ledge.connect(east_ledge, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
             #TODO: ms_3_room.connect(pot_locked_room, AND(r.super_jump_boots, r.zoomerang_buffer)) # skip bracelet requirement by boots superjump to land in pot, then zoomerang to dislodge link to the left
             ms_3_room.connect(ms_4_room, AND(r.boots_bonk_2d_hell, SWORD)) # can reach fourth arena from entrance with pegasus boots and sword
             after_b_passage.connect(boss_key_room, r.pit_buffer_itemless) # pit buffer across

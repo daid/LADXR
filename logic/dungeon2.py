@@ -42,7 +42,7 @@ class Dungeon2:
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=2).add(OwlStatue(0x133)).connect(east_torches, STONE_BEAK2) # East of Torches <--> Switch Owl
-            Location(dungeon=2).add(OwlStatue(0x12F)).connect(before_a_passage, STONE_BEAK2)  # Pushblock Room <--> Before First Staircase Owl
+            Location(dungeon=2).add(OwlStatue(0x12F)).connect(before_a_passage, STONE_BEAK2) # Pushblock Room <--> Before First Staircase Owl
             Location(dungeon=2).add(OwlStatue(0x129)).connect(vacuum_room, STONE_BEAK2) # Vacuum Mouth Area <--> After Hinox Owl
 
         entrance.connect(entrance_chest1, POWER_BRACELET) # Entrance <--> Entrance Chest

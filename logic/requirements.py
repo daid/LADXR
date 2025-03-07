@@ -299,7 +299,7 @@ class RequirementsSettings:
         self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
         self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to jump while buffered down into the block under a pit
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
-        self.boots_bonk = PEGASUS_BOOTS # bonk against walls to jump small gaps (no pits)
+        self.boots_bonk = PEGASUS_BOOTS # bonk against walls to jump small gaps (not starting inside of pit) (also easy 2d bonks)
         self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps
         self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
