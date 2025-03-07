@@ -85,3 +85,6 @@ def limitHitChallange(rom):
 
     # Prevent continue without saving from respawning you
     rom.patch(0x01, 0x02EB, ASM("jr z, $05"), ASM("jr $05"))
+
+    # Prevent acorn damage reduction
+    rom.patch(0x03, 0x2DA0, ASM("jr nz, $09"), ASM("jr $09"))
