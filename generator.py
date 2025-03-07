@@ -227,6 +227,12 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.shop.createShopRoom(rom, 0x299)
         rom.texts[0x030] = utils.formatText("Only %d {RUPEES}!" % (100,), ask="Buy  No Way")
         rom.texts[0x02C] = utils.formatText("Only %d {RUPEES}!" % (200,), ask="Buy  No Way")
+        # Add a telephone in the primary shop
+        import roomEditor
+        re = roomEditor.RoomEditor(rom, 0x2A1)
+        re.entities.append((1, 6, 0x80))
+        re.objects.append(roomEditor.Object(1, 6, 0xA6))
+        re.store(rom)
 
     if settings.hpmode == 'inverted':
         patches.health.setStartHealth(rom, 9)
