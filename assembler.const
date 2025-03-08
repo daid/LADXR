@@ -23,6 +23,7 @@
 
 641A:PushLinkOutOfEntity_06
 645D:CheckLinkInteractionWithEntity_06
+64C6:ReturnIfNonInteractive_06
 65DB:ClearEntityStatus_06
 
 4005:GetEntitySpeedYAddress_07
@@ -140,6 +141,7 @@ DBA5:wIsIndoor
 DBAE:wIndoorRoom
 DBA6:wSaveSlot
 DBC7:wInvincibilityCounter
+DC0F:wTunicType
 DC50:wObjPal1
 DC58:wObjPal2
 DC60:wObjPal3
