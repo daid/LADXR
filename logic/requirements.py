@@ -286,6 +286,8 @@ class RequirementsSettings:
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
         self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
         self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.ledge_super_bump = SHIELD # fall off ledge and rebound off entity with shield (can result in no-clip backflip if left or right facing and dpad down or up is held first)
+        self.ledge_super_poke = SWORD # fall off ledge and rebound off entity with sword
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_superbump = AND(PEGASUS_BOOTS, self.running_turn, self.shield_bump)
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump

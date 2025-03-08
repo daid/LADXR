@@ -46,9 +46,9 @@ class Dungeon7:
         after_boss_door = Location("D7 After Boss Door", dungeon=7)
         conveyor_room = Location("D7 Conveyor Horseheads Room", dungeon=7)
         conveyor_room_chest9 = Location(dungeon=7).add(DungeonChest(0x220)) # medicine
-        pre_boss = Location("D7 Before Boss", dungeon=7)
-        boss_room = Location("D7 Boss Room", dungeon=7)
-        boss = Location("D7 Boss Rewards", dungeon=7).add(HeartContainer(0x223), Instrument(0x22c)) # heart container, instrument
+        pre_boss_room = Location("D7 Before Boss", dungeon=7)
+        boss_room = Location("D7 Boss Room", dungeon=7).add(HeartContainer(0x223)) # heart container
+        instrument = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -60,7 +60,7 @@ class Dungeon7:
         entrance.connect(entrance_drop1, r.enemy_requirements["LIKE_LIKE"]) # Entrance <--> Entrance Key
         entrance.connect(before_a_stairs, KEY7) # Entrance <--> Before First Staircase
         before_a_stairs.connect(after_a_stairs, None) # Before Locked Staircase <--> Ball Room
-        after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area #TODO: make casual logic where you need bracelet to pull lever to make it out the door
+        after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area #TODO: delete in favor of casual logic commented out below
         ne_pillar.connect(ne_pillar_chest5, POWER_BRACELET) # Northeast Pillar Area <--> Horse Head, Bubble Chest
         ne_pillar.connect(before_b_stairs, None, one_way=True) # Northeast Pillar Area --> First Floor Main Area
         before_b_stairs.connect(after_b_stairs, None) # First Floor Main Area <--> Horseheads Staircase
@@ -88,7 +88,7 @@ class Dungeon7:
         after_d_stairs.connect(keylock_ledge, AND(KEY7, FOUND(KEY7, 3))) # Hinox Area <--> Key Locked Ledge
         after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: replace with "NEW VERSION" below
         #TODO: after_a_stairs.connect(pegs_after_a_stairs, BOOMERANG) # Ball Room <--> On Pegs Around Ches # NEW VERSION
-        #TODO: after_d_stairs.connect(pegs_after_a_stairs, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD, COUNT(SWORD,2))) # Hinox Area <--> On Pegs Around Ches # NEW VERSION
+        #TODO: before_b_stairs.connect(pegs_after_a_stairs, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD, COUNT(SWORD,2))) # Hinox Area <--> On Pegs Around Ches # NEW VERSION
         keylock_ledge.connect(pegs_after_a_stairs, None, one_way=True) # Key Locked Ledge --> On Pegs Around Chest
         keylock_ledge.connect(se_pillar, None, one_way=True) # Key Locked Ledge --> Southeast Pillar Area
         keylock_ledge.connect(after_d_stairs, None, one_way=True) # Key Locked Ledge --> Hinox Area
@@ -112,14 +112,19 @@ class Dungeon7:
         final_pillar_fallen.connect(after_boss_door, NIGHTMARE_KEY7) # Final Pillar Destroyed <--> After Boss Door
         after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
         conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
-        after_boss_door.connect(pre_boss, HOOKSHOT) # After Boss Door <--> Before Boss
-        pre_boss.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
-        pre_boss.connect(boss_room, None) # Before Boss <--> Boss Room
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Boss Rewards
+        after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
+        pre_boss_room.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
+        pre_boss_room.connect(boss_room, None) # Before Boss <--> Boss Room
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Instrument Room
 
         # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             entrance_drop1.items[0].forced_item = KEY7
+
+        #TODO: if options.logic == "casual":
+            #TODO: after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area
+        #TODO: else:
+            #TODO: after_a_stairs.connect(ne_pillar, POWER_BRACELET) # Ball Room <--> Northeast Pillar Area
             
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(before_b_stairs, r.super_jump_sword) # superjump in the center to get on raised blocks sword added to help since it has to be a low jump
@@ -133,7 +138,7 @@ class Dungeon7:
             #TODO: sw_pillar.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             sw_pillar.connect(sw_pillar_chest6, POWER_BRACELET) #TODO: Not really an accurate statement, as you can't do the block push from the north side. evaluate moving to hard logic, or even connecting from hinox area?
             after_d_stairs.connect(final_pillar_fallen, r.bomb_trigger) # bomb trigger pillar
-            final_pillar_fallen.connect(pre_boss, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
+            final_pillar_fallen.connect(pre_boss_room, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
             
         if options.logic == 'hell':
             #TODO: entrance.connect(before_a_stairs, r.boots_superbump) # boots to run, then bow or rod to run backwards, then hold shield so blade bumps you over wall #[logic prep for staircase rando]
@@ -151,12 +156,14 @@ class Dungeon7:
             #TODO: after_d_stairs.connect(keylock_ledge, r.boots_superbump) # running super bump off antifairy to get on ledge without key
             #TODO: owl_ledge.connect(sw_pillar, r.pit_buffer_boots) 
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
-            final_pillar_fallen.connect(pre_boss, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
+            final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
+            pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
+            
 
         
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon7:

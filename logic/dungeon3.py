@@ -54,10 +54,10 @@ class Dungeon3:
         towards_boss3 = Location("D3 Boss Path 3", dungeon=3)
         towards_boss4 = Location("D3 Boss Path 4", dungeon=3)
         three_pairodd_room = Location("D3 Three Pairodd Room", dungeon=3)
-        pre_boss = Location("D3 Room Before Boss", dungeon=3)
-        pre_boss_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
-        boss_room = Location("D3 Boss Room", dungeon=3)
-        boss = Location("D3 Boss Rewards", dungeon=3).add(HeartContainer(0x15A), Instrument(0x159)) # heart container, instrument
+        pre_boss_room = Location("D3 Room Before Boss", dungeon=3)
+        pre_boss_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
+        boss_room = Location("D3 Boss Room", dungeon=3).add(HeartContainer(0x15A)) # heart container
+        instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -80,7 +80,7 @@ class Dungeon3:
         swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room <--> Sword Stalfos, Keese Switch Chest
         slime_room.connect(before_a_stairs, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Near First Staircase
         before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
-        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) #TODO: Remove this in favor of west hallway connection? Perhaps replace with glitched tier over-wall shield bump kill method
+        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"]))
         center_4way.connect(south_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> South Key Room
         south_4way.connect(south_4way_drop1, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # South Key Room <--> South Key Room Key
         center_4way.connect(west_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> West Key Room
@@ -117,10 +117,10 @@ class Dungeon3:
         towards_boss2.connect(towards_boss3, AND(KEY3, FOUND(KEY3, 7))) # Boss Path 2 <--> Boss Path 3
         towards_boss3.connect(towards_boss4, AND(KEY3, FOUND(KEY3, 8))) # Boss Path 3 <--> Boss Path 4
         towards_boss4.connect(three_pairodd_room, AND(FEATHER, PEGASUS_BOOTS)) # Boss Path 4 <--> Three Pairodd Room
-        three_pairodd_room.connect(pre_boss, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
-        pre_boss.connect(pre_boss_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key
-        pre_boss.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Boss Rewards
+        three_pairodd_room.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
+        pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key
+        pre_boss_room.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Instrument Room
 
         # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
@@ -174,7 +174,7 @@ class Dungeon3:
             #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon3:

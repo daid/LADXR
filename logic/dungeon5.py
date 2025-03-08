@@ -52,8 +52,8 @@ class Dungeon5:
         ms_4_room = Location("D5 Master Stalfos 4", dungeon=5)
         ms_4_room_drop2 = Location(dungeon=5).add(HookshotDrop()) # hookshot
         pre_boss_room = Location("D5 Hallway Before Boss", dungeon=5)
-        boss_room = Location("D5 Boss Room", dungeon=5)
-        boss = Location(dungeon=5).add(HeartContainer(0x185), Instrument(0x182)) # heart container, instrument
+        boss_room = Location("D5 Boss Room", dungeon=5).add(HeartContainer(0x185)) # heart container
+        instrument = Location("D5 Instrument Room", dungeon=5).add(Instrument(0x182)) # wind marimba
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -113,7 +113,7 @@ class Dungeon5:
         ms_4_room.connect(ms_4_room_drop2, r.enemy_requirements["MASTER_STALFOS"]) # Master Stalfos Fight 4 <--> Master Stalfos Item
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT) # After Boss Keyblock <--> Hallway Before Boss
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY5) # Hallway Before Boss <--> Boss Room
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[4]]) # Boss Room <--> Boss Rewards
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[4]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             statue_room.connect(after_blade_trap, FEATHER) # jump past the blade traps
@@ -161,7 +161,7 @@ class Dungeon5:
             spark_hallway.connect(pre_boss_room, r.super_jump_sword) # cross pits room from bottom left to top left by superjump from bottom wall to land on outcropping, then jump across
 
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon5:

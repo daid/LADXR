@@ -41,8 +41,9 @@ class Dungeon4:
         outside_b_passage_shallows = Location("D4 Shallow Water By Boss Passageway", dungeon=4)
         after_b_passage = Location("D4 After Boss Passageway", dungeon=4)
         pre_boss_room = Location("D4 Before Boss Door", dungeon=4)
-        boss_room = Location("D4 Boss Room", dungeon=4)
-        boss = Location("D4 Boss Rewards", dungeon=4).add(HeartContainer(0x166), Instrument(0x162)) #heart container, instrument
+        pre_boss = Location("D4 Before Boss Stairs", dungeon=4)
+        boss_room = Location("D4 Boss Room", dungeon=4).add(HeartContainer(0x166)) # heart container
+        instrument = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162)) # surf harp
 
         # owl statues
 
@@ -93,8 +94,9 @@ class Dungeon4:
         before_miniboss.connect(outside_b_passage_shallows, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
         before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: r.attack_hookshot not required. Move it to casual  or move flippers only method to hard
         after_b_passage.connect(pre_boss_room, None) # After Boss Passageway <--> Before Boss Door
-        pre_boss_room.connect(boss_room, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Boss Rewards
+        pre_boss_room.connect(pre_boss, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
+        pre_boss.connect(boss_room, None) # logic prep for staircase rando
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(north_crossroads, r.tight_jump) # jump across the corners
@@ -125,7 +127,7 @@ class Dungeon4:
             #TODO: outside_b_passage_shallows.connect(before_b_passage, r.super_jump_feather) # [logic prep for staircase rando]
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(after_a_passage, r.super_bump, one_way=True) # wall clip and super bump off tektite to land on boss key ledge
+            #TODO: entrance.connect(after_a_passage, AND(wall_clip, r.super_bump), one_way=True) # wall clip and super bump off tektite to land on boss key ledge
             entrance.connect(east_crossroads, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into block, bonk/jump across gap, and hookshot spam to get across
             entrance.connect(north_crossroads, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into block, bonk/jump up, and hookshot spam to get across (easier with Piece of Power)
             entrance.connect(south_crossroads, OR(r.pit_buffer_boots, AND(r.pit_buffer, r.hookshot_spam_pit))) # #TODO: change to AND(r.pit_buffer, OR(r.pit_buffer_boots, r.hookshot_spam_pit))
@@ -147,7 +149,7 @@ class Dungeon4:
             south_tile_puzzle.connect(pre_boss_room, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon4:

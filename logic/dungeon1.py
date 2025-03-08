@@ -24,8 +24,8 @@ class Dungeon1:
         east_room_chest6 = Location(dungeon=1).add(DungeonChest(0x10A)) # stone beak
         miniboss_room = Location("D1 Miniboss", dungeon=1)
         fourblade_room = Location("D1 After Miniboss", dungeon=1)
-        boss_room = Location("D1 Boss Room", dungeon=1)
-        boss = Location("D1 Boss Rewards", dungeon=1).add(HeartContainer(0x106), Instrument(0x102)) # heart container, instrument
+        boss_room = Location("D1 Boss Room", dungeon=1).add(HeartContainer(0x106)) # heart container
+        instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -51,21 +51,21 @@ class Dungeon1:
         east_room.connect(miniboss_room, FEATHER) # East Area <--> Miniboss Room
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss
         fourblade_room.connect(boss_room, NIGHTMARE_KEY1) # After Miniboss <--> Boss Room
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Boss Rewards
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"]) # stalfos jump away when you press a button.
 
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(main_room_chest5, r.super_jump_feather)  # super jump
-            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # TODO: check if pit buffering actually lets you past the pit? - damage boost or buffer or mushroom pause over the pit to cross 
+            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # itemless pit buffer to miniboss door 
         
         if options.logic == 'hell':
             main_room.connect(main_room_chest5, AND(r.damage_boost, FOUND(KEY1, 3))) # damage boost off the hardhat to cross the pit
             north_room.connect(feather_room, SWORD) # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon1:
