@@ -6,8 +6,6 @@ from locations.all import *
 class Dungeon7:
     def __init__(self, options, world_setup, r):
 
-        class Dungeon7:
-    def __init__(self, options, world_setup, r):
         entrance = Location("D7 Entrance", dungeon=7)
         first_key = Location(dungeon=7).add(DroppedKey(0x210)).connect(entrance, r.enemy_requirements["LIKE_LIKE"])
         topright_pillar_area = Location("D7 Ball Room", dungeon=7).connect(entrance, KEY7)
