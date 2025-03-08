@@ -49,7 +49,7 @@ class Dungeon7:
         pre_boss_room = Location("D7 Before Boss", dungeon=7)
         boss_room = Location("D7 Boss Room", dungeon=7)
         boss_room_drop3 = Location(dungeon=7).add(HeartContainer(0x223)) # heart container
-        boss = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
+        instrument = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -117,7 +117,7 @@ class Dungeon7:
         pre_boss_room.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
         pre_boss_room.connect(boss_room, None) # Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Heart Container
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Instrument Room
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Instrument Room
 
         # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
@@ -165,7 +165,7 @@ class Dungeon7:
 
         
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon7:

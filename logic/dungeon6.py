@@ -55,7 +55,7 @@ class Dungeon6:
         pre_boss_room = Location("D6 Room Before Boss", dungeon=6)
         boss_room = Location("D6 Boss Room", dungeon=6)
         boss_room_drop3 = Location(dungeon=6).add(HeartContainer(0x1BC)) # heart container
-        boss = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
+        instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
     
         if raft_game_chest:
             Location().add(Chest(0x06C)).connect(top_left_room, POWER_BRACELET) # seashell chest in raft game
@@ -126,7 +126,7 @@ class Dungeon6:
         laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])) # Laser Turret Room <--> Room Before Boss
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6) # Room Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Heart Container
-        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Instrument Room
+        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
@@ -156,7 +156,7 @@ class Dungeon6:
             waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
 
         self.entrance = entrance
-        self.final_room = boss
+        self.final_room = instrument
 
 
 class NoDungeon6:
