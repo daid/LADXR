@@ -58,7 +58,7 @@ class Dungeon3:
         pre_boss_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
         boss_room = Location("D3 Boss Room", dungeon=3)
         boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
-        instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
+        boss = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -122,7 +122,7 @@ class Dungeon3:
         pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop8, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Heart Container
-        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Instrument Room
+        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Instrument Room
 
         # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
@@ -176,7 +176,7 @@ class Dungeon3:
             #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
         self.entrance = entrance
-        self.final_room = instrument
+        self.final_room = boss
 
 
 class NoDungeon3:

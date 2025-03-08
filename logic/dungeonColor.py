@@ -26,7 +26,7 @@ class DungeonColor:
         switch_room = Location("D0 Room Before Boss", dungeon=0)
         pre_boss = Location("D0 Outside Boss Door", dungeon=0)
         boss_room = Location("D0 Boss Room", dungeon=0)
-        fairy = Location("D0 Fairy Room", dungeon=0).add(TunicFairy(0), TunicFairy(1)) # red tunic, blue tunic
+        boss = Location("D0 Fairy Room", dungeon=0).add(TunicFairy(0), TunicFairy(1)) # red tunic, blue tunic
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -53,7 +53,7 @@ class DungeonColor:
         fourzol_room.connect(switch_room, AND(KEY0, FOUND(KEY0, 3))) # Four Zol Room <--> Room Before Boss
         switch_room.connect(pre_boss, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER))) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY0) # Outside Boss Door <--> Boss Room
-        boss_room.connect(fairy, r.boss_requirements[world_setup.boss_mapping[8]]) # Boss Room <--> Fairy Room
+        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[8]]) # Boss Room <--> Fairy Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(main_room, r.throw_pot) # throw pots to kill karakoro
@@ -68,7 +68,7 @@ class DungeonColor:
             north_room.connect(north_room_drop2, OR(BOMB, r.shield_bump)) # shield bump or bomb four socket karakoro into the holes
             
         self.entrance = entrance
-        self.final_room = fairy
+        self.final_room = boss
 
 
 class NoDungeonColor:

@@ -26,7 +26,7 @@ class Dungeon1:
         fourblade_room = Location("D1 After Miniboss", dungeon=1)
         boss_room = Location("D1 Boss Room", dungeon=1)
         boss_room_drop2 = Location(dungeon=1).add(HeartContainer(0x106)) # heart container
-        instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
+        boss = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -53,7 +53,7 @@ class Dungeon1:
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss
         fourblade_room.connect(boss_room, NIGHTMARE_KEY1) # After Miniboss <--> Boss Room
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Moldorm Heart Container
-        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Instrument Room
+        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"]) # stalfos jump away when you press a button.
@@ -67,7 +67,7 @@ class Dungeon1:
             north_room.connect(feather_room, SWORD) # keep slashing the spiked beetles until they keep moving 1 pixel close towards you and the pit, to get them to fall
             
         self.entrance = entrance
-        self.final_room = instrument
+        self.final_room = boss
 
 
 class NoDungeon1:

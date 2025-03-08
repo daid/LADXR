@@ -44,7 +44,7 @@ class Dungeon4:
         pre_boss = Location("D4 Before Boss Stairs", dungeon=4)
         boss_room = Location("D4 Boss Room", dungeon=4)
         boss_room_drop2 = Location(dungeon=4).add(HeartContainer(0x166)) # heart container
-        instrument = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162)) # surf harp
+        boss = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162)) # surf harp
 
         # owl statues
 
@@ -98,7 +98,7 @@ class Dungeon4:
         pre_boss_room.connect(pre_boss, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
         pre_boss.connect(boss_room, None) # logic prep for staircase rando
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Heart Container
-        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Instrument Room
+        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(north_crossroads, r.tight_jump) # jump across the corners
@@ -151,7 +151,7 @@ class Dungeon4:
             south_tile_puzzle.connect(pre_boss_room, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance
-        self.final_room = instrument
+        self.final_room = boss
 
 
 class NoDungeon4:

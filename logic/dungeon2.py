@@ -38,7 +38,7 @@ class Dungeon2:
         pre_boss = Location("D2 Outside Boss Door", dungeon=2)
         boss_room = Location("D2 Boss Room", dungeon=2)
         boss_room_drop2 = Location(dungeon=2).add(HeartContainer(0x12B)) # heart container
-        instrument = Location("D2 Instrument Room", dungeon=2).add(Instrument(0x12a)) # conch horn
+        boss = Location("D2 Instrument Room", dungeon=2).add(Instrument(0x12a)) # conch horn
         
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
@@ -77,7 +77,7 @@ class Dungeon2:
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Heart Container
-        boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Instrument Room
+        boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Instrument Room
 
         # connections
         if options.logic == "casual":
@@ -107,7 +107,7 @@ class Dungeon2:
             pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: Change AND to OR - use boots bonk on south wall and again on floating walkway to get to boss door, alternatively, hookshot spam
             
         self.entrance = entrance
-        self.final_room = instrument
+        self.final_room = boss
 
 
 class NoDungeon2:
