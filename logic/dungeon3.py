@@ -122,11 +122,12 @@ class Dungeon3:
         pre_boss.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
         boss_room.connect(boss, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Boss Rewards
 
+        # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
-            west_4way.connect(before_a_stairs, KEY3)
+            west_4way.connect(center_4way, KEY3)
             west_4way_drop2.items[0].forced_item = KEY3
-            south_4way.connect(before_a_stairs, KEY3)
+            south_4way.connect(center_4way, KEY3)
             south_4way_drop1.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
@@ -171,9 +172,6 @@ class Dungeon3:
             #TODO: towards_boss4.connect(three_pairodd_room, r.toadstool_bounce_2d_hell) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
             towards_boss4.connect(three_pairodd_room, AND(r.enemy_requirements["PAIRODD"], r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
-            
-        #TODO: if options.nagmessages == True: # is this possible along with magpie at the moment?
-            #towards_boss3.connect(towards_boss4, None)
 
         self.entrance = entrance
         self.final_room = boss

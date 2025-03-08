@@ -246,8 +246,8 @@ def isConsumable(item) -> bool:
         return False
     if item.startswith("RUPEES_") or item == "RUPEES":
         return True
-    if item.startswith("KEY"):
-        return True
+    #if item.startswith("KEY"):
+        #return True
     return False
 
 
@@ -278,15 +278,15 @@ class RequirementsSettings:
         self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
-        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots dash into wall for unclipped superjump
+        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
         self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
         self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
-        self.super_bump_boots = AND(SHIELD, PEGASUS_BOOTS, self.running_turn)
         self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.boots_superbump = AND(PEGASUS_BOOTS, self.running_turn, self.shield_bump)
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions

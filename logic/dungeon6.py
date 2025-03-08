@@ -152,11 +152,6 @@ class Dungeon6:
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
             waterway.connect(waterway_west_ledge, r.super_jump_feather, one_way=True)
             waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
-            
-        #TODO: add text clips
-            # Key block by hookshot_block
-            # Key block by after_b_passage
-            # Add casual logic
 
         self.entrance = entrance
         self.final_room = boss

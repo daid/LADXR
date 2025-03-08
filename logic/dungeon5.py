@@ -136,8 +136,6 @@ class Dungeon5:
             after_c_passage.connect(spark_hallway, r.super_jump_boots) # charge a boots dash in bottom right corner to the right, jump before hitting the wall and use weapon to turn left before hitting the wall
             #TODO: north_crossroads.connect(ms_3_room, OR(OR(SWORD, BOMB), AND(OR(r.super_jump_boots, POWER_BRACELET), r.enemy_requirements["HIDING_ZOL"])) # glitched logic to clear room before ms3
             #TODO: west_crossroads.connect(ms_3_room, AND(FEATHER, r.enemy_requirements["HIDING_ZOL"])) # glitched logic to clear room before ms3
-            #TODO: if options.nagmessages == True: # is this possible along with magpie at the moment?
-                #after_c_passage.connect(spark_hallway, AND(r.text_clip, r.super_jump)) # use the keyblock to get a wall clip in right wall to perform a superjump over the pushable block
             
         if  options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer_boots) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
