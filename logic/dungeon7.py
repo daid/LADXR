@@ -19,7 +19,7 @@ class Dungeon7:
         after_c_stairs_chest2 = Location(dungeon=7).add(DungeonChest(0x211)) # compass
         before_d_stairs = Location("D7 Peg Locked Staircase", dungeon=7)
         after_d_stairs = Location("D7 Hinox Area", dungeon=7)
-        after_d_stairs_drop1 = Location(dungeon=7).add(DroppedKey(0x21B)) # small key
+        after_d_stairs_drop2 = Location(dungeon=7).add(DroppedKey(0x21B)) # small key
         east_ledge = Location("D7 East Beamos Ledge", dungeon=7)
         east_ledge_chest3 = Location(dungeon=7).add(DungeonChest(0x204))
         west_ledge = Location("D7 West Kirby Ledge", dungeon=7)
@@ -47,7 +47,8 @@ class Dungeon7:
         conveyor_room = Location("D7 Conveyor Horseheads Room", dungeon=7)
         conveyor_room_chest9 = Location(dungeon=7).add(DungeonChest(0x220)) # medicine
         pre_boss_room = Location("D7 Before Boss", dungeon=7)
-        boss_room = Location("D7 Boss Room", dungeon=7).add(HeartContainer(0x223)) # heart container
+        boss_room = Location("D7 Boss Room", dungeon=7)
+        boss_room_drop3 = Location(dungeon=7).add(HeartContainer(0x223)) # heart container
         instrument = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
 
         # owl statues
@@ -84,7 +85,7 @@ class Dungeon7:
         #TODO: west_ledge.connect(before_b_stairs, None, one_way=True) # West Kirby Ledge --> First Floor Main Area #[logic prep for staircase rando]
         #TODO: west_ledge.connect(entrance, None, one_way=True) # West Kirby Ledge --> Entrance #[logic prep for staircase rando]
         west_ledge.connect(west_ledge_chest4, None) # West Kirby Ledge <--> Kirby Ledge Chest
-        after_d_stairs.connect(after_d_stairs_drop1, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Kinox Key
+        after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Kinox Key
         after_d_stairs.connect(keylock_ledge, AND(KEY7, FOUND(KEY7, 3))) # Hinox Area <--> Key Locked Ledge
         after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: replace with "NEW VERSION" below
         #TODO: after_a_stairs.connect(pegs_after_a_stairs, BOOMERANG) # Ball Room <--> On Pegs Around Ches # NEW VERSION
@@ -115,6 +116,7 @@ class Dungeon7:
         after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
         pre_boss_room.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
         pre_boss_room.connect(boss_room, None) # Before Boss <--> Boss Room
+        boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Instrument Room
 
         # key logic patch
@@ -158,7 +160,7 @@ class Dungeon7:
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
             final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
-            pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
+            #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
             
 
         

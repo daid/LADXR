@@ -52,7 +52,8 @@ class Dungeon5:
         ms_4_room = Location("D5 Master Stalfos 4", dungeon=5)
         ms_4_room_drop2 = Location(dungeon=5).add(HookshotDrop()) # hookshot
         pre_boss_room = Location("D5 Hallway Before Boss", dungeon=5)
-        boss_room = Location("D5 Boss Room", dungeon=5).add(HeartContainer(0x185)) # heart container
+        boss_room = Location("D5 Boss Room", dungeon=5)
+        boss_room_drop3 = Location(dungeon=5).add(HeartContainer(0x185)) # heart container
         instrument = Location("D5 Instrument Room", dungeon=5).add(Instrument(0x182)) # wind marimba
 
         # owl statues
@@ -113,6 +114,7 @@ class Dungeon5:
         ms_4_room.connect(ms_4_room_drop2, r.enemy_requirements["MASTER_STALFOS"]) # Master Stalfos Fight 4 <--> Master Stalfos Item
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT) # After Boss Keyblock <--> Hallway Before Boss
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY5) # Hallway Before Boss <--> Boss Room
+        boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[4]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[4]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':

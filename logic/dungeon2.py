@@ -36,7 +36,8 @@ class Dungeon2:
         before_c_passage = Location("D2 Boss Passageway", dungeon=2)
         pre_boss_room = Location("D2 Room Before Boss", dungeon=2)
         pre_boss = Location("D2 Outside Boss Door", dungeon=2)
-        boss_room = Location("D2 Boss Room", dungeon=2).add(HeartContainer(0x12B)) # heart container
+        boss_room = Location("D2 Boss Room", dungeon=2)
+        boss_room_drop2 = Location(dungeon=2).add(HeartContainer(0x12B)) # heart container
         instrument = Location("D2 Instrument Room", dungeon=2).add(Instrument(0x12a)) # conch horn
         
         # owl statues
@@ -75,6 +76,7 @@ class Dungeon2:
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
+        boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Instrument Room
 
         # connections

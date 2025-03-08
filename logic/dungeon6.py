@@ -53,7 +53,8 @@ class Dungeon6:
         vacuum_room = Location("D6 Vacuum Room", dungeon=6)
         laser_turret_room = Location("D6 Laser Turret Room", dungeon=6)
         pre_boss_room = Location("D6 Room Before Boss", dungeon=6)
-        boss_room = Location("D6 Boss Room", dungeon=6).add(HeartContainer(0x1BC)) # heart container
+        boss_room = Location("D6 Boss Room", dungeon=6)
+        boss_room_drop3 = Location(dungeon=6).add(HeartContainer(0x1BC)) # heart container
         instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
     
         if raft_game_chest:
@@ -124,6 +125,7 @@ class Dungeon6:
         vacuum_room.connect(laser_turret_room, r.enemy_requirements["HIDING_ZOL"]) # Vacuum Room <--> Laser Turret Room #TODO: move kill requirement to casual logic, HIDING_ZOL left in to make logic match stable
         laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])) # Laser Turret Room <--> Room Before Boss
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6) # Room Before Boss <--> Boss Room
+        boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
@@ -144,7 +146,7 @@ class Dungeon6:
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(second_elephant_room, OR(r.super_poke, r.super_bump)) # super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
+            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) # can boots superhop to pass both the mimic room and the 3 wizrobe room
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) # stun mask mimic, then pick it up and throw it against the top wall so it lands on top of the switch with enough delay to get past the top raised blocks
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: (I think this is not possible in reverse?) use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)

@@ -24,7 +24,8 @@ class Dungeon1:
         east_room_chest6 = Location(dungeon=1).add(DungeonChest(0x10A)) # stone beak
         miniboss_room = Location("D1 Miniboss", dungeon=1)
         fourblade_room = Location("D1 After Miniboss", dungeon=1)
-        boss_room = Location("D1 Boss Room", dungeon=1).add(HeartContainer(0x106)) # heart container
+        boss_room = Location("D1 Boss Room", dungeon=1)
+        boss_room_drop2 = Location(dungeon=1).add(HeartContainer(0x106)) # heart container
         instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
 
         # owl statues
@@ -51,6 +52,7 @@ class Dungeon1:
         east_room.connect(miniboss_room, FEATHER) # East Area <--> Miniboss Room
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss
         fourblade_room.connect(boss_room, NIGHTMARE_KEY1) # After Miniboss <--> Boss Room
+        boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Moldorm Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[0]]) # Boss Room <--> Instrument Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':

@@ -56,7 +56,8 @@ class Dungeon3:
         three_pairodd_room = Location("D3 Three Pairodd Room", dungeon=3)
         pre_boss_room = Location("D3 Room Before Boss", dungeon=3)
         pre_boss_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
-        boss_room = Location("D3 Boss Room", dungeon=3).add(HeartContainer(0x15A)) # heart container
+        boss_room = Location("D3 Boss Room", dungeon=3)
+        boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
         instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
 
         # owl statues
@@ -120,6 +121,7 @@ class Dungeon3:
         three_pairodd_room.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
         pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
+        boss_room.connect(boss_room_drop8, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Instrument Room
 
         # key logic patch
@@ -161,7 +163,7 @@ class Dungeon3:
             west_4way.connect(west_4way_drop2, r.shield_bump) # knock everything into the pit including the teleporting owls
             south_4way.connect(south_4way_drop1, r.shield_bump) # knock everything into the pit including the teleporting owls
             #TODO: main_room.connect(fenced_walkway, r.super_bump) # super bump off zols to go past pushblock to the fenced walkway
-            #TODO: ledge_pre_pit.connect(ledge_post_pit, r.shield_bump) # shield bump stalfos multiple times to get around pits to nightmare key
+            #TODO: ledge_pre_pit.connect(ledge_post_pit, r.ledge_super_bump) # shield bump stalfos multiple times to get around pits to nightmare key
             main_room.connect(ledge_pre_pit, AND(r.super_jump_feather, r.shield_bump)) # superjump into jumping stalfos and shield bump to right ledge
             big_pit_room.connect(ledge_pre_pit, r.pit_buffer_boots) # boots bonk across the pits with pit buffering and then hookshot or shield bump to the chest
             #TODO: big_pit_room.connect(ledge_pre_pit, r.hookshot_spam_pit) # hookshot spam to get across 3 block pit and then you can hookshot to nightmare key chest [VERYHARD] - Tracker Hell?
