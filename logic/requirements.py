@@ -277,6 +277,7 @@ class RequirementsSettings:
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
         self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
+        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
@@ -313,7 +314,6 @@ class RequirementsSettings:
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
-        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
