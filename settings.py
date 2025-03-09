@@ -6,7 +6,8 @@ class Setting:
     def __init__(self, key: str,
                  category: str, short_key: str, label: str, *,
                  description: str, multiworld: bool = True, aesthetic: bool = False, options: Optional[List[Tuple[str, str, str]]] = None,
-                 default: Optional[Union[bool, float, str]] = None, placeholder: Optional[str] = None):
+                 default: Optional[Union[bool, float, str]] = None, placeholder: Optional[str] = None,
+                 visible_if: Optional[List[str]] = None):
         if options:
             assert default in [option_key for option_key, option_short, option_label in options], f"{default} not in {options}"
             short_options = set()
@@ -25,6 +26,7 @@ class Setting:
         self.options = options
         self.default = default
         self.placeholder = placeholder
+        self.visible_if = visible_if
 
         self.value = default
 
@@ -64,6 +66,8 @@ class Setting:
             result["options"] = [{"key": option_key, "short": option_short, "label": option_label} for option_key, option_short, option_label in self.options]
         if self.placeholder:
             result["placeholder"] = self.placeholder
+        if self.visible_if:
+            result["visible_if"] = self.visible_if
         return result
 
 
@@ -150,28 +154,29 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location
 If random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances."""),
             Setting('shufflejunk', 'Entrances', 'j', 'Shuffle itemless entrances', default=False,
-                description="Caves/houses without items are also randomized when entranceshuffle is set"),
+                description="Caves/houses without items are also randomized when entranceshuffle is set",
+                visible_if=['entranceshuffle', "simple", "split", "mixed", "wild", "chaos", "insane", "madness"]),
             Setting('shuffleannoying', 'Entrances', 'a', 'Shuffle annoying entrances', default=False,
-                description="A few very annoying entrances (Mamu and the Raft House) will also be randomized when entranceshuffle is set"),
+                description="A few very annoying entrances (Mamu and the Raft House) will also be randomized when entranceshuffle is set",
+                visible_if=['entranceshuffle', "simple", "split", "mixed", "wild", "chaos", "insane", "madness"]),
             Setting('shufflewater', 'Entrances', 'w', 'Shuffle water entrances', default=False,
-                description="Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entranceshuffle is set. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works)."),
+                description="Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entranceshuffle is set. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works).",
+                visible_if=['entranceshuffle', "simple", "split", "mixed", "wild", "chaos", "insane", "madness"]),
             Setting('boss', 'Gameplay', 'B', 'Boss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon bosses that each dungeon has'),
             Setting('miniboss', 'Gameplay', 'b', 'Miniboss shuffle', options=[('default', '', 'Normal'), ('shuffle', 's', 'Shuffle'), ('random', 'r', 'Randomize')], default='default',
                 description='Randomizes the dungeon minibosses that each dungeon has'),
             Setting('enemies', 'Gameplay', 'e', 'Enemizer', options=[('default', '', 'None'), ('overworld', 'o', 'Overworld')], default='default',
                 description='Randomizes which enemies are placed'),
-            Setting('goal', 'Gameplay', 'G', 'Goal', options=[('8', '8', '8 instruments'), ('7', '7', '7 instruments'), ('6', '6', '6 instruments'),
-                                                         ('5', '5', '5 instruments'), ('4', '4', '4 instruments'), ('3', '3', '3 instruments'),
-                                                         ('2', '2', '2 instruments'), ('1', '1', '1 instrument'), ('0', '0', 'No instruments'),
-                                                         ('open', 'O', 'Egg already open'), ('random', 'R', 'Random instrument count'),
+            Setting('goal', 'Gameplay', 'G', 'Goal', options=[('vanilla', 'v', 'Vanilla'), ('instruments', 'i', 'X instruments'),
+                                                         ('open', 'O', 'Egg already open'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
                                                          ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='8',
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='vanilla',
                 description="""Changes the goal of the game.
-[1-8 instruments], number of instruments required to open the egg.
-[No instruments] open the egg without instruments, still requires the ocarina with the balled of the windfish
+[Vanilla], 8 instruments required to open the egg.
+[X instruments], a number of instruments required to open the egg.
 [Egg already open] the egg is already open, just head for it once you have the items needed to defeat the boss.
 [Randomized instrument count] random number of instruments required to open the egg, between 0 and 8.
 [Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.
@@ -180,6 +185,13 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!
 [Bingo-25] Bingo, but need to fill the whole bingo card to win!
 [Sign Maze] Go on a long trip on the overworld sign maze to open the egg."""),
+            Setting('goalcount', 'Gameplay', 'i', 'Goal count', options=[('7', '7', '7 instruments'),
+                    ('6', '6', '6 instruments'), ('5', '5', '5 instruments'), ('4', '4', '4 instruments'),
+                    ('3', '3', '3 instruments'), ('2', '2', '2 instruments'), ('1', '1', '1 instrument'),
+                    ('0', '0', 'No instruments'), ('random', 'R', 'Random instrument count')], default='4',
+                description="""Amount of instruments to find for the instruments goal.""",
+                visible_if=["goal", "instruments"],
+            ),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
                 description="""Effects which items are shuffled.
 [Casual] places more inventory and key items so the seed is easier.

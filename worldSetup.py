@@ -40,7 +40,8 @@ class WorldSetup:
             "moblin_cave": "MOBLIN_KING",
             "armos_temple": "ARMOS_KNIGHT",
         }
-        self.goal = None
+        self.goal = "vanilla"
+        self.goal_count = 8
         self.bingo_goals = None
         self.sign_maze = None
         self.multichest = RUPEES_20
@@ -236,13 +237,8 @@ class WorldSetup:
                 if settings.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
 
-        if settings.goal == 'random':
-            self.goal = rnd.randint(-1, 8)
-        elif settings.goal == 'open':
-            self.goal = -1
-        elif settings.goal in {"seashells", "bingo", "bingo-double", "bingo-triple", "bingo-full"}:
-            self.goal = settings.goal
-        elif settings.goal in {"maze"}:
+        self.goal = settings.goal
+        if settings.goal in {"maze"}:
             self.goal = settings.goal
             self.sign_maze = maze.buildMaze(rnd)
         elif settings.goal == "specific":
@@ -253,9 +249,15 @@ class WorldSetup:
             a, b = settings.goal.split("-")
             if a == "open":
                 a = -1
-            self.goal = rnd.randint(int(a), int(b))
-        else:
-            self.goal = int(settings.goal)
+            self.goal = 'instruments'
+            self.goal_count = rnd.randint(int(a), int(b))
+        elif settings.goal == 'instruments':
+            if settings.goalcount == 'random':
+                self.goal_count = rnd.randint(-1, 8)
+                if self.goal_count < 0:
+                    self.goal = 'open'
+            else:
+                self.goal_count = int(settings.goalcount)
         if self.goal in {"bingo", "bingo-double", "bingo-triple", "bingo-full"}:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 

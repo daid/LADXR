@@ -276,10 +276,12 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
     elif world_setup.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
-    elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
+    elif world_setup.goal.startswith("="):
         patches.goal.setSpecificInstruments(rom, [int(c) for c in world_setup.goal[1:]])
+    elif world_setup.goal == "open":
+        patches.goal.setRequiredInstrumentCount(rom, -1)
     else:
-        patches.goal.setRequiredInstrumentCount(rom, world_setup.goal)
+        patches.goal.setRequiredInstrumentCount(rom, world_setup.goal_count)
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)
