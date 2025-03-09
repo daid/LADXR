@@ -75,14 +75,14 @@ class Dungeon6:
         entrance.connect(dark_room, BOMB) # Entrance <--> Dark Room
         dark_room.connect(before_a_passage, r.enemy_requirements["HIDING_ZOL"]) # Dark Room <--> Dark Room Stairs Spawn
         before_a_passage.connect(after_a_passage, FEATHER) # Dark Room Stairs Spawn <--> South of L2 Bracelet Chest
-        after_a_passage.connect(bracelet_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # South of L2 Bracelet Chest <--> 
+        after_a_passage.connect(bracelet_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # South of L2 Bracelet Chest <--> Bracelet Room
         bracelet_room.connect(bracelet_room_chest3, None) # Bracelet Room <--> L2 Bracelet Chest
         bracelet_room.connect(entrance, COUNT(POWER_BRACELET, 2), one_way=True) # Bracelet Room --> Entrance
         entrance.connect(wizrobe_switch_room, POWER_BRACELET) # Entrance <--> Wizrobe Switch Room
+        entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) #TODO: delete in favor of casual logic commented out below
         wizrobe_switch_room.connect(wizrobe_switch_room_chest4, r.enemy_requirements["WIZROBE"]) # Wizrobe Switch Room <--> Three Wizrobe, Switch Chest #TODO: 12-arrow room if got here with only bracelet+bow
-        entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) # Entrance <--> 
         south_star_area.connect(south_star_area_chest5, None) # Before Northwest Area <--> Stairs Across Statues Chest
-        south_star_area.connect(star_area, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) #  <--> 
+        south_star_area.connect(star_area, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) # Before Northwest Area <--> Northwest Area
         star_area.connect(south_star_area, None, one_way=True) # Northwest Area --> Before Northwest Area
         star_area.connect(star_area_chest6, None) # Northwest Area <--> Switch, Star Above Statues Chest
         star_area.connect(star_area_drop1, OR(r.enemy_requirements["WIZROBE"], BOW)) # Northwest Area <--> Two Wizrobe Key
@@ -128,12 +128,21 @@ class Dungeon6:
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Instrument Room
 
+        #TODO: if options.logic == "casual":
+            #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, BOMB)) # Entrance <--> Before Northwest Area # diagonal boomerang throw removed for casual
+            #TODO: spark_pot_maze.connect(top_right_room,AND(POWER_BRACELET) OR(FEATHER, AND((r.enemy_requirements["SPARK_COUNTER_CLOCKWISE"]), (r.enemy_requirements["SPARK_CLOCKWISE"])))) # give the player a way to deal with sparks
+
+        #TODO: else:
+            #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) # Entrance <--> Before Northwest Area
+            #TODO: spark_pot_maze.connect(top_right_room, POWER_BRACELET) # Spark & Pot Maze <--> Northeast Horse Head Room # it's possible to get through without taking damage
+
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True)
             after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True)
             before_c_passage.connect(after_c_passage, None) # damage_boost past the mini_thwomps
             dodongo_room.connect(before_c_passage, r.boots_bonk) # boots bonk to escape dodongo room NE corner
+            #TODO: spark_pot_maze.connect(top_right_room, AND(POWER_BRACELET)) #[logic prep for staircase rando] # it's possible to pass through the room with only bracelet and not take damage, but it's hard
             
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(second_elephant_room, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
@@ -146,7 +155,7 @@ class Dungeon6:
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
+            entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, TOADSTOOL), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) # can boots superhop to pass both the mimic room and the 3 wizrobe room
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) # stun mask mimic, then pick it up and throw it against the top wall so it lands on top of the switch with enough delay to get past the top raised blocks
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: (I think this is not possible in reverse?) use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)

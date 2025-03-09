@@ -43,6 +43,7 @@ class Dungeon7:
         miniboss_room = Location("D7 Miniboss Room", dungeon=7)
         after_miniboss_room = Location("D7 After Miniboss Room", dungeon=7)
         after_miniboss_room_chest8 = Location(dungeon=7).add(DungeonChest(0x224)) # nightmare key
+        boss_backdoor = Location("D7 Boss Backdoor Room", dungeon=7)
         after_boss_door = Location("D7 After Boss Door", dungeon=7)
         conveyor_room = Location("D7 Conveyor Horseheads Room", dungeon=7)
         conveyor_room_chest9 = Location(dungeon=7).add(DungeonChest(0x220)) # medicine
@@ -71,10 +72,9 @@ class Dungeon7:
         se_pillar.connect(before_c_stairs, OR(r.hit_switch, FEATHER)) # Southeast Pillar Area <--> Two Peahat, Moldorm Room
         before_c_stairs.connect(after_c_stairs, None) # Two Peahat, Moldorm Room <--> North Three-of-a-Kind Puzzle
         after_c_stairs.connect(after_c_stairs_chest2, r.enemy_requirements["THREE_OF_A_KIND"]) # North Three-of-a-Kind Puzzle <-->  #TODO: When ROM patched to reset ball on S&Q in ROM, then add bracelet method
-        after_c_stairs.connect(spike_corridor, FEATHER) # North Three-of-a-Kind Puzzle <--> Between Pillar Pushbocks
+        after_c_stairs.connect(spike_corridor, FEATHER) # [logic prep for staircase rando]
         spike_corridor.connect(se_pillar, FEATHER, one_way=True) # Between Pillar Pushbocks --> Southeast Pillar Area
         nw_pillar.connect(spike_corridor, FEATHER, one_way=True) # Northwest Pillar Area --> Between Pillar Pushbocks
-        after_a_stairs.connect(after_d_stairs, BOOMERANG) #  <--> Hinox Area # only boomerang can hit first switch when you haven't gotten to pillars (like in potential casual logic)
         se_pillar.connect(before_b_stairs, None) # Southeast Pillar Area <--> First Floor Main Area # drop down pit
         before_b_stairs.connect(before_d_stairs, r.hit_switch) # First Floor Main Area <--> Peg Locked Staircase # you can get from the spike switch to the D staircase with just walking carefully (can L1 sword hit this switch damageless?)
         before_d_stairs.connect(after_d_stairs, None) # Peg Locked Staircase <--> Hinox Area
@@ -111,6 +111,8 @@ class Dungeon7:
         miniboss_room.connect(after_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[6]]) # Miniboss Room <--> After Miniboss Room
         after_miniboss_room.connect(after_miniboss_room_chest8, None) # After Miniboss Room <--> Nightmare Key/After Grim Creeper Chest
         final_pillar_fallen.connect(after_boss_door, NIGHTMARE_KEY7) # Final Pillar Destroyed <--> After Boss Door
+        final_pillar_fallen.connect(boss_backdoor, None) # Final Pillar Destroyed <--> Boss Backdoor Room
+        #TODO: boss_backdoor.connect(after_boss_door, AND(r.attack_hookshot_no_bomb, AND(KEY7, FOUND(KEY7, 3))))
         after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
         conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
         after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
@@ -124,10 +126,14 @@ class Dungeon7:
             entrance_drop1.items[0].forced_item = KEY7
 
         #TODO: if options.logic == "casual":
-            #TODO: after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area
+            #TODO: after_a_stairs.connect(ne_pillar, POWER_BRACELET) # intended method is to pull lever
         #TODO: else:
-            #TODO: after_a_stairs.connect(ne_pillar, POWER_BRACELET) # Ball Room <--> Northeast Pillar Area
-            
+            #TODO: after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area
+            #TODO: after_a_stairs.connect(after_d_stairs, BOOMERANG) # Ball Room <--> Hinox Area
+
+        #TODO if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
+            after_c_stairs.connect(spike_corridor, None) # [logic prep for staircase rando] # forced damage so cannot be in normal logic
+
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(before_b_stairs, r.super_jump_sword) # superjump in the center to get on raised blocks sword added to help since it has to be a low jump
             before_b_stairs.connect(east_ledge, r.super_jump_feather) # superjump in spike switch room to right ledge
@@ -159,6 +165,7 @@ class Dungeon7:
             #TODO: owl_ledge.connect(sw_pillar, r.pit_buffer_boots) 
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
             final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
+            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke, AND(HOOKSHOT, FEATHER, AND(KEY7, FOUND(KEY7, 3))))) #[logic prep for staircase rando] superjump and use sword or shield to rebount onto the pegs, feather to exit east side
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
             #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
             

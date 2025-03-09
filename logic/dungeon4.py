@@ -77,12 +77,12 @@ class Dungeon4:
         before_miniboss.connect(north_tile_puzzle, FLIPPERS) # Before Miniboss <--> Upper Tile Puzzle
         before_miniboss.connect(miniboss_room, AND(KEY4, FOUND(KEY4, 5))) # Before Miniboss <--> Miniboss Room - #TODO: change to one_way
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[3]]) # Miniboss Room <--> After Miniboss #TODO: change to one_way
-        after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # After Miniboss <--> Flippers Room
+        after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # After Miniboss <--> Flippers Room #TODO: DELETE and it's in casual logic statement
         flippers_room.connect(north_tile_puzzle, r.enemy_requirements["ZOL"]) # Flippers Room <--> Before Miniboss Room #TODO: change to one_way
         north_tile_puzzle.connect(flippers_room, None, one_way=True) # Flippers Room <--> Before Miniboss Room
         before_miniboss.connect(north_tile_puzzle, FLIPPERS) # Before Miniboss Room <--> Flippers Room
         #TODO: flippers_room.connect(after_miniboss, r.enemy_requirements["ZOL"], one_way=True) # [logic prep for staircase rando]
-        #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # [logic prep for staircase rando]
+        #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # [logic prep for staircase rando] #TODO: DELETE and it's in casual logic statement
         #TODO: miniboss_room.connect(before_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[3]], one_way=True) # [logic prep for staircase rando]
         flippers_room.connect(flippers_room_chest11, None) # Flippers Room <--> Flippers Chest
         north_tile_puzzle.connect(south_tile_puzzle, None, one_way=True)# Upper Tile Puzzle <--> Lower Tile Puzzle
@@ -93,12 +93,22 @@ class Dungeon4:
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS) # Lower Tile Puzzle Area <--> Outside Boss Passageway Keyblock
         outside_b_passage_keyblock.connect(before_b_passage, AND(KEY4, FOUND(KEY4, 5))) # Outside Boss Passageway Keyblock <--> Before Boss Passageway
         before_miniboss.connect(outside_b_passage_shallows, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
-        before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: r.attack_hookshot not required. Move it to casual  or move flippers only method to hard
+        before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: remove and let casual logic statement take care of it
         after_b_passage.connect(pre_boss_room, None) # After Boss Passageway <--> Before Boss Door
         pre_boss_room.connect(pre_boss, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
         pre_boss.connect(boss_room, None) # logic prep for staircase rando
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Instrument Room
+
+        #TODO: if options.logic == "casual":
+            #TODO: after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
+            #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
+            #TODO:before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but it's possible to get through wihtout damage which goes in normal logic
+
+        #TODO: else:
+            #TODO: after_miniboss.connect(flippers_room, None, one_way=True) # After Miniboss <--> Flippers Room
+            #TODO: after_miniboss.connect(miniboss_room, None, one_way=True) # After Miniboss <--> Miniboss Room
+            #TODO:before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> After Boss Passageway
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(north_crossroads, r.tight_jump) # jump across the corners
