@@ -190,8 +190,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                     ('3', '3', '3 instruments'), ('2', '2', '2 instruments'), ('1', '1', '1 instrument'),
                     ('0', '0', 'No instruments'), ('random', 'R', 'Random instrument count')], default='4',
                 description="""Amount of instruments to find for the instruments goal.""",
-                visible_if=["goal", "instruments"],
-            ),
+                visible_if=["goal", "instruments"]),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
                 description="""Effects which items are shuffled.
 [Casual] places more inventory and key items so the seed is easier.
@@ -227,6 +226,11 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
 [No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.
 [Dungeon Chain] Overworld is fully removed and all dungeons are chained together.
 [Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress."""),
+            Setting('dungeonchainlength', 'Special', 'd', 'Chain length', options=[
+                    ('3', '3', '3 Dungeons'), ('4', '4', '4 Dungeons'), ('5', '5', '5 Dungeons'),
+                    ('6', '6', '6 Dungeons'), ('7', '7', '7 Dungeons'), ('8', '8', '8 Dungeons')], default='5',
+                description="""Amount of dungeons in the dungeon chain.""",
+                visible_if=["overworld", "dungeonchain"]),
             Setting('owlstatues', 'Special', 'o', 'Owl statues', options=[('', '', 'Never'), ('dungeon', 'D', 'In dungeons'), ('overworld', 'O', 'On the overworld'), ('both', 'B', 'Dungeons and Overworld')], default='',
                 description='Replaces the hints from owl statues with additional randomized items'),
             Setting('keyholesanity', 'Special', 'K', 'Keyhole sanity', default=False,

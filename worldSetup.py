@@ -262,7 +262,7 @@ class WorldSetup:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         if settings.overworld == "dungeonchain":
-            self._buildDungeonChain(rnd)
+            self._buildDungeonChain(settings, rnd)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
@@ -271,19 +271,20 @@ class WorldSetup:
         self.one_on_one = settings.entranceshuffle not in {"madness"}
         self.pickEntrances(settings, rnd)
 
-    def _buildDungeonChain(self, rnd):
+    def _buildDungeonChain(self, settings, rnd):
+        chainlength = int(settings.dungeonchainlength)
         # Build a chain of 5 dungeons
         self.dungeon_chain = [1, 2, 3, 4, 5, 6, 7, 8]
         if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
             self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
-        self.dungeon_chain = self.dungeon_chain[:5]
         # Check if we randomly replace one of the dungeons with a cavegen
         if rnd.randrange(0, 100) < 80:
             self.cavegen = cavegen.Generator(rnd)
             self.cavegen.generate()
             # cavegen.dump("cave.svg", self.cavegen.start)
             self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
+        self.dungeon_chain = self.dungeon_chain[:chainlength]
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:
             inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]

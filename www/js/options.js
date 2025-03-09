@@ -800,6 +800,52 @@ var options =
   ]
  },
  {
+  "key": "dungeonchainlength",
+  "category": "Special",
+  "short_key": "d",
+  "label": "Chain length",
+  "description": "Amount of dungeons in the dungeon chain.",
+  "multiworld": true,
+  "aesthetic": false,
+  "default": "5",
+  "options": [
+   {
+    "key": "3",
+    "short": "3",
+    "label": "3 Dungeons"
+   },
+   {
+    "key": "4",
+    "short": "4",
+    "label": "4 Dungeons"
+   },
+   {
+    "key": "5",
+    "short": "5",
+    "label": "5 Dungeons"
+   },
+   {
+    "key": "6",
+    "short": "6",
+    "label": "6 Dungeons"
+   },
+   {
+    "key": "7",
+    "short": "7",
+    "label": "7 Dungeons"
+   },
+   {
+    "key": "8",
+    "short": "8",
+    "label": "8 Dungeons"
+   }
+  ],
+  "visible_if": [
+   "overworld",
+   "dungeonchain"
+  ]
+ },
+ {
   "key": "owlstatues",
   "category": "Special",
   "short_key": "o",
