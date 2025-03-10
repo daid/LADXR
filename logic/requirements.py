@@ -320,7 +320,8 @@ class RequirementsSettings:
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
         self.zoomerang_buffer = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
-        self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
+        self.lava_swim = AND(FLIPPERS) # be paused and splashing on lave, transition on the first frame after unpausing
+        self.lava_swim_sword = AND(FLIPPERS, SWORD) # be paused and splashing on lave, transition on the first frame after unpausing = some screens need sword to be held when unpausing to work???
 
         self.boss_requirements = {
             0: SWORD,  # D1 boss
@@ -408,7 +409,8 @@ class RequirementsSettings:
             
             "ARMOS_STATUE":            OR(BOMB, BOW, MAGIC_ROD),
             "BOMBER":                  OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
-            "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
+            "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, AND(HOOKSHOT, SWORD)),
+            "CUKEMAN":                 OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, AND(HOOKSHOT, SWORD)),
             "HIDING_GHINI":            self.attack_hookshot_no_bomb,
             "GHINI":                   self.attack_hookshot_no_bomb,
             "GIANT_GHINI":             self.attack_hookshot_no_bomb,
@@ -424,7 +426,7 @@ class RequirementsSettings:
             "ROCK_CRAWLER":            AND(POWER_BRACELET, self.attack_hookshot_powder),   # NOT in disassembly, but has different requirements so?
             "TEKTITE":                 self.attack_hookshot_powder,
             "WINGED_OCTOROK":          self.attack_hookshot_powder,
-            "ZORA":                    OR(SWORD, BOOMERANG),                               # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water
+            "ZORA":                    OR(SWORD, BOOMERANG),                               # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water also SHIELD seems to kill in water, at least
             "ANTI_KIRBY":              OR(BOMB, MAGIC_ROD, BOOMERANG),                     # double check magic rod
             "BLOOPER":                 self.attack_hookshot_powder,                        # 2d
             "FLYING_HOPPER_BOMBS":     OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
