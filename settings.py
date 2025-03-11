@@ -173,7 +173,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
                                                          ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', '4 specific instruments')], default='vanilla',
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), ('specific', 's', 'X specific instruments')], default='vanilla',
                 description="""Changes the goal of the game.
 [Vanilla], 8 instruments required to open the egg.
 [X instruments], a number of instruments required to open the egg.
@@ -190,7 +190,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                     ('3', '3', '3 instruments'), ('2', '2', '2 instruments'), ('1', '1', '1 instrument'),
                     ('0', '0', 'No instruments'), ('random', 'R', 'Random instrument count')], default='4',
                 description="""Amount of instruments to find for the instruments goal.""",
-                visible_if=["goal", "instruments"]),
+                visible_if=["goal", "instruments", "specific"]),
             Setting('itempool', 'Gameplay', 'P', 'Item pool', options=[('', '', 'Normal'), ('casual', 'c', 'Casual'), ('pain', 'p', 'Path of Pain'), ('keyup', 'k', 'More keys')], default='',
                 description="""Effects which items are shuffled.
 [Casual] places more inventory and key items so the seed is easier.

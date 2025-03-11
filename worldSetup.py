@@ -242,9 +242,13 @@ class WorldSetup:
             self.goal = settings.goal
             self.sign_maze = maze.buildMaze(rnd)
         elif settings.goal == "specific":
+            if settings.goalcount == 'random':
+                self.goal_count = rnd.randint(1, 8)
+            else:
+                self.goal_count = max(1, int(settings.goalcount))
             instruments = [c for c in "12345678"]
             rnd.shuffle(instruments)
-            self.goal = "=" + "".join(instruments[:4])
+            self.goal = "=" + "".join(instruments[:self.goal_count])
         elif "-" in settings.goal:
             a, b = settings.goal.split("-")
             if a == "open":
