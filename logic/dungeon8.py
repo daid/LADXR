@@ -10,10 +10,10 @@ class Dungeon8:
         entrance = Location("D8 Entrance", dungeon=8)
         lava_beamos_room = Location("D8 Lava Beamos Room", dungeon=8)
         miniboss1_room = Location("D8 Hinox Room", dungeon=8)
-        sw_zamboni_area = Location("D8 After Hinox", dungeon=8)
+        sw_zamboni_area = Location("D8 Zamboni Intersection", dungeon=8)
         sw_zamboni_area_chest1 = Location(dungeon=8).add(DungeonChest(0x24D)) # 20 rupees
         sw_zamboni_area_chest2 = Location(dungeon=8).add(DungeonChest(0x246)) # small key
-        spark_pit_room = Location("D8 Sparks Across Pit", dungeon=8)
+        spark_pit_room = Location("D8 Southwest Spark & Pit Room", dungeon=8)
         spark_pit_room_chest2 = Location(dungeon=8).add(DungeonChest(0x255)) # 50 rupees
         miniboss2_room = Location("D8 Rolling Bones Room", dungeon=8)
         sw_vire_room = Location("D8 Southwest Vire Room", dungeon=8)
@@ -21,27 +21,27 @@ class Dungeon8:
         vacuum_room = Location("D8 Vacuum Room", dungeon=8)
         vacuum_room_chest3 = Location(dungeon=8).add(DungeonChest(0x25C)) # compass
         spark_pot_room = Location("D8 Sparks Hidden Button Room", dungeon=8)
-        slime_trap_room = Location("D8 Slime Trap Chest Room", dungeon=8)
-        slime_trap_room_chest4 = Location(dungeon=8).add(DungeonChest(0x259))
+        slime_trap_room = Location("D8 Lava Chest Room", dungeon=8)
+        slime_trap_room_chest4 = Location(dungeon=8).add(DungeonChest(0x259)) # slime trap
         zamboni_pit_west = Location("D8 West of Chasm Zamboni", dungeon=8)
         zamboni_pit_east = Location("D8 East of Chasm Zamboni", dungeon=8)
-        zamboni_pit_east_drop2 = Location(dungeon=8).add(DroppedKey(0x25A))
+        zamboni_pit_east_drop2 = Location(dungeon=8).add(DroppedKey(0x25A)) # small key
         miniboss3_room = Location("D8 Smasher Room", dungeon=8)
         mimic_room = Location("D8 Mimic Room", dungeon=8)
         before_a_passage = Location("D8 Mimic Passageway Spawned", dungeon=8)
         after_a_passage = Location("D8 Beamos Hidden Button Room", dungeon=8)
         pot_pit_room = Location("D8 Pots & Pits Room", dungeon=8)
         pot_pit_room_doorway = Location("D8 Pots & Pits Room Door", dungeon=8)
-        pot_pit_room_chest5 = Location(dungeon=8).add(DungeonChest(0x25F))
+        pot_pit_room_chest5 = Location(dungeon=8).add(DungeonChest(0x25F)) # beak
         before_e_passage = Location("D8 Pots, & Pits Room Stairs", dungeon=8)
         after_e_passage = Location("D8 Below Peahat Blocks Hallway", dungeon=8)
         pre_center_zamboni = Location("D8 North of Entrance", dungeon=8)
         before_b_passage = Location("D8 Ledge by Entrance Zamboni", dungeon=8)
         after_b_passage = Location("D8 Before Cueball", dungeon=8)
-        before_c_passage = Location("D8 Floating Heart Area", dungeon=8)
+        before_c_passage = Location("D8 Before Passage to Boss", dungeon=8)
         switch_room = Location("D8 Switch Room", dungeon=8)
         pushblock_room = Location("D8 Pushblock Chest Area", dungeon=8)
-        pushblock_room_chest6 = Location(dungeon=8).add(DungeonChest(0x24F))
+        pushblock_room_chest6 = Location(dungeon=8).add(DungeonChest(0x24F)) # map
         lava_left_corridor = Location("D8 'L' Shaped Corridor", dungeon=8)
         pre_center_keyblock = Location("D8 Before Central Keyblock", dungeon=8)
         loop_ledge = Location("D8 Useless Ledge", dungeon=8)
@@ -59,25 +59,26 @@ class Dungeon8:
         after_d_passage = Location("D8 Staircase at Isolated Miniboss Area", dungeon=8)
         miniboss_room = Location("D8 Isolated Miniboss Room", dungeon=8)
         miniboss_cubby = Location("D8 Post Miniboss Room", dungeon=8)
-        rod_ledge = Location("D8 Miniboss Reward", dungeon=8)
+        rod_ledge = Location("D8 Miniboss Reward Ledge", dungeon=8)
         rod_ledge_chest7 = Location(dungeon=8).add(DungeonChest(0x237)) # magic rod
         dodongo_area = Location("D8 Dodongo Area", dungeon=8)
-        dodongo_area_drop3 = Location(dungeon=8).add(DroppedKey(0x23E))
+        dodongo_area_drop3 = Location(dungeon=8).add(DroppedKey(0x23E)) # small key
         pre_lava_ledge = Location("D8 Ledge West of Dodongos", dungeon=8)
         lava_ledge = Location("D8 Lava Ledge", dungeon=8)
         lava_ledge_chest8 = Location(dungeon=8).add(DungeonChest(0x235)) # medicine
         slime_corridor = Location("D8 Corridor by Lava Ledge Chest", dungeon=8)
         after_g_passage = Location("D8 North Refill Room", dungeon=8)
         after_f_stairs = Location("D8 Ledge Above Dodongos", dungeon=8)
-        after_f_stairs_chest9 = Location(dungeon=8).add(DungeonChest(0x23D))
+        after_f_stairs_chest9 = Location(dungeon=8).add(DungeonChest(0x23D)) # small key
         before_f_stairs = Location("D8 Northwest Area", dungeon=8)
-        before_f_stairs_chest10 = Location(dungeon=8).add(DungeonChest(0x240))
-        before_f_stairs_drop4 = Location(dungeon=8).add(DroppedKey(0x241))
+        miniboss4_cubby = Location("D8 Cubby After Northwest Vire", dungeon=8)
+        before_f_stairs_chest10 = Location(dungeon=8).add(DungeonChest(0x240)) # small key
+        before_f_stairs_drop4 = Location(dungeon=8).add(DroppedKey(0x241)) # small key
         ledge_west_boss = Location("D8 West of Boss Door Ledge", dungeon=8)
-        ledge_west_boss_chest11 = Location(dungeon=8).add(DungeonChest(0x23A))
+        ledge_west_boss_chest11 = Location(dungeon=8).add(DungeonChest(0x23A)) # 50 rupees
         miniboss4_room = Location("D8 Cueball Room", dungeon=8)
         nw_zamboni_room = Location("D8 Two Torch Zamboni Puzzle", dungeon=8)
-        nw_zamboni_room_chest12 = Location(dungeon=8).add(DungeonChest(0x232))
+        nw_zamboni_room_chest12 = Location(dungeon=8).add(DungeonChest(0x232)) # nightmare key
         after_c_passage = Location("Outside Boss Door", dungeon=8)
         boss_room = Location("D8 Boss Room", dungeon=8)
         boss_room_drop5 = Location(dungeon=8).add(HeartContainer(0x234)) # heart container
@@ -95,132 +96,135 @@ class Dungeon8:
         #TODO: else:
 
         #west   
-        entrance.connect(lava_beamos_room, r.enemy_requirements["VIRE"])
-        lava_beamos_room.connect(miniboss1_room, r.enemy_requirements["SNAKE"])
-        lava_beamos_room.connect(entrance, None, one_way=True)
-        miniboss1_room.connect(sw_zamboni_area, r.miniboss_requirements["HINOX"])
-        miniboss1_room.connect(lava_beamos_room, None, one_way=True)
-        sw_zamboni_area.connect(sw_zamboni_area_chest1, None)
-        sw_zamboni_area.connect(sw_zamboni_area_chest2, MAGIC_ROD)
-        before_f_stairs.connect(sw_zamboni_area, None, one_way=True)
-        sw_zamboni_area.connect(spark_pit_room, OR(HOOKSHOT, FEATHER))
-        spark_pit_room.connect(spark_pit_room_chest2, None)
-        sw_zamboni_area.connect(miniboss1_room, None, one_way=True)
-        sw_zamboni_area.connect(miniboss2_room, None, one_way=True)
-        miniboss2_room.connect(sw_vire_room, r.miniboss_requirements["ROLLING_BONES"])
-        sw_vire_room.connect(sw_vire_room_drop1, r.attack_hookshot_no_bomb) # takes 11 bombs minimum to get this from entrance, so it is excluded
-        miniboss2_room.connect(vacuum_room, r.miniboss_requirements["ROLLING_BONES"])
-        vacuum_room.connect(vacuum_room_chest3, None)
-        vacuum_room.connect(entrance, None, one_way=True)
+        entrance.connect(lava_beamos_room, r.enemy_requirements["VIRE"]) # Entrance <--> Lava Beamos Room
+        lava_beamos_room.connect(miniboss1_room, r.enemy_requirements["SNAKE"]) # Lava Beamos Room <--> Hinox Room
+        lava_beamos_room.connect(entrance, None, one_way=True) # Lava Beamos Room --> Entrance
+        miniboss1_room.connect(sw_zamboni_area, r.miniboss_requirements["HINOX"]) # Hinox Room <--> Zamboni Intersection
+        miniboss1_room.connect(lava_beamos_room, None, one_way=True) # Hinox Room --> Lava Beamos Room
+        sw_zamboni_area.connect(sw_zamboni_area_chest1, None) # Zamboni Intersection <--> Left of Hinox Zamboni Chest
+        sw_zamboni_area.connect(sw_zamboni_area_chest2, MAGIC_ROD) # Zamboni Intersection <--> Two Torches Room Chest 
+        sw_zamboni_area.connect(spark_pit_room, OR(HOOKSHOT, FEATHER)) # Zamboni Intersection <--> Southwest Spark & Pit Room
+        spark_pit_room.connect(spark_pit_room_chest2, None) # Southwest Spark & Pit Room <--> Spark, Pit Chest
+        sw_zamboni_area.connect(miniboss1_room, None, one_way=True) # Zamboni Intersection --> Hinox Room
+        sw_zamboni_area.connect(miniboss2_room, None, one_way=True) # Zamboni Intersection --> Rolling Bones Room
+        miniboss2_room.connect(sw_vire_room, r.miniboss_requirements["ROLLING_BONES"]) # Rolling Bones Room <--> Southwest Vire Room
+        sw_vire_room.connect(sw_vire_room_drop1, r.attack_hookshot_no_bomb) #  <-->  # takes 11 bombs minimum to get this from entrance, so bombs are excluded
+        miniboss2_room.connect(vacuum_room, r.miniboss_requirements["ROLLING_BONES"]) # Rolling Bones Room <--> Vacuum Room
+        vacuum_room.connect(vacuum_room_chest3, None) # Vacuum Room <--> Vacuum Mouth Chest
+        vacuum_room.connect(entrance, None, one_way=True) # Vacuum Room --> Entrance
         #east
-        entrance.connect(spark_pot_room, r.enemy_requirements["VIRE"])
-        spark_pot_room.connect(slime_trap_room, POWER_BRACELET)
-        slime_trap_room.connect(slime_trap_room_chest4, None)
-        spark_pot_room.connect(mimic_room, POWER_BRACELET)
-        mimic_room.connect(spark_pot_room, None, one_way=True)
-        mimic_room.connect(before_a_passage, r.enemy_requirements["MIMIC"])
-        before_a_passage.connect(mimic_room, None, one_way=True)
-        before_a_passage.connect(after_a_passage, FEATHER)
-        slime_trap_room.connect(spark_pot_room, None, one_way=True)
-        slime_trap_room.connect(zamboni_pit_west, FEATHER)
-        #TODO: zamboni_pit_west.connect(zamboni_pit_east, AND(PEGASUS_BOOTS, FEATHER)) #new logic r.not_that_tight_jump
-        zamboni_pit_east.connect(zamboni_pit_west, None, one_way=True)
-        zamboni_pit_east.connect(zamboni_pit_east_drop2, None)
-        zamboni_pit_east.connect(miniboss3_room, None, one_way=True)
-        miniboss3_room.connect(zamboni_pit_east, r.miniboss_requirements["SMASHER"])
-        miniboss3_room.connect(after_a_passage, r.miniboss_requirements["SMASHER"], one_way=True)
-        after_a_passage.connect(miniboss3_room, POWER_BRACELET, one_way=True)
-        miniboss3_room.connect(pot_pit_room_doorway, r.miniboss_requirements["SMASHER"], one_way=True)
-        pot_pit_room_doorway.connect(miniboss3_room, AND(OR(FEATHER, POWER_BRACELET), r.enemy_requirements["SNAKE"]), one_way=True)
-        pot_pit_room_doorway.connect(pot_pit_room, OR(FEATHER, POWER_BRACELET))
-        pot_pit_room.connect(pot_pit_room_chest5, None)
-        pot_pit_room.connect(before_e_passage, POWER_BRACELET)
+        entrance.connect(spark_pot_room, r.enemy_requirements["VIRE"]) # Entrance <--> Sparks Hidden Button Room
+        spark_pot_room.connect(entrance, POWER_BRACELET, one_way=True) # Sparks Hidden Button Roome --> Entrance
+        spark_pot_room.connect(slime_trap_room, POWER_BRACELET) # Sparks Hidden Button Room <--> Lava Chest Room
+        slime_trap_room.connect(slime_trap_room_chest4, None) # Lava Chest Room <--> Right Lava Chest
+        slime_trap_room.connect(spark_pot_room, None, one_way=True) # Lava Chest Room --> Sparks Hidden Button Room
+        slime_trap_room.connect(zamboni_pit_west, FEATHER) # Lava Chest Room <--> West of Chasm Zamboni
+        spark_pot_room.connect(mimic_room, POWER_BRACELET) # Sparks Hidden Button Room <--> Mimic Room
+        mimic_room.connect(spark_pot_room, None, one_way=True) # Mimic Room --> Sparks Hidden Button Room
+        mimic_room.connect(before_a_passage, r.enemy_requirements["MIMIC"]) # Mimic Room <--> Mimic Passageway Spawned
+        before_a_passage.connect(mimic_room, None, one_way=True) # Mimic Passageway Spawned <--> Mimic Room
+        before_a_passage.connect(after_a_passage, FEATHER) # Lava Chest Room <--> Mimic Passageway Spawned
+        #TODO: zamboni_pit_west.connect(zamboni_pit_east, AND(PEGASUS_BOOTS, FEATHER)) #TODO: one of the easier boots jumps in the game that still needs some air correction. If it were to be included, it could be normal logic since feather only is in hard already
+        zamboni_pit_east.connect(zamboni_pit_west, None, one_way=True) # East of Chasm Zamboni <--> West of Chasm Zamboni
+        zamboni_pit_east.connect(zamboni_pit_east_drop2, None) # East of Chasm Zamboni <--> Zamboni, Two Zol Key
+        zamboni_pit_east.connect(switch_room, BOMB) # East of Chasm Zamboni <--> Switch Room
+        switch_room.connect(before_c_passage, BOMB) # Switch Room <--> Before Passage to Boss
+        before_c_passage.connect(slime_trap_room, None, one_way=True) # Before Passage to Boss --> Lava Chest Room
+        zamboni_pit_east.connect(miniboss3_room, None, one_way=True) # East of Chasm Zamboni --> Smasher Room
+        miniboss3_room.connect(zamboni_pit_east, r.miniboss_requirements["SMASHER"], one_way=True) # Smasher Room --> East of Chasm Zamboni
+        miniboss3_room.connect(after_a_passage, r.miniboss_requirements["SMASHER"], one_way=True) # Smasher Room --> Beamos Hidden Button Room
+        after_a_passage.connect(miniboss3_room, POWER_BRACELET, one_way=True) # Beamos Hidden Button Room --> Smasher Room
+        miniboss3_room.connect(pot_pit_room_doorway, r.miniboss_requirements["SMASHER"], one_way=True) # Smasher Room <--> Pots & Pits Room Door
+        pot_pit_room_doorway.connect(miniboss3_room, AND(OR(FEATHER, POWER_BRACELET), r.enemy_requirements["SNAKE"]), one_way=True) # Pots & Pits Room Door --> Smasher Room #TODO: is there a way to clear this room and get to smasher for higher logic levels? (like boomerang or )
+        pot_pit_room_doorway.connect(pot_pit_room, OR(FEATHER, POWER_BRACELET)) # Pots & Pits Room Door <--> Pots & Pits Room
+        pot_pit_room.connect(pot_pit_room_chest5, None) # Pots & Pits Room <--> Four Ropes Pot Chest
+        pot_pit_room.connect(before_e_passage, POWER_BRACELET) # Pots & Pits Room <--> Pots, & Pits Room Stairs
         #north
-        entrance.connect(pre_center_zamboni, FEATHER)
-        pre_center_zamboni.connect(before_b_passage, None, one_way=True)
-        before_b_passage.connect(spark_pot_room, None, one_way=True)
-        pre_center_zamboni.connect(before_c_passage, None, one_way=True) # new logic
-        before_c_passage.connect(slime_trap_room, None, one_way=True)
-        before_c_passage.connect(switch_room, BOMB)
-        switch_room.connect(zamboni_pit_east, BOMB)
-        before_e_passage.connect(after_e_passage, FEATHER)
-        pre_center_zamboni.connect(after_e_passage, None, one_way=True)
-        pre_center_zamboni.connect(lava_left_corridor, None)
-        lava_left_corridor.connect(after_e_passage, BOMB)
-        lava_left_corridor.connect(pushblock_room, None)
-        pushblock_room.connect(pushblock_room_chest6, None)
-        pre_center_zamboni.connect(loop_ledge, None, one_way=True)
-        loop_ledge.connect(before_c_passage, None, one_way=True)
-        pre_center_zamboni.connect(pre_center_keyblock, None, one_way=True)
-        pre_center_keyblock.connect(heart_vire, KEY8)
-        pre_center_keyblock.connect(peahat_area, KEY8)
-        peahat_area.connect(heart_vire, KEY8)
-        peahat_area.connect(after_e_passage, None, one_way=True)
-        heart_vire.connect(before_g_passage, AND(KEY8, FOUND(KEY8, 2)))
-        before_g_passage.connect(hidden_arrow_room, None, one_way=True)
-        before_g_passage.connect(after_g_passage, HOOKSHOT, one_way=True)
-        after_g_passage.connect(before_g_passage, AND(FEATHER, HOOKSHOT))
-        hidden_arrow_room.connect(dodongo_area, r.enemy_requirements["HIDING_ZOL"])
-        hidden_arrow_room.connect(dark_east_spark, BOMB)
+        entrance.connect(pre_center_zamboni, FEATHER) # Entrance <--> North of Entrance
+        pre_center_zamboni.connect(before_b_passage, None, one_way=True) # North of Entrance <--> 
+        before_b_passage.connect(spark_pot_room, None, one_way=True) #  <--> 
+        pre_center_zamboni.connect(before_c_passage, None, one_way=True) # North of Entrance <--> Before Passage to Boss # new logic
+        before_e_passage.connect(after_e_passage, FEATHER) #  <--> 
+        pre_center_zamboni.connect(after_e_passage, None, one_way=True) # North of Entrance <--> 
+        pre_center_zamboni.connect(lava_left_corridor, None) # North of Entrance <--> 
+        lava_left_corridor.connect(after_e_passage, BOMB) #  <--> 
+        lava_left_corridor.connect(pushblock_room, None) #  <--> 
+        pushblock_room.connect(pushblock_room_chest6, None) #  <--> 
+        pre_center_zamboni.connect(loop_ledge, None, one_way=True) # North of Entrance <--> 
+        loop_ledge.connect(before_c_passage, None, one_way=True) #  <--> Before Passage to Boss
+        pre_center_zamboni.connect(pre_center_keyblock, None, one_way=True) # North of Entrance <--> 
+        pre_center_keyblock.connect(heart_vire, KEY8) #  <--> 
+        pre_center_keyblock.connect(peahat_area, KEY8) #  <--> 
+        peahat_area.connect(heart_vire, KEY8) #  <--> 
+        peahat_area.connect(after_e_passage, None, one_way=True) #  <--> 
+        heart_vire.connect(before_g_passage, AND(KEY8, FOUND(KEY8, 2))) #  <--> 
+        before_g_passage.connect(hidden_arrow_room, None, one_way=True) #  <--> 
+        before_g_passage.connect(after_g_passage, HOOKSHOT, one_way=True) #  <--> 
+        after_g_passage.connect(before_g_passage, AND(FEATHER, HOOKSHOT)) #  <--> 
+        hidden_arrow_room.connect(dodongo_area, r.enemy_requirements["HIDING_ZOL"]) #  <--> 
+        hidden_arrow_room.connect(dark_east_spark, BOMB) #  <--> 
         #dark
-        peahat_area.connect(dark_west, AND(AND(BOMB, BOW), FEATHER))
-        dark_west.connect(peahat_area, AND(BOMB, FEATHER), one_way=True)
-        peahat_area.connect(dark_west, AND(BOMB, FEATHER)) # could be hard due to obscurity
-        peahat_area.connect(dark_center, AND(BOMB, FEATHER)) # could be hard due to obscurity
-        dark_west.connect(before_f_stairs, AND(BOMB, FEATHER), one_way=True)
-        dark_west.connect(dark_center, AND(r.enemy_requirements["SNAKE"], r.enemy_requirements["PEAHAT"]))
-        dark_center.connect(dark_west, r.enemy_requirements["SNAKE"], one_way=True)
-        dark_center.connect(dark_east_zol, AND(KEY8, FOUND(KEY8, 4)))
-        dark_east_zol.connect(dark_east_spark, FEATHER)
-        dark_west.connect(dark_center_torches, KEY8)
-        dark_center_torches.connect(dark_center_pre_keyblock, HOOKSHOT)
-        dark_center_torches.connect(dark_center, None, one_way=True)
-        dark_center_pre_keyblock.connect(before_d_passage, AND(KEY8, FOUND(KEY8, 7)))
-        dark_center_pre_keyblock.connect(dark_center, None, one_way=True)
+        peahat_area.connect(dark_west, AND(AND(BOMB, BOW), FEATHER)) #  <--> 
+        dark_west.connect(peahat_area, AND(BOMB, FEATHER), one_way=True) #  <--> 
+        peahat_area.connect(dark_west, AND(BOMB, FEATHER)) #  <-->  # could be hard due to obscurity
+        peahat_area.connect(dark_center, AND(BOMB, FEATHER)) #  <-->  # could be hard due to obscurity
+        dark_west.connect(before_f_stairs, AND(BOMB, FEATHER), one_way=True) #  <--> 
+        dark_west.connect(dark_center, AND(r.enemy_requirements["SNAKE"], r.enemy_requirements["PEAHAT"])) #  <--> 
+        dark_center.connect(dark_west, r.enemy_requirements["SNAKE"], one_way=True) #  <--> 
+        dark_center.connect(dark_east_zol, AND(KEY8, FOUND(KEY8, 4))) #  <--> 
+        dark_east_zol.connect(dark_east_spark, FEATHER) #  <--> 
+        dark_west.connect(dark_center_torches, KEY8) #  <-->  # ???
+        dark_center_torches.connect(dark_center_pre_keyblock, HOOKSHOT) #  <--> 
+        dark_center_torches.connect(dark_center, None, one_way=True) #  <--> 
+        dark_center_pre_keyblock.connect(before_d_passage, AND(KEY8, FOUND(KEY8, 7))) #  <--> 
+        dark_center_pre_keyblock.connect(dark_center, None, one_way=True) #  <--> 
         #miniboss
-        before_d_passage.connect(after_d_passage, FEATHER)
-        after_d_passage.connect(miniboss_room, None, one_way=True)
-        miniboss_room.connect(miniboss_cubby, r.miniboss_requirements[world_setup.miniboss_mapping[7]])
-        miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[7]], one_way=True) # TODO: check requirements for blaino to punch you back to entrance, too
-        miniboss_cubby.connect(after_d_passage, None, one_way=True)
-        rod_ledge.connect(rod_ledge_chest7, None)
-        rod_ledge.connect(after_d_passage, None, one_way=True)
+        before_d_passage.connect(after_d_passage, FEATHER) #  <--> 
+        after_d_passage.connect(miniboss_room, None, one_way=True) #  <--> 
+        miniboss_room.connect(miniboss_cubby, r.miniboss_requirements[world_setup.miniboss_mapping[7]]) #  <--> 
+        miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[7]], one_way=True) #  <--> Entrance # TODO: check requirements for blaino to punch you back to entrance, too
+        miniboss_cubby.connect(after_d_passage, None, one_way=True) #  <--> 
+        rod_ledge.connect(rod_ledge_chest7, None) #  <--> 
+        rod_ledge.connect(after_d_passage, None, one_way=True) #  <--> 
+        switch_room.connect(rod_ledge_chest7, AND(BOMB, FEATHER, POWER_BRACELET, HOOKSHOT, FOUND(KEY8, 7), r.enemy_requirements["SNAKE"], r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) #  <-->  #above doesn't consider the swirch block so this is the normal logic from switch room
         #dodongo
-        dodongo_area.connect(hidden_arrow_room, None, one_way=True)
-        dodongo_area_drop3.connect(dodongo_area, r.enemy_requirements["GIBDO"]) # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
-        dodongo_area.connect(pre_lava_ledge, FEATHER)
-        pre_lava_ledge.connect(slime_corridor, FEATHER)
-        pre_lava_ledge.connect(slime_corridor, None, one_way=True)
-        pre_lava_ledge.connect(lava_ledge, HOOKSHOT)
-        pre_lava_ledge.connect(after_g_passage, None, one_way=True)
-        lava_ledge.connect(lava_ledge_chest8, None)
-        lava_ledge.connect(after_g_passage, None, one_way=True)
-        dodongo_area.connect(after_f_stairs_chest9, AND(FEATHER, AND(KEY8, FOUND(KEY8, 4)), r.miniboss_requirements["DODONGO"]), one_way=True) #TODO: assumes vanilla tal tal exits
-        after_f_stairs.connect(dodongo_area, None, one_way=True)
-        before_f_stairs.connect(after_f_stairs, None) #TODO: assumes vanilla tal tal exits
+        dodongo_area.connect(hidden_arrow_room, None, one_way=True) #  <--> 
+        dodongo_area_drop3.connect(dodongo_area, r.enemy_requirements["GIBDO"]) #  <-->  # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
+        dodongo_area.connect(pre_lava_ledge, FEATHER) #  <--> 
+        pre_lava_ledge.connect(slime_corridor, FEATHER) #  <--> 
+        pre_lava_ledge.connect(slime_corridor, None, one_way=True) #  <--> 
+        pre_lava_ledge.connect(lava_ledge, HOOKSHOT) #  <--> 
+        pre_lava_ledge.connect(after_g_passage, None, one_way=True) #  <--> 
+        lava_ledge.connect(lava_ledge_chest8, None) #  <--> 
+        lava_ledge.connect(after_g_passage, None, one_way=True) #  <--> 
+        dodongo_area.connect(after_f_stairs_chest9, AND(FEATHER, AND(KEY8, FOUND(KEY8, 4)), r.miniboss_requirements["DODONGO"]), one_way=True) #  <-->  #TODO: assumes vanilla tal tal exits
+        after_f_stairs.connect(dodongo_area, None, one_way=True) #  <--> 
+        before_f_stairs.connect(after_f_stairs, None) #  <-->  #TODO: assumes vanilla tal tal exits
         #northwest
-        slime_corridor.connect(before_f_stairs, AND(KEY8, FOUND(KEY8, 4)))
-        before_f_stairs.connect(before_f_stairs_chest10, None)
-        before_f_stairs.connect(before_f_stairs_drop4, BOW)
-        after_b_passage.connect(ledge_west_boss, HOOKSHOT)
-        ledge_west_boss.connect(ledge_west_boss_chest11, None)
-        ledge_west_boss.connect(before_f_stairs, None, one_way=True)
+        slime_corridor.connect(before_f_stairs, AND(KEY8, FOUND(KEY8, 4))) #  <--> 
+        before_f_stairs.connect(before_f_stairs_chest10, None) #  <--> 
+        before_f_stairs.connect(before_f_stairs_drop4, BOW) #  <--> 
+        miniboss4_cubby.connect(ledge_west_boss, HOOKSHOT) #  <--> 
+        ledge_west_boss.connect(ledge_west_boss_chest11, None) #  <--> 
+        ledge_west_boss.connect(before_f_stairs, None, one_way=True) #  <--> 
+        before_f_stairs.connect(sw_zamboni_area, None, one_way=True)
         #tal tal
         if back_entrance_heartpiece is not None:
-            Location().add(HeartPiece(back_entrance_heartpiece)).connect(before_f_stairs, None)  # Outside the dungeon on the platform
+            Location().add(HeartPiece(back_entrance_heartpiece)).connect(before_f_stairs, None) #  <-->  # Outside the dungeon on the platform
         #cueball
-        before_b_passage.connect(after_b_passage, AND(FEATHER, MAGIC_ROD))
-        after_b_passage.connect(before_b_passage, MAGIC_ROD, one_way=True)
-        before_f_stairs.connect(after_b_passage, AND(r.enemy_requirements["VIRE"], AND(r.enemy_requirements["SNAKE"])))
-        after_b_passage.connect(miniboss4_room, AND(KEY8, FOUND(KEY8, 7)))
-        miniboss4_room.connect(nw_zamboni_room, AND(FEATHER, r.miniboss_requirements["CUE_BALL"]))
-        nw_zamboni_room.connect(nw_zamboni_room_chest12, None)
+        before_b_passage.connect(after_b_passage, AND(FEATHER, MAGIC_ROD)) #  <--> 
+        after_b_passage.connect(before_b_passage, MAGIC_ROD, one_way=True) #  <--> 
+        after_b_passage.connect(miniboss4_cubby, None, one_way=True) #  <--> 
+        before_f_stairs.connect(miniboss4_cubby, AND(r.enemy_requirements["VIRE"], AND(r.enemy_requirements["SNAKE"]))) #  <--> 
+        miniboss4_cubby.connect(before_f_stairs, None, one_way=True) #  <--> 
+        after_b_passage.connect(miniboss4_room, AND(KEY8, FOUND(KEY8, 7))) #  <--> 
+        miniboss4_room.connect(nw_zamboni_room, AND(FEATHER, r.miniboss_requirements["CUE_BALL"])) #  <--> 
+        nw_zamboni_room.connect(nw_zamboni_room_chest12, None) #  <--> 
         #boss
-        before_c_passage.connect(after_c_passage, AND(FEATHER, MAGIC_ROD))
-        after_c_passage.connect(boss_room, NIGHTMARE_KEY8)
-        boss_room.connect(boss_room_drop5, r.boss_requirements[world_setup.boss_mapping[7]])
-        boss_room.connect(instrument, AND(FEATHER, r.boss_requirements[world_setup.boss_mapping[7]]))
-        
+        before_c_passage.connect(after_c_passage, AND(FEATHER, MAGIC_ROD)) # Before Passage to Boss <--> 
+        after_c_passage.connect(boss_room, NIGHTMARE_KEY8) #  <--> 
+        boss_room.connect(boss_room_drop5, r.boss_requirements[world_setup.boss_mapping[7]]) #  <--> 
+        boss_room.connect(instrument, AND(FEATHER, r.boss_requirements[world_setup.boss_mapping[7]])) #  <--> 
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             zamboni_pit_west.connect(zamboni_pit_east, r.tight_jump) # diagonal jump over the pits to reach zamboni
@@ -234,24 +238,25 @@ class Dungeon8:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             sw_zamboni_area.connect(spark_pit_room, r.pit_buffer_itemless) # pit buffer down across the pit then walk diagonally between pits
-            before_e_passage.connect(after_e_passage, r.boots_bonk, one_way=True) # boots bonking from rope room to mimic room sidescroller #TODO: move to hard, it's in glitched now to match stable
+            before_e_passage.connect(after_e_passage, r.boots_bonk, one_way=True) # boots bonking from rope room to mimic room sidescroller #TODO: move to hard or hell, it's in glitched now to match stable
             before_e_passage.connect(pot_pit_room, AND(r.hookshot_clip_block, r.super_jump_feather), one_way=True) # new logic
             after_e_passage.connect(peahat_area, r.sideways_block_push) # sideways block push in peahat room to get past keyblock
-            dark_center_torches.connect(before_d_passage, r.bookshot) # blow up hidden wall for darkroom, use feather + hookshot to clip past keyblock in front of stairs #TODO: make more explicit
+            dark_center_torches.connect(before_d_passage, r.bookshot) # skip keyblock to blaino
             dark_center.connect(dark_center_torches, r.super_jump_feather)
             dark_center.connect(dark_center_pre_keyblock, r.super_jump_feather)
             dark_center.connect(dark_east_zol, r.hookshot_clip, one_way=True)
             peahat_area.connect(before_f_stairs, r.jesus_jump) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             peahat_area.connect(heart_vire, r.jesus_jump)
             before_f_stairs.connect(slime_corridor, r.jesus_jump) # from up left you can jesus jump / lava swim around the key door next to the boss.
-            before_f_stairs.connect(after_b_passage, r.super_jump_feather) # superjump #TODO: make more explicit
             after_g_passage.connect(slime_corridor, r.jesus_jump)
+            slime_corridor.connect(before_f_stairs, r.jesus_jump)
             after_g_passage.connect(lava_ledge, AND(r.jesus_jump, r.super_jump_feather))
             slime_corridor.connect(lava_ledge, AND(r.super_jump_feather, r.jesus_jump))
             before_f_stairs.connect(after_c_passage, r.super_jump_feather, one_way=True) # superjump off the bottom or right wall to jump over to the boss door
             miniboss_cubby.connect(rod_ledge, r.super_jump_feather) # superjump to pegs after blaino
             dodongo_area.connect(after_f_stairs, r.super_jump_feather) # for getting dodongo chest without leaving the room
             dodongo_area.connect(after_f_stairs_chest9, AND(r.miniboss_requirements["DODONGO"], r.super_jump_feather)) # glitched
+            miniboss4_cubby.connect(after_b_passage, r.super_jump_feather) # superjump to get to cueball doorway
 
         if options.logic == 'hell':
             #southwest
@@ -272,7 +277,7 @@ class Dungeon8:
             pre_center_keyblock.connect(before_b_passage, r.jesus_buffer, one_way=True)
             before_c_passage.connect(before_b_passage, r.jesus_buffer)
             before_b_passage.connect(pre_center_zamboni, r.jesus_buffer, one_way=True)
-            #TODO: loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) #new logic
+            loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) #new logic
             #dark
             before_f_stairs.connect(dark_west, AND(AND(BOMB, OR(r.jesus_buffer, BOW)), r.lava_swim)) # hell - bomb the wall with bomb arrow of jesus buffer to get close enough and pause buffer the bomb on the splash, return with lava swim
             dark_west.connect(before_f_stairs, AND(BOMB, HOOKSHOT, r.jesus_buffer)) # hell - use hookshot when splashing to grab spark's block
@@ -293,12 +298,14 @@ class Dungeon8:
             dodongo_area.connect(pre_lava_ledge, r.boots_bonk) # bonk over 1 block of lava, no buffer
             dodongo_area.connect(after_f_stairs_chest9, AND(r.miniboss_requirements["DODONGO"], r.boots_bonk, r.lava_swim), one_way=True) # hell
             pre_lava_ledge.connect(lava_ledge, r.super_jump_feather) # walk off ledge and pause buffer to get in position
-            slime_corridor.connect(before_f_stairs, r.lava_swim) # hell
+            slime_corridor.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim)) # hell
             #northwest
             before_b_passage.connect(after_b_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk in 2d to use magic rod on upper ice blocks
             before_f_stairs.connect(peahat_area, r.jesus_buffer, one_way=True) # hell - from refill room push block and boots bonk into jesus buffer then bonk again
-            before_f_stairs.connect(peahat_area, r.lava_swim) #hell can be troublesome, if having issues, exit to tal tal and try again or use sword to guarantee it
+            before_f_stairs.connect(peahat_area, AND(r.jesus_buffer, r.lava_swim)) #hell can be troublesome, if having issues, exit to tal tal and try again or use sword to guarantee it
             before_f_stairs.connect(peahat_area, AND(r.jesus_buffer, r.lava_swim)) # use boots bonk next to 3x peahats to get on top of lava, and transition left while slashing sword
+            #TODO: before_f_stairs.connect(ledge_west_boss, r.super_bump) #new logic
+            #TODO: before_f_stairs.connect(miniboss4_cubby, r.super_bump) #new logic
             miniboss4_room.connect(nw_zamboni_room, AND(r.boots_bonk, r.miniboss_requirements["CUE_BALL"])) # use a boots bonk to cross the lava in cueball room
             #boss
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD)) # boots bonk through 2d section

@@ -409,8 +409,8 @@ class RequirementsSettings:
             
             "ARMOS_STATUE":            OR(BOMB, BOW, MAGIC_ROD),
             "BOMBER":                  OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
-            "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, AND(HOOKSHOT, SWORD)),
-            "CUKEMAN":                 OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, AND(HOOKSHOT, SWORD)),
+            "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
+            # add cukeman?
             "HIDING_GHINI":            self.attack_hookshot_no_bomb,
             "GHINI":                   self.attack_hookshot_no_bomb,
             "GIANT_GHINI":             self.attack_hookshot_no_bomb,
@@ -485,6 +485,7 @@ class RequirementsSettings:
             self.enemy_requirements["GIANT_GHINI"] = self.attack_hookshot # use bomb to kill ghini
             self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
+            self.enemy_requirements["BUZZ_BLOB"] = OR(OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), AND(HOOKSHOT, SWORD)) # only hookshot stuns, then you can kill with L1 sword, or by throwing something at it like another buzz blob
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
