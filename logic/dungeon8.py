@@ -124,7 +124,6 @@ class Dungeon8:
         mimic_room.connect(before_a_passage, r.enemy_requirements["MIMIC"]) # Mimic Room <--> Mimic Passageway Spawned
         before_a_passage.connect(mimic_room, None, one_way=True) # Mimic Passageway Spawned <--> Mimic Room
         before_a_passage.connect(after_a_passage, FEATHER) # Lava Chest Room <--> Mimic Passageway Spawned
-        #TODO: zamboni_pit_west.connect(zamboni_pit_east, AND(PEGASUS_BOOTS, FEATHER)) #TODO: one of the easier boots jumps in the game that still needs some air correction. If it were to be included, it could be normal logic since feather only is in hard already
         zamboni_pit_east.connect(zamboni_pit_west, None, one_way=True) # East of Chasm Zamboni <--> West of Chasm Zamboni
         zamboni_pit_east.connect(zamboni_pit_east_drop2, None) # East of Chasm Zamboni <--> Zamboni, Two Zol Key
         zamboni_pit_east.connect(switch_room, BOMB) # East of Chasm Zamboni <--> Switch Room
