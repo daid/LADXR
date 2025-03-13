@@ -249,7 +249,7 @@ class WorldSetup:
             instruments = [c for c in "12345678"]
             rnd.shuffle(instruments)
             self.goal = "=" + "".join(instruments[:self.goal_count])
-        elif "-" in settings.goal:
+        elif "-" in settings.goal and not settings.goal.startswith("bingo"):
             a, b = settings.goal.split("-")
             if a == "open":
                 a = -1
