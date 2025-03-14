@@ -628,7 +628,8 @@ class World:
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer_boots) # pit buffer to clip bottom wall and boots bonk across
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # hookshot spam or boots bonk across pits can go from left to right by pit buffering on top of the bottom wall then boots bonk across
             richard_cave_chest.connect(richard_cave, r.damage_boost) # use the zol on the other side of the pit to damage boost across (requires damage from pit + zol)
-            castle_secret_entrance_right.connect(castle_secret_entrance_left, r.boots_bonk_2d_spikepit) # medicine iframe abuse to get across spikes with a boots bonk
+            castle_secret_entrance_right.connect(castle_secret_entrance_left, r.boots_bonk_2d_spikepit) # #TODO: REPLACE with belowmedicine iframe abuse to get across spikes with a boots bonk
+            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.boots_bonk_2d_spikepit, r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer_boots) # multiple pit buffers to bonk across the bottom wall
             left_bay_area.connect(ukuku_prairie, r.hookshot_clip_block, one_way=True) # clip through the donuts blocking the path next to prairie plateau cave by hookshotting up and killing the two moblins that way which clips you further up two times. This is enough to move right
             tiny_island.connect(left_bay_area, AND(r.jesus_buffer, r.boots_bonk_pit, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)
@@ -649,7 +650,6 @@ class World:
 			#TODO: add jesus rooster to trick list
             
             below_right_taltal.connect(next_to_castle, r.jesus_buffer, one_way=True) # face right, boots bonk and get far enough left to jesus buffer / boots bonk across the bottom wall to the stairs
-            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
             crow_gold_leaf.connect(castle_courtyard, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, r.super_jump_feather)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_connector_right.connect(animal_village_connector_left, r.shaq_jump) # shaq jump off the obstacle to get through 
