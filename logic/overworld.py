@@ -649,7 +649,7 @@ class World:
 			#TODO: add jesus rooster to trick list
             
             below_right_taltal.connect(next_to_castle, r.jesus_buffer, one_way=True) # face right, boots bonk and get far enough left to jesus buffer / boots bonk across the bottom wall to the stairs
-            castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
+            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
             crow_gold_leaf.connect(castle_courtyard, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, r.super_jump_feather)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_connector_right.connect(animal_village_connector_left, r.shaq_jump) # shaq jump off the obstacle to get through 
@@ -664,7 +664,6 @@ class World:
             d6_entrance.connect(armos_fairy_entrance, r.jesus_rooster, one_way=True) # jesus rooster (2 screen) from d6 entrance top ledge to armos fairy entrance
             armos_fairy_entrance.connect(d6_armos_island, r.jesus_rooster, one_way=True) # jesus rooster from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, r.jesus_rooster) # jesus rooster (2-ish screen) from fairy cave to lower raft connector
-            
 
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip_block, r.shaq_jump)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, r.boots_roosterhop) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
