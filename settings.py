@@ -371,7 +371,8 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
             dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
             dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
         if self.overworld == "random":
-            self.goal = "4"  # Force 4 dungeon goal for random overworld right now.
+            self.goal = "instruments"  # Force 4 dungeon goal for random overworld right now.
+            self.goalcount = "4"
 
     def set(self, value: str) -> None:
         if "=" in value:
