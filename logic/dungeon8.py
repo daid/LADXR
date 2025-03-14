@@ -223,7 +223,7 @@ class Dungeon8:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             zamboni_pit_west.connect(zamboni_pit_east, r.tight_jump) # diagonal jump over the pits to reach zamboni
-            #TODO: after_a_passage.connect(before_a_passage, None, one_way=True) # new logic - take some damage but itemless
+            after_a_passage.connect(before_a_passage, None, one_way=True) # take some damage but itemless
             pot_pit_room_doorway.connect(miniboss3_room, r.throw_pot, one_way=True) # 4 pots to kill 4 ropes
             peahat_area.connect(heart_vire, r.tight_jump) # around keyblock
             peahat_area.connect(dark_center, AND(BOMB, FEATHER)) # pixel perfect bomb placement

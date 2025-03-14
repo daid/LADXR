@@ -52,8 +52,8 @@ class Dungeon3:
         towards_boss1 = Location("D3 Boss Path 1", dungeon=3)
         towards_boss2 = Location("D3 Boss Path 2", dungeon=3)
         towards_boss3 = Location("D3 Boss Path 3", dungeon=3)
-        towards_boss4 = Location("D3 Boss Path 4", dungeon=3)
-        three_pairodd_room = Location("D3 Three Pairodd Room", dungeon=3)
+        before_c_passage = Location("D3 Boss Path 4", dungeon=3)
+        after_c_passage = Location("D3 Three Pairodd Room", dungeon=3)
         pre_boss_room = Location("D3 Room Before Boss", dungeon=3)
         pre_boss_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
         boss_room = Location("D3 Boss Room", dungeon=3)
@@ -81,7 +81,7 @@ class Dungeon3:
         swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room <--> Sword Stalfos, Keese Switch Chest
         slime_room.connect(before_a_stairs, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Near First Staircase
         before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
-        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"]))
+        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Near First Staircase <--> Two Stalfos, Zol Chest
         center_4way.connect(south_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> South Key Room
         south_4way.connect(south_4way_drop1, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # South Key Room <--> South Key Room Key
         center_4way.connect(west_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> West Key Room
@@ -116,9 +116,9 @@ class Dungeon3:
         main_room.connect(towards_boss1, AND(KEY3, FOUND(KEY3, 5))) # Main Area <--> Boss Path 1
         towards_boss1.connect(towards_boss2, AND(KEY3, FOUND(KEY3, 6))) # Boss Path 1 <--> Boss Path 2
         towards_boss2.connect(towards_boss3, AND(KEY3, FOUND(KEY3, 7))) # Boss Path 2 <--> Boss Path 3
-        towards_boss3.connect(towards_boss4, AND(KEY3, FOUND(KEY3, 8))) # Boss Path 3 <--> Boss Path 4
-        towards_boss4.connect(three_pairodd_room, AND(FEATHER, PEGASUS_BOOTS)) # Boss Path 4 <--> Three Pairodd Room
-        three_pairodd_room.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
+        towards_boss3.connect(before_c_passage, AND(KEY3, FOUND(KEY3, 8))) # Boss Path 3 <--> Boss Path 4
+        before_c_passage.connect(after_c_passage, AND(FEATHER, PEGASUS_BOOTS)) # Boss Path 4 <--> Three Pairodd Room
+        after_c_passage.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
         pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY3) # Room Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop8, r.boss_requirements[world_setup.boss_mapping[2]]) # Boss Room <--> Heart Container
@@ -148,7 +148,7 @@ class Dungeon3:
             before_a_stairs.connect(before_a_stairs_chest4, AND(r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"], r.hookshot_clip_block)) # hookshot clip through the northern push block next to raised blocks chest to get to the zol
             big_pit_room.connect(ledge_pre_pit, r.super_jump_feather) # superjump to right side 3 gap via top wall and jump the 2 gap
             #TODO: towards_boss1.connect(miniboss_room, r.super_jump_feather)
-            towards_boss2.connect(after_miniboss_room, r.super_jump_feather) # superjump from keyblock path. use 2 keys to open enough blocks 
+            towards_boss2.connect(after_miniboss_room, r.super_jump_feather, one_way=True) # superjump from keyblock path. use 2 keys to open enough blocks 
         
         if options.logic == 'hell':
             #TODO: entrance.connect(after_vacuum, SWORD) # just hold right, more reliable with sword TODO: Tracker hell without sword?
@@ -169,10 +169,10 @@ class Dungeon3:
             #TODO: big_pit_room.connect(ledge_pre_pit, r.hookshot_spam_pit) # hookshot spam to get across 3 block pit and then you can hookshot to nightmare key chest [VERYHARD] - Tracker Hell?
             #TODO: main_room.connect(towards_boss3, r.super_bump, one_way=True) # super bump off stalfos to get in between boss key block 3 and 4. it's possible to land wall clipped, leading to the next trick:
             #TODO: towards_boss3.connect(after_miniboss_room_chest8, r.super_jump_feather, one_way=True) # feather-only super jump facing right into boots chest area
-            fenced_walkway.connect(three_bombite_room, AND(r.enemy_requirements["TIMER_BOMBITE"], OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs
-            towards_boss4.connect(three_pairodd_room, AND(FEATHER, POWER_BRACELET)) # TODO: REMOVE and replace with or(toadstool, bracelet) # current logic was for clearing first half with bracelet, second half with feather
-            #TODO: towards_boss4.connect(three_pairodd_room, r.toadstool_bounce_2d_hell) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
-            towards_boss4.connect(three_pairodd_room, AND(r.enemy_requirements["PAIRODD"], r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
+            fenced_walkway.connect(three_bombite_room, AND(r.enemy_requirements["TIMER_BOMBITE"], OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs #TODO: add L2 Sword
+            before_c_passage.connect(after_c_passage, AND(FEATHER, POWER_BRACELET)) # TODO: REMOVE and replace with or(toadstool, bracelet) # current logic was for clearing first half with bracelet, second half with feather
+            #TODO: before_c_passage.connect(after_c_passage, OR(r.toadstool_bounce_2d_hell, r.bracelet_bounce_2d_hell) # [wait for permanent toadstool patch] bracelet to get damage boost from 2d spikes to get through passage
+            before_c_passage.connect(after_c_passage, AND(r.enemy_requirements["PAIRODD"], r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
             #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
         self.entrance = entrance

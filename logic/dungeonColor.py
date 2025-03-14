@@ -11,7 +11,9 @@ class DungeonColor:
         main_room = Location("D0 Main Area", dungeon=0)
         main_room_chest1 = Location(dungeon=0).add(DungeonChest(0x30F)) # compass
         main_room_chest2 = Location(dungeon=0).add(DungeonChest(0x311)) # beak
-        main_room_chest3 = Location(dungeon=0).add(DungeonChest(0x314)) # small key
+        camo_pit_room = Location("D0 Camo Pit Room", dungeon=0)
+        bone_putter_room = Location("D0 Bone Putter Room", dungeon=0)
+        bone_putter_room_chest3 = Location(dungeon=0).add(DungeonChest(0x314)) # small key
         main_room_drop1 = Location(dungeon=0).add(DroppedKey(0x308)) # small key
         rupee_room = Location("D0 Secret Rupee Room", dungeon=0)
         miniboss1_room = Location("D0 Miniboss 1", dungeon=0)
@@ -38,7 +40,11 @@ class DungeonColor:
         entrance.connect(main_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"])) # Entrance <--> Main Area
         main_room.connect(main_room_chest1, OR(r.hit_switch, SHIELD)) # Main Area <--> Entrance Chest
         main_room.connect(main_room_chest2, AND(POWER_BRACELET, r.attack_hookshot)) # Main Area <--> Two Socket Chest
-        main_room.connect(main_room_chest3, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"])) # Main Area <--> Lower Small Key
+        main_room.connect(camo_pit_room, None, one_way=True) # Main Area --> Camo Pit Room
+        camo_pit_room.connect(main_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), one_way=True) # Camo Pit Room --> Main Area
+        camo_pit_room.connect(bone_putter_room_chest3, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), one_way=True) # Camo Pit Room --> Bone Putter Room
+        bone_putter_room.connect(bone_putter_room_chest3, None) # Bone Putter Room <--> Lower Small Key
+        bone_putter_room.connect(main_room, None, one_way=True) # Bone Putter Room <--> Main Area
         main_room.connect(main_room_drop1, OR(r.hit_switch, SHIELD)) # Main Area <--> Upper Small Key
         main_room.connect(rupee_room, BOMB) # Main Area <--> Secret Rupee Room
         main_room.connect(miniboss1_room, AND(KEY0, FOUND(KEY0, 3))) # Main Area <--> Miniboss 1
@@ -56,20 +62,21 @@ class DungeonColor:
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[8]]) # Boss Room <--> Fairy Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            entrance.connect(main_room, r.throw_pot) # throw pots to kill karakoro
-            main_room.connect(main_room_chest3, r.throw_pot) # throw pots to kill camo goblin
+            entrance.connect(main_room, r.throw_pot) # throw pots to kill camo goblin
+            camo_pit_room.connect(bone_putter_room, r.throw_pot) # throw pots to kill camo goblin
             north_room.connect(north_room_chest5, r.throw_pot) # throw pots to kill zols
             main_room.connect(main_room_chest2, r.attack_hookshot_no_bomb) # knock the karakoro into the pit without picking them up
             switch_room.connect(pre_boss, r.tight_jump) # before the boss, jump past raised blocks with only feather
 
         if options.logic == 'hell':
-            main_room.connect(main_room_chest3, r.shield_bump) # shield bump camo goblins into pit
+            camo_pit_room.connect(bone_putter_room, r.shield_bump) # shield bump camo goblins into pit
             main_room.connect(main_room_chest2, OR(BOMB, r.shield_bump)) # shield bump or bomb two socket karakoro into the holes
             north_room.connect(north_room_drop2, OR(BOMB, r.shield_bump)) # shield bump or bomb four socket karakoro into the holes
             
         self.entrance = entrance
         self.final_room = instrument
 
+        #TODO: find out if karakoro and camo ghouls can use enemy_requirements or if it's an immediate problem for enemizer
 
 class NoDungeonColor:
     def __init__(self, options, world_setup, r):

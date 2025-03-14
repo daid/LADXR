@@ -103,7 +103,7 @@ class Dungeon7:
         bomb_corridor.connect(owl_ledge, BOMB) # Bombable Wall Corridor <--> By Pit Owl
         #TODO: bomb_corridor.connect(after_d_stairs, None, one_way=True) # Bombable Wall Corridor --> Hinox Area # push blocks #[logic prep for staircase rando]
         owl_ledge.connect(sw_pillar, HOOKSHOT) # By Pit Owl <--> Southwest Pillar Area
-        sw_pillar.connect(sw_pillar_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Southwest Pillar Area <--> Three of a Kind, Pit Chest #TODO: you can't really use any kill requirement from this location, revisit but low priority
+        sw_pillar.connect(sw_pillar_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Southwest Pillar Area <--> Three of a Kind, Pit Chest #TODO: you can't really use any kill requirement pillar side of pushblocks
         sw_pillar.connect(final_pillar_fallen, POWER_BRACELET) # Southwest Pillar Area <--> Final Pillar Destroyed
         after_d_stairs.connect(before_e_stairs, None) # Hinox Area <--> tairs Leading to 3rd Floor
         before_e_stairs.connect(after_e_stairs, None) # tairs Leading to 3rd Floor <--> Third Floor Entry

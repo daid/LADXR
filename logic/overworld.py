@@ -111,7 +111,9 @@ class World:
 
         hookshot_cave = Location("Hookshot Cave")
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
-        self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
+        outside_hookshot_cave = Location()
+        outside_hookshot_cave.connect(forest, POWER_BRACELET)
+        self._addEntrance("hookshot_cave", outside_hookshot_cave, hookshot_cave, None)
 
         swamp = Location("Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
         swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
@@ -148,7 +150,7 @@ class World:
         graveyard_cave_left = Location("Graveyard Cave West")
         graveyard_cave_right = Location("Graveyard Cave East").connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
         graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard_cave_right, OR(AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER), ROOSTER))  # grave cave
-        outside_graveyard_left = Location()
+        outside_graveyard_left = Location("Inside Ghost Grave Rock Circle")
         ghost_grave.connect(outside_graveyard_left, POWER_BRACELET)
         self._addEntrance("graveyard_cave_left", outside_graveyard_left, graveyard_cave_left, None)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
@@ -545,7 +547,7 @@ class World:
             dream_hut_right.connect(dream_hut_left, r.super_jump_feather) # super jump
             forest.connect(swamp, r.bomb_trigger)  # bomb trigger tarin
             forest.connect(forest_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger heartpiece
-            self._addEntranceRequirementEnter("hookshot_cave", r.hookshot_clip) # clip past the rocks in front of hookshot cave
+            forest.connect(outside_hookshot_cave, r.hookshot_clip, one_way=True) # clip past the rocks in front of hookshot cave
             swamp.connect(forest_toadstool, r.pit_buffer_itemless, one_way=True) # villa buffer from top (swamp phonebooth area) to bottom (toadstool area)
             writes_hut_outside.connect(swamp, r.pit_buffer_itemless, one_way=True) # villa buffer from top (writes hut) to bottom (swamp phonebooth area) or damage boost
             graveyard.connect(forest_heartpiece, r.pit_buffer_itemless, one_way=True) # villa buffer from top.
@@ -602,19 +604,25 @@ class World:
             self._addEntranceRequirement("d8", OR(r.bomb_trigger, AND(OCARINA, SONG3))) # bomb trigger the head and walk through, or play the ocarina song 3 and walk through
 
         if options.logic == 'hell':
+            #TODO: outside_dream_hut.connect(mabe_village, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             dream_hut_right.connect(dream_hut, None) # alternate diagonal movement with orthogonal movement to control the mimics. Get them clipped into the walls to walk past
+            #TODO: outside_hookshot_cave.connect(forest, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             swamp.connect(forest_toadstool, r.damage_boost) # damage boost from toadstool area across the pit
             swamp.connect(forest, AND(r.bush, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # boots bonk / hookshot spam over the pits right of forest_rear_chest
             forest.connect(forest_heartpiece, r.boots_bonk_pit, one_way=True) # boots bonk across the pits
-            forest_cave_crystal_chest.connect(forest_cave, AND(r.super_jump_feather, r.hookshot_clip_block, r.sideways_block_push)) # superjump off the bottom wall to get between block and crystal, than use 3 keese to hookshot clip while facing right to get a sideways blockpush off
+            forest_cave_crystal_chest.connect(forest_cave, AND(r.super_jump_feather, r.hookshot_clip_block, r.sideways_block_push)) #TODO: REMOVE and replace with below row
+            #TODO: forest_cave_crystal_chest.connect(forest_cave, AND(OR(r.boots_roosterhop, r.super_jump_feather), r.hookshot_clip_block, r.sideways_block_push)) # superjump or roosterhop off the bottom wall to get between block and crystal, than use 3 keese to hookshot clip while facing right to get a sideways blockpush off
             log_cave_heartpiece.connect(forest_cave, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             log_cave_heartpiece.connect(forest_cave, OR(r.super_jump_rooster, r.boots_roosterhop)) # boots rooster hop in bottom left corner to "superjump" into the area. use buffers after picking up rooster to gain height / time to throw rooster again facing up
             writes_hut_outside.connect(swamp, r.damage_boost) # damage boost with moblin arrow next to telephone booth
             writes_cave_left_chest.connect(writes_cave, r.damage_boost) # damage boost off the zol to get across the pit.
             graveyard.connect(crazy_tracy_hut, r.hookshot_spam_pit, one_way=True) # use hookshot spam to clip the rock on the right with the crow
+            #TODO: crazy_tracy_hut.connect(graveyard, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             graveyard.connect(forest, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk over pits by witches hut, or hookshot spam across the pit
             graveyard_cave_left.connect(graveyard_cave_right, r.hookshot_spam_pit) # hookshot spam over the pit
             graveyard_cave_right.connect(graveyard_cave_left, OR(r.damage_boost, r.boots_bonk_pit), one_way=True) # boots bonk off the cracked block, or set up a damage boost with the keese
+            #TODO: outside_graveyard_left.connect(ghost_grave, AND(BOOMERANG, OR(FEATHER, PEGASUS_BOOTS), r.hookshot_clip_block), one_way=True) # stand in bottom of rock curcle, boomerand the zompie until you get a good rupee spawn, feather or bonk over the stiarcase, and hookshot clip the rupee to escape
+            #TODO: ghost_grave.connect(outside_graveyard_left, r.zoomerang_buffer) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             
             self._addEntranceRequirementEnter("mamu", AND(r.pit_buffer_itemless, r.pit_buffer_boots, POWER_BRACELET)) # can clear the gaps at the start with multiple pit buffers, can reach bottom left sign with bonking along the bottom wall
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer_boots) # pit buffer to clip bottom wall and boots bonk across
@@ -641,6 +649,7 @@ class World:
 			#TODO: add jesus rooster to trick list
             
             below_right_taltal.connect(next_to_castle, r.jesus_buffer, one_way=True) # face right, boots bonk and get far enough left to jesus buffer / boots bonk across the bottom wall to the stairs
+            castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
             crow_gold_leaf.connect(castle_courtyard, BOMB) # bird on tree at left side kanalet, place a bomb against the tree and the crow flies off. With well placed second bomb the crow can be killed
             mermaid_statue.connect(animal_village, AND(TRADING_ITEM_SCALE, r.super_jump_feather)) # early mermaid statue by buffering on top of the right ledge, then superjumping to the left (horizontal pixel perfect)
             animal_village_connector_right.connect(animal_village_connector_left, r.shaq_jump) # shaq jump off the obstacle to get through 
@@ -681,6 +690,7 @@ class World:
             bridge_seashell.connect(outside_rooster_house, AND(OR(r.hookshot_spam_pit, r.boots_bonk_pit), POWER_BRACELET)) # boots bonk or hookshot spam over the pit to get to the rock
             bird_key.connect(bird_cave, AND(r.boots_jump, r.pit_buffer)) # boots jump above wall, use multiple pit buffers to get across
             right_taltal_connector2.connect(right_taltal_connector3, r.pit_buffer_itemless, one_way=True) # 2 separate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
+            #TODO: right_taltal_connector3.connect(right_taltal_connector2, AND(r.zoomerang, HOOKSHOT), one_way=True) # zoomerang facing left to superjump onto ledge, hookshot to get un-stuck
             water_cave_hole.connect(heartpiece_swim_cave, r.jesus_buffer_itemless, one_way=True) # after falling down the hole, use pause buffers to get down towards the entrance
             mountain_bridge_staircase.connect(outside_rooster_house, r.pit_buffer_boots) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
             left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, AND(r.boots_jump, r.pit_buffer), one_way=True) # boots jump to bottom left corner of pits, pit buffer and jump to left

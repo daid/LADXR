@@ -122,8 +122,8 @@ class Dungeon6:
         flying_bomb_room.connect(after_c_passage, COUNT(POWER_BRACELET, 2)) # Flying Bomb Room <--> Stairs West of Horsehead Hallway
         flying_bomb_room.connect(after_b_passage, FOUND(KEY6, 2)) # Flying Bomb Room <--> Second Floating Tile Fight
         after_b_passage.connect(vacuum_room, None) # Second Floating Tile Fight <--> Vacuum Room
-        vacuum_room.connect(laser_turret_room, r.enemy_requirements["HIDING_ZOL"]) # Vacuum Room <--> Laser Turret Room #TODO: move kill requirement to casual logic, HIDING_ZOL left in to make logic match stable
-        laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])) # Laser Turret Room <--> Room Before Boss
+        vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"]))) # Vacuum Room <--> Room Before Boss #TODO: REMOVE, it's covered in casual logic statement
+        #TODO: laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])) # Laser Turret Room <--> Room Before Boss #TODO: ADD ways to knock wizrobe into pit
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6) # Room Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[5]]) # Boss Room <--> Instrument Room
@@ -131,10 +131,12 @@ class Dungeon6:
         #TODO: if options.logic == "casual":
             #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, BOMB)) # Entrance <--> Before Northwest Area # diagonal boomerang throw removed for casual
             #TODO: spark_pot_maze.connect(top_right_room,AND(POWER_BRACELET) OR(FEATHER, AND((r.enemy_requirements["SPARK_COUNTER_CLOCKWISE"]), (r.enemy_requirements["SPARK_CLOCKWISE"])))) # give the player a way to deal with sparks
+            #TODO: vacuum_room.connect(laser_turret_room, r.enemy_requirements["HIDING_ZOL"]) # Vacuum Room <--> Laser Turret Room
 
         #TODO: else:
             #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) # Entrance <--> Before Northwest Area
             #TODO: spark_pot_maze.connect(top_right_room, POWER_BRACELET) # Spark & Pot Maze <--> Northeast Horse Head Room # it's possible to get through without taking damage
+            #TODO: vacuum_room.connect(laser_turret_room, None) # Vacuum Room <--> Laser Turret Room
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
@@ -155,11 +157,11 @@ class Dungeon6:
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
-            entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, TOADSTOOL), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
+            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, TOADSTOOL), OR(r.ledge_super_poke, r.ledge_super_bump))) #TODO: [best leave toadstool out until permanent-toadstool patch] super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) # can boots superhop to pass both the mimic room and the 3 wizrobe room
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) # stun mask mimic, then pick it up and throw it against the top wall so it lands on top of the switch with enough delay to get past the top raised blocks
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: (I think this is not possible in reverse?) use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
-            #TODO: before_b_passage.connect(after_a_passage, TOADSTOOL) #TODO: so, so much easier than damage boost, and two-way!
+            #TODO: before_b_passage.connect(after_a_passage, TOADSTOOL) #TODO:[Wait until permanent toadstool patch?]
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
             waterway.connect(waterway_west_ledge, r.super_jump_feather, one_way=True)
             waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
