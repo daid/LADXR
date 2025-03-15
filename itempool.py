@@ -113,16 +113,18 @@ class ItemPool:
         elif settings.owlstatues == 'overworld':
             self.add(RUPEES_20, 9)
 
+        heart_container_type = HEART_CONTAINER
         if settings.hpmode == 'inverted':
-            self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+            heart_container_type = BAD_HEART_CONTAINER
         elif settings.hpmode == 'low':
-            self.add(HEART_PIECE, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+            heart_container_type = HEART_PIECE
         elif settings.hpmode == 'extralow':
-            self.add(RUPEES_20, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-        
+            heart_container_type = RUPEES_20
+        elif settings.hpmode == '5hit':
+            heart_container_type = RUPEES_20
+            self.add(RUPEES_20, self.get(HEART_PIECE))
+            self.remove(HEART_PIECE, self.get(HEART_PIECE))
+
         if settings.goal == 'seashells':
             self.remove(SEASHELL, 2)
 
@@ -368,6 +370,10 @@ class ItemPool:
             self.add(SEASHELL, 8)
             if self.get(SEASHELL) < 20:
                 raise RuntimeError("Not enough seashells (" + str(self.get(SEASHELL)) + ") available in itempool")
+
+        if heart_container_type != HEART_CONTAINER:
+            self.add(heart_container_type, self.get(HEART_CONTAINER))
+            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.

@@ -103,6 +103,21 @@ function randomGenerationString()
         setTimeout(randomGenerationString, 1000);
 }
 
+function updateSettingsVisibility() {
+    for(var s of options) {
+        if (!s.visible_if) continue;
+        var e = ID(s.key);
+        if (!e) continue;
+        var p = e.parentNode.parentNode;
+        var r = ID(s.visible_if[0]);
+        if (!r) continue;
+        if (s.visible_if.slice(1).includes(r.value))
+            p.classList.remove("hidden");
+        else
+            p.classList.add("hidden");
+    }
+}
+
 function updateGfxModImage() {
     if (!ID('gfxmod')) return;
     var gfxmod = ID('gfxmod').value
@@ -225,7 +240,7 @@ function buildUI(filter_function) {
     loadSettingsString();
     for(var s of options) {
         if (ID(s.key)) {
-            ID(s.key).oninput = updateSettingsString;
+            ID(s.key).oninput = function() { updateSettingsString(); updateSettingsVisibility(); }
             if (s.key == 'gfxmod') ID(s.key).oninput = function(e) {
                 if (ID('gfxmod').value == 'custom') ID('customgfxfile').click();
                 updateGfxModImage();
@@ -235,6 +250,7 @@ function buildUI(filter_function) {
     }
     updateGfxModImage();
     updateSettingsString();
+    updateSettingsVisibility();
     checkStoredRom();
     if (!storedRomArray) updateForm();
 

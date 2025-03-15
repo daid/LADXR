@@ -246,8 +246,8 @@ def isConsumable(item) -> bool:
         return False
     if item.startswith("RUPEES_") or item == "RUPEES":
         return True
-    #if item.startswith("KEY"):
-        #return True
+    if item.startswith("KEY") and item != KEY_CAVERN_OPENED:
+        return True
     return False
 
 

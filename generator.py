@@ -198,7 +198,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':
         patches.aesthetics.slowLowHPBeep(rom)
-    if settings.lowhpbeep == 'none':
+    if settings.lowhpbeep == 'none' or settings.hardmode == 'ohko':
         patches.aesthetics.removeLowHPBeep(rom)
     if 0 <= int(settings.linkspalette):
         patches.aesthetics.forceLinksPalette(rom, int(settings.linkspalette))
@@ -227,11 +227,23 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.shop.createShopRoom(rom, 0x299)
         rom.texts[0x030] = utils.formatText("Only %d {RUPEES}!" % (100,), ask="Buy  No Way")
         rom.texts[0x02C] = utils.formatText("Only %d {RUPEES}!" % (200,), ask="Buy  No Way")
+        # Add a telephone in the primary shop
+        import roomEditor
+        re = roomEditor.RoomEditor(rom, 0x2A1)
+        re.entities.append((1, 6, 0x80))
+        re.objects.append(roomEditor.Object(1, 6, 0xA6))
+        re.store(rom)
 
     if settings.hpmode == 'inverted':
         patches.health.setStartHealth(rom, 9)
     elif settings.hpmode == '1':
         patches.health.setStartHealth(rom, 1)
+    elif settings.hpmode == '5hit':
+        if settings.hardmode == 'ohko':
+            patches.health.setStartHealth(rom, 1)
+        else:
+            patches.health.setStartHealth(rom, 5)
+        patches.health.limitHitChallange(rom)
 
     patches.inventory.songSelectAfterOcarinaSelect(rom)
     if settings.quickswap == 'a':
@@ -264,10 +276,12 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
         patches.maze.patchMaze(rom, world_setup.sign_maze[0], world_setup.sign_maze[1])
     elif world_setup.goal == "seashells":
         patches.goal.setSeashellGoal(rom, 20)
-    elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
+    elif world_setup.goal.startswith("="):
         patches.goal.setSpecificInstruments(rom, [int(c) for c in world_setup.goal[1:]])
+    elif world_setup.goal == "open":
+        patches.goal.setRequiredInstrumentCount(rom, -1)
     else:
-        patches.goal.setRequiredInstrumentCount(rom, world_setup.goal)
+        patches.goal.setRequiredInstrumentCount(rom, world_setup.goal_count)
 
     # Patch the generated logic into the rom
     patches.chest.setMultiChest(rom, world_setup.multichest)

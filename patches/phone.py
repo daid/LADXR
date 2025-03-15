@@ -30,9 +30,21 @@ def patchPhone(rom):
     rom.texts[0x245] = b""
     rom.texts[0x247] = b""
     rom.texts[0x248] = b""
-    rom.patch(0x06, 0x2A8F, 0x2BBC, ASM("""
+    rom.patch(0x06, 0x2A7C, 0x2BBC, ASM("""
+        ld   a, [wTunicType]
+        call SetEntitySpriteVariant
+
+        ldh  a, [hActiveEntityVisualPosY]
+        sub  $05
+        ldh  [hActiveEntityVisualPosY], a
+        ld   de, TelephoneSpriteVariants
+        call RenderActiveEntitySpritesPair
+        call ReturnIfNonInteractive_06
+        call CheckLinkInteractionWithEntity_06
+        ret  nc
+    
         ; We use $DB6D to store which tunics we have. This is normally the Dungeon9 instrument, which does not exist.
-        ld  a, [$DC0F]
+        ld  a, [wTunicType]
         ld  hl, wCollectedTunics
         inc a
 
@@ -55,6 +67,10 @@ notTunic2:
         xor a
 noWrap:
 
-        ld  [$DC0F], a
+        ld  [wTunicType], a
         ret
-    """), fill_nop=True)
+TelephoneSpriteVariants:
+        db $50, $00, $52, $00
+        db $50, $02, $52, $02
+        db $50, $03, $52, $03
+    """, 0x6A7C), fill_nop=True)

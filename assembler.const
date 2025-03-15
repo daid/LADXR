@@ -23,6 +23,8 @@
 
 641A:PushLinkOutOfEntity_06
 645D:CheckLinkInteractionWithEntity_06
+64C6:ReturnIfNonInteractive_06
+65DB:ClearEntityStatus_06
 
 4005:GetEntitySpeedYAddress_07
 7D96:ReturnIfNonInteractive_07
@@ -65,6 +67,7 @@ C290:wEntitiesStateTable
 C2A0:wEntitiesCollisionsTable
 C2B0:wEntitiesPrivateState1Table
 C2C0:wEntitiesPrivateState2Table
+C2D0:wEntitiesPrivateState3Table
 C2E0:wEntitiesTransitionCountdownTable
 C2F0:wEntitiesPrivateCountdown1Table
 C300:wEntitiesPrivateCountdown2Table
@@ -79,6 +82,7 @@ C3A0:wEntitiesTypeTable
 C3B0:wEntitiesSpriteVariantTable
 C3D0:wEntitiesInertiaTable
 C3E0:wEntitiesRoomTable
+C410:wEntitiesIgnoreHitsCountdownTable
 C420:wEntitiesFlashCountdownTable
 C440:wEntitiesPrivateState4Table
 C460:wEntitiesLoadOrderTable
@@ -117,9 +121,12 @@ DB4B:wHasToadstool
 DB4C:wMagicPowderCount
 DB4E:wSwordLevel
 DB56:wIsBowWowFollowingLink
+DB57:wDeathCount
+DB5A:wHealth
 DB5D:wRupeeCountHigh
 DB5E:wRupeeCountLow
 DB6D:wCollectedTunics ; Memory location where to store which tunic options are available
+DB6B:wHasInstrument7
 DB73:wIsMarinFollowingLink
 DB7A:wGhostSeeksGrave
 DB7D:wBoomerangTradedItem
@@ -129,8 +136,12 @@ DB90:wAddRupeeBufferLow
 DB91:wSubstractRupeeBufferHigh
 DB92:wSubstractRupeeBufferLow
 DB94:wSubtractHealthBuffer
+DB95:wGameplayType
 DBA5:wIsIndoor
+DBAE:wIndoorRoom
+DBA6:wSaveSlot
 DBC7:wInvincibilityCounter
+DC0F:wTunicType
 DC50:wObjPal1
 DC58:wObjPal2
 DC60:wObjPal3

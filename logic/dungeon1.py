@@ -45,7 +45,7 @@ class Dungeon1:
         entrance.connect(main_room_chest5, AND(FEATHER, FOUND(KEY1, 3))) # Main Area <--> Nightmare Key Chest
         main_room.connect(seashell_room, BOMB) # Main Area <--> Hidden Bombable Wall Room
         main_room.connect(north_room, FOUND(KEY1, 3)) # Main Area <--> North Area
-        north_room.connect(northwest_room, None)
+        north_room.connect(northwest_room, None) # North Room <--> Spiked Beetle Room
         northwest_room.connect(feather_room, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD)) # North Area <--> Feather Room
         main_room.connect(east_room, FOUND(KEY1, 3)) # Main Area <--> East Area
         east_room.connect(east_room_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # East Area <--> Three of a Kind Chest
@@ -59,7 +59,7 @@ class Dungeon1:
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"]) # stalfos jump away when you press a button.
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            entrance.connect(main_room_chest5, r.super_jump_feather)  # super jump
+            entrance.connect(main_room_chest5, r.super_jump_feather) # super jump
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless)) # itemless pit buffer to miniboss door 
         
         if options.logic == 'hell':

@@ -88,7 +88,6 @@ class Dungeon2:
         #TODO: if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             #outside_passage_b.connect(vacuum_room, POWER_BRACELET, one_way=True) # exit passage b stairs by lifting pot and also r.corner_walk if it were in requirements.py
 
-
         if options.logic == 'glitched' or options.logic == 'hell':
             boo_room.connect(boo_room_chest8, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because player will have fire)
             after_miniboss.connect(before_b_passage, r.super_jump_feather) # superjump after hinox to access passage B
@@ -105,7 +104,7 @@ class Dungeon2:
             pot_pol_room.connect(before_c_passage, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
             before_c_passage.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: enclose in or statement to allow boots only method
-            
+
         self.entrance = entrance
         self.final_room = instrument
 
