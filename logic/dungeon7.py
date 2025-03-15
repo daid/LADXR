@@ -33,7 +33,7 @@ class Dungeon7:
         tile_room = Location("D7 Floating Tile Fight", dungeon=7)
         spike_corridor = Location("D7 Between Pillar Pushbocks", dungeon=7)
         bomb_corridor = Location("D7 Bombable Wall Corridor", dungeon=7)
-        owl_ledge = Location("D7 By Pit Owl", dungeon=7)
+        bombwall_owl = Location("D7 By Pit Owl", dungeon=7)
         keylock_ledge = Location("D7 Key Locked Ledge", dungeon=7)
         pegs_after_a_stairs = Location("D7 On Pegs Around Chest", dungeon=7)
         pegs_after_a_stairs_chest7 = Location(dungeon=7).add(DungeonChest(0x21A))
@@ -56,12 +56,12 @@ class Dungeon7:
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=7).add(OwlStatue(0x216)).connect(after_a_stairs, STONE_BEAK7)
             Location(dungeon=7).add(OwlStatue(0x204)).connect(before_b_stairs, STONE_BEAK7)
-            Location(dungeon=7).add(OwlStatue(0x21C)).connect(owl_ledge, STONE_BEAK7)
+            Location(dungeon=7).add(OwlStatue(0x21C)).connect(bombwall_owl, STONE_BEAK7)
 
         # connections
         # floor 1
         entrance.connect(entrance_drop1, r.enemy_requirements["LIKE_LIKE"]) # Entrance <--> Entrance Key
-        entrance.connect(before_a_stairs, KEY7) # Entrance <--> Before First Staircase
+        entrance.connect(before_a_stairs, FOUND(KEY7, 1)) # Entrance <--> Before First Staircase
         before_b_stairs.connect(before_b_stairs_chest1, None) # First Floor Main Area <--> Switch Wrapped Chest
         before_b_stairs.connect(before_d_stairs, r.hit_switch) # First Floor Main Area <--> Peg Locked Staircase (TODO: can which items can hit this switch damageless?)
         west_ledge.connect(west_ledge_chest4, None) # West Kirby Ledge <--> Kirby Ledge Chest
@@ -95,8 +95,8 @@ class Dungeon7:
         after_d_stairs.connect(tile_room, None, one_way=True) # Hinox Area --> Floating Tile Fight
         tile_room.connect(nw_pillar, None) # Floating Tile Fight <--> Northwest Pillar Area
         after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Kinox Key
-        after_d_stairs.connect(keylock_ledge, AND(KEY7, FOUND(KEY7, 3))) # Hinox Area <--> Key Locked Ledge
-        after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: replace with "NEW VERSION" below
+        after_d_stairs.connect(keylock_ledge, FOUND(KEY7, 3)) # Hinox Area <--> Key Locked Ledge
+        after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: REPLACE with below
         #TODO: after_a_stairs.connect(pegs_after_a_stairs, BOOMERANG) # Ball Room <--> On Pegs Around Ches # NEW VERSION
         #TODO: before_b_stairs.connect(pegs_after_a_stairs, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD, COUNT(SWORD,2))) # Hinox Area <--> On Pegs Around Ches # NEW VERSION
         keylock_ledge.connect(pegs_after_a_stairs, None, one_way=True) # Key Locked Ledge --> On Pegs Around Chest
@@ -105,9 +105,9 @@ class Dungeon7:
         pegs_after_a_stairs.connect(after_d_stairs, None, one_way=True) # On Pegs Around Chest --> Hinox Area
         pegs_after_a_stairs.connect(pegs_after_a_stairs_chest7, None) # On Pegs Around Chest --> Mirror Shield Chest
         nw_pillar.connect(bomb_corridor, BOMB) # Northwest Pillar Area <--> Bombable Wall Corridor
-        bomb_corridor.connect(owl_ledge, BOMB) # Bombable Wall Corridor <--> By Pit Owl
+        bomb_corridor.connect(bombwall_owl, BOMB) # Bombable Wall Corridor <--> By Pit Owl
         #TODO: bomb_corridor.connect(after_d_stairs, None, one_way=True) # Bombable Wall Corridor --> Hinox Area # push blocks #[logic prep for staircase rando]
-        owl_ledge.connect(sw_pillar, HOOKSHOT) # By Pit Owl <--> Southwest Pillar Area
+        bombwall_owl.connect(sw_pillar, HOOKSHOT) # By Pit Owl <--> Southwest Pillar Area
         sw_pillar.connect(sw_pillar_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Southwest Pillar Area <--> Three of a Kind, Pit Chest #TODO: you can't really use any kill requirement pillar side of pushblocks
         sw_pillar.connect(final_pillar_fallen, POWER_BRACELET) # Southwest Pillar Area <--> Final Pillar Destroyed
         after_d_stairs.connect(before_e_stairs, None) # Hinox Area <--> Stairs Leading to 3rd Floor
@@ -123,7 +123,7 @@ class Dungeon7:
         after_miniboss_room.connect(after_miniboss_room_chest8, None) # After Miniboss Room <--> Nightmare Key/After Grim Creeper Chest
 
         # floor 3 after cutscene
-        #TODO: boss_backdoor.connect(after_boss_door, AND(r.attack_hookshot_no_bomb, AND(KEY7, FOUND(KEY7, 3))))
+        #TODO: boss_backdoor.connect(after_boss_door, AND(r.attack_hookshot_no_bomb, FOUND(KEY7, 3)))
         after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
         conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
         after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
@@ -150,10 +150,10 @@ class Dungeon7:
             before_b_stairs.connect(east_ledge, r.super_jump_feather) # superjump in spike switch room to right ledge
             spike_corridor.connect(nw_pillar, OR(r.shaq_jump, r.super_jump_feather)) # superjump from right wall or shaq jump off pushblock
             west_ledge.connect(before_d_stairs, r.boots_jump, one_way = True) # without hitting the switch, drop off ledge onto peg wall, and boots jump to pegs blocking stairs
-            after_d_stairs.connect(owl_ledge, r.sideways_block_push) # sideways block push to get to owl statue by bomb wall
+            after_d_stairs.connect(bombwall_owl, r.sideways_block_push) # sideways block push to get to owl statue by bomb wall
             after_d_stairs.connect(sw_pillar, r.sideways_block_push) # sideways block push to get to SW pillar area
             #TODO: after_d_stairs.connect(bomb_corridor, AND(r.wall_clip, r.shaq_jump)) #[logic prep for staircase rando]
-            #TODO: owl_ledge.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
+            #TODO: bombwall_owl.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             #TODO: sw_pillar.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             sw_pillar.connect(sw_pillar_chest6, POWER_BRACELET) #TODO: Not really an accurate statement, as you can't do the block push from the north side. evaluate moving to hard logic, or even connecting from hinox area?
             after_d_stairs.connect(final_pillar_fallen, r.bomb_trigger) # bomb trigger pillar
@@ -173,10 +173,10 @@ class Dungeon7:
             #TODO: after_d_stairs.connect(se_pillar, r.boots_superhop, one_way = True) #[logic prep for staircase rando]
             #TODO: after_d_stairs.connect(se_pillar, r.super_bump, one_way = True) #[logic prep for staircase rando]
             #TODO: after_d_stairs.connect(keylock_ledge, r.boots_superbump) # running super bump off antifairy to get on ledge without key
-            #TODO: owl_ledge.connect(sw_pillar, r.pit_buffer_boots) 
+            #TODO: bombwall_owl.connect(sw_pillar, r.pit_buffer_boots) 
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
             final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
-            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke, AND(HOOKSHOT, FEATHER, AND(KEY7, FOUND(KEY7, 3))))) #[logic prep for staircase rando] superjump and use sword or shield to rebount onto the pegs, feather to exit east side
+            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke, AND(HOOKSHOT, FEATHER, FOUND(KEY7, 3)))) #[logic prep for staircase rando] superjump and use sword or shield to rebount onto the pegs, feather to exit east side
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
             #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
             

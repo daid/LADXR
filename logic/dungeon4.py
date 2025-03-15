@@ -61,21 +61,21 @@ class Dungeon4:
         entrance.connect(east_crossroads, AND(FEATHER, PEGASUS_BOOTS)) # Entrance <--> East of Crossroads
         east_crossroads.connect(east_crossroads_chest5, BOMB) # East of Crossroads <--> Lower Bomb Locked Watery Chest
         east_crossroads.connect(east_crossroads_chest6, OR(BOMB, FLIPPERS)) # East of Crossroads <--> Upper Bomb Locked Watery Chest
-        east_of_entrance.connect(west_statue_room, KEY4, one_way=True) # East of Entrance <--> Statue Room West Door
-        west_statue_room.connect(east_of_entrance, AND(KEY4, FOUND(KEY4, 5)), one_way=True) # Statue Room West Door <--> East of Entrance
+        east_of_entrance.connect(west_statue_room, FOUND(KEY4, 1), one_way=True) # East of Entrance <--> Statue Room West Door
+        west_statue_room.connect(east_of_entrance, FOUND(KEY4, 5), one_way=True) # Statue Room West Door <--> East of Entrance
         west_statue_room.connect(north_statue_room, OR(FEATHER, FLIPPERS)) # Statue Room West Door <--> Statue Room North Door
-        south_crossroads.connect(north_statue_room, AND(KEY4, FOUND(KEY4, 4)), one_way=True) # South of Crossroads <--> Statue Room North Door
-        north_statue_room.connect(south_crossroads, AND(KEY4, FOUND(KEY4, 2)), one_way=True) # Statue Room North Door <--> South of Crossroads
+        south_crossroads.connect(north_statue_room, FOUND(KEY4, 4), one_way=True) # South of Crossroads <--> Statue Room North Door
+        north_statue_room.connect(south_crossroads, FOUND(KEY4, 2), one_way=True) # Statue Room North Door <--> South of Crossroads
         south_crossroads.connect(south_crossroads_chest7, FLIPPERS) # South of Crossroads <--> Peahat's Chest <--> South of Crossroads
         south_crossroads.connect(north_crossroads, AND(FEATHER, PEGASUS_BOOTS)) # South of Crossroads <--> North of Crossroads
-        north_crossroads.connect(before_miniboss, AND(KEY4, FOUND(KEY4, 3))) # North of Crossroads <--> Before Miniboss
+        north_crossroads.connect(before_miniboss, FOUND(KEY4, 3)) # North of Crossroads <--> Before Miniboss
         before_miniboss.connect(sidescroller_drop1, AND(r.enemy_requirements["ZOL"], FLIPPERS)) # Before Miniboss <--> Pit Key
         before_miniboss.connect(before_miniboss_chest8, FLIPPERS) # Before Miniboss <--> Flipper Locked After Boots Pit Chest
         before_miniboss.connect(south_tile_puzzle, OR(FEATHER, FLIPPERS)) # Before Miniboss <--> Lower Tile Puzzle Area
         south_tile_puzzle.connect(south_tile_puzzle_chest9, None) # Lower Tile Puzzle Area <--> Spark Chest
         south_tile_puzzle.connect(south_tile_puzzle_chest10, None) # Lower Tile Puzzle Area <--> Blob Chest
         before_miniboss.connect(north_tile_puzzle, FLIPPERS) # Before Miniboss <--> Upper Tile Puzzle
-        before_miniboss.connect(miniboss_room, AND(KEY4, FOUND(KEY4, 5))) # Before Miniboss <--> Miniboss Room - #TODO: change to one_way
+        before_miniboss.connect(miniboss_room, FOUND(KEY4, 5)) # Before Miniboss <--> Miniboss Room - #TODO: change to one_way
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[3]]) # Miniboss Room <--> After Miniboss #TODO: change to one_way
         after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # After Miniboss <--> Flippers Room #TODO: DELETE and it's in casual logic statement
         flippers_room.connect(north_tile_puzzle, r.enemy_requirements["ZOL"]) # Flippers Room <--> Before Miniboss Room #TODO: change to one_way
@@ -91,7 +91,7 @@ class Dungeon4:
         after_a_passage.connect(after_a_passage_chest12, None) # Boss Key Ledge <--> Nightmare Key Ledge Chest
         after_a_passage.connect(south_tile_puzzle, None, one_way=True) # Boss Key Ledge <--> Lower Tile Puzzle Area
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS) # Lower Tile Puzzle Area <--> Outside Boss Passageway Keyblock
-        outside_b_passage_keyblock.connect(before_b_passage, AND(KEY4, FOUND(KEY4, 5))) # Outside Boss Passageway Keyblock <--> Before Boss Passageway
+        outside_b_passage_keyblock.connect(before_b_passage, FOUND(KEY4, 5)) # Outside Boss Passageway Keyblock <--> Before Boss Passageway
         before_miniboss.connect(outside_b_passage_shallows, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
         before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: remove and let casual logic statement take care of it
         after_b_passage.connect(pre_boss_room, None) # After Boss Passageway <--> Before Boss Door

@@ -42,12 +42,12 @@ class Dungeon1:
         entrance.connect(main_room, None) # Entrance <--> Main Area
         main_room.connect(main_room_chest3, None) # Main Area <--> Spark, Mini-Moldorm Chest
         main_room.connect(main_room_chest4, OR(r.enemy_requirements["MINI_MOLDORM"], SHIELD)) # Main Area <--> Mini-Moldorn Spawn Chest
-        entrance.connect(main_room_chest5, AND(FEATHER, KEY1, FOUND(KEY1, 3))) # Main Area <--> Nightmare Key Chest
+        entrance.connect(main_room_chest5, AND(FEATHER, FOUND(KEY1, 3))) # Main Area <--> Nightmare Key Chest
         main_room.connect(seashell_room, BOMB) # Main Area <--> Hidden Bombable Wall Room
-        main_room.connect(north_room, AND(KEY1, FOUND(KEY1, 3))) # Main Area <--> North Area
+        main_room.connect(north_room, FOUND(KEY1, 3)) # Main Area <--> North Area
         north_room.connect(northwest_room, None)
         northwest_room.connect(feather_room, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD)) # North Area <--> Feather Room
-        main_room.connect(east_room, AND(KEY1, FOUND(KEY1, 3))) # Main Area <--> East Area
+        main_room.connect(east_room, FOUND(KEY1, 3)) # Main Area <--> East Area
         east_room.connect(east_room_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # East Area <--> Three of a Kind Chest
         east_room.connect(miniboss_room, FEATHER) # East Area <--> Miniboss Room
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]]) # Miniboss <--> After Miniboss

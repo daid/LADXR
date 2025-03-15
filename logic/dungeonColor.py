@@ -47,16 +47,16 @@ class DungeonColor:
         bone_putter_room.connect(main_room, None, one_way=True) # Bone Putter Room <--> Main Area
         main_room.connect(main_room_drop1, OR(r.hit_switch, SHIELD)) # Main Area <--> Upper Small Key
         main_room.connect(rupee_room, BOMB) # Main Area <--> Secret Rupee Room
-        main_room.connect(miniboss1_room, AND(KEY0, FOUND(KEY0, 3))) # Main Area <--> Miniboss 1
+        main_room.connect(miniboss1_room, FOUND(KEY0, 3)) # Main Area <--> Miniboss 1
         miniboss1_room.connect(miniboss1_room_chest4, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]]) # Miniboss 1 <--> Nightmare Key Chest
-        main_room.connect(miniboss2_room, AND(KEY0, FOUND(KEY0, 2))) # Main Area <--> Miniboss 2
+        main_room.connect(miniboss2_room, FOUND(KEY0, 2)) # Main Area <--> Miniboss 2
         miniboss2_room.connect(button_room, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]]) # Miniboss 2 <--> Hidden Button Room
         button_room.connect(north_room, POWER_BRACELET)  # Hidden Button Room <--> North Area
         north_room.connect(north_room_chest5, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["HIDING_ZOL"])) # North Area <--> Zol Chest
         north_room.connect(north_room_drop2, AND(r.attack_hookshot, POWER_BRACELET)) # North Area <--> Bullshit Room
         button_room.connect(west_room, POWER_BRACELET) # Hidden Button Room <--> 3x3 Puzzle Room
         west_room.connect(fourzol_room, OR(r.hit_switch, SHIELD)) # 3x3 Puzzle Room <--> Four Zol Room
-        fourzol_room.connect(switch_room, AND(KEY0, FOUND(KEY0, 3))) # Four Zol Room <--> Room Before Boss
+        fourzol_room.connect(switch_room, FOUND(KEY0, 3)) # Four Zol Room <--> Room Before Boss
         switch_room.connect(pre_boss, OR(r.hit_switch, AND(PEGASUS_BOOTS, FEATHER))) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY0) # Outside Boss Door <--> Boss Room
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[8]]) # Boss Room <--> Fairy Room

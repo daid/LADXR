@@ -47,17 +47,17 @@ class Dungeon2:
             Location(dungeon=2).add(OwlStatue(0x129)).connect(vacuum_room, STONE_BEAK2) # Vacuum Mouth Area <--> After Hinox Owl
 
         entrance.connect(entrance_chest1, POWER_BRACELET) # Entrance <--> Entrance Chest
-        entrance.connect(blade_room, AND(KEY2, FOUND(KEY2, 5))) # Entrance <--> West of Torches
+        entrance.connect(blade_room, FOUND(KEY2, 5)) # Entrance <--> West of Torches
         pitbeetle_room.connect(blade_room, r.enemy_requirements["KEESE"]) # West of Torches <--> Hardhat Beetle Room
         pitbeetle_room.connect(pitbeetle_room_chest2, OR(FEATHER, HOOKSHOT)) # Beetle Room <--> Hardhat Beetle Pit Chest
         entrance.connect(east_torches, r.fire) # Entrance <--> East of Torches
         east_torches.connect(east_torches_drop1, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["STALFOS_AGGRESSIVE"])) # East of Torches <--> Two Stalfos Key
-        east_torches.connect(east_torches_chest3, AND(KEY2, FOUND(KEY2, 5), r.enemy_requirements["MASKED_MIMIC_GORIYA"])) # East of Torches <--> Mask-Mimic Chest
+        east_torches.connect(east_torches_chest3, AND(FOUND(KEY2, 5), r.enemy_requirements["MASKED_MIMIC_GORIYA"])) # East of Torches <--> Mask-Mimic Chest
         east_torches.connect(pitplatform_room, r.hit_switch) # East of Torches <--> Platforms & Pits Area
         pitplatform_room.connect(pitplatform_chest4, r.hit_switch) # Platforms & Pits Area <--> First Switch Locked Chest
         pitplatform_room.connect(pitplatform_chest5, FEATHER) # Platforms & Pits Area <--> Button Spawn Chest
         pitplatform_room.connect(mimic_beetle_room, FEATHER) # Platforms & Pits Area <--> Mimic & Beetle Area
-        mimic_beetle_room.connect(before_a_passage, AND(KEY2, FOUND(KEY2, 3))) # Mimic & Beetle Area <--> Pushblock Room
+        mimic_beetle_room.connect(before_a_passage, FOUND(KEY2, 3)) # Mimic & Beetle Area <--> Pushblock Room
         before_a_passage.connect(after_a_passage, FEATHER) # Pushblock Room <--> Dark Spark Room
         after_a_passage.connect(miniboss_room, None) # Dark Spark Room <--> Miniboss Room
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[1]]) # Miniboss Room <--> After Miniboss
@@ -65,13 +65,13 @@ class Dungeon2:
         after_miniboss.connect(vacuum_room, FEATHER) # After Miniboss <--> Vacuum Mouth Area
         vacuum_room.connect(vacuum_room_chest6, None) # Vacuum Mouth Area <--> Vacuum Mouth Chest
         vacuum_room.connect(vacuum_room_chest7, None) # Vacuum Mouth Area <--> Outside Boo Buddies Room Chest
-        vacuum_room.connect(boo_room, AND(KEY2, FOUND(KEY2, 5))) # Vacuum Mouth Area <--> Boo Buddies Room
+        vacuum_room.connect(boo_room, FOUND(KEY2, 5)) # Vacuum Mouth Area <--> Boo Buddies Room
         boo_room.connect(boo_room_chest8, OR(r.fire, r.enemy_requirements["BOO_BUDDY"])) # Boo Buddies Room <--> Boo Buddies Room Chest
         vacuum_room.connect(north_switch_room, POWER_BRACELET) # Vacuum Mouth Area <--> North Switch Maze
         before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze
         north_switch_room.connect(north_switch_room_chest8, None) # North Switch Maze <--> Second Switch Locked Chest
         north_switch_room.connect(north_switch_room_chest9, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
-        north_switch_room.connect(pot_pol_room, AND(KEY2, FOUND(KEY2, 5))) # North Switch Maze <--> Boss Passageway Room Entrance
+        north_switch_room.connect(pot_pol_room, FOUND(KEY2, 5)) # North Switch Maze <--> Boss Passageway Room Entrance
         pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door

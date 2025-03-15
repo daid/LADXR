@@ -148,29 +148,29 @@ class Dungeon8:
         lava_left_corridor.connect(pushblock_room, None) # 'L' Shaped Corridor <--> Pushblock Chest Area
         pushblock_room.connect(pushblock_room_chest6, None) # Pushblock Chest Area <--> Push Block Chest
         loop_ledge.connect(before_c_passage, None, one_way=True) # Useless Ledge --> Before Passage to Boss
-        pre_center_keyblock.connect(heart_vire, KEY8) # Before Central Keyblock <--> Floating Heart & Vire Area
-        pre_center_keyblock.connect(peahat_area, KEY8) # Before Central Keyblock <--> Peahat Area
+        pre_center_keyblock.connect(heart_vire, FOUND(KEY8, 1)) # Before Central Keyblock <--> Floating Heart & Vire Area
+        pre_center_keyblock.connect(peahat_area, FOUND(KEY8, 1)) # Before Central Keyblock <--> Peahat Area
         pre_center_keyblock.connect(loop_ledge, None, one_way=True) # Before Central Keyblock --> Useless Ledge
-        peahat_area.connect(heart_vire, KEY8) # Peahat Area <--> Floating Heart & Vire Area
+        peahat_area.connect(heart_vire, FOUND(KEY8, 1)) # Peahat Area <--> Floating Heart & Vire Area
         peahat_area.connect(after_e_passage, None, one_way=True) # Peahat Area --> Staircase Below Three Peahats
-        heart_vire.connect(before_g_passage, AND(KEY8, FOUND(KEY8, 2))) # Floating Heart & Vire Area <--> Blade Room
+        heart_vire.connect(before_g_passage, FOUND(KEY8, 2)) # Floating Heart & Vire Area <--> Blade Room
         before_g_passage.connect(hidden_arrow_room, None, one_way=True) # Blade Room --> Hidden Arrow Room
         before_g_passage.connect(after_g_passage, AND(FEATHER, HOOKSHOT)) # Blade Room <--> North Refill Room
         hidden_arrow_room.connect(dodongo_area, r.enemy_requirements["HIDING_ZOL"]) # Hidden Arrow Room <--> Dodongo Area
         hidden_arrow_room.connect(dark_east_spark, BOMB) # Hidden Arrow Room <--> Dark East (Spark Side)
         # dark
         dark_east_spark.connect(dark_east_zol, FEATHER) # Dark East (Spark Side) <--> Dark East (Zol Side)
-        dark_east_zol.connect(dark_center, AND(KEY8, FOUND(KEY8, 4))) # Dark East (Zol Side) <--> Dark Center
+        dark_east_zol.connect(dark_center, FOUND(KEY8, 4)) # Dark East (Zol Side) <--> Dark Center
         dark_center.connect(peahat_area, AND(BOMB, FEATHER), one_way=True) # Dark Center --> Peahat Area # coming form peahat area could be hard due to obscurity
         dark_center.connect(dark_west, r.enemy_requirements["SNAKE"], one_way=True) # Dark Center <--> Dark West
         dark_west.connect(peahat_area, AND(BOMB, FEATHER), one_way=True) # Dark West --> Peahat Area # coming form peahat area could be hard due to obscurity
         dark_west.connect(before_f_stairs, AND(BOMB, FEATHER), one_way=True) # Dark West --> Northwest Area
         dark_west.connect(dark_center, AND(r.enemy_requirements["SNAKE"], r.enemy_requirements["PEAHAT"])) # Dark West <--> Dark Center
-        dark_west.connect(dark_center_torches, KEY8) # Dark West <--> Dark Center Between Torches # ???
+        dark_west.connect(dark_center_torches, FOUND(KEY8, 3)) # Dark West <--> Dark Center Between Torches # ???
         dark_center_torches.connect(dark_center, None, one_way=True) # Dark Center Between Torches --> Dark Center
         dark_center_torches.connect(dark_center_pre_keyblock, HOOKSHOT) # Dark Center Between Torches <--> Dark Center Before Keyblock
         dark_center_pre_keyblock.connect(dark_center, None, one_way=True) # Dark Center Before Keyblock --> Dark Center
-        dark_center_pre_keyblock.connect(before_d_passage, AND(KEY8, FOUND(KEY8, 7))) # Dark Center Before Keyblock <--> Dark Room Staircase
+        dark_center_pre_keyblock.connect(before_d_passage, FOUND(KEY8, 7)) # Dark Center Before Keyblock <--> Dark Room Staircase
         # miniboss
         before_d_passage.connect(after_d_passage, FEATHER) # Dark Room Staircase <--> Staircase by Blaino
         after_d_passage.connect(miniboss_room, None, one_way=True) # Staircase by Blaino <--> Blaino Room
@@ -188,11 +188,11 @@ class Dungeon8:
         pre_lava_ledge.connect(after_g_passage, None, one_way=True) # Ledge West of Dodongos <--> North Refill Room
         lava_ledge.connect(lava_ledge_chest8, None) # Lava Ledge <--> Lava Ledge Chest
         lava_ledge.connect(after_g_passage, None, one_way=True) # Lava Ledge <--> North Refill Room
-        dodongo_area.connect(after_f_stairs_chest9, AND(FEATHER, AND(KEY8, FOUND(KEY8, 4)), r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Area <-->  #TODO: assumes vanilla tal tal exits
+        dodongo_area.connect(after_f_stairs_chest9, AND(FEATHER, FOUND(KEY8, 4), r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Area <-->  #TODO: assumes vanilla tal tal exits
         after_f_stairs.connect(dodongo_area, None, one_way=True) # Ledge Above Dodongos <--> Dodongo Area
         before_f_stairs.connect(after_f_stairs, None) # Northwest Area <--> Ledge Above Dodongos # assumes vanilla tal tal exits
         # northwest
-        slime_corridor.connect(before_f_stairs, AND(KEY8, FOUND(KEY8, 4))) # Corridor by Lava Ledge Chest <--> Northwest Area
+        slime_corridor.connect(before_f_stairs, FOUND(KEY8, 4)) # Corridor by Lava Ledge Chest <--> Northwest Area
         before_f_stairs.connect(before_f_stairs_chest10, None) # Northwest Area <--> Beamos Blocked Chest
         before_f_stairs.connect(before_f_stairs_drop4, BOW) # Northwest Area <--> Lava Arrow Statue Key
         miniboss4_cubby.connect(ledge_west_boss, HOOKSHOT) # Cubby After Northwest Vire <--> West of Boss Door Ledge
@@ -208,7 +208,7 @@ class Dungeon8:
         after_b_passage.connect(miniboss4_cubby, None, one_way=True) # Before Cueball <--> Cubby After Northwest Vire
         before_f_stairs.connect(miniboss4_cubby, AND(r.enemy_requirements["VIRE"], AND(r.enemy_requirements["SNAKE"]))) # Northwest Area <--> Cubby After Northwest Vire
         miniboss4_cubby.connect(before_f_stairs, None, one_way=True) # Cubby After Northwest Vire <--> Northwest Area
-        after_b_passage.connect(miniboss4_room, AND(KEY8, FOUND(KEY8, 7))) # Before Cueball <--> Cueball Room
+        after_b_passage.connect(miniboss4_room, FOUND(KEY8, 7)) # Before Cueball <--> Cueball Room
         miniboss4_room.connect(nw_zamboni_room, AND(FEATHER, r.miniboss_requirements["CUE_BALL"])) # Cueball Room <--> Two Torch Zamboni Puzzle
         nw_zamboni_room.connect(nw_zamboni_room_chest12, None) # Two Torch Zamboni Puzzle <--> Nightmare Key
         # boss

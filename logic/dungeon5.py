@@ -69,7 +69,7 @@ class Dungeon5:
         before_a_passage.connect(after_a_passage, FEATHER) # Room West of Entrance <--> Crystal Room Entrance
         after_a_passage.connect(crystal_room, SWORD) # Crystal Room Entrance <--> Crystal Room
         crystal_room.connect(crystal_room_drop1, SWORD) # Crystal Room <--> Crystal Key
-        entrance.connect(crystal_puddle_room, KEY5) # Entrance <--> After First Key
+        entrance.connect(crystal_puddle_room, FOUND(KEY5, 1)) # Entrance <--> After First Key
         crystal_puddle_room.connect(messy_room, r.enemy_requirements["IRON_MASK"]) # After First Key <--> Messy Room
         messy_room.connect(messy_room_chest3, r.enemy_requirements["IRON_MASK"]) # Messy Room <--> Flying Bomb Chest South
         crystal_puddle_room.connect(statue_room, r.enemy_requirements["IRON_MASK"]) # After First Key <--> Fireball Statue Room
@@ -78,10 +78,10 @@ class Dungeon5:
         pot_column_room.connect(pot_column_room_chest4, None) # Pot Column Room <--> Three Iron Mask Chest
         pot_column_room.connect(after_blade_trap, None, one_way=True) # Pot Column Room --> After Blade Trap
         statue_room.connect(before_miniboss, HOOKSHOT) # Fireball Statue Room <--> Before Miniboss
-        before_miniboss.connect(miniboss_room, AND(KEY5, FOUND(KEY5, 2))) # Before Miniboss <--> Miniboss Room
+        before_miniboss.connect(miniboss_room, FOUND(KEY5, 2)) # Before Miniboss <--> Miniboss Room
         miniboss_room.connect(before_c_passage, r.miniboss_requirements[world_setup.miniboss_mapping[4]]) # Miniboss Room <--> After Miniboss
         before_c_passage.connect(after_c_passage, AND(HOOKSHOT, FEATHER)) # After Miniboss <--> Before Boss Keyblock
-        after_c_passage.connect(after_boss_keyblock, AND(KEY5, FOUND(KEY5, 3))) # Before Boss Keyblock <--> After Boss Keyblock
+        after_c_passage.connect(after_boss_keyblock, FOUND(KEY5, 3)) # Before Boss Keyblock <--> After Boss Keyblock
         crystal_puddle_room.connect(ms_1_room, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), one_way=True) # Crystal River Area --> Master Stalfos Fight 1
         ms_1_room.connect(crystal_puddle_room, r.enemy_requirements["MASTER_STALFOS"], one_way=True) # Master Stalfos Fight 1 --> Crystal River Area
         ms_1_room.connect(before_d_passage, r.enemy_requirements["MASTER_STALFOS"], one_way=True) # Master Stalfos Fight 1 --> South of Crossroads

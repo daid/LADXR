@@ -91,7 +91,7 @@ class Dungeon6:
         top_left_room.connect(star_area, POWER_BRACELET, one_way=True) # Northwest Horse Head Room --> Northwest Area
         top_left_room.connect(top_left_room_chest7, None) # Northwest Horse Head Room <--> Top Left Horse Heads Chest
         # miniboss
-        entrance.connect(before_miniboss, KEY6) # Entrance <--> Before Miniboss
+        entrance.connect(before_miniboss, FOUND(KEY6, 1)) # Entrance <--> Before Miniboss
         before_miniboss.connect(miniboss_room, BOMB) # Before Miniboss <--> Miniboss Room
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[5]], one_way=True) # Miniboss Room --> After Miniboss
         after_miniboss.connect(miniboss_room, COUNT(POWER_BRACELET, 2), one_way=True) # After Miniboss --> Miniboss Room
@@ -115,7 +115,7 @@ class Dungeon6:
         waterway_east_ledge.connect(dodongo_room, None, one_way=True) # Outside Dodongo Room --> Dodongo Room
         waterway_east_ledge.connect(waterway, None, one_way=True) # Outside Dodongo Room --> Waterway
         waterway_east_ledge.connect(hookshot_block, HOOKSHOT, one_way=True) # Outside Dodongo Room --> Waterway Hookshot Block
-        hookshot_block.connect(waterway_west_ledge, AND(KEY6, FOUND(KEY6, 3))) # Waterway Hookshot Block --> Ledge Left of Waterway
+        hookshot_block.connect(waterway_west_ledge, FOUND(KEY6, 3)) # Waterway Hookshot Block --> Ledge Left of Waterway
         waterway_west_ledge.connect(pot_area, POWER_BRACELET) # Ledge Left of Waterway <--> Pot Owl Area
         pot_area.connect(pot_ring_chest11, POWER_BRACELET) # Pot Owl Area <--> Pot Locked Chest
         # boss

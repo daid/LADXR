@@ -87,13 +87,13 @@ class Dungeon3:
         north_4way.connect(swordstalfos_room, AND(r.hit_switch, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # North Key Room --> Sword Stalfos Pedestal
         # 4 way
         before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
-        center_4way.connect(north_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> North Key Room
+        center_4way.connect(north_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> North Key Room
         north_4way.connect(north_4way_drop3, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # North Key Room <--> North Key Room Key
-        center_4way.connect(south_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> South Key Room
+        center_4way.connect(south_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> South Key Room
         south_4way.connect(south_4way_drop1, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # South Key Room <--> South Key Room Key
-        center_4way.connect(west_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> West Key Room
+        center_4way.connect(west_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> West Key Room
         west_4way.connect(west_4way_drop2, AND(r.enemy_requirements["HIDING_ZOL"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # West Key Room <--> West Key Room Key
-        center_4way.connect(east_4way, AND(KEY3, FOUND(KEY3, 4))) # Key Room Crossroads <--> East Key Room
+        center_4way.connect(east_4way, FOUND(KEY3, 4)) # Key Room Crossroads <--> East Key Room
         # main area
         east_4way.connect(main_room, None) # East Key Room <--> Main Area
         main_room.connect(main_room_drop4, r.enemy_requirements["HIDING_ZOL"]) # Main Area <--> After Stairs Key
@@ -117,10 +117,10 @@ class Dungeon3:
         main_room.connect(miniboss_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["GEL"])) # Main Area <--> Miniboss Room
         miniboss_room.connect(after_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[2]]) # Miniboss Room <--> Miniboss Reward Room
         after_miniboss_room.connect(after_miniboss_room_chest9, None) # Miniboss Reward Room <--> Boots Chest
-        main_room.connect(towards_boss1, AND(KEY3, FOUND(KEY3, 5))) # Main Area <--> Boss Path 1
-        towards_boss1.connect(towards_boss2, AND(KEY3, FOUND(KEY3, 6))) # Boss Path 1 <--> Boss Path 2
-        towards_boss2.connect(towards_boss3, AND(KEY3, FOUND(KEY3, 7))) # Boss Path 2 <--> Boss Path 3
-        towards_boss3.connect(before_c_passage, AND(KEY3, FOUND(KEY3, 8))) # Boss Path 3 <--> Boss Path 4
+        main_room.connect(towards_boss1, FOUND(KEY3, 5)) # Main Area <--> Boss Path 1
+        towards_boss1.connect(towards_boss2, FOUND(KEY3, 6)) # Boss Path 1 <--> Boss Path 2
+        towards_boss2.connect(towards_boss3, FOUND(KEY3, 7)) # Boss Path 2 <--> Boss Path 3
+        towards_boss3.connect(before_c_passage, FOUND(KEY3, 8)) # Boss Path 3 <--> Boss Path 4
         # boss
         before_c_passage.connect(after_c_passage, AND(FEATHER, PEGASUS_BOOTS)) # Boss Path 4 <--> Three Pairodd Room
         after_c_passage.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
@@ -132,9 +132,9 @@ class Dungeon3:
         # key logic patch
         if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
-            west_4way.connect(center_4way, KEY3)
+            west_4way.connect(center_4way, FOUND(KEY3, 1))
             west_4way_drop2.items[0].forced_item = KEY3
-            south_4way.connect(center_4way, KEY3)
+            south_4way.connect(center_4way, FOUND(KEY3, 1))
             south_4way_drop1.items[0].forced_item = KEY3
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
