@@ -67,6 +67,7 @@ class Dungeon3:
             Location(dungeon=3).add(OwlStatue(0x147)).connect(main_room, STONE_BEAK3) # Main Room <--> Tile Arrow Owl
 
         # connections
+        # entrance
         entrance.connect(after_vacuum, PEGASUS_BOOTS) # Entrance <--> After Vacuum
         after_vacuum.connect(after_vacuum_chest1, None) # After Vacuum <--> Vacuum Mouth Chest
         entrance.connect(after_pot_door, r.throw_pot) # Entrance <--> After Pot Door
@@ -80,17 +81,20 @@ class Dungeon3:
         slime_room.connect(swordstalfos_entry, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Sword Stalfos Room Entrance
         swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room <--> Sword Stalfos, Keese Switch Chest
         slime_room.connect(before_a_stairs, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Near First Staircase
-        before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
         before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Near First Staircase <--> Two Stalfos, Zol Chest
+        # switch locked checks
+        north_4way.connect(before_a_stairs_chest5, AND(r.hit_switch), one_way=True) # North Key Room --> Zol Switch Chest
+        north_4way.connect(swordstalfos_room, AND(r.hit_switch, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # North Key Room --> Sword Stalfos Pedestal
+        # 4 way
+        before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
+        center_4way.connect(north_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> North Key Room
+        north_4way.connect(north_4way_drop3, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # North Key Room <--> North Key Room Key
         center_4way.connect(south_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> South Key Room
         south_4way.connect(south_4way_drop1, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # South Key Room <--> South Key Room Key
         center_4way.connect(west_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> West Key Room
         west_4way.connect(west_4way_drop2, AND(r.enemy_requirements["HIDING_ZOL"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # West Key Room <--> West Key Room Key
-        center_4way.connect(north_4way, AND(KEY3, FOUND(KEY3, 8))) # Key Room Crossroads <--> North Key Room
-        north_4way.connect(north_4way_drop3, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # North Key Room <--> North Key Room Key
-        north_4way.connect(before_a_stairs_chest5, AND(r.hit_switch), one_way=True) # North Key Room --> Zol Switch Chest
-        north_4way.connect(swordstalfos_room, AND(r.hit_switch, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # North Key Room --> Sword Stalfos Pedestal
         center_4way.connect(east_4way, AND(KEY3, FOUND(KEY3, 4))) # Key Room Crossroads <--> East Key Room
+        # main area
         east_4way.connect(main_room, None) # East Key Room <--> Main Area
         main_room.connect(main_room_drop4, r.enemy_requirements["HIDING_ZOL"]) # Main Area <--> After Stairs Key
         main_room.connect(two_pairodd_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["GEL"])) # Main Area <--> Two Zol, Two Pairodd Room
@@ -117,6 +121,7 @@ class Dungeon3:
         towards_boss1.connect(towards_boss2, AND(KEY3, FOUND(KEY3, 6))) # Boss Path 1 <--> Boss Path 2
         towards_boss2.connect(towards_boss3, AND(KEY3, FOUND(KEY3, 7))) # Boss Path 2 <--> Boss Path 3
         towards_boss3.connect(before_c_passage, AND(KEY3, FOUND(KEY3, 8))) # Boss Path 3 <--> Boss Path 4
+        # boss
         before_c_passage.connect(after_c_passage, AND(FEATHER, PEGASUS_BOOTS)) # Boss Path 4 <--> Three Pairodd Room
         after_c_passage.connect(pre_boss_room, r.enemy_requirements["PAIRODD"]) # Three Pairodd Room <--> Room Before Boss
         pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"]) # Room Before Boss <--> Nightmare Door Key

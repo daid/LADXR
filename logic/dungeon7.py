@@ -59,32 +59,41 @@ class Dungeon7:
             Location(dungeon=7).add(OwlStatue(0x21C)).connect(owl_ledge, STONE_BEAK7)
 
         # connections
+        # floor 1
         entrance.connect(entrance_drop1, r.enemy_requirements["LIKE_LIKE"]) # Entrance <--> Entrance Key
         entrance.connect(before_a_stairs, KEY7) # Entrance <--> Before First Staircase
+        before_b_stairs.connect(before_b_stairs_chest1, None) # First Floor Main Area <--> Switch Wrapped Chest
+        before_b_stairs.connect(before_d_stairs, r.hit_switch) # First Floor Main Area <--> Peg Locked Staircase (TODO: can which items can hit this switch damageless?)
+        west_ledge.connect(west_ledge_chest4, None) # West Kirby Ledge <--> Kirby Ledge Chest
+        #TODO: west_ledge.connect(before_b_stairs, None, one_way=True) # West Kirby Ledge --> First Floor Main Area #[logic prep for staircase rando]
+        #TODO: west_ledge.connect(entrance, None, one_way=True) # West Kirby Ledge --> Entrance #[logic prep for staircase rando]
+        east_ledge.connect(east_ledge_chest3, None) # East Beamos Ledge <--> Beamos Ledge Chest
+        #TODO: east_ledge.connect(before_a_stairs, None, one_way=True) # East Beamos Ledge --> Before Locked Staircase #[logic prep for staircase rando]
+        #TODO: east_ledge.connect(entrance, None, one_way=True) # East Beamos Ledge --> Entrance #[logic prep for staircase rando]
+
+        # connect floor 1 & 2
         before_a_stairs.connect(after_a_stairs, None) # Before Locked Staircase <--> Ball Room
+        before_b_stairs.connect(after_b_stairs, None) # First Floor Main Area <--> Horseheads Staircase
+        before_c_stairs.connect(after_c_stairs, None) # Two Peahat, Moldorm Room <--> North Three-of-a-Kind Puzzle
+        before_d_stairs.connect(after_d_stairs, None) # Peg Locked Staircase <--> Hinox Area
+        ne_pillar.connect(before_b_stairs, None, one_way=True) # Northeast Pillar Area --> First Floor Main Area
+        se_pillar.connect(before_b_stairs, None) # Southeast Pillar Area <--> First Floor Main Area
+        se_pillar.connect(before_c_stairs, OR(r.hit_switch, FEATHER)) # Southeast Pillar Area <--> Two Peahat, Moldorm Room
+        tile_room.connect(west_ledge, None, one_way=True) # Floating Tile Fight --> West Kirby Ledge
+        after_d_stairs.connect(west_ledge, None, one_way=True) # Hinox Area --> West Kirby Ledge
+        pegs_after_a_stairs.connect(east_ledge, None, one_way=True) # On Pegs Around Chest --> East Beamos Ledge
+
+        # floor 2
         after_a_stairs.connect(ne_pillar, None) # Ball Room <--> Northeast Pillar Area #TODO: delete in favor of casual logic commented out below
         ne_pillar.connect(ne_pillar_chest5, POWER_BRACELET) # Northeast Pillar Area <--> Horse Head, Bubble Chest
-        ne_pillar.connect(before_b_stairs, None, one_way=True) # Northeast Pillar Area --> First Floor Main Area
-        before_b_stairs.connect(after_b_stairs, None) # First Floor Main Area <--> Horseheads Staircase
         after_b_stairs.connect(ne_pillar, r.hit_switch) # Horseheads Staircase <--> Northeast Pillar Area
-        before_b_stairs.connect(before_b_stairs_chest1, None) # First Floor Main Area <--> Switch Wrapped Chest
         ne_pillar.connect(se_pillar, FEATHER) # Northeast Pillar Area <--> Southeast Pillar Area
-        se_pillar.connect(before_c_stairs, OR(r.hit_switch, FEATHER)) # Southeast Pillar Area <--> Two Peahat, Moldorm Room
-        before_c_stairs.connect(after_c_stairs, None) # Two Peahat, Moldorm Room <--> North Three-of-a-Kind Puzzle
         after_c_stairs.connect(after_c_stairs_chest2, r.enemy_requirements["THREE_OF_A_KIND"]) # North Three-of-a-Kind Puzzle <-->  #TODO: When ROM patched to reset ball on S&Q in ROM, then add bracelet method
         after_c_stairs.connect(spike_corridor, FEATHER) # [logic prep for staircase rando]
         spike_corridor.connect(se_pillar, FEATHER, one_way=True) # Between Pillar Pushbocks --> Southeast Pillar Area
         nw_pillar.connect(spike_corridor, FEATHER, one_way=True) # Northwest Pillar Area --> Between Pillar Pushbocks
-        se_pillar.connect(before_b_stairs, None) # Southeast Pillar Area <--> First Floor Main Area # drop down pit
-        before_b_stairs.connect(before_d_stairs, r.hit_switch) # First Floor Main Area <--> Peg Locked Staircase # you can get from the spike switch to the D staircase with just walking carefully (can L1 sword hit this switch damageless?)
-        before_d_stairs.connect(after_d_stairs, None) # Peg Locked Staircase <--> Hinox Area
         after_d_stairs.connect(tile_room, None, one_way=True) # Hinox Area --> Floating Tile Fight
         tile_room.connect(nw_pillar, None) # Floating Tile Fight <--> Northwest Pillar Area
-        tile_room.connect(west_ledge, None, one_way=True) # Floating Tile Fight --> West Kirby Ledge
-        after_d_stairs.connect(west_ledge, None, one_way=True) # Hinox Area --> West Kirby Ledge
-        #TODO: west_ledge.connect(before_b_stairs, None, one_way=True) # West Kirby Ledge --> First Floor Main Area #[logic prep for staircase rando]
-        #TODO: west_ledge.connect(entrance, None, one_way=True) # West Kirby Ledge --> Entrance #[logic prep for staircase rando]
-        west_ledge.connect(west_ledge_chest4, None) # West Kirby Ledge <--> Kirby Ledge Chest
         after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Kinox Key
         after_d_stairs.connect(keylock_ledge, AND(KEY7, FOUND(KEY7, 3))) # Hinox Area <--> Key Locked Ledge
         after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: replace with "NEW VERSION" below
@@ -95,23 +104,25 @@ class Dungeon7:
         keylock_ledge.connect(after_d_stairs, None, one_way=True) # Key Locked Ledge --> Hinox Area
         pegs_after_a_stairs.connect(after_d_stairs, None, one_way=True) # On Pegs Around Chest --> Hinox Area
         pegs_after_a_stairs.connect(pegs_after_a_stairs_chest7, None) # On Pegs Around Chest --> Mirror Shield Chest
-        pegs_after_a_stairs.connect(east_ledge, None, one_way=True) # On Pegs Around Chest --> East Beamos Ledge
-        east_ledge.connect(east_ledge_chest3, None) # East Beamos Ledge <--> Beamos Ledge Chest
-        #TODO: east_ledge.connect(before_a_stairs, None, one_way=True) # East Beamos Ledge --> Before Locked Staircase #[logic prep for staircase rando]
-        #TODO: east_ledge.connect(entrance, None, one_way=True) # East Beamos Ledge --> Entrance #[logic prep for staircase rando]
         nw_pillar.connect(bomb_corridor, BOMB) # Northwest Pillar Area <--> Bombable Wall Corridor
         bomb_corridor.connect(owl_ledge, BOMB) # Bombable Wall Corridor <--> By Pit Owl
         #TODO: bomb_corridor.connect(after_d_stairs, None, one_way=True) # Bombable Wall Corridor --> Hinox Area # push blocks #[logic prep for staircase rando]
         owl_ledge.connect(sw_pillar, HOOKSHOT) # By Pit Owl <--> Southwest Pillar Area
         sw_pillar.connect(sw_pillar_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Southwest Pillar Area <--> Three of a Kind, Pit Chest #TODO: you can't really use any kill requirement pillar side of pushblocks
         sw_pillar.connect(final_pillar_fallen, POWER_BRACELET) # Southwest Pillar Area <--> Final Pillar Destroyed
-        after_d_stairs.connect(before_e_stairs, None) # Hinox Area <--> tairs Leading to 3rd Floor
-        before_e_stairs.connect(after_e_stairs, None) # tairs Leading to 3rd Floor <--> Third Floor Entry
+        after_d_stairs.connect(before_e_stairs, None) # Hinox Area <--> Stairs Leading to 3rd Floor
+
+        # connect floor 2 & 3
+        before_e_stairs.connect(after_e_stairs, None) # Stairs Leading to 3rd Floor <--> Third Floor Entry
+        final_pillar_fallen.connect(after_boss_door, NIGHTMARE_KEY7) # Final Pillar Destroyed <--> After Boss Door
+        final_pillar_fallen.connect(boss_backdoor, None) # Final Pillar Destroyed <--> Boss Backdoor Room
+
+        # floor 3
         after_e_stairs.connect(miniboss_room, None) # Third Floor Entry <--> Miniboss Room
         miniboss_room.connect(after_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[6]]) # Miniboss Room <--> After Miniboss Room
         after_miniboss_room.connect(after_miniboss_room_chest8, None) # After Miniboss Room <--> Nightmare Key/After Grim Creeper Chest
-        final_pillar_fallen.connect(after_boss_door, NIGHTMARE_KEY7) # Final Pillar Destroyed <--> After Boss Door
-        final_pillar_fallen.connect(boss_backdoor, None) # Final Pillar Destroyed <--> Boss Backdoor Room
+
+        # floor 3 after cutscene
         #TODO: boss_backdoor.connect(after_boss_door, AND(r.attack_hookshot_no_bomb, AND(KEY7, FOUND(KEY7, 3))))
         after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
         conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
@@ -132,7 +143,7 @@ class Dungeon7:
             #TODO: after_a_stairs.connect(after_d_stairs, BOOMERANG) # Ball Room <--> Hinox Area
 
         #TODO if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            after_c_stairs.connect(spike_corridor, None) # [logic prep for staircase rando] # forced damage so cannot be in normal logic
+            #TODO: after_c_stairs.connect(spike_corridor, None) # [logic prep for staircase rando] # forced damage so cannot be in normal logic
 
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(before_b_stairs, r.super_jump_sword) # superjump in the center to get on raised blocks sword added to help since it has to be a low jump

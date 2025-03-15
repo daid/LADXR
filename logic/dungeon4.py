@@ -103,12 +103,12 @@ class Dungeon4:
         #TODO: if options.logic == "casual":
             #TODO: after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
             #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
-            #TODO:before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but it's possible to get through wihtout damage which goes in normal logic
+            #TODO: before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but it's possible to get through wihtout damage which goes in normal logic
 
         #TODO: else:
             #TODO: after_miniboss.connect(flippers_room, None, one_way=True) # After Miniboss <--> Flippers Room
             #TODO: after_miniboss.connect(miniboss_room, None, one_way=True) # After Miniboss <--> Miniboss Room
-            #TODO:before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> After Boss Passageway
+            #TODO: before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> After Boss Passageway
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(north_crossroads, r.tight_jump) # jump across the corners

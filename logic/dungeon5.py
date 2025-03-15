@@ -107,7 +107,7 @@ class Dungeon5:
         before_b_passage.connect(after_b_passage, FLIPPERS) # Deep Water Passage Entrance <--> Bridge Chest Room
         after_b_passage.connect(boss_key_room, HOOKSHOT) # Bridge Chest Room Entrance <--> Bridge Chest Room
         boss_key_room.connect(boss_key_room_chest10, None) # Bridge Chest Room  <--> Nightmare Key/Torch Cross Chest
-        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) #TODO: add POWER_BRACELET to requirement - North of Crossroads <--> Master Stalfos Fight 3
+        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: add POWER_BRACELET to requirement
         ms_3_room.connect(pot_locked_room, POWER_BRACELET) # Master Stalfos Fight 3 <--> Pot Locked Room
         pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])) # Pot Locked Room <--> Three Stalfos Chest #TODO: remove kill enemy requirements, it's just here to make logic match stable
         ms_3_room.connect(ms_4_room, AND(FEATHER, SWORD)) # Master Stalfos Fight 3 <-> Master Stalfos Fight 4

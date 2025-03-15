@@ -67,6 +67,7 @@ class Dungeon6:
             Location(dungeon=6).add(OwlStatue(0x1B6)).connect(pot_area, STONE_BEAK6) # Pot Owl Area <--> Pot Owl
 
         # connections
+        # west
         entrance.connect(first_elephant_room, r.enemy_requirements["WIZROBE"]) # Entrance <--> Elephant & Chest Room
         first_elephant_room.connect(first_elephant_room_chest1, None) # Elephant & Chest Room <--> Mini-Moldorm, Spark Chest
         first_elephant_room.connect(second_elephant_room, COUNT(POWER_BRACELET, 2)) # Elephant & Chest Room <--> Flying Heart & Statue Room
@@ -89,14 +90,14 @@ class Dungeon6:
         star_area.connect(top_left_room, COUNT(POWER_BRACELET, 2)) # Northwest Area <--> Northwest Horse Head Room
         top_left_room.connect(star_area, POWER_BRACELET, one_way=True) # Northwest Horse Head Room --> Northwest Area
         top_left_room.connect(top_left_room_chest7, None) # Northwest Horse Head Room <--> Top Left Horse Heads Chest
+        # miniboss
         entrance.connect(before_miniboss, KEY6) # Entrance <--> Before Miniboss
         before_miniboss.connect(miniboss_room, BOMB) # Before Miniboss <--> Miniboss Room
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[5]], one_way=True) # Miniboss Room --> After Miniboss
         after_miniboss.connect(miniboss_room, COUNT(POWER_BRACELET, 2), one_way=True) # After Miniboss --> Miniboss Room
         after_miniboss.connect(before_b_passage, COUNT(POWER_BRACELET, 2), one_way=True) # After Miniboss --> Boss Passageway Revealed
         before_b_passage.connect(after_miniboss, None, one_way=True) # Boss Passageway Revealed --> After Miniboss
-        before_b_passage.connect(after_b_passage, FEATHER) # Boss Passageway Revealed <--> Second Floating Tile Fight
-        after_b_passage.connect(after_b_passage_drop2, None) # Second Floating Tile Fight <--> Tile Room Key
+        # east
         entrance.connect(four_wizrobe_room, COUNT(POWER_BRACELET, 2), one_way=True) # Entrance --> Four Wizrobe Room
         four_wizrobe_room.connect(entrance, r.enemy_requirements["WIZROBE"], one_way=True) # Four Wizrobe Room --> Entrance
         four_wizrobe_room.connect(blade_trap_room, r.enemy_requirements["WIZROBE"], one_way=True) # Four Wizrobe Room --> Blade Trap Room
@@ -106,6 +107,10 @@ class Dungeon6:
         four_wizrobe_room.connect(waterway,r.enemy_requirements["WIZROBE"]) # Four Wizrobe Room <--> Waterway
         waterway.connect(waterway_chest9, None) # Waterway <--> Water Tektite Chest
         dodongo_room.connect(before_c_passage, OR(FEATHER, r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Room --> Pols Room
+        before_c_passage.connect(spark_pot_maze, r.enemy_requirements["POLS_VOICE"]) # Pols Room <--> Spark & Pot Maze
+        before_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], one_way=True) # Pols Room --> Dodongo Room
+        spark_pot_maze.connect(top_right_room, POWER_BRACELET) # Spark & Pot Maze <--> Northeast Horse Head Room
+        top_right_room.connect(top_right_room_chest10, None) # Northeast Horse Head Room <--> Top Right Horse Heads Chest
         dodongo_room.connect(waterway_east_ledge, r.miniboss_requirements["DODONGO"]) # Dodongo Room <--> Outside Dodongo Room
         waterway_east_ledge.connect(dodongo_room, None, one_way=True) # Outside Dodongo Room --> Dodongo Room
         waterway_east_ledge.connect(waterway, None, one_way=True) # Outside Dodongo Room --> Waterway
@@ -113,14 +118,14 @@ class Dungeon6:
         hookshot_block.connect(waterway_west_ledge, AND(KEY6, FOUND(KEY6, 3))) # Waterway Hookshot Block --> Ledge Left of Waterway
         waterway_west_ledge.connect(pot_area, POWER_BRACELET) # Ledge Left of Waterway <--> Pot Owl Area
         pot_area.connect(pot_ring_chest11, POWER_BRACELET) # Pot Owl Area <--> Pot Locked Chest
-        before_c_passage.connect(spark_pot_maze, r.enemy_requirements["POLS_VOICE"]) # Pols Room <--> Spark & Pot Maze
-        before_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], one_way=True) # Pols Room --> Dodongo Room
-        spark_pot_maze.connect(top_right_room, POWER_BRACELET) # Spark & Pot Maze <--> Northeast Horse Head Room
-        top_right_room.connect(top_right_room_chest10, None) # Northeast Horse Head Room <--> Top Right Horse Heads Chest
+        # boss
+        before_b_passage.connect(after_b_passage, FEATHER) # Boss Passageway Revealed <--> Second Floating Tile Fight
         before_c_passage.connect(after_c_passage, PEGASUS_BOOTS) # Pols Room <--> Stairs West of Horsehead Hallway
-        after_c_passage.connect(flying_bomb_room, POWER_BRACELET, one_way=True) # Stairs West of Horsehead Hallway <--> Flying Bomb Room
+        after_c_passage.connect(flying_bomb_room, POWER_BRACELET, one_way=True) # Stairs West of Horsehead Hallway --> Flying Bomb Room
         flying_bomb_room.connect(after_c_passage, COUNT(POWER_BRACELET, 2)) # Flying Bomb Room <--> Stairs West of Horsehead Hallway
         flying_bomb_room.connect(after_b_passage, FOUND(KEY6, 2)) # Flying Bomb Room <--> Second Floating Tile Fight
+        after_b_passage.connect(after_b_passage_drop2, None) # Second Floating Tile Fight <--> Tile Room Key
+        # boss
         after_b_passage.connect(vacuum_room, None) # Second Floating Tile Fight <--> Vacuum Room
         vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"]))) # Vacuum Room <--> Room Before Boss #TODO: REMOVE, it's covered in casual logic statement
         #TODO: laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])) # Laser Turret Room <--> Room Before Boss #TODO: ADD ways to knock wizrobe into pit
