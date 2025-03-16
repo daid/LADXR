@@ -115,6 +115,7 @@ class Dungeon8:
         slime_trap_room.connect(slime_trap_room_chest4, None) # Lava Chest Room <--> Right Lava Chest
         slime_trap_room.connect(spark_pot_room, None, one_way=True) # Lava Chest Room --> Sparks Hidden Button Room
         slime_trap_room.connect(zamboni_pit_west, FEATHER) # Lava Chest Room <--> West of Chasm Zamboni
+        zamboni_pit_west.connect(slime_trap_room, HOOKSHOT, one_way=True)
         spark_pot_room.connect(mimic_room, POWER_BRACELET) # Sparks Hidden Button Room <--> Mimic Room
         mimic_room.connect(spark_pot_room, None, one_way=True) # Mimic Room --> Sparks Hidden Button Room
         mimic_room.connect(before_a_passage, r.enemy_requirements["MIMIC"]) # Mimic Room <--> Mimic Passageway Spawned
@@ -142,6 +143,7 @@ class Dungeon8:
         before_c_passage.connect(slime_trap_room, None, one_way=True) # Before Passage to Boss --> Lava Chest Room
         pre_center_zamboni.connect(after_e_passage, None, one_way=True) # North of Entrance --> Staircase Below Three Peahats
         pre_center_zamboni.connect(lava_left_corridor, None) # North of Entrance --> 'L' Shaped Corridor # two way due to pushblock
+
         pre_center_zamboni.connect(loop_ledge, None, one_way=True) # North of Entrance --> Useless Ledge
         pre_center_zamboni.connect(pre_center_keyblock, None, one_way=True) # North of Entrance --> Before Central Keyblock
         lava_left_corridor.connect(after_e_passage, BOMB) # 'L' Shaped Corridor <--> Staircase Below Three Peahats
@@ -150,7 +152,7 @@ class Dungeon8:
         loop_ledge.connect(before_c_passage, None, one_way=True) # Useless Ledge --> Before Passage to Boss
         pre_center_keyblock.connect(heart_vire, FOUND(KEY8, 1)) # Before Central Keyblock <--> Floating Heart & Vire Area
         pre_center_keyblock.connect(peahat_area, FOUND(KEY8, 1)) # Before Central Keyblock <--> Peahat Area
-        pre_center_keyblock.connect(loop_ledge, None, one_way=True) # Before Central Keyblock --> Useless Ledge
+        pre_center_keyblock.connect(loop_ledge, FEATHER, one_way=True) # Before Central Keyblock --> Useless Ledge
         peahat_area.connect(heart_vire, FOUND(KEY8, 1)) # Peahat Area <--> Floating Heart & Vire Area
         peahat_area.connect(after_e_passage, None, one_way=True) # Peahat Area --> Staircase Below Three Peahats
         heart_vire.connect(before_g_passage, FOUND(KEY8, 2)) # Floating Heart & Vire Area <--> Blade Room
@@ -239,12 +241,16 @@ class Dungeon8:
             before_e_passage.connect(pot_pit_room, AND(r.hookshot_clip_block, r.super_jump_feather), one_way=True) # new logic
             #center
             after_e_passage.connect(peahat_area, r.sideways_block_push) # sideways block push in peahat room to get past keyblock
+            after_e_passage.connect(lava_left_corridor, AND(r.wall_clip, r.super_jump_feather), one_way=True)
             lava_left_corridor.connect(pre_center_zamboni, r.jesus_jump) # jesus jump through center lava to get back to zamboni
             after_e_passage.connect(pre_center_zamboni, r.jesus_jump) # jesus jump through center lava to get back to zamboni
             pre_center_keyblock.connect(pre_center_zamboni, r.jesus_jump) # jesus jump through center lava to get back to zamboni
             loop_ledge.connect(pre_center_zamboni, r.jesus_jump) # jesus jump through center lava to get back to zamboni
             before_c_passage.connect(pre_center_zamboni, r.jesus_jump) # jesus jump through center lava to get back to zamboni
             peahat_area.connect(before_f_stairs, r.jesus_jump) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
+            before_c_passage.connect(loop_ledge, AND(r.wall_clip, r.super_jump_feather)) # wall clip on stairs, superjump over blocks
+            loop_ledge.connect(pre_center_keyblock, AND(r.wall_clip, r.super_jump_feather)) # wall clip on useless ledge, and superjump over blocks
+            pre_center_keyblock.connect(heart_vire, r.super_jump_feather) # push block into lava, get wall clipped on left wall and superjump right then up to skip keyblock
             #dark
             dark_center.connect(dark_center_torches, r.super_jump_feather) # wall clip and super jump
             dark_center.connect(dark_center_pre_keyblock, r.super_jump_feather) # wall clip and super jump
@@ -266,12 +272,12 @@ class Dungeon8:
         if options.logic == 'hell':
             #south
             sw_zamboni_area.connect(before_f_stairs, r.zoomerang_buffer) # pixel perfect left-facing zoomerang followed up by another zoomerang to get un-stuck. unreliable without shovel
-            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell) #TODO: replace with row below
+            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell) #TODO: replace with row below, also consider moving this to hard
             #TODO: before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_hell), one_way=True) #TODO: also possible with toadstool [wait till permanent toadstool patch?]
-            pot_pit_room_doorway.connect(pot_pit_room_chest5, r.pit_buffer_itemless) # pit buffer from south smasher doorway to the SE room chest
+            pot_pit_room_doorway.connect(pot_pit_room_chest5, r.pit_buffer_itemless, one_way=True) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room.connect(pot_pit_room_doorway, AND(r.hookshot_clip_block, r.hookshot_spam_pit)) # can get to SE room doorway with just hookshot spam
             pot_pit_room.connect(before_e_passage, r.zoomerang_buffer, one_way=True) # new logic, zoomerang gets you to SE room passage without bracelet. unreliable without shovel #TODO: check if possible in reverse with pot dislodge method
-            before_e_passage.connect(pot_pit_room, r.shaq_jump) #TODO: this is wild, attempt shaq jump in lower right corner of staircase area until it works
+            before_e_passage.connect(pot_pit_room, r.shaq_jump, one_way=True) #TODO: this is wild, attempt shaq jump in lower right corner of staircase area until it works
             before_e_passage.connect(after_e_passage, r.boots_bonk, one_way=True) # boots bonking from rope room to below peahats through passage
             zamboni_pit_west.connect(slime_trap_room, r.boots_bonk, one_way=True) # boots bonk to hop over 1 tile of lava
             #center
@@ -282,9 +288,10 @@ class Dungeon8:
             pre_center_keyblock.connect(pre_center_zamboni, r.jesus_buffer, one_way=True) # jesus buffer through center lava to get back to zamboni
             pre_center_keyblock.connect(before_b_passage, r.jesus_buffer, one_way=True) # jesus buffer through center lava to get to staircase
             loop_ledge.connect(before_b_passage, r.jesus_buffer, one_way=True) # jesus buffer through center lava to get to staircase
+            before_b_passage.connect(loop_ledge, HOOKSHOT, one_way=True) # while standing on staircase, hookshot up, then hookshot right on the frame that you splash the lava - pausing on the splash frame to buffer is OK
             before_c_passage.connect(before_b_passage, r.jesus_buffer) # jesus buffer between staircase to cueball and staircase to boss
             before_b_passage.connect(pre_center_zamboni, r.jesus_buffer, one_way=True) # hop off ledge from staircase to cueball and then jesus buffer
-            loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) # get in block walk-off-ledge and pause buffering, then waslk-jump into block. hoookshot clip off vire to get out and skip key requirement
+            loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) # get in block walk-off-ledge and pause buffering, then walk-jump into block. hoookshot clip off vire to get out and skip key requirement
             #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, TOADSTOOL), one_way=True) #new logic [wait till permanent toadstool patch?]
             #dark
             before_f_stairs.connect(dark_west, AND(BOMB, r.lava_swim), one_way=True) # pixel perfect bomb placement to open door, return with lava swim
