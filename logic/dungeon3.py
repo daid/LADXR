@@ -175,9 +175,9 @@ class Dungeon3:
             #TODO: main_room.connect(towards_boss3, r.super_bump, one_way=True) # super bump off stalfos to get in between boss key block 3 and 4. it's possible to land wall clipped, leading to the next trick:
             #TODO: towards_boss3.connect(after_miniboss_room_chest8, r.super_jump_feather, one_way=True) # feather-only super jump facing right into boots chest area
             fenced_walkway.connect(three_bombite_room, AND(r.enemy_requirements["TIMER_BOMBITE"], OR(BOW, MAGIC_ROD, AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)))), one_way=True) # 3 bombite room from the left side, use a bombite to blow open the wall without bombs #TODO: add L2 Sword
-            before_c_passage.connect(after_c_passage, AND(FEATHER, POWER_BRACELET)) # TODO: REMOVE and replace with or(toadstool, bracelet) # current logic was for clearing first half with bracelet, second half with feather
-            #TODO: before_c_passage.connect(after_c_passage, OR(r.toadstool_bounce_2d_hell, r.bracelet_bounce_2d_hell) # [wait for permanent toadstool patch] bracelet to get damage boost from 2d spikes to get through passage
-            before_c_passage.connect(after_c_passage, AND(r.enemy_requirements["PAIRODD"], r.boots_bonk_2d_spikepit)) # use medicine invulnerability to pass through the 2d section with a boots bonk to reach the staircase
+            before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, AND(FEATHER, POWER_BRACELET))) # TODO: REMOVE and replace with below
+            #TODO: after_c_passage.connect(before_c_passage, AND(r.bounce_2d_spikepit, PEGASUS_BOOTS), one_way=True) # all while holding the "A" button, diagonal walk off ladder in pirahna room, and bounce off spikes, then bonk the thwomp but in reverse
+            #TODO: before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit)) # bracelet or toadstool to get bounce off spikes, or boots bonk during medicine invulnerability
             #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
         self.entrance = entrance

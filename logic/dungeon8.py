@@ -143,7 +143,6 @@ class Dungeon8:
         before_c_passage.connect(slime_trap_room, None, one_way=True) # Before Passage to Boss --> Lava Chest Room
         pre_center_zamboni.connect(after_e_passage, None, one_way=True) # North of Entrance --> Staircase Below Three Peahats
         pre_center_zamboni.connect(lava_left_corridor, None) # North of Entrance --> 'L' Shaped Corridor # two way due to pushblock
-
         pre_center_zamboni.connect(loop_ledge, None, one_way=True) # North of Entrance --> Useless Ledge
         pre_center_zamboni.connect(pre_center_keyblock, None, one_way=True) # North of Entrance --> Before Central Keyblock
         lava_left_corridor.connect(after_e_passage, BOMB) # 'L' Shaped Corridor <--> Staircase Below Three Peahats
@@ -273,7 +272,7 @@ class Dungeon8:
             #south
             sw_zamboni_area.connect(before_f_stairs, r.zoomerang_buffer) # pixel perfect left-facing zoomerang followed up by another zoomerang to get un-stuck. unreliable without shovel
             before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell) #TODO: replace with row below, also consider moving this to hard
-            #TODO: before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_hell), one_way=True) #TODO: also possible with toadstool [wait till permanent toadstool patch?]
+            #TODO: before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # 
             pot_pit_room_doorway.connect(pot_pit_room_chest5, r.pit_buffer_itemless, one_way=True) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room.connect(pot_pit_room_doorway, AND(r.hookshot_clip_block, r.hookshot_spam_pit)) # can get to SE room doorway with just hookshot spam
             pot_pit_room.connect(before_e_passage, r.zoomerang_buffer, one_way=True) # new logic, zoomerang gets you to SE room passage without bracelet. unreliable without shovel #TODO: check if possible in reverse with pot dislodge method
@@ -292,7 +291,7 @@ class Dungeon8:
             before_c_passage.connect(before_b_passage, r.jesus_buffer) # jesus buffer between staircase to cueball and staircase to boss
             before_b_passage.connect(pre_center_zamboni, r.jesus_buffer, one_way=True) # hop off ledge from staircase to cueball and then jesus buffer
             loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) # get in block walk-off-ledge and pause buffering, then walk-jump into block. hoookshot clip off vire to get out and skip key requirement
-            #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, TOADSTOOL), one_way=True) #new logic [wait till permanent toadstool patch?]
+            #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, "TOADSTOOL2"), one_way=True) # new logic - use toadstool after hurt by goomba, and bouncing off goomba to freeze after gaining height. Hold "A" button during the damage boost to get extra boost
             #dark
             before_f_stairs.connect(dark_west, AND(BOMB, r.lava_swim), one_way=True) # pixel perfect bomb placement to open door, return with lava swim
             dark_west.connect(before_f_stairs, AND(BOMB, HOOKSHOT, r.jesus_buffer), one_way=True) # boots bonk then use hookshot when splashing to grab spark's block, will respawn near spark block

@@ -106,6 +106,7 @@ class World:
         forest_cave_crystal_chest = Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
         log_cave_heartpiece = Location().add(HeartPiece(0x2AB)).connect(forest_cave, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         forest_toadstool = Location().add(Toadstool())
+        #TODO: Location().add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
         self._addEntrance("toadstool_entrance", forest, forest_cave, None)
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
@@ -629,7 +630,7 @@ class World:
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # hookshot spam or boots bonk across pits can go from left to right by pit buffering on top of the bottom wall then boots bonk across
             richard_cave_chest.connect(richard_cave, r.damage_boost) # use the zol on the other side of the pit to damage boost across (requires damage from pit + zol)
             castle_secret_entrance_right.connect(castle_secret_entrance_left, r.boots_bonk_2d_spikepit) # #TODO: REPLACE with belowmedicine iframe abuse to get across spikes with a boots bonk
-            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.boots_bonk_2d_spikepit, r.bracelet_bounce_2d_hell, r.toadstool_bounce_2d_hell)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button with no item to hop on goombas
+            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.boots_bonk_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button when bouncing off spikes or goombas
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer_boots) # multiple pit buffers to bonk across the bottom wall
             left_bay_area.connect(ukuku_prairie, r.hookshot_clip_block, one_way=True) # clip through the donuts blocking the path next to prairie plateau cave by hookshotting up and killing the two moblins that way which clips you further up two times. This is enough to move right
             tiny_island.connect(left_bay_area, AND(r.jesus_buffer, r.boots_bonk_pit, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)

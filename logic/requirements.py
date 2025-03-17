@@ -298,7 +298,7 @@ class RequirementsSettings:
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
         self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) get a better position for jumps, or start a superjump
-        self.pit_buffer_itemless = True # walk on top of pits and buffer down
+        self.pit_buffer_itemless = True # walk on top of pits and buffer down Note: Glitched logic if single pit buffer, Hell logic if 2 or more tiles
         self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
         self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to jump while buffered down into the block under a pit
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
@@ -307,8 +307,9 @@ class RequirementsSettings:
         self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
-        self.bracelet_bounce_2d_hell = POWER_BRACELET # grab walls in 2d sections to get flung into spikes and boost upwards
-        self.toadstool_bounce_2d_hell = TOADSTOOL # use toadstool right after taking damage from spikes, and hold any button afterwards to gain extra height from the bounce
+        self.bounce_2d_spikepit = self.damage_boost_special # bounce off spikes in 2d sections with no items. holding the "A" button gives a bit extra height
+        self.bracelet_bounce_2d_spikepit = AND(self.damage_boost_special, POWER_BRACELET) # grab walls in 2d sections to get flung into spikes and boost upwards
+        self.toadstool_bounce_2d_spikepit = AND(self.damage_boost_special, "TOADSTOOL2") # use toadstool right after taking damage from spikes, and hold any button afterwards to gain extra height from the bounce
         self.hookshot_spam_pit = HOOKSHOT # use hookshot with spam to cross 1 tile gaps
         self.hookshot_clip = AND(HOOKSHOT, options.superweapons == False) # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
         self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)

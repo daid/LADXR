@@ -63,7 +63,7 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_SCALE: 1,
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
-    "MEDICINE2": 1, "RAFT": 1,
+    "MEDICINE2": 1, "TOADSTOOL2": 1, "RAFT": 1,
     TAIL_CAVE_OPENED: 1, KEY_CAVERN_OPENED: 1, ANGLER_TUNNEL_OPENED: 1, FACE_SHRINE_OPENED: 1, CASTLE_GATE_OPENED: 1, EAGLE_TOWER_OPENED: 1
 }
 
@@ -204,6 +204,7 @@ class ItemPool:
             self.remove(ROOSTER)
             self.remove(GEL, 2)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)
@@ -240,6 +241,7 @@ class ItemPool:
             self.remove(GOLD_LEAF, 5)
             self.remove(HEART_PIECE, 8)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)

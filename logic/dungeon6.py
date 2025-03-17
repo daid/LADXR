@@ -162,11 +162,11 @@ class Dungeon6:
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, TOADSTOOL), OR(r.ledge_super_poke, r.ledge_super_bump))) #TODO: [best leave toadstool out until permanent-toadstool patch] super jump into wall and then feather jump in place to move the mimic, walk off the ledge while holding sword or shield to slowly get to door with it never closing
+            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door with it never closing
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) # can boots superhop to pass both the mimic room and the 3 wizrobe room
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) # stun mask mimic, then pick it up and throw it against the top wall so it lands on top of the switch with enough delay to get past the top raised blocks
-            before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: (I think this is not possible in reverse?) use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
-            #TODO: before_b_passage.connect(after_a_passage, TOADSTOOL) #TODO:[Wait until permanent toadstool patch?]
+            before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: change to one_way - #use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
+            #TODO: before_b_passage.connect(after_b_passage, "TOADSTOOL2") # use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
             waterway.connect(waterway_west_ledge, r.super_jump_feather, one_way=True)
             waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance

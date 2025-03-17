@@ -156,8 +156,8 @@ class Dungeon7:
             #TODO: bombwall_owl.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             #TODO: sw_pillar.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             sw_pillar.connect(sw_pillar_chest6, POWER_BRACELET) #TODO: Not really an accurate statement, as you can't do the block push from the north side. evaluate moving to hard logic, or even connecting from hinox area?
-            after_e_stairs.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather))
-            boss_backdoor.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather))
+            #TODO: after_e_stairs.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather)) # hookshot clip pot in upper right while 2 blocks to the left of it repeatedly until wall clipped, then superjump onto pegs
+            #TODO: boss_backdoor.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather)) # hookshot clip pot in upper right while 2 blocks to the left of it repeatedly until wall clipped, then superjump onto pegs
             after_d_stairs.connect(final_pillar_fallen, r.bomb_trigger) # bomb trigger pillar
             final_pillar_fallen.connect(pre_boss_room, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
             
@@ -178,8 +178,8 @@ class Dungeon7:
             #TODO: bombwall_owl.connect(sw_pillar, r.pit_buffer_boots) 
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
             final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
-            after_e_stairs.connect(conveyor_room_chest9, OR(r.super_bump, r.super_poke))
-            boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather))) #[logic prep for staircase rando] superjump and use sword or shield to rebount onto the pegs, feather to exit east side
+            #TODO: after_e_stairs.connect(conveyor_room_chest9, OR(r.super_bump, r.super_poke)) # superjump and rebound off peahat onto pegs
+            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke)) # superjump and rebound off peahat onto pegs
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
             #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
             
