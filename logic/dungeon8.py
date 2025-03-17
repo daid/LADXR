@@ -291,7 +291,7 @@ class Dungeon8:
             before_c_passage.connect(before_b_passage, r.jesus_buffer) # jesus buffer between staircase to cueball and staircase to boss
             before_b_passage.connect(pre_center_zamboni, r.jesus_buffer, one_way=True) # hop off ledge from staircase to cueball and then jesus buffer
             loop_ledge.connect(heart_vire, r.hookshot_clip_block, one_way=True) # get in block walk-off-ledge and pause buffering, then walk-jump into block. hoookshot clip off vire to get out and skip key requirement
-            #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, "TOADSTOOL2"), one_way=True) # new logic - use toadstool after hurt by goomba, and bouncing off goomba to freeze after gaining height. Hold "A" button during the damage boost to get extra boost
+            #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, r.damage_boost_special, "TOADSTOOL2"), one_way=True) # new logic - use toadstool after hurt by goomba, and bouncing off goomba to freeze after gaining height. Hold "A" button during the damage boost to get extra boost
             #dark
             before_f_stairs.connect(dark_west, AND(BOMB, r.lava_swim), one_way=True) # pixel perfect bomb placement to open door, return with lava swim
             dark_west.connect(before_f_stairs, AND(BOMB, HOOKSHOT, r.jesus_buffer), one_way=True) # boots bonk then use hookshot when splashing to grab spark's block, will respawn near spark block
