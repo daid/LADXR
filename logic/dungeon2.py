@@ -74,6 +74,7 @@ class Dungeon2:
         north_switch_room.connect(pot_pol_room, FOUND(KEY2, 5)) # North Switch Maze <--> Boss Passageway Room Entrance
         pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: REPLACE with below which removed AND() around enemy requirement
         #TODO: pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: Since it's a room full of pots, check if we can reduce requirements for some logic levels (short term) or let it be improved in enemizer
+        #TODO: pot_pol_room needs to be divided into two nodes (inside pots vs outside pots), there's known tricks for crossing pot wall in reverse, and enemy kill requirements not required to exit key door if arrived in staircase.
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
