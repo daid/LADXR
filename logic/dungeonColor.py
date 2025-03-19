@@ -42,7 +42,7 @@ class DungeonColor:
         main_room.connect(main_room_chest2, AND(POWER_BRACELET, r.attack_hookshot)) # Main Area <--> Two Socket Chest
         main_room.connect(camo_pit_room, None, one_way=True) # Main Area --> Camo Pit Room
         camo_pit_room.connect(main_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), one_way=True) # Camo Pit Room --> Main Area
-        camo_pit_room.connect(bone_putter_room_chest3, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), one_way=True) # Camo Pit Room --> Bone Putter Room
+        camo_pit_room.connect(bone_putter_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), one_way=True) # Camo Pit Room --> Bone Putter Room
         bone_putter_room.connect(bone_putter_room_chest3, None) # Bone Putter Room <--> Lower Small Key
         bone_putter_room.connect(main_room, None, one_way=True) # Bone Putter Room <--> Main Area
         main_room.connect(main_room_drop1, OR(r.hit_switch, SHIELD)) # Main Area <--> Upper Small Key

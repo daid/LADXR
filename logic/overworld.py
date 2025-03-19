@@ -555,6 +555,7 @@ class World:
             graveyard.connect(forest, None, one_way=True) # villa buffer from the top twice to get to the main forest area
             log_cave_heartpiece.connect(forest_cave, r.super_jump_feather) # super jump
             log_cave_heartpiece.connect(forest_cave, r.bomb_trigger) # bomb trigger
+            #TODO: log_cave_heartpiece.connect(forest_cave, AND(r.sideways_block_push, r.hookshot_clip)) # perform two sideways block pushes from right screen, hold left and hookshot has a ~50% chance of snagging the check
             graveyard_cave_left.connect(graveyard_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger the heartpiece from the left side
             graveyard_heartpiece.connect(graveyard_cave_right, r.sideways_block_push) # sideways block push from the right staircase.
             
@@ -644,6 +645,7 @@ class World:
             ukuku_prairie.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster
             bay_water.connect(d5_entrance, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster into d5 entrance (wall clip), wall clip + jesus jump to get out
             prairie_island_seashell.connect(ukuku_prairie, AND(r.jesus_rooster, r.bush)) # jesus rooster from right side, screen transition on top of the water to reach the island
+            #TODO: prairie_island_seashell.connect(ukuku_prairie, AND(HOOKSHOT, BOOMERANG)) # when not having flippers, you can use hookshot on the white block the exact frame you step on water, and it will screen transition. S@Q menu to stop drowning briefly, then boomerang diagonally to get bush seashell
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_rooster, one_way=True) # jesus rooster (3 screen) through the underground passage leading to martha's bay mad batter
             # fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, OR(FEATHER, SWORD, BOW), FLIPPERS)) # just swing/shoot at fisher, if photographer is on screen it is dumb
             fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # face the fisherman from the left, get within 4 pixels (a range, not exact) of his left side, hold up, and mash a until you get the textbox.
