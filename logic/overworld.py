@@ -106,7 +106,7 @@ class World:
         forest_cave_crystal_chest = Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
         log_cave_heartpiece = Location().add(HeartPiece(0x2AB)).connect(forest_cave, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         forest_toadstool = Location().add(Toadstool())
-        #TODO: Location().add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
+        Location().add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
         self._addEntrance("toadstool_entrance", forest, forest_cave, None)
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 

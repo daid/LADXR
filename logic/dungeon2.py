@@ -29,15 +29,15 @@ class Dungeon2:
         vacuum_room_chest7 = Location(dungeon=2).add(DungeonChest(0x121)) # 20 rupees
         boo_room = Location("D2 Boo Buddies Room", dungeon=2)
         boo_room_chest8 = Location(dungeon=2).add(DungeonChest(0x120)) # bracelet
-        north_switch_room = Location("D2 North Switch Maze", dungeon=2)
-        north_switch_room_chest8 = Location(dungeon=2).add(DungeonChest(0x122)) # small key
-        north_switch_room_chest9 = Location(dungeon=2).add(DungeonChest(0x127)) # nightmare key
+        north_switch_room = Location("D2 North Switch Maze", dungeon=2) #TODO: revisit the whole north switch/peg area
+        north_switch_room_chest9 = Location(dungeon=2).add(DungeonChest(0x122)) # small key
+        north_switch_room_chest10 = Location(dungeon=2).add(DungeonChest(0x127)) # nightmare key
         pot_pol_room = Location("D2 Pots & Pols Room", dungeon=2)
         before_c_passage = Location("D2 Boss Passageway", dungeon=2)
         pre_boss_room = Location("D2 Room Before Boss", dungeon=2)
         pre_boss = Location("D2 Outside Boss Door", dungeon=2)
         boss_room = Location("D2 Boss Room", dungeon=2)
-        boss_room_drop2 = Location(dungeon=2).add(HeartContainer(0x12B)) # heart container
+        boss_room_drop3 = Location(dungeon=2).add(HeartContainer(0x12B)) # heart container
         instrument = Location("D2 Instrument Room", dungeon=2).add(Instrument(0x12a)) # conch horn
         
         # owl statues
@@ -67,16 +67,17 @@ class Dungeon2:
         vacuum_room.connect(vacuum_room_chest7, None) # Vacuum Mouth Area <--> Outside Boo Buddies Room Chest
         vacuum_room.connect(boo_room, FOUND(KEY2, 5)) # Vacuum Mouth Area <--> Boo Buddies Room
         boo_room.connect(boo_room_chest8, OR(r.fire, r.enemy_requirements["BOO_BUDDY"])) # Boo Buddies Room <--> Boo Buddies Room Chest
-        vacuum_room.connect(north_switch_room, POWER_BRACELET) # Vacuum Mouth Area <--> North Switch Maze
-        before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze
-        north_switch_room.connect(north_switch_room_chest8, None) # North Switch Maze <--> Second Switch Locked Chest
-        north_switch_room.connect(north_switch_room_chest9, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
+        vacuum_room.connect(north_switch_room, AND(POWER_BRACELET, r.hit_switch)) # Vacuum Mouth Area <--> North Switch Maze #TODO: revisit the whole north switch/peg area
+        before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze #TODO: revisit the whole north switch/peg area
+        north_switch_room.connect(north_switch_room_chest9, None) # North Switch Maze <--> Second Switch Locked Chest
+        north_switch_room.connect(north_switch_room_chest10, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
         north_switch_room.connect(pot_pol_room, FOUND(KEY2, 5)) # North Switch Maze <--> Boss Passageway Room Entrance
-        pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway
+        pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: REPLACE with below which removed AND() around enemy requirement
+        #TODO: pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: Since it's a room full of pots, check if we can reduce requirements for some logic levels (short term) or let it be improved in enemizer
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
-        boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Heart Container
+        boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[1]]) # Boss Room <--> Instrument Room
 
         # connections
