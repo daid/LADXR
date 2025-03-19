@@ -52,6 +52,7 @@ class Location:
         if not one_way:
             other.connect(self, req, one_way=True)
         return self
+    
 
     def __repr__(self):
         return "<%s:%s:%d:%d:%d>" % (self.__class__.__name__, self.dungeon, len(self.items), len(self.simple_connections), len(self.gated_connections))
