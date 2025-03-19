@@ -136,6 +136,7 @@ class Dungeon4:
             #TODO: before_miniboss.connect(outside_b_passage_shallows, r.jesus_jump) # [logic prep for staircase rando] jesus jump
             #TODO: south_tile_puzzle.connect(outside_b_passage_keyblock, r.jesus_jump) # [logic prep for staircase rando] jesus jump
             #TODO: before_a_passage.connect(after_a_passage, AND(BRACELET, r.super_poke)) # [logic prep for staircase rando] lift pots, then superjump and knockback off the peahat twice to get on ledge
+            #TODO: before_b_passage.connect(outside_b_passage_shallows, r.hookshot_clip, r.super_jump_feather) # [logic prep for staircase rando] by the staircase, hookshot block to the right multiple times to clip into wall. superjump down, and pause buffer to land on block, walk right.
             #TODO: outside_b_passage_shallows.connect(before_b_passage, r.super_jump_feather) # [logic prep for staircase rando]
 
         if options.logic == 'hell':
@@ -154,7 +155,7 @@ class Dungeon4:
             #TODO: south_tile_puzzle.connect(north_tile_puzzle, r.hookshot_clip_block, one_way=True) # [logic prep for staircase rando] facing downwards at the pushblock in statue+spark room, spam hookshot while spark passes you by
             #TODO: before_miniboss.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
             #TODO: outside_b_passage_shallows.connect(before_b_passage, r.hookshot_clip_block) # logic prep for staircase rando
-            #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, AND(r.jesus_buffer, "TOADSTOOL2")) # boots bonk to upper right of chest, buffer down, then hold left+toadstool to land on shallow water
+            #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, r.jesus_buffer) # boots bonk to upper right of chest, buffer down, then hold left out of pause menu to land on shallow water
             before_a_passage.connect(after_a_passage, AND(r.boots_bonk_2d_hell)) # Use flippers for puzzle and boots bonk to get through 2d section #TODO: move to hard, change to boots_bonk
             #TODO: before_a_passage.connect(after_a_passage, r.super_poke) # [logic prep for staircase rando] braceletless superjump and knockback off the peahat twice to get on ledge
             #TODO: before_a_passage.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
