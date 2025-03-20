@@ -178,7 +178,7 @@ class Dungeon3:
             before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, AND(FEATHER, POWER_BRACELET))) # TODO: REMOVE and replace with below
             #TODO: after_c_passage.connect(before_c_passage, AND(r.bounce_2d_spikepit, PEGASUS_BOOTS), one_way=True) # all while holding the "A" button, diagonal walk off ladder in piranha sidescroller, and bounce off spikes, then bonk the thwomp but in reverse
             #TODO: before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit)) # bracelet or toadstool to get bounce off spikes, or boots bonk during medicine invulnerability
-            #TODO: consider logic for passageway in reverse, sould some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
+            #TODO: consider logic for passageway in reverse, should some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
         self.entrance = entrance
         self.final_room = instrument
