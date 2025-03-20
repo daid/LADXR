@@ -39,8 +39,7 @@ class Dungeon4:
         before_b_passage = Location("D4 Before Boss Passageway", dungeon=4)
         outside_b_passage_keyblock = Location("D4 Outside Boss Passageway Keyblock", dungeon=4)
         outside_b_passage_shallows = Location("D4 Shallow Water By Boss Passageway", dungeon=4)
-        after_b_passage = Location("D4 After Boss Passageway", dungeon=4)
-        pre_boss_room = Location("D4 Before Boss Door", dungeon=4)
+        after_b_passage = Location("D4 Before Boss Door", dungeon=4)
         pre_boss = Location("D4 Before Boss Stairs", dungeon=4)
         boss_room = Location("D4 Boss Room", dungeon=4)
         boss_room_drop2 = Location(dungeon=4).add(HeartContainer(0x166)) # heart container
@@ -80,7 +79,6 @@ class Dungeon4:
         after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # After Miniboss <--> Flippers Room #TODO: DELETE and it's in casual logic statement
         flippers_room.connect(north_tile_puzzle, r.enemy_requirements["ZOL"]) # Flippers Room <--> Before Miniboss Room #TODO: change to one_way
         north_tile_puzzle.connect(flippers_room, None, one_way=True) # Flippers Room <--> Before Miniboss Room
-        before_miniboss.connect(north_tile_puzzle, FLIPPERS) # Before Miniboss Room <--> Flippers Room
         #TODO: flippers_room.connect(after_miniboss, r.enemy_requirements["ZOL"], one_way=True) # [logic prep for staircase rando]
         #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # [logic prep for staircase rando] #TODO: DELETE and it's in casual logic statement
         #TODO: miniboss_room.connect(before_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[3]], one_way=True) # [logic prep for staircase rando]
@@ -93,9 +91,8 @@ class Dungeon4:
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS) # Lower Tile Puzzle Area <--> Outside Boss Passageway Keyblock
         outside_b_passage_keyblock.connect(before_b_passage, FOUND(KEY4, 5)) # Outside Boss Passageway Keyblock <--> Before Boss Passageway
         before_miniboss.connect(outside_b_passage_shallows, OR(FLIPPERS, HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # Before Miniboss Room <--> Outside Boss Passageway Pushblock
-        before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> After Boss Passageway #TODO: remove and let casual logic statement take care of it
-        after_b_passage.connect(pre_boss_room, None) # After Boss Passageway <--> Before Boss Door
-        pre_boss_room.connect(pre_boss, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
+        before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # Before Boss Passageway <--> Before Boss Door #TODO: remove and let casual logic statement take care of it
+        after_b_passage.connect(pre_boss, NIGHTMARE_KEY4) # Before Boss Door <--> Boss Room
         pre_boss.connect(boss_room, None) # logic prep for staircase rando
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[3]]) # Boss Room <--> Instrument Room
@@ -103,12 +100,12 @@ class Dungeon4:
         #TODO: if options.logic == "casual":
             #TODO: after_miniboss.connect(flippers_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
             #TODO: after_miniboss.connect(miniboss_room, POWER_BRACELET, one_way=True) # intended method is to pull lever
-            #TODO: before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but it's possible to get through wihtout damage which goes in normal logic
+            #TODO: before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but it's possible to get through without damage which goes in normal logic
 
         #TODO: else:
             #TODO: after_miniboss.connect(flippers_room, None, one_way=True) # After Miniboss <--> Flippers Room
             #TODO: after_miniboss.connect(miniboss_room, None, one_way=True) # After Miniboss <--> Miniboss Room
-            #TODO: before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> After Boss Passageway
+            #TODO: before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> Before Boss Door
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(north_crossroads, r.tight_jump) # jump across the corners
@@ -124,7 +121,7 @@ class Dungeon4:
             after_miniboss.connect(flippers_room, None, one_way=True) # walk directly without pulling lever
             #TODO: after_miniboss.connect(miniboss_room, None, one_way=True) # [logic prep for auto-key logic] walk directly without pulling lever
             south_tile_puzzle.connect(before_a_passage, r.tight_jump) # With a tight jump feather is enough to reach the top left switch without flippers, or use flippers for puzzle and boots to get through 2d section
-            south_tile_puzzle.connect(pre_boss_room, r.tight_jump) # jump from bottom right corner of boss door room
+            south_tile_puzzle.connect(after_b_passage, r.tight_jump) # jump from bottom right corner of boss door room
             
         if options.logic == 'glitched' or options.logic == 'hell':
             #TODO: entrance.connect(west_statue_room, r.super_jump_feather, one_way=True) # [logic prep for auto-key logic]
@@ -159,7 +156,7 @@ class Dungeon4:
             before_a_passage.connect(after_a_passage, AND(r.boots_bonk_2d_hell)) # Use flippers for puzzle and boots bonk to get through 2d section #TODO: move to hard, change to boots_bonk
             #TODO: before_a_passage.connect(after_a_passage, r.super_poke) # [logic prep for staircase rando] braceletless superjump and knockback off the peahat twice to get on ledge
             #TODO: before_a_passage.connect(entrance, OR(r.super_poke, r.super_bump), one_way=True) # [logic prep for staircase rando] rebound off peahat to entrance
-            south_tile_puzzle.connect(pre_boss_room, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
+            south_tile_puzzle.connect(after_b_passage, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance
         self.final_room = instrument
