@@ -27,7 +27,8 @@ class Dungeon5:
         before_c_passage = Location("D5 After Miniboss", dungeon=5)
         after_c_passage = Location("D5 Before Boss Keyblock", dungeon=5)
         after_boss_keyblock = Location("D5 After Boss Keyblock", dungeon=5)
-        ms_1_room = Location("Master Stalfos Fight 1", dungeon=5)
+        ms_1_room = Location("D5 Master Stalfos 1", dungeon=5)
+        ms_1_victory = Location("D5 Master Stalfos 1 Victory", dungeon=5).add(KeyLocation("MS1_KILL"))
         before_d_passage = Location("D5 South of Crossroads", dungeon=5)
         before_d_passage_chest5 = Location(dungeon=5).add(DungeonChest(0x196)) # master stalfos message
         after_d_passage = Location("D5 Fireball Torches Room", dungeon=5)
@@ -40,17 +41,19 @@ class Dungeon5:
         north_ledge_chest_7 = Location(dungeon=5).add(DungeonChest(0x188)) # 50 rupees
         east_ledge = Location("D5 East Ledge", dungeon=5)
         east_ledge_chest8 = Location(dungeon=5).add(DungeonChest(0x18F)) # small key
-        ms_2_room = Location("Master Stalfos Fight 2", dungeon=5)
+        ms_2_room = Location("D5 Master Stalfos 2", dungeon=5)
+        ms_2_victory = Location("D5 Master Stalfos 2 Victory", dungeon=5).add(KeyLocation("MS2_KILL"))
         west_crossroads = Location("D5 West of Crossroads", dungeon=5)
         before_b_passage = Location("D5 Deep Water Passage Entrance", dungeon=5)
         after_b_passage = Location("D5 Bridge Chest Room Entrance", dungeon=5)
         boss_key_room = Location("D5 Bridge Chest Room", dungeon=5)
         boss_key_room_chest10 = Location(dungeon=5).add(DungeonChest(0x186))  # nightmare key
         ms_3_room = Location("D5 Master Stalfos 3", dungeon=5)
+        ms_3_victory = Location("D5 Master Stalfos 3 Victory", dungeon=5).add(KeyLocation("MS3_KILL"))
         pot_locked_room = Location("D5 Pot Locked Room", dungeon=5)
         pot_locked_room_chest9 = Location(dungeon=5).add(DungeonChest(0x183))
         ms_4_room = Location("D5 Master Stalfos 4", dungeon=5)
-        ms_4_room_drop2 = Location(dungeon=5).add(HookshotDrop()) # hookshot
+        ms_4_room_drop2 = Location("D5 Master Stalfos 4 Victory", dungeon=5).add(HookshotDrop()) # hookshot
         pre_boss_room = Location("D5 Hallway Before Boss", dungeon=5)
         boss_room = Location("D5 Boss Room", dungeon=5)
         boss_room_drop3 = Location(dungeon=5).add(HeartContainer(0x185)) # heart container
@@ -85,6 +88,7 @@ class Dungeon5:
         crystal_puddle_room.connect(ms_1_room, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), one_way=True) # Crystal River Area --> Master Stalfos Fight 1
         ms_1_room.connect(crystal_puddle_room, r.enemy_requirements["MASTER_STALFOS"], one_way=True) # Master Stalfos Fight 1 --> Crystal River Area
         ms_1_room.connect(before_d_passage, r.enemy_requirements["MASTER_STALFOS"], one_way=True) # Master Stalfos Fight 1 --> South of Crossroads
+        ms_1_room.connect(ms_1_victory, r.enemy_requirements["MASTER_STALFOS"]) # Master Stalfos Fight 1 Victory
         before_d_passage.connect(ms_1_room, None, one_way=True) # South of Crossroads --> Master Stalfos Fight 1
         before_d_passage.connect(before_d_passage_chest5, None) # South of Crossroads <--> Hookshot Note Chest
         before_d_passage.connect(after_d_passage, FEATHER) # South of Crossroads <--> Fireball Torches Room
@@ -94,6 +98,8 @@ class Dungeon5:
         spark_hallway.connect(after_c_passage, None, one_way=True) # Spark Hallway --> Before Boss Keyblock
         spark_hallway.connect(star_room, None, one_way=True) # Spark Hallway --> Star Owl Room
         before_d_passage.connect(north_crossroads, FEATHER) # South of Crossroads <--> North of Crossroads
+        before_d_passage.connect(ms_2_room, None) # South of Crossroads <--> Master Stalfos Fight 2
+        ms_2_room.connect(ms_2_victory, AND("MS1_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 2 Victory
         north_crossroads.connect(middle_ledge, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # North of Crossroads <--> First Ledge Chest
         middle_ledge.connect(middle_ledge_chest6, None) # First Ledge <--> Two Stalfos, Star Pit Chest
         middle_ledge.connect(east_ledge, HOOKSHOT) # First Ledge <--> East Ledge
@@ -101,17 +107,17 @@ class Dungeon5:
         north_crossroads.connect(north_ledge, HOOKSHOT) # North of Crossroads <--> North Ledge
         middle_ledge.connect(north_ledge, HOOKSHOT, one_way=True) # First Ledge <--> North Ledge
         north_ledge.connect(north_ledge_chest_7, None) # North Ledge <--> Sword Stalfos, Star, Bridge Chest
-        before_d_passage.connect(ms_2_room, None) # South of Crossroads <--> Master Stalfos Fight 2
         before_d_passage.connect(west_crossroads, None) # South of Crossroads <--> West of Crossroads
         west_crossroads.connect(before_b_passage, FLIPPERS) # West of Crossroads <--> Deep Water Passage Entrance
         before_b_passage.connect(after_b_passage, FLIPPERS) # Deep Water Passage Entrance <--> Bridge Chest Room
         after_b_passage.connect(boss_key_room, HOOKSHOT) # Bridge Chest Room Entrance <--> Bridge Chest Room
         boss_key_room.connect(boss_key_room_chest10, None) # Bridge Chest Room  <--> Nightmare Key/Torch Cross Chest
-        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: add POWER_BRACELET to requirement
+        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: add POWER_BRACELET to normal logic requirement
+        ms_3_room.connect(ms_3_victory, AND("MS2_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 3 Victory
         ms_3_room.connect(pot_locked_room, POWER_BRACELET) # Master Stalfos Fight 3 <--> Pot Locked Room
         pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])) # Pot Locked Room <--> Three Stalfos Chest #TODO: remove kill enemy requirements, it's just here to make logic match stable
-        ms_3_room.connect(ms_4_room, AND(FEATHER, SWORD)) # Master Stalfos Fight 3 <-> Master Stalfos Fight 4
-        ms_4_room.connect(ms_4_room_drop2, r.enemy_requirements["MASTER_STALFOS"]) # Master Stalfos Fight 4 <--> Master Stalfos Item
+        crystal_room.connect(ms_4_room, None) # Crystal Room <--> Master Stalfos Fight 4
+        ms_4_room.connect(ms_4_room_drop2, AND("MS3_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 4 <--> Master Stalfos Item
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT) # After Boss Keyblock <--> Hallway Before Boss
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY5) # Hallway Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[4]]) # Boss Room <--> Heart Container
@@ -156,13 +162,10 @@ class Dungeon5:
             north_ledge.connect(middle_ledge, r.pit_buffer_itemless, one_way=True) # itemless pit buffer down through where the bridge would be
             middle_ledge.connect(east_ledge, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
             #TODO: ms_3_room.connect(pot_locked_room, AND(r.super_jump_boots, r.zoomerang_buffer)) # skip bracelet requirement by boots superjump to land in pot, then zoomerang to dislodge link to the left
-            ms_3_room.connect(ms_4_room, AND(r.boots_bonk_2d_hell, SWORD)) # can reach fourth arena from entrance with pegasus boots and sword
             after_b_passage.connect(boss_key_room, r.pit_buffer_itemless) # pit buffer across
             if options.owlstatues == "both" or options.owlstatues == "dungeon": #TODO: remove if statement
                 after_boss_keyblock.connect(spark_hallway, AND(STONE_BEAK5, r.pit_buffer_itemless), one_way=True) #TODO: remove beak from requirement -  pit buffer from top right to bottom in right pits room
             spark_hallway.connect(pre_boss_room, r.super_jump_sword) # cross pits room from bottom left to top left by superjump from bottom wall to land on outcropping, then jump across
-
-            #TODO: implement fake MS1 - MS4 items for progression through Master Stalfos miniboss fights, adds conciseness and uses existing logic instead of backup logic
 
         self.entrance = entrance
         self.final_room = instrument

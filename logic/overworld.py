@@ -93,7 +93,7 @@ class World:
         self._addEntrance("witch", forest, witch_hut, None)
         crazy_tracy_hut = Location("Outside Crazy Tracy's House").connect(forest, POWER_BRACELET)
         crazy_tracy_hut_inside = Location("Crazy Tracy's House")
-        Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
+        Location("Medicine Purchase").add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
         start_house.connect(crazy_tracy_hut, AND(OCARINA, SONG2), one_way=True) # Manbo's Mambo into the pond outside Tracy
 
@@ -106,7 +106,7 @@ class World:
         forest_cave_crystal_chest = Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
         log_cave_heartpiece = Location().add(HeartPiece(0x2AB)).connect(forest_cave, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         forest_toadstool = Location().add(Toadstool())
-        Location().add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
+        Location("Backup Toadstool").add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
         self._addEntrance("toadstool_entrance", forest, forest_cave, None)
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
@@ -404,7 +404,7 @@ class World:
 
         # Raft game.
         raft_house = Location("Raft House")
-        Location().add(KeyLocation("RAFT")).connect(raft_house, FOUND("RUPEES", 500))
+        Location("Raft Purchase").add(KeyLocation("RAFT")).connect(raft_house, FOUND("RUPEES", 500))
         raft_return_upper = Location("Raft Return North")
         raft_return_lower = Location("Raft Return South").connect(raft_return_upper, None, one_way=True)
         outside_raft_house = Location("Outside Raft House").connect(below_right_taltal, HOOKSHOT).connect(below_right_taltal, FLIPPERS, one_way=True)
