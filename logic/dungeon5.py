@@ -99,7 +99,7 @@ class Dungeon5:
         spark_hallway.connect(star_room, None, one_way=True) # Spark Hallway --> Star Owl Room
         before_d_passage.connect(north_crossroads, FEATHER) # South of Crossroads <--> North of Crossroads
         before_d_passage.connect(ms_2_room, None) # South of Crossroads <--> Master Stalfos Fight 2
-        ms_2_room.connect(ms_2_victory, AND("MS1_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 2 Victory
+        ms_2_room.connect(ms_2_victory, AND(r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 2 Victory
         north_crossroads.connect(middle_ledge, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # North of Crossroads <--> First Ledge Chest
         middle_ledge.connect(middle_ledge_chest6, None) # First Ledge <--> Two Stalfos, Star Pit Chest
         middle_ledge.connect(east_ledge, HOOKSHOT) # First Ledge <--> East Ledge
@@ -113,7 +113,7 @@ class Dungeon5:
         after_b_passage.connect(boss_key_room, HOOKSHOT) # Bridge Chest Room Entrance <--> Bridge Chest Room
         boss_key_room.connect(boss_key_room_chest10, None) # Bridge Chest Room  <--> Nightmare Key/Torch Cross Chest
         north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: add POWER_BRACELET to normal logic requirement
-        ms_3_room.connect(ms_3_victory, AND("MS2_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 3 Victory
+        ms_3_room.connect(ms_3_victory, AND("MS1_KILL", "MS2_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 3 Victory
         ms_3_room.connect(pot_locked_room, POWER_BRACELET) # Master Stalfos Fight 3 <--> Pot Locked Room
         pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])) # Pot Locked Room <--> Three Stalfos Chest #TODO: remove kill enemy requirements, it's just here to make logic match stable
         crystal_room.connect(ms_4_room, None) # Crystal Room <--> Master Stalfos Fight 4
