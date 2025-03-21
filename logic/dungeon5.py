@@ -128,7 +128,7 @@ class Dungeon5:
             before_d_passage.connect(north_crossroads, HOOKSHOT) # walk into pit and hookshot right to get to single tile, next corner walk up+left or hookshot to first ledge chest
             north_crossroads.connect(middle_ledge, AND(r.wall_clip, r.tight_jump)) # tight jump from bottom wall clipped to make it over the pits
             after_b_passage.connect(boss_key_room, r.boots_jump) # boots jump across
-            #TODO: north_crossroads.connect(ms_3_room, OR(OR(SWORD, BOMB))) # left zide zol can only be killed with sword and bomb unless you have power bracelet or glitches
+            #TODO: north_crossroads.connect(ms_3_room, OR(OR(SWORD, BOMB))) # left side zol can only be killed with sword and bomb unless you have power bracelet or glitches
             
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across the pits
@@ -161,6 +161,8 @@ class Dungeon5:
             if options.owlstatues == "both" or options.owlstatues == "dungeon": #TODO: remove if statement
                 after_boss_keyblock.connect(spark_hallway, AND(STONE_BEAK5, r.pit_buffer_itemless), one_way=True) #TODO: remove beak from requirement -  pit buffer from top right to bottom in right pits room
             spark_hallway.connect(pre_boss_room, r.super_jump_sword) # cross pits room from bottom left to top left by superjump from bottom wall to land on outcropping, then jump across
+
+            #TODO: implement fake MS1 - MS4 items for progression through Master Stalfos miniboss fights, adds conciseness and uses existing logic instead of backup logic
 
         self.entrance = entrance
         self.final_room = instrument

@@ -180,6 +180,8 @@ class Dungeon3:
             #TODO: before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit)) # bracelet or toadstool to get bounce off spikes, or boots bonk during medicine invulnerability
             #TODO: consider logic for passageway in reverse, should some tricks be labeled one-way? Is there different strategies for traversing this passage in reverse? Being mindful of staircase rando
 
+            #TODO: consider fake "SWITCH_3" item for conciseness and preparedness for stair shuffle
+
         self.entrance = entrance
         self.final_room = instrument
 
