@@ -109,6 +109,8 @@ class Dungeon2:
             before_c_passage.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: enclose in or statement to allow boots only method
 
+            #TODO: consider fake "SWITCH_2" item for conciseness and preparedness for stair shuffle
+
         self.entrance = entrance
         self.final_room = instrument
 

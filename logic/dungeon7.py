@@ -94,11 +94,11 @@ class Dungeon7:
         nw_pillar.connect(spike_corridor, FEATHER, one_way=True) # Northwest Pillar Area --> Between Pillar Pushbocks
         after_d_stairs.connect(tile_room, None, one_way=True) # Hinox Area --> Floating Tile Fight
         tile_room.connect(nw_pillar, None) # Floating Tile Fight <--> Northwest Pillar Area
-        after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Kinox Key
+        after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"]) # Hinox Area <--> Hinox Key
         after_d_stairs.connect(keylock_ledge, FOUND(KEY7, 3)) # Hinox Area <--> Key Locked Ledge
         after_d_stairs.connect(pegs_after_a_stairs, OR(r.hit_switch)) # Hinox Area <--> On Pegs Around Chest #TODO: REPLACE with below
-        #TODO: after_a_stairs.connect(pegs_after_a_stairs, BOOMERANG) # Ball Room <--> On Pegs Around Ches # NEW VERSION
-        #TODO: before_b_stairs.connect(pegs_after_a_stairs, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD, COUNT(SWORD,2))) # Hinox Area <--> On Pegs Around Ches # NEW VERSION
+        #TODO: after_a_stairs.connect(pegs_after_a_stairs, BOOMERANG) # Ball Room <--> On Pegs Around Chest # NEW VERSION
+        #TODO: before_b_stairs.connect(pegs_after_a_stairs, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD, COUNT(SWORD,2))) # Hinox Area <--> On Pegs Around Chest # NEW VERSION
         keylock_ledge.connect(pegs_after_a_stairs, None, one_way=True) # Key Locked Ledge --> On Pegs Around Chest
         keylock_ledge.connect(se_pillar, None, one_way=True) # Key Locked Ledge --> Southeast Pillar Area
         keylock_ledge.connect(after_d_stairs, None, one_way=True) # Key Locked Ledge --> Hinox Area
@@ -165,7 +165,7 @@ class Dungeon7:
             #TODO: entrance.connect(before_a_stairs, r.boots_superbump) # boots to run, then bow or rod to run backwards, then hold shield so blade bumps you over wall #[logic prep for staircase rando]
             #TODO: entrance.connect(west_ledge, r.super_bump) # enter SW room wall clipped, line up with wizrobes, and repeat super bumps to move up onto the ledge (very precise)
             entrance.connect(east_ledge, AND(r.super_jump_boots, r.shield_bump)) # along bottom wall in first key room, setup boots super jump, but hold shield after the jump to bump down to ledge
-            #TODO: after_b_stairs.connect(ne_pillar, r.zoomerang_buffer) # zoomerang gets you out of saircase in horsehead room if the entrance was randomized and you couldn't hit a switch  #[logic prep for staircase rando]
+            #TODO: after_b_stairs.connect(ne_pillar, r.zoomerang_buffer) # zoomerang gets you out of staircase in horsehead room if the entrance was randomized and you couldn't hit a switch  #[logic prep for staircase rando]
             entrance.connect(before_b_stairs, r.super_jump_feather) # superjump in the center to get on raised blocks, hell because the jump has to be very low
             entrance.connect(before_b_stairs, r.boots_superhop) # boots superhop in the center to get on raised blocks
             before_b_stairs.connect(east_ledge, r.boots_superhop) # boots superhop from room with spike switch
@@ -183,7 +183,7 @@ class Dungeon7:
             #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
             #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
             
-
+            #TODO: consider fake "SWITCH_7" item for conciseness and preparedness for stair shuffle
         
         self.entrance = entrance
         self.final_room = instrument

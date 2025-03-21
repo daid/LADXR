@@ -14,8 +14,9 @@ class Dungeon6:
         second_elephant_room_chest2 = Location(dungeon=6).add(DungeonChest(0x1C9)) # 100 rupees
         dark_room = Location("D6 Dark Room", dungeon=6)
         before_a_passage = Location("D6 Dark Room Stairs Spawn", dungeon=6)
-        after_a_passage = Location("D6 South of L2 Bracelet Chest", dungeon=6)
-        bracelet_room = Location("D6 Bracelet Room", dungeon=6)
+        after_a_passage = Location("D6 Inside Pegs Before L2 Bracelet Chest", dungeon=6)
+        pre_bracelet_room = Location("D6 Outside Pegs Before L2 Bracelet Room", dungeon=6)
+        bracelet_room = Location("D6 L2 Bracelet Room", dungeon=6)
         bracelet_room_chest3 = Location(dungeon=6).add(DungeonChest(0x1CE)) # L2 bracelet
         wizrobe_switch_room = Location("D6 Wizrobe Switch Room", dungeon=6)
         wizrobe_switch_room_chest4 = Location(dungeon=6).add(DungeonChest(0x1C0)) # map
@@ -43,7 +44,7 @@ class Dungeon6:
         hookshot_block = Location("D6 Waterway Hookshot Block", dungeon=6)
         waterway_west_ledge = Location("D6 Ledge Left of Waterway", dungeon=6)
         pot_area = Location("D6 Pot Owl Area", dungeon=6)
-        pot_ring_chest11= Location(dungeon=6).add(DungeonChest(0x1B6)) # nightmare key
+        pot_ring_chest11 = Location(dungeon=6).add(DungeonChest(0x1B6)) # nightmare key
         before_c_passage = Location("D6 Pols Room", dungeon=6)
         spark_pot_maze = Location("D6 Spark & Pot Maze", dungeon=6)
         top_right_room = Location("D6 Northeast Horse Head Room", dungeon=6)
@@ -75,15 +76,16 @@ class Dungeon6:
         second_elephant_room.connect(second_elephant_room_chest2, None) # Flying Heart & Statue Room <--> Flying Heart, Statue Chest
         entrance.connect(dark_room, BOMB) # Entrance <--> Dark Room
         dark_room.connect(before_a_passage, r.enemy_requirements["HIDING_ZOL"]) # Dark Room <--> Dark Room Stairs Spawn
-        before_a_passage.connect(after_a_passage, FEATHER) # Dark Room Stairs Spawn <--> South of L2 Bracelet Chest
-        after_a_passage.connect(bracelet_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # South of L2 Bracelet Chest <--> Bracelet Room
-        bracelet_room.connect(bracelet_room_chest3, None) # Bracelet Room <--> L2 Bracelet Chest
-        bracelet_room.connect(entrance, COUNT(POWER_BRACELET, 2), one_way=True) # Bracelet Room --> Entrance
+        before_a_passage.connect(after_a_passage, FEATHER) # Dark Room Stairs Spawn <--> Inside Pegs Before L2 Bracelet Chest
+        after_a_passage.connect(pre_bracelet_room, r.hit_switch, one_way=True) # Inside Pegs Before L2 Bracelet Chest --> Outside Pegs Before L2 Bracelet Room #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
+        pre_bracelet_room.connect(bracelet_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # Outside Pegs Before L2 Bracelet Room <--> L2 Bracelet Room
+        bracelet_room.connect(bracelet_room_chest3, None) # L2 Bracelet Room <--> L2 Bracelet Chest
+        bracelet_room.connect(entrance, COUNT(POWER_BRACELET, 2), one_way=True) # L2 Bracelet Room --> Entrance
         entrance.connect(wizrobe_switch_room, POWER_BRACELET) # Entrance <--> Wizrobe Switch Room
-        entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) #TODO: delete in favor of casual logic commented out below
+        entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) #TODO: delete in favor of casual logic commented out below #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
         wizrobe_switch_room.connect(wizrobe_switch_room_chest4, r.enemy_requirements["WIZROBE"]) # Wizrobe Switch Room <--> Three Wizrobe, Switch Chest #TODO: 12-arrow room if got here with only bracelet+bow
         south_star_area.connect(south_star_area_chest5, None) # Before Northwest Area <--> Stairs Across Statues Chest
-        south_star_area.connect(star_area, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) # Before Northwest Area <--> Northwest Area
+        south_star_area.connect(star_area, AND(r.throw_pot, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) # Before Northwest Area <--> Northwest Area
         star_area.connect(south_star_area, None, one_way=True) # Northwest Area --> Before Northwest Area
         star_area.connect(star_area_chest6, None) # Northwest Area <--> Switch, Star Above Statues Chest
         star_area.connect(star_area_drop1, OR(r.enemy_requirements["WIZROBE"], BOW)) # Northwest Area <--> Two Wizrobe Key
@@ -101,7 +103,7 @@ class Dungeon6:
         entrance.connect(four_wizrobe_room, COUNT(POWER_BRACELET, 2), one_way=True) # Entrance --> Four Wizrobe Room
         four_wizrobe_room.connect(entrance, r.enemy_requirements["WIZROBE"], one_way=True) # Four Wizrobe Room --> Entrance
         four_wizrobe_room.connect(blade_trap_room, r.enemy_requirements["WIZROBE"], one_way=True) # Four Wizrobe Room --> Blade Trap Room
-        blade_trap_room.connect(after_blade_trap, AND(FEATHER, r.hit_switch), one_way=True) #  --> Ledge After Blade Trap
+        blade_trap_room.connect(after_blade_trap, AND(FEATHER, r.hit_switch), one_way=True) #  --> Ledge After Blade Trap #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
         after_blade_trap.connect(after_blade_trap_chest8, None) # Ledge After Blade Trap <--> Four Wizrobe Ledge Chest
         after_blade_trap.connect(four_wizrobe_room, None, one_way=True) # Ledge After Blade Trap --> Four Wizrobe Room
         four_wizrobe_room.connect(waterway,r.enemy_requirements["WIZROBE"]) # Four Wizrobe Room <--> Waterway
@@ -145,8 +147,9 @@ class Dungeon6:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
-            before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True)
-            after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True)
+            #TODO: south_star_area.connect(star_area, AND(r.stun_wizrobe, r.throw_enemy, r.throw_pot) # stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
+            before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True) # boots dash over 1 block gaps in sidescroller
+            after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True) # boots dash over 1 block gaps in sidescroller, then bonk to get on ladder
             before_c_passage.connect(after_c_passage, None) # damage_boost past the mini_thwomps
             dodongo_room.connect(before_c_passage, r.boots_bonk) # boots bonk to escape dodongo room NE corner
             #TODO: spark_pot_maze.connect(top_right_room, AND(POWER_BRACELET)) #[logic prep for staircase rando] # it's possible to pass through the room with only bracelet and not take damage, but it's hard
@@ -154,22 +157,26 @@ class Dungeon6:
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(second_elephant_room, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
             wizrobe_switch_room.connect(south_star_area, r.super_jump_feather, one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
-            south_star_area.connect(star_area, AND(POWER_BRACELET, r.super_jump_feather)) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
+            south_star_area.connect(star_area, AND(r.super_jump_feather, r.throw_pot)) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
             before_c_passage.connect(dodongo_room, r.super_jump_feather, one_way=True) # superjump to get from pols to dodongos without kill requirements
-            after_miniboss.connect(before_b_passage, r.bomb_trigger) # go through north door exits to wrap-around, then bomb trigger as you trasition into 2-statue room
+            after_miniboss.connect(before_b_passage, r.bomb_trigger) # go through north door exits to wrap-around, then bomb trigger as you transition into 2-statue room
             flying_bomb_room.connect(after_b_passage, r.shaq_jump, one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
             waterway.connect(waterway_east_ledge, r.super_jump, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
             #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.ledge_super_poke, r.ledge_super_bump))) # super jump into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door with it never closing
-            entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) # can boots superhop to pass both the mimic room and the 3 wizrobe room
-            entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) # stun mask mimic, then pick it up and throw it against the top wall so it lands on top of the switch with enough delay to get past the top raised blocks
+            entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) #TODO: REMOVE and replace with below
+            entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) #TODO: REMOVE and replace with below
+            #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, OR(r.boots_superhop, AND(r.stun_mask_mimic, r.throw_enemy), SWORD)), one_way=True) # very difficult ways to hit the switch while making it over the peg - stun and throw the mask mimic up at the wall and run, or spin atack whilc walking to the peg while wall clipped, or normal boots superhop from NW corner of room
+            #TODO: south_star_area.connect(star_area, AND(SWORD, r.throw_pot) # hit three wizrobe room switch with sword beam (L2) or spin attack while facing up and a well timed up-press to step onto peg as it raises
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: change to one_way - #use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
             #TODO: before_b_passage.connect(after_b_passage, "TOADSTOOL2") # use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
             waterway.connect(waterway_west_ledge, r.super_jump_feather, one_way=True)
             waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
+
+            #TODO: consider fake "SWITCH_6" item for conciseness and preparedness for stair shuffle
 
         self.entrance = entrance
         self.final_room = instrument

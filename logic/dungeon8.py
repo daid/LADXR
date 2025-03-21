@@ -310,6 +310,8 @@ class Dungeon8:
             after_c_passage.connect(before_f_stairs, AND(r.jesus_jump, r.zoomerang)) # jj across lava uand then a few dozen consecutive buffers to get lodged lower left corner of rain, the right-facing zoomerang to escape
             boss_room.connect(instrument, AND(r.boots_bonk, r.boss_requirements[world_setup.boss_mapping[7]])) # boots bonk in boss room to collect instrument
             
+            #TODO: consider fake "SWITCH_8" item for conciseness and preparedness for stair shuffle
+
         self.entrance = entrance
         self.final_room = instrument
 
