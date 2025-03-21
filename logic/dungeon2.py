@@ -32,8 +32,9 @@ class Dungeon2:
         north_switch_room = Location("D2 North Switch Maze", dungeon=2) #TODO: revisit the whole north switch/peg area
         north_switch_room_chest9 = Location(dungeon=2).add(DungeonChest(0x122)) # small key
         north_switch_room_chest10 = Location(dungeon=2).add(DungeonChest(0x127)) # nightmare key
+        pot_pol_room_doorway = Location("D2 Pots & Pols Room Doorway", dungeon=2)
         pot_pol_room = Location("D2 Pots & Pols Room", dungeon=2)
-        before_c_passage = Location("D2 Boss Passageway", dungeon=2)
+        before_c_passage = Location("D2 Boss Passageway Spawn", dungeon=2)
         pre_boss_room = Location("D2 Room Before Boss", dungeon=2)
         pre_boss = Location("D2 Outside Boss Door", dungeon=2)
         boss_room = Location("D2 Boss Room", dungeon=2)
@@ -71,10 +72,10 @@ class Dungeon2:
         before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze #TODO: revisit the whole north switch/peg area
         north_switch_room.connect(north_switch_room_chest9, None) # North Switch Maze <--> Second Switch Locked Chest
         north_switch_room.connect(north_switch_room_chest10, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
-        north_switch_room.connect(pot_pol_room, FOUND(KEY2, 5)) # North Switch Maze <--> Boss Passageway Room Entrance
-        pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, OR(r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"]))) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: REPLACE with below which removed AND() around enemy requirement
-        #TODO: pot_pol_room.connect(before_c_passage, AND(POWER_BRACELET, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # Boss Passageway Room Entrance <--> Boss Passageway #TODO: Since it's a room full of pots, check if we can reduce requirements for some logic levels (short term) or let it be improved in enemizer
-        #TODO: pot_pol_room needs to be divided into two nodes (inside pots vs outside pots), there's known tricks for crossing pot wall in reverse, and enemy kill requirements not required to exit key door if arrived in staircase.
+        north_switch_room.connect(pot_pol_room_doorway, FOUND(KEY2, 5)) # North Switch Maze <--> Pots & Pols Room Doorway
+        pot_pol_room_doorway.connect(pot_pol_room, POWER_BRACELET) # Pots & Pols Room Doorway <--> Pots & Pols Room
+        pot_pol_room.connect(before_c_passage, AND(OR(r.throw_pot, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"])) # Pots & Pols Room --> Boss Passageway Spawn #TODO: enemy randomizer would make this pot kill requirement inaccurate. Also, technically you can kill zols with pots too, given 20 available, consider for normal logic
+        #TODO: before_c_passage.connect(pot_pol_room, None, one_way=True) # [logic prep for staircase rando] - Boss Passageway Spawn --> Pots & Pols Room
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door
         pre_boss.connect(boss_room, NIGHTMARE_KEY2) # Outside Boss Door <--> Boss Room
@@ -93,6 +94,7 @@ class Dungeon2:
         if options.logic == 'glitched' or options.logic == 'hell':
             boo_room.connect(boo_room_chest8, SWORD) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because player will have fire)
             after_miniboss.connect(before_b_passage, r.super_jump_feather) # superjump after hinox to access passage B
+            #TODO: before_c_passage.connect(pot_pol_room, AND(r.hookshot_clip, r.super_jump_feather), one_way=True) # [logic prep for staircase rando] - hookshot top center pot while touching north wall several times until wall clipped, superjump over pots to key door
             
         if options.logic == 'hell':    
             pitbeetle_room.connect(pitbeetle_room_chest2, r.boots_bonk_pit) # use boots bonk on torch to jump over the pits
@@ -103,7 +105,7 @@ class Dungeon2:
             #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet to get damage boost from 2d spikes to get through passage
             after_miniboss.connect(vacuum_room, r.boots_bonk_pit) # boots bonk to get over 1 tile pits by owl statue
             #TODO: after_miniboss.connect(vacuum_room, r.hookshot_spam_pit) # hookshot spam to cross single tile pits by owl statue
-            pot_pol_room.connect(before_c_passage, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
+            pot_pol_room_doorway.connect(before_c_passage, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
             before_c_passage.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
             pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: enclose in or statement to allow boots only method
 
