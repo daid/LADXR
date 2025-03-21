@@ -246,7 +246,7 @@ def isConsumable(item) -> bool:
         return False
     if item.startswith("RUPEES_") or item == "RUPEES":
         return True
-    if item.startswith("KEY"):
+    if item.startswith("KEY") and item != KEY_CAVERN_OPENED:
         return True
     return False
 
@@ -275,14 +275,21 @@ class RequirementsSettings:
         self.throw_pot = POWER_BRACELET # grab pots to kill enemies
         self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
+        self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
+        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
-        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots dash into wall for unclipped superjump
+        self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
         self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
-        self.boots_superhop = AND(PEGASUS_BOOTS, OR(MAGIC_ROD, BOW)) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.ledge_super_bump = SHIELD # fall off ledge and rebound off entity with shield (can result in no-clip backflip if left or right facing and dpad down or up is held first)
+        self.ledge_super_poke = SWORD # fall off ledge and rebound off entity with sword
+        self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.boots_superbump = AND(PEGASUS_BOOTS, self.running_turn, self.shield_bump)
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
@@ -290,16 +297,19 @@ class RequirementsSettings:
         self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
-        self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) or just getting a better position for jumps
-        self.pit_buffer_itemless = True # walk on top of pits and buffer down
+        self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) get a better position for jumps, or start a superjump
+        self.pit_buffer_itemless = True # walk on top of pits and buffer down Note: Glitched logic if single pit buffer, Hell logic if 2 or more tiles
         self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
-        self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to cross gaps
+        self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to jump while buffered down into the block under a pit
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
-        self.boots_bonk = PEGASUS_BOOTS # bonk against walls in 2d sections to get to higher places (no pits involved usually)
+        self.boots_bonk = PEGASUS_BOOTS # bonk against walls to jump small gaps (not starting inside of pit) (also easy 2d bonks)
         self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps
         self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
+        self.bounce_2d_spikepit = self.damage_boost_special # bounce off spikes in 2d sections with no items. holding the "A" button gives a bit extra height
+        self.bracelet_bounce_2d_spikepit = AND(self.damage_boost_special, POWER_BRACELET) # grab walls in 2d sections to get flung into spikes and boost upwards
+        self.toadstool_bounce_2d_spikepit = AND(self.damage_boost_special, "TOADSTOOL2") # use toadstool right after taking damage from spikes, and hold any button afterwards to gain extra height from the bounce
         self.hookshot_spam_pit = HOOKSHOT # use hookshot with spam to cross 1 tile gaps
         self.hookshot_clip = AND(HOOKSHOT, options.superweapons == False) # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
         self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
@@ -307,11 +317,12 @@ class RequirementsSettings:
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
-        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
         self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
-        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
-        self.lava_swim = AND(FLIPPERS, SWORD) # when transitioning on top of lava, slash your sword to transition into the lava instead of on top of it
+        self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
+        self.zoomerang_buffer = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
+        self.lava_swim = AND(FLIPPERS) # be paused and splashing on lave, transition on the first frame after unpausing
+        self.lava_swim_sword = AND(FLIPPERS, SWORD) # be paused and splashing on lave, transition on the first frame after unpausing = some screens need sword to be held when unpausing to work???
 
         self.boss_requirements = {
             0: SWORD,  # D1 boss
@@ -400,6 +411,7 @@ class RequirementsSettings:
             "ARMOS_STATUE":            OR(BOMB, BOW, MAGIC_ROD),
             "BOMBER":                  OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
             "BUZZ_BLOB":               OR(BOMB, BOW, MAGIC_ROD, BOOMERANG),
+            # add cukeman?
             "HIDING_GHINI":            self.attack_hookshot_no_bomb,
             "GHINI":                   self.attack_hookshot_no_bomb,
             "GIANT_GHINI":             self.attack_hookshot_no_bomb,
@@ -415,7 +427,7 @@ class RequirementsSettings:
             "ROCK_CRAWLER":            AND(POWER_BRACELET, self.attack_hookshot_powder),   # NOT in disassembly, but has different requirements so?
             "TEKTITE":                 self.attack_hookshot_powder,
             "WINGED_OCTOROK":          self.attack_hookshot_powder,
-            "ZORA":                    OR(SWORD, BOOMERANG),                               # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water
+            "ZORA":                    OR(SWORD, BOOMERANG),                               # check how BOMB, BOW, MAGIC_ROD, HOOKSHOT, MAGIC_POWDER interact on land as zora falls into water also SHIELD seems to kill in water, at least
             "ANTI_KIRBY":              OR(BOMB, MAGIC_ROD, BOOMERANG),                     # double check magic rod
             "BLOOPER":                 self.attack_hookshot_powder,                        # 2d
             "FLYING_HOPPER_BOMBS":     OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER),
@@ -474,6 +486,7 @@ class RequirementsSettings:
             self.enemy_requirements["GIANT_GHINI"] = self.attack_hookshot # use bomb to kill ghini
             self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
+            self.enemy_requirements["BUZZ_BLOB"] = OR(OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), AND(HOOKSHOT, SWORD)) # only hookshot stuns, then you can kill with L1 sword, or by throwing something at it like another buzz blob
             
         if options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
@@ -482,7 +495,7 @@ class RequirementsSettings:
             self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
-            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits
+            self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits #TODO: disable this and let it be handled in tracker hell note: l2 sword beams can kill but obscure
             self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
             self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, COUNT(SWORD,2)) # use bombs or L2 sword beams to damage dethl
             self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob

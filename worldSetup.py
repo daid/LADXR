@@ -40,7 +40,8 @@ class WorldSetup:
             "moblin_cave": "MOBLIN_KING",
             "armos_temple": "ARMOS_KNIGHT",
         }
-        self.goal = None
+        self.goal = "vanilla"
+        self.goal_count = 8
         self.bingo_goals = None
         self.sign_maze = None
         self.multichest = RUPEES_20
@@ -236,31 +237,36 @@ class WorldSetup:
                 if settings.miniboss == 'shuffle':
                     values.remove(self.miniboss_mapping[key])
 
-        if settings.goal == 'random':
-            self.goal = rnd.randint(-1, 8)
-        elif settings.goal == 'open':
-            self.goal = -1
-        elif settings.goal in {"seashells", "bingo", "bingo-double", "bingo-triple", "bingo-full"}:
-            self.goal = settings.goal
-        elif settings.goal in {"maze"}:
+        self.goal = settings.goal
+        if settings.goal in {"maze"}:
             self.goal = settings.goal
             self.sign_maze = maze.buildMaze(rnd)
         elif settings.goal == "specific":
+            if settings.goalcount == 'random':
+                self.goal_count = rnd.randint(1, 8)
+            else:
+                self.goal_count = max(1, int(settings.goalcount))
             instruments = [c for c in "12345678"]
             rnd.shuffle(instruments)
-            self.goal = "=" + "".join(instruments[:4])
-        elif "-" in settings.goal:
+            self.goal = "=" + "".join(instruments[:self.goal_count])
+        elif "-" in settings.goal and not settings.goal.startswith("bingo"):
             a, b = settings.goal.split("-")
             if a == "open":
                 a = -1
-            self.goal = rnd.randint(int(a), int(b))
-        else:
-            self.goal = int(settings.goal)
+            self.goal = 'instruments'
+            self.goal_count = rnd.randint(int(a), int(b))
+        elif settings.goal == 'instruments':
+            if settings.goalcount == 'random':
+                self.goal_count = rnd.randint(-1, 8)
+                if self.goal_count < 0:
+                    self.goal = 'open'
+            else:
+                self.goal_count = int(settings.goalcount)
         if self.goal in {"bingo", "bingo-double", "bingo-triple", "bingo-full"}:
             self.bingo_goals = bingo.randomizeGoals(rnd, settings)
 
         if settings.overworld == "dungeonchain":
-            self._buildDungeonChain(rnd)
+            self._buildDungeonChain(settings, rnd)
 
         self.multichest = rnd.choices(MULTI_CHEST_OPTIONS, MULTI_CHEST_WEIGHTS)[0]
 
@@ -269,19 +275,20 @@ class WorldSetup:
         self.one_on_one = settings.entranceshuffle not in {"madness"}
         self.pickEntrances(settings, rnd)
 
-    def _buildDungeonChain(self, rnd):
+    def _buildDungeonChain(self, settings, rnd):
+        chainlength = int(settings.dungeonchainlength)
         # Build a chain of 5 dungeons
         self.dungeon_chain = [1, 2, 3, 4, 5, 6, 7, 8]
         if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
             self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
-        self.dungeon_chain = self.dungeon_chain[:5]
         # Check if we randomly replace one of the dungeons with a cavegen
         if rnd.randrange(0, 100) < 80:
             self.cavegen = cavegen.Generator(rnd)
             self.cavegen.generate()
             # cavegen.dump("cave.svg", self.cavegen.start)
             self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
+        self.dungeon_chain = self.dungeon_chain[:chainlength]
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:
             inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]

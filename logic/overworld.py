@@ -10,7 +10,7 @@ class World:
 
         mabe_village = Location("Mabe Village")
         Location().add(HeartPiece(0x2A4)).connect(mabe_village, r.bush)  # well
-        Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, COUNT("RUPEES", 20)))  # fishing game, heart piece is directly done by the minigame.
+        Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, FOUND("RUPEES", 50)))  # fishing game, heart piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
         Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
@@ -44,8 +44,8 @@ class World:
 
         shop = Location("Shop")
         if options.shopsanity == '':
-            Location().add(ShopItem(0)).connect(shop, COUNT("RUPEES", 200))
-            Location().add(ShopItem(1)).connect(shop, COUNT("RUPEES", 980))
+            Location().add(ShopItem(0)).connect(shop, FOUND("RUPEES", 250))
+            Location().add(ShopItem(1)).connect(shop, FOUND("RUPEES", 1000+250))
         else:
             Location().add(ShopItem(0)).connect(shop, FOUND("RUPEES", 100))
             Location().add(ShopItem(1)).connect(shop, FOUND("RUPEES", 200))
@@ -93,7 +93,7 @@ class World:
         self._addEntrance("witch", forest, witch_hut, None)
         crazy_tracy_hut = Location("Outside Crazy Tracy's House").connect(forest, POWER_BRACELET)
         crazy_tracy_hut_inside = Location("Crazy Tracy's House")
-        Location().add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
+        Location("Medicine Purchase").add(KeyLocation("MEDICINE2")).connect(crazy_tracy_hut_inside, FOUND("RUPEES", 50))
         self._addEntrance("crazy_tracy", crazy_tracy_hut, crazy_tracy_hut_inside, None)
         start_house.connect(crazy_tracy_hut, AND(OCARINA, SONG2), one_way=True) # Manbo's Mambo into the pond outside Tracy
 
@@ -106,12 +106,15 @@ class World:
         forest_cave_crystal_chest = Location().add(Chest(0x2BD)).connect(forest_cave, SWORD)  # chest in forest cave on route to mushroom
         log_cave_heartpiece = Location().add(HeartPiece(0x2AB)).connect(forest_cave, POWER_BRACELET)  # piece of heart in the forest cave on route to the mushroom
         forest_toadstool = Location().add(Toadstool())
+        Location("Backup Toadstool").add(KeyLocation("TOADSTOOL2")).connect(forest_toadstool, TOADSTOOL) # ensures player player has access to forest toadstool to prevent softlock behind witch trade
         self._addEntrance("toadstool_entrance", forest, forest_cave, None)
         self._addEntrance("toadstool_exit", forest_toadstool, forest_cave, None)
 
         hookshot_cave = Location("Hookshot Cave")
         hookshot_cave_chest = Location().add(Chest(0x2B3)).connect(hookshot_cave, OR(HOOKSHOT, ROOSTER))
-        self._addEntrance("hookshot_cave", forest, hookshot_cave, POWER_BRACELET)
+        outside_hookshot_cave = Location()
+        outside_hookshot_cave.connect(forest, POWER_BRACELET)
+        self._addEntrance("hookshot_cave", outside_hookshot_cave, hookshot_cave, None)
 
         swamp = Location("Swamp").connect(forest, AND(OR(MAGIC_POWDER, FEATHER, ROOSTER), r.bush))
         swamp.connect(forest, r.bush, one_way=True) # can go backwards past Tarin
@@ -148,7 +151,7 @@ class World:
         graveyard_cave_left = Location("Graveyard Cave West")
         graveyard_cave_right = Location("Graveyard Cave East").connect(graveyard_cave_left, OR(FEATHER, ROOSTER))
         graveyard_heartpiece = Location().add(HeartPiece(0x2DF)).connect(graveyard_cave_right, OR(AND(BOMB, OR(HOOKSHOT, PEGASUS_BOOTS), FEATHER), ROOSTER))  # grave cave
-        outside_graveyard_left = Location()
+        outside_graveyard_left = Location("Inside Ghost Grave Rock Circle")
         ghost_grave.connect(outside_graveyard_left, POWER_BRACELET)
         self._addEntrance("graveyard_cave_left", outside_graveyard_left, graveyard_cave_left, None)
         self._addEntrance("graveyard_cave_right", graveyard, graveyard_cave_right, None)
@@ -172,7 +175,7 @@ class World:
         self._addEntrance("prairie_left_cave2", ukuku_prairie, prairie_left_cave2, BOMB)
         self._addEntranceRequirementExit("prairie_left_cave2", None) # if exiting, you do not need bombs
 
-        mamu = Location("Mamu").connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
+        mamu = Location("Mamu").connect(Location().add(Song(0x2FB)), AND(OCARINA, FOUND("RUPEES", 1300)))
         self._addEntrance("mamu", ukuku_prairie, mamu, AND(OR(AND(FEATHER, PEGASUS_BOOTS), ROOSTER), OR(HOOKSHOT, ROOSTER), POWER_BRACELET))
 
         dungeon3_entrance = Location("Outside D3").connect(ukuku_prairie, OR(FEATHER, ROOSTER, FLIPPERS))
@@ -401,7 +404,7 @@ class World:
 
         # Raft game.
         raft_house = Location("Raft House")
-        Location().add(KeyLocation("RAFT")).connect(raft_house, COUNT("RUPEES", 100))
+        Location("Raft Purchase").add(KeyLocation("RAFT")).connect(raft_house, FOUND("RUPEES", 500))
         raft_return_upper = Location("Raft Return North")
         raft_return_lower = Location("Raft Return South").connect(raft_return_upper, None, one_way=True)
         outside_raft_house = Location("Outside Raft House").connect(below_right_taltal, HOOKSHOT).connect(below_right_taltal, FLIPPERS, one_way=True)
@@ -545,13 +548,14 @@ class World:
             dream_hut_right.connect(dream_hut_left, r.super_jump_feather) # super jump
             forest.connect(swamp, r.bomb_trigger)  # bomb trigger tarin
             forest.connect(forest_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger heartpiece
-            self._addEntranceRequirementEnter("hookshot_cave", r.hookshot_clip) # clip past the rocks in front of hookshot cave
+            forest.connect(outside_hookshot_cave, r.hookshot_clip, one_way=True) # clip past the rocks in front of hookshot cave
             swamp.connect(forest_toadstool, r.pit_buffer_itemless, one_way=True) # villa buffer from top (swamp phonebooth area) to bottom (toadstool area)
             writes_hut_outside.connect(swamp, r.pit_buffer_itemless, one_way=True) # villa buffer from top (writes hut) to bottom (swamp phonebooth area) or damage boost
             graveyard.connect(forest_heartpiece, r.pit_buffer_itemless, one_way=True) # villa buffer from top.
             graveyard.connect(forest, None, one_way=True) # villa buffer from the top twice to get to the main forest area
             log_cave_heartpiece.connect(forest_cave, r.super_jump_feather) # super jump
             log_cave_heartpiece.connect(forest_cave, r.bomb_trigger) # bomb trigger
+            #TODO: log_cave_heartpiece.connect(forest_cave, AND(r.sideways_block_push, r.hookshot_clip)) # perform two sideways block pushes from right screen, hold left and hookshot has a ~50% chance of snagging the check
             graveyard_cave_left.connect(graveyard_heartpiece, r.bomb_trigger, one_way=True) # bomb trigger the heartpiece from the left side
             graveyard_heartpiece.connect(graveyard_cave_right, r.sideways_block_push) # sideways block push from the right staircase.
             
@@ -602,25 +606,32 @@ class World:
             self._addEntranceRequirement("d8", OR(r.bomb_trigger, AND(OCARINA, SONG3))) # bomb trigger the head and walk through, or play the ocarina song 3 and walk through
 
         if options.logic == 'hell':
+            #TODO: outside_dream_hut.connect(mabe_village, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             dream_hut_right.connect(dream_hut, None) # alternate diagonal movement with orthogonal movement to control the mimics. Get them clipped into the walls to walk past
+            #TODO: outside_hookshot_cave.connect(forest, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             swamp.connect(forest_toadstool, r.damage_boost) # damage boost from toadstool area across the pit
             swamp.connect(forest, AND(r.bush, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # boots bonk / hookshot spam over the pits right of forest_rear_chest
             forest.connect(forest_heartpiece, r.boots_bonk_pit, one_way=True) # boots bonk across the pits
-            forest_cave_crystal_chest.connect(forest_cave, AND(r.super_jump_feather, r.hookshot_clip_block, r.sideways_block_push)) # superjump off the bottom wall to get between block and crystal, than use 3 keese to hookshot clip while facing right to get a sideways blockpush off
+            forest_cave_crystal_chest.connect(forest_cave, AND(r.super_jump_feather, r.hookshot_clip_block, r.sideways_block_push)) #TODO: REMOVE and replace with below row
+            #TODO: forest_cave_crystal_chest.connect(forest_cave, AND(OR(r.boots_roosterhop, r.super_jump_feather), r.hookshot_clip_block, r.sideways_block_push)) # superjump or roosterhop off the bottom wall to get between block and crystal, than use 3 keese to hookshot clip while facing right to get a sideways blockpush off
             log_cave_heartpiece.connect(forest_cave, BOOMERANG) # clip the boomerang through the corner gaps on top right to grab the item
             log_cave_heartpiece.connect(forest_cave, OR(r.super_jump_rooster, r.boots_roosterhop)) # boots rooster hop in bottom left corner to "superjump" into the area. use buffers after picking up rooster to gain height / time to throw rooster again facing up
             writes_hut_outside.connect(swamp, r.damage_boost) # damage boost with moblin arrow next to telephone booth
             writes_cave_left_chest.connect(writes_cave, r.damage_boost) # damage boost off the zol to get across the pit.
             graveyard.connect(crazy_tracy_hut, r.hookshot_spam_pit, one_way=True) # use hookshot spam to clip the rock on the right with the crow
+            #TODO: crazy_tracy_hut.connect(graveyard, r.zoomerang_buffer, one_way=True) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             graveyard.connect(forest, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk over pits by witches hut, or hookshot spam across the pit
             graveyard_cave_left.connect(graveyard_cave_right, r.hookshot_spam_pit) # hookshot spam over the pit
             graveyard_cave_right.connect(graveyard_cave_left, OR(r.damage_boost, r.boots_bonk_pit), one_way=True) # boots bonk off the cracked block, or set up a damage boost with the keese
+            #TODO: outside_graveyard_left.connect(ghost_grave, AND(BOOMERANG, OR(FEATHER, PEGASUS_BOOTS), r.hookshot_clip_block), one_way=True) # stand in bottom of rock curcle, boomerand the zompie until you get a good rupee spawn, feather or bonk over the stiarcase, and hookshot clip the rupee to escape
+            #TODO: ghost_grave.connect(outside_graveyard_left, r.zoomerang_buffer) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             
             self._addEntranceRequirementEnter("mamu", AND(r.pit_buffer_itemless, r.pit_buffer_boots, POWER_BRACELET)) # can clear the gaps at the start with multiple pit buffers, can reach bottom left sign with bonking along the bottom wall
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer_boots) # pit buffer to clip bottom wall and boots bonk across
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # hookshot spam or boots bonk across pits can go from left to right by pit buffering on top of the bottom wall then boots bonk across
             richard_cave_chest.connect(richard_cave, r.damage_boost) # use the zol on the other side of the pit to damage boost across (requires damage from pit + zol)
-            castle_secret_entrance_right.connect(castle_secret_entrance_left, r.boots_bonk_2d_spikepit) # medicine iframe abuse to get across spikes with a boots bonk
+            castle_secret_entrance_right.connect(castle_secret_entrance_left, r.boots_bonk_2d_spikepit) # #TODO: REPLACE with belowmedicine iframe abuse to get across spikes with a boots bonk
+            #TODO: castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.boots_bonk_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button when bouncing off spikes or goombas
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer_boots) # multiple pit buffers to bonk across the bottom wall
             left_bay_area.connect(ukuku_prairie, r.hookshot_clip_block, one_way=True) # clip through the donuts blocking the path next to prairie plateau cave by hookshotting up and killing the two moblins that way which clips you further up two times. This is enough to move right
             tiny_island.connect(left_bay_area, AND(r.jesus_buffer, r.boots_bonk_pit, r.bush)) # jesus jump around with boots bonks, then one final bonk off the bottom wall to get on the staircase (needs to be centered correctly)
@@ -634,6 +645,7 @@ class World:
             ukuku_prairie.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster), one_way=True) # jesus jump/rooster
             bay_water.connect(d5_entrance, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster into d5 entrance (wall clip), wall clip + jesus jump to get out
             prairie_island_seashell.connect(ukuku_prairie, AND(r.jesus_rooster, r.bush)) # jesus rooster from right side, screen transition on top of the water to reach the island
+            #TODO: prairie_island_seashell.connect(ukuku_prairie, AND(HOOKSHOT, BOOMERANG)) # when not having flippers, you can use hookshot on the white block the exact frame you step on water, and it will screen transition. S@Q menu to stop drowning briefly, then boomerang diagonally to get bush seashell
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_rooster, one_way=True) # jesus rooster (3 screen) through the underground passage leading to martha's bay mad batter
             # fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, OR(FEATHER, SWORD, BOW), FLIPPERS)) # just swing/shoot at fisher, if photographer is on screen it is dumb
             fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # face the fisherman from the left, get within 4 pixels (a range, not exact) of his left side, hold up, and mash a until you get the textbox.
@@ -655,7 +667,6 @@ class World:
             d6_entrance.connect(armos_fairy_entrance, r.jesus_rooster, one_way=True) # jesus rooster (2 screen) from d6 entrance top ledge to armos fairy entrance
             armos_fairy_entrance.connect(d6_armos_island, r.jesus_rooster, one_way=True) # jesus rooster from top (fairy bomb cave) to armos island
             armos_fairy_entrance.connect(raft_exit, r.jesus_rooster) # jesus rooster (2-ish screen) from fairy cave to lower raft connector
-            
 
             obstacle_cave_entrance.connect(obstacle_cave_inside, OR(r.hookshot_clip_block, r.shaq_jump)) # get past crystal rocks by hookshotting into top pushable block, or boots dashing into top wall where the pushable block is to superjump down
             obstacle_cave_entrance.connect(obstacle_cave_inside, r.boots_roosterhop) # get past crystal rocks pushing the top pushable block, then boots dashing up picking up the rooster before bonking. Pause buffer until rooster is fully picked up then throw it down before bonking into wall
@@ -681,6 +692,7 @@ class World:
             bridge_seashell.connect(outside_rooster_house, AND(OR(r.hookshot_spam_pit, r.boots_bonk_pit), POWER_BRACELET)) # boots bonk or hookshot spam over the pit to get to the rock
             bird_key.connect(bird_cave, AND(r.boots_jump, r.pit_buffer)) # boots jump above wall, use multiple pit buffers to get across
             right_taltal_connector2.connect(right_taltal_connector3, r.pit_buffer_itemless, one_way=True) # 2 separate pit buffers so not obnoxious to get past the two pit rooms before d7 area. 2nd pits can pit buffer on top right screen, bottom wall to scroll on top of the wall on bottom screen
+            #TODO: right_taltal_connector3.connect(right_taltal_connector2, AND(r.zoomerang, HOOKSHOT), one_way=True) # zoomerang facing left to superjump onto ledge, hookshot to get un-stuck
             water_cave_hole.connect(heartpiece_swim_cave, r.jesus_buffer_itemless, one_way=True) # after falling down the hole, use pause buffers to get down towards the entrance
             mountain_bridge_staircase.connect(outside_rooster_house, r.pit_buffer_boots) # cross bridge to staircase with pit buffer to clip bottom wall and jump or boots bonk across
             left_right_connector_cave_entrance.connect(left_right_connector_cave_exit, AND(r.boots_jump, r.pit_buffer), one_way=True) # boots jump to bottom left corner of pits, pit buffer and jump to left
@@ -731,8 +743,8 @@ class DungeonDiveOverworld:
         self.entrances = {}
 
         start_house = Location().add(StartItem())
-        Location().add(ShopItem(0)).connect(start_house, COUNT("RUPEES", 200))
-        Location().add(ShopItem(1)).connect(start_house, COUNT("RUPEES", 980))
+        Location().add(ShopItem(0)).connect(start_house, FOUND("RUPEES", 250))
+        Location().add(ShopItem(1)).connect(start_house, FOUND("RUPEES", 1000 + 250))
         Location().add(Song(0x0B1)).connect(start_house, OCARINA)  # Marins song
         start_house.add(DroppedKey(0xB2))  # Sword on the beach
         egg = Location().connect(start_house, AND(r.bush, BOMB))
@@ -846,8 +858,8 @@ class ALttP:
         trendy_shop.connect(Location().add(TradeSequenceItem(0x2A0, TRADING_ITEM_YOSHI_DOLL)), FOUND("RUPEES", 50))
         self._addEntrance("trendy_shop", start_area, trendy_shop, r.bush)
         shop = Location()
-        Location().add(ShopItem(0)).connect(shop, COUNT("RUPEES", 200))
-        Location().add(ShopItem(1)).connect(shop, COUNT("RUPEES", 980))
+        Location().add(ShopItem(0)).connect(shop, FOUND("RUPEES", 250))
+        Location().add(ShopItem(1)).connect(shop, FOUND("RUPEES", 1250))
         self._addEntrance("shop", start_area, shop, None)
         writes_house = Location()
         writes_house.connect(Location().add(TradeSequenceItem(0x2a8, TRADING_ITEM_BROOM)), TRADING_ITEM_LETTER)
@@ -951,7 +963,7 @@ class ALttP:
         self._addEntrance("prairie_left_cave2", mountain_left, prairie_left_cave2, None)
         self._addEntrance("castle_jump_cave", mountain_left, Location().add(Chest(0x1FD)), None)
 
-        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, COUNT("RUPEES", 300)))
+        mamu = Location().connect(Location().add(Song(0x2FB)), AND(OCARINA, FOUND("RUPEES", 1300)))
         self._addEntrance("mamu", mountain_left, mamu, None)
 
         mountain_right = Location().connect(mountain_left, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS)))

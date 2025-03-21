@@ -118,16 +118,14 @@ class Logic:
             world.nightmare.connect(world.egg, egg_trigger)
         elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
             world.nightmare.connect(world.egg, AND(egg_trigger, *["INSTRUMENT%s" % c for c in world_setup.goal[1:]]))
+        elif world_setup.goal == 'open':
+            world.nightmare.connect(world.egg, None)
+        elif world_setup.goal_count == 0:
+            world.nightmare.connect(world.egg, egg_trigger)
+        elif world_setup.goal_count == 8:
+            world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
         else:
-            goal = int(world_setup.goal)
-            if goal < 0:
-                world.nightmare.connect(world.egg, None)
-            elif goal == 0:
-                world.nightmare.connect(world.egg, egg_trigger)
-            elif goal == 8:
-                world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
-            else:
-                world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], goal)))
+            world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], world_setup.goal_count)))
 
         if configuration_options.dungeon_items == 'keysy':
             for n in range(9):

@@ -63,7 +63,7 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_SCALE: 1,
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
-    "MEDICINE2": 1, "RAFT": 1,
+    "MEDICINE2": 1, "TOADSTOOL2": 1, "RAFT": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1,
     TAIL_CAVE_OPENED: 1, KEY_CAVERN_OPENED: 1, ANGLER_TUNNEL_OPENED: 1, FACE_SHRINE_OPENED: 1, CASTLE_GATE_OPENED: 1, EAGLE_TOWER_OPENED: 1
 }
 
@@ -113,16 +113,18 @@ class ItemPool:
         elif settings.owlstatues == 'overworld':
             self.add(RUPEES_20, 9)
 
+        heart_container_type = HEART_CONTAINER
         if settings.hpmode == 'inverted':
-            self.add(BAD_HEART_CONTAINER, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+            heart_container_type = BAD_HEART_CONTAINER
         elif settings.hpmode == 'low':
-            self.add(HEART_PIECE, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+            heart_container_type = HEART_PIECE
         elif settings.hpmode == 'extralow':
-            self.add(RUPEES_20, self.get(HEART_CONTAINER))
-            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-        
+            heart_container_type = RUPEES_20
+        elif settings.hpmode == '5hit':
+            heart_container_type = RUPEES_20
+            self.add(RUPEES_20, self.get(HEART_PIECE))
+            self.remove(HEART_PIECE, self.get(HEART_PIECE))
+
         if settings.goal == 'seashells':
             self.remove(SEASHELL, 2)
 
@@ -202,6 +204,7 @@ class ItemPool:
             self.remove(ROOSTER)
             self.remove(GEL, 2)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)
@@ -238,6 +241,7 @@ class ItemPool:
             self.remove(GOLD_LEAF, 5)
             self.remove(HEART_PIECE, 8)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)
@@ -368,6 +372,10 @@ class ItemPool:
             self.add(SEASHELL, 8)
             if self.get(SEASHELL) < 20:
                 raise RuntimeError("Not enough seashells (" + str(self.get(SEASHELL)) + ") available in itempool")
+
+        if heart_container_type != HEART_CONTAINER:
+            self.add(heart_container_type, self.get(HEART_CONTAINER))
+            self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
 
         # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
         #   As we cheat and can place rupees for the wrong player.
