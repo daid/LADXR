@@ -59,7 +59,7 @@ class Dungeon6:
         instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
     
         if raft_game_chest:
-            Location().add(Chest(0x06C)).connect(top_left_room, POWER_BRACELET) # seashell chest in raft game
+            Location().add(Chest(0x06C)).connect(top_left_room, POWER_BRACELET) # seashell chest in raft game #TODO: remove POWER_BRACELET requirement as staircase is accessible by default, connection in reverse is already  handled in connections
 
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
