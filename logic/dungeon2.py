@@ -71,10 +71,10 @@ class Dungeon2:
         vacuum_room.connect(north_switch_room, AND(POWER_BRACELET, r.hit_switch)) # Vacuum Mouth Area <--> North Switch Maze #TODO: revisit the whole north switch/peg area
         before_b_passage.connect(north_switch_room, FEATHER) # Blocked Staircase <--> North Switch Maze #TODO: revisit the whole north switch/peg area
         north_switch_room.connect(north_switch_room_chest9, None) # North Switch Maze <--> Second Switch Locked Chest
-        north_switch_room.connect(north_switch_room_chest10, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], r.throw_pot))) # North Switch Maze <--> Enemy Order Room Chest
+        north_switch_room.connect(north_switch_room_chest10, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET))) # North Switch Maze <--> Enemy Order Room Chest
         north_switch_room.connect(pot_pol_room_doorway, FOUND(KEY2, 5)) # North Switch Maze <--> Pots & Pols Room Doorway
         pot_pol_room_doorway.connect(pot_pol_room, POWER_BRACELET) # Pots & Pols Room Doorway <--> Pots & Pols Room
-        pot_pol_room.connect(before_c_passage, AND(OR(r.throw_pot, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"])) # Pots & Pols Room --> Boss Passageway Spawn #TODO: enemy randomizer would make this pot kill requirement inaccurate. Also, technically you can kill zols with pots too, given 20 available, consider for normal logic
+        pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"])) # Pots & Pols Room --> Boss Passageway Spawn #TODO: enemy randomizer would make this pot kill requirement inaccurate. Also, technically you can kill zols with pots too, given 20 available, consider for normal logic
         #TODO: before_c_passage.connect(pot_pol_room, None, one_way=True) # [logic prep for staircase rando] - Boss Passageway Spawn --> Pots & Pols Room
         before_c_passage.connect(pre_boss_room, POWER_BRACELET) # Boss Passageway <--> Room Before Boss
         pre_boss_room.connect(pre_boss, FEATHER) # Room Before Boss <--> Outside Boss Door

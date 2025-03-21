@@ -70,7 +70,7 @@ class Dungeon3:
         # entrance
         entrance.connect(after_vacuum, PEGASUS_BOOTS) # Entrance <--> After Vacuum
         after_vacuum.connect(after_vacuum_chest1, None) # After Vacuum <--> Vacuum Mouth Chest
-        entrance.connect(after_pot_door, r.throw_pot) # Entrance <--> After Pot Door
+        entrance.connect(after_pot_door, POWER_BRACELET) # Entrance <--> After Pot Door
         after_pot_door.connect(after_pot_door_chest2, AND(r.enemy_requirements["GEL"], r.enemy_requirements["MOBLIN_SWORD"], r.enemy_requirements["BOUNCING_BOMBITE"])) # After Pot Door <--> Two Bombite, Sword Stalfos, Zol Chest
         after_pot_door.connect(slime_room, None) # After Pot Door <--> Slime Room 
         after_pot_door.connect(before_a_stairs, PEGASUS_BOOTS, one_way=True) # After Pot Door <--> Near First Staircase

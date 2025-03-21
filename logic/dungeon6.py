@@ -85,7 +85,7 @@ class Dungeon6:
         entrance.connect(south_star_area, AND(POWER_BRACELET, OR(BOMB, BOOMERANG))) #TODO: delete in favor of casual logic commented out below #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
         wizrobe_switch_room.connect(wizrobe_switch_room_chest4, r.enemy_requirements["WIZROBE"]) # Wizrobe Switch Room <--> Three Wizrobe, Switch Chest #TODO: 12-arrow room if got here with only bracelet+bow
         south_star_area.connect(south_star_area_chest5, None) # Before Northwest Area <--> Stairs Across Statues Chest
-        south_star_area.connect(star_area, AND(r.throw_pot, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) # Before Northwest Area <--> Northwest Area
+        south_star_area.connect(star_area, AND(POWER_BRACELET, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT))) # Before Northwest Area <--> Northwest Area
         star_area.connect(south_star_area, None, one_way=True) # Northwest Area --> Before Northwest Area
         star_area.connect(star_area_chest6, None) # Northwest Area <--> Switch, Star Above Statues Chest
         star_area.connect(star_area_drop1, OR(r.enemy_requirements["WIZROBE"], BOW)) # Northwest Area <--> Two Wizrobe Key
@@ -147,7 +147,7 @@ class Dungeon6:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
-            #TODO: south_star_area.connect(star_area, AND(r.stun_wizrobe, r.throw_enemy, r.throw_pot) # stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
+            #TODO: south_star_area.connect(star_area, AND(r.stun_wizrobe, r.throw_enemy, POWER_BRACELET) # stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True) # boots dash over 1 block gaps in sidescroller
             after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True) # boots dash over 1 block gaps in sidescroller, then bonk to get on ladder
             before_c_passage.connect(after_c_passage, None) # damage_boost past the mini_thwomps
@@ -157,7 +157,7 @@ class Dungeon6:
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(second_elephant_room, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
             wizrobe_switch_room.connect(south_star_area, r.super_jump_feather, one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
-            south_star_area.connect(star_area, AND(r.super_jump_feather, r.throw_pot)) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
+            south_star_area.connect(star_area, AND(r.super_jump_feather, POWER_BRACELET)) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
             before_c_passage.connect(dodongo_room, r.super_jump_feather, one_way=True) # superjump to get from pols to dodongos without kill requirements
             after_miniboss.connect(before_b_passage, r.bomb_trigger) # go through north door exits to wrap-around, then bomb trigger as you transition into 2-statue room
             flying_bomb_room.connect(after_b_passage, r.shaq_jump, one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
@@ -169,7 +169,7 @@ class Dungeon6:
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.boots_superhop)) #TODO: REMOVE and replace with below
             entrance.connect(south_star_area, AND(POWER_BRACELET, r.stun_mask_mimic, r.throw_enemy), one_way=True) #TODO: REMOVE and replace with below
             #TODO: entrance.connect(south_star_area, AND(POWER_BRACELET, OR(r.boots_superhop, AND(r.stun_mask_mimic, r.throw_enemy), SWORD)), one_way=True) # very difficult ways to hit the switch while making it over the peg - stun and throw the mask mimic up at the wall and run, or spin atack whilc walking to the peg while wall clipped, or normal boots superhop from NW corner of room
-            #TODO: south_star_area.connect(star_area, AND(SWORD, r.throw_pot) # hit three wizrobe room switch with sword beam (L2) or spin attack while facing up and a well timed up-press to step onto peg as it raises
+            #TODO: south_star_area.connect(star_area, AND(SWORD, POWER_BRACELET) # hit three wizrobe room switch with sword beam (L2) or spin attack while facing up and a well timed up-press to step onto peg as it raises
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: change to one_way - #use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
             #TODO: before_b_passage.connect(after_b_passage, "TOADSTOOL2") # use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
