@@ -45,11 +45,11 @@ class Dungeon6:
         waterway_west_ledge = Location("D6 Ledge Left of Waterway", dungeon=6)
         pot_area = Location("D6 Pot Owl Area", dungeon=6)
         pot_ring_chest11 = Location(dungeon=6).add(DungeonChest(0x1B6)) # nightmare key
-        before_c_passage = Location("D6 Pols Room", dungeon=6)
+        after_c_passage = Location("D6 Pols Room", dungeon=6)
         spark_pot_maze = Location("D6 Spark & Pot Maze", dungeon=6)
         top_right_room = Location("D6 Northeast Horse Head Room", dungeon=6)
         top_right_room_chest10 = Location(dungeon=6).add(DungeonChest(0x1B1)) #50 rupees
-        after_c_passage = Location("D6 Stairs West of Horsehead Hallway", dungeon=6)
+        before_c_passage = Location("D6 Stairs West of Horsehead Hallway", dungeon=6)
         flying_bomb_room = Location("D6 Flying Bomb Room", dungeon=6)
         vacuum_room = Location("D6 Vacuum Room", dungeon=6)
         laser_turret_room = Location("D6 Laser Turret Room", dungeon=6)
@@ -64,8 +64,9 @@ class Dungeon6:
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=6).add(OwlStatue(0x1BB)).connect(entrance, STONE_BEAK6) # Entrance <--> Corridor Owl
-            Location(dungeon=6).add(OwlStatue(0x1D7)).connect(blade_trap_room, AND(POWER_BRACELET, STONE_BEAK6)) # Blade Trap Room <--> Blade Trap Owl
+            Location(dungeon=6).add(OwlStatue(0x1D7)).connect(blade_trap_room, AND(POWER_BRACELET, STONE_BEAK6)) # Blade Trap Room <--> Blade Trap Owl #TODO: add hard/glitched logic for this check (face left into pot and press A)
             Location(dungeon=6).add(OwlStatue(0x1B6)).connect(pot_area, STONE_BEAK6) # Pot Owl Area <--> Pot Owl
+        
 
         # connections
         # west
@@ -75,7 +76,7 @@ class Dungeon6:
         entrance.connect(second_elephant_room, COUNT(POWER_BRACELET, 2)) # Entrance <--> Flying Heart & Statue Room
         second_elephant_room.connect(second_elephant_room_chest2, None) # Flying Heart & Statue Room <--> Flying Heart, Statue Chest
         entrance.connect(dark_room, BOMB) # Entrance <--> Dark Room
-        dark_room.connect(before_a_passage, r.enemy_requirements["HIDING_ZOL"]) # Dark Room <--> Dark Room Stairs Spawn
+        dark_room.connect(before_a_passage, r.enemy_requirements["HIDING_ZOL"]) # Dark Room <--> Dark Room Stairs Spawn #TODO: drop kill requirement for stairs shuffle when arriving from before_a_passage
         before_a_passage.connect(after_a_passage, FEATHER) # Dark Room Stairs Spawn <--> Inside Pegs Before L2 Bracelet Chest
         after_a_passage.connect(pre_bracelet_room, r.hit_switch, one_way=True) # Inside Pegs Before L2 Bracelet Chest --> Outside Pegs Before L2 Bracelet Room #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
         pre_bracelet_room.connect(bracelet_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.enemy_requirements["WIZROBE"])) # Outside Pegs Before L2 Bracelet Room <--> L2 Bracelet Room
@@ -99,6 +100,7 @@ class Dungeon6:
         after_miniboss.connect(miniboss_room, COUNT(POWER_BRACELET, 2), one_way=True) # After Miniboss --> Miniboss Room
         after_miniboss.connect(before_b_passage, COUNT(POWER_BRACELET, 2), one_way=True) # After Miniboss --> Boss Passageway Revealed
         before_b_passage.connect(after_miniboss, None, one_way=True) # Boss Passageway Revealed --> After Miniboss
+        #TODO: after_miniboss.connect(before_miniboss, None, one_way=True) # walk north in room north of miniboss to wrap around. NOTE: get stuck in door if you haven't defeated the miniboss, but you can use items to be closer to screen edge, probably oob
         # east
         entrance.connect(four_wizrobe_room, COUNT(POWER_BRACELET, 2), one_way=True) # Entrance --> Four Wizrobe Room
         four_wizrobe_room.connect(entrance, r.enemy_requirements["WIZROBE"], one_way=True) # Four Wizrobe Room --> Entrance
@@ -106,11 +108,11 @@ class Dungeon6:
         blade_trap_room.connect(after_blade_trap, AND(FEATHER, r.hit_switch), one_way=True) #  --> Ledge After Blade Trap #TODO: Consider connect with fake SWITCH_6 item for consciseness, goal for stair shuffle preparedness
         after_blade_trap.connect(after_blade_trap_chest8, None) # Ledge After Blade Trap <--> Four Wizrobe Ledge Chest
         after_blade_trap.connect(four_wizrobe_room, None, one_way=True) # Ledge After Blade Trap --> Four Wizrobe Room
-        four_wizrobe_room.connect(waterway,r.enemy_requirements["WIZROBE"]) # Four Wizrobe Room <--> Waterway
+        four_wizrobe_room.connect(waterway,r.enemy_requirements["WIZROBE"]) # Four Wizrobe Room <--> Waterway #TODO: technically one_way
         waterway.connect(waterway_chest9, None) # Waterway <--> Water Tektite Chest
-        dodongo_room.connect(before_c_passage, OR(FEATHER, r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Room --> Pols Room
-        before_c_passage.connect(spark_pot_maze, r.enemy_requirements["POLS_VOICE"]) # Pols Room <--> Spark & Pot Maze
-        before_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], one_way=True) # Pols Room --> Dodongo Room
+        dodongo_room.connect(after_c_passage, OR(FEATHER, r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Room --> Pols Room
+        after_c_passage.connect(spark_pot_maze, r.enemy_requirements["POLS_VOICE"]) # Pols Room <--> Spark & Pot Maze
+        after_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], one_way=True) # Pols Room --> Dodongo Room
         spark_pot_maze.connect(top_right_room, POWER_BRACELET) # Spark & Pot Maze <--> Northeast Horse Head Room
         top_right_room.connect(top_right_room_chest10, None) # Northeast Horse Head Room <--> Top Right Horse Heads Chest
         dodongo_room.connect(waterway_east_ledge, r.miniboss_requirements["DODONGO"]) # Dodongo Room <--> Outside Dodongo Room
@@ -122,9 +124,9 @@ class Dungeon6:
         pot_area.connect(pot_ring_chest11, POWER_BRACELET) # Pot Owl Area <--> Pot Locked Chest
         # boss
         before_b_passage.connect(after_b_passage, FEATHER) # Boss Passageway Revealed <--> Second Floating Tile Fight
-        before_c_passage.connect(after_c_passage, PEGASUS_BOOTS) # Pols Room <--> Stairs West of Horsehead Hallway
-        after_c_passage.connect(flying_bomb_room, POWER_BRACELET, one_way=True) # Stairs West of Horsehead Hallway --> Flying Bomb Room
-        flying_bomb_room.connect(after_c_passage, COUNT(POWER_BRACELET, 2)) # Flying Bomb Room <--> Stairs West of Horsehead Hallway
+        after_c_passage.connect(before_c_passage, PEGASUS_BOOTS) # Pols Room <--> Stairs West of Horsehead Hallway
+        before_c_passage.connect(flying_bomb_room, POWER_BRACELET, one_way=True) # Stairs West of Horsehead Hallway --> Flying Bomb Room
+        flying_bomb_room.connect(before_c_passage, COUNT(POWER_BRACELET, 2)) # Flying Bomb Room <--> Stairs West of Horsehead Hallway
         flying_bomb_room.connect(after_b_passage, FOUND(KEY6, 2)) # Flying Bomb Room <--> Second Floating Tile Fight
         after_b_passage.connect(after_b_passage_drop2, None) # Second Floating Tile Fight <--> Tile Room Key
         # boss
@@ -150,18 +152,18 @@ class Dungeon6:
             #TODO: south_star_area.connect(star_area, AND(r.stun_wizrobe, r.throw_enemy, POWER_BRACELET) # stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True) # boots dash over 1 block gaps in sidescroller
             after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True) # boots dash over 1 block gaps in sidescroller, then bonk to get on ladder
-            before_c_passage.connect(after_c_passage, None) # damage_boost past the mini_thwomps
-            dodongo_room.connect(before_c_passage, r.boots_bonk) # boots bonk to escape dodongo room NE corner
+            after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the mini_thwomps
+            #TODO: determine what difficulty the itemless c_passage thromp manip should be and add it to logic
             #TODO: spark_pot_maze.connect(top_right_room, AND(POWER_BRACELET)) #[logic prep for staircase rando] # it's possible to pass through the room with only bracelet and not take damage, but it's hard
             
         if options.logic == 'glitched' or options.logic == 'hell':
-            entrance.connect(second_elephant_room, BOMB) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
+            first_elephant_room.connect(second_elephant_room, r.bomb_trigger) # kill moldorm on screen above wizrobes, then bomb trigger on the right side to break elephant statue to get to the second chest
             wizrobe_switch_room.connect(south_star_area, r.super_jump_feather, one_way=True) # path from entrance to left_side: use superjumps to pass raised blocks
             south_star_area.connect(star_area, AND(r.super_jump_feather, POWER_BRACELET)) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
-            before_c_passage.connect(dodongo_room, r.super_jump_feather, one_way=True) # superjump to get from pols to dodongos without kill requirements
+            after_c_passage.connect(dodongo_room, r.super_jump_feather, one_way=True) # superjump to get from pols to dodongos without kill requirements
             after_miniboss.connect(before_b_passage, r.bomb_trigger) # go through north door exits to wrap-around, then bomb trigger as you transition into 2-statue room
-            flying_bomb_room.connect(after_b_passage, r.shaq_jump, one_way=True) # going backwards from dodongos, use a shaq jump to pass by keyblock at tile room
-            waterway.connect(waterway_east_ledge, r.super_jump, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block, so weapons added
+            flying_bomb_room.connect(after_b_passage, r.shaq_jump, one_way=True) # face left and shaq jump off keyblock to get into floating tile room
+            waterway.connect(waterway_east_ledge, r.super_jump, one_way=True) # superjump from waterway towards dodongos. glitched with weapon assisted superjump, but hell when feather-only
             waterway.connect(waterway_west_ledge, r.super_jump_feather) # superjump from waterway to the left.
 
         if options.logic == 'hell':
@@ -173,8 +175,8 @@ class Dungeon6:
             before_b_passage.connect(after_b_passage, r.damage_boost_special) #TODO: change to one_way - #use a double damage boost from the sparks to get across (first one is free, second one needs to buffer while in midair for spark to get close enough)
             #TODO: before_b_passage.connect(after_b_passage, "TOADSTOOL2") # use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop) # can boots superhop off the top wall with bow or magic rod
-            waterway.connect(waterway_west_ledge, r.super_jump_feather, one_way=True)
-            waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # path from lower_right_side to center_2:  superjump from waterway towards dodongos. superjump next to corner block is super tight to get enough horizontal distance
+            waterway.connect(waterway_east_ledge, r.super_jump_feather, one_way=True) # superjump from waterway towards dodongos. glitched with weapon assisted superjump, but hell when feather-only
+            dodongo_room.connect(after_c_passage, r.boots_bonk, one_way=True) # boots bonk to escape dodongo room NE corner
 
             #TODO: consider fake "SWITCH_6" item for conciseness and preparedness for stair shuffle
 

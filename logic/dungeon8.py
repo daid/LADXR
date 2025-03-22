@@ -14,15 +14,15 @@ class Dungeon8:
         sw_zamboni_area_chest1 = Location(dungeon=8).add(DungeonChest(0x24D)) # 20 rupees
         sw_zamboni_area_chest2 = Location(dungeon=8).add(DungeonChest(0x246)) # small key
         spark_pit_room = Location("D8 Southwest Spark & Pit Room", dungeon=8)
-        spark_pit_room_chest2 = Location(dungeon=8).add(DungeonChest(0x255)) # 50 rupees
+        spark_pit_room_chest3 = Location(dungeon=8).add(DungeonChest(0x255)) # 50 rupees
         miniboss2_room = Location("D8 Rolling Bones Room", dungeon=8)
         sw_vire_room = Location("D8 Southwest Vire Room", dungeon=8)
         sw_vire_room_drop1 = Location(dungeon=8).add(DroppedKey(0x24C)) # small key
         vacuum_room = Location("D8 Vacuum Room", dungeon=8)
-        vacuum_room_chest3 = Location(dungeon=8).add(DungeonChest(0x25C)) # compass
+        vacuum_room_chest4 = Location(dungeon=8).add(DungeonChest(0x25C)) # compass
         spark_pot_room = Location("D8 Sparks Hidden Button Room", dungeon=8)
         slime_trap_room = Location("D8 Lava Chest Room", dungeon=8)
-        slime_trap_room_chest4 = Location(dungeon=8).add(DungeonChest(0x259)) # slime trap
+        slime_trap_room_chest5 = Location(dungeon=8).add(DungeonChest(0x259)) # slime trap
         zamboni_pit_west = Location("D8 West of Chasm Zamboni", dungeon=8)
         zamboni_pit_east = Location("D8 East of Chasm Zamboni", dungeon=8)
         zamboni_pit_east_drop2 = Location(dungeon=8).add(DroppedKey(0x25A)) # small key
@@ -32,7 +32,7 @@ class Dungeon8:
         after_a_passage = Location("D8 Beamos Hidden Button Room", dungeon=8)
         pot_pit_room = Location("D8 Pots & Pits Room", dungeon=8)
         pot_pit_room_doorway = Location("D8 Pots & Pits Room Door", dungeon=8)
-        pot_pit_room_chest5 = Location(dungeon=8).add(DungeonChest(0x25F)) # beak
+        pot_pit_room_chest6 = Location(dungeon=8).add(DungeonChest(0x25F)) # beak
         before_e_passage = Location("D8 Pots, & Pits Room Stairs", dungeon=8)
         after_e_passage = Location("D8 Staircase Below Three Peahats", dungeon=8)
         pre_center_zamboni = Location("D8 North of Entrance", dungeon=8)
@@ -41,7 +41,7 @@ class Dungeon8:
         before_c_passage = Location("D8 Before Passage to Boss", dungeon=8)
         switch_room = Location("D8 Switch Room", dungeon=8)
         pushblock_room = Location("D8 Pushblock Chest Area", dungeon=8)
-        pushblock_room_chest6 = Location(dungeon=8).add(DungeonChest(0x24F)) # map
+        pushblock_room_chest7 = Location(dungeon=8).add(DungeonChest(0x24F)) # map
         lava_left_corridor = Location("D8 'L' Shaped Corridor", dungeon=8)
         pre_center_keyblock = Location("D8 Before Central Keyblock", dungeon=8)
         loop_ledge = Location("D8 Useless Ledge", dungeon=8)
@@ -60,25 +60,25 @@ class Dungeon8:
         miniboss_room = Location("D8 Blaino Room", dungeon=8)
         miniboss_cubby = Location("D8 Post Blaino Before Pegs", dungeon=8)
         rod_ledge = Location("D8 Blaino Reward Ledge", dungeon=8)
-        rod_ledge_chest7 = Location(dungeon=8).add(DungeonChest(0x237)) # magic rod
+        rod_ledge_chest8 = Location(dungeon=8).add(DungeonChest(0x237)) # magic rod
         dodongo_area = Location("D8 Dodongo Area", dungeon=8)
         dodongo_area_drop3 = Location(dungeon=8).add(DroppedKey(0x23E)) # small key
         pre_lava_ledge = Location("D8 Ledge West of Dodongos", dungeon=8)
         lava_ledge = Location("D8 Lava Ledge", dungeon=8)
-        lava_ledge_chest8 = Location(dungeon=8).add(DungeonChest(0x235)) # medicine
+        lava_ledge_chest9 = Location(dungeon=8).add(DungeonChest(0x235)) # medicine
         slime_corridor = Location("D8 Corridor by Lava Ledge Chest", dungeon=8)
         after_g_passage = Location("D8 North Refill Room", dungeon=8)
         after_f_stairs = Location("D8 Ledge Above Dodongos", dungeon=8)
-        after_f_stairs_chest9 = Location(dungeon=8).add(DungeonChest(0x23D)) # small key
+        after_f_stairs_chest10 = Location(dungeon=8).add(DungeonChest(0x23D)) # small key
         before_f_stairs = Location("D8 Northwest Area", dungeon=8)
         miniboss4_cubby = Location("D8 Cubby After Northwest Vire", dungeon=8)
-        before_f_stairs_chest10 = Location(dungeon=8).add(DungeonChest(0x240)) # small key
+        before_f_stairs_chest11 = Location(dungeon=8).add(DungeonChest(0x240)) # small key
         before_f_stairs_drop4 = Location(dungeon=8).add(DroppedKey(0x241)) # small key
         ledge_west_boss = Location("D8 West of Boss Door Ledge", dungeon=8)
-        ledge_west_boss_chest11 = Location(dungeon=8).add(DungeonChest(0x23A)) # 50 rupees
+        ledge_west_boss_chest12 = Location(dungeon=8).add(DungeonChest(0x23A)) # 50 rupees
         miniboss4_room = Location("D8 Cueball Room", dungeon=8)
         nw_zamboni_room = Location("D8 Two Torch Zamboni Puzzle", dungeon=8)
-        nw_zamboni_room_chest12 = Location(dungeon=8).add(DungeonChest(0x232)) # nightmare key
+        nw_zamboni_room_chest13 = Location(dungeon=8).add(DungeonChest(0x232)) # nightmare key
         after_c_passage = Location("Outside Boss Door", dungeon=8)
         boss_room = Location("D8 Boss Room", dungeon=8)
         boss_room_drop5 = Location(dungeon=8).add(HeartContainer(0x234)) # heart container
@@ -104,19 +104,19 @@ class Dungeon8:
         sw_zamboni_area.connect(sw_zamboni_area_chest1, None) # Zamboni Intersection <--> Left of Hinox Zamboni Chest
         sw_zamboni_area.connect(sw_zamboni_area_chest2, MAGIC_ROD) # Zamboni Intersection <--> Two Torches Room Chest 
         sw_zamboni_area.connect(spark_pit_room, OR(HOOKSHOT, FEATHER)) # Zamboni Intersection <--> Southwest Spark & Pit Room
-        spark_pit_room.connect(spark_pit_room_chest2, None) # Southwest Spark & Pit Room <--> Spark, Pit Chest
+        spark_pit_room.connect(spark_pit_room_chest3, None) # Southwest Spark & Pit Room <--> Spark, Pit Chest
         sw_zamboni_area.connect(miniboss1_room, None, one_way=True) # Zamboni Intersection --> Hinox Room
         sw_zamboni_area.connect(miniboss2_room, None, one_way=True) # Zamboni Intersection --> Rolling Bones Room
         miniboss2_room.connect(sw_vire_room, r.miniboss_requirements["ROLLING_BONES"]) # Rolling Bones Room <--> Southwest Vire Room
         sw_vire_room.connect(sw_vire_room_drop1, r.attack_hookshot_no_bomb) #  <-->  # takes 11 bombs minimum to get this from entrance, so bombs are excluded
         miniboss2_room.connect(vacuum_room, r.miniboss_requirements["ROLLING_BONES"]) # Rolling Bones Room <--> Vacuum Room
-        vacuum_room.connect(vacuum_room_chest3, None) # Vacuum Room <--> Vacuum Mouth Chest
+        vacuum_room.connect(vacuum_room_chest4, None) # Vacuum Room <--> Vacuum Mouth Chest
         vacuum_room.connect(entrance, None, one_way=True) # Vacuum Room --> Entrance
         # east
         entrance.connect(spark_pot_room, r.enemy_requirements["VIRE"], one_way=True) # Entrance <--> Sparks Hidden Button Room
         spark_pot_room.connect(entrance, POWER_BRACELET, one_way=True) # Sparks Hidden Button Roome --> Entrance
         spark_pot_room.connect(slime_trap_room, POWER_BRACELET) # Sparks Hidden Button Room <--> Lava Chest Room
-        slime_trap_room.connect(slime_trap_room_chest4, None) # Lava Chest Room <--> Right Lava Chest
+        slime_trap_room.connect(slime_trap_room_chest5, None) # Lava Chest Room <--> Right Lava Chest
         slime_trap_room.connect(spark_pot_room, None, one_way=True) # Lava Chest Room --> Sparks Hidden Button Room
         slime_trap_room.connect(zamboni_pit_west, FEATHER) # Lava Chest Room <--> West of Chasm Zamboni
         zamboni_pit_west.connect(slime_trap_room, HOOKSHOT, one_way=True)
@@ -136,7 +136,7 @@ class Dungeon8:
         miniboss3_room.connect(pot_pit_room_doorway, r.miniboss_requirements["SMASHER"], one_way=True) # Smasher Room <--> Pots & Pits Room Door
         pot_pit_room_doorway.connect(miniboss3_room, AND(OR(FEATHER, POWER_BRACELET), r.enemy_requirements["SNAKE"]), one_way=True) # Pots & Pits Room Door --> Smasher Room #TODO: is there a way to clear this room and get to smasher for higher logic levels? (like boomerang or )
         pot_pit_room_doorway.connect(pot_pit_room, OR(FEATHER, POWER_BRACELET)) # Pots & Pits Room Door <--> Pots & Pits Room
-        pot_pit_room.connect(pot_pit_room_chest5, None) # Pots & Pits Room <--> Four Ropes Pot Chest
+        pot_pit_room.connect(pot_pit_room_chest6, None) # Pots & Pits Room <--> Four Ropes Pot Chest
         pot_pit_room.connect(before_e_passage, POWER_BRACELET) # Pots & Pits Room <--> Pots, & Pits Room Stairs
         before_e_passage.connect(after_e_passage, FEATHER) # Pots, & Pits Room Stairs <--> Staircase Below Three Peahats
         # north
@@ -148,7 +148,7 @@ class Dungeon8:
         lava_left_corridor.connect(pre_center_zamboni, FEATHER, one_way=True) # North of Entrance --> 'L' Shaped Corridor # two way due to pushblock
         lava_left_corridor.connect(after_e_passage, BOMB) # 'L' Shaped Corridor <--> Staircase Below Three Peahats
         lava_left_corridor.connect(pushblock_room, None) # 'L' Shaped Corridor <--> Pushblock Chest Area
-        pushblock_room.connect(pushblock_room_chest6, None) # Pushblock Chest Area <--> Push Block Chest
+        pushblock_room.connect(pushblock_room_chest7, None) # Pushblock Chest Area <--> Push Block Chest
         loop_ledge.connect(before_c_passage, None, one_way=True) # Useless Ledge --> Before Passage to Boss
         pre_center_keyblock.connect(heart_vire, FOUND(KEY8, 1)) # Before Central Keyblock <--> Floating Heart & Vire Area
         pre_center_keyblock.connect(peahat_area, FOUND(KEY8, 1)) # Before Central Keyblock <--> Peahat Area
@@ -178,9 +178,9 @@ class Dungeon8:
         after_d_passage.connect(miniboss_room, None, one_way=True) # Staircase by Blaino <--> Blaino Room
         miniboss_room.connect(miniboss_cubby, r.miniboss_requirements[world_setup.miniboss_mapping[7]]) # Blaino Room <--> Post Blaino Before Pegs
         miniboss_room.connect(entrance, None, one_way=True) # Blaino Room <--> Entrance # Blaino punches you back to entrance
-        rod_ledge.connect(rod_ledge_chest7, None) # Blaino Reward Ledge <--> Magic Rod Chest
+        rod_ledge.connect(rod_ledge_chest8, None) # Blaino Reward Ledge <--> Magic Rod Chest
         rod_ledge.connect(after_d_passage, None, one_way=True) # Blaino Reward Ledge <--> Staircase by Blaino
-        switch_room.connect(rod_ledge_chest7, AND(BOMB, FEATHER, POWER_BRACELET, HOOKSHOT, FOUND(KEY8, 7), r.enemy_requirements["SNAKE"], r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # Switch Room <--> Magic Rod Chest # explicitly include normal logic from switch room to rod chest
+        switch_room.connect(rod_ledge_chest8, AND(BOMB, FEATHER, POWER_BRACELET, HOOKSHOT, FOUND(KEY8, 7), r.enemy_requirements["SNAKE"], r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # Switch Room <--> Magic Rod Chest # explicitly include normal logic from switch room to rod chest
         # dodongo
         hidden_arrow_room.connect(dodongo_area, None, one_way=True) # Hidden Arrow Room <--> Dodongo Area
         dodongo_area.connect(dodongo_area_drop3, r.enemy_requirements["GIBDO"]) # Dodongo Area <--> Gibdos on Cracked Floor Key # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
@@ -188,17 +188,17 @@ class Dungeon8:
         pre_lava_ledge.connect(slime_corridor, None, one_way=True) # Ledge West of Dodongos <--> Corridor by Lava Ledge Chest
         pre_lava_ledge.connect(lava_ledge, HOOKSHOT) # Ledge West of Dodongos <--> Lava Ledge
         pre_lava_ledge.connect(after_g_passage, None, one_way=True) # Ledge West of Dodongos <--> North Refill Room
-        lava_ledge.connect(lava_ledge_chest8, None) # Lava Ledge <--> Lava Ledge Chest
+        lava_ledge.connect(lava_ledge_chest9, None) # Lava Ledge <--> Lava Ledge Chest
         lava_ledge.connect(after_g_passage, None, one_way=True) # Lava Ledge <--> North Refill Room
-        dodongo_area.connect(after_f_stairs_chest9, AND(FEATHER, FOUND(KEY8, 4), r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Area <-->  #TODO: assumes vanilla tal tal exits
+        dodongo_area.connect(after_f_stairs_chest10, AND(FEATHER, FOUND(KEY8, 4), r.miniboss_requirements["DODONGO"]), one_way=True) # Dodongo Area <-->  #TODO: assumes vanilla tal tal exits
         after_f_stairs.connect(dodongo_area, None, one_way=True) # Ledge Above Dodongos <--> Dodongo Area
         before_f_stairs.connect(after_f_stairs, None) # Northwest Area <--> Ledge Above Dodongos # assumes vanilla tal tal exits
         # northwest
         slime_corridor.connect(before_f_stairs, FOUND(KEY8, 4)) # Corridor by Lava Ledge Chest <--> Northwest Area
-        before_f_stairs.connect(before_f_stairs_chest10, None) # Northwest Area <--> Beamos Blocked Chest
+        before_f_stairs.connect(before_f_stairs_chest11, None) # Northwest Area <--> Beamos Blocked Chest
         before_f_stairs.connect(before_f_stairs_drop4, BOW) # Northwest Area <--> Lava Arrow Statue Key
         miniboss4_cubby.connect(ledge_west_boss, HOOKSHOT) # Cubby After Northwest Vire <--> West of Boss Door Ledge
-        ledge_west_boss.connect(ledge_west_boss_chest11, None) # West of Boss Door Ledge <--> West of Boss Door Ledge Chest
+        ledge_west_boss.connect(ledge_west_boss_chest12, None) # West of Boss Door Ledge <--> West of Boss Door Ledge Chest
         ledge_west_boss.connect(before_f_stairs, None, one_way=True) # West of Boss Door Ledge --> Northwest Area
         before_f_stairs.connect(sw_zamboni_area, None, one_way=True) # Northwest Area --> Zamboni Intersection 
         # cueball
@@ -209,7 +209,7 @@ class Dungeon8:
         miniboss4_cubby.connect(before_f_stairs, None, one_way=True) # Cubby After Northwest Vire <--> Northwest Area
         after_b_passage.connect(miniboss4_room, FOUND(KEY8, 7)) # Before Cueball <--> Cueball Room
         miniboss4_room.connect(nw_zamboni_room, AND(FEATHER, r.miniboss_requirements["CUE_BALL"])) # Cueball Room <--> Two Torch Zamboni Puzzle
-        nw_zamboni_room.connect(nw_zamboni_room_chest12, None) # Two Torch Zamboni Puzzle <--> Nightmare Key
+        nw_zamboni_room.connect(nw_zamboni_room_chest13, None) # Two Torch Zamboni Puzzle <--> Nightmare Key
         # boss
         before_c_passage.connect(after_c_passage, AND(FEATHER, MAGIC_ROD)) # Before Passage to Boss <--> Outside Boss Door
         after_c_passage.connect(boss_room, NIGHTMARE_KEY8) # Outside Boss Door <--> Boss Room
@@ -230,7 +230,7 @@ class Dungeon8:
             dodongo_area.connect(dodongo_area_drop3, OR(HOOKSHOT, MAGIC_ROD)) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
             before_f_stairs.connect(miniboss4_cubby, r.throw_pot) # throw 4 of the 5 pots to kill 2 ropes and vire
             before_f_stairs.connect(sw_vire_room_drop1, AND(r.miniboss_requirements["ROLLING_BONES"], r.enemy_requirements["VIRE"]), one_way=True) # allows bombs to kill vire but only from dropdown in unlit torch room
-            after_f_stairs.connect(after_f_stairs_chest9, BOMB) # throw bombs from ledge to defeat dodongos
+            after_f_stairs.connect(after_f_stairs_chest10, BOMB) # throw bombs from ledge to defeat dodongos
 
         if options.logic == 'glitched' or options.logic == 'hell':
             #south
@@ -259,7 +259,7 @@ class Dungeon8:
             after_g_passage.connect(lava_ledge, AND(r.jesus_jump, r.super_jump_feather)) # jesus jump and use any way to wall clip / super jump to reach lava ledge chest
             slime_corridor.connect(lava_ledge, AND(r.jesus_jump, r.super_jump_feather)) # jesus jump and use any way to wall clip / super jump to reach lava ledge chest
             dodongo_area.connect(after_f_stairs, r.super_jump_feather) # wall clip and superjump to dojongo ledge
-            dodongo_area.connect(after_f_stairs_chest9, AND(r.miniboss_requirements["DODONGO"], r.super_jump_feather)) # kill dodongos and superjump to immediately get chest
+            dodongo_area.connect(after_f_stairs_chest10, AND(r.miniboss_requirements["DODONGO"], r.super_jump_feather)) # kill dodongos and superjump to immediately get chest
             before_f_stairs.connect(after_c_passage, r.super_jump_feather, one_way=True) # superjump off the bottom or right wall to jump over to the boss door
 
         if options.logic == 'hell':
@@ -267,7 +267,7 @@ class Dungeon8:
             sw_zamboni_area.connect(before_f_stairs, r.zoomerang_buffer) # pixel perfect left-facing zoomerang followed up by another zoomerang to get un-stuck. unreliable without shovel
             before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell) #TODO: replace with row below, also consider moving this to hard
             #TODO: before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # 
-            pot_pit_room_doorway.connect(pot_pit_room_chest5, r.pit_buffer_itemless, one_way=True) # pit buffer from south smasher doorway to the SE room chest
+            pot_pit_room_doorway.connect(pot_pit_room_chest6, r.pit_buffer_itemless, one_way=True) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room.connect(pot_pit_room_doorway, AND(r.hookshot_clip_block, r.hookshot_spam_pit)) # can get to SE room doorway with just hookshot spam
             pot_pit_room.connect(before_e_passage, r.zoomerang_buffer, one_way=True) # new logic, zoomerang gets you to SE room passage without bracelet. unreliable without shovel #TODO: check if possible in reverse with pot dislodge method
             before_e_passage.connect(pot_pit_room, r.shaq_jump, one_way=True) #TODO: this is wild, attempt shaq jump in lower right corner of staircase area until it works
@@ -291,11 +291,11 @@ class Dungeon8:
             dark_center_pre_keyblock.connect(before_d_passage, r.zoomerang_buffer, one_way=True) # right-facing zoomerang to geth through keyblock. unreliable without shovel
             #miniboss
             before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
-            switch_room.connect(rod_ledge_chest7, AND(BOMB, OR(AND(r.jesus_buffer, MAGIC_ROD), AND(POWER_BRACELET, r.boots_bonk_2d_hell, r.sideways_block_push)), FOUND(KEY8, 7), r.enemy_requirements["PEAHAT"], r.enemy_requirements["SNAKE"], HOOKSHOT, r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # hell logic for getting rod chest without feather
+            switch_room.connect(rod_ledge_chest8, AND(BOMB, OR(AND(r.jesus_buffer, MAGIC_ROD), AND(POWER_BRACELET, r.boots_bonk_2d_hell, r.sideways_block_push)), FOUND(KEY8, 7), r.enemy_requirements["PEAHAT"], r.enemy_requirements["SNAKE"], HOOKSHOT, r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # hell logic for getting rod chest without feather
             #dodongo
             dodongo_area.connect(dodongo_area_drop3, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             dodongo_area.connect(pre_lava_ledge, r.boots_bonk) # bonk over 1 block of lava, no buffer
-            dodongo_area.connect(after_f_stairs_chest9, AND(r.miniboss_requirements["DODONGO"], r.boots_bonk, r.lava_swim), one_way=True) # kill dodongos and lava swim to get through tal tal connector to chest
+            dodongo_area.connect(after_f_stairs_chest10, AND(r.miniboss_requirements["DODONGO"], r.boots_bonk, r.lava_swim), one_way=True) # kill dodongos and lava swim to get through tal tal connector to chest
             pre_lava_ledge.connect(lava_ledge, r.super_jump_feather) # walk off ledge and pause buffer to get in position
             slime_corridor.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim)) # boots bonk and lava swim around small key door near boss
             #northwest

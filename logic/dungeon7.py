@@ -77,7 +77,7 @@ class Dungeon7:
         before_c_stairs.connect(after_c_stairs, None) # Two Peahat, Moldorm Room <--> North Three-of-a-Kind Puzzle
         before_d_stairs.connect(after_d_stairs, None) # Peg Locked Staircase <--> Hinox Area
         ne_pillar.connect(before_b_stairs, None, one_way=True) # Northeast Pillar Area --> First Floor Main Area
-        se_pillar.connect(before_b_stairs, None) # Southeast Pillar Area <--> First Floor Main Area
+        se_pillar.connect(before_b_stairs, None) # Southeast Pillar Area <--> First Floor Main Area #TODO: it seems north three of a kind relies on this connection being two way to match upstream logic. Need to find the real path and put it in normal logic to fix this node.
         se_pillar.connect(before_c_stairs, OR(r.hit_switch, FEATHER)) # Southeast Pillar Area <--> Two Peahat, Moldorm Room
         tile_room.connect(west_ledge, None, one_way=True) # Floating Tile Fight --> West Kirby Ledge
         after_d_stairs.connect(west_ledge, None, one_way=True) # Hinox Area --> West Kirby Ledge
@@ -88,7 +88,7 @@ class Dungeon7:
         ne_pillar.connect(ne_pillar_chest5, POWER_BRACELET) # Northeast Pillar Area <--> Horse Head, Bubble Chest
         after_b_stairs.connect(ne_pillar, r.hit_switch) # Horseheads Staircase <--> Northeast Pillar Area
         ne_pillar.connect(se_pillar, FEATHER) # Northeast Pillar Area <--> Southeast Pillar Area
-        after_c_stairs.connect(after_c_stairs_chest2, r.enemy_requirements["THREE_OF_A_KIND"]) # North Three-of-a-Kind Puzzle <-->  #TODO: When ROM patched to reset ball on S&Q in ROM, then add bracelet method
+        after_c_stairs.connect(after_c_stairs_chest2, r.enemy_requirements["THREE_OF_A_KIND"]) # North Three-of-a-Kind Puzzle <--> #TODO: When ROM patched to reset ball on S&Q in ROM, then add bracelet method
         after_c_stairs.connect(spike_corridor, FEATHER) # [logic prep for staircase rando]
         spike_corridor.connect(se_pillar, FEATHER, one_way=True) # Between Pillar Pushbocks --> Southeast Pillar Area
         nw_pillar.connect(spike_corridor, FEATHER, one_way=True) # Northwest Pillar Area --> Between Pillar Pushbocks
@@ -107,7 +107,7 @@ class Dungeon7:
         nw_pillar.connect(bomb_corridor, BOMB) # Northwest Pillar Area <--> Bombable Wall Corridor
         bomb_corridor.connect(bombwall_owl, BOMB) # Bombable Wall Corridor <--> By Pit Owl
         #TODO: bomb_corridor.connect(after_d_stairs, None, one_way=True) # Bombable Wall Corridor --> Hinox Area # push blocks #[logic prep for staircase rando]
-        bombwall_owl.connect(sw_pillar, HOOKSHOT) # By Pit Owl <--> Southwest Pillar Area
+        bombwall_owl.connect(sw_pillar, AND(HOOKSHOT, r.enemy_requirements["THREE_OF_A_KIND"])) # By Pit Owl <--> Southwest Pillar Area
         sw_pillar.connect(sw_pillar_chest6, r.enemy_requirements["THREE_OF_A_KIND"]) # Southwest Pillar Area <--> Three of a Kind, Pit Chest #TODO: you can't really use any kill requirement pillar side of pushblocks
         sw_pillar.connect(final_pillar_fallen, POWER_BRACELET) # Southwest Pillar Area <--> Final Pillar Destroyed
         after_d_stairs.connect(before_e_stairs, None) # Hinox Area <--> Stairs Leading to 3rd Floor
@@ -123,7 +123,7 @@ class Dungeon7:
         after_miniboss_room.connect(after_miniboss_room_chest8, None) # After Miniboss Room <--> Nightmare Key/After Grim Creeper Chest
 
         # floor 3 after cutscene
-        #TODO: boss_backdoor.connect(after_boss_door, AND(r.attack_hookshot_no_bomb, FOUND(KEY7, 3)))
+        #TODO: boss_backdoor.connect(after_boss_door, AND(r.miniboss_requirements[world_setup.miniboss_mapping[6]], r.hit_switch, FOUND(KEY7, 3)))
         after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
         conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
         after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
@@ -143,7 +143,7 @@ class Dungeon7:
             #TODO: after_a_stairs.connect(after_d_stairs, BOOMERANG) # Ball Room <--> Hinox Area
 
         #TODO if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            #TODO: after_c_stairs.connect(spike_corridor, None) # [logic prep for staircase rando] # forced damage so cannot be in normal logic
+            #TODO: after_c_stairs.connect(spike_corridor, r.damage_boost) # [logic prep for staircase rando] # forced damage so cannot be in normal logic
 
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(before_b_stairs, r.super_jump_sword) # superjump in the center to get on raised blocks sword added to help since it has to be a low jump

@@ -272,11 +272,11 @@ class RequirementsSettings:
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
         # add trick directory here
-        self.throw_pot = POWER_BRACELET # grab pots to kill enemies
-        self.throw_enemy = POWER_BRACELET # grab stunned enemies to kill enemies
+        self.throw_pot = POWER_BRACELET #TODO: rename: throw_kill throw pot or obstacle to kill enemies in obscure manner [*not* applicable for intended mechanics like opening doors, chests, or situations where killing enemy with pot is vanilla expectation (D2 pols voice)]
+        self.throw_enemy = POWER_BRACELET # lift and throw stunned enemies to kill enemies
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
         self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
-        self.tight_jump = FEATHER # jumps that are possible but are tight to make it across
+        self.tight_jump = FEATHER # any jump that spans 2 pit/water tiles cardinally | also applies to jumps which have special requirements like abusing diagonal speed or wall clips
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
@@ -296,6 +296,8 @@ class RequirementsSettings:
         self.jesus_buffer_itemless = True # Use buffers to get into positions after getting on top of liquids without needing boots or feather or rooster
         self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
+        self.diagonal_walk = True # when two pits are corner-adjacent, walk diagonally across the point where they meet
+        self.corner_walk = True # when a pit and an obstacle are corner-adjacent, hug the obstacle and turn sharply to get to the other side. more difficult heading north / easier heading south
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
         self.wall_clip = True # push into corners to get further into walls, to avoid collision with enemies along path (see swamp flowers for example) get a better position for jumps, or start a superjump
         self.pit_buffer_itemless = True # walk on top of pits and buffer down Note: Glitched logic if single pit buffer, Hell logic if 2 or more tiles

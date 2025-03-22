@@ -35,6 +35,7 @@ class Dungeon5:
         star_room = Location("D5 Star Owl Room", dungeon=5)
         spark_hallway = Location("D5 Spark Hallway", dungeon=5)
         north_crossroads = Location("D5 North of Crossroads", dungeon=5)
+        single_tile_ledge = Location("D5 Single-Tile Ledge", dungeon=5)
         middle_ledge = Location("D5 First Ledge", dungeon=5)
         middle_ledge_chest6 = Location(dungeon=5).add(DungeonChest(0x18E)) # 50 rupees
         north_ledge = Location("D5 North Ledge", dungeon=5)
@@ -97,25 +98,29 @@ class Dungeon5:
         star_room.connect(spark_hallway, r.enemy_requirements["STAR"], one_way=True) # Star Owl Room --> Spark Hallway
         spark_hallway.connect(after_c_passage, None, one_way=True) # Spark Hallway --> Before Boss Keyblock
         spark_hallway.connect(star_room, None, one_way=True) # Spark Hallway --> Star Owl Room
-        before_d_passage.connect(north_crossroads, FEATHER) # South of Crossroads <--> North of Crossroads
         before_d_passage.connect(ms_2_room, None) # South of Crossroads <--> Master Stalfos Fight 2
-        ms_2_room.connect(ms_2_victory, AND(r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 2 Victory
-        north_crossroads.connect(middle_ledge, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # North of Crossroads <--> First Ledge Chest
+        before_d_passage.connect(north_crossroads, FEATHER) # South of Crossroads <--> North of Crossroads
+        north_crossroads.connect(single_tile_ledge, HOOKSHOT, one_way=True) # North of Crossroads <--> Single-Tile Ledge
+        north_crossroads.connect(single_tile_ledge, FEATHER)
+        single_tile_ledge.connect(middle_ledge, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS))) # North of Crossroads <--> First Ledge Chest
+        single_tile_ledge.connect(middle_ledge, HOOKSHOT, one_way=True)
         middle_ledge.connect(middle_ledge_chest6, None) # First Ledge <--> Two Stalfos, Star Pit Chest
         middle_ledge.connect(east_ledge, HOOKSHOT) # First Ledge <--> East Ledge
+        ms_2_room.connect(ms_2_victory, AND(r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 2 Victory
         east_ledge.connect(east_ledge_chest8, None) # East Ledge <--> Flying Bomb Chest East
-        north_crossroads.connect(north_ledge, HOOKSHOT) # North of Crossroads <--> North Ledge
         middle_ledge.connect(north_ledge, HOOKSHOT, one_way=True) # First Ledge <--> North Ledge
         north_ledge.connect(north_ledge_chest_7, None) # North Ledge <--> Sword Stalfos, Star, Bridge Chest
+        north_ledge.connect(north_crossroads, HOOKSHOT) # North of Crossroads <--> North Ledge
+        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: REMOVE and replace with below
+        #TODO: north_crossroads.connect(ms_3_room, AND(FEATHER, r.enemy_requirements["HIDING_ZOL"])
+        ms_3_room.connect(ms_3_victory, AND("MS1_KILL", "MS2_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 3 Victory
+        ms_3_room.connect(pot_locked_room, POWER_BRACELET) # Master Stalfos Fight 3 <--> Pot Locked Room
+        pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])) # Pot Locked Room <--> Three Stalfos Chest #TODO: remove kill enemy requirements, it's just here to make logic match stable
         before_d_passage.connect(west_crossroads, None) # South of Crossroads <--> West of Crossroads
         west_crossroads.connect(before_b_passage, FLIPPERS) # West of Crossroads <--> Deep Water Passage Entrance
         before_b_passage.connect(after_b_passage, FLIPPERS) # Deep Water Passage Entrance <--> Bridge Chest Room
         after_b_passage.connect(boss_key_room, HOOKSHOT) # Bridge Chest Room Entrance <--> Bridge Chest Room
         boss_key_room.connect(boss_key_room_chest10, None) # Bridge Chest Room  <--> Nightmare Key/Torch Cross Chest
-        north_crossroads.connect(ms_3_room, r.enemy_requirements["HIDING_ZOL"]) # North of Crossroads <--> Master Stalfos Fight 3 #TODO: add POWER_BRACELET to normal logic requirement
-        ms_3_room.connect(ms_3_victory, AND("MS1_KILL", "MS2_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 3 Victory
-        ms_3_room.connect(pot_locked_room, POWER_BRACELET) # Master Stalfos Fight 3 <--> Pot Locked Room
-        pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])) # Pot Locked Room <--> Three Stalfos Chest #TODO: remove kill enemy requirements, it's just here to make logic match stable
         crystal_room.connect(ms_4_room, None) # Crystal Room <--> Master Stalfos Fight 4
         ms_4_room.connect(ms_4_room_drop2, AND("MS3_KILL", r.enemy_requirements["MASTER_STALFOS"])) # Master Stalfos Fight 4 <--> Master Stalfos Item
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT) # After Boss Keyblock <--> Hallway Before Boss
@@ -131,10 +136,11 @@ class Dungeon5:
             after_c_passage.connect(before_c_passage, r.boots_bonk, one_way=True) # don't need hookshot in reverse [move to hell?]
             spark_hallway.connect(after_boss_keyblock, r.tight_jump) # jump from bottom left to top right, skipping the keyblock
             spark_hallway.connect(pre_boss_room, r.boots_jump) # cross pits room from bottom left to top left with boots jump
-            before_d_passage.connect(north_crossroads, HOOKSHOT) # walk into pit and hookshot right to get to single tile, next corner walk up+left or hookshot to first ledge chest
-            north_crossroads.connect(middle_ledge, AND(r.wall_clip, r.tight_jump)) # tight jump from bottom wall clipped to make it over the pits
+            before_d_passage.connect(single_tile_ledge, r.hookshot_over_pit) # walk into pit and hookshot right to get to single tile ledge
+            single_tile_ledge.connect(north_crossroads, r.diagonal_walk) # walk diagonally between pits to get to north crossroads
+            middle_ledge.connect(north_crossroads, r.tight_jump) # tight jump to/from first chest ledge, helps but not required to start wall clipped
             after_b_passage.connect(boss_key_room, r.boots_jump) # boots jump across
-            #TODO: north_crossroads.connect(ms_3_room, OR(OR(SWORD, BOMB))) # left side zol can only be killed with sword and bomb unless you have power bracelet or glitches
+            #TODO: north_crossroads.connect(ms_3_room, OR(SWORD, BOMB)) # left side zol can only be killed with sword and bomb unless you have power bracelet or glitches
             
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across the pits
@@ -142,8 +148,7 @@ class Dungeon5:
             north_crossroads.connect(north_ledge, r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across the pits
             middle_ledge.connect(east_ledge, r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across the pits
             after_c_passage.connect(spark_hallway, r.super_jump_boots) # charge a boots dash in bottom right corner to the right, jump before hitting the wall and use weapon to turn left before hitting the wall
-            #TODO: north_crossroads.connect(ms_3_room, OR(OR(SWORD, BOMB), AND(OR(r.super_jump_boots, POWER_BRACELET), r.enemy_requirements["HIDING_ZOL"])) # glitched logic to clear room before ms3
-            #TODO: west_crossroads.connect(ms_3_room, AND(FEATHER, r.enemy_requirements["HIDING_ZOL"])) # glitched logic to clear room before ms3
+            north_crossroads.connect(ms_3_room, AND(r.pit_buffer_itemless, r.hookshot_over_pit, r.diagonal_walk, r.enemy_requirements["HIDING_ZOL"])) # kill the slimes on both sides the left by traveling through pit above crossroads
             
         if  options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer_boots) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
@@ -157,10 +162,10 @@ class Dungeon5:
             after_c_passage.connect(spark_hallway, r.super_jump_sword) # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
             after_c_passage.connect(spark_hallway, r.zoomerang) # use zoomerang dashing left to get an unclipped boots superjump off the right wall over the pushblock
             #TODO: before_d_passage.connect(after_d_passage, None) # hold the A button when itemless to bounce higher off the cheep-cheeps to cover 2-block gaps. helpful to stand on edge and pause/map buffer to catch the frame where fish starts to leap, then hold left
-            #TODO: before_d_passage.connect(north_crossroads, r.boots_bonk) # boots bonk over pit
-            north_crossroads.connect(north_ledge, r.boots_bonk_pit) # get to first chest via the north chest with pit buffering
+            #TODO: before_d_passage.connect(north_crossroads, r.boots_bonk_pit) # boots bonk over pit
+            north_crossroads.connect(north_ledge, r.pit_buffer_boots) # get to first chest via the north chest with pit buffering
             north_ledge.connect(middle_ledge, r.pit_buffer_itemless, one_way=True) # itemless pit buffer down through where the bridge would be
-            middle_ledge.connect(east_ledge, r.boots_bonk_pit) # boots bonk across the pits with pit buffering
+            middle_ledge.connect(east_ledge, r.pit_buffer_boots) # boots bonk across the pits with pit buffering
             #TODO: ms_3_room.connect(pot_locked_room, AND(r.super_jump_boots, r.zoomerang_buffer)) # skip bracelet requirement by boots superjump to land in pot, then zoomerang to dislodge link to the left
             after_b_passage.connect(boss_key_room, r.pit_buffer_itemless) # pit buffer across
             if options.owlstatues == "both" or options.owlstatues == "dungeon": #TODO: remove if statement
