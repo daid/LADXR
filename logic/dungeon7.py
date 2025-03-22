@@ -46,8 +46,8 @@ class Dungeon7:
         boss_backdoor = Location("D7 Boss Backdoor Room", dungeon=7)
         after_boss_door = Location("D7 After Boss Door", dungeon=7)
         conveyor_room = Location("D7 Conveyor Horseheads Room", dungeon=7)
-        conveyor_room_chest9 = Location(dungeon=7).add(DungeonChest(0x220)) # medicine
-        pre_boss_room = Location("D7 Before Boss", dungeon=7)
+        after_boss_door_chest9 = Location(dungeon=7).add(DungeonChest(0x220)) # medicine
+        pre_boss_ledge = Location("D7 Before Boss", dungeon=7)
         boss_room = Location("D7 Boss Room", dungeon=7)
         boss_room_drop3 = Location(dungeon=7).add(HeartContainer(0x223)) # heart container
         instrument = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
@@ -115,20 +115,20 @@ class Dungeon7:
         # connect floor 2 & 3
         before_e_stairs.connect(after_e_stairs, None) # Stairs Leading to 3rd Floor <--> Third Floor Entry
         final_pillar_fallen.connect(after_boss_door, NIGHTMARE_KEY7) # Final Pillar Destroyed <--> After Boss Door
-        final_pillar_fallen.connect(boss_backdoor, None) # Final Pillar Destroyed <--> Boss Backdoor Room
+        final_pillar_fallen.connect(boss_backdoor, FOUND(KEY7, 3)) # Final Pillar Destroyed <--> Boss Backdoor Room
 
-        # floor 3
+        # floor 3 before cutscene
         after_e_stairs.connect(miniboss_room, None) # Third Floor Entry <--> Miniboss Room
         miniboss_room.connect(after_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[6]]) # Miniboss Room <--> After Miniboss Room
         after_miniboss_room.connect(after_miniboss_room_chest8, None) # After Miniboss Room <--> Nightmare Key/After Grim Creeper Chest
+        #TODO: after_e_stairs.connect(boss_backdoor, FOUND(KEY7, 3)) # Third Floor Entry <--> Boss Backdoor Room
+        #TODO: conveyor_room.connect(after_boss_door_chest9, POWER_BRACELET, one_way=True) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
 
         # floor 3 after cutscene
-        #TODO: boss_backdoor.connect(after_boss_door, AND(r.miniboss_requirements[world_setup.miniboss_mapping[6]], r.hit_switch, FOUND(KEY7, 3)))
-        after_boss_door.connect(conveyor_room, None) # After Boss Door <--> Conveyor Horseheads Room
-        conveyor_room.connect(conveyor_room_chest9, POWER_BRACELET) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
-        after_boss_door.connect(pre_boss_room, HOOKSHOT) # After Boss Door <--> Before Boss
-        pre_boss_room.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
-        pre_boss_room.connect(boss_room, None) # Before Boss <--> Boss Room
+        after_boss_door.connect(after_boss_door_chest9, POWER_BRACELET, one_way=True) # After Boss Door <--> Conveyor Beamos Chest
+        after_boss_door.connect(pre_boss_ledge, HOOKSHOT) # After Boss Door <--> Before Boss
+        pre_boss_ledge.connect(after_boss_door, None, one_way=True) # Before Boss --> After Boss Door
+        pre_boss_ledge.connect(boss_room, None) # Before Boss <--> Boss Room
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Heart Container
         boss_room.connect(instrument, r.boss_requirements[world_setup.boss_mapping[6]]) # Boss Room <--> Instrument Room
 
@@ -156,10 +156,9 @@ class Dungeon7:
             #TODO: bombwall_owl.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             #TODO: sw_pillar.connect(after_d_stairs, r.zoomerang_buffer) #[logic prep for staircase rando]
             sw_pillar.connect(sw_pillar_chest6, POWER_BRACELET) #TODO: Not really an accurate statement, as you can't do the block push from the north side. evaluate moving to hard logic, or even connecting from hinox area?
-            #TODO: after_e_stairs.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather)) # hookshot clip pot in upper right while 2 blocks to the left of it repeatedly until wall clipped, then superjump onto pegs
-            #TODO: boss_backdoor.connect(conveyor_room_chest9, AND(FOUND(KEY7, 3), r.hookshot_clip_block, r.super_jump_feather)) # hookshot clip pot in upper right while 2 blocks to the left of it repeatedly until wall clipped, then superjump onto pegs
             after_d_stairs.connect(final_pillar_fallen, r.bomb_trigger) # bomb trigger pillar
-            final_pillar_fallen.connect(pre_boss_room, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
+            final_pillar_fallen.connect(pre_boss_ledge, r.super_jump_feather) # superjump on top of goomba to extend superjump to boss door plateau
+            #TODO: boss_backdoor.connect(conveyor_room, AND(r.hookshot_clip_block, r.super_jump_feather), one_way=True) # hookshot clip pot in upper right repeatedly until wall clipped, then superjump onto pegs
             
         if options.logic == 'hell':
             #TODO: entrance.connect(before_a_stairs, r.boots_superbump) # boots to run, then bow or rod to run backwards, then hold shield so blade bumps you over wall #[logic prep for staircase rando]
@@ -177,12 +176,12 @@ class Dungeon7:
             #TODO: after_d_stairs.connect(keylock_ledge, r.boots_superbump) # running super bump off antifairy to get on ledge without key
             #TODO: bombwall_owl.connect(sw_pillar, r.pit_buffer_boots) 
             #TODO: sw_pillar.connect(sw_pillar_chest7, None) # push blocks to stun suit buddies and spawn chest #quite difficult, should we include this?
-            final_pillar_fallen.connect(pre_boss_room, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau
-            #TODO: after_e_stairs.connect(conveyor_room_chest9, OR(r.super_bump, r.super_poke)) # superjump and rebound off peahat onto pegs
-            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke)) # superjump and rebound off peahat onto pegs
-            #TODO: final_pillar_fallen.connect(pre_boss, r.super_jump_feather) #[logic prep for staircase rando]
-            #TODO: pre_boss_room.connect(instrument, AND(PEGASUS_BOOTS, r.shield_bump)) # walk off ledge holding shield, then use shield to backflip and goomba surf to instrument #TODO: boots helps if the landing is poor, maybe tracker only without boots?
+            #TODO: boss_backdoor.connect(conveyor_area, OR(r.super_bump, r.super_poke), one_way=True) # superjump and rebound off peahat onto pegs, feather diagonally to get to right exit
+            #TODO: boss_backdoor.connect(after_boss_door, OR(r.super_bump, r.super_poke), one_way=True)
+            final_pillar_fallen.connect(pre_boss_ledge, r.boots_superhop) # boots superhop on top of goomba to extend superhop to boss door plateau #TODO: REPLACE with below
+            #TODO: final_pillar_fallen.connect(pre_boss_ledge, AND(OR(r.boots_superhop, r.super_jump_feather), r.goomba_surf)) #TODO: add goomba surft in requirements.py : it will have no requirements to work with 2d sections, but should be here for tricks toggling in the future
             
+            #TODO: consider fake "PILLAR" item to track pillar cound using FOUND()
             #TODO: consider fake "SWITCH_7" item for conciseness and preparedness for stair shuffle
         
         self.entrance = entrance
