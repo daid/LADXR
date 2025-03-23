@@ -102,12 +102,12 @@ class Dungeon2:
             pitplatform_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             mimic_beetle_room.connect(east_torches_drop2, AND(r.rear_attack_range, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # adjust for alternate requirements for dungeon2_r4
             before_a_passage.connect(after_a_passage, r.boots_dash_2d) # TODO: Move to HARD logic -  use boots to dash over the spikes in the 2d section
-            #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet to get damage boost from 2d spikes to get through passage
+            #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
             after_miniboss.connect(vacuum_room, r.boots_bonk_pit) # boots bonk to get over 1 tile pits by owl statue
             #TODO: after_miniboss.connect(vacuum_room, r.hookshot_spam_pit) # hookshot spam to cross single tile pits by owl statue
             pot_pol_room_doorway.connect(before_c_passage, AND(r.hookshot_clip_block, r.enemy_requirements["ZOL"], r.enemy_requirements["POLS_VOICE"])) # hookshot clip through the pot using both pol's voice
             before_c_passage.connect(pre_boss_room, OR(BOMB, r.boots_jump)) # use a bomb to lower the last platform, or boots + feather to cross over top (only relevant in hell logic)
-            pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: enclose in or statement to allow boots only method
+            pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit)) # TODO: enclose in OR statement to allow boots only method
 
             #TODO: consider fake "SWITCH_2" item for conciseness and preparedness for stair shuffle
 

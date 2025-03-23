@@ -287,7 +287,7 @@ class Dungeon8:
             dark_west.connect(peahat_area, AND(BOMB, r.jesus_buffer), one_way=True) # bomb the wall and boots bonk + pause buffer until on land
             dark_center.connect(peahat_area, AND(BOMB, r.jesus_buffer), one_way=True) # bomb the wall and boots bonk + pause buffer until on land
             dark_east_zol.connect(dark_east_spark, OR(r.hookshot_spam_pit, r.boots_bonk)) # spam hookshot or simply boots bonk to get over 1 block pit
-            dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.ledge_super_bump), one_way=True) # wall clip then superjump to spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
+            dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.ledge_super_bump), one_way=True) # wall clip then superjump to the spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
             dark_center_pre_keyblock.connect(before_d_passage, r.zoomerang_buffer, one_way=True) # right-facing zoomerang to geth through keyblock. unreliable without shovel
             #miniboss
             before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks

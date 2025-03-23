@@ -27,7 +27,7 @@ class Dungeon4:
         before_miniboss_chest8 = Location(dungeon=4).add(DungeonChest(0x16E)) # 50 rupees
         south_tile_puzzle = Location("D4 Lower Tile Puzzle Area", dungeon=4)
         south_tile_puzzle_chest9 = Location(dungeon=4).add(DungeonChest(0x16D)) # gel chest
-        south_tile_puzzle_chest10 = Location(dungeon=4).add(DungeonChest(0x168)) # key chest near the puzzle
+        south_tile_puzzle_chest10 = Location(dungeon=4).add(DungeonChest(0x168)) # small key
         miniboss_room = Location("D4 Miniboss Room", dungeon=4)
         after_miniboss = Location("D4 After Miniboss", dungeon=4)
         flippers_room = Location("D4 Flippers Room", dungeon=4)

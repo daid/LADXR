@@ -20,7 +20,7 @@ class DungeonColor:
         miniboss1_room_chest4 = Location(dungeon=0).add(DungeonChest(0x302)) # nightmare key
         miniboss2_room = Location("D0 Miniboss 2", dungeon=0)
         button_room = Location("D0 Hidden Button Room", dungeon=0)
-        north_room = Location("D0 North Area", dungeon=0)
+        north_room = Location("D0 Bullshit Room", dungeon=0)
         north_room_chest5 = Location(dungeon=0).add(DungeonChest(0x306)) # map
         north_room_drop2 = Location(dungeon=0).add(DroppedKey(0x307)) # small key
         west_room = Location("D0 3x3 Puzzle Room", dungeon=0)

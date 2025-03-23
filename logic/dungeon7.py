@@ -184,7 +184,7 @@ class Dungeon7:
             entrance.connect(before_b_stairs, r.boots_superhop) # boots superhop in the center to get on raised blocks
             before_b_stairs.connect(east_ledge, r.boots_superhop) # boots superhop from room with spike switch
             #TODO: before_c_stairs.connect(before_b_stairs, r.super_bump) #[logic prep for staircase rando]
-            before_c_stairs.connect(west_ledge, r.super_bump) # super bump but into kirby mouth, it can spit you out with no-clip and land on ledge (need wall clip from c staircase) #[logic prep for staircase rando]
+            #TODO: before_c_stairs.connect(west_ledge, r.super_bump) # super bump but into kirby mouth, it can spit you out with no-clip and land on ledge (need wall clip from c staircase) #[logic prep for staircase rando]
             spike_corridor.connect(ne_pillar, r.pit_buffer_boots, one_way=True) #[logic prep for staircase rando]
             #TODO: after_d_stairs.connect(se_pillar, r.boots_superhop, one_way = True) #[logic prep for staircase rando]
             #TODO: after_d_stairs.connect(se_pillar, r.super_bump, one_way = True) #[logic prep for staircase rando]

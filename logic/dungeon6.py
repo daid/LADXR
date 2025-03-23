@@ -149,7 +149,7 @@ class Dungeon6:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             before_a_passage.connect(after_a_passage, None) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
-            #TODO: south_star_area.connect(star_area, AND(r.stun_wizrobe, r.throw_enemy, POWER_BRACELET) # stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
+            #TODO: south_star_area.connect(star_area, AND(OR(AND(r.stun_wizrobe, r.throw_enemy), FOUND(SWORD, 2), POWER_BRACELET) # L2 sword beam, or stun wizrobe with powder and throw it at switch to get access to pots to throw at door - hard due to obscurity
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, one_way=True) # boots dash over 1 block gaps in sidescroller
             after_b_passage.connect(before_b_passage, AND(r.boots_dash_2d, r.boots_bonk), one_way=True) # boots dash over 1 block gaps in sidescroller, then bonk to get on ladder
             after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the mini_thwomps

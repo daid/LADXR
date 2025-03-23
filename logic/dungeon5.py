@@ -156,7 +156,7 @@ class Dungeon5:
             statue_room.connect(after_blade_trap, r.pit_buffer_boots) # boots bonk + pit buffer past the blade traps
             after_blade_trap.connect(pot_column_room, r.pit_buffer_itemless, one_way=True)
             statue_room.connect(before_miniboss, AND(r.boots_jump, r.pit_buffer)) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across. #TODO: change to pit_buffer_boots
-            statue_room.connect(before_miniboss, r.super_bump)
+            #TODO: statue_room.connect(before_miniboss, r.super_bump) # super bump off zol or fireball to skip bridge pull NOTE: not sure if oob
             before_miniboss.connect(before_c_passage, AND(r.sideways_block_push, POWER_BRACELET)) # Sideways block push + pick up pots to reach post_gohma #TODO: move to glitched
             before_c_passage.connect(after_c_passage, r.boots_jump) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_c_passage.connect(spark_hallway, r.super_jump_sword) # unclipped superjump in bottom right corner of staircase before boss room, jumping left over the pushable block. reverse is push block
