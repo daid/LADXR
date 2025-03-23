@@ -169,7 +169,7 @@ checkMetadataTable = {
     "0x311": CheckMetadata("Two Socket Chest", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0311.GIF
     "0x302": CheckMetadata("Nightmare Key Chest", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0302.GIF
     "0x306": CheckMetadata("Zol Chest", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0306.GIF
-    "0x307": CheckMetadata("Bullshit Room", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0307.GIF
+    "0x307": CheckMetadata("Bullshit Room Key", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/0307.GIF
     "0x30A-Owl": CheckMetadata("Puzzowl", "Color Dungeon"), #http://artemis251.fobby.net/zelda/maps/underworld3/030A.GIF
     "0x2BF": CheckMetadata("Dream Hut East", "Mabe Village"), #http://artemis251.fobby.net/zelda/maps/underworld2/02BF.GIF
     "0x2BE": CheckMetadata("Dream Hut West", "Mabe Village"), #http://artemis251.fobby.net/zelda/maps/underworld2/02BE.GIF
