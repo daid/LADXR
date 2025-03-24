@@ -135,7 +135,7 @@ class Dungeon7:
         #TODO: floor3_pre_cutscenes.connect(boss_backdoor, FOUND(KEY7, 3)) # Floor 3 Before Tower Drop <--> Boss Backdoor Room
         #TODO: conveyor_room.connect(after_boss_door_chest9, POWER_BRACELET, one_way=True) # Conveyor Horseheads Room <--> Conveyor Beamos Chest
 
-        # floor 3 after cutscene [can't put miniboss_room or boss_backdoor in post-cutscene connections else logic will leak]
+        # floor 3 after cutscene [shouldn't put miniboss_room, boss_backdoor, or conveyor_room in post-cutscene connections else logic will leak]
         floor3_post_cutscene.connect(after_boss_door, NIGHTMARE_KEY7) # Floor 3 After Tower Drop <--> After Boss Door
         after_boss_door.connect(after_boss_door_chest9, POWER_BRACELET, one_way=True) # After Boss Door <--> Conveyor Beamos Chest
         after_boss_door.connect(pre_boss_ledge, HOOKSHOT) # After Boss Door <--> Before Boss
@@ -179,7 +179,7 @@ class Dungeon7:
             #TODO: entrance.connect(before_a_stairs, r.boots_superbump) # boots to run, then bow or rod to run backwards, then hold shield so blade bumps you over wall #[logic prep for staircase rando]
             #TODO: entrance.connect(west_ledge, r.super_bump) # enter SW room wall clipped, line up with wizrobes, and repeat super bumps to move up onto the ledge (very precise)
             entrance.connect(east_ledge, AND(r.super_jump_boots, r.shield_bump)) # along bottom wall in first key room, setup boots super jump, but hold shield after the jump to bump down to ledge
-            #TODO: after_b_stairs.connect(ne_pillar, r.zoomerang_buffer) # zoomerang gets you out of staircase in horsehead room if the entrance was randomized and you couldn't hit a switch  #[logic prep for staircase rando]
+            #TODO: after_b_stairs.connect(ne_pillar, r.zoomerang_buffer) # zoomerang gets you out of staircase in horsehead room if the entrance was randomized and you couldn't hit a switch  #[logic prep for staircase rando] [sometimes doesn't work?]
             entrance.connect(before_b_stairs, r.super_jump_feather) # superjump in the center to get on raised blocks, hell because the jump has to be very low
             entrance.connect(before_b_stairs, r.boots_superhop) # boots superhop in the center to get on raised blocks
             before_b_stairs.connect(east_ledge, r.boots_superhop) # boots superhop from room with spike switch
