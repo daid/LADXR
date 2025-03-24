@@ -1,6 +1,7 @@
 import typing
 from .requirements import hasConsumableRequirement, OR
 from locations.itemInfo import ItemInfo
+from collections.abc import Iterable
 
 
 class Location:
@@ -19,12 +20,21 @@ class Location:
             self.items.append(ii)
         return self
 
-    def connect(self, other, req, *, one_way=False):
+    def connect(self, others, req, *, one_way=False):
+        if not isinstance(others, Iterable):
+            others = [others]
+
+        for other in others:
+            self.singleConnect(other, req, one_way=one_way)
+
+        return self
+    
+    def singleConnect(self, other, req, *, one_way=False):
         assert isinstance(other, Location), type(other)
 
         if isinstance(req, bool):
             if req:
-                self.connect(other, None, one_way=one_way)
+                self.singleConnect(other, None, one_way=one_way)
             return
 
         if other in self.__connected_to:
@@ -50,8 +60,7 @@ class Location:
             else:
                 self.simple_connections.append((other, req))
         if not one_way:
-            other.connect(self, req, one_way=True)
-        return self
+            other.singleConnect(self, req, one_way=True)
     
 
     def __repr__(self):
