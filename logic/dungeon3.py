@@ -28,6 +28,7 @@ class Dungeon3:
         west_4way_drop2 = Location(dungeon=3).add(DroppedKey(0x155)) # small key
         north_4way = Location("D3 North Key Room", dungeon=3)
         north_4way_drop3 = Location(dungeon=3).add(DroppedKey(0x154)) # small key
+        north_4way_switch = Location("D7 North Key Room Switch", dungeon=7).add(KeyLocation("SWITCH3"))
         east_4way = Location("D3 East Key Room", dungeon=3)
         main_room = Location("D3 Main Area", dungeon=3)
         main_room_drop4 = Location(dungeon=3).add(DroppedKey(0x14D)) # small key
@@ -79,16 +80,16 @@ class Dungeon3:
         #TODO: west_hallway.connect(before_a_stairs_chest4, AND(r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Long Hallway <--> Two Stalfos, Zol Chest
         slime_room.connect(slime_room_chest3, None) # Slime Room <--> Four Zol Chest
         slime_room.connect(swordstalfos_entry, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Sword Stalfos Room Entrance
+        swordstalfos_entry.connect(swordstalfos_room, "SWITCH3") # Sword Stalfos Room Entrance --> Sword Stalfos Pedestal
         swordstalfos_room.connect(swordstalfos_room_chest6, None) # Sword Stalfos Room <--> Sword Stalfos, Keese Switch Chest
         slime_room.connect(before_a_stairs, r.enemy_requirements["HIDING_ZOL"]) # Slime Room <--> Near First Staircase
-        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Near First Staircase <--> Two Stalfos, Zol Chest
-        # switch locked checks
-        north_4way.connect(before_a_stairs_chest5, r.hit_switch, one_way=True) # North Key Room --> Zol Switch Chest
-        north_4way.connect(swordstalfos_room, AND(r.hit_switch, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # North Key Room --> Sword Stalfos Pedestal
+        before_a_stairs.connect(before_a_stairs_chest4, AND(PEGASUS_BOOTS, r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["GEL"], r.enemy_requirements["STALFOS_EVASIVE"])) # Near First Staircase <--> Two Stalfos, Zol Chest
+        before_a_stairs.connect(before_a_stairs_chest5, "SWITCH3") # Near First Staircase --> Zol Switch Chest
         # 4 way
         before_a_stairs.connect(center_4way, None) # Near First Staircase <--> Key Room Crossroads
         center_4way.connect(north_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> North Key Room
         north_4way.connect(north_4way_drop3, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["MOBLIN"])) # North Key Room <--> North Key Room Key
+        north_4way.connect(north_4way_switch, r.hit_switch)
         center_4way.connect(south_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> South Key Room
         south_4way.connect(south_4way_drop1, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["PAIRODD"], BOOMERANG))) # South Key Room <--> South Key Room Key
         center_4way.connect(west_4way, FOUND(KEY3, 8)) # Key Room Crossroads <--> West Key Room
@@ -139,8 +140,7 @@ class Dungeon3:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(after_vacuum, r.hookshot_over_pit) # hookshot the chest to get to the right side
-            north_4way.connect(before_a_stairs_chest5, r.throw_pot, one_way=True) # after hit switch get zol switch chest
-            north_4way.connect(swordstalfos_room, AND(r.throw_pot, r.enemy_requirements["HIDING_ZOL"]), one_way=True) # hit switch with pot, and go back to stalfos pedestal chest
+            north_4way.connect(north_4way_switch, r.throw_pot)
             south_4way.connect(south_4way_drop1, r.throw_pot) # use pots to kill enemies
             north_4way.connect(north_4way_drop3, r.throw_pot) # use pots to kill the enemies
             fenced_walkway.connect(three_bombite_room_drop_6, BOOMERANG, one_way=True) # 3 bombite room from the walkway, grab item with boomerang
