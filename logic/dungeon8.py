@@ -40,6 +40,7 @@ class Dungeon8:
         after_b_passage = Location("D8 Before Cueball", dungeon=8)
         before_c_passage = Location("D8 Before Passage to Boss", dungeon=8)
         switch_room = Location("D8 Switch Room", dungeon=8)
+        switch_room_switch = Location("D8 Switch", dungeon=8).add(KeyLocation("SWITCH8"))
         pushblock_room = Location("D8 Pushblock Chest Area", dungeon=8)
         pushblock_room_chest7 = Location(dungeon=8).add(DungeonChest(0x24F)) # map
         lava_left_corridor = Location("D8 'L' Shaped Corridor", dungeon=8)
@@ -128,6 +129,7 @@ class Dungeon8:
         zamboni_pit_east.connect(zamboni_pit_west, None, one_way=True) # East of Chasm Zamboni <--> West of Chasm Zamboni
         zamboni_pit_east.connect(zamboni_pit_east_drop2, None) # East of Chasm Zamboni <--> Zamboni, Two Zol Key
         zamboni_pit_east.connect(switch_room, BOMB) # East of Chasm Zamboni <--> Switch Room
+        switch_room.connect(switch_room_switch, r.hit_switch) # Switch Room <--> Switch
         switch_room.connect(before_c_passage, BOMB) # Switch Room <--> Before Passage to Boss
         zamboni_pit_east.connect(miniboss3_room, None, one_way=True) # East of Chasm Zamboni --> Smasher Room
         miniboss3_room.connect(zamboni_pit_east, r.miniboss_requirements["SMASHER"], one_way=True) # Smasher Room --> East of Chasm Zamboni
@@ -176,12 +178,11 @@ class Dungeon8:
         # miniboss
         before_d_passage.connect(after_d_passage, FEATHER) # Dark Room Staircase <--> Staircase by Blaino
         after_d_passage.connect(miniboss_room, None, one_way=True) # Staircase by Blaino <--> Blaino Room
-        miniboss_room.connect(miniboss_cubby, r.miniboss_requirements[world_setup.miniboss_mapping[7]]) # Blaino Room <--> Post Blaino Before Pegs
         miniboss_room.connect(entrance, None, one_way=True) # Blaino Room <--> Entrance # Blaino punches you back to entrance
+        miniboss_room.connect(miniboss_cubby, r.miniboss_requirements[world_setup.miniboss_mapping[7]]) # Blaino Room <--> Post Blaino Before Pegs
+        miniboss_cubby.connect(rod_ledge, "SWITCH8") # superjump to skip over pegs after blaino
         rod_ledge.connect(rod_ledge_chest8, None) # Blaino Reward Ledge <--> Magic Rod Chest
-        rod_ledge.connect(after_d_passage, None, one_way=True) # Blaino Reward Ledge <--> Staircase by Blaino
-        switch_room.connect(rod_ledge_chest8, AND(BOMB, FEATHER, POWER_BRACELET, HOOKSHOT, FOUND(KEY8, 7), r.enemy_requirements["SNAKE"], r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # Switch Room <--> Magic Rod Chest # explicitly include normal logic from switch room to rod chest
-        # dodongo
+        rod_ledge.connect(after_d_passage, None, one_way=True) # Blaino Reward Ledge <--> Staircase by Blaino# dodongo
         hidden_arrow_room.connect(dodongo_area, None, one_way=True) # Hidden Arrow Room <--> Dodongo Area
         dodongo_area.connect(dodongo_area_drop3, r.enemy_requirements["GIBDO"]) # Dodongo Area <--> Gibdos on Cracked Floor Key # 2 gibdos cracked floor; technically possible to use pits to kill but dumb
         dodongo_area.connect(pre_lava_ledge, FEATHER) # Dodongo Area <--> Ledge West of Dodongos
@@ -290,9 +291,7 @@ class Dungeon8:
             dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.ledge_super_bump), one_way=True) # wall clip then superjump to the spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
             dark_center_pre_keyblock.connect(before_d_passage, r.zoomerang_buffer, one_way=True) # right-facing zoomerang to geth through keyblock. unreliable without shovel
             #miniboss
-            before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
-            switch_room.connect(rod_ledge_chest8, AND(BOMB, OR(AND(r.jesus_buffer, MAGIC_ROD), AND(POWER_BRACELET, r.boots_bonk_2d_hell, r.sideways_block_push)), FOUND(KEY8, 7), r.enemy_requirements["PEAHAT"], r.enemy_requirements["SNAKE"], HOOKSHOT, r.miniboss_requirements[world_setup.miniboss_mapping[7]]), one_way=True) # hell logic for getting rod chest without feather
-            #dodongo
+            before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks#dodongo
             dodongo_area.connect(dodongo_area_drop3, AND(FEATHER, SHIELD)) # lock gibdos into pits and crack the tile they stand on, then use shield to bump them into the pit
             dodongo_area.connect(pre_lava_ledge, r.boots_bonk) # bonk over 1 block of lava, no buffer
             dodongo_area.connect(after_f_stairs_chest10, AND(r.miniboss_requirements["DODONGO"], r.boots_bonk, r.lava_swim), one_way=True) # kill dodongos and lava swim to get through tal tal connector to chest

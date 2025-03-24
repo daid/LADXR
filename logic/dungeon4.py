@@ -108,10 +108,8 @@ class Dungeon4:
             #TODO: before_b_passage.connect(after_b_passage, FLIPPERS) # Before Boss Passageway <--> Before Boss Door
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            entrance.connect(north_crossroads, r.tight_jump) # jump across the corners
-            entrance.connect(south_crossroads, r.tight_jump) # jump across the corners
-            north_crossroads.connect(east_crossroads, r.tight_jump) # jump across the corners
-            south_crossroads.connect(east_crossroads, r.tight_jump) # jump across the corners
+            for location in (entrance, east_crossroads):
+                location.connect((north_crossroads, south_crossroads), r.tight_jump) # jump diagonally over crossroads
             east_crossroads.connect(east_crossroads_chest6, r.tight_jump) # jump around the bombable block
             south_crossroads.connect(south_crossroads_chest7, r.tight_jump) # With a tight jump feather is enough to cross the puddle without flippers
             before_miniboss.connect(sidescroller_drop1, AND(r.enemy_requirements["ZOL"], BOOMERANG)) # fall off the bridge and boomerang downwards before hitting the water to grab the item
@@ -137,13 +135,15 @@ class Dungeon4:
             #TODO: outside_b_passage_shallows.connect(before_b_passage, r.super_jump_feather) # [logic prep for staircase rando]
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(after_a_passage, AND(wall_clip, r.super_bump), one_way=True) # wall clip and super bump off tektite to land on boss key ledge
-            entrance.connect(east_crossroads, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into block, bonk/jump across gap, and hookshot spam to get across
-            entrance.connect(north_crossroads, AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into block, bonk/jump up, and hookshot spam to get across (easier with Piece of Power)
-            entrance.connect(south_crossroads, OR(r.pit_buffer_boots, AND(r.pit_buffer, r.hookshot_spam_pit))) # #TODO: change to AND(r.pit_buffer, OR(r.pit_buffer_boots, r.hookshot_spam_pit))
-            #TODO: north_crossroads.connect(entrance, AND(r.pit_buffer, r.hookshot_spam_pit)) #logic prep for staircase rando
+            #TODO: entrance.connect(after_a_passage, AND(r.wall_clip, r.super_bump), one_way=True) # wall clip and super bump off tektite to land on boss key ledge
+            north_crossroads.connect((entrance, east_crossroads), AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # pit buffer into block, bonk/jump across gap, and hookshot spam to get across (easier with Piece of Power)
+            #TODO: north_crossroads.connect((entrance, east_crossroads), AND(r.pit_buffer, r.hookshot_spam_pit, one_way=True) #logic prep for staircase rando
+            #TODO: north_crossroads.connect(south_crossroads, r.pit_buffer, one_way=True) #logic prep for staircase rando
+            entrance.connect(south_crossroads, OR(r.pit_buffer_boots, AND(r.pit_buffer, r.hookshot_spam_pit))) # #TODO: REPLACE with for loop below
+            #TODO: for location in (entrance, east_crossroads):
+                #TODO: location.connect(south_crossroads, AND(r.pit_buffer, OR(r.pit_buffer_boots, r.hookshot_spam_pit))) # boots buffer or hookshot spam to center of pit and buffer down
             #TODO: north_crossroads.connect(east_crossroads, AND(r.pit_buffer, r.hookshot_spam_pit)) #logic prep for staircase rando
-            south_crossroads.connect(east_crossroads, AND(OR(BOMB, BOW), r.hookshot_clip_block), one_way=True) # split zols for more entities, and clip through the block against the right wall
+            south_crossroads.connect((entrance, east_crossroads), AND(OR(BOMB, BOW), r.hookshot_clip_block), one_way=True) # split zols for more entities, and hookshot clip through the blocks to west or east of crossroads
             east_crossroads.connect(east_crossroads_chest5, AND(r.sideways_block_push, OR(r.jesus_buffer, r.jesus_jump))) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
             west_statue_room.connect(north_statue_room, r.boots_bonk) # two boots bonks to cross the water gaps
             south_crossroads.connect(south_crossroads_chest7, AND(r.pit_buffer_boots, HOOKSHOT)) # boots bonk across the water bottom wall to the bottom left corner, then hookshot up #TODO: remove boots requirement, hookshot only method found
