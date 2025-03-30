@@ -64,14 +64,13 @@ class Dungeon3:
         boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
         instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
 
-        # connections
-
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             north_4way.connect(north_4way_owl1, STONE_BEAK3, back=False)
             after_b_stairs.connect(after_b_stairs_owl2, STONE_BEAK3, back=False)
             fenced_walkway.connect(fenced_walkway_owl3, STONE_BEAK3, back=False)
-
+            
+        # connections
         # entrance
         entrance.connect(entrance_chest1, PEGASUS_BOOTS, back=False)
         entrance.connect(after_pot_door, POWER_BRACELET, back=None)
@@ -107,11 +106,11 @@ class Dungeon3:
         two_zol_stalfos_room.connect(fenced_walkway, back=False)
         after_b_stairs.connect(fenced_walkway, back=False) #TODO: REMOVE this patch which makes logic match upstream
         fenced_walkway.connect(fenced_walkway_chest7, AND("D3_ZOLS_CLEAR", "D3_STALFOS_CLEAR"), back=False)
-        #TODO: fenced_walkway.connect(two_zol_stalfos_room_clear, OR(COUNT(SWORD, 2), BOW, BOMB, BOOMERANG)), back=False)
         # main north
         after_b_stairs.connect(timer_bombite_room, back=False)
         timer_bombite_room.connect(three_zol_stalfos_room, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["TIMER_BOMBITE"]), back=False)
         three_zol_stalfos_room.connect(three_zol_stalfos_room_chest8, back=False)
+        fenced_walkway.connect(fenced_walkway_bombwall, BOMB, back=False) #NOTE: Must put fake item in normal logic else causes a generation error with item count
         three_zol_stalfos_room.connect(three_bombite_room, OR(BOMB, "D3_BOMBWALL"))
         three_bombite_room.connect(three_bombite_room_drop_6, r.enemy_requirements["BOUNCING_BOMBITE"], back=False)
         # main east

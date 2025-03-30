@@ -90,7 +90,7 @@ class Dungeon8:
         boss_room_drop5 = Location(dungeon=8).add(HeartContainer(0x234)) # heart container
         instrument = Location("D8 Instrument Room", dungeon=8).add(Instrument(0x230)) # instrument
 
-        # tal tal
+        # back exits
         taltal_passage.connect((before_f_stairs, after_f_stairs))
         if back_entrance_heartpiece is not None:
             taltal_chest = Location().add(HeartPiece(back_entrance_heartpiece))

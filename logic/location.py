@@ -20,12 +20,10 @@ class Location:
             self.items.append(ii)
         return self
 
-    def connect(self, others, req="UNSET", *, back="UNSET", one_way=False):
-        assert one_way == False or back == "UNSET", "one_way is for backwards compatibility and should not be used with back"
-
+    def connect(self, others, req="UNSET", *, back="UNSET"):
         if not isinstance(others, Iterable):
             others = [others]
-        
+
         # Assume there's no forward requirement if nothing is specified
         if req == "UNSET":
             req = None
@@ -36,9 +34,7 @@ class Location:
 
         for other in others:
             self.singleConnect(other, req)
-
-            if not one_way:
-                other.singleConnect(self, back)
+            other.singleConnect(self, back)
 
         return self
     

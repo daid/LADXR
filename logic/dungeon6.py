@@ -56,7 +56,7 @@ class Dungeon6:
         before_spark_pot_maze = Location("D6 Before Pot Maze", dungeon=6)
         after_spark_pot_maze = Location("D6 After Pot Maze", dungeon=6)
         top_right_room = Location("D6 NE Horsehead Room", dungeon=6)
-        top_right_room_switch = Location("D6 NE Horsehead Switch", dungeon=6).add(KeyLocation("SWITCH6F"))
+        top_right_room_switch = Location("D6 NE Horsehead Switch", dungeon=6).add(KeyLocation("SWITCH6E"))
         top_right_room_chest10 = Location(dungeon=6).add(DungeonChest(0x1B1)) # 50 rupees
         dodongo_room = Location("D6 Dodongo Room", dungeon=6)
         waterway_east_ledge = Location("D6 Outside Dodongo Room", dungeon=6)
@@ -64,7 +64,7 @@ class Dungeon6:
         waterway_west_ledge = Location("D6 Star Ledge", dungeon=6)
         pot_area = Location("D6 Pot Owl Area", dungeon=6)
         pot_area_owl3 = Location(dungeon=6).add(OwlStatue(0x1B6)) # hint
-        pot_area_switch = Location("D6 Pot Owl Area Switch", dungeon=6).add(KeyLocation("SWITCH6E"))
+        pot_area_switch = Location("D6 Pot Owl Area Switch", dungeon=6).add(KeyLocation("SWITCH6F"))
         pot_area_chest11 = Location(dungeon=6).add(DungeonChest(0x1B6)) # nightmare key
         vacuum_room = Location("D6 Vacuum Room", dungeon=6)
         laser_turret_room = Location("D6 Laser Turret Room", dungeon=6)
@@ -73,6 +73,7 @@ class Dungeon6:
         boss_room_drop3 = Location(dungeon=6).add(HeartContainer(0x1BC)) # heart container
         instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
     
+        # back exit
         if raft_game_chest:
             rapids_island_chest11 = Location().add(Chest(0x06C)) # seashell
             rapids_island.connect(rapids_island_chest11, back=False) #TODO: remove POWER_BRACELET requirement as staircase is accessible by default, connection in reverse is already  handled in connections
@@ -121,7 +122,7 @@ class Dungeon6:
         star_area.connect(star_area_drop1, OR(r.enemy_requirements["WIZROBE"], BOW), back=False) # add bow since it's just two wizrobes (8 arrows)
         star_area.connect(top_left_room, COUNT(POWER_BRACELET, 2), back=POWER_BRACELET) # solve horseheads and then jump off return ledge to skip L2 bracelet requirement
         top_left_room.connect(top_left_room_chest7, back=False)
-        top_left_room.connect(top_left_room_switch, r.hit_switch)
+        top_left_room.connect(top_left_room_switch, r.hit_switch, back=False)
         top_left_room.connect(top_left_exit)
         top_left_exit.connect(rapids_island)
         # miniboss

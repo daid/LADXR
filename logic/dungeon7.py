@@ -11,15 +11,15 @@ class Dungeon7:
         entrance_drop1 = Location(dungeon=7).add(DroppedKey(0x210)) # small key
         before_a_stairs = Location("D7 Key Locked Staircase", dungeon=7)
         after_a_stairs = Location("D7 Ball Room", dungeon=7)
-        after_a_stairs_switch_range = Location("D7 Pit Switch (Range)", dungeon=7).add(KeyLocation("SWITCH7B_RANGE"))
         after_a_stairs_switch = Location("D7 Pit Switch", dungeon=7).add(KeyLocation("SWITCH7B"))
+        #TODO: after_a_stairs_switch_range = Location("D7 Pit Switch (Range)", dungeon=7).add(KeyLocation("SWITCH7B_RANGE")) NOTE: enable this when new switch logic is uncommented
         after_a_stairs_owl1 = Location(dungeon=7).add(OwlStatue(0x216))
         ball_access = Location("D7 Ball Access", dungeon=7).add(KeyLocation("D7_BALL"))
         before_b_stairs = Location("D7 1st Floor North Area", dungeon=7)
         before_b_stairs_owl2 = Location(dungeon=7).add(OwlStatue(0x204))
         before_b_stairs_chest1 = Location(dungeon=7).add(DungeonChest(0x209)) # stone beak
-        before_b_stairs_switch = Location("D7 1st Floor Switch").add(KeyLocation("SWITCH7A"))
-        before_b_stairs_switch_range = Location("D7 1st Floor Switch (From Pegs)").add(KeyLocation("SWITCH7A_RANGE"))
+        before_b_stairs_switch = Location("D7 1st Floor Switch", dungeon=7).add(KeyLocation("SWITCH7A"))
+        before_b_stairs_switch_range = Location("D7 1st Floor Switch (From Pegs)", dungeon=7).add(KeyLocation("SWITCH7A_RANGE"))
         after_b_stairs = Location("D7 Upstairs Locked Staircase", dungeon=7)
         before_c_stairs = Location("D7 1st Floor NW Staircase", dungeon=7)
         after_c_stairs = Location("D7 North Three-of-a-Kind", dungeon=7)
@@ -36,9 +36,9 @@ class Dungeon7:
         ne_pillar_chest5 = Location(dungeon=7).add(DungeonChest(0x212)) # map chest
         se_pillar = Location("D7 SE Pillar Area", dungeon=7)
         se_pillar_fall = Location("D7 SE Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
-        se_pillar_switch = Location("D7 Fenced Switch").add(KeyLocation("SWITCH7C"))
-        se_pillar_switch_midrange = Location("D7 Fenced Switch (From Below)", dungeon=7).add(KeyLocation("SWITCH7C_MIDRANGE"))
-        se_pillar_switch_range = Location("D7 Fenced Switch (From Pegs)").add(KeyLocation("SWITCH7C_RANGE"))
+        se_pillar_switch = Location("D7 Fenced Switch", dungeon=7).add(KeyLocation("SWITCH7C"))
+        #TODO: se_pillar_switch_midrange = Location("D7 Fenced Switch (From Below)", dungeon=7).add(KeyLocation("SWITCH7C_MIDRANGE")) NOTE: enable this when new switch logic is uncommented
+        se_pillar_switch_range = Location("D7 Fenced Switch (From Pegs)", dungeon=7).add(KeyLocation("SWITCH7C_RANGE"))
         nw_pillar = Location("D7 NW Pillar Area", dungeon=7)
         nw_pillar_fall = Location("D7 NW Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
         sw_pillar = Location("D7 SW Pillar Area", dungeon=7)
@@ -60,7 +60,7 @@ class Dungeon7:
         miniboss = Location("D7 Miniboss Room", dungeon=7)
         after_miniboss = Location("D7 After Miniboss Room", dungeon=7)
         after_miniboss_chest8 = Location(dungeon=7).add(DungeonChest(0x224)) # nightmare key
-        after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D"))
+        #TODO: after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D")) NOTE: enable this if switch is found to be logical
         boss_backdoor = Location("D7 Boss Backdoor Room", dungeon=7)
         conveyor_room = Location("D7 Conveyor Horseheads Room", dungeon=7)
         after_boss_door = Location("D7 After Boss Door", dungeon=7)
@@ -84,8 +84,10 @@ class Dungeon7:
         before_b_stairs.connect(before_b_stairs_switch, r.hit_switch, back=False)
         before_b_stairs.connect(before_b_stairs_switch_range, OR(OR(BOOMERANG, BOW, BOMB, HOOKSHOT, MAGIC_ROD)), back=False)
         before_b_stairs.connect(before_c_stairs, AND(FEATHER, "SWITCH7A_RANGE"))
-        before_b_stairs.connect(before_d_stairs, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"), back=OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"))
-        before_b_stairs.connect(entrance, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"), back=False)
+        before_b_stairs.connect(before_d_stairs, OR("SWITCH7A", "SWITCH7C", "SWITCH7C_RANGE"), back=OR("SWITCH7A", "SWITCH7C", "SWITCH7C_RANGE")) #TODO: replace with line below when enable SWITCH7B_RANGE
+        #TODO: before_b_stairs.connect(before_d_stairs, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"), back=OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"))
+        before_b_stairs.connect(entrance, OR("SWITCH7A", "SWITCH7C", "SWITCH7C_RANGE"), back=False) #TODO: replace with line below when enable SWITCH7B_RANGE
+        #TODO: before_b_stairs.connect(entrance, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"), back=False)
         west_ledge.connect((entrance, before_b_stairs, west_ledge_chest4), back=False)
         east_ledge.connect((entrance, before_a_stairs, before_a_stairs, east_ledge_chest3), back=False)
         # connect floor 1 & 2
@@ -103,18 +105,23 @@ class Dungeon7:
         pegs_before_ball.connect(east_ledge, back=False) # pit
         # floor 2 north
         after_a_stairs.connect(ball_access, POWER_BRACELET)
-        after_a_stairs.connect((pegs_before_ball, after_d_stairs), "SWITCH7B_RANGE", back=False) # only casual logic due to diagonal boomerang throw
+        #TODO: after_a_stairs.connect((pegs_before_ball, after_d_stairs), "SWITCH7B_RANGE", back=False) # enable when casual logic statement is uncommented
         after_a_stairs.connect(ne_pillar) #TODO: REMOVE in favor of casual logic for pulling lever
-        after_b_stairs.connect(ne_pillar, "SWITCH7A", back=OR("SWITCH7B_RANGE", "SWITCH7C"))
+        after_b_stairs.connect(ne_pillar, "SWITCH7A", back="SWITCH7C") #TODO: replace with line below when enable SWITCH7B_RANGE
+        #TODO: after_b_stairs.connect(ne_pillar, "SWITCH7A", back=OR("SWITCH7B_RANGE", "SWITCH7C"))
         ne_pillar.connect(ne_pillar_chest5, POWER_BRACELET, back=False)
         ne_pillar.connect(ne_pillar_fall, "D7_BALL", back=False)
         ne_pillar.connect(se_pillar, FEATHER)
-        ne_pillar.connect(spike_corridor, OR("SWITCH7A", "SWITCH7B_RANGE"), back=OR("SWITCH7C", "SWITCH7C_MIDRANGE"))
+        ne_pillar.connect(spike_corridor, "SWITCH7A", back="SWITCH7C") #TODO: replace with line below when enable SWITCH7B_RANGE or SWITCH7C_MIDRANGE
+        #TODO: ne_pillar.connect(spike_corridor, OR("SWITCH7A", "SWITCH7B_RANGE"), back=OR("SWITCH7C", "SWITCH7C_MIDRANGE"))
         se_pillar.connect(se_pillar_fall, "D7_BALL", back=False)
         se_pillar.connect(se_pillar_switch, r.hit_switch) #NOTE: add bracelet method if rom patched
-        se_pillar.connect(spike_corridor, OR(FEATHER, "SWITCH7C"), back=OR("SWITCH7A", "SWITCH7B_RANGE", FEATHER))
+        se_pillar.connect(spike_corridor, "SWITCH7C", back=OR("SWITCH7A", FEATHER)) #TODO: replace with line below when enable SWITCH7B_RANGE
+        #TODO: se_pillar.connect(spike_corridor, OR(FEATHER, "SWITCH7C"), back=OR("SWITCH7A", "SWITCH7B_RANGE", FEATHER))
+        se_pillar.connect(before_c_stairs, FEATHER, back=False)
         spike_corridor.connect(after_c_stairs, FEATHER) # jump over spikes
-        spike_corridor.connect(before_c_stairs, OR("SWITCH7A", "SWITCH7B_RANGE"), back=False)
+        spike_corridor.connect(before_c_stairs, "SWITCH7A", back=False) #TODO: replace with line below when enable SWITCH7B_RANGE
+        #TODO: spike_corridor.connect(before_c_stairs, OR("SWITCH7A", "SWITCH7B_RANGE"), back=False)
         after_c_stairs.connect(after_c_stairs_chest2, r.enemy_requirements["THREE_OF_A_KIND"], back=False) #NOTE: add bracelet method if rom patched
         nw_pillar.connect(spike_corridor, FEATHER, back=False)
         nw_pillar.connect(nw_pillar_fall, "D7_BALL", back=False)
@@ -133,9 +140,9 @@ class Dungeon7:
         # floor 2 center
         bombwall_corridor.connect((bombwall_pit, nw_pillar), BOMB)
         bombwall_corridor.connect(after_d_stairs, back=False) # push blocks from inside corridor to get to hinox area
-        bombwall_pit.connect(sw_pillar, AND(HOOKSHOT, "D7_TOAK_CLEAR"), back=False) #TODO: fake item to track the chest has spawned via toak complete NOTE: add bracelet method if rom patched
+        bombwall_pit.connect(sw_pillar, AND(HOOKSHOT, "D7_TOAK_CLEAR"), back=False) #NOTE: add bracelet method if rom patched
         sw_pillar.connect(sw_pillar_fall, "D7_BALL", back=False)
-        sw_pillar.connect(sw_pillar_chest6, "D7_TOAK_CLEAR", back=False) #TODO: find out which items can really solve toak from north part of room NOTE: add bracelet method if rom patched
+        sw_pillar.connect(sw_pillar_chest6, "D7_TOAK_CLEAR", back=False) #NOTE: add bracelet method if rom patched
         # connect floor 2 & 3
         after_d_stairs.connect(before_e_stairs)
         before_e_stairs.connect(after_e_stairs)
@@ -146,7 +153,7 @@ class Dungeon7:
         miniboss.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[6]], back=False) # miniboss portal
         miniboss.connect((floor3_pre_cutscene, after_miniboss), r.miniboss_requirements[world_setup.miniboss_mapping[6]], back=None)
         after_miniboss.connect(after_miniboss_chest8, back=False)
-        #TODO: after_miniboss.connect(after_miniboss_switch, r.hit_switch, back=False) NOTE: enable this is switch is foud to be logical
+        #TODO: after_miniboss.connect(after_miniboss_switch, r.hit_switch, back=False) NOTE: enable this if switch is found to be logical
         #TODO: floor3_pre_cutscene.connect(boss_backdoor, FOUND(KEY7, 3))
         #TODO: conveyor_room.connect(after_boss_door_chest9, POWER_BRACELET, back=False)
         conveyor_room.connect((before_b_stairs, before_c_stairs), back=False) # fall down near boss door to floor 1
@@ -203,7 +210,7 @@ class Dungeon7:
             #TODO: spike_corridor.connect(ne_pillar, r.boots_bonk_pit, back=OR(AND(r.boots_superhop, r.sword_poke), AND(r.pit_buffer_itemless, r.super_jump_feather))) # boots bonk off pegs to se pillar reverse: pit buffer and super jump off south wall to land on pegs
             #TODO: after_d_stairs.connect(after_d_stairs_drop2, "D7_BALL", back=False) # kill hinox with ball (don't drop it!)
             after_d_stairs.connect(sw_pillar, r.super_jump_boots, back=False) # boots jump into wall by puzzle buddies to super jump into sw pillar area
-            sw_pillar_toak.connect((bombwall_pit, sw_pillar), False, back=AND(r.pit_buffer_boots, BOMB)) # push blocks into puzzle buddies to solve three-of-a-kind NOTE: also can be solved with just pushing blocks into puzzle buddies
+            #TODO: sw_pillar_toak.connect((bombwall_pit, sw_pillar), False, back=AND(r.pit_buffer_boots, BOMB)) # pit buffer into rail and defeat puzzle buddies with bomb NOTE: probably some other items too
             #TODO: after_d_stairs.connect(se_pillar, r.boots_superhop, back=False) #[logic prep for stairs shuffle]
             #TODO: after_d_stairs.connect(se_pillar_switch_midrange, OR(AND(PEGASUS_BOOTS, SWORD), AND(r.super_jump_feather, HOOKSHOT),COUNT(SWORD, 2)), back=False) # 1) boots bonk and slash 2) superjump & 6 pause buffers to land on rail, hookshot the switch, and walk back off rail 3) L2 sword beam
             #TODO: after_d_stairs.connect(keylock_ledge, AND(r.boots_superhop, r.shield_bump), back=False) # running super bump off antifairy to get on ledge without key
@@ -213,8 +220,6 @@ class Dungeon7:
             #TODO: floor3_pre_cutscene.connect((conveyor_area, after_boss_door), OR(r.super_bump, r.super_poke), back=False)
             #TODO: boss_backdoor.connect((conveyor_area, after_boss_door), OR(r.shaq_jump, r.boots_superhop), back=False) # all forms of sueprjumps and rebound off peahat onto pegs
             floor3_post_cutscene.connect(pre_boss_ledge, r.boots_superhop, back=False) # boots superhop on top of goomba to extend superhop to boss door plateau
-
-        #TODO: consider fake "D7_TOAK" item for variety of complex kill methods
         
         self.entrance = entrance
         self.final_room = instrument
