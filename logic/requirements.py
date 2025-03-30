@@ -258,6 +258,7 @@ class RequirementsSettings:
         self.attack = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG)
         self.attack_hookshot = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # hinox, shrouded stalfos
         self.hit_switch = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # hit switches in dungeons
+        self.hit_switch_color = OR(SWORD, SHIELD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # hit switches in color dungeon
         self.attack_hookshot_powder = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT, MAGIC_POWDER) # zols, keese, moldorm
         self.attack_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # ?
         self.attack_hookshot_no_bomb = OR(SWORD, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT) # vire
@@ -277,7 +278,8 @@ class RequirementsSettings:
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
         self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # any jump that spans 2 pit/water tiles cardinally | also applies to jumps which have special requirements like abusing diagonal speed or wall clips
-        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies when used in combination with superjumps
+        self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies/objects when used in combination with superjumps
+        self.sword_poke = SHIELD # use sword to knock back enemies or knock off enemies/objects when used in combination with superjumps
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
@@ -289,7 +291,6 @@ class RequirementsSettings:
         self.ledge_super_bump = SHIELD # fall off ledge and rebound off entity with shield (can result in no-clip backflip if left or right facing and dpad down or up is held first)
         self.ledge_super_poke = SWORD # fall off ledge and rebound off entity with sword
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
-        self.boots_superbump = AND(PEGASUS_BOOTS, self.running_turn, self.shield_bump)
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
@@ -305,7 +306,7 @@ class RequirementsSettings:
         self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to jump while buffered down into the block under a pit
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
         self.boots_bonk = PEGASUS_BOOTS # bonk against walls to jump small gaps (not starting inside of pit) (also easy 2d bonks)
-        self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps
+        self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps NOTE: it's used identical to boots_bonk, could remove this?
         self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
@@ -317,6 +318,7 @@ class RequirementsSettings:
         self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
         self.hookshot_over_pit = HOOKSHOT # use hookshot while over a pit to reach certain areas (see d3 vacuum room, d5 north of crossroads for example)
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
+        self.hookshot_wrap = HOOKSHOT # hookshotting when link's feet touch water /lava results in bazarre behavior including wrong respawns and screen transitions
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
@@ -447,7 +449,7 @@ class RequirementsSettings:
             "TRACTOR_DEVICE":          SWORD,                                              # does not count as enemy in kill all rooms
             "TRACTOR_DEVICE_REVERSE":  SWORD,                                              # does not count as enemy in kill all rooms
             "ZOMBIE":                  self.attack_hookshot_powder,
-            
+
         }
 
         # Adjust for options
