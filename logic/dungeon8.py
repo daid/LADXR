@@ -61,7 +61,7 @@ class Dungeon8:
         before_d_passage = Location("D8 Dark Room Staircase", dungeon=8)
         after_d_passage = Location("D8 Staircase by Blaino", dungeon=8)
         miniboss_room = Location("D8 Blaino Room", dungeon=8)
-        miniboss_cubby = Location("D8 Post Blaino Before Pegs", dungeon=8)
+        miniboss_cubby = Location("D8 Before Pegs After Blaino", dungeon=8)
         rod_ledge = Location("D8 Blaino Reward Ledge", dungeon=8)
         rod_ledge_chest8 = Location(dungeon=8).add(DungeonChest(0x237)) # magic rod
         dodongo_area = Location("D8 Dodongo Area", dungeon=8)
@@ -77,7 +77,7 @@ class Dungeon8:
         before_f_stairs = Location("D8 Northwest Area", dungeon=8)
         taltal_passage = Location("D8 Tal Tal Connector")
         before_f_stairs_owl3 = Location(dungeon=8).add(OwlStatue(0x241)) # hint
-        miniboss4_cubby = Location("D8 Cubby before NW Miniboss", dungeon=8)
+        miniboss4_cubby = Location("D8 Cubby Before Cueball", dungeon=8)
         before_f_stairs_chest11 = Location(dungeon=8).add(DungeonChest(0x240)) # small key
         before_f_stairs_drop4 = Location(dungeon=8).add(DroppedKey(0x241)) # small key
         ledge_west_boss = Location("D8 Ledge by NW Exit", dungeon=8)
@@ -218,7 +218,7 @@ class Dungeon8:
             #center
             before_e_passage.connect(peahat_area, r.sideways_block_push, back=False) # sideways block push in peahat room to get past keyblock
             before_e_passage.connect(bombwall_corridor, r.super_jump_feather, back=False)
-            pre_center_zamboni.connect((bombwall_corridor, before_e_passage, pre_center_keyblock, loop_ledge, before_c_passage, before_b_passage), False, back=r.jesus_jump) # allows jesus jump to any connection since zamboni ride is itemless
+            pre_center_zamboni.connect((before_e_passage, pre_center_keyblock, loop_ledge, before_c_passage, before_b_passage), False, back=r.jesus_jump) # allows jesus jump to any connection since zamboni ride is itemless
             peahat_area.connect(before_f_stairs, r.jesus_jump, back=False) # use jesus jump in refill room left of peahats to clip bottom wall and push bottom block left, to get a place to super jump
             before_c_passage.connect(loop_ledge, r.super_jump_feather, back=False) # wall clip on stairs, superjump over blocks
             loop_ledge.connect((heart_vire, pre_center_keyblock), r.super_jump_feather, back=False) # wall clip on loop ledge or ledge left of keyblock, and superjump over blocks
@@ -250,7 +250,7 @@ class Dungeon8:
             #center
             before_f_stairs.connect(peahat_area, AND(r.boots_bonk, r.jesus_buffer), back=False) # from refill room push block and boots bonk into jesus buffer then bonk again
             peahat_area.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim), back=False) # bonk to set up lava swim on the screen transition
-            pre_center_zamboni.connect((bombwall_corridor, before_e_passage, pre_center_keyblock, loop_ledge, before_c_passage, before_b_passage), False, back=r.jesus_buffer) # allows jesus buffer to any connection since zamboni ride is itemless
+            pre_center_zamboni.connect((before_e_passage, pre_center_keyblock, loop_ledge, before_c_passage, before_b_passage), False, back=r.jesus_buffer) # allows jesus buffer to any connection since zamboni ride is itemless
             #TODO: make connections for starting a jesus buffer with hookshot by pausing on the splash frame, also you can use hookshot to stop drowning in water or lava
             before_b_passage.connect(loop_ledge, HOOKSHOT, back=False) # while standing on staircase, hookshot up, then hookshot right on the frame that you splash the lava - pausing on the splash frame to buffer seems easier
             loop_ledge.connect(heart_vire, r.hookshot_clip_block, back=False) # get in block walk-off-ledge and pause buffering, then walk-jump into block. hoookshot clip off vire to get out and skip key requirement
@@ -270,7 +270,7 @@ class Dungeon8:
             slime_corridor.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim)) # boots bonk and lava swim around small key door near boss
             #northwest
             before_b_passage.connect(after_b_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk in 2d to use magic rod on upper ice blocks
-            #TODO: before_f_stairs.connect((miniboss4_cubby, ledge_west_boss), r.super_bump, back=False) # super bump while wall clipped on stairs to tal tal
+            #TODO: before_f_stairs.connect(ledge_west_boss, r.super_bump, back=False) # super bump while wall clipped on stairs to tal tal
             miniboss4_room.connect(nw_zamboni_room, AND(r.boots_bonk, r.jesus_buffer, r.miniboss_requirements["CUE_BALL"]), back=False) # use a boots bonk to cross the lava in cueball room
             #boss
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk through 2d ice section

@@ -66,7 +66,7 @@ class Dungeon2:
         pitbeetle_room.connect(pitbeetle_room_chest2, OR(FEATHER, HOOKSHOT), back=False)
         entrance.connect(stalfos_room, r.fire, back=None)
         stalfos_room.connect(stalfos_room_drop1, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["STALFOS_AGGRESSIVE"]), back=False)
-        stalfos_room.connect(mimic_room, AND(FOUND(KEY2, 5)), back=False)
+        stalfos_room.connect(mimic_room, FOUND(KEY2, 5), back=False)
         stalfos_room.connect(statue_switch_room, back=r.hit_switch)
         mimic_room.connect(mimic_room_chest3, r.enemy_requirements["MASKED_MIMIC_GORIYA"], back=False)
         locked_switch_room.connect((statue_switch_room, locked_switch_room_chest4), r.hit_switch)
