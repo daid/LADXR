@@ -78,8 +78,9 @@ class Dungeon2:
         pushblock_room.connect(before_a_passage)
         # main
         before_a_passage.connect(after_a_passage, FEATHER)
+        after_a_passage.connect(miniboss_room, back=False)
         miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[1]], back=False) # miniboss portal
-        miniboss_room.connect((after_a_passage, after_miniboss), r.miniboss_requirements[world_setup.miniboss_mapping[1]], back=None)
+        miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[1]], back=None)
         between_pits.connect((after_miniboss, vacuum_room), FEATHER)
         before_b_passage.connect((after_miniboss, between_pits), POWER_BRACELET)
         before_b_passage.connect(after_b_passage, FEATHER)
@@ -101,11 +102,11 @@ class Dungeon2:
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[1]], back=False)
 
         if options.logic == "casual":
-            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # kill mimics from east side of barricade and travel back to get key
+            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # kill mimics from east side of barricade and travel back to get key #TODO: remove from if statement once another connection is enabled
             #TODO: pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"]), back=None)
         else:
             statue_switch_room.connect(mimic_beetle_room_clear, r.rear_attack, back=False) # defeat mimics from where key drops
-            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # require any method of mimic defeat to logically include key drop
+            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # require any method of mimic defeat to logically include key drop #TODO: remove from if statement once another connection is enabled
             #TODO: pot_pol_room.connect(before_c_passage, OR(POWER_BRACELET, AND(r.enemy_requirements["POLS_VOICE"], r.enemy_requirements["ZOL"])), back=None)
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':

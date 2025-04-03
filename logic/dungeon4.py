@@ -96,7 +96,6 @@ class Dungeon4:
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS)
         outside_b_passage_keyblock.connect(before_b_passage, FOUND(KEY4, 5))
         # boss
-        before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) #TODO: REMOVE and let casual logic statement take care of it
         after_b_passage.connect(pre_boss, NIGHTMARE_KEY4) #NOTE: in stairs shuffle if you didn't have nightmare key you could wall clip in the doorway and get out without nightmare key - undecided
         pre_boss.connect(boss_room) # stairs to boss
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[3]], back=False)
@@ -104,11 +103,11 @@ class Dungeon4:
 
         if options.logic == "casual":
             #TODO: after_miniboss.connect((miniboss_room, flippers_room), POWER_BRACELET)
-            before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) # intended method is to have a weapon here, but you can just swim through damageless
+            before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) #TODO: CHANGE to AND(r.enemy_requirements["CHEEP_CHEEP_HORIZONTAL"], r.enemy_requirements["CHEEP_CHEEP_VERTICAL"])
 
         else:
             #TODO: after_miniboss.connect((miniboss_room, flippers_room))
-            before_b_passage.connect(after_b_passage, FLIPPERS)
+            before_b_passage.connect(after_b_passage, AND(r.attack_hookshot, FLIPPERS)) #TODO: REMOVE r.attack_hookshot under normal logic since you can just swim past
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             for location in (entrance, east_crossroads):
@@ -128,7 +127,6 @@ class Dungeon4:
             #TODO: entrance.connect(west_statue_room, r.super_jump_feather, back=False) # super jump off the tile to the right of the staircase to below statues
             east_crossroads.connect(east_crossroads_chest5, AND(r.sideways_block_push, FLIPPERS), back=False) # sideways block push while swimming to skip bombs
             #TODO: before_miniboss.connect(north_crossroads, r.super_jump_feather, back=False) # push block down and superjump to the right
-            before_miniboss.connect(before_miniboss_zol_clear, r.throw_pot, back=False) #TODO: REMOVE and let hard logic of itemless zol kill take over
             before_miniboss.connect(before_miniboss_pit, r.super_jump_feather, back=False) # superjump into pits outside miniboss
             before_miniboss.connect(north_tile_puzzle, r.jesus_jump) # use jesus jump to transition over the water left of miniboss
             #TODO: before_miniboss.connect(outside_b_passage_shallows, r.jesus_jump) # jesus jump to shallow water to the right of the boss passage staircase

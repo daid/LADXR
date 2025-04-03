@@ -80,14 +80,15 @@ class Dungeon5:
         messy_room.connect(messy_room_chest3, r.enemy_requirements["IRON_MASK"], back=False)
         ms_1_room.connect((ms_1_victory, crystal_puddle_room, before_d_passage), r.enemy_requirements["MASTER_STALFOS"], back=False)
         before_d_passage.connect(ms_1_room, back=False)
+        # crossroads
         before_d_passage.connect(before_d_passage_chest5, back=False)
         before_d_passage.connect((north_crossroads, after_d_passage), FEATHER)
         before_d_passage.connect((west_crossroads, ms_2_room))
-        # crossroads
-        ms_2_room.connect(ms_2_victory, AND(r.enemy_requirements["MASTER_STALFOS"]), back=False)
+        west_crossroads.connect(west_crossroads_zol_clear, r.enemy_requirements["HIDING_ZOL"], back=False)
+        ms_2_room.connect(ms_2_victory, r.enemy_requirements["MASTER_STALFOS"], back=False)
         north_crossroads.connect(single_tile_ledge, HOOKSHOT, back=False)
         north_crossroads.connect(single_tile_ledge, FEATHER)
-        single_tile_ledge.connect(middle_ledge, OR(HOOKSHOT, AND(FEATHER, PEGASUS_BOOTS)))
+        single_tile_ledge.connect(middle_ledge, AND(FEATHER, PEGASUS_BOOTS))
         single_tile_ledge.connect(middle_ledge, HOOKSHOT, back=False)
         middle_ledge.connect(middle_ledge_chest6, back=False)
         middle_ledge.connect(east_ledge, HOOKSHOT)
@@ -98,14 +99,14 @@ class Dungeon5:
         north_crossroads.connect(ms_3_room, AND("D5_ZOL_CLEAR", r.enemy_requirements["HIDING_ZOL"]), back=False)
         ms_3_room.connect(ms_3_victory, AND("MS1_KILL", "MS2_KILL", r.enemy_requirements["MASTER_STALFOS"]), back=False)
         ms_3_room.connect(pot_locked_room, POWER_BRACELET, back=False)
+        pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), back=False) #TODO: remove kill enemy requirements, it's just here to make logic match stable
+        
         # ms4
-        before_a_passage.connect(after_a_passage, FEATHER, back=None)
+        before_a_passage.connect(after_a_passage, FEATHER)
         after_a_passage.connect(crystal_room, SWORD)
         crystal_room.connect(crystal_room_drop1, SWORD, back=False)
         crystal_room.connect(ms_4_room, back=False)
-        west_crossroads.connect(west_crossroads_zol_clear, r.enemy_requirements["HIDING_ZOL"], back=False)
         ms_4_room.connect(ms_4_room_drop2, AND("MS3_KILL", r.enemy_requirements["MASTER_STALFOS"]), back=False)
-        pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), back=False) #TODO: remove kill enemy requirements, it's just here to make logic match stable
         # boss key
         west_crossroads.connect(before_b_passage, FLIPPERS)
         before_b_passage.connect(after_b_passage, FLIPPERS)
@@ -120,7 +121,6 @@ class Dungeon5:
         before_c_passage.connect(before_miniboss, POWER_BRACELET, back=False)
         star_room.connect((after_d_passage, spark_hallway), r.enemy_requirements["STAR"], back=None)
         spark_hallway.connect(after_c_passage, back=False)
-        before_c_passage.connect(before_miniboss, POWER_BRACELET, back=False)
         before_c_passage.connect(after_c_passage, AND(HOOKSHOT, FEATHER), back=FEATHER)
         # boss
         after_c_passage.connect(after_boss_keyblock, FOUND(KEY5, 3))
@@ -132,6 +132,7 @@ class Dungeon5:
             statue_room.connect(after_blade_trap, FEATHER, back=False) # jump past the blade traps
             after_blade_trap.connect(pot_column_room, r.tight_jump, back=False) # tight jump south to get across huge pit
             #TODO: before_miniboss.connect(statue_room, HOOKSHOT) # open the bridge by hookshotting up while almost standing in pit
+            after_a_passage.connect(before_a_passage, r.boots_bonk, back=False) # only takes one boots bonk to get on last ladder
             before_d_passage.connect(after_d_passage, r.boots_bonk) # boots charge + bonk to cross 2d bridge #TODO: move to hell?
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk, HOOKSHOT), back=r.boots_bonk) # boots bonk in 2d section to skip feather #TODO: move to hell?
             spark_hallway.connect(after_boss_keyblock, r.tight_jump) # jump from bottom left to top right, skipping the keyblock

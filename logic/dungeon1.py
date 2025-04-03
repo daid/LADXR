@@ -70,7 +70,7 @@ class Dungeon1:
         after_a_passage.connect(after_a_passage_chest8, back=False)
         # boss
         east_room.connect(east_room_chest7, r.enemy_requirements["THREE_OF_A_KIND"], back=False)
-        east_room.connect(miniboss_room, FEATHER, back=r.miniboss_requirements[world_setup.miniboss_mapping[0]])
+        east_room.connect(miniboss_room, FEATHER, back=AND(FEATHER, r.miniboss_requirements[world_setup.miniboss_mapping[0]]))
         miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[0]], back=False) # miniboss portal
         miniboss_room.connect(fourblade_room, r.miniboss_requirements[world_setup.miniboss_mapping[0]], back=None)
         fourblade_room.connect(boss_room, NIGHTMARE_KEY1, back=r.boss_requirements[world_setup.boss_mapping[0]])
@@ -90,11 +90,11 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             main_room.connect(fenced_walkway, r.super_jump_feather) # super jump, works both ways, connected from main room since the wall clip must be maintained
-            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=False) # itemless pit buffer to miniboss door
+            east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=AND(r.pit_buffer_itemless, r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # itemless pit buffer to/from miniboss door
         
         if options.logic == 'hell':
             main_room.connect(pre_keyblock, r.damage_boost, back=False) # damage boost off the hardhat to cross the pit NOTE: boots bonk also
-            northwest_room.connect(after_a_passage, SWORD, back=None) # keep slashing the spiked beetles until 1 pixel at a time they move into the pit and fall
+            northwest_room.connect(before_a_passage, SWORD, back=None) # keep slashing the spiked beetles until 1 pixel at a time they move into the pit and fall
             
         self.entrance = entrance
         self.final_room = instrument

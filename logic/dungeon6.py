@@ -143,7 +143,7 @@ class Dungeon6:
         four_wizrobe_room.connect(blade_trap_room, r.enemy_requirements["WIZROBE"], back=r.enemy_requirements["STAR"])
         blade_trap_room.connect(after_blade_trap, AND(FEATHER, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")), back=None)
         after_blade_trap.connect((after_blade_trap_chest8, four_wizrobe_room), back=False)
-        four_wizrobe_room.connect(waterway,r.enemy_requirements["WIZROBE"], back=None)
+        four_wizrobe_room.connect(waterway, r.enemy_requirements["WIZROBE"], back=None) #NOTE: not possible to get through tektites itemless without taking damage - problem for OHKO mode
         waterway.connect(waterway_chest9, back=False)
         waterway.connect((hookshot_block, waterway_east_ledge), False, back=None) # jump down into waterway
         # northeast
@@ -161,8 +161,8 @@ class Dungeon6:
         pot_area.connect(pot_area_switch, r.hit_switch, back=False)
         # boss
         after_b_passage.connect(vacuum_room, back=False)
-        vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"])), back=False) #TODO: REMOVE, replace with statement below as well as casual logic
-        #TODO: laser_turret_room.connect(pre_boss_room, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"]), back=False)
+        vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"])), back=False) #TODO: REMOVE, replace with statement below as well as casual/hard logic
+        #TODO: laser_turret_room.connect(pre_boss_room, AND(FEATHER, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6, back=r.boss_requirements[world_setup.boss_mapping[5]])
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
 
@@ -182,6 +182,7 @@ class Dungeon6:
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, back=AND(r.boots_dash_2d, r.boots_bonk)) # boots dash over 1 block gaps in sidescroller
             after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the thwimps #TODO: consider removing damage_boost
             #TODO: before_spark_pot_maze.connect(after_spark_pot_maze, AND(POWER_BRACELET, r.damage_boost)) #TODO: consider removing damage_boost
+            #TODO: laser_turret_room.connect(pre_boss_room, AND(r.diagonal_walk, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
             
         if options.logic == 'glitched' or options.logic == 'hell':
             first_elephant_room.connect(second_elephant_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.bomb_trigger), back=False) # kill moldorm from hallway with spark, then bomb trigger through the doorway to break elephant statue

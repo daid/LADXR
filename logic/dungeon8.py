@@ -107,8 +107,8 @@ class Dungeon8:
         entrance.connect((lava_beamos_room, spark_pot_room), r.enemy_requirements["VIRE"], back=False)
         lava_beamos_room.connect(entrance, back=False)
         lava_beamos_room.connect(miniboss1_room, r.enemy_requirements["SNAKE"], back=None)
-        miniboss1_room.connect(sw_zamboni_area, r.miniboss_requirements["HINOX"], back=False)
-        sw_zamboni_area.connect((sw_zamboni_area_chest1, miniboss1_room, miniboss2_room), back=False)
+        miniboss1_room.connect(sw_zamboni_area, r.miniboss_requirements["HINOX"], back=None)
+        sw_zamboni_area.connect((sw_zamboni_area_chest1, miniboss2_room), back=False)
         sw_zamboni_area.connect(sw_zamboni_area_chest2, MAGIC_ROD, back=False)
         sw_zamboni_area.connect(spark_pit_room, OR(HOOKSHOT, FEATHER), back=False)
         spark_pit_room.connect(spark_pit_room_chest3, back=False)
@@ -209,7 +209,7 @@ class Dungeon8:
             before_f_stairs.connect(dark_west, AND(BOMB, FEATHER), back=False) # pixel perfect bomb placement
             before_f_stairs.connect(miniboss4_cubby, r.throw_pot, back=False) # throw 4 of the 5 pots to kill 2 ropes and vire
             before_f_stairs.connect(sw_vire_room_drop1, AND(r.miniboss_requirements["ROLLING_BONES"], r.enemy_requirements["VIRE"]), back=False) # allows bombs to kill vire but only from dropdown in unlit torch room #TODO: look for a better way to do this
-            after_f_stairs.connect(dodongo_clear, BOMB, back=False) # throw bombs from ledge to defeat dodongos
+            after_f_stairs.connect(dodongo_clear, BOMB, back=False) # throw bombs from ledge to defeat dodongos #TODO: maybe this method should be casual?
 
         if options.logic == 'glitched' or options.logic == 'hell':
             #south
