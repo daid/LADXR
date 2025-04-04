@@ -23,7 +23,6 @@ class Dungeon2:
         pit_peg_room = Location("D2 Pits & Pegs Room", dungeon=2)
         pit_peg_room_chest5 = Location(dungeon=2).add(DungeonChest(0x139)) # small key
         mimic_beetle_room = Location("D2 Mimic & Beetle Area", dungeon=2)
-        mimic_beetle_room_clear = Location("D2 Mimic Key Spawn", dungeon=2).add(KeyLocation("D2_MIMIC_CLEAR"))
         pushblock_room = Location("D2 Pushblock Room", dungeon=2)
         pushblock_room_owl2 = Location(dungeon=2).add(OwlStatue(0x12F)) # hint
         before_a_passage = Location("D2 Pushblock Room Passage Spawn", dungeon=2)
@@ -73,7 +72,7 @@ class Dungeon2:
         locked_switch_room.connect(pit_peg_room, r.hit_switch, back=None)
         pit_peg_room.connect(mimic_beetle_room, FEATHER)
         pit_peg_room_chest5.connect((mimic_beetle_room, pit_peg_room), False, back=AND(FEATHER, r.hit_switch))
-        mimic_beetle_room.connect(mimic_beetle_room_clear, r.enemy_requirements["MASKED_MIMIC_GORIYA"], back=False)
+        mimic_beetle_room.connect(statue_switch_room_drop2, AND(r.enemy_requirements["MASKED_MIMIC_GORIYA"], FEATHER, r.hit_switch), back=False)
         mimic_beetle_room.connect(pushblock_room, FOUND(KEY2, 3))
         pushblock_room.connect(before_a_passage)
         # main
@@ -101,12 +100,11 @@ class Dungeon2:
         pre_boss.connect(boss_room, NIGHTMARE_KEY2, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[1]], back=False)
 
-        if options.logic == "casual":
-            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # kill mimics from east side of barricade and travel back to get key #TODO: remove from if statement once another connection is enabled
+        
+        #TODO: if options.logic == "casual":
             #TODO: pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"]), back=None)
-        else:
-            statue_switch_room.connect(mimic_beetle_room_clear, r.rear_attack, back=False) # defeat mimics from where key drops
-            statue_switch_room.connect(statue_switch_room_drop2, "D2_MIMIC_CLEAR", back=False) # require any method of mimic defeat to logically include key drop #TODO: remove from if statement once another connection is enabled
+        if options.logic != "casual": #TODO: change to == after enabling casual logic
+            statue_switch_room.connect(statue_switch_room_drop2, r.rear_attack, back=False) # defeat mimics from where key drops
             #TODO: pot_pol_room.connect(before_c_passage, OR(POWER_BRACELET, AND(r.enemy_requirements["POLS_VOICE"], r.enemy_requirements["ZOL"])), back=None)
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
@@ -125,6 +123,7 @@ class Dungeon2:
         if options.logic == 'hell':    
             pitbeetle_room.connect(pitbeetle_room_chest2, r.boots_bonk_pit, back=False) # use boots bonk on torch to jump over the pits
             pit_peg_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
+            mimic_beetle_room.connect(statue_switch_room_drop2, AND(r.enemy_requirements["MASKED_MIMIC_GORIYA"], OR(r.boots_bonk_pit, r.hookshot_spam_pit), r.hit_switch), back=False)
             pit_peg_room_chest5.connect((pit_peg_room, mimic_beetle_room), False, back=OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             before_a_passage.connect(after_a_passage, r.boots_dash_2d) # TODO: Move to HARD logic - # use boots to dash over the spikes in the 2d section
             #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage [logic prep for stairs shuffle]

@@ -66,7 +66,6 @@ class Dungeon8:
         rod_ledge_chest8 = Location(dungeon=8).add(DungeonChest(0x237)) # magic rod
         dodongo_area = Location("D8 Dodongo Area", dungeon=8)
         dodongo_area_drop3 = Location(dungeon=8).add(DroppedKey(0x23E)) # small key
-        dodongo_clear = Location("D8 Dodongos Defeated", dungeon=8).add(KeyLocation("D8_DODONGO_CLEAR"))
         pre_lava_ledge = Location("D8 Ledge West of Dodongos", dungeon=8)
         lava_ledge = Location("D8 Lava Ledge", dungeon=8)
         lava_ledge_chest9 = Location(dungeon=8).add(DungeonChest(0x235)) # medicine
@@ -169,12 +168,11 @@ class Dungeon8:
         rod_ledge.connect(rod_ledge_chest8, back=False)
         # northeast
         dodongo_area.connect(dodongo_area_drop3, r.enemy_requirements["GIBDO"], back=False) # technically possible to use pits to kill gibdos but dumb
-        dodongo_area.connect(dodongo_clear, r.miniboss_requirements["DODONGO"], back=False)
         dodongo_area.connect(pre_lava_ledge, FEATHER)
         pre_lava_ledge.connect((slime_corridor, after_g_passage), back=False)
         pre_lava_ledge.connect(lava_ledge, HOOKSHOT, back=False)
         lava_ledge.connect((lava_ledge_chest9, after_g_passage), back=False)
-        after_f_stairs.connect(after_f_stairs_chest10, "D8_DODONGO_CLEAR", back=False)
+        after_f_stairs.connect(after_f_stairs_chest10, r.miniboss_requirements["DODONGO"], back=False)
         after_f_stairs.connect(dodongo_area, back=False)
         # northwest
         slime_corridor.connect(before_f_stairs, FOUND(KEY8, 4))
@@ -209,7 +207,6 @@ class Dungeon8:
             before_f_stairs.connect(dark_west, AND(BOMB, FEATHER), back=False) # pixel perfect bomb placement
             before_f_stairs.connect(miniboss4_cubby, r.throw_pot, back=False) # throw 4 of the 5 pots to kill 2 ropes and vire
             before_f_stairs.connect(sw_vire_room_drop1, AND(r.miniboss_requirements["ROLLING_BONES"], r.enemy_requirements["VIRE"]), back=False) # allows bombs to kill vire but only from dropdown in unlit torch room #TODO: look for a better way to do this
-            after_f_stairs.connect(dodongo_clear, BOMB, back=False) # throw bombs from ledge to defeat dodongos #TODO: maybe this method should be casual?
 
         if options.logic == 'glitched' or options.logic == 'hell':
             #south
@@ -231,7 +228,8 @@ class Dungeon8:
             slime_corridor.connect((before_f_stairs, after_g_passage), r.jesus_jump) # jesus jump through lava to reach northmost staircase or go around key door
             miniboss4_cubby.connect(after_b_passage, r.super_jump_feather) # superjump to get to cueball doorway
             lava_ledge.connect((after_g_passage, slime_corridor), False, back=AND(r.jesus_jump, r.super_jump_feather)) # jesus jump and buffer into bottom ledge to wall clip / super jump to reach chest
-            dodongo_area.connect(after_f_stairs, r.super_jump_feather, back=False) # wall clip and superjump to dojongo ledge
+            dodongo_area.connect(after_f_stairs, r.super_jump_feather, back=False) # wall clip and superjump to dodongo ledge
+            dodongo_area.connect(after_f_stairs_chest10, AND(r.miniboss_requirements["DODONGO"], r.super_jump_feather), back=False) # wall clip and superjump to dodongo ledge chest after killing dodongo
             before_f_stairs.connect(after_c_passage, r.super_jump_feather, back=False) # superjump off the bottom or right wall to jump over to the boss door #TODO: add requirements to buffer into wall / open key door to wall clip
 
         if options.logic == 'hell':

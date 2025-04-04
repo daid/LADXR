@@ -43,7 +43,7 @@ class Dungeon7:
         nw_pillar_fall = Location("D7 NW Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
         sw_pillar = Location("D7 SW Pillar Area", dungeon=7)
         sw_pillar_fall = Location("D7 SW Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
-        sw_pillar_toak = Location("D7 South Three-of-a-Kind Clear", dungeon=7).add(KeyLocation("D7_TOAK_CLEAR"))
+        sw_pillar_toak = Location("D7 South Three-of-a-Kind Clear", dungeon=7).add(KeyLocation("D7_TOAK_CLEAR"))  #NOTE: unopened chest despawns after 6 screen transitions or enter stairs, but never despawns if opened
         sw_pillar_chest6 = Location(dungeon=7).add(DungeonChest(0x21C))
         tile_room = Location("D7 Floating Tile Fight", dungeon=7)
         spike_corridor = Location("D7 Corridor Between Pillars", dungeon=7)
@@ -182,7 +182,7 @@ class Dungeon7:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             ne_pillar.connect(ne_pillar_fall, AND(r.bomb_trigger, r.enemy_requirements["HIDING_ZOL"]), back=False) # trigger pillar cutscene by placing a bomb during the screen transition
-            se_pillar.connect(se_pillar_fall, AND(r.bomb_trigger, r.enemy_requirements["HIDING_ZOL"]), back=False) # trigger pillar cutscene by placing a bomb during the screen transition)
+            se_pillar.connect(se_pillar_fall, AND(r.bomb_trigger, r.enemy_requirements["HIDING_ZOL"]), back=False) # trigger pillar cutscene by placing a bomb during the screen transition
             spike_corridor.connect((nw_pillar_fall, ne_pillar_fall, se_pillar_fall), AND(r.bomb_trigger, r.enemy_requirements["HIDING_ZOL"]), back=False) # trigger pillar cutscene by placing a bomb during the screen transition
             nw_pillar.connect(nw_pillar_fall, r.bomb_trigger, back=False) # trigger pillar cutscene by placing a bomb during the screen transition
             sw_pillar.connect(sw_pillar_fall, r.bomb_trigger, back=False) # trigger pillar cutscene by placing a bomb during the screen transition
