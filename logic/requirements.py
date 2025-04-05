@@ -462,6 +462,7 @@ class RequirementsSettings:
             self.bush.remove(SWORD)
             self.pit_bush.remove(SWORD)
             self.hit_switch.remove(SWORD)
+            self.hit_switch_color.remove(SWORD)
         if options.logic == "casual":
             # In casual mode, remove the more complex kill methods
             self.bush.remove(MAGIC_POWDER)

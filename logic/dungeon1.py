@@ -52,7 +52,7 @@ class Dungeon1:
         entrance.connect(entrance_chest3, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], SHIELD), r.enemy_requirements["KEESE"]), back=False) #TODO: REMOVE, replace with casual logic statement
         entrance.connect(main_room, back=False)
         entrance.connect(cracked_pit_room, back=r.enemy_requirements["KEESE"])
-        cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], SWORD), back=SWORD)
+
         # main area
         main_room.connect(main_room_chest4, back=False)
         main_room.connect(main_room_chest5, OR(r.enemy_requirements["MINI_MOLDORM"], SHIELD), back=False)
@@ -85,10 +85,19 @@ class Dungeon1:
             #TODO: entrance.connect(entrance_chest3, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], SHIELD), r.enemy_requirements["KEESE"]), back=False)
             #TODO: northwest_room.connect(before_a_passage, OR(r.enemy_requirements["SPIKED_BEETLE"], SHIELD), back=None)
 
+        if options.bowwow != "normal":
+            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], FEATHER), back=FEATHER) # crystals in main room are pits in good boy mode
+        else:
+            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], SWORD), back=SWORD)
+
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"], back=False) # make stalfos jump into when you press A or B button
+            if options.bowwow == "swordless":
+                cracked_pit_room.connect(main_room, r.boots_bonk, back=False) # crystals in main room are pits in swordless good boy mode
 
         if options.logic == 'glitched' or options.logic == 'hell':
+            if options.bowwow == "swordless":
+                main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in swordless good boy mode
             main_room.connect(fenced_walkway, r.super_jump_feather) # super jump, works both ways, connected from main room since the wall clip must be maintained
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=AND(r.pit_buffer_itemless, r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # itemless pit buffer to/from miniboss door
         
