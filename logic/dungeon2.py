@@ -66,10 +66,10 @@ class Dungeon2:
         entrance.connect(stalfos_room, r.fire, back=None)
         stalfos_room.connect(stalfos_room_drop1, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["STALFOS_AGGRESSIVE"]), back=False)
         stalfos_room.connect(mimic_room, FOUND(KEY2, 5), back=False)
-        stalfos_room.connect(statue_switch_room, back=r.hit_switch)
+        stalfos_room.connect(statue_switch_room, back=r.hit_switch) #NOTE: r.hit_switch would have to be dropped here if a skip is found to get from mimic_beetle_room to statue_switch_room
         mimic_room.connect(mimic_room_chest3, r.enemy_requirements["MASKED_MIMIC_GORIYA"], back=False)
         locked_switch_room.connect((statue_switch_room, locked_switch_room_chest4), r.hit_switch)
-        locked_switch_room.connect(pit_peg_room, r.hit_switch, back=None)
+        locked_switch_room.connect(pit_peg_room, r.hit_switch, back=None) #NOTE: r.hit_switch would have to be dropped here if a skip is found to get from statue_switch_room to locked_switch_room
         pit_peg_room.connect(mimic_beetle_room, FEATHER)
         pit_peg_room_chest5.connect((mimic_beetle_room, pit_peg_room), False, back=FEATHER)
         mimic_beetle_room.connect(statue_switch_room_drop2, AND(r.enemy_requirements["MASKED_MIMIC_GORIYA"], FEATHER, r.hit_switch), back=False)
@@ -91,6 +91,8 @@ class Dungeon2:
         final_switch_east.connect(final_switch_east_chest9, back=False)
         final_switch_east.connect(after_b_passage, r.hit_switch, back=False)
         after_b_passage.connect(after_b_passage_chest10, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["MOBLIN"], OR(r.enemy_requirements["POLS_VOICE"], POWER_BRACELET)), back=False)
+        after_b_passage.connect((vacuum_room, final_switch_west, final_switch_east), AND(r.hit_switch, FEATHER, POWER_BRACELET), back=False)
+
         # boss
         after_b_passage.connect(pot_pol_room_doorway, FOUND(KEY2, 5))
         pot_pol_room_doorway.connect(pot_pol_room, POWER_BRACELET)
