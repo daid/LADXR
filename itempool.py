@@ -64,9 +64,16 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
     "MEDICINE2": 1, "TOADSTOOL2": 1, "RAFT": 1, 
-    "D3_GEL_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_BOMBWALL": 1, "D4_PITKEY": 1, "D4_BOSS_CLEAR": 1, "D5_ZOL_CLEAR": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1, "D7_BALL": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "D7_BOSS_CLEAR": 1,
-    "SWITCH3": 1, "SWITCH6A": 1, "SWITCH6A_RANGE": 1, "SWITCH6B_RANGE": 1, "SWITCH6C": 1, "SWITCH6D": 1, "SWITCH6E": 1, "SWITCH6F": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7C": 1, "SWITCH7C_RANGE": 1, "SWITCH8": 1,
     TAIL_CAVE_OPENED: 1, KEY_CAVERN_OPENED: 1, ANGLER_TUNNEL_OPENED: 1, FACE_SHRINE_OPENED: 1, CASTLE_GATE_OPENED: 1, EAGLE_TOWER_OPENED: 1
+}
+
+STATIC_DUNGEON_ITEMS = {
+    3: { "D3_GEL_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_BOMBWALL": 1, "SWITCH3": 1, },
+    4: { "D4_PITKEY": 1, "D4_BOSS_CLEAR": 1, },
+    5: { "D5_ZOL_CLEAR": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1, },
+    6: { "SWITCH6A": 1, "SWITCH6A_RANGE": 1, "SWITCH6B_RANGE": 1, "SWITCH6C": 1, "SWITCH6D": 1, "SWITCH6E": 1, "SWITCH6F": 1, },
+    7: { "D7_BALL": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "D7_BOSS_CLEAR": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7C": 1, "SWITCH7C_RANGE": 1, },
+    8: { "SWITCH8": 1, },
 }
 
 
@@ -286,6 +293,12 @@ class ItemPool:
             self.remove(GEL, 4)
             self.remove(MESSAGE, 1)
             self.add(RUPEES_500, 3)
+
+        if settings.overworld not in {"dungeonchain", "nodungeons"}:
+            for dungeon,items in STATIC_DUNGEON_ITEMS.items():
+                for item, qty in items.items():
+                    self.add(item, qty)
+
         if settings.overworld == "dungeonchain":
             self.__pool = {}
             required_item_count = 1  # Start item
@@ -326,6 +339,9 @@ class ItemPool:
                     self.add(f"STONE_BEAK{dungeon_idx}")
                     if 1 <= dungeon_idx <= 8:
                         self.add(HEART_CONTAINER)
+                    if dungeon_idx in STATIC_DUNGEON_ITEMS:
+                        for item, qty in STATIC_DUNGEON_ITEMS[dungeon_idx].items():
+                            self.add(item, qty)
                 required_item_count += item_counts[dungeon_idx]
                 required_items.update(required_items_per_dungeon[dungeon_idx])
             for item in required_items:
