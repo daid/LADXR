@@ -92,11 +92,11 @@ class Dungeon1:
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"], back=False) # make stalfos jump into when you press A or B button
-            if options.bowwow == "swordless":
+            if options.bowwow != "normal":
                 cracked_pit_room.connect(main_room, r.boots_bonk, back=False) # crystals in main room are pits in swordless good boy mode
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            if options.bowwow == "swordless":
+            if options.bowwow != "normal":
                 main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in swordless good boy mode
             main_room.connect(fenced_walkway, r.super_jump_feather) # super jump, works both ways, connected from main room since the wall clip must be maintained
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=AND(r.pit_buffer_itemless, r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # itemless pit buffer to/from miniboss door
