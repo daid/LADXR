@@ -82,12 +82,10 @@ class Dungeon7:
         entrance.connect(before_a_stairs, FOUND(KEY7, 1))
         before_b_stairs.connect(before_b_stairs_chest1, back=False)
         before_b_stairs.connect(before_b_stairs_switch, r.hit_switch, back=False)
-        before_b_stairs.connect(before_b_stairs_switch_range, OR(OR(BOOMERANG, BOW, BOMB, HOOKSHOT, MAGIC_ROD)), back=False)
-        before_b_stairs.connect(before_c_stairs, AND(FEATHER, "SWITCH7A_RANGE"))
-        before_b_stairs.connect(before_d_stairs, OR("SWITCH7A", "SWITCH7C", "SWITCH7C_RANGE")) #TODO: replace with line below when enable SWITCH7B_RANGE
-        #TODO: before_b_stairs.connect(before_d_stairs, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"))
-        before_b_stairs.connect(entrance, OR("SWITCH7A", "SWITCH7C", "SWITCH7C_RANGE"), back=False) #TODO: replace with line below when enable SWITCH7B_RANGE
-        #TODO: before_b_stairs.connect(entrance, OR("SWITCH7A", "SWITCH7B_RANGE", "SWITCH7C", "SWITCH7C_RANGE"), back=False)
+        before_b_stairs.connect(before_b_stairs_switch_range, OR(BOOMERANG, BOW, BOMB, HOOKSHOT, MAGIC_ROD), back=False)
+        before_b_stairs.connect(before_c_stairs, "SWITCH7A", back=False) #NOTE: have to walk past kirby, so maybe it could be more friendly in casual logic
+        before_b_stairs.connect(before_d_stairs, "SWITCH7A", back=False)
+        before_b_stairs.connect(entrance, "SWITCH7A", back=False)
         west_ledge.connect((entrance, before_b_stairs, west_ledge_chest4), back=False)
         east_ledge.connect((entrance, before_a_stairs, before_b_stairs, east_ledge_chest3), back=False)
         # connect floor 1 & 2
@@ -97,7 +95,7 @@ class Dungeon7:
         before_c_stairs.connect(after_c_stairs) # stairs
         before_d_stairs.connect(after_d_stairs) # stairs
         ne_pillar.connect((entrance, before_b_stairs), back=False) # pit
-        nw_pillar.connect((before_b_stairs, before_c_stairs), back=False) # pit
+        nw_pillar.connect(before_b_stairs, back=False)
         se_pillar.connect((entrance, before_b_stairs), back=False) # pit
         spike_corridor.connect(before_b_stairs, back=False) # pit
         tile_room.connect((before_b_stairs, west_ledge), back=False) # pit
@@ -204,6 +202,7 @@ class Dungeon7:
             entrance.connect(east_ledge, AND(OR(r.super_jump_boots, r.zoomerang), r.shield_bump), back=False) # along bottom wall in first key room, setup boots super jump, but hold shield after the jump to bump down to ledge
             entrance.connect((before_b_stairs, before_c_stairs), r.super_jump_feather) # superjump in the center to get on raised blocks, hell because the jump has to be very low
             entrance.connect(before_b_stairs, r.boots_superhop, back=True) # boots superhop in the center to get on raised blocks
+            #TODO: before_b_stairs.connect(before_b_stairs_switch_range, COUNT(SWORD, 2), back=False)
             before_b_stairs.connect(east_ledge, r.boots_superhop, back=False) # boots superhop from room with spike switch
             #TODO: before_c_stairs.connect((before_b_stairs, west_ledge), r.super_bump, back=False) # super bump wall clipped from the stairs off peahat to cross pegs, then again into kirby mouth to get spit onto ledge
             spike_corridor.connect(ne_pillar, r.pit_buffer_boots, back=AND(r.pit_buffer_itemless, r.super_jump_feather)) # pit buffer to go around pegs to ne pillar reverse: pit buffer and super jump off south wall to land on pegs
@@ -212,7 +211,8 @@ class Dungeon7:
             after_d_stairs.connect(sw_pillar, r.super_jump_boots, back=False) # boots jump into wall by puzzle buddies to super jump into sw pillar area
             #TODO: sw_pillar_toak.connect((bombwall_pit, sw_pillar), False, back=AND(r.pit_buffer_boots, BOMB)) # pit buffer into rail and defeat puzzle buddies with bomb NOTE: probably some other items too
             #TODO: after_d_stairs.connect(se_pillar, r.boots_superhop, back=False) #[logic prep for stairs shuffle]
-            #TODO: after_d_stairs.connect(se_pillar_switch_midrange, OR(AND(PEGASUS_BOOTS, SWORD), AND(r.super_jump_feather, HOOKSHOT),COUNT(SWORD, 2)), back=False) # 1) boots bonk and slash 2) superjump & 6 pause buffers to land on rail, hookshot the switch, and walk back off rail 3) L2 sword beam
+            #TODO: after_d_stairs.connect(se_pillar_switch_midrange, OR(AND(PEGASUS_BOOTS, SWORD), AND(r.super_jump_feather, HOOKSHOT), COUNT(SWORD, 2)), back=False) # 1) boots bonk and slash 2) superjump & 6 pause buffers to land on rail, hookshot the switch, and walk back off rail 3) L2 sword beam
+            #TODO: after_d_stairs.connect(se_pillar_switch_range, COUNT(SWORD, 2), back=False)
             #TODO: after_d_stairs.connect(keylock_ledge, AND(r.boots_superhop, r.shield_bump), back=False) # running super bump off antifairy to get on ledge without key
             #TODO: after_d_stairs.connect((bombwall_pit, sw_pillar), False, back=r.zoomerang_buffer) # push block and perform right-facing zoomerang to escapt where blocks meet at corner
             #TODO: bombwall_pit.connect(sw_pillar, r.pit_buffer_boots) # two way pit buffer across pit

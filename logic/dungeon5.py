@@ -75,14 +75,16 @@ class Dungeon5:
         entrance.connect(before_a_passage, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["IRON_MASK"]), back=r.enemy_requirements["IRON_MASK"])
         entrance.connect(crystal_puddle_room, FOUND(KEY5, 1))
         before_a_passage.connect(before_a_passage_chest2, back=False)
-        crystal_puddle_room.connect((messy_room, statue_room), r.enemy_requirements["IRON_MASK"], back=False)
+        crystal_puddle_room.connect(messy_room, r.enemy_requirements["IRON_MASK"], back=False)
+        crystal_puddle_room.connect(statue_room, r.enemy_requirements["IRON_MASK"], back=None)
         crystal_puddle_room.connect(ms_1_room, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), back=False)
         messy_room.connect(messy_room_chest3, r.enemy_requirements["IRON_MASK"], back=False)
         ms_1_room.connect((ms_1_victory, crystal_puddle_room, before_d_passage), r.enemy_requirements["MASTER_STALFOS"], back=False)
         before_d_passage.connect(ms_1_room, back=False)
         # crossroads
         before_d_passage.connect(before_d_passage_chest5, back=False)
-        before_d_passage.connect((north_crossroads, after_d_passage), FEATHER)
+        before_d_passage.connect(north_crossroads, FEATHER)
+        before_d_passage.connect(after_d_passage, FEATHER)
         before_d_passage.connect((west_crossroads, ms_2_room))
         west_crossroads.connect(west_crossroads_zol_clear, r.enemy_requirements["HIDING_ZOL"], back=False)
         ms_2_room.connect(ms_2_victory, r.enemy_requirements["MASTER_STALFOS"], back=False)
@@ -103,7 +105,7 @@ class Dungeon5:
         
         # ms4
         before_a_passage.connect(after_a_passage, FEATHER)
-        after_a_passage.connect(crystal_room, SWORD)
+        after_a_passage.connect(crystal_room, SWORD, back=False)
         crystal_room.connect(crystal_room_drop1, SWORD, back=False)
         crystal_room.connect(ms_4_room, back=False)
         ms_4_room.connect(ms_4_room_drop2, AND("MS3_KILL", r.enemy_requirements["MASTER_STALFOS"]), back=False)
@@ -126,7 +128,7 @@ class Dungeon5:
         after_c_passage.connect(after_boss_keyblock, FOUND(KEY5, 3))
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT)
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY5, back=False)
-        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[4]])
+        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[4]], back=False)
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             statue_room.connect(after_blade_trap, FEATHER, back=False) # jump past the blade traps

@@ -57,9 +57,9 @@ class Dungeon4:
 
         # connections
         # entrance
-        entrance.connect((entrance_chest1, entrance_chest2))
+        entrance.connect((entrance_chest1, entrance_chest2), back=False)
         entrance.connect(spark_beetle_room, AND(r.enemy_requirements["SPIKED_BEETLE"], r.enemy_requirements["ZOL"]))
-        spark_beetle_room.connect(spark_beetle_room_chest3)
+        spark_beetle_room.connect(spark_beetle_room_chest3, back=False)
         spark_beetle_room.connect(crystal_room, AND(r.enemy_requirements["SPIKED_BEETLE"], r.enemy_requirements["ZOL"]), back=False)
         crystal_room.connect(crystal_room_chest4, SWORD, back=False)
         # crossroads
@@ -79,7 +79,8 @@ class Dungeon4:
         before_miniboss.connect(south_tile_puzzle, OR(FEATHER, FLIPPERS))
         before_miniboss.connect(north_tile_puzzle, FLIPPERS)
         before_miniboss.connect(miniboss_room, FOUND(KEY4, 5), back=False)
-        before_miniboss_stairs.connect((before_miniboss, sidescroller_stairs))
+        before_miniboss.connect(before_miniboss_stairs)
+        before_miniboss_stairs.connect(sidescroller_stairs)
         sidescroller_stairs.connect(sidescroller_drop1, AND("D4_PITKEY", FLIPPERS), back=False)
         before_miniboss_pit.connect(sidescroller_pit, back=False) # connects pit to sidescroller, the superjump remains in glitched logic
         sidescroller_pit.connect(sidescroller_stairs, FLIPPERS, back=False) # be able to fall into sidescroller and logically exit ladder
@@ -91,7 +92,7 @@ class Dungeon4:
         # west
         south_tile_puzzle.connect((south_tile_puzzle_chest9, south_tile_puzzle_chest10), back=False)
         south_tile_puzzle.connect(before_a_passage, OR(AND(FEATHER, PEGASUS_BOOTS), FLIPPERS), back=False) #TODO: fake item flag to guarantee logical access to north tile puzzle to see the solution
-        before_a_passage.connect(after_a_passage, FEATHER, back=None) #TODO: casual could use boots for getting by thwomps?
+        before_a_passage.connect(after_a_passage, FEATHER)
         after_a_passage.connect((south_tile_puzzle, after_a_passage_chest12), back=False)
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS)
         outside_b_passage_keyblock.connect(before_b_passage, FOUND(KEY4, 5))
@@ -122,6 +123,7 @@ class Dungeon4:
             sidescroller_pit.connect(sidescroller_drop1, "D4_PITKEY", back=False) # hold left after falling in pit to grab the drop before it touches the water #NOTE: this particular connection shows up in magpie as glitched still for some reason?
             south_tile_puzzle.connect(before_a_passage, r.tight_jump, back=False) # precise feather jump is enough to reach the top left puzzle tile without flippers
             south_tile_puzzle.connect(after_b_passage, r.tight_jump) # tight diagonal feather jump in or out of pre boss door room
+            #TODO: before_a_passage.connect(after_a_passage, False, back=None) # diagonal walk off the stairs in to fake jump over the little ledge
             
         if options.logic == 'glitched' or options.logic == 'hell':
             #TODO: entrance.connect(west_statue_room, r.super_jump_feather, back=False) # super jump off the tile to the right of the staircase to below statues
@@ -150,7 +152,7 @@ class Dungeon4:
             #TODO: outside_b_passage_shallows.connect(before_miniboss_chest8, r.jesus_buffer, back=False) # boots bonk to upper right of chest, buffer down, then hold left out of pause menu to land on shallow water
             #TODO: south_tile_puzzle.connect(after_a_passage, r.super_poke, back=False) # superjump and knockback off the peahat twice to get on ledge
             #TODO: entrance.connect((south_tile_puzzle, before_miniboss), False, back=OR(r.super_poke, r.super_bump)) # super jump and rebound off peahat to entrance
-            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) # boots bonk to get through 2d section #TODO: MOVE to hard, change to boots_bonk
+            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) # boots bonk to get through 2d section
             south_tile_puzzle.connect(after_b_passage, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
         self.entrance = entrance

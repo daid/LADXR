@@ -43,7 +43,7 @@ class Dungeon3:
         fenced_walkway = Location("D3 Fenced Walkway", dungeon=3)
         fenced_walkway_owl3 = Location("Flying Bomb Owl", dungeon=3).add(OwlStatue(0x140)) # hint
         fenced_walkway_chest7 = Location(dungeon=3).add(DungeonChest(0x144)) # 50 rupees
-        fenced_walkway_bombwall = Location("Bombable Wall Open", dungeon=3).add(KeyLocation("D3_BOMBWALL"))
+        north_bombwall = Location("North Bombable Wall Open", dungeon=3).add(KeyLocation("D3_BOMBWALL"))
         timer_bombite_room = Location("D3 Timer Bombite Room", dungeon=3)
         three_zol_stalfos_room = Location("D3 Three Zol, Stalfos Room", dungeon=3)
         three_zol_stalfos_room_chest8 = Location(dungeon=3).add(DungeonChest(0x142)) # compass
@@ -81,7 +81,7 @@ class Dungeon3:
         west_hallway.connect(west_hallway_clear, r.enemy_requirements["GEL"], back=False)
         west_hallway.connect(before_a_stairs, back=False)
         before_a_stairs.connect(before_a_stairs_chest5, AND("D3_GEL_CLEAR", r.enemy_requirements["STALFOS_EVASIVE"]), back=False)
-        swordstalfos_room.connect(swordstalfos_room_chest4, "SWITCH3", back=None)
+        swordstalfos_room.connect(swordstalfos_room_chest4, "SWITCH3", back=False)
         before_a_stairs.connect(before_a_stairs_chest6, "SWITCH3", back=False)
         before_a_stairs.connect(after_a_stairs)
         # 4 way
@@ -94,24 +94,23 @@ class Dungeon3:
         # main area
         before_b_stairs.connect(after_b_stairs)
         after_b_stairs.connect(after_b_stairs_drop4, r.enemy_requirements["HIDING_ZOL"], back=False)
-        after_b_stairs.connect(two_pairodd_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["GEL"]), back=False)
+        after_b_stairs.connect(two_pairodd_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["GEL"]), back=None)
         after_b_stairs.connect(miniboss_room, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["GEL"]), back=None)
         miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[2]], back=False) # miniboss portal
         miniboss_room.connect(after_miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[2]], back=None)
         after_miniboss_room.connect((after_miniboss_room_chest10, after_b_stairs), back=False)
         # main west
         two_pairodd_room.connect(two_pairodd_room_drop5, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["PAIRODD"]), back=False)
-        two_pairodd_room.connect((after_b_stairs, two_zol_stalfos_room), back=False)
+        two_pairodd_room.connect(two_zol_stalfos_room, back=False)
         two_zol_stalfos_room.connect(two_zol_stalfos_room_clear, AND(r.enemy_requirements["ZOL"], r.enemy_requirements["STALFOS_AGGRESSIVE"]), back=False)
         two_zol_stalfos_room.connect(fenced_walkway, back=False)
         after_b_stairs.connect(fenced_walkway, back=False) #TODO: REMOVE this patch which makes logic match upstream
         fenced_walkway.connect(fenced_walkway_chest7, AND("D3_ZOLS_CLEAR", "D3_STALFOS_CLEAR"), back=False)
         # main north
-        after_b_stairs.connect(timer_bombite_room, back=False)
-        timer_bombite_room.connect(three_zol_stalfos_room, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["TIMER_BOMBITE"]), back=False)
+        timer_bombite_room.connect((after_b_stairs, three_zol_stalfos_room), AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["TIMER_BOMBITE"]), back=None)
         three_zol_stalfos_room.connect(three_zol_stalfos_room_chest8, back=False)
-        fenced_walkway.connect(fenced_walkway_bombwall, BOMB, back=False) #NOTE: Must put fake item in normal logic else causes a generation error with item count
-        three_zol_stalfos_room.connect(three_bombite_room, OR(BOMB, "D3_BOMBWALL"))
+        three_zol_stalfos_room.connect(north_bombwall, BOMB, back=False)
+        three_zol_stalfos_room.connect(three_bombite_room, "D3_BOMBWALL")
         three_bombite_room.connect(three_bombite_room_drop_6, r.enemy_requirements["BOUNCING_BOMBITE"], back=False)
         # main east
         after_b_stairs.connect(big_pit_room, BOMB)
@@ -149,7 +148,7 @@ class Dungeon3:
             south_4way.connect(south_4way_drop1, r.throw_pot, back=False) # use pots to kill enemies
             north_4way.connect(north_4way_drop3, r.throw_pot, back=False) # use pots to kill the enemies
             fenced_walkway.connect(three_bombite_room_drop_6, BOOMERANG, back=False) # 3 bombite room from the walkway, grab item with boomerang
-            #TODO: fenced_walkway.connect(fenced_walkway_bombwall, OR(AND(FEATHER, OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD, BOOMERANG), back=False) # feather and close range weapon to trigger bouncing bombite to blow up the wall
+            #TODO: fenced_walkway.connect(north_bombwall, OR(AND(FEATHER, OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD, BOOMERANG), back=False) # feather and close range weapon to trigger bouncing bombite to blow up the wall
 
         if options.logic == 'glitched' or options.logic == 'hell':
             before_a_stairs.connect(west_hallway, r.hookshot_clip_block, back=False) # REMOVE and replace with below
@@ -173,8 +172,8 @@ class Dungeon3:
             south_4way.connect(south_4way_drop1, r.shield_bump, back=False) # knock everything into the pit including the teleporting owls
             #TODO: after_b_stairs.connect(fenced_walkway, r.super_bump, back=False) # super bump off zols to go past pushblock to the fenced walkway
             #TODO: fenced_walkway.connect(two_zol_stalfos_room_clear, COUNT(SWORD, 2)), back=False)
-            fenced_walkway.connect(fenced_walkway_bombwall, OR(AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD), back=False) #TODO: REMOVE and replace with below and statement in [hard]
-            #TODO: fenced_walkway.connect(fenced_walkway_bombwall, OR(FOUND(SWORD, 2), AND(PEGASUS_BOOTS, OR(SWORD, MAGIC_POWDER))), back=False) # set off bouncing bombite to blow up the bombwall from the fenced walkway
+            fenced_walkway.connect(north_bombwall, OR(AND(OR(FEATHER, PEGASUS_BOOTS), OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD), back=False) #TODO: REMOVE and replace with below and statement in [hard]
+            #TODO: fenced_walkway.connect(north_bombwall, OR(FOUND(SWORD, 2), AND(PEGASUS_BOOTS, OR(SWORD, MAGIC_POWDER))), back=False) # set off bouncing bombite to blow up the bombwall from the fenced walkway
             #TODO: ledge_pre_pit.connect(ledge_post_pit, r.ledge_super_bump, back=False) # shield bump stalfos multiple times to get around pits to nightmare key
             after_b_stairs.connect(ledge_pre_pit, AND(r.super_jump_feather, r.shield_bump), back=False) # superjump into jumping stalfos and shield bump to right ledge
             big_pit_room.connect(ledge_pre_pit, r.pit_buffer_boots) # boots bonk across the pits with pit buffering and then hookshot or shield bump to the chest
