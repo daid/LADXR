@@ -109,13 +109,13 @@ checkMetadataTable = {
     "0x1C9": CheckMetadata("Flying Heart, Statue Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01C9.GIF
     "0x1BB-Owl": CheckMetadata("Corridor Owl", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01BB.GIF
     "0x1CE": CheckMetadata("L2 Bracelet Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01CE.GIF
-    "0x1C0": CheckMetadata("Three Wizzrobe, Switch Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01C0.GIF
+    "0x1C0": CheckMetadata("Three Wizrobe, Switch Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01C0.GIF
     "0x1B9": CheckMetadata("Stairs Across Statues Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B9.GIF
     "0x1B3": CheckMetadata("Switch, Star Above Statues Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B3.GIF
-    "0x1B4": CheckMetadata("Two Wizzrobe Key", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B4.GIF
+    "0x1B4": CheckMetadata("Two Wizrobe Key", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B4.GIF
     "0x1B0": CheckMetadata("Top Left Horse Heads Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B0.GIF
     "0x1BE": CheckMetadata("Water Tektite Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01BE.GIF
-    "0x1D1": CheckMetadata("Four Wizzrobe Ledge Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01D1.GIF
+    "0x1D1": CheckMetadata("Four Wizrobe Ledge Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01D1.GIF
     "0x1D7-Owl": CheckMetadata("Blade Trap Owl", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01D7.GIF
     "0x1C3": CheckMetadata("Tile Room Key", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01C3.GIF
     "0x1B1": CheckMetadata("Top Right Horse Heads Chest", "Face Shrine"), #http://artemis251.fobby.net/zelda/maps/underworld1/01B1.GIF
