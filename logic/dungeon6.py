@@ -112,7 +112,7 @@ class Dungeon6:
         # west
         entrance.connect(after_potbutton_door, POWER_BRACELET, back=None)
         entrance.connect((fenced_walkway_switched, potbutton_area_switched), "SWITCH6A_RANGE", back=False)
-        fenced_walkway_switched.connect(potbutton_area_switched, back=False) # ledge drop
+        fenced_walkway_switched.connect(potbutton_area_switched, POWER_BRACELET, back=False) # ledge drop
         potbutton_area_switched.connect(three_wizrobe_area_switched, POWER_BRACELET, back=None)
         after_potbutton_door.connect(three_wizrobe_area_clear, r.enemy_requirements["WIZROBE"], back=False) #TODO: REPLACE with below
         #TODO: after_potbutton_door.connect(three_wizrobe_area_clear, OR(BOMB, MAGIC_ROD)) # excludes bow when can't reach arrow refill on the other side of pegs
@@ -207,6 +207,7 @@ class Dungeon6:
             
         if options.logic == 'glitched' or options.logic == 'hell':
             first_elephant_room.connect(second_elephant_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.bomb_trigger), back=False) # kill moldorm in hallway, then bomb trigger through the doorway to break elephant statue, irrelevant in reverse since the door is L2 bracelet locked
+            potbutton_area_switched.connect(fenced_walkway_switched, AND(POWER_BRACELET, r.shaq_jump))
             after_potbutton_door.connect(three_wizrobe_area, r.super_jump_feather, back=False) # path from entrance to left_side: use superjumps to pass raised blocks
             three_wizrobe_area.connect(star_area, AND(r.super_jump_feather, POWER_BRACELET), back=False) # delayed superjump onto raised pegs so that you can pick up pot without switch hitter
             potbutton_area_switched.connect(entrance, r.shaq_jump, back=False)
