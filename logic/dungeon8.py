@@ -113,7 +113,7 @@ class Dungeon8:
         spark_pit_room.connect(spark_pit_room_chest3, back=False)
         miniboss2_room.connect((sw_vire_room, vacuum_room, sw_zamboni_area), r.miniboss_requirements["ROLLING_BONES"], back=False)
         sw_vire_room.connect(sw_vire_room_drop1, r.attack_hookshot_no_bomb, back=False) # takes 11 bombs minimum to get this from entrance, so bombs are excluded
-        vacuum_room.connect((vacuum_room_chest4, entrance), back=False) # vacuum warps to entrance
+        vacuum_room.connect((vacuum_room_chest4, entrance), back=False) # let vacuum warp you to entrance
         # east
         spark_pot_room.connect((entrance, slime_trap_room, mimic_room), POWER_BRACELET, back=False)
         slime_trap_room.connect((slime_trap_room_chest5, spark_pot_room), back=False)
@@ -258,7 +258,7 @@ class Dungeon8:
             peahat_area.connect((dark_west, dark_center), False, back=AND(BOMB, r.jesus_buffer)) # bomb the wall and boots bonk to start jesus buffer
             dark_west.connect(before_f_stairs, AND(BOMB, r.hookshot_wrap, r.jesus_buffer), back=False) # boots bonk then use hookshot when splashing to grab spark's block, will respawn near spark block
             dark_east_zol.connect(dark_east_spark, OR(r.hookshot_spam_pit, r.boots_bonk)) # spam hookshot or simply boots bonk to get over 1 block pit
-            #TODO: dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.ledge_super_bump), back=False) # wall clip then superjump to the spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
+            #TODO: dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.shield_bump), back=False) # wall clip then superjump to the spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
             dark_center_pre_keyblock.connect(before_d_passage, r.zoomerang_buffer, back=False) # right-facing zoomerang to get through keyblock. unreliable without shovel
             #miniboss
             before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks

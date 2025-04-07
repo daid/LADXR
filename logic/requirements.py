@@ -270,6 +270,7 @@ class RequirementsSettings:
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
+        self.sword_beam = COUNT(SWORD, 2) # L2 sword beams as damage or range weapon/switch hitter
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
         # add trick directory here
@@ -288,8 +289,6 @@ class RequirementsSettings:
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
         self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
         self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
-        self.ledge_super_bump = SHIELD # fall off ledge and rebound off entity with shield (can result in no-clip backflip if left or right facing and dpad down or up is held first)
-        self.ledge_super_poke = SWORD # fall off ledge and rebound off entity with sword
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
@@ -305,11 +304,11 @@ class RequirementsSettings:
         self.pit_buffer = FEATHER # jump on top of pits and buffer to cross vertical gaps
         self.pit_buffer_boots = OR(PEGASUS_BOOTS, FEATHER) # use boots or feather to jump while buffered down into the block under a pit
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
-        self.boots_bonk = PEGASUS_BOOTS # bonk against walls to jump small gaps (not starting inside of pit) (also easy 2d bonks)
+        self.boots_bonk = PEGASUS_BOOTS # bonk against walls as a replacement for feather - clear 1-tile pits/liquids, get height for any reason, easy 2d bonks (not used for pit buffer bonks)
         self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps NOTE: it's used identical to boots_bonk, could remove this?
-        self.boots_bonk_2d_spikepit = AND(PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
-        self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
+        self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
+        self.boots_bonk_2d_spikepit = AND(self.damage_boost_special, PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
         self.bounce_2d_spikepit = self.damage_boost_special # bounce off spikes in 2d sections with no items. holding the "A" button gives a bit extra height
         self.bracelet_bounce_2d_spikepit = AND(self.damage_boost_special, POWER_BRACELET) # grab walls in 2d sections to get flung into spikes and boost upwards
         self.toadstool_bounce_2d_spikepit = AND(self.damage_boost_special, "TOADSTOOL2") # use toadstool right after taking damage from spikes, and hold any button afterwards to gain extra height from the bounce
@@ -394,9 +393,9 @@ class RequirementsSettings:
             "COLOR_GHOUL_GREEN":       self.attack_hookshot_powder,
             "COLOR_GHOUL_RED":         self.attack_hookshot_powder,
             "COLOR_GHOUL_BLUE":        self.attack_hookshot_powder,
-            "COLOR_SHELL_GREEN":       AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
-            "COLOR_SHELL_RED":         AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
-            "COLOR_SHELL_BLUE":        AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed on their own
+            "COLOR_SHELL_GREEN":       AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed, these requirements are for forcibly moving it into socket
+            "COLOR_SHELL_RED":         AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed, these requirements are for forcibly moving it into socket
+            "COLOR_SHELL_BLUE":        AND(self.attack_hookshot, POWER_BRACELET),          # can not be killed, these requirements are for forcibly moving it into socket
             "URCHIN":                  self.attack_hookshot,                               # does not have powder in overworld logic file as option
             "GIANT_GOPONGA_FLOWER":    OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
             "GOPONGA_FLOWER":          OR(BOWWOW, HOOKSHOT, MAGIC_ROD, BOOMERANG),
@@ -477,7 +476,7 @@ class RequirementsSettings:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             self.boss_requirements[1] = AND(OR(SWORD, MAGIC_ROD, BOMB), POWER_BRACELET)  # bombs + bracelet genie
             self.boss_requirements[3] = AND(FLIPPERS, OR(SWORD, MAGIC_ROD, BOW, BOMB))  # bomb angler fish
-            self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), COUNT(SWORD, 2), AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
+            self.boss_requirements[6] = OR(MAGIC_ROD, AND(BOMB, BOW), self.sword_beam, AND(OR(SWORD, HOOKSHOT, BOW), SHIELD))  # evil eagle 3 cycle magic rod / bomb arrows / l2 sword, and bow kill
             self.enemy_requirements["POLS_VOICE"] = OR(BOMB, MAGIC_ROD, AND(OCARINA, SONG1), AND(self.stun_wizrobe, self.throw_enemy, BOW)) # wizrobe stun has same req as pols voice stun
             self.enemy_requirements["WIZROBE"] = OR(BOMB, MAGIC_ROD, AND(self.stun_wizrobe, self.throw_enemy, BOW))
             self.enemy_requirements["THREE_OF_A_KIND"] = OR(self.attack_hookshot, SHIELD)  # bomb three of a kinds
@@ -492,18 +491,18 @@ class RequirementsSettings:
             self.enemy_requirements["WINGED_BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             self.enemy_requirements["BONE_PUTTER"] = OR(SWORD, BOMB, BOW, MAGIC_ROD, BOOMERANG, MAGIC_POWDER) # use bomb to kill bone putter
             self.enemy_requirements["BUZZ_BLOB"] = OR(OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), AND(HOOKSHOT, SWORD)) # only hookshot stuns, then you can kill with L1 sword, or by throwing something at it like another buzz blob
-            
+                 
         if options.logic == 'glitched' or options.logic == 'hell':
-            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, COUNT(SWORD, 2), AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
+            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, self.sword_beam, AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
             
         if options.logic == "hell":
-            self.boss_requirements[7] = OR(MAGIC_ROD, COUNT(SWORD, 2)) # hot head sword beams
+            self.boss_requirements[7] = OR(MAGIC_ROD, self.sword_beam) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
-            self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, COUNT(SWORD,2)) # use sword beams to damage buzz blob
+            self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, self.sword_beam) # use sword beams to damage buzz blob
             self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits #TODO: disable this and let it be handled in tracker hell note: l2 sword beams can kill but obscure
             self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
-            self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, COUNT(SWORD,2)) # use bombs or L2 sword beams to damage dethl
-            self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, COUNT(SWORD,2)) # use sword beams to damage buzz blob
+            self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, self.sword_beam) # use bombs or L2 sword beams to damage dethl
+            self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, self.sword_beam) # use sword beams to damage buzz blob
         
         # add final nightmare as per the assembly, shadow forms are just forms of final nightmare
         self.enemy_requirements["FINAL_NIGHTMARE"] = AND(self.enemy_requirements["SHADOW_BLOB"], self.enemy_requirements["SHADOW_AGAHNIM"], self.enemy_requirements["SHADOW_MOLDORM"], self.enemy_requirements["SHADOW_GANON"], self.enemy_requirements["SHADOW_LANMOLA"], self.enemy_requirements["SHADOW_DETHL"])

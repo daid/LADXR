@@ -174,6 +174,7 @@ class Dungeon6:
         # boss
         after_b_passage.connect(vacuum_room, back=False)
         vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"])), back=False) #TODO: REMOVE, replace with statement below as well as casual/hard logic
+        vacuum_room.connect(entrance, FEATHER, back=False) # jump over pits and warp let vacuum warp you to entrance
         #TODO: laser_turret_room.connect(pre_boss_room, AND(FEATHER, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
@@ -219,19 +220,20 @@ class Dungeon6:
             north_waterway.connect(north_waterway_west_ledge, r.super_jump_feather, back=False) # superjump from north_waterway to the left
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.ledge_super_poke, r.ledge_super_bump)), back=False) # super jump into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door with it never closing
+            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.sword_poke, r.shield_bump)), back=False) # super jump into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door with it never closing
             entrance.connect(entrance_switch_range, AND(r.stun_mask_mimic, r.throw_enemy), back=False) #TODO: REMOVE and replace with below
             #TODO: entrance.connect(entrance_switch_range, OR(AND(r.stun_mask_mimic, r.throw_enemy), SWORD), back=False) # spin attack while walking up to step onto peg as it raises, or stun and throw mask mimic
             entrance.connect(potbutton_area_switched, AND("SWITCH6A", OR(r.boots_superhop, AND(r.super_jump_feather, r.boots_jump))), back=r.boots_superhop) # boots superhop onto top left peg or wall clip and superjump to bottom-left peg and then boots jump to top left peg
             after_potbutton_door.connect(three_wizrobe_area, r.boots_superhop, back=OR(r.boots_superhop, r.super_jump_boots, "SWITCH6B_RANGE")) # get over the pegs blocking the east doorway
             #TODO: three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, SWORD, back=False) # spin attack while walking up to step onto peg as it raise
-            #TODO: three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(AND(r.stun_wizrobe, r.throw_enemy), COUNT(SWORD, 2), AND(HOOKSHOT, FEATHER)), back=False) # stun+throw wizrobe or while on raised pegs, L2 sword beam, or hit switch with hookshot and feather on the frame the hokshot returns to link to stay on second layer
+            #TODO: three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(AND(r.stun_wizrobe, r.throw_enemy), r.sword_beam, AND(HOOKSHOT, FEATHER)), back=False) # stun+throw wizrobe or while on raised pegs, L2 sword beam, or hit switch with hookshot and feather on the frame the hokshot returns to link to stay on second layer
             three_wizrobe_area.connect(star_area, AND(r.boots_superhop, POWER_BRACELET), back=False) # boots superhop onto peg to get to pots needed to break door
             before_b_passage.connect(after_b_passage, r.damage_boost_special, back=False) #TODO: REPLACE with below
             #TODO: before_b_passage.connect(after_b_passage, r.damage_boost_special, back="TOADSTOOL2") # going left: damage boost off both sparks to get across or going right: use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop, back=False) # can boots superhop off the top wall with bow or magic rod
             north_waterway.connect(north_waterway_east_ledge, r.super_jump_feather, back=False) # superjump from north_waterway towards dodongos. glitched with weapon assisted superjump, but hell when feather-only
             dodongo_room.connect(after_c_passage, r.boots_bonk, back=False) # boots bonk to escape dodongo room NE corner
+            vacuum_room.connect(entrance, back=False) # let vacuum pull you over pits and warp you to entrance
 
         self.entrance = entrance
         self.final_room = instrument

@@ -40,7 +40,7 @@ class DungeonColor:
             main_room.connect(main_room_owl2, STONE_BEAK0, back=False)
             button_west.connect(west_room_owl3, STONE_BEAK0, back=False)
 
-        # connections NOTE: back requirement usually false since there is no other entrances
+        # connections
         entrance.connect(main_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), back=False)
         main_room.connect((main_room_chest1, main_room_drop1), r.hit_switch_color, back=False)
         main_room.connect(main_room_chest2, AND(POWER_BRACELET, r.attack_hookshot), back=False) #NOTE: not using enemy requirements here
@@ -49,7 +49,7 @@ class DungeonColor:
         main_room.connect(center_miniboss, FOUND(KEY0, 2), back=False)
         #TODO: main_room.connect(rupee_room, BOMB, back=False)
         #TODO: rupee_room.connect(rupee_room_jackpot, back=False)
-        camo_pit_room.connect(bone_putter_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), back=False)
+        camo_pit_room.connect(bone_putter_room, AND(r.enemy_requirements["COLOR_GHOUL_GREEN"], r.enemy_requirements["COLOR_GHOUL_RED"]), back=False) #NOTE: can also shield bump, but no implication to logic - would be hell
         bone_putter_room.connect((main_room, bone_putter_room_chest3), back=False)
         ne_miniboss.connect(ne_miniboss_chest4, r.miniboss_requirements[world_setup.miniboss_mapping["c2"]], back=False)
         center_miniboss.connect(button_room, r.miniboss_requirements[world_setup.miniboss_mapping["c1"]], back=False)
@@ -71,7 +71,6 @@ class DungeonColor:
 
         if options.logic == 'hell':
             main_room.connect(main_room_chest2, OR(BOMB, r.shield_bump), back=False) # shield bump or bomb two socket karakoro into the holes
-            #TODO: camo_pit_room.connect(bone_putter_room, r.shield_bump, back=False) # shield bump camo goblins into pit
             button_north.connect(north_room_drop2, OR(BOMB, r.shield_bump), back=False) # shield bump or bomb four socket karakoro into the holes
             
         self.entrance = entrance
