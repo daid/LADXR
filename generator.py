@@ -86,6 +86,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
+    patches.core.fixHealthFullCheck(rom)
     if multiworld is not None:
         patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
