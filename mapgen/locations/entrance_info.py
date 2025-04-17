@@ -28,7 +28,7 @@ from logic.dungeonColor import DungeonColor
 
 def one_way(loc, req=None):
     res = Location()
-    loc.connect(res, req, one_way=True)
+    loc.connect(res, req, back=False)
     return res
 
 

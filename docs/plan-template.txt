@@ -317,7 +317,7 @@ Location:0x186:
 Location:0x185: 
 ;Catfish's Maw - Spark, Two Iron Mask Chest
 Location:0x19E: 
-;Catfish's Maw - Swort Stalfos, Star, Bridge Chest
+;Catfish's Maw - Sword Stalfos, Star, Bridge Chest
 Location:0x188: 
 ;Catfish's Maw - Three Iron Mask Chest
 Location:0x197: 
@@ -329,7 +329,7 @@ Location:0x18E:
 Location:0x1BC: 
 ;Face Shrine - Flying Heart, Statue Chest
 Location:0x1C9: 
-;Face Shrine - Four Wizzrobe Ledge Chest
+;Face Shrine - Four Wizrobe Ledge Chest
 Location:0x1D1: 
 ;Face Shrine - L2 Bracelet Chest
 Location:0x1CE: 
@@ -341,7 +341,7 @@ Location:0x1B6:
 Location:0x1B9: 
 ;Face Shrine - Switch, Star Above Statues Chest
 Location:0x1B3: 
-;Face Shrine - Three Wizzrobe, Switch Chest
+;Face Shrine - Three Wizrobe, Switch Chest
 Location:0x1C0: 
 ;Face Shrine - Tile Room Key
 Location:0x1C3: 
@@ -349,7 +349,7 @@ Location:0x1C3:
 Location:0x1B0: 
 ;Face Shrine - Top Right Horse Heads Chest
 Location:0x1B1: 
-;Face Shrine - Two Wizzrobe Key
+;Face Shrine - Two Wizrobe Key
 Location:0x1B4: 
 ;Face Shrine - Water Tektite Chest
 Location:0x1BE: 
