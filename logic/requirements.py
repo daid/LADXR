@@ -273,7 +273,7 @@ class RequirementsSettings:
         self.sword_beam = COUNT(SWORD, 2) # L2 sword beams as damage or range weapon/switch hitter
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
-        # add trick directory here
+        # trick directory
         self.throw_pot = POWER_BRACELET #TODO: rename: throw_kill throw pot or obstacle to kill enemies in obscure manner [*not* applicable for intended mechanics like opening doors, chests, or situations where killing enemy with pot is vanilla expectation (D2 pols voice)]
         self.throw_enemy = POWER_BRACELET # lift and throw stunned enemies to kill enemies
         self.midair_turn = OR(SWORD, BOW, MAGIC_ROD) # while in air, can be used to turn around
@@ -291,9 +291,12 @@ class RequirementsSettings:
         self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
-        self.jesus_jump = FEATHER # pause on the frame of hitting liquid (water / lava) to be able to jump again on unpause
+        self.jesus_jump = FEATHER # pause on the frame of splashing on liquid (water / lava) to be able to jump again on unpause
+        #NOTE: consider standardise buffers to "jesus_buffer_item" (each item being a tool to start the buffer)
+        self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of s&q menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
-        self.jesus_buffer_itemless = True # Use buffers to get into positions after getting on top of liquids without needing boots or feather or rooster
+        self.jesus_buffer_hookshot = HOOKSHOT # hookshot an object near water and pause on the frame where there is a splash to start a buffer. Also used when transitioning on top of water, buffer the hookshot out of s&q menu and pause again to start a buffer
+        self.jesus_buffer_itemless = True # land on water itemless by a method such as hopping off a ledge. pause on the frame of splashing on liquid (water / lava)
         self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
         self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.diagonal_walk = True # when two pits are corner-adjacent, walk diagonally across the point where they meet
@@ -321,9 +324,8 @@ class RequirementsSettings:
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks
         self.bomb_trigger = BOMB # drop two bombs at the same time to trigger cutscenes or pickup items (can use pits, or screen transitions
         self.text_clip = False & options.nagmessages # trigger a text box on keyblock or rock or obstacle while holding diagonal to clip into the side. Removed from logic for now
-        self.jesus_rooster = AND(ROOSTER, options.hardmode != "oracle") # when transitioning on top of water, buffer the rooster out of sq menu to spawn it. Then do an unbuffered pickup of the rooster as soon as you spawn again to pick it up
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
-        self.zoomerang_buffer = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
+        self.zoomerang_shovel = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
         self.lava_swim = AND(FLIPPERS) # be paused and splashing on lave, transition on the first frame after unpausing
         self.lava_swim_sword = AND(FLIPPERS, SWORD) # be paused and splashing on lave, transition on the first frame after unpausing = some screens need sword to be held when unpausing to work???
 

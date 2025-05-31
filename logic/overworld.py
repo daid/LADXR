@@ -606,9 +606,9 @@ class World:
             self._addEntranceRequirement("d8", OR(r.bomb_trigger, AND(OCARINA, SONG3))) # bomb trigger the head and walk through, or play the ocarina song 3 and walk through
 
         if options.logic == 'hell':
-            #TODO: outside_dream_hut.connect(mabe_village, r.zoomerang_buffer, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
+            #TODO: outside_dream_hut.connect(mabe_village, r.zoomerang_shovel, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             dream_hut_right.connect(dream_hut, None) # alternate diagonal movement with orthogonal movement to control the mimics. Get them clipped into the walls to walk past
-            #TODO: outside_hookshot_cave.connect(forest, r.zoomerang_buffer, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
+            #TODO: outside_hookshot_cave.connect(forest, r.zoomerang_shovel, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             swamp.connect(forest_toadstool, r.damage_boost) # damage boost from toadstool area across the pit
             swamp.connect(forest, AND(r.bush, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # boots bonk / hookshot spam over the pits right of forest_rear_chest
             forest.connect(forest_heartpiece, r.boots_bonk_pit, back=False) # boots bonk across the pits
@@ -619,12 +619,12 @@ class World:
             writes_hut_outside.connect(swamp, r.damage_boost) # damage boost with moblin arrow next to telephone booth
             writes_cave_left_chest.connect(writes_cave, r.damage_boost) # damage boost off the zol to get across the pit.
             graveyard.connect(crazy_tracy_hut, r.hookshot_spam_pit, back=False) # use hookshot spam to clip the rock on the right with the crow
-            #TODO: crazy_tracy_hut.connect(graveyard, r.zoomerang_buffer, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
+            #TODO: crazy_tracy_hut.connect(graveyard, r.zoomerang_shovel, back=False) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             graveyard.connect(forest, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # boots bonk over pits by witches hut, or hookshot spam across the pit
             graveyard_cave_left.connect(graveyard_cave_right, r.hookshot_spam_pit) # hookshot spam over the pit
             graveyard_cave_right.connect(graveyard_cave_left, OR(r.damage_boost, r.boots_bonk_pit), back=False) # boots bonk off the cracked block, or set up a damage boost with the keese
             #TODO: outside_graveyard_left.connect(ghost_grave, AND(BOOMERANG, OR(FEATHER, PEGASUS_BOOTS), r.hookshot_clip_block), back=False) # stand in bottom of rock curcle, boomerand the zompie until you get a good rupee spawn, feather or bonk over the stiarcase, and hookshot clip the rupee to escape
-            #TODO: ghost_grave.connect(outside_graveyard_left, r.zoomerang_buffer) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
+            #TODO: ghost_grave.connect(outside_graveyard_left, r.zoomerang_shovel) # right-facing zoomerang while tucked in bottom left corner of stones. Pause buffer first frame after zoomerang and then hold any other direction on d pad
             
             self._addEntranceRequirementEnter("mamu", AND(r.pit_buffer_itemless, r.pit_buffer_boots, POWER_BRACELET)) # can clear the gaps at the start with multiple pit buffers, can reach bottom left sign with bonking along the bottom wall
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer_boots) # pit buffer to clip bottom wall and boots bonk across
@@ -645,7 +645,7 @@ class World:
             ukuku_prairie.connect(bay_water, OR(r.jesus_jump, r.jesus_rooster), back=False) # jesus jump/rooster
             bay_water.connect(d5_entrance, OR(r.jesus_jump, r.jesus_rooster)) # jesus jump/rooster into d5 entrance (wall clip), wall clip + jesus jump to get out
             prairie_island_seashell.connect(ukuku_prairie, AND(r.jesus_rooster, r.bush)) # jesus rooster from right side, screen transition on top of the water to reach the island
-            #TODO: prairie_island_seashell.connect(ukuku_prairie, AND(HOOKSHOT, BOOMERANG)) # when not having flippers, you can use hookshot on the white block the exact frame you step on water, and it will screen transition. S@Q menu to stop drowning briefly, then boomerang diagonally to get bush seashell
+            #TODO: prairie_island_seashell.connect(ukuku_prairie, AND(jesus_buffer_hookshot, BOOMERANG)) # when not having flippers, you can use hookshot on the white block the exact frame you step on water, and it will screen transition. S@Q menu to stop drowning briefly, then boomerang diagonally to get bush seashell
             bay_madbatter_connector_exit.connect(bay_madbatter_connector_entrance, r.jesus_rooster, back=False) # jesus rooster (3 screen) through the underground passage leading to martha's bay mad batter
             # fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, OR(FEATHER, SWORD, BOW), FLIPPERS)) # just swing/shoot at fisher, if photographer is on screen it is dumb
             fisher_under_bridge.connect(bay_water, AND(TRADING_ITEM_FISHING_HOOK, FLIPPERS)) # face the fisherman from the left, get within 4 pixels (a range, not exact) of his left side, hold up, and mash a until you get the textbox.

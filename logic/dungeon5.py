@@ -98,11 +98,11 @@ class Dungeon5:
         middle_ledge.connect(north_ledge, HOOKSHOT, back=False)
         north_ledge.connect(north_ledge_chest_7, back=False)
         north_ledge.connect(north_crossroads, HOOKSHOT)
+        north_crossroads.connect(west_crossroads, POWER_BRACELET, back=False)
         north_crossroads.connect(ms_3_room, AND("D5_ZOL_CLEAR", r.enemy_requirements["HIDING_ZOL"]), back=False)
         ms_3_room.connect(ms_3_victory, AND("MS1_KILL", "MS2_KILL", r.enemy_requirements["MASTER_STALFOS"]), back=False)
         ms_3_room.connect(pot_locked_room, POWER_BRACELET, back=False)
         pot_locked_room.connect(pot_locked_room_chest9, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"]), back=False) #TODO: remove kill enemy requirements, it's just here to make logic match stable
-        
         # ms4
         before_a_passage.connect(after_a_passage, FEATHER)
         after_a_passage.connect(crystal_room, SWORD, back=False)
@@ -119,7 +119,7 @@ class Dungeon5:
         after_blade_trap.connect(pot_column_room, HOOKSHOT, back=None)
         pot_column_room.connect(pot_column_room_chest4, back=False)
         before_miniboss.connect(miniboss_room, FOUND(KEY5, 2))
-        miniboss_room.connect((entrance, before_c_passage), r.miniboss_requirements[world_setup.miniboss_mapping[4]], back=False) # miniboss portal and exit door
+        miniboss_room.connect((entrance, before_c_passage), r.miniboss_requirements[world_setup.miniboss_mapping[4]], back=False) # miniboss portal
         before_c_passage.connect(before_miniboss, POWER_BRACELET, back=False)
         star_room.connect((after_d_passage, spark_hallway), r.enemy_requirements["STAR"], back=None)
         spark_hallway.connect(after_c_passage, back=False)
@@ -133,18 +133,18 @@ class Dungeon5:
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             statue_room.connect(after_blade_trap, FEATHER, back=False) # jump past the blade traps
             after_blade_trap.connect(pot_column_room, r.tight_jump, back=False) # tight jump south to get across huge pit
-            #TODO: before_miniboss.connect(statue_room, HOOKSHOT) # open the bridge by hookshotting up while almost standing in pit
+            #TODO: before_miniboss.connect(statue_room, HOOKSHOT, back=False) # open the bridge by hookshotting up while almost standing in pit [stair shuffle prep]
             after_a_passage.connect(before_a_passage, r.boots_bonk, back=False) # only takes one boots bonk to get on last ladder
-            before_d_passage.connect(after_d_passage, r.boots_bonk) # boots charge + bonk to cross 2d bridge #TODO: move to hell?
-            before_c_passage.connect(after_c_passage, AND(r.boots_bonk, HOOKSHOT), back=r.boots_bonk) # boots bonk in 2d section to skip feather #TODO: move to hell?
+            before_d_passage.connect(after_d_passage, r.boots_bonk) # boots charge + bonk to cross 2d bridge
+            before_c_passage.connect(after_c_passage, AND(r.boots_bonk, HOOKSHOT), back=r.boots_bonk) # boots bonk in 2d section to skip feather
             spark_hallway.connect(after_boss_keyblock, r.tight_jump) # jump from bottom left to top right, skipping the keyblock
             spark_hallway.connect(pre_boss_room, r.boots_jump, back=False) # cross pits room from bottom left to top left with boots jump
-            before_d_passage.connect(single_tile_ledge, r.hookshot_over_pit, back=False) # walk into pit and hookshot right to get to single tile ledge
-            single_tile_ledge.connect(north_crossroads, r.diagonal_walk) # walk diagonally between pits to get to north crossroads
-            north_ledge.connect(middle_ledge, HOOKSHOT, back=False) # open the bridge by hookshotting up while almost standing in pit
+            before_d_passage.connect((north_crossroads, single_tile_ledge), r.hookshot_over_pit, back=False) # walk into pit and hookshot to grap a block before falling
+            single_tile_ledge.connect(north_crossroads, r.diagonal_walk) # walk diagonally between pits to get to north crossroads [stair shuffle prep]
+            #TODO: north_ledge.connect(middle_ledge, HOOKSHOT, back=False) # open the bridge by hookshotting up while almost standing in pit
             middle_ledge.connect(north_crossroads, r.tight_jump) # tight jump to/from first chest ledge, helps but not required to start wall clipped
             after_b_passage.connect(boss_key_room, r.boots_jump, back=False) # boots jump across
-            #TODO: north_crossroads.connect(west_crossroads_zol_clear, OR(SWORD, BOMB), back=False) # left side zol can only be killed with sword and bomb unless you have power bracelet or glitches
+            north_crossroads.connect(west_crossroads_zol_clear, OR(SWORD, BOMB), back=False) # left side zol can only be killed with sword or bomb unless you have power bracelet or glitches
             
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer, back=False) # pit buffer to clip bottom wall and jump across the pits
@@ -159,21 +159,21 @@ class Dungeon5:
             statue_room.connect(after_blade_trap, r.pit_buffer_boots, back=False) # boots bonk + pit buffer past the blade traps
             after_blade_trap.connect(pot_column_room, r.pit_buffer_itemless, back=False) # pit buffer down 3 tiles
             before_miniboss.connect(statue_room, r.boots_jump, back=False) # boots jump across
-            statue_room.connect(before_miniboss, AND(r.boots_jump, r.pit_buffer), back=False) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across. #TODO: change to pit_buffer_boots
-            #TODO: statue_room.connect(before_miniboss, r.super_bump, back=False) # super bump off zol or fireball to skip bridge pull NOTE: not sure if oob
-            before_miniboss.connect(before_c_passage, AND(r.sideways_block_push, POWER_BRACELET), back=False) # Sideways block push + pick up pots to reach stairs after gohma #TODO: move to glitched
+            statue_room.connect(before_miniboss, AND(r.boots_jump, r.pit_buffer_boots), back=False) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across.
+            before_miniboss.connect(before_c_passage, AND(r.sideways_block_push, POWER_BRACELET), back=False) # Sideways block push + pick up pots to reach stairs after gohma #TODO: MOVE to glitched
+            #TODO: before_miniboss.connect(before_c_passage, AND(FOUND(KEY5, 1), r.super_bump), back=False) # open key block to wall clip, then superbump over the block using zol or antifairy
             before_c_passage.connect(after_c_passage, r.boots_jump, back=False) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_c_passage.connect(spark_hallway, OR(r.super_jump_sword, r.zoomerang), back=False) # unclipped superjump in bottom right corner of staircase before boss room or left-facing zoomerang to superjump off right wall
             #TODO: before_d_passage.connect(after_d_passage) # hold the A button when itemless to bounce higher off the cheep-cheeps to cover 2-block gaps. helpful to stand on edge and pause/map buffer to catch the frame where fish starts to leap, then hold left
-            #TODO: before_d_passage.connect(north_crossroads, r.boots_bonk_pit) # boots bonk over pit
+            #TODO: before_d_passage.connect(north_crossroads, r.boots_bonk_pit, back=False) # boots bonk over pit
             north_crossroads.connect(north_ledge, r.pit_buffer_boots) # boots bonk across the pits with pit buffering
             north_ledge.connect(middle_ledge, r.pit_buffer_itemless, back=False) # itemless pit buffer down through where the bridge would be
             middle_ledge.connect(east_ledge, r.pit_buffer_boots) # boots bonk across the pits with pit buffering
-            #TODO: ms_3_room.connect(pot_locked_room, AND(r.super_jump_boots, r.zoomerang_buffer), back=False) # skip bracelet requirement by boots superjump to land in pot, then zoomerang to dislodge link to the left
+            #TODO: ms_3_room.connect(pot_locked_room, AND(r.super_jump_boots, r.zoomerang_shovel), back=False) # skip bracelet requirement by boots superjump to land in pot, then zoomerang to dislodge link to the left
             after_b_passage.connect(boss_key_room, r.pit_buffer_itemless, back=False)  # itemless pit buffer down through where the bridge would be
             if options.owlstatues == "both" or options.owlstatues == "dungeon": #TODO: REMOVE if statement, it's the patch to match upstream logic
                 after_boss_keyblock.connect(spark_hallway, AND(STONE_BEAK5, r.pit_buffer_itemless), back=False) #TODO: REMOVE beak from requirement - pit buffer from east of boss door to spark hallway
-            spark_hallway.connect(pre_boss_room, r.super_jump_feather, back=False) # wall clip bottom left superjump until clipped on bottom wall, then superjump to land on outcropping, tight jump to before boss
+            spark_hallway.connect(pre_boss_room, AND(r.super_jump_feather, r.tight_jump), back=False) # wall clip bottom left and superjump back and forth until clipped on bottom wall, then superjump to outcropping, tight jump to floor before boss
 
         self.entrance = entrance
         self.final_room = instrument
