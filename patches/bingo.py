@@ -581,7 +581,7 @@ BINGO_GOALS = [
     KillGoal("Kill an Armos Statue", 0x0F, TileInfo(0xEA6, 0xEB6, 0xEA7, 0xEB7)),
     KillGoal("Kill a Pokey", 0xE3, TileInfo(0x8C4, flipH=True, colormap=[2, 3, 1, 0]), extra_check="State1"),
     KillGoal("Kill a Piranha Plant", 0xA2, TileInfo(0x1640, flipH=True, colormap=[2, 3, 1, 0])),
-    KillGoal("Kill a Wizzrobe", 0x21, TileInfo(0x950, flipH=True, colormap=[2, 3, 1, 0])),
+    KillGoal("Kill a Wizrobe", 0x21, TileInfo(0x950, flipH=True, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a group of Three-of-a-Kinds (hearts)", 0x90, TileInfo(0x1594, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=0, group="3-of-a-kind"),
     KillGoal("Kill a group of Three-of-a-Kinds (diamonds)", 0x90, TileInfo(0x1590, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=1, group="3-of-a-kind"),
     KillGoal("Kill a group of Three-of-a-Kinds (spades)", 0x90, TileInfo(0x1598, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=2, group="3-of-a-kind"),
