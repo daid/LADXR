@@ -1136,6 +1136,11 @@ var options =
     "label": "Rosa"
    },
    {
+    "key": "Saria.bin",
+    "short": "Saria.bin>",
+    "label": "Saria"
+   },
+   {
     "key": "Subrosian.bin",
     "short": "Subrosian.bin>",
     "label": "Subrosian"
