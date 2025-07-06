@@ -168,12 +168,12 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                 description='Randomizes the dungeon minibosses that each dungeon has.'),
             Setting('enemies', 'Gameplay', 'e', 'Enemizer', options=[('default', '', 'None'), ('overworld', 'o', 'Overworld')], default='default',
                 description='Randomizes which enemies are placed.'),
-            Setting('goal', 'Gameplay', 'G', 'Goal', options=[('vanilla', 'v', 'Vanilla'), ('instruments', 'i', 'X instruments'), ('specific', 's', 'X specific instruments')],
+            Setting('goal', 'Gameplay', 'G', 'Goal', options=[('vanilla', 'v', 'Vanilla'), ('instruments', 'i', 'X instruments'), ('specific', 's', 'X specific instruments'),
                                                          ('open', 'O', 'Egg already open'),
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
                                                          ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), default='vanilla',
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), default='vanilla'],
                 description="""Changes the goal of the game.
 [Vanilla] 8 instruments required to open the egg.
 [X instruments] A number of instruments required to open the egg.
@@ -276,7 +276,7 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
                 description="""
 [Random] Randomizes overworld and dungeon music.
 [Disable] No music in the whole game.
-[Tone shifted] Tone shifts the musics, making it sound different.""",
+[Tone shifted] Tone shifts the musics, making it sound different""",
                 aesthetic=True),
         ]
         self.__by_key = {s.key: s for s in self.__all}
