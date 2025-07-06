@@ -173,7 +173,7 @@ If random start location and/or dungeon shuffle is enabled, then these will be s
                                                          ('open-4', '<', 'Random short game (0-4)'), ('5-8', '>', 'Random long game (5-8)'),
                                                          ('seashells', 'S', 'Seashell hunt (20)'), ('bingo', 'b', 'Bingo!'),
                                                          ('bingo-double', 'd', 'Double Bingo!'), ('bingo-triple', 't', 'Triple Bingo!'),
-                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze'), default='vanilla'],
+                                                         ('bingo-full', 'B', 'Bingo-25!'), ('maze', 'm', 'Sign Maze')], default='vanilla',
                 description="""Changes the goal of the game.
 [Vanilla] 8 instruments required to open the egg.
 [X instruments] A number of instruments required to open the egg.
