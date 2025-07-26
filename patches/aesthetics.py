@@ -244,7 +244,8 @@ def getMarinStartingText(rnd: random.Random):
     line = rnd.choice(lines).strip().decode("unicode_escape")\
         .replace('<rnd100>', randomNumber(1,101,rnd)) \
         .replace('<ord100>', randomOrdinal(1,101,rnd))\
-        .replace('<rnd999>', randomNumber(1,1000,rnd))
+        .replace('<rnd999>', randomNumber(1,1000,rnd))\
+        .replace('<marinLinesAmount>', str(len(lines)))
 
     return formatText(line)
 
