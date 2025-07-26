@@ -340,4 +340,14 @@ Did you ever hear the tragedy of Darth Dethl The Wise? I thought not. It's not a
 This is no island, it's a space station.
 This is a dream. Nothing matters. Go nuts, kid.
 ---PLACEHOLDER---\nwarlink, don't forget to replace this text.
-
+##### this is the <ord100> time in a row you've woke up in my bed.
+Talk to me <rnd100> times and you might get a surprise!
+{SWORD} for only <rnd999> {RUPEES}!
+{BOMB} for only <rnd999> {RUPEES}!
+{GOLD_LEAF} for only <rnd999> {RUPEES}!
+{OCARINA} for only <rnd999> {RUPEES}!
+{PEGASUS_BOOTS} for only <rnd999> {RUPEES}!
+{FEATHER} for only <rnd999> {RUPEES}!
+20 {RUPEES} for only <rnd999> {RUPEES}!
+<rnd999> {RUPEES} for only <rnd999> {RUPEES}!
+Nothing for only <rnd999> {RUPEES}!

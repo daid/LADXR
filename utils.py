@@ -1,6 +1,7 @@
 from typing import Optional
 
 from locations.items import *
+from random import randrange
 
 class Error(Exception):
     pass
@@ -150,6 +151,22 @@ _NAMES = {
 }
 
 
+def randomOrdinal(min: int, max: int) -> bytes:
+	n = str(randrange(min, max))
+	match n[-1]:
+		case "1":
+			ordinal = "st"
+		case "2":
+			ordinal = "nd"
+		case "3":
+			ordinal = "rd"
+		case _:
+			ordinal = "th"
+	return "{}{}".format(n, ordinal).encode('ascii')
+
+def randomNumber(min: int, max: int) -> bytes:
+	return str(randrange(min, max)).encode('ascii')
+
 _CHARACTERS = {
     b"'":  b"^",
     b'<agrave>': b'\x80',
@@ -199,7 +216,11 @@ _CHARACTERS = {
     b'<arrowD>': b'\xF1',
     b'<arrowL>': b'\xF2',
     b'<arrowR>': b'\xF3',
+    b'<rnd100>': randomNumber(1,101), # [1;101[, so [1;100]
+    b'<ord100>': randomOrdinal(1,101),
+    b'<rnd999>': randomNumber(1,1000),
 }
+
 
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
