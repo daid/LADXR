@@ -201,7 +201,7 @@ _CHARACTERS = {
     b'<arrowR>': b'\xF3',
 }
 
-def randomOrdinal(min: int, max: int, rnd: random) -> bytes:
+def randomOrdinal(min: int, max: int, rnd: random.Random) -> bytes:
 	n = str(rnd.randrange(min, max))
 	match n[-1]:
 		case "1":
@@ -214,14 +214,14 @@ def randomOrdinal(min: int, max: int, rnd: random) -> bytes:
 			ordinal = "th"
 	return "{}{}".format(n, ordinal).encode('ascii')
 
-def randomNumber(min: int, max: int, rnd: random) -> bytes:
+def randomNumber(min: int, max: int, rnd: random.Random) -> bytes:
 	return str(random.randrange(min, max)).encode('ascii')
 
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
 
 
-def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None, rnd: Optional[random] = None) -> bytes:
+def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None, rnd: Optional[random.Random] = None) -> bytes:
     instr = instr.format(**_NAMES)
     s = instr.encode("ascii")
     for character, encodedCharacter in _CHARACTERS.items():
