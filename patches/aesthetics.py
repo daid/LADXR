@@ -240,7 +240,7 @@ def reduceMessageLengths(rom, rnd):
     lines = open(os.path.join(os.path.dirname(__file__), "marin.txt"), "rb").readlines()
     while lines[-1].strip() == b'':
         lines.pop(-1)
-    rom.texts[0x01] = formatText(rnd.choice(lines).strip().decode("unicode_escape"))
+    rom.texts[0x01] = formatText(rnd.choice(lines).strip().decode("unicode_escape"), rnd=rnd)
 
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText("You've got a Guardian Acorn!")
