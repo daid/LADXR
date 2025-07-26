@@ -150,23 +150,6 @@ _NAMES = {
     EAGLE_TOWER_OPENED: "Eagle Tower open"
 }
 
-
-def randomOrdinal(min: int, max: int, rnd: random) -> bytes:
-	n = str(rnd.randrange(min, max))
-	match n[-1]:
-		case "1":
-			ordinal = "st"
-		case "2":
-			ordinal = "nd"
-		case "3":
-			ordinal = "rd"
-		case _:
-			ordinal = "th"
-	return "{}{}".format(n, ordinal).encode('ascii')
-
-def randomNumber(min: int, max: int, rnd: random) -> bytes:
-	return str(random.randrange(min, max)).encode('ascii')
-
 _CHARACTERS = {
     b"'":  b"^",
     b'<agrave>': b'\x80',
@@ -218,6 +201,21 @@ _CHARACTERS = {
     b'<arrowR>': b'\xF3',
 }
 
+def randomOrdinal(min: int, max: int, rnd: random) -> bytes:
+	n = str(rnd.randrange(min, max))
+	match n[-1]:
+		case "1":
+			ordinal = "st"
+		case "2":
+			ordinal = "nd"
+		case "3":
+			ordinal = "rd"
+		case _:
+			ordinal = "th"
+	return "{}{}".format(n, ordinal).encode('ascii')
+
+def randomNumber(min: int, max: int, rnd: random) -> bytes:
+	return str(random.randrange(min, max)).encode('ascii')
 
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
