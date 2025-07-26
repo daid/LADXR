@@ -201,8 +201,8 @@ _CHARACTERS = {
     b'<arrowR>': b'\xF3',
 }
 
-def randomOrdinal(min: int, max: int, rnd: random.Random) -> bytes:
-	n = str(rnd.randrange(min, max))
+def randomOrdinal(min: int, max: int, rnd: random.Random) -> str:
+	n = randomNumber(min, max, rnd)
 	match n[-1]:
 		case "1":
 			ordinal = "st"
@@ -212,24 +212,21 @@ def randomOrdinal(min: int, max: int, rnd: random.Random) -> bytes:
 			ordinal = "rd"
 		case _:
 			ordinal = "th"
-	return "{}{}".format(n, ordinal).encode('ascii')
+	return "{}{}".format(n, ordinal)
 
-def randomNumber(min: int, max: int, rnd: random.Random) -> bytes:
-	return str(random.randrange(min, max)).encode('ascii')
+
+def randomNumber(min: int, max: int, rnd: random.Random) -> str:
+	return str(random.randrange(min, max))
 
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value
 
 
-def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None, rnd: Optional[random.Random] = None) -> bytes:
+def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
     instr = instr.format(**_NAMES)
     s = instr.encode("ascii")
     for character, encodedCharacter in _CHARACTERS.items():
         s = s.replace(character, encodedCharacter)
-    if rnd != None:
-        s = s.replace(b'<rnd100>', randomNumber(1,101,rnd)) # [1;101[, so [1;100]
-        s = s.replace(b'<ord100>', randomOrdinal(1,101,rnd))
-        s = s.replace(b'<rnd999>', randomNumber(1,1000,rnd))
 
     def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
