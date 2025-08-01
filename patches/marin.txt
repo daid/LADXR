@@ -340,17 +340,17 @@ Did you ever hear the tragedy of Darth Dethl The Wise? I thought not. It's not a
 This is no island, it's a space station.
 This is a dream. Nothing matters. Go nuts, kid.
 ---PLACEHOLDER---\nwarlink, don't forget to replace this text.
-##### this is the <ord100> time in a row you've woke up in my bed.
-Talk to me <rnd100> times and you might get a surprise!
-{SWORD} for only <rnd999> {RUPEES}!
-{BOMB} for only <rnd999> {RUPEES}!
-{GOLD_LEAF} for only <rnd999> {RUPEES}!
-{OCARINA} for only <rnd999> {RUPEES}!
-{PEGASUS_BOOTS} for only <rnd999> {RUPEES}!
-{FEATHER} for only <rnd999> {RUPEES}!
-20 {RUPEES} for only <rnd999> {RUPEES}!
-<rnd999> {RUPEES} for only <rnd999> {RUPEES}!
-Nothing for only <rnd999> {RUPEES}!
+##### this is the <ord999> time in a row you've woke up in my bed.
+Talk to me <rnd3,9999> times and you might get a surprise!
+{SWORD} for only <rnd2,999> {RUPEES}!
+{BOMB} for only <rnd2,999> {RUPEES}!
+{GOLD_LEAF} for only <rnd2,999> {RUPEES}!
+{OCARINA} for only <2,rnd999> {RUPEES}!
+{PEGASUS_BOOTS} for only <2,rnd999> {RUPEES}!
+{FEATHER} for only <rnd2,999> {RUPEES}!
+20 {RUPEES} for only <rnd21,999> {RUPEES}!
+<rnd999> {RUPEES} for only <rnd2,999> {RUPEES}!
+Nothing for only <rnd2,999> {RUPEES}!
 You've got the\nCompass!  Now,\nyou can see\nwhere the chests\nand Nightmare\nare hidden! This\nCompass has a\nnew feature-- a\ntone will tell\nyou if a key is\nhidden in a room\nwhen you enter!
 Hmm... I must say #####, The two pieces of pottery which were hand crafted by my father, Mari- er I mean Tarin, that are in the lower left corner of the inside of this house at tile positions, X6, Y1 and X6,Y2 do appear to be quite heavy...\nIf one were to attempt to lift them off of the ground, I do believe they could not achieve this goal only using their bare hands.
 Is Bombs an Instrument?
@@ -403,7 +403,7 @@ So, did you come from Holodrum to get here or or you going to go to Holodrum whe
 So, did you come from Labrynna to get here or or you going to go to Labrynna when you're done? I've got these books that contradict each other.
 ##### IS YOU
 I don't have long. Listen. If I tell you on the beach that I want to be a seagull, DON'T LISTEN TO ME! It sucks!
-Get your sword here! https:<stick><stick>youtu.be<stick>dQw4w9WgXcQ
+Get your {SWORD} here! https:<stick><stick>youtu.be<stick>dQw4w9WgXcQ
 Have you heard of the critically acclaimed MMORPG Final Fantasy XIV which has an expanded free trial that you can play through the entirety of A Realm Reborn and the award-winning HEAVENSWARD and STORMBLOOD expansions up to level 70 for free with no restrictions on playtime? Now available on XBOX series X & S! Sign up and enjoy Eorzea today!
 This seed brought to you by Gamer Supps.
 Hey VSauce, ##### here.

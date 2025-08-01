@@ -6,6 +6,7 @@ import os
 import json
 import struct
 import random
+import re
 
 def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
@@ -241,11 +242,11 @@ def getMarinStartingText(rnd: random.Random):
     
     # generate random numbers
     # [1;101[, so [1;100]
+    
     line = rnd.choice(lines).strip().decode("unicode_escape")\
-        .replace('<rnd100>', randomNumber(1,101,rnd)) \
-        .replace('<ord100>', randomOrdinal(1,101,rnd))\
-        .replace('<rnd999>', randomNumber(1,1000,rnd))\
         .replace('<marinLinesAmount>', str(len(lines)))
+    line = re.sub(r'<rnd(?:(-?\d+),)?(-?\d+)>', lambda m: randomNumber(int(m.group(1)) if m.group(1) != None else 1, int(m.group(2))+1, rnd), line)
+    line = re.sub(r'<ord(?:(-?\d+),)?(-?\d+)>', lambda m: randomOrdinal(int(m.group(1)) if m.group(1) != None else 1, int(m.group(2))+1, rnd), line)
 
     return formatText(line)
 
