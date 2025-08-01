@@ -1,11 +1,12 @@
 from assembler import ASM
-from utils import formatText, setReplacementName
+from utils import formatText, setReplacementName, randomNumber, randomOrdinal
 from roomEditor import RoomEditor
 import entityData
 import os
 import json
 import struct
-
+import random
+import re
 
 def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
@@ -234,13 +235,24 @@ def noText(rom):
         if not isinstance(rom.texts[idx], int) and (idx < 0x217 or idx > 0x21A):
             rom.texts[idx] = rom.texts[idx][-1:]
 
-
-def reduceMessageLengths(rom, rnd):
-    # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
+def getMarinStartingText(rnd: random.Random):
     lines = open(os.path.join(os.path.dirname(__file__), "marin.txt"), "rb").readlines()
     while lines[-1].strip() == b'':
         lines.pop(-1)
-    rom.texts[0x01] = formatText(rnd.choice(lines).strip().decode("unicode_escape"))
+    
+    # generate random numbers
+    # [1;101[, so [1;100]
+    
+    line = rnd.choice(lines).strip().decode("unicode_escape")\
+        .replace('<marinLinesAmount>', str(len(lines)))
+    line = re.sub(r'<rnd(?:(-?\d+),)?(-?\d+)>', lambda m: randomNumber(int(m.group(1)) if m.group(1) != None else 1, int(m.group(2))+1, rnd), line)
+    line = re.sub(r'<ord(?:(-?\d+),)?(-?\d+)>', lambda m: randomOrdinal(int(m.group(1)) if m.group(1) != None else 1, int(m.group(2))+1, rnd), line)
+
+    return formatText(line)
+
+def reduceMessageLengths(rom, rnd):
+    # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
+    rom.texts[0x01] = getMarinStartingText(rnd)
 
     # Reduce length of a bunch of common texts
     rom.texts[0xEA] = formatText("You've got a Guardian Acorn!")
