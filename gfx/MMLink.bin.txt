@@ -1,0 +1,4 @@
+{
+    "name": "Spikey-Valentine, Thunder Wool, and Techokami",
+    "url": "https://www.spriters-resource.com/custom_edited/thelegendofzeldacustoms/sheet/159119/"
+}
