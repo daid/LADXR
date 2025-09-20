@@ -26,17 +26,17 @@ def fixBowwow(rom):
         b"46234423"
         b"4A234823"
         b"4C034C23",
-        b"500B502B"
-        b"520B522B"
-        b"540B560B"
-        b"580B5A0B"
-        b"562B542B"
-        b"5A2B582B"
-        b"5C0B5C2B")
+        b"700B702B"
+        b"720B722B"
+        b"740B760B"
+        b"780B7A0B"
+        b"762B742B"
+        b"7A2B782B"
+        b"7C0B7C2B")
     # Patch to use the chain sprite from second vram bank (however, the chain bugs out various things)
     rom.patch(0x05, 0x0282,
         ASM("ld a, $4E\njr nz, $02\nld a, $7E\nld [de], a\ninc de\nld a, $00"),
-        ASM("ld a, $5E\nld [de], a\ninc de\nld a, $08"), fill_nop=True)
+        ASM("ld a, $7E\nld [de], a\ninc de\nld a, $08"), fill_nop=True)
     # Never load the bowwow tiles in the first VRAM bank, as we do not need them.
     rom.patch(0x00, 0x2EB0, ASM("ld a, [wIsBowWowFollowingLink]\ncp $01\nld a, $A4\njr z, $18"), "", fill_nop=True)
 

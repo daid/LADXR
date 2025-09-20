@@ -104,7 +104,7 @@ doNotGiveArrows:
     ret
 
 sprite:
-    db   $76, $09, $78, $09, $7A, $09, $7C, $09
+    db   $5A, $09, $5C, $09, $5E, $09, $60, $09
 """, 0x67F5), fill_nop=True)
     rom.patch(0x20, 0x0322 + 0x41 * 2, "734A", "564B")  # Remove the owl init handler
 

@@ -51,7 +51,7 @@ TradeSequenceItemData:
     ; tile attributes
     db $0D, $0A, $0D, $0D, $0E, $0E, $0D, $0D, $0D, $0E, $09, $0A, $0A, $0D
     ; tile index
-    db $1A, $B0, $B4, $B8, $BC, $C0, $C4, $C8, $CC, $D0, $D4, $D8, $DC, $E0
+    db $A0, $A4, $A8, $AC, $B0, $B4, $B8, $BC, $C0, $C4, $C8, $CC, $D0, $D4
 
 UpdateInventoryMenu:
         ld   a, [wTradeSequenceItem]

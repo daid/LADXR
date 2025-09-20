@@ -209,11 +209,11 @@ def moreSlots(rom):
     rom.patch(0x36, 0x31B8, ASM("ld e, $0C"), ASM("ld e, $10"))
 
     ##  Patch the toadstool as a different item
-    rom.patch(0x20, 0x1C84, "9C019C" "069C61", "4C7F7F" "4D7F7F")  # Which tiles are used for the toadstool
+    rom.patch(0x20, 0x1C84, "9C019C" "069C61", "867F7F" "877F7F")  # Which tiles are used for the toadstool
     rom.patch(0x20, 0x1C8A, "9C659C" "C19CC5", "90927F" "91937F")  # Which tiles are used for the rooster
-    rom.patch(0x20, 0x1C90, "9D219D" "259D81", "057F7F" "047F7F")  # Which tiles are used for the hammer
-    rom.patch(0x20, 0x1C6C, "927F7F" "937F7F", "127F7F" "137F7F")  # Which tiles are used for the feather (to make space for rooster)
-    rom.patch(0x20, 0x1C66, "907F7F" "917F7F", "107F7F" "117F7F")  # Which tiles are used for the ocarina (to make space for rooster)
+    rom.patch(0x20, 0x1C90, "9D219D" "259D81", "897F7F" "887F7F")  # Which tiles are used for the hammer
+    rom.patch(0x20, 0x1C6C, "927F7F" "937F7F", "827F7F" "837F7F")  # Which tiles are used for the feather (to make space for rooster)
+    rom.patch(0x20, 0x1C66, "907F7F" "917F7F", "807F7F" "817F7F")  # Which tiles are used for the ocarina (to make space for rooster)
 
     # Move the inventory tile numbers to a higher address, so there is space for the table above it.
     rom.banks[0x20][0x1C36:0x1C9C] = rom.banks[0x20][0x1C30:0x1C96]
@@ -262,7 +262,7 @@ HammerUse:
     ret
     """, 0x129D), fill_nop=True)
     # Fix the graphics of the toadstool hold over your head
-    rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $4C"))
+    rom.patch(0x02, 0x121E, ASM("ld e, $8E"), ASM("ld e, $86"))
     rom.patch(0x02, 0x1241, ASM("ld a, $14"), ASM("ld a, $1C"))
 
     # Do not remove powder when it is used up.
@@ -297,8 +297,8 @@ def advancedInventorySubscreen(rom):
               "090C0F12494C4F52")
 
     be = BackgroundEditor(rom, 2)
-    be.tiles[0x9DA9] = 0x4A
-    be.tiles[0x9DC9] = 0x4B
+    be.tiles[0x9DA9] = 0x9E
+    be.tiles[0x9DC9] = 0x9F
     for x in range(1, 10):
         be.tiles[0x9DE9 + x] = 0xB0 + (x % 9)
     be.tiles[0x9DE9] = 0xBA
@@ -332,7 +332,7 @@ def advancedInventorySubscreen(rom):
 
     rom.patch(0x20, 0x19D3, ASM("ld bc, $5994\nld e, $33"), ASM("ld bc, $7E08\nld e, $%02x" % (0x33 + 24)))
     rom.banks[0x20][0x3E08:0x3E08+0x33] = rom.banks[0x20][0x1994:0x1994+0x33]
-    rom.patch(0x20, 0x3E08+0x32, "00" * 25, "9DAA08464646464646464646" "9DCA08B0B0B0B0B0B0B0B0B0" "00")
+    rom.patch(0x20, 0x3E08+0x32, "00" * 25, "9DAA089C9C9C9C9C9C9C9C9C" "9DCA08B0B0B0B0B0B0B0B0B0" "00")
 
     # instead of doing an GBC specific check, jump to our custom handling
     rom.patch(0x20, 0x19DE, ASM("ldh a, [$FFFE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
