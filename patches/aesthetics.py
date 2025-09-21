@@ -33,6 +33,8 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     assert (img.size[1] % tileheight) == 0
 
     cols = img.size[0] // 8
+    if cols > 32:
+        cols = 16
     rows = img.size[1] // tileheight
     result = bytearray(rows * cols * tileheight * 2)
     index = 0
@@ -50,14 +52,71 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
                 result[index] = a
                 result[index+1] = b
                 index += 2
+    if len(result) > 8 and struct.unpack("<I", result[:4])[0] == 0xDEADCA7E:
+        result = result[:1024]
+        header_size = struct.unpack("<I", result[4:8])[0]
+        info_list = json.loads(zlib.decompress(result[8:8+header_size]))
+        bx, by = 0, 32
+        max_width = 16
+        for info in info_list:
+            size = info["size"]
+            width, height = 16, math.ceil(size // 32 / 16)
+            if info["type"] in {"photo", "bg"}:
+                width, height = 20, 9
+                size = width * height * 32
+            if by + height * 16 > img.size[1]:
+                bx += max_width * 8
+                by = 0
+                max_width = 16
+            max_width = max(max_width, width)
+            block = bytearray(width * height * 32)
+            index = 0
+            colormap = [0, 1, 2, 3]
+            if "colormap" in info:
+                for n in range(4):
+                    colormap[n] = (info["colormap"] >> (n * 4)) & 0x0F
+            for ty in range(height):
+                for tx in range(width):
+                    for y in range(tileheight):
+                        a = 0
+                        b = 0
+                        for x in range(8):
+                            c = colormap[remap[img.getpixel((bx + tx * 8 + x, by + ty * tileheight + y)) & 3]]
+                            if c & 1:
+                                a |= 0x80 >> x
+                            if c & 2:
+                                b |= 0x80 >> x
+                        block[index] = a
+                        block[index + 1] = b
+                        index += 2
+            if info["type"] == "sprite":
+                pass
+            elif info["type"] in {"tile", "photo", "bg"}:
+                for row in range(height):
+                    a = b''
+                    b = b''
+                    for x in range(width):
+                        a += block[(row * width + x) * 32:(row * width + x) * 32 + 16]
+                        b += block[(row * width + x) * 32 + 16:(row * width + x) * 32 + 32]
+                    block[row * width * 32:row * width * 32 + width * 16] = a
+                    block[row * width * 32 + width * 16:row * width * 32 + width * 32] = b
+            elif info["type"] == "tile4":
+                for tile_nr in range(len(block) // 64):
+                    block[tile_nr*64+16:tile_nr*64+32], block[tile_nr*64+32:tile_nr*64+48] = block[tile_nr*64+32:tile_nr*64+48], block[tile_nr*64+16:tile_nr*64+32]
+            else:
+                print(info["type"])
+            result += block[:size]
+            by += height * 16
     return result
 
 
 def patchGraphics(rom, graphics_data):
-    header, size = struct.unpack("<II", graphics_data[:8])
-    if header == 0xDEADBEEF and size < 1024:
+    header_id, size = struct.unpack("<II", graphics_data[:8])
+    if header_id in {0xDEADBEEF, 0xDEADCA7E} and size < 1024:
         header = graphics_data[8:8+size]
         graphics_data = graphics_data[1024:]
+        if header_id == 0xDEADCA7E:
+            header = zlib.decompress(header)
         for info in json.loads(header):
             updateGraphics(rom, info["addr"] // 0x4000, info["addr"] & 0x3FFF, graphics_data[:info["size"]])
             graphics_data = graphics_data[info["size"]:]
@@ -155,7 +214,7 @@ def createGfxImage(rom, filename):
         # {"addr": 0x33 * 0x4000 + 0x1000, "size": 0x0800, "type": "photo", "tilemap": 0x17 * 0x4000 + 0x0EEF},  # Windfish, tilemap is BG commands encoded...
     ]
     infoblock = zlib.compress(json.dumps(info_list, separators=(',', ':')).encode('ascii'))
-    infoblock = struct.pack("<II", 0xDEADBEEF, len(infoblock)) + infoblock
+    infoblock = struct.pack("<II", 0xDEADCA7E, len(infoblock)) + infoblock
     print(f"Info block len: {len(infoblock)}")
     assert len(infoblock) < 1024, f"{len(infoblock)} > 1024"
     blocks = [(infoblock + bytes(1024 - len(infoblock)), {"type": "info"})]
