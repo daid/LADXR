@@ -243,8 +243,7 @@ blockBadEmu:
     addSprite(0x82, 0x2C, 0x0920)  # Feather
     addSprite(0x84, 0x2C, 0x08E0)  # Magic powder
     addSprite(0x86, 0x2C, 0x28C0)  # Toadstool
-    addSprite(0x88, 0x2C, 0x0840)  # Hammer (TODO: proper sprite)
-
+    # 0x88 is used for the hammer in inventory subscreen
     addSprite(0x8A, 0x2C, 0x28E0)  # Slime key
     addSprite(0x8C, 0x2C, 0x0C00)  # Tail key
     addSprite(0x8E, 0x2C, 0x0C20)  # Angler key

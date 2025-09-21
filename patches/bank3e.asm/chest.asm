@@ -901,7 +901,7 @@ ItemSpriteTable:
     db $9E, $14 ; $54 ; Seashell disguise
     db $A0, $14 ; $55 ; Medicine disguise
     db $80, $15 ; $56 ; Bomb disguise
-    db $88, $4C       ; Hammer
+    db $52, $4C       ; Hammer
     db $8C, $1D        ; TAIL_CAVE_OPENED
     db $8A, $1D        ; KEY_CAVERN_OPENED
     db $8E, $1D        ; ANGLER_TUNNEL_OPENED
