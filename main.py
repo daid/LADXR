@@ -33,6 +33,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Export the map (few graphical mistakes)")
     parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
         help="Write an unfilled plan file")
+    parser.add_argument('--gfxtemplate', dest="gfxtemplate", type=str, required=False,
+        help="Create a new gfx template")
     parser.add_argument('--timeout', type=float, required=False,
         help="Timeout generating the seed after the specified number of seconds")
     parser.add_argument('--logdirectory', dest="log_directory", type=str, required=False,
@@ -112,6 +114,13 @@ def main(mainargs: Optional[List[str]] = None) -> None:
             if len(ii.OPTIONS) > 1:
                 f.write(";%r\n" % (ii.metadata))
                 f.write("Location:%s: \n" % (ii.nameId))
+        sys.exit(0)
+
+    if args.gfxtemplate:
+        import patches.aesthetics
+        rom = ROMWithTables(open(args.input_filename, 'rb'))
+        patches.aesthetics.createGfxImage(rom, args.gfxtemplate)
+        print(f"Created {args.gfxtemplate}")
         sys.exit(0)
 
     if args.dump is not None or args.test:

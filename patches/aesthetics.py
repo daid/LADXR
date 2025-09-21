@@ -1,12 +1,16 @@
 from assembler import ASM
 from utils import formatText, setReplacementName, randomNumber, randomOrdinal
 from roomEditor import RoomEditor
+from backgroundEditor import BackgroundEditor
 import entityData
 import os
 import json
 import struct
 import random
 import re
+import math
+import zlib
+
 
 def imageTo2bpp(filename, *, tileheight=None, colormap=None):
     import PIL.Image
@@ -106,13 +110,52 @@ def gfxMod(rom, filename):
 
 def createGfxImage(rom, filename):
     import PIL.Image
-    bank_count = 10
-    info = [
-        {"addr": 0x2C * 0x4000, "size": bank_count * 0x4000},
-        {"addr": 0x0C * 0x4000 + 0x1800, "size": 0x80 * 0x40, "patch": "extlink"},
+    info_list = [
+        {"addr": 0x2C * 0x4000 + 0x0000, "size": 0x0D00, "type": "sprite"},
+        {"addr": 0x2C * 0x4000 + 0x0D00, "size": 0x0200, "type": "tile"},
+        {"addr": 0x2C * 0x4000 + 0x0F00, "size": 0x00C0, "type": "sprite"},
+        {"addr": 0x2C * 0x4000 + 0x0FC0, "size": 0x0040, "type": "tile"},
+        {"addr": 0x2C * 0x4000 + 0x1000, "size": 0x0200, "type": "sprite"},
+        {"addr": 0x2C * 0x4000 + 0x1200, "size": 0x0600, "type": "tile"},
+        #{"addr": 0x2C * 0x4000 + 0x1800, "size": 0x1000, "type": "sprite"}, # Link sprites
+        {"addr": 0x0C * 0x4000 + 0x1800, "size": 0x80 * 0x40, "type": "sprite", "patch": "extlink"},
+        {"addr": 0x2C * 0x4000 + 0x2800, "size": 0x00C0, "type": "tile4"},
+        {"addr": 0x2C * 0x4000 + 0x28C0, "size": 0x0140, "type": "sprite"},
+        {"addr": 0x2C * 0x4000 + 0x2A00, "size": 0x1600, "type": "tile4"},
+        {"addr": 0x2D * 0x4000 + 0x0000, "size": 0x0200, "type": "tile4"},
+        {"addr": 0x2D * 0x4000 + 0x0200, "size": 0x0400, "type": "tile"},
+        {"addr": 0x2D * 0x4000 + 0x0600, "size": 0x3A00, "type": "tile4"},
+        {"addr": 0x2E * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
+        {"addr": 0x2F * 0x4000 + 0x0000, "size": 0x4000, "type": "tile"},
+        # bank 30 is background map tiles
+        {"addr": 0x31 * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
+        {"addr": 0x32 * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
+        # bank 33 end cutscene
+        {"addr": 0x34 * 0x4000 + 0x0000, "size": 0x2000, "type": "sprite"},
+        {"addr": 0x35 * 0x4000 + 0x0000, "size": 0x2000, "type": "sprite"},
+        {"addr": 0x35 * 0x4000 + 0x2000, "size": 0x1000, "type": "tile"},
+        {"addr": 0x38 * 0x4000 + 0x0000, "size": 0x0400, "type": "sprite"},
+        {"addr": 0x29 * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 0},
+        {"addr": 0x29 * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 1},
+        {"addr": 0x29 * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 2},
+        {"addr": 0x29 * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 3},
+        {"addr": 0x2A * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 4},
+        {"addr": 0x2A * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 5},
+        {"addr": 0x2A * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 6},
+        {"addr": 0x2A * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 7},
+        {"addr": 0x2B * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 8},
+        {"addr": 0x2B * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 9},
+        {"addr": 0x2B * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 10},
+        {"addr": 0x2B * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 11},
+        {"addr": 0x30 * 0x4000 + 0x1800, "size": 0x0800, "type": "bg", "bg": 0x12},  # Peach
+        {"addr": 0x30 * 0x4000 + 0x3000, "size": 0x0800, "type": "bg", "bg": 0x15},  # Mural
+        {"addr": 0x30 * 0x4000 + 0x3800, "size": 0x0800, "type": "bg", "bg": 0x23},  # Painting
+        # {"addr": 0x33 * 0x4000 + 0x1000, "size": 0x0800, "type": "photo", "tilemap": 0x17 * 0x4000 + 0x0EEF},  # Windfish, tilemap is BG commands encoded...
     ]
-    infoblock = json.dumps(info, separators=(',', ':')).encode('ascii')
+    infoblock = zlib.compress(json.dumps(info_list, separators=(',', ':')).encode('ascii'))
     infoblock = struct.pack("<II", 0xDEADBEEF, len(infoblock)) + infoblock
+    print(f"Info block len: {len(infoblock)}")
+    assert len(infoblock) < 1024, f"{len(infoblock)} > 1024"
     data = infoblock + bytes(1024 - len(infoblock))
 
     def reversebits(n):
@@ -121,49 +164,119 @@ def createGfxImage(rom, filename):
         n = ((n & 0x0F) << 4) | ((n & 0xF0) >> 4)
         return n
 
-    for bank_nr in range(bank_count):
-        data += rom.banks[0x2C + bank_nr]
-    for n in range(0x80):
-        idx1 = rom.banks[0x20][0x1319 + n * 2]
-        attr1 = rom.banks[0x20][0x1407 + n * 2]
-        idx2 = rom.banks[0x20][0x131A + n * 2]
-        attr2 = rom.banks[0x20][0x1408 + n * 2]
-        sprite1 = rom.banks[0x2C][0x1800 + idx1 * 16:0x1800 + idx1 * 16 + 32]
-        sprite2 = rom.banks[0x2C][0x1800 + idx2 * 16:0x1800 + idx2 * 16 + 32]
-        if attr1 & 0x20:
-            sprite1 = bytes(reversebits(b) for b in sprite1)
-        if attr1 & 0x40:
-            sprite1 = b''.join(sprite1[30-n*2:32-n*2] for n in range(16))
-        if attr2 & 0x20:
-            sprite2 = bytes(reversebits(b) for b in sprite2)
-        if attr2 & 0x40:
-            sprite2 = b''.join(sprite2[30-n*2:32-n*2] for n in range(16))
-        if n in {0x02, 0x03, 0x08, 0x09, 0x0C, 0x0D, 0x5A, 0x5D} or n > 0x76:
-            sprite1 = bytes(32)
-            sprite2 = bytes(32)
-        data += sprite1 + sprite2
-    data = data[:0x1C00] + bytes(0x1000) + data[0x2C00:]  # Wipe out the player sprites, as they are moved to end of graphics.
+    for info in info_list:
+        data_block = bytearray()
+        if info.get("patch") == "extlink":
+            for n in range(0x80):
+                idx1 = rom.banks[0x20][0x1319 + n * 2]
+                attr1 = rom.banks[0x20][0x1407 + n * 2]
+                idx2 = rom.banks[0x20][0x131A + n * 2]
+                attr2 = rom.banks[0x20][0x1408 + n * 2]
+                sprite1 = rom.banks[0x2C][0x1800 + idx1 * 16:0x1800 + idx1 * 16 + 32]
+                sprite2 = rom.banks[0x2C][0x1800 + idx2 * 16:0x1800 + idx2 * 16 + 32]
+                if attr1 & 0x20:
+                    sprite1 = bytes(reversebits(b) for b in sprite1)
+                if attr1 & 0x40:
+                    sprite1 = b''.join(sprite1[30-n*2:32-n*2] for n in range(16))
+                if attr2 & 0x20:
+                    sprite2 = bytes(reversebits(b) for b in sprite2)
+                if attr2 & 0x40:
+                    sprite2 = b''.join(sprite2[30-n*2:32-n*2] for n in range(16))
+                if n in {0x02, 0x03, 0x08, 0x09, 0x0C, 0x0D, 0x5A, 0x5D} or n > 0x76:
+                    sprite1 = bytes(32)
+                    sprite2 = bytes(32)
+                if n == 0x76: # Magic rod attack
+                    sprite1 = rom.banks[0x2C][0x0040:0x0060]
+                    sprite2 = rom.banks[0x2C][0x0060:0x0080]
+                if n == 0x77: # Magic rod attack
+                    sprite1 = rom.banks[0x2C][0x0080:0x00A0]
+                data_block += sprite1 + sprite2
+        elif info.get("type") == "photo":
+            tiles = rom.banks[info["addr"] >> 14][info["addr"] & 0x3FFF:]
+            tilemap = rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:]
+            for y in range(0, 18, 2):
+                for x in range(16):
+                    for ty in range(2):
+                        tile_nr = tilemap[x+(y+ty)*20]
+                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
+            for y in range(0, 18, 2):
+                for x in range(4):
+                    for ty in range(2):
+                        tile_nr = tilemap[16+x+(y+ty)*20]
+                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
+                data_block += bytes(32 * 12)
+        elif info.get("type") == "bg":
+            tiles = rom.banks[info["addr"] >> 14][info["addr"] & 0x3FFF:]
+            be = BackgroundEditor(rom, info["bg"])
+            for y in range(0, 18, 2):
+                for x in range(16):
+                    for ty in range(2):
+                        tile_nr = be.tiles[0x9800+x+(y+ty)*32]
+                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
+            for y in range(0, 18, 2):
+                for x in range(4):
+                    for ty in range(2):
+                        tile_nr = be.tiles[0x9800+16+x+(y+ty)*32]
+                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
+                data_block += bytes(32 * 12)
+        else:
+            start = info["addr"]
+            end = info["addr"] + info["size"]
+            while start < end:
+                bank = start >> 14
+                addr = start & 0x3FFF
+                length = min(end - start, 0x4000 - addr)
+                print(f"{bank:02x}:{addr:04x}:{length:04x} {info['type']}")
+                data_block += rom.banks[bank][addr:addr+length]
+                start += length
+            if info["type"] == "tile":
+                # rearrange 8x16 into 8x8
+                a = b''
+                offset = min(16, len(data_block) // 32)
+                for row in range(math.ceil(len(data_block) / 512)):
+                    for n in range(min(16, len(data_block) // 32)):
+                        a += data_block[n*16:(n+1)*16] + data_block[(n+offset)*16:(n+offset+1)*16]
+                    data_block = data_block[512:]
+                data_block = a
+            if info["type"] == "tile4":
+                # rearrange 2x2
+                a = b''
+                for n in range(0, len(data_block), 64):
+                    a += data_block[n:n+16]
+                    a += data_block[n+32:n+32+16]
+                    a += data_block[n+16:n+16+16]
+                    a += data_block[n+48:n+48+16]
+                data_block = a
+        data_block += bytes((0x200 - (len(data_block) % 0x200)) % 0x200)
+        data += data_block
 
-    assert len(data) - 1024 == sum(i["size"] for i in info), f'{len(data) - 1024} ~= {sum(i["size"] for i in info)}'
-    img = PIL.Image.new("P", (32 * 8, len(data) // 64))
+    row_count = len(data) // 32 // 16
+    col_count = 1
+    while (col_count + 1) * 128 < row_count * 16 / col_count:
+        col_count += 1
+    row_count = math.ceil(row_count / col_count)
+    print(col_count * 160, row_count * 16)
+    img = PIL.Image.new("P", (col_count * 128, row_count * 16))
     img.putpalette((
         128, 0, 128,
         0, 0, 0,
         128, 128, 128,
         255, 255, 255,
     ))
-    for tx in range(32):
-        for ty in range(len(data) // 1024):
+    for ty in range(len(data) // 512):
+        oy = (ty % row_count) * 16
+        ox = (ty // row_count) * 128
+        for tx in range(16):
             for y in range(16):
-                a = data[tx * 32 + ty * 32 * 32 + y * 2]
-                b = data[tx * 32 + ty * 32 * 32 + y * 2 + 1]
+                a = data[tx * 32 + ty * 32 * 16 + y * 2]
+                b = data[tx * 32 + ty * 32 * 16 + y * 2 + 1]
                 for x in range(8):
                     c = 0
                     if a & (0x80 >> x):
                         c |= 1
                     if b & (0x80 >> x):
                         c |= 2
-                    img.putpixel((tx*8+x, ty*16+y), c)
+                    img.putpixel((ox+tx*8+x, oy+y), c)
     img.save(filename)
 
 
