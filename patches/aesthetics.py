@@ -111,22 +111,23 @@ def gfxMod(rom, filename):
 def createGfxImage(rom, filename):
     import PIL.Image
     info_list = [
-        {"addr": 0x2C * 0x4000 + 0x0000, "size": 0x0D00, "type": "sprite"},
-        {"addr": 0x2C * 0x4000 + 0x0D00, "size": 0x0200, "type": "tile"},
-        {"addr": 0x2C * 0x4000 + 0x0F00, "size": 0x00C0, "type": "sprite"},
-        {"addr": 0x2C * 0x4000 + 0x0FC0, "size": 0x0040, "type": "tile"},
-        {"addr": 0x2C * 0x4000 + 0x1000, "size": 0x0200, "type": "sprite"},
-        {"addr": 0x2C * 0x4000 + 0x1200, "size": 0x0600, "type": "tile"},
+        {"addr": 0x2C * 0x4000 + 0x0000, "size": 0x0400, "type": "sprite"},
+        {"addr": 0x2C * 0x4000 + 0x0400, "size": 0x0900, "type": "sprite", "colormap": 0x1230},
+        {"addr": 0x2C * 0x4000 + 0x0D00, "size": 0x0200, "type": "tile", "colormap": 0x0132},
+        {"addr": 0x2C * 0x4000 + 0x0F00, "size": 0x00C0, "type": "sprite", "colormap": 0x0132},
+        {"addr": 0x2C * 0x4000 + 0x0FC0, "size": 0x0040, "type": "tile", "colormap": 0x0132},
+        {"addr": 0x2C * 0x4000 + 0x1000, "size": 0x0200, "type": "sprite", "colormap": 0x0132},
+        {"addr": 0x2C * 0x4000 + 0x1200, "size": 0x0600, "type": "tile", "colormap": 0x0132},
         #{"addr": 0x2C * 0x4000 + 0x1800, "size": 0x1000, "type": "sprite"}, # Link sprites
         {"addr": 0x0C * 0x4000 + 0x1800, "size": 0x80 * 0x40, "type": "sprite", "patch": "extlink"},
-        {"addr": 0x2C * 0x4000 + 0x2800, "size": 0x00C0, "type": "tile4"},
+        {"addr": 0x2C * 0x4000 + 0x2800, "size": 0x00C0, "type": "tile4", "colormap": 0x1230},
         {"addr": 0x2C * 0x4000 + 0x28C0, "size": 0x0140, "type": "sprite"},
-        {"addr": 0x2C * 0x4000 + 0x2A00, "size": 0x1600, "type": "tile4"},
-        {"addr": 0x2D * 0x4000 + 0x0000, "size": 0x0200, "type": "tile4"},
-        {"addr": 0x2D * 0x4000 + 0x0200, "size": 0x0400, "type": "tile"},
-        {"addr": 0x2D * 0x4000 + 0x0600, "size": 0x3A00, "type": "tile4"},
+        {"addr": 0x2C * 0x4000 + 0x2A00, "size": 0x1600, "type": "tile4", "colormap": 0x0132},
+        {"addr": 0x2D * 0x4000 + 0x0000, "size": 0x0200, "type": "tile4", "colormap": 0x0132},
+        {"addr": 0x2D * 0x4000 + 0x0200, "size": 0x0400, "type": "tile", "colormap": 0x0132},
+        {"addr": 0x2D * 0x4000 + 0x0600, "size": 0x3A00, "type": "tile4", "colormap": 0x0132},
         {"addr": 0x2E * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
-        {"addr": 0x2F * 0x4000 + 0x0000, "size": 0x4000, "type": "tile"},
+        {"addr": 0x2F * 0x4000 + 0x0000, "size": 0x4000, "type": "tile", "colormap": 0x0132},
         # bank 30 is background map tiles
         {"addr": 0x31 * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
         {"addr": 0x32 * 0x4000 + 0x0000, "size": 0x4000, "type": "sprite"},
@@ -135,28 +136,29 @@ def createGfxImage(rom, filename):
         {"addr": 0x35 * 0x4000 + 0x0000, "size": 0x2000, "type": "sprite"},
         {"addr": 0x35 * 0x4000 + 0x2000, "size": 0x1000, "type": "tile"},
         {"addr": 0x38 * 0x4000 + 0x0000, "size": 0x0400, "type": "sprite"},
-        {"addr": 0x29 * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 0},
-        {"addr": 0x29 * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 1},
-        {"addr": 0x29 * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 2},
-        {"addr": 0x29 * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 3},
-        {"addr": 0x2A * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 4},
-        {"addr": 0x2A * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 5},
-        {"addr": 0x2A * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 6},
-        {"addr": 0x2A * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 7},
-        {"addr": 0x2B * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 8},
-        {"addr": 0x2B * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 9},
-        {"addr": 0x2B * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 10},
-        {"addr": 0x2B * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1820 + 720 * 11},
-        {"addr": 0x30 * 0x4000 + 0x1800, "size": 0x0800, "type": "bg", "bg": 0x12},  # Peach
-        {"addr": 0x30 * 0x4000 + 0x3000, "size": 0x0800, "type": "bg", "bg": 0x15},  # Mural
-        {"addr": 0x30 * 0x4000 + 0x3800, "size": 0x0800, "type": "bg", "bg": 0x23},  # Painting
+        {"addr": 0x3B * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 0, "colormap": 0x0132},
+        {"addr": 0x29 * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 1, "colormap": 0x0132},
+        {"addr": 0x29 * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 2, "colormap": 0x0132},
+        {"addr": 0x29 * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 3, "colormap": 0x0132},
+        {"addr": 0x29 * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 4, "colormap": 0x0132},
+        {"addr": 0x2A * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 5, "colormap": 0x0132},
+        {"addr": 0x2A * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 6, "colormap": 0x0132},
+        {"addr": 0x2A * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 7, "colormap": 0x0132},
+        {"addr": 0x2A * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 8, "colormap": 0x0132},
+        {"addr": 0x2B * 0x4000 + 0x0000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 9, "colormap": 0x0132},
+        {"addr": 0x2B * 0x4000 + 0x1000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 10, "colormap": 0x0132},
+        {"addr": 0x2B * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 11, "colormap": 0x0132},
+        {"addr": 0x2B * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 12, "colormap": 0x0132},
+        {"addr": 0x30 * 0x4000 + 0x1800, "size": 0x0800, "type": "bg", "bg": 0x12, "colormap": 0x0132},  # Peach
+        {"addr": 0x30 * 0x4000 + 0x3000, "size": 0x0800, "type": "bg", "bg": 0x15, "colormap": 0x0132},  # Mural
+        {"addr": 0x30 * 0x4000 + 0x3800, "size": 0x0800, "type": "bg", "bg": 0x23, "colormap": 0x0132},  # Painting
         # {"addr": 0x33 * 0x4000 + 0x1000, "size": 0x0800, "type": "photo", "tilemap": 0x17 * 0x4000 + 0x0EEF},  # Windfish, tilemap is BG commands encoded...
     ]
     infoblock = zlib.compress(json.dumps(info_list, separators=(',', ':')).encode('ascii'))
     infoblock = struct.pack("<II", 0xDEADBEEF, len(infoblock)) + infoblock
     print(f"Info block len: {len(infoblock)}")
     assert len(infoblock) < 1024, f"{len(infoblock)} > 1024"
-    data = infoblock + bytes(1024 - len(infoblock))
+    blocks = [(infoblock + bytes(1024 - len(infoblock)), {"type": "info"})]
 
     def reversebits(n):
         n = ((n & 0x55) << 1) | ((n & 0xAA) >> 1)
@@ -195,30 +197,18 @@ def createGfxImage(rom, filename):
             tiles = rom.banks[info["addr"] >> 14][info["addr"] & 0x3FFF:]
             tilemap = rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:]
             for y in range(0, 18, 2):
-                for x in range(16):
+                for x in range(20):
                     for ty in range(2):
                         tile_nr = tilemap[x+(y+ty)*20]
                         data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
-            for y in range(0, 18, 2):
-                for x in range(4):
-                    for ty in range(2):
-                        tile_nr = tilemap[16+x+(y+ty)*20]
-                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
-                data_block += bytes(32 * 12)
         elif info.get("type") == "bg":
             tiles = rom.banks[info["addr"] >> 14][info["addr"] & 0x3FFF:]
             be = BackgroundEditor(rom, info["bg"])
             for y in range(0, 18, 2):
-                for x in range(16):
+                for x in range(20):
                     for ty in range(2):
                         tile_nr = be.tiles[0x9800+x+(y+ty)*32]
                         data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
-            for y in range(0, 18, 2):
-                for x in range(4):
-                    for ty in range(2):
-                        tile_nr = be.tiles[0x9800+16+x+(y+ty)*32]
-                        data_block += tiles[tile_nr*0x10:tile_nr*0x10+0x10]
-                data_block += bytes(32 * 12)
         else:
             start = info["addr"]
             end = info["addr"] + info["size"]
@@ -229,8 +219,7 @@ def createGfxImage(rom, filename):
                 print(f"{bank:02x}:{addr:04x}:{length:04x} {info['type']}")
                 data_block += rom.banks[bank][addr:addr+length]
                 start += length
-            if info["type"] == "tile":
-                # rearrange 8x16 into 8x8
+            if info["type"] == "tile": # rearrange 8x16 into 8x8
                 a = b''
                 offset = min(16, len(data_block) // 32)
                 for row in range(math.ceil(len(data_block) / 512)):
@@ -238,8 +227,7 @@ def createGfxImage(rom, filename):
                         a += data_block[n*16:(n+1)*16] + data_block[(n+offset)*16:(n+offset+1)*16]
                     data_block = data_block[512:]
                 data_block = a
-            if info["type"] == "tile4":
-                # rearrange 2x2
+            if info["type"] == "tile4": # rearrange 2x2 tiles from col/row to row/col
                 a = b''
                 for n in range(0, len(data_block), 64):
                     a += data_block[n:n+16]
@@ -248,35 +236,74 @@ def createGfxImage(rom, filename):
                     a += data_block[n+48:n+48+16]
                 data_block = a
         data_block += bytes((0x200 - (len(data_block) % 0x200)) % 0x200)
-        data += data_block
+        blocks.append((data_block, info))
 
-    row_count = len(data) // 32 // 16
-    col_count = 1
-    while (col_count + 1) * 128 < row_count * 16 / col_count:
-        col_count += 1
-    row_count = math.ceil(row_count / col_count)
-    print(col_count * 160, row_count * 16)
-    img = PIL.Image.new("P", (col_count * 128, row_count * 16))
+    def arrange_blocks(max_height):
+        col_height = 0
+        col_width = 16
+        cols = []
+        for block, info in blocks:
+            width = 20 if info["type"] in {"photo", "bg"} else 16
+            height = math.ceil(len(block) // 32 / width)
+            if height + col_height > max_height:
+                cols.append((col_width, col_height))
+                col_width = 16
+                col_height = 0
+            col_width = max(col_width, width)
+            col_height += height
+        cols.append((col_width, col_height))
+        return cols
+    max_h = 10000
+    best_d = 10000
+    best_cols = None
+    for n in range(100):
+        cols = arrange_blocks(max_h - 1)
+        total_w = sum(w for w, h in cols) / 4
+        max_h = max(h for w, h in cols)
+        diagonal = math.sqrt(total_w * total_w + max_h * max_h)
+        if diagonal < best_d:
+            best_d = diagonal
+            best_cols = cols
+    assert best_cols is not None
+    total_w = sum(w for w, h in best_cols)
+    max_h = max(h for w, h in best_cols)
+    print(best_cols)
+
+    img = PIL.Image.new("P", (total_w * 8, max_h * 16))
     img.putpalette((
         128, 0, 128,
         0, 0, 0,
         128, 128, 128,
         255, 255, 255,
     ))
-    for ty in range(len(data) // 512):
-        oy = (ty % row_count) * 16
-        ox = (ty // row_count) * 128
-        for tx in range(16):
-            for y in range(16):
-                a = data[tx * 32 + ty * 32 * 16 + y * 2]
-                b = data[tx * 32 + ty * 32 * 16 + y * 2 + 1]
-                for x in range(8):
-                    c = 0
-                    if a & (0x80 >> x):
-                        c |= 1
-                    if b & (0x80 >> x):
-                        c |= 2
-                    img.putpixel((ox+tx*8+x, oy+y), c)
+    ox = 0
+    oy = 0
+    max_w = 16
+    for block, info in blocks:
+        width = 20 if info["type"] in {"photo", "bg"} else 16
+        height = len(block) // 32 // width
+        if oy + height > max_h:
+            oy = 0
+            ox += max_w
+            max_w = 16
+        max_w = max(max_w, width)
+        colormap = [0, 1, 2, 3]
+        if "colormap" in info:
+            for n in range(4):
+                colormap[(info["colormap"] >> (n * 4)) & 0x0F] = n
+        for ty in range(height):
+            for tx in range(width):
+                for y in range(16):
+                    a = block[tx * 32 + ty * 32 * width + y * 2]
+                    b = block[tx * 32 + ty * 32 * width + y * 2 + 1]
+                    for x in range(8):
+                        c = 0
+                        if a & (0x80 >> x):
+                            c |= 1
+                        if b & (0x80 >> x):
+                            c |= 2
+                        img.putpixel((ox*8+tx*8+x, oy*16+y), colormap[c])
+            oy += 1
     img.save(filename)
 
 
