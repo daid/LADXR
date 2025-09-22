@@ -118,8 +118,32 @@ def patchGraphics(rom, graphics_data):
         if header_id == 0xDEADCA7E:
             header = zlib.decompress(header)
         for info in json.loads(header):
-            updateGraphics(rom, info["addr"] // 0x4000, info["addr"] & 0x3FFF, graphics_data[:info["size"]])
-            graphics_data = graphics_data[info["size"]:]
+            if info.get("type") in {"photo", "bg"}:
+                input_tiles = graphics_data[:18*20*16]
+                graphics_data = graphics_data[18*20*16:]
+                block = b''
+                tile_map = bytearray()
+                tile_lookup = {}
+                for y in range(18):
+                    for x in range(20):
+                        tile = bytes(input_tiles[(x+y*20)*16:(x+y*20)*16+16])
+                        if tile not in tile_lookup:
+                            tile_lookup[tile] = len(block) // 16
+                            block += tile
+                        tile_map.append(tile_lookup[tile])
+                if info.get("type") == "photo":
+                    rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:(info["tilemap"] & 0x3FFF) + len(tile_map)] = tile_map
+                if info.get("type") == "bg":
+                    be = BackgroundEditor(rom, info["bg"])
+                    for y in range(18):
+                        for x in range(20):
+                            be.tiles[0x9800 + x + y * 32] = tile_map[x + y * 20]
+                    be.store(rom)
+                assert len(block) <= info["size"], "Photo too complex and does not fit. Need more duplicate tiles"
+            else:
+                block = graphics_data[:info["size"]]
+                graphics_data = graphics_data[info["size"]:]
+            updateGraphics(rom, info["addr"] // 0x4000, info["addr"] & 0x3FFF, block)
             if info.get("patch") == "extlink":
                 enableExtendedLinkSprites(rom)
             if info.get("patch") == "pinkbatman":
@@ -137,7 +161,7 @@ def updateGraphics(rom, bank, offset, data):
         updateGraphics(rom, bank + 1, 0, data[0x4000 - offset:])
     else:
         rom.banks[bank][offset:offset+len(data)] = data
-        if 0x20 <= bank < 0x34:
+        if 0x20 <= bank < 0x34 and bank != 0x2C:
             rom.banks[bank-0x20][offset:offset + len(data)] = data
 
 
@@ -164,7 +188,12 @@ def gfxMod(rom, filename):
                 setReplacementName(patch["item"], patch["name"])
     else:
         patchGraphics(rom, imageTo2bpp(filename))
-    # createGfxImage(rom, "tmp.png")
+    if rom.banks[0x2C][0x0C90:0x0CA0] != b'\xFF' * 0x10:    # Replacement inventory screen split instead of the two diacritics tiles
+        be = BackgroundEditor(rom, 0x02)
+        be.tiles[0x9C48] = 0xC8
+        for n in range(15):
+            be.tiles[0x9C68 + n * 0x20] = 0xC9
+        be.store(rom)
 
 
 def createGfxImage(rom, filename):
