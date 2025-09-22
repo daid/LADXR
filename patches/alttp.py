@@ -518,10 +518,10 @@ PegDestroyed:
     ret
 
 HammerSpriteData: ; Needs this number of bytes to align the entry point
-    db   $02, $2C, $00, $2C, $00, $0C, $02, $0C, $04, $4C, $06, $0C, $06, $0C, $04, $0C
+    db   $54, $2C, $52, $2C, $52, $0C, $54, $0C, $56, $4C, $58, $0C, $58, $0C, $56, $0C
 
 PegSpriteData:
-    db   $F0, $09, $F0, $29
+    db   $70, $09, $70, $29
 
 HammerState1:
     ld   a, $0E
@@ -615,7 +615,11 @@ OffsetX:
 OffsetY:
     db 0, 0, $100-12, 12
     """, 0x46BB), fill_nop=True)
-    rom.banks[0x3F][0x3700:0x3720] = createTileData("""    ....    
+    # Hammer sprites (on top of bingo board)
+    rom.banks[0x3F][0x2800+0x520:0x2800+0x520+0x80] = patches.aesthetics.imageTo2bpp("patches/overworld/alttp/hammer.png", tileheight=16, colormap=[0xFFFFFF, 0xAAAAAA, 0x555555, 0x000000])
+    rom.banks[0x3F][0x2800+0x880:0x2800+0x880+0x20] = rom.banks[0x3F][0x2800+0x560:0x2800+0x560+0x20]
+    # Hammer pegs (on top of bowwow)
+    rom.banks[0x3F][0x2800+0x700:0x2800+0x700+0x20] = createTileData("""    ....    
    .2222
   .22233
  .222322
@@ -631,7 +635,6 @@ OffsetY:
 222.3332
   22....
    22222""", " .32")
-    rom.banks[0x3F][0x2800:0x2880] = patches.aesthetics.imageTo2bpp("patches/overworld/alttp/hammer.png", tileheight=16, colormap=[0xFFFFFF, 0xAAAAAA, 0x555555, 0x000000])
 
 
 def patchMermaidStatueToCrystalBlock(rom):
@@ -640,7 +643,7 @@ def patchMermaidStatueToCrystalBlock(rom):
     rom.banks[0x03][0x00FB + 0xCE] = 0xA4  # hitbox flags
     rom.patch(0x18, 0x0928, 0x09C0, ASM("""
 SpriteData:  ; Needs this number of bytes to align the entry point
-    db   $F2, $0D, $F4, $0D, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    db   $72, $0D, $74, $0D, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 EntityEntry:
     ld   de, SpriteData
@@ -649,10 +652,11 @@ EntityEntry:
     ret
 
     """, 0x4928), fill_nop=True)
-    rom.banks[0x3F][0x3720:0x3730] = rom.banks[0x2D][0x1900:0x1910]
-    rom.banks[0x3F][0x3730:0x3740] = rom.banks[0x2D][0x1920:0x1930]
-    rom.banks[0x3F][0x3740:0x3750] = rom.banks[0x2D][0x1910:0x1920]
-    rom.banks[0x3F][0x3750:0x3760] = rom.banks[0x2D][0x1930:0x1940]
+    # Put graphics on bowwow graphics
+    rom.banks[0x3F][0x2800+0x720:0x2800+0x720+0x10] = rom.banks[0x2D][0x1900:0x1910]
+    rom.banks[0x3F][0x2800+0x730:0x2800+0x730+0x10] = rom.banks[0x2D][0x1920:0x1930]
+    rom.banks[0x3F][0x2800+0x740:0x2800+0x740+0x10] = rom.banks[0x2D][0x1910:0x1920]
+    rom.banks[0x3F][0x2800+0x750:0x2800+0x750+0x10] = rom.banks[0x2D][0x1930:0x1940]
 
 def patchWalrusToCastleEndGate(rom):
     rom.patch(0x18, 0x1501, 0x19B7, ASM("""

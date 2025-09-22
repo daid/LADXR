@@ -608,6 +608,7 @@ def setBingoGoal(rom, goals, mode):
 
     for goal in goals:
         for bank, addr, current, target in goal.extra_patches:
+            print(f"{bank:02x}:{addr:04x}")
             rom.patch(bank, addr, current, target)
 
     # Setup the bingo card visuals
@@ -1148,13 +1149,10 @@ done:   ; Return to normal item drop handler
     rom.patch(0x03, 0x0147, "00", "98")
     rom.patch(0x20, 0x00e4, "000000", ASM("dw $5e1b\ndb $18"))
 
-    # Add graphics for our bingo board to 2nd WRAM bank.
-    rom.banks[0x3F][0x3700:0x3780] = rom.banks[0x32][0x1500:0x1580]
-    rom.banks[0x3F][0x3728:0x373A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
-    rom.banks[0x3F][0x3748:0x375A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+    # Use graphics for our bingo board from 2nd WRAM bank.
     rom.patch(0x18, 0x1E0B,
               "00F85003" + "00005203" + "00085403" + "00105603",
-              "00F8F00B" + "0000F20B" + "0008F40B" + "0010F60B")
+              "00F8520B" + "0000540B" + "0008560B" + "0010580B")
 
     # Add the bingo board to marins house
     re = RoomEditor(rom, 0x2A3)
