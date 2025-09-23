@@ -256,7 +256,7 @@ def createGfxImage(rom, filename):
 
     for info in info_list:
         data_block = bytearray()
-        if info.get("patch") == "extlink":
+        if info.get("patch") == "extlink" and rom.banks[0x0C][0x37C0:0x3800] != bytes(0x40):
             for n in range(0x80):
                 idx1 = rom.banks[0x20][0x1319 + n * 2]
                 attr1 = rom.banks[0x20][0x1407 + n * 2]
