@@ -92,6 +92,8 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
             if info["type"] == "sprite":
                 pass
             elif info["type"] in {"tile", "photo", "bg"}:
+                if info["type"] == "tile":
+                    width = min(width, info["size"] // 0x20)
                 for row in range(height):
                     a = b''
                     b = b''
