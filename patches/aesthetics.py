@@ -277,10 +277,10 @@ def createGfxImage(rom, filename):
                 if n in {0x02, 0x03, 0x08, 0x09, 0x0C, 0x0D, 0x5A, 0x5D} or n > 0x76:
                     sprite1 = bytes(32)
                     sprite2 = bytes(32)
-                if n == 0x76: # Magic rod attack
+                if n == 0x78:  # Magic rod attack
                     sprite1 = rom.banks[0x2C][0x0040:0x0060]
                     sprite2 = rom.banks[0x2C][0x0060:0x0080]
-                if n == 0x77: # Magic rod attack
+                if n == 0x79:  # Magic rod attack
                     sprite1 = rom.banks[0x2C][0x0080:0x00A0]
                 data_block += sprite1 + sprite2
         elif info.get("type") == "photo":
