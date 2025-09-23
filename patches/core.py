@@ -46,7 +46,7 @@ up:
     """), fill_nop=True)
 
 def bugfixPowderBagSprite(rom):
-    rom.patch(0x03, 0x2055, "8E16", "0E1E")
+    rom.patch(0x03, 0x2055, "8E16", "841E")
 
 def easyColorDungeonAccess(rom):
     re = RoomEditor(rom, 0x312)
