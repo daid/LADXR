@@ -256,6 +256,9 @@ def createGfxImage(rom, filename):
         n = ((n & 0x0F) << 4) | ((n & 0xF0) >> 4)
         return n
 
+    if rom.banks[0x3F][0x0000] != 0:  # LADXR Rom with bank 3F, so grab the ocarina and feather sprites from there.
+        rom.banks[0x2C][0x0900:0x0940] = rom.banks[0x3F][0x3000:0x3040]
+
     for info in info_list:
         data_block = bytearray()
         if info.get("patch") == "extlink" and rom.banks[0x0C][0x37C0:0x3800] != bytes(0x40):
