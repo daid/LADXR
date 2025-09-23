@@ -92,6 +92,8 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
             if info["type"] == "sprite":
                 pass
             elif info["type"] in {"tile", "photo", "bg"}:
+                if info["type"] == "tile":
+                    width = min(width, info["size"] // 0x20)
                 for row in range(height):
                     a = b''
                     b = b''
@@ -254,9 +256,12 @@ def createGfxImage(rom, filename):
         n = ((n & 0x0F) << 4) | ((n & 0xF0) >> 4)
         return n
 
+    if rom.banks[0x3F][0x0000] != 0:  # LADXR Rom with bank 3F, so grab the ocarina and feather sprites from there.
+        rom.banks[0x2C][0x0900:0x0940] = rom.banks[0x3F][0x3000:0x3040]
+
     for info in info_list:
         data_block = bytearray()
-        if info.get("patch") == "extlink":
+        if info.get("patch") == "extlink" and rom.banks[0x0C][0x37C0:0x3800] != bytes(0x40):
             for n in range(0x80):
                 idx1 = rom.banks[0x20][0x1319 + n * 2]
                 attr1 = rom.banks[0x20][0x1407 + n * 2]
@@ -275,10 +280,10 @@ def createGfxImage(rom, filename):
                 if n in {0x02, 0x03, 0x08, 0x09, 0x0C, 0x0D, 0x5A, 0x5D} or n > 0x76:
                     sprite1 = bytes(32)
                     sprite2 = bytes(32)
-                if n == 0x76: # Magic rod attack
+                if n == 0x78:  # Magic rod attack
                     sprite1 = rom.banks[0x2C][0x0040:0x0060]
                     sprite2 = rom.banks[0x2C][0x0060:0x0080]
-                if n == 0x77: # Magic rod attack
+                if n == 0x79:  # Magic rod attack
                     sprite1 = rom.banks[0x2C][0x0080:0x00A0]
                 data_block += sprite1 + sprite2
         elif info.get("type") == "photo":
