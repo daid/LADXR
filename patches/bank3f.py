@@ -315,8 +315,8 @@ blockBadEmu:
     rom.banks[0x3F][0x2800+0x520+0x28:0x2800+0x520+0x3A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
     rom.banks[0x3F][0x2800+0x520+0x48:0x2800+0x520+0x5A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
 
-    if rom.banks[0x0C][0x38C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3680:0x3700] != bytes(0x40):  # Detect extended sprite sheet with magic rod
-        addSprite(0x3C, 0x0C, 0x3580, count=6)  # Magic rod attack (extended)
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3600:0x3660] != bytes(0x40):  # Detect extended sprite sheet with magic rod
+        addSprite(0x3C, 0x0C, 0x3600, count=6)  # Magic rod attack (extended)
     else:
         addSprite(0x3C, 0x2C, 0x0040, count=6)  # Magic rod attack (sword)
     rom.patch(0x02, 0x12F0,
