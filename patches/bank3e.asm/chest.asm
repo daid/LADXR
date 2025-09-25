@@ -932,7 +932,7 @@ LargeItemSpriteTable:
     db $14, $0E, $16, $0E ; Instrument6
     db $18, $0E, $1A, $0E ; Instrument7
     db $1C, $0E, $1E, $0E ; Instrument8
-    db $6A, $2B, $68, $2B ; Rooster
+    db $20, $0B, $22, $0B ; Rooster
     db $A0, $0E, $A2, $0E ; TradeItem1
     db $A4, $0C, $A6, $0C ; TradeItem2
     db $A8, $0C, $AA, $0C ; TradeItem3
