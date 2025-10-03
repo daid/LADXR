@@ -119,20 +119,26 @@ def patchGraphics(rom, graphics_data):
         graphics_data = graphics_data[1024:]
         if header_id == 0xDEADCA7E:
             header = zlib.decompress(header)
+        print(header)
         for info in json.loads(header):
             if info.get("type") in {"photo", "bg"}:
                 input_tiles = graphics_data[:18*20*16]
                 graphics_data = graphics_data[18*20*16:]
-                block = b''
+                block = bytearray(info["size"])
                 tile_map = bytearray()
                 tile_lookup = {}
+                available_tiles = list(range(len(block) // 16))
+                if info.get("bg") in {0x15}:    # Ensure the textbox works properly during the mural
+                    available_tiles.remove(126)
+                    tile_lookup[bytes([0xFF] * 16)] = 126
                 for y in range(18):
                     for x in range(20):
                         tile = bytes(input_tiles[(x+y*20)*16:(x+y*20)*16+16])
                         if tile not in tile_lookup:
-                            tile_lookup[tile] = len(block) // 16
-                            block += tile
+                            tile_lookup[tile] = available_tiles.pop(0)
                         tile_map.append(tile_lookup[tile])
+                for tile, index in tile_lookup.items():
+                    block[index*16:index*16+16] = tile
                 if info.get("type") == "photo":
                     rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:(info["tilemap"] & 0x3FFF) + len(tile_map)] = tile_map
                 if info.get("type") == "bg":
@@ -141,7 +147,7 @@ def patchGraphics(rom, graphics_data):
                         for x in range(20):
                             be.tiles[0x9800 + x + y * 32] = tile_map[x + y * 20]
                     be.store(rom)
-                assert len(block) <= info["size"], "Photo too complex and does not fit. Need more duplicate tiles"
+                assert len(block) <= info["size"], f"{info['type']}:{info.get('bg')} too complex and does not fit. Need more duplicate tiles"
             else:
                 block = graphics_data[:info["size"]]
                 graphics_data = graphics_data[info["size"]:]
