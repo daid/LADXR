@@ -614,6 +614,10 @@ def setBingoGoal(rom, goals, mode):
     # Setup the bingo card visuals
     be = BackgroundEditor(rom, 0x15)
     ba = BackgroundEditor(rom, 0x15, attributes=True)
+    wall_tiles = []
+    for y in range(2):
+        for x in range(4):
+            wall_tiles.append(be.tiles[0x9800 + x + y * 0x20])
     for y in range(18):
         for x in range(20):
             be.tiles[0x9800 + x + y * 0x20] = (x + (y & 2)) % 4 | ((y % 2) * 4)
@@ -634,7 +638,9 @@ def setBingoGoal(rom, goals, mode):
     be.store(rom)
     ba.store(rom)
 
-    tiles = rom.banks[0x30][0x3000:0x3040] + rom.banks[0x30][0x3100:0x3140]
+    tiles = b''
+    for wall_tile_index in wall_tiles:
+        tiles += rom.banks[0x30][0x3000+wall_tile_index*0x10:0x3010+wall_tile_index*0x10]
     for goal in goals:
         tiles += goal.tile_info.get(rom)
     rom.banks[0x30][0x3000:0x3000 + len(tiles)] = tiles
