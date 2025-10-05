@@ -1,5 +1,6 @@
 from assembler import ASM
 import utils
+from patches import extragfx
 
 
 def addBank3F(rom):
@@ -260,18 +261,16 @@ blockBadEmu:
     for n in range(0x2800+0x300, 0x2800+0x300+0x20, 2):
         rom.banks[0x3F][n+1] ^= rom.banks[0x3F][n]
     # Capacity upgrade arrow (0x32)
-    rom.banks[0x3F][0x2800+0x320:0x2800+0x320+0x10] = utils.createTileData("""
-   33
-  3113
- 311113
-33311333
-  3113
-  3333
-""")
-    rom.banks[0x3F][0x2800+0x330:0x2800+0x330+0x10] = rom.banks[0x3F][0x2800+0x320:0x2800+0x320+0x10]
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3660:0x3680] != bytes(0x20):  # Detect extended sprite sheet with Capacity upgrade
+        addSprite(0x32, 0x0C, 0x3660, count=2)  # Capacity upgrade
+    else:
+        rom.banks[0x3F][0x2800+0x320:0x2800+0x320+0x20] = extragfx.capacityUpgradeIcon() * 2
     addSprite(0x34, 0x35, 0x0F00)  # Tunic
     # Song symbols
-    rom.banks[0x3F][0x2800 + 0x360:0x2800 + 0x360+0x60] = getSongGraphics(rom)
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3680:0x36E0] != bytes(0x60):  # Detect extended sprite sheet with song symbols
+        addSprite(0x36, 0x0C, 0x3680, count=6)
+    else:
+        rom.banks[0x3F][0x2800 + 0x360:0x2800 + 0x360+0x60] = extragfx.songItemGraphics()
 
     addSprite(0xA0, 0x2C, 0x09A0, count=4)  # Yoshi
     addSprite(0xA4, 0x2C, 0x0400, count=52)  # Other trading items
@@ -311,9 +310,12 @@ blockBadEmu:
 
     addSprite(0x5A, 0x32, 0x1800, count=8)  # Ghost sprites (bah, only because sprite data in start house is full...)
 
-    addSprite(0x52, 0x32, 0x1500, count=8)  # Bingo board
-    rom.banks[0x3F][0x2800+0x520+0x28:0x2800+0x520+0x3A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
-    rom.banks[0x3F][0x2800+0x520+0x48:0x2800+0x520+0x5A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x36E0:0x3760] != bytes(0x80):  # Detect extended sprite sheet with bingo board
+        addSprite(0x52, 0x0C, 0x36E0, count=8)  # Bingo board
+    else:
+        addSprite(0x52, 0x32, 0x1500, count=8)  # Bingo board
+        rom.banks[0x3F][0x2800+0x520+0x28:0x2800+0x520+0x3A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+        rom.banks[0x3F][0x2800+0x520+0x48:0x2800+0x520+0x5A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
 
     if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3600:0x3660] != bytes(0x60):  # Detect extended sprite sheet with magic rod
         addSprite(0x3C, 0x0C, 0x3600, count=6)  # Magic rod attack (extended)
@@ -331,54 +333,3 @@ blockBadEmu:
 
     # Reserve 8 tiles for pet followers (E8-EF)
     addSprite(0xE8, 0x34, 0x3F00, count=8)
-
-
-def getSongGraphics(rom):
-    return utils.createTileData("""
-
-
-     ...
-  . .222
- .2.2222
-.22.222.
-.22222.3
-.2..22.3
- .33...3
- .33.3.3
- ..233.3
-.22.2333
-.222.233
- .222...
-  ...
-""" + """
-
-
-      ..
-     .22
-    .223
-   ..222
-  .33.22
-  .3..22
-  .33.33
-   ..23.
-  ..233.
- .22.333
-.22..233
- ..  .23
-      ..
-""" + """
-
-
-    ...
-   .222.
-  .2.332
-  .23.32
-  .233.2
- .222222
-.2222222
-.2..22.2
-.2.3.222
-.22...22
- .2333..
-  .23333
-   .....""", " .23")
