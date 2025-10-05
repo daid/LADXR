@@ -142,6 +142,11 @@ def patchGraphics(rom, graphics_data):
                     block[index*16:index*16+16] = tile
                 if info.get("type") == "photo":
                     rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:(info["tilemap"] & 0x3FFF) + len(tile_map)] = tile_map
+                    photo_index = (info["tilemap"] - (0x28 * 0x4000 + 0x1550)) // 720
+                    addr = rom.banks[0x3D][0x2534 + photo_index * 2:0x2534 + photo_index * 2 + 2]
+                    addr = addr[0] | (addr[1] << 8)
+                    if addr != 0:
+                        rom.banks[0x3D][addr-0x4000:addr-0x4000+len(tile_map)] = tile_map
                 if info.get("type") == "bg":
                     be = BackgroundEditor(rom, info["bg"])
                     for y in range(18):
