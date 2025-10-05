@@ -1,4 +1,5 @@
 from assembler import ASM
+from patches import extragfx
 from utils import formatText, setReplacementName, randomNumber, randomOrdinal
 from roomEditor import RoomEditor
 from backgroundEditor import BackgroundEditor
@@ -289,8 +290,20 @@ def createGfxImage(rom, filename):
                 if n == 0x78:  # Magic rod attack
                     sprite1 = rom.banks[0x2C][0x0040:0x0060]
                     sprite2 = rom.banks[0x2C][0x0060:0x0080]
-                if n == 0x79:  # Magic rod attack
+                if n == 0x79:  # Magic rod attack/capacity upgrade
                     sprite1 = rom.banks[0x2C][0x0080:0x00A0]
+                    sprite2 = extragfx.capacityUpgradeIcon() * 2
+                if n == 0x7A:  # Song gfx 1/2
+                    sprite1 = extragfx.songItemGraphics()[:0x20]
+                    sprite2 = extragfx.songItemGraphics()[0x20:0x40]
+                if n == 0x7B:  # Song gfx 3/bingo
+                    sprite1 = extragfx.songItemGraphics()[0x40:]
+                    sprite2 = extragfx.bingoBoard(rom)[:0x20]
+                if n == 0x7C:  # Bingo
+                    sprite1 = extragfx.bingoBoard(rom)[0x20:0x40]
+                    sprite2 = extragfx.bingoBoard(rom)[0x40:0x60]
+                if n == 0x7D:  # Bingo
+                    sprite1 = extragfx.bingoBoard(rom)[0x60:]
                 data_block += sprite1 + sprite2
         elif info.get("type") == "photo":
             tiles = rom.banks[info["addr"] >> 14][info["addr"] & 0x3FFF:]
