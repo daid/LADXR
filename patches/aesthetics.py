@@ -162,6 +162,11 @@ def patchGraphics(rom, graphics_data):
     else:
         # Old style graphics, just fixed bin at 0x2C
         updateGraphics(rom, 0x2C, 0, graphics_data)
+    if rom.banks[0x35][0x1A00:0x1A10] != b'\x00\x00\x42\x42\x24\x24\x18\x18\x18\x18\x24\x24\x42\x42\x00\x00':
+        # Extra color dungeon guardian sprites
+        rom.patch(0x36, 0x1AAC,
+                  "40024202422240224A2248224E224C2248024A024C024E02",
+                  "50025202522250225A2258225E225C2258025A025C025E02")
 
 
 def updateGraphics(rom, bank, offset, data):
