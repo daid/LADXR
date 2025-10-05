@@ -69,8 +69,6 @@ def patch(rom):
     # Make the honeycomb not use any graphics slots.
     entityData.SPRITE_DATA[0xB3] = None
 
-    rom.patch(0x00, 0x31E8, ASM("and a, $10"), ASM("and a, $00")) # ignore the castle opening switch for now.
-
     # New Ledge updates/mountain edges
     setMetaTile(rom, 0x05, 0xD2, 0x4A, 0x4A, 0x7F, 0x7F)
     setTileAttr(rom, 0x05, 0x03, 0x03, 0x00, 0x00)
@@ -188,6 +186,25 @@ def patch(rom):
 
     # Skip the whole egg maze.
     rom.patch(0x14, 0x0453, "75", "73")
+
+    # Fix castle gate room by using the face shrine opening room (needs to be on the same half, so cannot use the normal castle gate)
+    rom.patch(0x00, 0x31D1, ASM("cp $8C"), ASM("cp $87"))
+    rom.patch(0x00, 0x31D5, ASM("ld a, [$D88C]"), ASM("ld a, [$D887]"))
+    rom.patch(0x20, 0x2DC6, ASM("cp $8C"), ASM("cp $87"))
+    rom.patch(0x20, 0x2DCA, ASM("ld a, [$D88C]"), ASM("ld a, [$D887]"))
+    rom.patch(0x02, 0x382E, ASM("ld hl, $D879"), ASM("ld hl, $D887")) # Switch target
+    re = RoomEditor(rom, "Alt8C")
+    re.objects = RoomEditor(rom, 0x87).objects
+    re.overlay = RoomEditor(rom, 0x87).overlay
+    re.removeObject(5, 1)
+    re.removeObject(5, 2)
+    re.overlay[15] = re.overlay[5]
+    re.overlay[16] = re.overlay[6]
+    re.overlay[17] = re.overlay[7]
+    re.overlay[25] = re.overlay[5]
+    re.overlay[26] = re.overlay[6]
+    re.overlay[27] = re.overlay[7]
+    re.store(rom)
 
 def patchTarinBeeKeeperToFakeSword(rom):
     rom.patch(0x07, 0x0EB1, 0x1101, ASM("""
