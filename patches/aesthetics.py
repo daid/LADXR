@@ -142,6 +142,11 @@ def patchGraphics(rom, graphics_data):
                     block[index*16:index*16+16] = tile
                 if info.get("type") == "photo":
                     rom.banks[info["tilemap"] >> 14][info["tilemap"] & 0x3FFF:(info["tilemap"] & 0x3FFF) + len(tile_map)] = tile_map
+                    photo_index = (info["tilemap"] - (0x28 * 0x4000 + 0x1550)) // 720
+                    addr = rom.banks[0x3D][0x2534 + photo_index * 2:0x2534 + photo_index * 2 + 2]
+                    addr = addr[0] | (addr[1] << 8)
+                    if addr != 0:
+                        rom.banks[0x3D][addr-0x4000:addr-0x4000+len(tile_map)] = tile_map
                 if info.get("type") == "bg":
                     be = BackgroundEditor(rom, info["bg"])
                     for y in range(18):
@@ -162,6 +167,11 @@ def patchGraphics(rom, graphics_data):
     else:
         # Old style graphics, just fixed bin at 0x2C
         updateGraphics(rom, 0x2C, 0, graphics_data)
+    if rom.banks[0x35][0x1A00:0x1A10] != b'\x00\x00\x42\x42\x24\x24\x18\x18\x18\x18\x24\x24\x42\x42\x00\x00':
+        # Extra color dungeon guardian sprites
+        rom.patch(0x36, 0x1AAC,
+                  "40024202422240224A2248224E224C2248024A024C024E02",
+                  "50025202522250225A2258225E225C2258025A025C025E02")
 
 
 def updateGraphics(rom, bank, offset, data):
@@ -247,6 +257,7 @@ def createGfxImage(rom, filename):
         {"addr": 0x2B * 0x4000 + 0x2000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 11, "colormap": 0x0132},
         {"addr": 0x2B * 0x4000 + 0x3000, "size": 0x1000, "type": "photo", "tilemap": 0x28 * 0x4000 + 0x1550 + 720 * 12, "colormap": 0x0132},
         {"addr": 0x30 * 0x4000 + 0x1800, "size": 0x0800, "type": "bg", "bg": 0x12, "colormap": 0x0132},  # Peach
+        {"addr": 0x30 * 0x4000 + 0x2700, "size": 0x0200, "type": "sprite"},
         {"addr": 0x30 * 0x4000 + 0x3000, "size": 0x0800, "type": "bg", "bg": 0x15, "colormap": 0x0132},  # Mural
         {"addr": 0x30 * 0x4000 + 0x3800, "size": 0x0800, "type": "bg", "bg": 0x23, "colormap": 0x0132},  # Painting
         # {"addr": 0x33 * 0x4000 + 0x1000, "size": 0x0800, "type": "photo", "tilemap": 0x17 * 0x4000 + 0x0EEF},  # Windfish, tilemap is BG commands encoded...
