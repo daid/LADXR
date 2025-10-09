@@ -76,7 +76,7 @@ class Settings:
         gfx_options = [('', '', 'Default')]
         gfx_path = os.path.join(os.path.dirname(__file__), "gfx")
         for filename in sorted(os.listdir(gfx_path)):
-            if filename in {"template.png", "template_extended.png"}:
+            if filename in {"template.png", "template_extended.png", "template_extended2.png"}:
                 continue
             if filename.endswith(".bin"):
                 gfx_options.append((filename, filename + ">", filename[:-4]))
