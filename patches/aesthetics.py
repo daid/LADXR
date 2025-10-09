@@ -576,7 +576,7 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0xae] = formatText("You got 200 {RUPEES}! You're Ecstatic!", center=True)
     rom.texts[0xdc] = formatText("Ribbit! Ribbit! I'm Mamu, on vocals! But I don't need to tell you that, do I? Everybody knows me! Want to hang out and listen to us jam? For 300 {RUPEES}, we'll let you listen to a previously unreleased cut! What do you do?", ask="Pay Leave")
     rom.texts[0xe8] = formatText("You've found a {GOLD_LEAF}! Press START to see how many you've collected!")
-    rom.texts[0xed] = formatText("You've got the Mirror {SHIELD}! You can now turnback the beams you couldn't block before!")
+    rom.texts[0xed] = formatText("You've got the Mirror {SHIELD}! You can now turn back the beams you couldn't block before!")
     rom.texts[0xee] = formatText("You've got a more Powerful {POWER_BRACELET}! Now you can almost lift a whale!")
     rom.texts[0xf0] = formatText("Want to go on a raft ride for a hundred {RUPEES}?", ask="Yes No Way")
 
