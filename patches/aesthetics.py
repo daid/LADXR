@@ -145,7 +145,7 @@ def patchGraphics(rom, graphics_data):
                     photo_index = (info["tilemap"] - (0x28 * 0x4000 + 0x1550)) // 720
                     addr = rom.banks[0x3D][0x2534 + photo_index * 2:0x2534 + photo_index * 2 + 2]
                     addr = addr[0] | (addr[1] << 8)
-                    if addr != 0:
+                    if addr != 0 and photo_index not in {4, 10}:
                         rom.banks[0x3D][addr-0x4000:addr-0x4000+len(tile_map)] = tile_map
                 if info.get("type") == "bg":
                     be = BackgroundEditor(rom, info["bg"])
