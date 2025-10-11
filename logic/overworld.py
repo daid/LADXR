@@ -813,7 +813,7 @@ class ALttP:
         start_area = Location()
         start_house = Location().add(StartItem())
         self._addEntrance("start_house", start_area, start_house, None)
-        Location().add(Song(0x092)).connect(start_area, AND(OCARINA, r.bush))  # Marins song
+        Location().add(Song(0x0A5)).connect(start_area, AND(OCARINA, r.bush))  # Marins song
         seashell_mansion = Location()
         if options.goal != "seashells":
             Location().add(SeashellMansionBonus(0)).connect(seashell_mansion, COUNT(SEASHELL, 5))
