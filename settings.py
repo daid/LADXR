@@ -374,6 +374,8 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
         if self.overworld == "nodungeons":
             dis("owlstatues", "dungeon", "", "No dungeons does not work with owl statues in dungeons")
             dis("owlstatues", "both", "overworld", "No dungeons does not work with owl statues in dungeons")
+        if self.overworld not in {"normal", "nodungeons"}:
+            req("shopsanity", "", "Shopsanity is only allowed in normal overworlds")
         if self.overworld == "random":
             self.goal = "instruments"  # Force 4 dungeon goal for random overworld right now.
             self.goalcount = "4"

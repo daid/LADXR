@@ -54,7 +54,11 @@ def readEntrances(rom):
     result = {}
     for key, info in worldSetup.ENTRANCE_INFO.items():
         re = RoomEditor(rom, info.alt_room if info.alt_room is not None else info.room)
-        warp = re.getWarps()[info.index if info.index not in (None, "all") else 0]
+        index = info.index if info.index not in (None, "all") else 0
+        warps = re.getWarps()
+        if index >= len(warps):
+            continue
+        warp = warps[index]
         for other_key, other_info in worldSetup.ENTRANCE_INFO.items():
             if warp.room == other_info.target:
                 result[key] = f"{other_key}:inside"
@@ -65,7 +69,10 @@ def readEntrances(rom):
                 result[key] = other_key
 
         re = RoomEditor(rom, info.target)
-        warp = re.getWarps()[0]
+        warps = re.getWarps()
+        if not warps:
+            continue
+        warp = warps[0]
         for other_key, other_info in worldSetup.ENTRANCE_INFO.items():
             if warp.room == other_info.target:
                 result[f"{key}:inside"] = f"{other_key}:inside"
