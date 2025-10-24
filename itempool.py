@@ -178,15 +178,6 @@ class ItemPool:
                     self.remove(f"STONE_BEAK{n}")
                     self.add(f"KEY{n}")
 
-        if settings.dungeon_items == 'keysy':
-            for n in range(9):
-                for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
-                    item_name = "%s%d" % (item_name, n)
-                    if item_name in self.__pool:
-                        self.add(RUPEES_20, self.__pool[item_name])
-                        self.remove(item_name, self.__pool[item_name])
-                    self.add(item_name, amount)
-
         if settings.overworld == "dungeondive":
             self.remove(SWORD)
             self.remove(SHOVEL)
@@ -373,6 +364,15 @@ class ItemPool:
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
                     self.add(pick)
                     required_item_count -= 1
+
+        if settings.dungeon_items == 'keysy':
+            for n in range(9):
+                for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
+                    item_name = "%s%d" % (item_name, n)
+                    if item_name in self.__pool:
+                        self.add(RUPEES_20, self.__pool[item_name])
+                        self.remove(item_name, self.__pool[item_name])
+                    self.add(item_name, amount)
 
         if settings.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
