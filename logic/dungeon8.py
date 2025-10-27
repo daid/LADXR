@@ -27,8 +27,8 @@ class Dungeon8:
         bottomright_pot_chest = Location(dungeon=8).add(DungeonChest(0x25F)).connect(bottom_right, r.miniboss_requirements["SMASHER"]) # 4 ropes pot room chest
 
         map_chest = Location(dungeon=8).add(DungeonChest(0x24F)).connect(entrance_up, None) # use the zamboni to get to the push blocks
-        lower_center = Location("D8 After Lava Keyblock", dungeon=8).connect(entrance_up, KEY8)
-        hidden_arrow_room = Location("hidden_arrow_room", dungeon=8).connect(lower_center, AND(KEY8, FOUND(KEY8, 2)))
+        lower_center = Location("D8 After Lava Keyblock", dungeon=8).connect(entrance_up, FOUND(KEY8, 1))
+        hidden_arrow_room = Location("hidden_arrow_room", dungeon=8).connect(lower_center, FOUND(KEY8, 2))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=8).add(OwlStatue(0x245)).connect(hidden_arrow_room, STONE_BEAK8)
         upper_center = Location("D8 Dodongo Area", dungeon=8).connect(hidden_arrow_room, r.enemy_requirements["HIDING_ZOL"])
@@ -37,14 +37,14 @@ class Dungeon8:
         medicine_chest = Location(dungeon=8).add(DungeonChest(0x235)).connect(upper_center, AND(FEATHER, HOOKSHOT))  # medicine chest
 
         middle_center_1 = Location("D8 Dark East", dungeon=8).connect(upper_center, BOMB)
-        middle_center_2 = Location("D8 Dark Center", dungeon=8).connect(middle_center_1, AND(KEY8, FOUND(KEY8, 4)))
-        middle_center_3 = Location("D8 Dark West", dungeon=8).connect(middle_center_2, AND(r.enemy_requirements["SNAKE"], KEY8))
-        miniboss_entrance = Location("D8 Miniboss Stairs", dungeon=8).connect(middle_center_3, AND(HOOKSHOT, KEY8, FOUND(KEY8, 7))) # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
+        middle_center_2 = Location("D8 Dark Center", dungeon=8).connect(middle_center_1, FOUND(KEY8, 4))
+        middle_center_3 = Location("D8 Dark West", dungeon=8).connect(middle_center_2, AND(r.enemy_requirements["SNAKE"], FOUND(KEY8, 3)))
+        miniboss_entrance = Location("D8 Miniboss Stairs", dungeon=8).connect(middle_center_3, AND(HOOKSHOT, FOUND(KEY8, 7))) # hookshot to get across to keyblock, 7 to fix keylock issues if keys are used on other keyblocks
         miniboss_room = Location("D8 Miniboss Room", dungeon=8).connect(miniboss_entrance, FEATHER) # feather for 2d section
         miniboss = Location(dungeon=8).connect(miniboss_room, r.miniboss_requirements[world_setup.miniboss_mapping[7]])
         miniboss.add(DungeonChest(0x237)) # fire rod chest
 
-        up_left = Location(dungeon=8).connect(upper_center, AND(KEY8, FOUND(KEY8, 4)))
+        up_left = Location(dungeon=8).connect(upper_center, FOUND(KEY8, 4))
         entrance_up.connect(up_left, AND(FEATHER, MAGIC_ROD), one_way=True) # alternate path with fire rod through 2d section to nightmare key
         up_left.add(DungeonChest(0x240)) # beamos blocked chest
         up_left.connect(entrance_left, None, one_way=True) # path from up_left to entrance_left by dropping of the ledge in torch room 
@@ -61,7 +61,7 @@ class Dungeon8:
         stairs_ledge_chest = Location(dungeon=8).add(DungeonChest(0x23A)).connect(up_left, AND(r.enemy_requirements["VIRE"], r.enemy_requirements["SNAKE"], HOOKSHOT)) # ledge chest left of boss door
         stairs_ledge_chest.connect(top_left_stairs, HOOKSHOT, one_way = True)
         
-        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, r.miniboss_requirements["CUE_BALL"], KEY8, FOUND(KEY8, 7)))
+        nightmare_key = Location(dungeon=8).add(DungeonChest(0x232)).connect(top_left_stairs, AND(FEATHER, r.miniboss_requirements["CUE_BALL"], FOUND(KEY8, 7)))
 
         # Bombing from the center dark rooms to the left so you can access more keys.
         # The south walls of center dark room can be bombed from lower_center too with bomb and feather for center dark room access from the south, allowing even more access. Not sure if this should be logic since "obscure"

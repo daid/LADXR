@@ -10,16 +10,16 @@ class Dungeon5:
         compass = Location(dungeon=5).add(DungeonChest(0x19E)).connect(entrance, AND(r.enemy_requirements["KEESE"], r.enemy_requirements["IRON_MASK"]))
         fourth_stalfos_area = Location(dungeon=5).add(DroppedKey(0x181)).connect(compass, AND(SWORD, FEATHER)) # crystal rocks can only be broken by sword
 
-        area2 = Location("D5 After First Key", dungeon=5).connect(entrance, KEY5)
+        area2 = Location("D5 After First Key", dungeon=5).connect(entrance, FOUND(KEY5, 1))
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             Location(dungeon=5).add(OwlStatue(0x19A)).connect(area2, STONE_BEAK5)
         area2_past_iron_masks = Location(dungeon=5).add(DungeonChest(0x19B)).connect(area2, r.enemy_requirements["IRON_MASK"])  # map chest
         blade_trap_chest = Location(dungeon=5).add(DungeonChest(0x197)).connect(area2_past_iron_masks, HOOKSHOT)  # key chest on the left
         pre_gohma = Location("D5 Before Miniboss", dungeon=5).connect(area2_past_iron_masks, HOOKSHOT) # area top left before keyblock gohma
-        gohma = Location("D5 Miniboss Room", dungeon=5).connect(pre_gohma, AND(KEY5, FOUND(KEY5,2)))
+        gohma = Location("D5 Miniboss Room", dungeon=5).connect(pre_gohma, FOUND(KEY5,2))
         post_gohma = Location("D5 After Miniboss", dungeon=5).connect(gohma, r.miniboss_requirements[world_setup.miniboss_mapping[4]]) # staircase after gohma
         staircase_before_boss = Location("D5 Before Boss Keyblock", dungeon=5).connect(post_gohma, AND(HOOKSHOT, FEATHER)) # bottom right section pits room before boss door. Path via gohma
-        after_keyblock_boss = Location("D5 After Boss Keyblock", dungeon=5).connect(staircase_before_boss, AND(KEY5, FOUND(KEY5, 3))) # top right section pits room before boss door
+        after_keyblock_boss = Location("D5 After Boss Keyblock", dungeon=5).connect(staircase_before_boss, FOUND(KEY5, 3)) # top right section pits room before boss door
         after_stalfos = Location(dungeon=5).add(DungeonChest(0x196)).connect(area2, AND(r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["MASTER_STALFOS"])) # Need to defeat master stalfos once for this empty chest; l2 sword beams kill but obscure
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             butterfly_owl = Location(dungeon=5).add(OwlStatue(0x18A)).connect(after_stalfos, AND(FEATHER, STONE_BEAK5))
@@ -33,7 +33,7 @@ class Dungeon5:
         third_arena = Location("D5 Master Stalfos 3", dungeon=5).connect(north_of_crossroads, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["MASTER_STALFOS"])) # can beat 3rd m.stalfos
         stone_tablet = Location(dungeon=5).add(DungeonChest(0x183)).connect(north_of_crossroads, AND(POWER_BRACELET, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["STALFOS_AGGRESSIVE"], r.enemy_requirements["STALFOS_EVASIVE"])))  # stone tablet
         boss_key = Location(dungeon=5).add(DungeonChest(0x186)).connect(after_stalfos, AND(FLIPPERS, HOOKSHOT))  # nightmare key
-        before_boss = Location("D5 Before Boss", dungeon=5).connect(after_keyblock_boss, HOOKSHOT) 
+        before_boss = Location("D5 Before Boss", dungeon=5).connect(after_keyblock_boss, HOOKSHOT)
         boss_room = Location("D5 Boss Room", dungeon=5).connect(before_boss, NIGHTMARE_KEY5)
         boss = Location(dungeon=5).add(HeartContainer(0x185), Instrument(0x182)).connect(boss_room, r.boss_requirements[world_setup.boss_mapping[4]])
 

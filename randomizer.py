@@ -15,12 +15,9 @@ import spoilerLog
 import itempool
 import mapgen
 from plan import Plan
-from worldSetup import WorldSetup
+import worldSetup
 from settings import Settings
-
-
-class Error(Exception):
-    pass
+from utils import Error
 
 
 class Randomizer:
@@ -40,7 +37,7 @@ class Randomizer:
             self.__logic = logic.main.MultiworldLogic(settings, self.rnd)
         else:
             for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                world_setup = WorldSetup()
+                world_setup = worldSetup.WorldSetup()
                 world_setup.randomize(settings, self.rnd)
                 if settings.overworld == "random":
                     world_setup.map = mapgen.generate(args.input_filename, 8, 8)

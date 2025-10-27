@@ -215,6 +215,14 @@ def forceLinksPalette(rom, index):
         rom.patch(0x21, 0x33FC, "A222", "037E")
     for n in range(6):
         rom.patch(0x05, 0x1261 + n * 2, "00", f"{index:02x}")
+    # Fix entering dream bed
+    rom.patch(0x21, 0x0228, 0x0238, ASM(f"ld hl, 5518 + 4 + {index*8}"), fill_nop=True)
+    rom.patch(0x15, 0x3D50 + 5, "00", f"{index:02x}")
+    rom.patch(0x15, 0x3D50 + 7, "00", f"{index:02x}")
+    rom.patch(0x15, 0x3D58 + 5, "02", f"{index:02x}")
+    rom.patch(0x15, 0x3D58 + 7, "02", f"{index:02x}")
+    rom.patch(0x15, 0x3D60 + 5, "03", f"{index:02x}")
+    rom.patch(0x15, 0x3D60 + 7, "03", f"{index:02x}")
 
 
 def fastText(rom):

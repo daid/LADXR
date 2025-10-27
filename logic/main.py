@@ -13,15 +13,20 @@ from .requirements import AND, OR, COUNT, COUNTS, FOUND, RequirementsSettings
 from .location import Location
 from locations.items import *
 from locations.keyLocation import KeyLocation
-from worldSetup import WorldSetup
+import worldSetup
 import itempool
 import mapgen
 
 
 class Logic:
-    def __init__(self, configuration_options, *, world_setup):
+    def __init__(self, configuration_options, *, world_setup, requirements_settings=None):
         self.world_setup = world_setup
-        r = RequirementsSettings(configuration_options)
+
+        if requirements_settings == None:
+            requirements_settings = RequirementsSettings(configuration_options)
+
+        r = requirements_settings
+        self.requirements_settings = requirements_settings
 
         if configuration_options.overworld == "dungeondive":
             world = overworld.DungeonDiveOverworld(configuration_options, r)
@@ -113,16 +118,14 @@ class Logic:
             world.nightmare.connect(world.egg, egg_trigger)
         elif isinstance(world_setup.goal, str) and world_setup.goal.startswith("="):
             world.nightmare.connect(world.egg, AND(egg_trigger, *["INSTRUMENT%s" % c for c in world_setup.goal[1:]]))
+        elif world_setup.goal == 'open':
+            world.nightmare.connect(world.egg, None)
+        elif world_setup.goal_count == 0:
+            world.nightmare.connect(world.egg, egg_trigger)
+        elif world_setup.goal_count == 8:
+            world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
         else:
-            goal = int(world_setup.goal)
-            if goal < 0:
-                world.nightmare.connect(world.egg, None)
-            elif goal == 0:
-                world.nightmare.connect(world.egg, egg_trigger)
-            elif goal == 8:
-                world.nightmare.connect(world.egg, AND(egg_trigger, INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8))
-            else:
-                world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], goal)))
+            world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], world_setup.goal_count)))
 
         if configuration_options.dungeon_items == 'keysy':
             for n in range(9):
@@ -190,7 +193,7 @@ class MultiworldLogic:
                 world = Logic(options, world_setup=world_setups[n])
             else:
                 for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                    world_setup = WorldSetup()
+                    world_setup = worldSetup.WorldSetup()
                     world_setup.randomize(options, rnd)
                     world = Logic(options, world_setup=world_setup)
                     if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):

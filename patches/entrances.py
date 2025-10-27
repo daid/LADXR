@@ -1,5 +1,5 @@
 from roomEditor import RoomEditor, ObjectWarp
-from worldSetup import ENTRANCE_INFO
+import worldSetup
 
 
 def changeEntrances(rom, mapping):
@@ -9,7 +9,7 @@ def changeEntrances(rom, mapping):
     for key in mapping.keys():
         if key.endswith(":inside"):
             continue
-        info = ENTRANCE_INFO[key]
+        info = worldSetup.ENTRANCE_INFO[key]
         re = RoomEditor(rom, info.alt_room if info.alt_room is not None else info.room)
         warp = re.getWarps()[info.index if info.index not in (None, "all") else 0]
         warp_to[f"{key}:inside"] = warp
@@ -52,10 +52,10 @@ def changeEntrances(rom, mapping):
 
 def readEntrances(rom):
     result = {}
-    for key, info in ENTRANCE_INFO.items():
+    for key, info in worldSetup.ENTRANCE_INFO.items():
         re = RoomEditor(rom, info.alt_room if info.alt_room is not None else info.room)
         warp = re.getWarps()[info.index if info.index not in (None, "all") else 0]
-        for other_key, other_info in ENTRANCE_INFO.items():
+        for other_key, other_info in worldSetup.ENTRANCE_INFO.items():
             if warp.room == other_info.target:
                 result[key] = f"{other_key}:inside"
             if (warp.room == other_info.room
@@ -66,7 +66,7 @@ def readEntrances(rom):
 
         re = RoomEditor(rom, info.target)
         warp = re.getWarps()[0]
-        for other_key, other_info in ENTRANCE_INFO.items():
+        for other_key, other_info in worldSetup.ENTRANCE_INFO.items():
             if warp.room == other_info.target:
                 result[f"{key}:inside"] = f"{other_key}:inside"
             if (warp.room == other_info.room
