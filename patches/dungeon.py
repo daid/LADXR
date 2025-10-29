@@ -1,3 +1,4 @@
+import cavegen
 from roomEditor import RoomEditor, Object, ObjectHorizontal, ObjectWarp
 from assembler import ASM
 
@@ -148,7 +149,7 @@ def patchDungeonChain(rom, world_setup):
     order = world_setup.dungeon_chain + ["egg"]
 
     if world_setup.cavegen:
-        for ri in [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]:
+        for ri in cavegen.ALL_CAVE_ROOM_IDS:
             re = RoomEditor(rom, ri)
             re.entities = []
             re.objects = []
@@ -170,6 +171,8 @@ def patchDungeonChain(rom, world_setup):
                 exit_rooms["cavegen"] = room.room_id
         # Fix tile attributes for bombable walls
         rom.patch(0x24, 0x0400 + 0x3F * 4, "00000000040404040000000000000000", "04040404040404040404040404040404")
+        rom.patch(0x24, 0x0400 + 0x93 * 4, "00000000000000000000000000000000", "01050505050105050505010505050501")  # single tile corners
+        rom.patch(0x24, 0x0400 + 0xCE * 4, "07070707", "04040404")  # Small table
 
     last_exit_map = 0x10
     last_exit_room = 0x2A3  # Start house

@@ -570,7 +570,7 @@ class RoomEditor:
             counts = {}
             for n in tiles:
                 counts[n] = counts.get(n, 0) + 1
-            self.floor_object = max(counts, key=counts.get)
+            self.floor_object = max(counts, key=counts.get) if len(counts) > 0 else 5
             template_tiles = [self.floor_object] * 80
         else:
             counts = {}

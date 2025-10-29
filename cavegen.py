@@ -97,6 +97,9 @@ HAZARD_ENTITIES = {
     "ARMOS_KNIGHT": [(4, 3, 0x88)],
 }
 
+ALL_CAVE_ROOM_IDS = [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]
+
+
 class RoomConnection:
     def __init__(self, source, target):
         self.source = source
@@ -135,6 +138,7 @@ class Room:
 
     def __repr__(self):
         return f"ROOM{{{self.x},{self.y}}}"
+
 
 class Generator:
     def __init__(self, rng):
@@ -296,7 +300,7 @@ class Generator:
         self.layout_map()
         self.setup_connection_types()
         self.set_room_types()
-        cave_room_ids = [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]
+        cave_room_ids = ALL_CAVE_ROOM_IDS.copy()
         for room in self.all_rooms:
             room.room_id = cave_room_ids.pop()
             self.build_room_tiles(room)
@@ -338,21 +342,22 @@ def dump(filename, *starts):
     f.close()
 
 
-if __name__ == "__main__":
+def main():
     import sys
     import romTables
     from roomEditor import RoomEditor
     import random
     import mapexport
     rng = random.Random()
-    cave = Generator(rng).generate()
-    dump("cave.svg", cave)
+    generator = Generator(rng)
+    generator.generate()
+    dump("cave.svg", generator.start)
 
     rom = romTables.ROMWithTables(open(sys.argv[1], "rb"))
     for x in range(8):
         for y in range(8):
             rom.banks[0x14][0x0220 + 10 * 8*8 + x + y * 8] = 0
-    cave_room_ids = [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]
+    cave_room_ids = ALL_CAVE_ROOM_IDS.copy()
     def place(room):
         room_id = cave_room_ids.pop()
         rom.banks[0x14][0x0220 + 10 * 8*8 + room.x + room.y * 8] = room_id & 0xFF
@@ -362,7 +367,7 @@ if __name__ == "__main__":
         re.store(rom)
         for c in room.connections:
             place(c.target)
-    place(cave)
+    place(generator.start)
 
     for ri in cave_room_ids:
         re = RoomEditor(rom, ri)
@@ -370,3 +375,7 @@ if __name__ == "__main__":
         re.objects = []
         re.store(rom)
     mapexport.MapExport(rom, overworld=False, underworld=False, dungeons=[10]).export()
+
+
+if __name__ == "__main__":
+    main()
