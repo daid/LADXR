@@ -364,14 +364,20 @@ class ItemPool:
                     self.add(pick)
                     required_item_count -= 1
 
-        if settings.dungeon_items == 'keysy':
+        if settings.dungeon_keys == 'removed':
             for n in range(9):
-                for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
-                    item_name = "%s%d" % (item_name, n)
-                    if item_name in self.__pool:
-                        self.add(RUPEES_20, self.__pool[item_name])
-                        self.remove(item_name, self.__pool[item_name])
-                    self.add(item_name, amount)
+                item_name = f"KEY{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 9)
+        if settings.nightmare_keys == 'removed':
+            for n in range(9):
+                item_name = f"NIGHTMARE_KEY{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 1)
 
         if settings.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.

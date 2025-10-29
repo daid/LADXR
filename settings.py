@@ -1,3 +1,4 @@
+import string
 from typing import List, Tuple, Optional, Union
 import os
 
@@ -127,18 +128,37 @@ Spoiler logs can not be generated for ROMs generated with race mode enabled, and
 [Normal] Requires Magnifying Lens to get the Boomerang.
 [Trade] Allows to trade an inventory item for a random other inventory item. The Boomerang is shuffled.
 [Gift] You get a random gift of any item, and the Boomerang is shuffled."""),
-            Setting('dungeon_items', 'Gameplay', 'D', 'Dungeon items', options=[('', '', 'Standard'),
-                                                                          ('smallkeys', 's', 'Small keys'),
-                                                                          ('nightmarekeys', 'n', 'Nightmare keys'),
-                                                                          ('localkeys', 'L', 'Map/Compass/Beaks'),
-                                                                          ('localnightmarekey', 'N', 'MCB + SmallKeys'),
-                                                                          ('keysanity', 'K', 'Keysanity'),
-                                                                          ('keysy', 'k', 'Keysy')], default='',
-                description="""Sets if dungeon items can only be in their respective dungeon, or everywhere.
-[Standard] Dungeon items are only in their dungeon.
-[Maps/.../..] Specified items can be anywhere
-[Keysanity] All dungeon items can be anywhere.
-[Keysy] No keys, key doors are already open."""),
+            Setting('dungeon_keys', 'Dungeon Items', 'k', 'Dungeon keys', options=[('', '', 'Standard'),
+                                                                          ('keysanity', 'k', 'Keysanity'),
+                                                                          ('removed', 'r', 'Removed')], default='',
+                description="""Sets if dungeon keys can only be in their respective dungeon, or everywhere.
+[Standard] Dungeon keys are only in their dungeon.
+[Keysanity] Dungeon keys can be anywhere.
+[Removed] No keys, key doors are already open. (also known as Keysy)"""),
+            Setting('nightmare_keys', 'Dungeon Items', 'n', 'Nightmare keys', options=[('', '', 'Standard'),
+                                                                                   ('keysanity', 'k', 'Keysanity'),
+                                                                                   ('removed', 'r', 'Removed')],
+                    default='',
+                    description="""Sets if dungeon keys can only be in their respective dungeon, or everywhere.
+[Standard] Nightmare keys are only in their dungeon.
+[Keysanity] Nightmare keys can be anywhere.
+[Removed] No nightmare keys, nightmare doors are already open. (also known as Keysy)"""),
+            Setting('dungeon_beaks', 'Dungeon Items', 'Y', 'Dungeon beaks', options=[('', '', 'Standard'),
+                                                                                   ('keysanity', 'k', 'Keysanity'),
+                                                                                   ('removed', 'r', 'Removed')],
+                    default='',
+                    description="""Sets if dungeon beaks can only be in their respective dungeon, or everywhere.
+[Standard] Dungeon beaks are only in their dungeon.
+[Keysanity] Dungeon beaks can be anywhere.
+[Removed] No beaks."""),
+            Setting('dungeon_maps', 'Dungeon Items', 'D', 'Dungeon map/compass', options=[('', '', 'Standard'),
+                                                                                     ('keysanity', 'k', 'Keysanity'),
+                                                                                     ('removed', 'r', 'Removed')],
+                    default='',
+                    description="""Sets if dungeon maps/compasses can only be in their respective dungeon, or everywhere.
+[Standard] Dungeon maps/compasses are only in their dungeon.
+[Keysanity] Dungeon maps/compasses can be anywhere.
+[Removed] No maps/compasses."""),
             Setting('randomstartlocation', 'Entrances', 'r', 'Random start location', default=False,
                 description='Randomize where your starting house is located'),
             Setting('dungeonshuffle', 'Entrances', 'u', 'Dungeon shuffle', default=False,
@@ -288,6 +308,7 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
         for s in self.__all:
             assert s.short_key not in short_keys, f"{s.label}: {short_keys[s.short_key].label}"
             short_keys[s.short_key] = s
+        # print("Unused ss:", "".join([s for s in string.ascii_letters if s not in short_keys]))
 
     @property
     def multiworld(self):  # returns the amount of multiworld players.

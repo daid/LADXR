@@ -8,6 +8,8 @@ KEY_DOORS = {
     0xED: 0xF5,
     0xEE: 0xF6,
     0xEF: 0xF7,
+}
+NIGHTMARE_DOORS = {
     0xF8: 0xF4,
 }
 
@@ -23,6 +25,20 @@ def removeKeyDoors(rom):
                 update = True
             if obj.type_id == 0xDE: # Keyblocks
                 obj.type_id = re.floor_object & 0x0F
+                update = True
+        if update:
+            re.store(rom)
+
+
+def removeNightmareKeyDoors(rom):
+    for n in range(0x100, 0x316):
+        if n == 0x2FF:
+            continue
+        update = False
+        re = RoomEditor(rom, n)
+        for obj in re.objects:
+            if obj.type_id in NIGHTMARE_DOORS:
+                obj.type_id = NIGHTMARE_DOORS[obj.type_id]
                 update = True
         if update:
             re.store(rom)

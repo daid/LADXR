@@ -106,7 +106,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
+    if settings.dungeon_keys == 'keysanity' or settings.nightmare_keys == 'keysanity':
         patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
     if settings.witch:
@@ -162,8 +162,10 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     elif settings.overworld == 'random':
         patches.overworld.patchOverworldTilesets(rom)
         mapgen.store_map(rom, logic.world.map)
-    if settings.dungeon_items == 'keysy':
+    if settings.dungeon_keys == 'removed':
         patches.dungeon.removeKeyDoors(rom)
+    if settings.nightmare_keys == 'removed':
+        patches.dungeon.removeNightmareKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)

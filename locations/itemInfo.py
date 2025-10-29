@@ -24,27 +24,29 @@ class ItemInfo:
         return self.OPTIONS
 
     def configure(self, options):
-        if options.dungeon_items in {'localkeys', 'localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'}:
-            # Add items that can be anywhere due to dungeon items setting
-            self.OPTIONS = self.OPTIONS.copy()
-            for n in range(10):
-                if options.dungeon_items not in {'smallkeys', 'nightmarekeys'}:
-                    self.OPTIONS += ["MAP%d" % (n), "COMPASS%d" % (n), "STONE_BEAK%d" % (n)]
-                if options.dungeon_items in {'localnightmarekey', 'keysanity', 'smallkeys'}:
-                    self.OPTIONS += ["KEY%d" % (n)]
-                if options.dungeon_items in {'keysanity', 'nightmarekeys'}:
-                    self.OPTIONS += ["NIGHTMARE_KEY%d" % (n)]
+        # Add items that can be anywhere due to dungeon items setting
+        self.OPTIONS = self.OPTIONS.copy()
+        for n in range(10):
+            if options.dungeon_keys == 'keysanity':
+                self.OPTIONS += [f"KEY{n}"]
+            if options.nightmare_keys == 'keysanity':
+                self.OPTIONS += [f"NIGHTMARE_KEY{n}"]
+            if options.dungeon_beaks == 'keysanity':
+                self.OPTIONS += [f"STONE_BEAK{n}"]
+            if options.dungeon_maps == 'keysanity':
+                self.OPTIONS += [f"MAP{n}", f"COMPASS{n}"]
 
-        if self._location.dungeon is not None and options.dungeon_items in {'', 'localkeys', 'localnightmarekey', 'keysy', 'smallkeys', 'nightmarekeys'}:
+        if self._location.dungeon is not None:
             # Add items specific to this dungeon
-            self.OPTIONS = self.OPTIONS.copy()
             d = self._location.dungeon
-            if options.dungeon_items in {'', 'keysy', 'smallkeys', 'nightmarekeys'}:
-                self.OPTIONS += ["MAP%d" % (d), "COMPASS%d" % (d), "STONE_BEAK%d" % (d)]
-            if options.dungeon_items in {'', 'localkeys', 'nightmarekeys'}:
-                self.OPTIONS += ["KEY%d" % (d)]
-            if options.dungeon_items != 'nightmarekeys':
-                self.OPTIONS += ["NIGHTMARE_KEY%d" % (d)]
+            if options.dungeon_keys != 'keysanity':
+                self.OPTIONS += [f"KEY{d}"]
+            if options.nightmare_keys != 'keysanity':
+                self.OPTIONS += [f"NIGHTMARE_KEY{d}"]
+            if options.dungeon_beaks != 'keysanity':
+                self.OPTIONS += [f"STONE_BEAK{d}"]
+            if options.dungeon_maps != 'keysanity':
+                self.OPTIONS += [f"MAP{d}", f"COMPASS{d}"]
 
     def read(self, rom):
         raise NotImplementedError()

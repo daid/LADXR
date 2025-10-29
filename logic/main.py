@@ -127,10 +127,12 @@ class Logic:
         else:
             world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], world_setup.goal_count)))
 
-        if configuration_options.dungeon_items == 'keysy':
+        if configuration_options.dungeon_keys == 'removed':
             for n in range(9):
                 for count in range(9):
                     world.start.add(KeyLocation("KEY%d" % (n)))
+        if configuration_options.nightmare_keys == 'removed':
+            for n in range(9):
                 world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n)))
 
         self.world = world
@@ -238,7 +240,7 @@ class MultiworldItemInfoWrapper:
         self.world = world
         self.world_count = configuration_options.multiworld
         self.target = target
-        self.dungeon_items = configuration_options.dungeon_items
+        self.dungeon_keys = configuration_options.dungeon_keys
         self.MULTIWORLD_OPTIONS = None
         self.item = None
 

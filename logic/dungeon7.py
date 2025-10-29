@@ -164,7 +164,7 @@ class Dungeon7:
         boss_room.connect(instrument, "D7_BOSS_CLEAR", back=False)
 
         # key logic patch
-        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
+        if options.dungeon_keys == 'keysanity':
             entrance_drop1.items[0].forced_item = KEY7
 
         #TODO: if options.logic == "casual":

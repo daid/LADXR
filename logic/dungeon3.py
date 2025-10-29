@@ -130,7 +130,7 @@ class Dungeon3:
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY3, back=False)
         boss_room.connect((boss_room_drop8, instrument), r.boss_requirements[world_setup.boss_mapping[2]], back=False)
 
-        if options.dungeon_items not in {'localnightmarekey', 'keysanity', 'keysy', 'smallkeys'}:
+        if options.dungeon_keys != 'keysanity':
             # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
             after_a_stairs.connect(west_4way, FOUND(KEY3, 1), back=False)
             west_4way_drop2.items[0].forced_item = KEY3

@@ -61,7 +61,7 @@ class Randomizer:
         elif settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
-            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_items, settings.owlstatues, settings.accessibility)
+            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_keys, settings.nightmare_keys, settings.dungeon_beaks, settings.dungeon_maps, settings.owlstatues, settings.accessibility)
         for item, count in self.readItemPool(settings, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
@@ -227,9 +227,12 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
-    def __init__(self, logic: logic.main.Logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
+    def __init__(self, logic: logic.main.Logic, dungeon_keys_setting: str, nightmare_keys_setting: str, dungeon_beaks_setting: str, dungeon_maps_setting: str, owl_statue_setting: str, accessibility: str) -> None:
         super().__init__(logic, accessibility)
-        self.dungeon_item_setting = dungeon_item_setting
+        self.dungeon_keys_setting = dungeon_keys_setting
+        self.nightmare_keys_setting = nightmare_keys_setting
+        self.dungeon_beaks_setting = dungeon_beaks_setting
+        self.dungeon_maps_setting = dungeon_maps_setting
         self.owl_statue_setting = owl_statue_setting
 
     def run(self, rnd: random.Random) -> None:
@@ -238,11 +241,11 @@ class RandomItemPlacer(ItemPlacer):
 
         # Place keys that are restricted to their dungeon first to avoid running out of valid spots
         dungeon_keys = []
-        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_item_setting in {'', 'keysy', 'smallkeys', 'nightmarekeys'}:
+        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_beaks_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("STONE_BEAK")]
-        if self.dungeon_item_setting in {'', 'localkeys', 'nightmarekeys'}:
+        if self.dungeon_keys_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("KEY")]
-        if self.dungeon_item_setting in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
+        if self.nightmare_keys_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("NIGHTMARE_KEY")]
         rnd.shuffle(dungeon_keys)
 
