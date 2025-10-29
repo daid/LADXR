@@ -93,9 +93,17 @@ doNotGivePowder:
 doNotGiveBombs:
 
     ld   a, [$DB45]
+#IF DUNGEON_CHAIN
+    cp   $20
+#ELSE
     cp   $10
+#ENDIF
     jr   nc, doNotGiveArrows
+#IF DUNGEON_CHAIN
+    ld   a, $20
+#ELSE
     ld   a, $10
+#ENDIF
     ld   [$DB45], a
 doNotGiveArrows:
 

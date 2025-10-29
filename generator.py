@@ -83,6 +83,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
 
     #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
+    assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
