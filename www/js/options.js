@@ -6,7 +6,6 @@ var options =
   "short_key": "<",
   "label": "Seed",
   "description": "For multiple people to generate the same randomization result, enter the generated seed number here.\nNote, not all strings are valid seeds.",
-  "multiworld": false,
   "aesthetic": false,
   "default": "",
   "placeholder": "Leave empty for random seed"
@@ -17,7 +16,6 @@ var options =
   "short_key": "L",
   "label": "Logic",
   "description": "Affects where items are allowed to be placed.\n[Casual] Same as normal, except that a few more complex options are removed, like removing bushes with powder and killing enemies with powder or bombs.\n[Normal] playable without using any tricks or glitches. Requires nothing to be done outside of normal item usage.\n[Hard] More advanced techniques may be required, but glitches are not. Examples include tricky jumps, killing enemies with only pots and skipping keys with smart routing.\n[Glitched] Advanced glitches and techniques may be required, but extremely difficult or tedious tricks are not required. Examples include Bomb Triggers, Super Jumps and Jesus Jumps.\n[Hell] Obscure and hard techniques may be required. Examples include featherless jumping with Pegasus Boots and/or Hookshot, sequential pit buffers and unclipped superjumps. Things in here can be extremely hard to do or very time consuming. Only insane people go for this.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -54,7 +52,6 @@ var options =
   "short_key": "F",
   "label": "Forward Factor",
   "description": "Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5.",
-  "multiworld": true,
   "aesthetic": false,
   "default": 0.0
  },
@@ -64,7 +61,6 @@ var options =
   "short_key": "A",
   "label": "Accessibility",
   "description": "\n[100% Locations] Guaranteed that every single item can be reached and gained.\n[Beatable] Only guarantees that the game is beatable. Certain items/chests might never be reachable.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "all",
   "options": [
@@ -86,7 +82,6 @@ var options =
   "short_key": "V",
   "label": "Race mode",
   "description": "\nSpoiler logs can not be generated for ROMs generated with race mode enabled, and seed generation is slightly different.",
-  "multiworld": false,
   "aesthetic": false,
   "default": false
  },
@@ -96,7 +91,6 @@ var options =
   "short_key": "h",
   "label": "Randomize heart pieces",
   "description": "Includes heart pieces in the item pool",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -106,7 +100,6 @@ var options =
   "short_key": "s",
   "label": "Randomize hidden seashells",
   "description": "Randomizes the secret sea shells hiding in the ground/trees/mansion. (Chests are always randomized.)",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -116,7 +109,6 @@ var options =
   "short_key": "H",
   "label": "Randomize heart containers",
   "description": "Includes boss heart container drops in the item pool",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -126,7 +118,6 @@ var options =
   "short_key": "I",
   "label": "Randomize instruments",
   "description": "Instruments are placed on random locations, dungeon goal will just contain a random item.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -136,7 +127,6 @@ var options =
   "short_key": "T",
   "label": "Randomize trade quest",
   "description": "Trade quest items are randomized, each NPC takes its normal trade quest item, but gives a random item.",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -146,7 +136,6 @@ var options =
   "short_key": "W",
   "label": "Randomize item given by the witch",
   "description": "Adds both the Toadstool and the reward for giving the Toadstool to the witch to the item pool.",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -156,7 +145,6 @@ var options =
   "short_key": "R",
   "label": "Add the rooster",
   "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -166,7 +154,6 @@ var options =
   "short_key": "Z",
   "label": "Boomerang trade",
   "description": "\n[Normal] Requires Magnifying Lens to get the Boomerang.\n[Trade] Allows to trade an inventory item for a random other inventory item. The Boomerang is shuffled.\n[Gift] You get a random gift of any item, and the Boomerang is shuffled.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "gift",
   "options": [
@@ -193,7 +180,6 @@ var options =
   "short_key": "k",
   "label": "Dungeon keys",
   "description": "Sets if dungeon keys can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon keys are only in their dungeon.\n[Keysanity] Dungeon keys can be anywhere.\n[Removed] No keys, key doors are already open. (also known as Keysy)",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -220,7 +206,6 @@ var options =
   "short_key": "n",
   "label": "Nightmare keys",
   "description": "Sets if dungeon keys can only be in their respective dungeon, or everywhere.\n[Standard] Nightmare keys are only in their dungeon.\n[Keysanity] Nightmare keys can be anywhere.\n[Removed] No nightmare keys, nightmare doors are already open. (also known as Keysy)",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -247,7 +232,6 @@ var options =
   "short_key": "Y",
   "label": "Dungeon beaks",
   "description": "Sets if dungeon beaks can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon beaks are only in their dungeon.\n[Keysanity] Dungeon beaks can be anywhere.\n[Removed] No beaks.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -274,7 +258,6 @@ var options =
   "short_key": "D",
   "label": "Dungeon map/compass",
   "description": "Sets if dungeon maps/compasses can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon maps/compasses are only in their dungeon.\n[Keysanity] Dungeon maps/compasses can be anywhere.\n[Removed] No maps/compasses.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -301,7 +284,6 @@ var options =
   "short_key": "r",
   "label": "Random start location",
   "description": "Randomize where your starting house is located",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -311,7 +293,6 @@ var options =
   "short_key": "u",
   "label": "Dungeon shuffle",
   "description": "Randomizes the dungeon that each dungeon entrance leads to",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -321,7 +302,6 @@ var options =
   "short_key": "E",
   "label": "Entrance randomizer",
   "description": "Randomizes where overworld entrances lead to.\n[Simple] Single entrance caves that contain items are randomized.\n[Split] Connector caves are also randomized, in a separate pool from single entrance caves.\n[Mixed] Connector caves are also randomized, in the same pool as single entrance caves.\n[Wild] Connections can go from overworld to overworld, or inside to inside.\n[Chaos] Entrance and exits are decoupled.\n[Insane] Combines chaos and wild, anything goes anywhere, there is no God.\n[Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location.\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "none",
   "options": [
@@ -373,7 +353,6 @@ var options =
   "short_key": "j",
   "label": "Shuffle itemless entrances",
   "description": "Caves/houses without items are also randomized when entrance shuffle is set.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -393,7 +372,6 @@ var options =
   "short_key": "a",
   "label": "Shuffle annoying entrances",
   "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized when entrance shuffle is set.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -413,7 +391,6 @@ var options =
   "short_key": "w",
   "label": "Shuffle water entrances",
   "description": "Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entrance shuffle is set. Use the warp-to-home from the Save & Quit menu if you get stuck (hold A+B+Start+Select until it works).",
-  "multiworld": true,
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -433,7 +410,6 @@ var options =
   "short_key": "B",
   "label": "Boss shuffle",
   "description": "Randomizes the dungeon bosses that each dungeon has.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -460,7 +436,6 @@ var options =
   "short_key": "b",
   "label": "Miniboss shuffle",
   "description": "Randomizes the dungeon minibosses that each dungeon has.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -487,7 +462,6 @@ var options =
   "short_key": "e",
   "label": "Enemizer",
   "description": "Randomizes which enemies are placed.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -509,7 +483,6 @@ var options =
   "short_key": "G",
   "label": "Goal",
   "description": "Changes the goal of the game.\n[Vanilla] 8 instruments required to open the egg.\n[X instruments] A number of instruments required to open the egg.\n[X specific instruments] A number of specific instruments required to open the egg. The sign at Mt. Tamaranch will tell you what they are.\n[Egg already open] The egg is already open, just head for it once you have the items needed to defeat the boss.\n[Randomized instrument count] A random number of instruments required to open the egg, between 0 and 8.\n[Random short/long game] A random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.\n[Seashell hunt] The egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.\n[Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!\n[Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!\n[Bingo-25] Bingo, but need to fill the whole bingo card to win!\n[Sign Maze] Go on a long trip on the overworld sign maze to open the egg.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "vanilla",
   "options": [
@@ -581,7 +554,6 @@ var options =
   "short_key": "i",
   "label": "Goal count",
   "description": "Amount of instruments to find for the instruments goal.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "4",
   "options": [
@@ -643,7 +615,6 @@ var options =
   "short_key": "P",
   "label": "Item pool",
   "description": "Effects which items are shuffled.\n[Casual] Places more inventory and key items so the seed is easier.\n[More keys] Adds more small keys and extra nightmare keys so dungeons are easier.\n[Path of pain] ...just find out yourself.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -675,7 +646,6 @@ var options =
   "short_key": "m",
   "label": "Health mode",
   "description": "\n[Normal] Health works as you would expect.\n[Inverted] You start with 9 heart containers, but killing a boss will take a heart container instead of giving one.\n[Start with 1] Normal game, you just start with 1 heart instead of 3.\n[Low max] Replace heart containers with heart pieces.\n[5 Hit Challenge] You can take 5 hits before you die, no healing, no saving.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -712,7 +682,6 @@ var options =
   "short_key": "X",
   "label": "Hard mode",
   "description": "\n[Oracle] Less iframes and heath from drops. Bombs damage yourself. Water damages you without flippers. No Piece of Power or Guardian Acorn drops.\n[Hero] Switch version hero mode, double damage, no heart/fairy drops.\n[One hit KO] You die on a single hit, always.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "none",
   "options": [
@@ -744,7 +713,6 @@ var options =
   "short_key": "t",
   "label": "Stealing from the shop",
   "description": "Effects when you can steal from the shop. Stealing is bad and never in logic.\n[Normal] Requires the sword before you can steal.\n[Always] You can always steal from the shop.\n[Never] You can never steal from the shop.\n[GGS] Glitches get stitches, do not try to rob the shopkeeper by S&Q...",
-  "multiworld": true,
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -776,7 +744,6 @@ var options =
   "short_key": "v",
   "label": "Evil shop",
   "description": "Replaces the grandpa house with an evil shop, where you can sell heart pieces.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -798,7 +765,6 @@ var options =
   "short_key": "g",
   "label": "Good boy mode",
   "description": "Allows Bowwow to be taken into any area, damage bosses and more enemies. If enabled you always start with Bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just Bowwow.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "normal",
   "options": [
@@ -825,7 +791,6 @@ var options =
   "short_key": "O",
   "label": "Overworld",
   "description": "\n[Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.\n[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.\n[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.\n[Random] Creates a randomized overworld. WARNING: This will error out often during generation, work in progress.\n[ALttP] Overworld is replaced with one based on A Link to the Past. Also adds the Hammer to the item pool, along with stakes that require the Hammer to remove. WARNING: Work in progress, please report any bugs!",
-  "multiworld": true,
   "aesthetic": false,
   "default": "normal",
   "options": [
@@ -867,7 +832,6 @@ var options =
   "short_key": "d",
   "label": "Chain length",
   "description": "Amount of dungeons in the dungeon chain.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "5",
   "options": [
@@ -913,7 +877,6 @@ var options =
   "short_key": "o",
   "label": "Owl statues",
   "description": "Replaces the hints from owl statues with additional randomized items.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -945,7 +908,6 @@ var options =
   "short_key": "K",
   "label": "Keyhole sanity",
   "description": "Makes the overworld keyholes give rewards and turns opening dungeons into findable items.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -955,7 +917,6 @@ var options =
   "short_key": "N",
   "label": "Shopsanity",
   "description": "\nTurns all the phone booths into extra shops, and lowers the prices, and allows buying the two shop items independent of each other.\n[Basic] Just extra shops.\n[Important] Shops are guaranteed to have important items.\n                ",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -982,7 +943,6 @@ var options =
   "short_key": "q",
   "label": "Enable super weapons",
   "description": "All items will be more powerful, faster, harder, bigger stronger. You name it.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -992,7 +952,6 @@ var options =
   "short_key": "Q",
   "label": "Quickswap",
   "description": "Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "none",
   "options": [
@@ -1019,7 +978,6 @@ var options =
   "short_key": "f",
   "label": "Text mode",
   "description": "[Fast] Makes text appear twice as fast.\n[No-Text] Removes all text from the game",
-  "multiworld": true,
   "aesthetic": true,
   "default": "fast",
   "options": [
@@ -1046,7 +1004,6 @@ var options =
   "short_key": "p",
   "label": "Low HP beeps",
   "description": "Slows or disables the low health beeping sound",
-  "multiworld": true,
   "aesthetic": true,
   "default": "slow",
   "options": [
@@ -1073,7 +1030,6 @@ var options =
   "short_key": "l",
   "label": "Remove flashing lights",
   "description": "Remove the flashing light effects from Mamu, shopkeeper and MadBatter. Useful for capture cards and people that are sensitive for these things.",
-  "multiworld": true,
   "aesthetic": true,
   "default": true
  },
@@ -1083,7 +1039,6 @@ var options =
   "short_key": "S",
   "label": "Show nag messages",
   "description": "Enables the nag messages normally shown when touching stones and crystals.",
-  "multiworld": true,
   "aesthetic": true,
   "default": false
  },
@@ -1093,7 +1048,6 @@ var options =
   "short_key": "c",
   "label": "Graphics",
   "description": "Generally affects at least Link's sprite, but can alter any graphics in the game.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "",
   "options": [
@@ -1108,11 +1062,6 @@ var options =
     "label": "AgesGirl"
    },
    {
-    "key": "AgesGirl.bin.icon.png",
-    "short": "AgesGirl.bin.icon.png>",
-    "label": "AgesGirl.bin.icon"
-   },
-   {
     "key": "BasicNew.png",
     "short": "BasicNew.png>",
     "label": "BasicNew"
@@ -1123,19 +1072,9 @@ var options =
     "label": "Bowwow"
    },
    {
-    "key": "Bowwow.bin.icon.png",
-    "short": "Bowwow.bin.icon.png>",
-    "label": "Bowwow.bin.icon"
-   },
-   {
     "key": "Bunny.bin",
     "short": "Bunny.bin>",
     "label": "Bunny"
-   },
-   {
-    "key": "Bunny.bin.icon.png",
-    "short": "Bunny.bin.icon.png>",
-    "label": "Bunny.bin.icon"
    },
    {
     "key": "GrandmaUlrira.bin",
@@ -1143,19 +1082,19 @@ var options =
     "label": "GrandmaUlrira"
    },
    {
-    "key": "GrandmaUlrira.bin.icon.png",
-    "short": "GrandmaUlrira.bin.icon.png>",
-    "label": "GrandmaUlrira.bin.icon"
-   },
-   {
     "key": "Kirby.bin",
     "short": "Kirby.bin>",
     "label": "Kirby"
    },
    {
-    "key": "Kirby.bin.icon.png",
-    "short": "Kirby.bin.icon.png>",
-    "label": "Kirby.bin.icon"
+    "key": "LuckwurstJoe.png",
+    "short": "LuckwurstJoe.png>",
+    "label": "LuckwurstJoe"
+   },
+   {
+    "key": "LuckwurstJoe2.png",
+    "short": "LuckwurstJoe2.png>",
+    "label": "LuckwurstJoe2"
    },
    {
     "key": "Luigi.bin",
@@ -1163,29 +1102,9 @@ var options =
     "label": "Luigi"
    },
    {
-    "key": "Luigi.bin.icon.png",
-    "short": "Luigi.bin.icon.png>",
-    "label": "Luigi.bin.icon"
-   },
-   {
-    "key": "LwJ_DX_Sprite.png",
-    "short": "LwJ_DX_Sprite.png>",
-    "label": "LwJ_DX_Sprite"
-   },
-   {
-    "key": "LwJ_DX_SpriteNew.png",
-    "short": "LwJ_DX_SpriteNew.png>",
-    "label": "LwJ_DX_SpriteNew"
-   },
-   {
     "key": "MMLink.bin",
     "short": "MMLink.bin>",
     "label": "MMLink"
-   },
-   {
-    "key": "MMLink.bin.icon.png",
-    "short": "MMLink.bin.icon.png>",
-    "label": "MMLink.bin.icon"
    },
    {
     "key": "Marin.bin",
@@ -1193,19 +1112,9 @@ var options =
     "label": "Marin"
    },
    {
-    "key": "Marin.bin.icon.png",
-    "short": "Marin.bin.icon.png>",
-    "label": "Marin.bin.icon"
-   },
-   {
     "key": "MarinAlpha.bin",
     "short": "MarinAlpha.bin>",
     "label": "MarinAlpha"
-   },
-   {
-    "key": "MarinAlpha.bin.icon.png",
-    "short": "MarinAlpha.bin.icon.png>",
-    "label": "MarinAlpha.bin.icon"
    },
    {
     "key": "Mario.bin",
@@ -1213,19 +1122,9 @@ var options =
     "label": "Mario"
    },
    {
-    "key": "Mario.bin.icon.png",
-    "short": "Mario.bin.icon.png>",
-    "label": "Mario.bin.icon"
-   },
-   {
     "key": "Martha.bin",
     "short": "Martha.bin>",
     "label": "Martha"
-   },
-   {
-    "key": "Martha.bin.icon.png",
-    "short": "Martha.bin.icon.png>",
-    "label": "Martha.bin.icon"
    },
    {
     "key": "Matty.bin",
@@ -1233,29 +1132,9 @@ var options =
     "label": "Matty"
    },
    {
-    "key": "Matty.bin.icon.png",
-    "short": "Matty.bin.icon.png>",
-    "label": "Matty.bin.icon"
-   },
-   {
-    "key": "MattyNew.png",
-    "short": "MattyNew.png>",
-    "label": "MattyNew"
-   },
-   {
-    "key": "Matty_LA.png",
-    "short": "Matty_LA.png>",
-    "label": "Matty_LA"
-   },
-   {
     "key": "Meme.bin",
     "short": "Meme.bin>",
     "label": "Meme"
-   },
-   {
-    "key": "Meme.bin.icon.png",
-    "short": "Meme.bin.icon.png>",
-    "label": "Meme.bin.icon"
    },
    {
     "key": "NESLink.bin",
@@ -1263,19 +1142,9 @@ var options =
     "label": "NESLink"
    },
    {
-    "key": "NESLink.bin.icon.png",
-    "short": "NESLink.bin.icon.png>",
-    "label": "NESLink.bin.icon"
-   },
-   {
     "key": "Ninten.bin",
     "short": "Ninten.bin>",
     "label": "Ninten"
-   },
-   {
-    "key": "Ninten.bin.icon.png",
-    "short": "Ninten.bin.icon.png>",
-    "label": "Ninten.bin.icon"
    },
    {
     "key": "Richard.bin",
@@ -1283,19 +1152,9 @@ var options =
     "label": "Richard"
    },
    {
-    "key": "Richard.bin.icon.png",
-    "short": "Richard.bin.icon.png>",
-    "label": "Richard.bin.icon"
-   },
-   {
     "key": "Ricky.bin",
     "short": "Ricky.bin>",
     "label": "Ricky"
-   },
-   {
-    "key": "Ricky.bin.icon.png",
-    "short": "Ricky.bin.icon.png>",
-    "label": "Ricky.bin.icon"
    },
    {
     "key": "Rooster.bin",
@@ -1303,19 +1162,9 @@ var options =
     "label": "Rooster"
    },
    {
-    "key": "Rooster.bin.icon.png",
-    "short": "Rooster.bin.icon.png>",
-    "label": "Rooster.bin.icon"
-   },
-   {
     "key": "Rosa.bin",
     "short": "Rosa.bin>",
     "label": "Rosa"
-   },
-   {
-    "key": "Rosa.bin.icon.png",
-    "short": "Rosa.bin.icon.png>",
-    "label": "Rosa.bin.icon"
    },
    {
     "key": "Saria.bin",
@@ -1323,34 +1172,9 @@ var options =
     "label": "Saria"
    },
    {
-    "key": "Saria.bin.icon.png",
-    "short": "Saria.bin.icon.png>",
-    "label": "Saria.bin.icon"
-   },
-   {
     "key": "Sig.bin",
     "short": "Sig.bin>",
     "label": "Sig"
-   },
-   {
-    "key": "Sig.bin.icon.png",
-    "short": "Sig.bin.icon.png>",
-    "label": "Sig.bin.icon"
-   },
-   {
-    "key": "SigNew.bin",
-    "short": "SigNew.bin>",
-    "label": "SigNew"
-   },
-   {
-    "key": "SigNew.bin.icon.png",
-    "short": "SigNew.bin.icon.png>",
-    "label": "SigNew.bin.icon"
-   },
-   {
-    "key": "SigNew.png",
-    "short": "SigNew.png>",
-    "label": "SigNew"
    },
    {
     "key": "Subrosian.bin",
@@ -1358,84 +1182,14 @@ var options =
     "label": "Subrosian"
    },
    {
-    "key": "Subrosian.bin.icon.png",
-    "short": "Subrosian.bin.icon.png>",
-    "label": "Subrosian.bin.icon"
-   },
-   {
     "key": "Tarin.bin",
     "short": "Tarin.bin>",
     "label": "Tarin"
    },
    {
-    "key": "Tarin.bin.icon.png",
-    "short": "Tarin.bin.icon.png>",
-    "label": "Tarin.bin.icon"
-   },
-   {
-    "key": "TealMelancholy.png",
-    "short": "TealMelancholy.png>",
-    "label": "TealMelancholy"
-   },
-   {
-    "key": "Totally_Normal_LADX1.png",
-    "short": "Totally_Normal_LADX1.png>",
-    "label": "Totally_Normal_LADX1"
-   },
-   {
-    "key": "Totally_Normal_LADX2.png",
-    "short": "Totally_Normal_LADX2.png>",
-    "label": "Totally_Normal_LADX2"
-   },
-   {
     "key": "X.bin",
     "short": "X.bin>",
     "label": "X"
-   },
-   {
-    "key": "X.bin.icon.png",
-    "short": "X.bin.icon.png>",
-    "label": "X.bin.icon"
-   },
-   {
-    "key": "X.png",
-    "short": "X.png>",
-    "label": "X"
-   },
-   {
-    "key": "ladx_graphics.png",
-    "short": "ladx_graphics.png>",
-    "label": "ladx_graphics"
-   },
-   {
-    "key": "le_becc.png",
-    "short": "le_becc.png>",
-    "label": "le_becc"
-   },
-   {
-    "key": "le_becc_new.png",
-    "short": "le_becc_new.png>",
-    "label": "le_becc_new"
-   },
-   {
-    "key": "navi.png",
-    "short": "navi.png>",
-    "label": "navi"
-   },
-   {
-    "key": "new_link_test.png",
-    "short": "new_link_test.png>",
-    "label": "new_link_test"
-   },
-   {
-    "key": "ninja.png",
-    "short": "ninja.png>",
-    "label": "ninja"
-   },
-   {
-    "key": "template_new.png",
-    "short": "template_new.png>",
-    "label": "template_new"
    }
   ]
  },
@@ -1445,7 +1199,6 @@ var options =
   "short_key": "x",
   "label": "Follower",
   "description": "Gives you a pet follower in the game.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "",
   "options": [
@@ -1482,7 +1235,6 @@ var options =
   "short_key": "C",
   "label": "Link's color",
   "description": "Allows you to force a certain color on Link.\n[Normal] Color of Link depends on the tunic.\n[Green/Yellow/Red/Blue] Forces Link into one of these colors.\n[?? C/D] Colors of Link are usually inverted and color depends on the area you are in.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "-1",
   "options": [
@@ -1539,7 +1291,6 @@ var options =
   "short_key": "M",
   "label": "Music",
   "description": "\n[Random] Randomizes overworld and dungeon music.\n[Disable] No music in the whole game.\n[Tone shifted] Tone shifts the musics, making it sound different",
-  "multiworld": true,
   "aesthetic": true,
   "default": "",
   "options": [

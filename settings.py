@@ -6,7 +6,7 @@ import os
 class Setting:
     def __init__(self, key: str,
                  category: str, short_key: str, label: str, *,
-                 description: str, multiworld: bool = True, aesthetic: bool = False, options: Optional[List[Tuple[str, str, str]]] = None,
+                 description: str, aesthetic: bool = False, options: Optional[List[Tuple[str, str, str]]] = None,
                  default: Optional[Union[bool, float, str]] = None, placeholder: Optional[str] = None,
                  visible_if: Optional[List[str]] = None):
         if options:
@@ -22,7 +22,6 @@ class Setting:
         self.short_key = short_key
         self.label = label
         self.description = description
-        self.multiworld = multiworld
         self.aesthetic = aesthetic
         self.options = options
         self.default = default
@@ -42,7 +41,7 @@ class Setting:
                 raise ValueError(f"{value} is not an accepted value for {self.key} setting")
         if self.options:
             if value not in [k for k, s, v in self.options]:
-                raise ValueError(f"{value} is not an accepted value for {self.key} setting")
+                raise ValueError(f"{value} is not an accepted value for {self.key} setting: {','.join(k for k, s, v in self.options)}")
         self.value = value
 
     def getShortValue(self):
@@ -59,7 +58,6 @@ class Setting:
             "short_key": self.short_key,
             "label": self.label,
             "description": self.description,
-            "multiworld": self.multiworld,
             "aesthetic": self.aesthetic,
             "default": self.default,
         }
@@ -73,7 +71,7 @@ class Setting:
 
 
 class Settings:
-    def __init__(self, multiworld_count=None):
+    def __init__(self):
         gfx_options = [('', '', 'Default')]
         gfx_path = os.path.join(os.path.dirname(__file__), "gfx")
         for filename in sorted(os.listdir(gfx_path)):
@@ -85,7 +83,7 @@ class Settings:
                 gfx_options.append((filename, filename + ">", filename[:-4]))
 
         self.__all = [
-            Setting('seed', 'Main', '<', 'Seed', placeholder='Leave empty for random seed', default="", multiworld=False,
+            Setting('seed', 'Main', '<', 'Seed', placeholder='Leave empty for random seed', default="",
                 description="""For multiple people to generate the same randomization result, enter the generated seed number here.
 Note, not all strings are valid seeds."""),
             Setting('logic', 'Main', 'L', 'Logic', options=[('casual', 'c', 'Casual'), ('', '', 'Normal'), ('hard', 'h', 'Hard'), ('glitched', 'g', 'Glitched'), ('hell', 'H', 'Hell')], default='',
@@ -101,10 +99,10 @@ Note, not all strings are valid seeds."""),
                 description="""
 [100% Locations] Guaranteed that every single item can be reached and gained.
 [Beatable] Only guarantees that the game is beatable. Certain items/chests might never be reachable."""),
-            Setting('race', 'Main', 'V', 'Race mode', default=False, multiworld=False,
+            Setting('race', 'Main', 'V', 'Race mode', default=False,
                 description="""
 Spoiler logs can not be generated for ROMs generated with race mode enabled, and seed generation is slightly different."""),
-#             Setting('spoilerformat', 'Main', 'Spoiler Format', options=[('none', 'None'), ('text', 'Text'), ('json', 'JSON')], default='none', multiworld=False,
+#             Setting('spoilerformat', 'Main', 'Spoiler Format', options=[('none', 'None'), ('text', 'Text'), ('json', 'JSON')], default='none',
 #                 description="""Affects how the spoiler log is generated.
 # [None] No spoiler log is generated. One can still be manually dumped later.
 # [Text] Creates a .txt file meant for a human to read.
@@ -300,8 +298,6 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
                 aesthetic=True),
         ]
         self.__by_key = {s.key: s for s in self.__all}
-        self.__multiworld_count = multiworld_count
-        self.__multiworld_settings = []
 
         # Make sure all short keys are unique
         short_keys = {}
@@ -309,16 +305,6 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
             assert s.short_key not in short_keys, f"{s.label}: {short_keys[s.short_key].label}"
             short_keys[s.short_key] = s
         # print("Unused ss:", "".join([s for s in string.ascii_letters if s not in short_keys]))
-
-    @property
-    def multiworld(self):  # returns the amount of multiworld players.
-        if self.__multiworld_settings:
-            return len(self.__multiworld_settings)
-        return self.__multiworld_count
-
-    @property
-    def multiworld_settings(self):
-        return self.__multiworld_settings
 
     def __getattr__(self, item):
         return self.__by_key[item].value
@@ -400,6 +386,8 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
         if self.overworld == "random":
             self.goal = "instruments"  # Force 4 dungeon goal for random overworld right now.
             self.goalcount = "4"
+        if self.hpmode == '5hit':
+            req("heartpiece", True, "5hit removes heart pieces")
 
     def set(self, value: str) -> None:
         if "=" in value:

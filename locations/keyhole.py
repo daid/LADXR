@@ -17,7 +17,6 @@ class KeyHole(ItemInfo):
         TRADING_ITEM_FISHING_HOOK, TRADING_ITEM_NECKLACE, TRADING_ITEM_SCALE, TRADING_ITEM_MAGNIFYING_GLASS,
         TAIL_CAVE_OPENED, KEY_CAVERN_OPENED, ANGLER_TUNNEL_OPENED, FACE_SHRINE_OPENED, CASTLE_GATE_OPENED, EAGLE_TOWER_OPENED
     ]
-    MULTIWORLD = False
 
     def __init__(self, room, default_reward):
         super().__init__(room)
@@ -29,7 +28,7 @@ class KeyHole(ItemInfo):
         else:
             self.OPTIONS = [self.__default_reward]
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         item_id = CHEST_ITEMS[option]
         if option == GEL:
             randomnumber = self.room  # TODO: We need some way to get some seed depended randomness in here.

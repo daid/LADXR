@@ -21,14 +21,13 @@ class BoomerangGuy(ItemInfo):
                 SEASHELL, BOOMERANG, HEART_PIECE, BOWWOW, ARROWS_10, SINGLE_ARROW,
                 MAX_POWDER_UPGRADE, MAX_BOMBS_UPGRADE, MAX_ARROWS_UPGRADE, RED_TUNIC, BLUE_TUNIC,
                 HEART_CONTAINER, BAD_HEART_CONTAINER, TOADSTOOL]
-            self.MULTIWORLD = True
 
     # Cannot trade:
     # SWORD, BOMB, SHIELD, POWER_BRACELET, OCARINA, MAGIC_POWDER, BOW
     # Checks for these are at $46A2, and potentially we could remove those.
     # But SHIELD, BOMB and MAGIC_POWDER would most likely break things.
     # SWORD and POWER_BRACELET would most likely introduce the lv0 shield/bracelet issue
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         if self.setting == 'trade':
             inv = INVENTORY_MAP[option]
             # Patch the check if you traded back the boomerang (so traded twice)
@@ -78,9 +77,6 @@ class BoomerangGuy(ItemInfo):
             # Ignore the trade back.
             rom.texts[0x225] = formatText("It's a secret to everybody.")
             rom.patch(0x19, 0x0668, ASM("ld a, [wBoomerangTradedItem]"), ASM("ret"), fill_nop=True)
-
-            if multiworld is not None:
-                rom.banks[0x3E][0x3300 + self.room] = multiworld
 
     def read(self, rom):
         if rom.banks[0x19][0x06C5] == 0x00:

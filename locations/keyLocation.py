@@ -8,7 +8,7 @@ class KeyLocation(ItemInfo):
         super().__init__()
         self.OPTIONS = [key]
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         pass
 
     def read(self, rom):

@@ -16,15 +16,12 @@ class MadBatter(ItemInfo):
         TRADING_ITEM_FISHING_HOOK,TRADING_ITEM_NECKLACE,TRADING_ITEM_SCALE,TRADING_ITEM_MAGNIFYING_GLASS,
         TAIL_CAVE_OPENED, KEY_CAVERN_OPENED, ANGLER_TUNNEL_OPENED, FACE_SHRINE_OPENED, CASTLE_GATE_OPENED, EAGLE_TOWER_OPENED
     ]
-    MULTIWORLD = True
 
     def configure(self, options):
         return
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         rom.banks[0x18][0x0F90 + (self.room & 0x0F)] = CHEST_ITEMS[option]
-        if multiworld is not None:
-            rom.banks[0x3E][0x3300 + self.room] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)

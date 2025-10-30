@@ -4,7 +4,6 @@ from checkMetadata import checkMetadataTable
 
 class ItemInfo:
     OPTIONS = []
-    MULTIWORLD = False
 
     def __init__(self, room=None):
         self.item = None
@@ -51,7 +50,7 @@ class ItemInfo:
     def read(self, rom):
         raise NotImplementedError()
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         raise NotImplementedError()
 
     def __repr__(self):

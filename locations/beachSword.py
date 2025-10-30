@@ -10,9 +10,9 @@ class BeachSword(DroppedKey):
     def __init__(self) -> None:
         super().__init__(0x0F2)
 
-    def patch(self, rom: ROM, option: str, *, multiworld: Optional[int] = None) -> None:
+    def patch(self, rom: ROM, option: str) -> None:
         # Set the heart piece data
-        super().patch(rom, option, multiworld=multiworld)
+        super().patch(rom, option)
 
         # Patch the room to contain a heart piece instead of the sword on the beach
         re = RoomEditor(rom, 0x0F2)
