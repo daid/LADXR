@@ -32,45 +32,6 @@ RenderChestItem:
     call $0AD2
     ret
 
-SendItemFromChestToOtherGameWait:
-    halt ; Wait a frame until we might have room to send
-    jr SendItemFromChestToOtherGame.retry
-
-SendItemFromChestToOtherGame:
-    call IncreaseCheckCounter
-.retry:
-    ld   hl, wLinkStatusBits
-    bit  1, [hl]
-    jp   nz, SendItemFromChestToOtherGameWait
-
-    ; Store send item data
-    ld   hl, $0000
-    call OffsetPointerByRoomNumber
-    ld   a, h
-    ld   [wLinkSendItemRoomHigh], a
-    ld   a, l
-    ld   [wLinkSendItemRoomLow], a
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   [wLinkSendItemTarget], a
-    ldh  a, [$FFF1] ; Load active sprite variant
-    ld   [wLinkSendItemItem], a
-
-    ; Finally set the status bit to indicate there is an item to send
-    ld   hl, wLinkStatusBits
-    set  1, [hl]
-    ret
-
-GiveItemFromChestMultiworld:
-    ; Check our "item is for other player" flag
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   hl, $0055
-    cp   [hl]
-    jr   nz, SendItemFromChestToOtherGame
-
 GiveItemFromChest:
     call IncreaseCheckCounter
     ldh  a, [$FFF1] ; Load active sprite variant
@@ -757,15 +718,6 @@ OpenEagleTower:
     set  4, [hl]
     ret
 
-ItemMessageMultiworld:
-    ; Check our "item is for other player" flag
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   hl, $0055
-    cp   [hl]
-    jr   nz, ItemMessageForOtherPlayer
-
 ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
@@ -800,17 +752,6 @@ ItemMessage:
     bit  1, [hl]
     jp   z, $2385 ; Opendialog in $000-$0FF range
     ld   a, $ED
-    jp   $2385 ; Opendialog in $000-$0FF range
-
-ItemMessageForOtherPlayer:
-    push af
-    call BuildItemMessage
-    call MessageAddTargetPlayer
-    dec  de
-    pop  af
-    add  a, $31 ; '1'
-    ld   [de], a
-    ld   a, $C9
     jp   $2385 ; Opendialog in $000-$0FF range
 
 ItemSpriteTable:
@@ -1031,15 +972,6 @@ GiveItemAndMessageForRoom:
     ldh  [$FFF1], a
     call GiveItemFromChest
     jp ItemMessage
-
-GiveItemAndMessageForRoomMultiworld:
-    ;Load the chest type from the chest table.
-    ld   hl, $7800
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ldh  [$FFF1], a
-    call GiveItemFromChestMultiworld
-    jp ItemMessageMultiworld
 
 RenderItemForRoom:
     ;Load the chest type from the chest table.

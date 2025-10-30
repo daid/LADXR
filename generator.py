@@ -80,7 +80,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     assembler.resetConsts()
     assembler.const("INV_SIZE", 16)
 
-    #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
     assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
 

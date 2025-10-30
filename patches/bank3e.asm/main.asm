@@ -10,15 +10,15 @@ MainJumpTable:
         dw   ItemMessage                          ; 3
         dw   RenderDroppedKey                     ; 4
         dw   RenderHeartPiece                     ; 5
-        dw   GiveItemFromChestMultiworld          ; 6
+        dw   GiveItemFromChest                    ; 6 (duplicate of 2 due to old multiworld code)
         dw   CheckIfLoadBowWow                    ; 7
         dw   BowwowEat                            ; 8
         dw   HandleOwlStatue                      ; 9
-        dw   ItemMessageMultiworld                ; A
+        dw   ItemMessage                          ; A (duplicate of 3 due to old multiworld code)
         dw   GiveItemAndMessageForRoom            ; B
         dw   RenderItemForRoom                    ; C
         dw   StartGameMarinMessage                ; D
-        dw   GiveItemAndMessageForRoomMultiworld  ; E
+        dw   GiveItemAndMessageForRoom            ; E (duplicate of B due to old multiworld code)
         dw   RenderOwlStatueItem                  ; F
         dw   UpdateInventoryMenu                  ; 10
         dw   HandleSeashellMansionItem            ; 11

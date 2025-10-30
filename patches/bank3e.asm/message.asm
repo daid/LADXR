@@ -96,18 +96,6 @@ MessagePad:
     jr   nz, .loop
     ret
 
-MessageAddTargetPlayer:
-    call MessagePad
-    ld   hl, M" for player X"
-    call MessageCopyString
-    ret
-
-MessageAddFromPlayer:
-    call MessagePad
-    ld   hl, M" from player X"
-    call MessageCopyString
-    ret
-
 MessageCopyString:
 .loop:
     ldi  a, [hl]
