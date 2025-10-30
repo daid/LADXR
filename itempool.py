@@ -378,6 +378,18 @@ class ItemPool:
                     self.add(RUPEES_20, self.__pool[item_name])
                     self.remove(item_name, self.__pool[item_name])
                 self.add(item_name, 1)
+        if settings.dungeon_beaks == 'removed':
+            for n in range(9):
+                item_name = f"STONE_BEAK{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+        if settings.dungeon_maps == 'removed':
+            for n in range(9):
+                for item_name in (f"MAP{n}", f"COMPASS{n}"):
+                    if item_name in self.__pool:
+                        self.add(RUPEES_20, self.__pool[item_name])
+                        self.remove(item_name, self.__pool[item_name])
 
         if settings.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
