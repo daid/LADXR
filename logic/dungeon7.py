@@ -164,7 +164,7 @@ class Dungeon7:
         boss_room.connect(instrument, "D7_BOSS_CLEAR", back=False)
 
         # key logic patch
-        if options.dungeon_keys == 'keysanity':
+        if options.dungeon_keys == '':
             entrance_drop1.items[0].forced_item = KEY7
 
         #TODO: if options.logic == "casual":
