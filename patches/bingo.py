@@ -343,9 +343,9 @@ def ClearTrendyGameGoal(description, tile_info, group=None):
             ld  a, d
             cp  e
             ret c
-            jp  $7BD6
+            jp  $7FF3
         """)),
-        (0x04, 0x3BD6, "00" * 6, ASM("""
+        (0x04, 0x3FF3, "00" * 6, ASM("""
             %s
             ret
         """ % (set_code)))
@@ -608,7 +608,6 @@ def setBingoGoal(rom, goals, mode):
 
     for goal in goals:
         for bank, addr, current, target in goal.extra_patches:
-            print(f"{bank:02x}:{addr:04x}")
             rom.patch(bank, addr, current, target)
 
     # Setup the bingo card visuals
