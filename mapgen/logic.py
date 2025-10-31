@@ -52,9 +52,7 @@ class LogicGenerator:
             tmp.add(n)
             for item in n.items:
                 print(item)
-            for o, req in n.simple_connections:
-                r(o)
-            for o, req in n.gated_connections:
+            for o, req in n.connections:
                 r(o)
         r(self.start)
 

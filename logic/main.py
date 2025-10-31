@@ -157,9 +157,7 @@ class Logic:
                 location.flat_requirements = new_flat_requirements
             else:
                 location.flat_requirements = requirements.flatten(req)
-            for connection, requirement in location.simple_connections:
-                __rec(connection, AND(req, requirement) if req else requirement)
-            for connection, requirement in location.gated_connections:
+            for connection, requirement in location.connections:
                 __rec(connection, AND(req, requirement) if req else requirement)
         __rec(self.start, None)
         for ii in self.iteminfo_list:
@@ -174,7 +172,5 @@ class Logic:
         self.__location_set.add(location)
         for ii in location.items:
             self.iteminfo_list.append(ii)
-        for connection, requirement in location.simple_connections:
-            self.__recursiveFindAll(connection)
-        for connection, requirement in location.gated_connections:
+        for connection, requirement in location.connections:
             self.__recursiveFindAll(connection)

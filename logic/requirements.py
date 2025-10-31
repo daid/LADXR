@@ -23,37 +23,12 @@ class OR:
         if item in self.__items:
             self.__items.remove(item)
 
-    def hasConsumableRequirement(self) -> bool:
-        for item in self.__items:
-            if isConsumable(item):
-                print("Consumable OR requirement? %r" % self)
-                return True
-        for child in self.__children:
-            if child.hasConsumableRequirement():
-                print("Consumable OR requirement? %r" % self)
-                return True
-        return False
-
     def test(self, inventory) -> bool:
         for item in self.__items:
             if item in inventory:
                 return True
         for child in self.__children:
             if child.test(inventory):
-                return True
-        return False
-
-    def consume(self, inventory) -> bool:
-        for item in self.__items:
-            if item in inventory:
-                if isConsumable(item):
-                    inventory[item] -= 1
-                    if inventory[item] == 0:
-                        del inventory[item]
-                    inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
-                return True
-        for child in self.__children:
-            if child.consume(inventory):
                 return True
         return False
 
@@ -88,33 +63,12 @@ class AND:
         if item in self.__items:
             self.__items.remove(item)
 
-    def hasConsumableRequirement(self) -> bool:
-        for item in self.__items:
-            if isConsumable(item):
-                return True
-        for child in self.__children:
-            if child.hasConsumableRequirement():
-                return True
-        return False
-
     def test(self, inventory) -> bool:
         for item in self.__items:
             if item not in inventory:
                 return False
         for child in self.__children:
             if not child.test(inventory):
-                return False
-        return True
-
-    def consume(self, inventory) -> bool:
-        for item in self.__items:
-            if isConsumable(item):
-                inventory[item] -= 1
-                if inventory[item] == 0:
-                    del inventory[item]
-                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + 1
-        for child in self.__children:
-            if not child.consume(inventory):
                 return False
         return True
 
@@ -140,20 +94,8 @@ class COUNT:
     def __repr__(self) -> str:
         return "<%dx%s>" % (self.__amount, self.__item)
 
-    def hasConsumableRequirement(self) -> bool:
-        if isConsumable(self.__item):
-            return True
-        return False
-
     def test(self, inventory) -> bool:
         return inventory.get(self.__item, 0) >= self.__amount
-
-    def consume(self, inventory) -> None:
-        if isConsumable(self.__item):
-            inventory[self.__item] -= self.__amount
-            if inventory[self.__item] == 0:
-                del inventory[self.__item]
-            inventory["%s_USED" % self.__item] = inventory.get("%s_USED" % self.__item, 0) + self.__amount
 
     def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
@@ -174,26 +116,11 @@ class COUNTS:
     def __repr__(self) -> str:
         return "<%dx%s>" % (self.__amount, self.__items)
 
-    def hasConsumableRequirement(self) -> bool:
-        for item in self.__items:
-            if isConsumable(item):
-                print("Consumable COUNTS requirement? %r" % (self))
-                return True
-        return False
-
     def test(self, inventory) -> bool:
         count = 0
         for item in self.__items:
             count += inventory.get(item, 0)
         return count >= self.__amount
-
-    def consume(self, inventory) -> None:
-        for item in self.__items:
-            if isConsumable(item):
-                inventory[item] -= self.__amount
-                if inventory[item] == 0:
-                    del inventory[item]
-                inventory["%s_USED" % item] = inventory.get("%s_USED" % item, 0) + self.__amount
 
     def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
@@ -215,14 +142,8 @@ class FOUND:
     def __repr__(self) -> str:
         return "{%dx%s}" % (self.__amount, self.__item)
 
-    def hasConsumableRequirement(self) -> bool:
-        return False
-
     def test(self, inventory) -> bool:
         return inventory.get(self.__item, 0) + inventory.get("%s_USED" % self.__item, 0) >= self.__amount
-
-    def consume(self, inventory) -> None:
-        pass
 
     def getItems(self, inventory, target_set) -> None:
         if self.test(inventory):
@@ -231,24 +152,6 @@ class FOUND:
 
     def copyWithModifiedItemNames(self, f) -> "FOUND":
         return FOUND(f(self.__item), self.__amount)
-
-
-def hasConsumableRequirement(requirements) -> bool:
-    if isinstance(requirements, str):
-        return isConsumable(requirements)
-    if requirements is None:
-        return False
-    return requirements.hasConsumableRequirement()
-
-
-def isConsumable(item) -> bool:
-    if item is None:
-        return False
-    if item.startswith("RUPEES_") or item == "RUPEES":
-        return True
-    if item.startswith("KEY") and item != KEY_CAVERN_OPENED:
-        return True
-    return False
 
 
 class RequirementsSettings:
