@@ -300,7 +300,8 @@ class WorldSetup:
             import patches.entrances
             self.entrance_mapping = patches.entrances.readEntrances(rom)
         else:
-            self.entrance_mapping = {"d%d" % (n): "d%d" % (n) for n in range(9)}
+            self.entrance_mapping = {"d%d" % (n): "d%d:inside" % (n) for n in range(9)}
+            self.entrance_mapping.update({"d%d:inside" % (n): "d%d" % (n) for n in range(9)})
         self.boss_mapping = patches.enemies.readBossMapping(rom)
         self.miniboss_mapping = patches.enemies.readMiniBossMapping(rom)
         self.goal = 8 # Better then nothing
