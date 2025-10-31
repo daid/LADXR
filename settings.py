@@ -368,6 +368,7 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
             dis("miniboss", "random", "shuffle", "With bingo goal, minibosses need to be on normal or shuffle")
             dis("itempool", "casual", "", "Bingo goal does not work with casual item pool")
             dis("itempool", "keyup", "", "Bingo goal does not work with more keys item pool")
+            dis("dungeon_maps", "removed", "", "Bingo goal needs maps/compasses")
         if self.goal == "maze":
             req("overworld", "normal", "Maze goal does not work with dungeondive")
             req("accessibility", "all", "Maze goal needs 'all' accessibility")
