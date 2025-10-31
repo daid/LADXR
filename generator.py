@@ -97,6 +97,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.core.easyColorDungeonAccess(rom)
     patches.owl.removeOwlEvents(rom)
     patches.enemies.fixArmosKnightAsMiniboss(rom)
+    patches.enemies.enemyQoL(rom)
     patches.bank3e.addBank3E(rom, seed, settings)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
