@@ -125,6 +125,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.tarin.updateTarin(rom)
     patches.fishingMinigame.updateFinishingMinigame(rom)
     patches.health.upgradeHealthContainers(rom)
+    if settings.dungeon_beaks == "removed":
+        patches.owl.removeDungeonOwlBeakRequirement(rom)
     if settings.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)
     if settings.owlstatues in ("overworld", "both"):

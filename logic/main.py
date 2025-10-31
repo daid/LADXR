@@ -134,6 +134,9 @@ class Logic:
         if configuration_options.nightmare_keys == 'removed':
             for n in range(9):
                 world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n)))
+        if configuration_options.dungeon_beaks == 'removed':
+            for n in range(9):
+                world.start.add(KeyLocation("STONE_BEAK%d" % (n)))
 
         self.world = world
         self.start = world.start

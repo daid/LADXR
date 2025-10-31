@@ -121,6 +121,10 @@ sprite:
     re.store(rom)
 
 
+def removeDungeonOwlBeakRequirement(rom):
+    rom.patch(0x18, 0x1E9F, ASM("jp OpenDialogInTable1"), "", fill_nop=True)
+
+
 def upgradeDungeonOwlStatues(rom):
     # Call our custom handler after the check for the stone beak
     rom.patch(0x18, 0x1EA2, ASM("ldh a, [hMapId]\ncp $FF\njr nz, $05"), ASM("ld a, $09\nrst 8\njp $7FF2"), fill_nop=True)
@@ -134,6 +138,7 @@ def upgradeDungeonOwlStatues(rom):
         jp   nz, $5EAD
         jp   $5EA8
     """), fill_nop=True)
+
 
 def upgradeOverworldOwlStatues(rom):
     # Replace the code that handles signs/owl statues on the overworld

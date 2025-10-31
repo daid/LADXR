@@ -384,6 +384,7 @@ class ItemPool:
                 if item_name in self.__pool:
                     self.add(RUPEES_20, self.__pool[item_name])
                     self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 1)
         if settings.dungeon_maps == 'removed':
             for n in range(9):
                 for item_name in (f"MAP{n}", f"COMPASS{n}"):
