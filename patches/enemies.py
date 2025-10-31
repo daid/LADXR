@@ -651,4 +651,4 @@ def enemyQoL(rom):
     rom.patch(0x36, 0x0E4B, ASM("ld a, $6E\ncall OpenDialogInTable2"), "", fill_nop=True)
     rom.patch(0x36, 0x0D32, ASM("ld a, $6F\ncall OpenDialogInTable2"), "", fill_nop=True)
     # Remove D2 boss "can't hurt me" dialog
-    rom.patch(0x04, 0x035E, ASM("jr nz, $0D"), ASM("ret"), fill_nop=True)
+    rom.patch(0x04, 0x035E, ASM("jr nz, $0D"), ASM("ret nz"), fill_nop=True)
