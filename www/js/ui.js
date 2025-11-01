@@ -15,6 +15,7 @@ function getShareLink(data) {
     for(var s of options) {
         if (!s.aesthetic) continue;
         if (typeof(s.default) != 'boolean') continue;
+        if (!s.default) continue;
         hash += s.short_key;
     }
     if(!seedProvided)
