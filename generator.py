@@ -55,6 +55,7 @@ import patches.maze
 import patches.tradeSequence
 import patches.alttp
 import patches.colorBook
+import patches.quickswap
 import hints
 import locations.keyLocation
 
@@ -251,9 +252,11 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
 
     patches.inventory.songSelectAfterOcarinaSelect(rom)
     if settings.quickswap == 'a':
-        patches.core.quickswap(rom, 1)
+        patches.quickswap.simple_quickswap(rom, 1)
     elif settings.quickswap == 'b':
-        patches.core.quickswap(rom, 0)
+        patches.quickswap.simple_quickswap(rom, 0)
+    elif settings.quickswap == 'dynamic':
+        patches.quickswap.dynamic_quickswap(rom, settings)
 
     hints.addHints(rom, rnd, logic.iteminfo_list)
 

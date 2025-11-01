@@ -263,9 +263,13 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
                 '''),
             Setting('superweapons', 'Special', 'q', 'Enable super weapons', default=False,
                 description='All items will be more powerful, faster, harder, bigger stronger. You name it.'),
-            Setting('quickswap', 'User options', 'Q', 'Quickswap', options=[('none', '', 'Disabled'), ('a', 'a', 'Swap A button'), ('b', 'b', 'Swap B button')], default='none',
-                description='Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.',
-                aesthetic=True),
+            Setting('quickswap', 'User options', 'Q', 'Quickswap', options=[('none', '', 'Disabled'), ('a', 'a', 'Swap A button'), ('b', 'b', 'Swap B button'), ('dynamic', 'd', 'Dynamic')], default='none',
+                description='''
+Adds that the select button swaps with either A or B. The map is not available when quickswap is enabled.
+[Swap A button] Press select to swap the A button item with the top-right inventory item.
+[Swap B button] Press select to swap the B button item with the top-left inventory item.
+[Dynamic] Press select to swap whichever equipped item was not used last with any inventory item, sorted by recently used on that button, cycling through them with repeated select presses.
+                ''', aesthetic=True),
             Setting('textmode', 'User options', 'f', 'Text mode', options=[('fast', '', 'Fast'), ('default', 'd', 'Normal'), ('none', 'n', 'No-text')], default='fast',
                 description="""[Fast] Makes text appear twice as fast.
 [No-Text] Removes all text from the game""", aesthetic=True),

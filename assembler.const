@@ -171,6 +171,15 @@ DE11:wCuccoSpawnCount
 DE12:wDropBombSpawnCount
 DE13:wLinkSpawnDelay
 
+DD20:wQuickswapSlot
+DD21:wQuickswapIndex
+DD22:wQuickswapPreviewB1
+DD23:wQuickswapPreviewB2
+DD24:wQuickswapPreviewA1
+DD25:wQuickswapPreviewA2
+B030:wRecentItemListSlotB ; length of 16 bytes
+B040:wRecentItemListSlotA ; length of 16 bytes
+
 FF00:rP1
 FF01:rSB
 FF02:rSC
