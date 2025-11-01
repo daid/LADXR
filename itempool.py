@@ -285,7 +285,7 @@ class ItemPool:
             self.remove(MESSAGE, 1)
             self.add(RUPEES_500, 3)
 
-        if settings.overworld not in {"dungeonchain", "nodungeons"}:
+        if settings.overworld not in {"dungeonchain", "nodungeons", "random"}:
             for dungeon,items in STATIC_DUNGEON_ITEMS.items():
                 for item, qty in items.items():
                     self.add(item, qty)
