@@ -174,8 +174,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
-    if settings.overworld == "alttp":
-        # Only apply this to ALTTP right now, as it might cause issues otherwise.
+    if settings.overworld == "alttp" or settings.overworld == "random":
+        # Only apply this to ALTTP/random right now, as it might cause issues otherwise.
         patches.aesthetics.allowOverworldBackgroundTileTransitions(rom)
     if settings.music == 'random':
         patches.music.randomizeMusic(rom, rnd)

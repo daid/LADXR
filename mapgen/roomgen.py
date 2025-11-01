@@ -20,7 +20,7 @@ def find_random_clear_area(the_map: Map, w, h, *, tries):
     for n in range(tries):
         x = random.randint(0, the_map.w - w)
         y = random.randint(0, the_map.h - h)
-        if is_area_clear(the_map, x - 1, y - 1, w + 2, h + 2):
+        if is_area_clear(the_map, x, y, w + 1, h + 1):
             return x, y
     return None, None
 

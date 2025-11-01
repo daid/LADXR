@@ -9,6 +9,7 @@ from .entrance_info import INFO
 class Entrance(LocationBase):
     def __init__(self, room, x, y, entrance_name):
         super().__init__(room, x, y)
+        print(f"New: {entrance_name} at room: {room.x},{room.y} tile: {x},{y}")
         self.entrance_name = entrance_name
         self.entrance_info = ENTRANCE_INFO[entrance_name]
         self.source_warp = None

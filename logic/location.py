@@ -57,10 +57,9 @@ class Location:
             self.__connected_to.add(other)
 
             self.connections.append((other, req))
-    
 
     def __repr__(self):
-        return "<%s:%s:%d:%d>" % (self.__class__.__name__, self.dungeon, len(self.items), len(self.connections))
+        return f"<{self.__class__.__name__}:{self.dungeon}:{self.name}:{len(self.items)}:{len(self.connections)}>"
 
     def friendlyName(self, recurse=True):
         if self.name:

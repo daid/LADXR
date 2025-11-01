@@ -291,7 +291,9 @@ class RandomItemPlacer(ItemPlacer):
                 if verbose:
                     for loc in self._logic.location_list:
                         if loc not in e.getAccessableLocations():
-                            print("Cannot access: ", loc.items)
+                            print("Cannot access: ", loc.items, loc)
+                            for target, req in loc.connections:
+                                print(f"  {target} {req}")
                     print("Not all locations are accessible anymore with the full item pool")
                 return False
         return True

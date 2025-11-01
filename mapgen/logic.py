@@ -25,10 +25,10 @@ class LogicGenerator:
                     self.entrance_map[location.entrance_name] = location
 
         start = self.entrance_map["start_house"]
-        self.start = Location()
+        self.start = Location(name="start")
         self.egg = self.start  # TODO
-        self.nightmare = Location()
-        self.windfish = Location().connect(self.nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
+        self.nightmare = Location(name="nightmare")
+        self.windfish = Location(name="windfish").connect(self.nightmare, AND(MAGIC_POWDER, SWORD, OR(BOOMERANG, BOW)))
         self.fill_walkable(self.start, start.room.x * 10 + start.x, start.room.y * 8 + start.y)
 
         logic_str_map = {None: "."}
@@ -63,27 +63,27 @@ class LogicGenerator:
                 continue
             tile = self.map.get_tile(x, y)
             if tile == 0x5C:  # bush
-                other_location = Location()
+                other_location = Location(name="bush")
                 location.connect(other_location, self.requirements_settings.bush)
                 self.fill_bush(other_location, x, y)
             elif tile == 0x20:  # rock
-                other_location = Location()
+                other_location = Location(name="rock")
                 location.connect(other_location, POWER_BRACELET)
                 self.fill_rock(other_location, x, y)
             elif tile == 0xE8:  # pit
                 if self.map.get_tile(x - 1, y) in tile_options and self.map.get_tile(x + 1, y) in tile_options:
                     if self.logic_map[x - 1 + y * self.w] == location and self.logic_map[x + 1 + y * self.w] is None:
-                        other_location = Location().connect(location, FEATHER)
+                        other_location = Location(name="pit").connect(location, FEATHER)
                         self.fill_walkable(other_location, x + 1, y)
                     if self.logic_map[x - 1 + y * self.w] is None and self.logic_map[x + 1 + y * self.w] == location:
-                        other_location = Location().connect(location, FEATHER)
+                        other_location = Location(name="pit").connect(location, FEATHER)
                         self.fill_walkable(other_location, x - 1, y)
                 if self.map.get_tile(x, y - 1) in tile_options and self.map.get_tile(x, y + 1) in tile_options:
                     if self.logic_map[x + (y - 1) * self.w] == location and self.logic_map[x + (y + 1) * self.w] is None:
-                        other_location = Location().connect(location, FEATHER)
+                        other_location = Location(name="pit").connect(location, FEATHER)
                         self.fill_walkable(other_location, x, y + 1)
                     if self.logic_map[x + (y - 1) * self.w] is None and self.logic_map[x + (y + 1) * self.w] == location:
-                        other_location = Location().connect(location, FEATHER)
+                        other_location = Location(name="pit").connect(location, FEATHER)
                         self.fill_walkable(other_location, x, y - 1)
 
     def fill_bush(self, location, x, y):
@@ -92,7 +92,7 @@ class LogicGenerator:
                 continue
             tile = self.map.get_tile(x, y)
             if tile in walkable_tiles or tile in entrance_tiles:
-                other_location = Location()
+                other_location = Location(name="post-bush")
                 location.connect(other_location, self.requirements_settings.bush)
                 self.fill_walkable(other_location, x, y)
 
@@ -102,7 +102,7 @@ class LogicGenerator:
                 continue
             tile = self.map.get_tile(x, y)
             if tile in walkable_tiles or tile in entrance_tiles:
-                other_location = Location()
+                other_location = Location(name="post-rock")
                 location.connect(other_location, POWER_BRACELET)
                 self.fill_walkable(other_location, x, y)
 

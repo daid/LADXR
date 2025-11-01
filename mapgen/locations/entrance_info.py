@@ -214,7 +214,7 @@ INFO = {
     "toadstool_entrance": EntranceInfo(
         items={None: 2},
         logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2BD)), SWORD).connect(  # chest in forest cave on route to mushroom
-            Location().add(HeartPiece(0x2AB), POWER_BRACELET)),  # piece of heart in the forest cave on route to the mushroom
+            Location().add(HeartPiece(0x2AB)), POWER_BRACELET),  # piece of heart in the forest cave on route to the mushroom
         exits=[("right_taltal_connector6", lambda loc: loc)],
     ),
     "toadstool_exit": EntranceInfo(),
@@ -316,6 +316,7 @@ INFO = {
         logic=lambda c, w, r: Location().connect(Location().add(KeyLocation("MEDICINE2")), FOUND("RUPEES", 50))
     ),
     "rooster_grave": EntranceInfo(
+        items={SONG3: 1},
         logic=lambda c, w, r: Location().connect(Location().add(DroppedKey(0x1E4)), AND(OCARINA, SONG3))
     ),
     "desert_cave": EntranceInfo(
