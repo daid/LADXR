@@ -5,7 +5,7 @@ from locations.items import *
 from entranceInfo import ENTRANCE_INFO
 from patches import bingo
 from patches import maze
-import cavegen
+import dungeongen.dungeongen
 
 
 MULTI_CHEST_OPTIONS = [MAGIC_POWDER, BOMB, MEDICINE, RUPEES_50, RUPEES_20, RUPEES_100, RUPEES_200, RUPEES_500, SEASHELL, GEL, ARROWS_10, SINGLE_ARROW]
@@ -46,7 +46,6 @@ class WorldSetup:
         self.sign_maze = None
         self.multichest = RUPEES_20
         self.map = None  # Randomly generated map data
-        self.cavegen = None
         self.dungeon_chain = None
         self.inside_to_outside = True
         self.keep_two_way = True
@@ -284,10 +283,10 @@ class WorldSetup:
         rnd.shuffle(self.dungeon_chain)
         # Check if we randomly replace one of the dungeons with a cavegen
         if rnd.randrange(0, 100) < 80:
-            self.cavegen = cavegen.Generator(rnd)
-            self.cavegen.generate()
-            # cavegen.dump("cave.svg", self.cavegen.start)
-            self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = "cavegen"
+            random_dungeon = dungeongen.dungeongen.Generator(rnd)
+            random_dungeon.generate()
+            dungeongen.dungeongen.dump("cave.svg", random_dungeon)
+            self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = random_dungeon
         self.dungeon_chain = self.dungeon_chain[:chainlength]
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:

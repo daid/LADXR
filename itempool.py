@@ -296,10 +296,8 @@ class ItemPool:
             key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
             item_counts = {
                 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
-                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1, "cavegen": 0,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
             }
-            if logic.world_setup.cavegen:
-                item_counts["cavegen"] = logic.world_setup.cavegen.get_reward_count()
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
@@ -317,25 +315,28 @@ class ItemPool:
                 "mamu": {RUPEES_100: 1, RUPEES_200: 1, OCARINA: 1},
                 "trendy": {RUPEES_50: 1},
                 "dream": {PEGASUS_BOOTS: 1},
-                "chestcave": {},
-                "cavegen": {BOMB: 1},
+                "chestcave": {}
             }
             required_items = {SWORD: 1, BOW if rnd.uniform(0, 100) < 50 else BOOMERANG: 1, MAGIC_POWDER: 1}
-            for dungeon_idx in logic.world_setup.dungeon_chain:
-                if isinstance(dungeon_idx, int):
-                    self.add(f"KEY{dungeon_idx}", key_counts[dungeon_idx])
-                    self.add(f"NIGHTMARE_KEY{dungeon_idx}")
-                    self.add(f"MAP{dungeon_idx}")
-                    self.add(f"COMPASS{dungeon_idx}")
-                    self.add(f"STONE_BEAK{dungeon_idx}")
-                    if 1 <= dungeon_idx <= 8:
+            for dungeon in logic.world_setup.dungeon_chain:
+                if isinstance(dungeon, int):
+                    self.add(f"KEY{dungeon}", key_counts[dungeon])
+                    self.add(f"NIGHTMARE_KEY{dungeon}")
+                    self.add(f"MAP{dungeon}")
+                    self.add(f"COMPASS{dungeon}")
+                    self.add(f"STONE_BEAK{dungeon}")
+                    if 1 <= dungeon <= 8:
                         self.add(HEART_CONTAINER)
-                    if dungeon_idx in STATIC_DUNGEON_ITEMS:
-                        for item, qty in STATIC_DUNGEON_ITEMS[dungeon_idx].items():
+                    if dungeon in STATIC_DUNGEON_ITEMS:
+                        for item, qty in STATIC_DUNGEON_ITEMS[dungeon].items():
                             self.add(item, qty)
-                required_item_count += item_counts[dungeon_idx]
-                for item, amount in required_items_per_dungeon[dungeon_idx].items():
-                    required_items[item] = max(required_items.get(item, 0), amount)
+                if isinstance(dungeon, str) or isinstance(dungeon, int):  # stock dungeon or single room
+                    required_item_count += item_counts[dungeon]
+                    for item, amount in required_items_per_dungeon[dungeon].items():
+                        required_items[item] = max(required_items.get(item, 0), amount)
+                else:  # generated dungeon
+                    required_item_count += dungeon.get_reward_count()
+                    dungeon.get_logic_requirements(required_items)
             for item, amount in required_items.items():
                 self.add(item, amount)
                 required_item_count -= amount
