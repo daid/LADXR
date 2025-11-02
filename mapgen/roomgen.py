@@ -33,6 +33,7 @@ def setup_room_types(the_map: Map):
             MountainEgg(the_map.get(x, 0))
         else:
             Mountain(the_map.get(x, 0))
+    the_map.get(egg_x, 0).edge_down.set_open()
 
     # Add some beach.
     width = the_map.w if random.random() < 0.5 else random.randint(max(2, the_map.w // 4), the_map.w // 2)
