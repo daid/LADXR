@@ -13,7 +13,7 @@ import math
 import zlib
 
 
-def imageTo2bpp(filename, *, tileheight=None, colormap=None):
+def imageTo2bpp(filename, *, tileheight=None, colormap=None, debug=False):
     import PIL.Image
     if isinstance(filename, str):
         img = PIL.Image.open(filename)
@@ -26,8 +26,11 @@ def imageTo2bpp(filename, *, tileheight=None, colormap=None):
         pal3 = img.getpalette()[0:12]
         pal = [(pal3[n*3] << 16) | (pal3[n*3+1] << 8) | (pal3[n*3+2]) for n in range(4)]
         for m in range(4):
-            diff = [abs((pal[n] & 0xFF) - (colormap[m] & 0xFF)) + abs(((pal[n] >> 8) & 0xFF) - ((colormap[m] >> 8) & 0xFF)) + abs(((pal[n] >> 16) & 0xFF) - ((colormap[m] >> 16) & 0xFF)) for n in range(4)]
+            diff = [abs((pal[m] & 0xFF) - (colormap[n] & 0xFF)) + abs(((pal[m] >> 8) & 0xFF) - ((colormap[n] >> 8) & 0xFF)) + abs(((pal[m] >> 16) & 0xFF) - ((colormap[n] >> 16) & 0xFF)) for n in range(4)]
             remap[m] = diff.index(min(diff))
+        if debug:
+            for n in range(4):
+                print(f"Color: {pal[n]:06x} = {remap[n]} {colormap[remap[n]]:06x}")
     assert (img.size[0] % 8) == 0
     if tileheight is None:
         tileheight = 8 if img.size[1] == 8 else 16
