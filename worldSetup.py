@@ -281,13 +281,13 @@ class WorldSetup:
         if rnd.randrange(0, 100) < 50:  # Reduce the chance D0 is in the chain.
             self.dungeon_chain.append(0)
         rnd.shuffle(self.dungeon_chain)
+        self.dungeon_chain = self.dungeon_chain[:chainlength]
         # Check if we randomly replace one of the dungeons with a cavegen
         if rnd.randrange(0, 100) < 80:
             random_dungeon = dungeongen.dungeongen.Generator(rnd)
             random_dungeon.generate()
             dungeongen.dungeongen.dump("cave.svg", random_dungeon)
             self.dungeon_chain[rnd.randint(0, len(self.dungeon_chain) - 2)] = random_dungeon
-        self.dungeon_chain = self.dungeon_chain[:chainlength]
         # Check if we want a random extra insert.
         if rnd.randrange(0, 100) < 80:
             inserts = ["shop", "mamu", "trendy", "dream", "chestcave"]
