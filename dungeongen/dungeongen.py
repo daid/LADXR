@@ -1,7 +1,7 @@
 from locations.items import *
 from .constants import *
 from .roomtemplates import ROOM_TEMPLATES
-from typing import Tuple
+from typing import Tuple, Optional, Set
 import math
 
 
@@ -60,15 +60,29 @@ class Room:
         return None
 
     def get_tileset_id(self):
+        print("get_tileset_id")
+        tileset_ids: Optional[Set[int]] = None
         for tile in self.tiles:
             if tile in TILE_TILESETS:
-                return TILE_TILESETS[tile][0]
+                if tileset_ids is None:
+                    tileset_ids = set(TILE_TILESETS[tile])
+                else:
+                    tileset_ids = tileset_ids.intersection(set(TILE_TILESETS[tile]))
+        if tileset_ids:
+            print(tileset_ids)
+            return next(iter(tileset_ids))
         return 0xFF
 
     def get_animation_id(self):
+        animation_ids: Optional[Set[int]] = None
         for tile in self.tiles:
             if tile in TILE_ANIMATION_SET:
-                return TILE_ANIMATION_SET[tile][0]
+                if animation_ids is None:
+                    animation_ids = set(TILE_ANIMATION_SET[tile])
+                else:
+                    animation_ids = animation_ids.intersection(set(TILE_ANIMATION_SET[tile]))
+        if animation_ids:
+            return next(iter(animation_ids))
         return 0x0B
 
     @property
