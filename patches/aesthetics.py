@@ -217,6 +217,9 @@ def gfxMod(rom, filename):
             be.tiles[0x9C68 + n * 0x20] = 0xC9
         be.store(rom)
 
+    # Fix that instrument menu graphics are loaded from the GBC bank, not the DMG bank.
+    rom.patch(0x00, 0x0C3A, ASM("ld a, $0C"), ASM("ld a, $2C"))
+
 
 def createGfxImage(rom, filename):
     import PIL.Image
