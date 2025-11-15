@@ -173,7 +173,7 @@ class RequirementsSettings:
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
-        self.sword_beam = COUNT(SWORD, 2) # L2 sword beams as damage or range weapon/switch hitter
+        self.sword_beam = AND(COUNT(SWORD, 2), (options.hpmode != 5hit) | (options.hardmode == ohko)) # L2 sword beams as damage or range weapon/switch hitter
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
         # trick directory
@@ -200,8 +200,8 @@ class RequirementsSettings:
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
         self.jesus_buffer_hookshot = HOOKSHOT # hookshot an object near water and pause on the frame where there is a splash to start a buffer. Also used when transitioning on top of water, buffer the hookshot out of s&q menu and pause again to start a buffer
         self.jesus_buffer_itemless = True # land on water itemless by a method such as hopping off a ledge. pause on the frame of splashing on liquid (water / lava)
-        self.damage_boost_special = options.hardmode == "none" # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
-        self.damage_boost = (options.bowwow == "normal") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
+        self.damage_boost_special = (options.hpmode != 5hit) & (options.hardmode == "none") # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
+        self.damage_boost = (options.bowwow == "normal") & (options.hpmode != 5hit) & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.diagonal_walk = True # when two pits are corner-adjacent, walk diagonally across the point where they meet
         self.corner_walk = True # when a pit and an obstacle are corner-adjacent, hug the obstacle and turn sharply to get to the other side. more difficult heading north / easier heading south
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
@@ -230,7 +230,7 @@ class RequirementsSettings:
         self.zoomerang = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG) # after starting a boots dash, pause buffer boomerang (on b), feather and the direction you're dashing in to get boosted in certain directions
         self.zoomerang_shovel = AND(PEGASUS_BOOTS, FEATHER, BOOMERANG, SHOVEL) # use shovel while charging boots to dash in place, then pause buffer boomerang (on b), and the direction you're dashing in to get boosted in certain directions
         self.lava_swim = AND(FLIPPERS) # be paused and splashing on lave, transition on the first frame after unpausing
-        self.lava_swim_sword = AND(FLIPPERS, SWORD) # be paused and splashing on lave, transition on the first frame after unpausing = some screens need sword to be held when unpausing to work???
+        self.lava_swim_sword = AND(FLIPPERS, SWORD) # be paused and splashing on lava, transition on the first frame after unpausing = some screens need sword to be held when unpausing to work???
 
         self.boss_requirements = {
             0: SWORD,  # D1 boss
