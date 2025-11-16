@@ -173,9 +173,11 @@ class RequirementsSettings:
         self.rear_attack = OR(SWORD, BOMB) # mimic
         self.rear_attack_range = OR(MAGIC_ROD, BOW) # mimic
         self.fire = OR(MAGIC_POWDER, MAGIC_ROD) # torches
-        self.sword_beam = AND(COUNT(SWORD, 2), (options.hpmode != 5hit) | (options.hardmode == ohko)) # L2 sword beams as damage or range weapon/switch hitter
+        self.sword_beam = AND(COUNT(SWORD, 2), (options.hpmode != "5hit") | (options.hardmode == "ohko")) # L2 sword beams as damage or range weapon/switch hitter
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
+        print("(options.hpmode != 5hit) | (options.hardmode == ohko)")
+        print((options.hpmode != "5hit") | (options.hardmode == "ohko"))
         # trick directory
         self.throw_pot = POWER_BRACELET #TODO: rename: throw_kill throw pot or obstacle to kill enemies in obscure manner [*not* applicable for intended mechanics like opening doors, chests, or situations where killing enemy with pot is vanilla expectation (D2 pols voice)]
         self.throw_enemy = POWER_BRACELET # lift and throw stunned enemies to kill enemies
@@ -200,8 +202,8 @@ class RequirementsSettings:
         self.jesus_buffer = PEGASUS_BOOTS # use a boots bonk to get on top of liquid (water / lava), then use buffers to get into positions
         self.jesus_buffer_hookshot = HOOKSHOT # hookshot an object near water and pause on the frame where there is a splash to start a buffer. Also used when transitioning on top of water, buffer the hookshot out of s&q menu and pause again to start a buffer
         self.jesus_buffer_itemless = True # land on water itemless by a method such as hopping off a ledge. pause on the frame of splashing on liquid (water / lava)
-        self.damage_boost_special = (options.hpmode != 5hit) & (options.hardmode == "none") # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
-        self.damage_boost = (options.bowwow == "normal") & (options.hpmode != 5hit) & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
+        self.damage_boost_special = (options.hpmode != "5hit") & (options.hardmode == "none") # use damage to cross pits / get through forced barriers without needing an enemy that can be eaten by bowwow
+        self.damage_boost = (options.bowwow == "normal") & (options.hpmode != "5hit") & (options.hardmode == "none")  # Use damage to cross pits / get through forced barriers
         self.diagonal_walk = True # when two pits are corner-adjacent, walk diagonally across the point where they meet
         self.corner_walk = True # when a pit and an obstacle are corner-adjacent, hug the obstacle and turn sharply to get to the other side. more difficult heading north / easier heading south
         self.sideways_block_push = True # wall clip pushable block, get against the edge and push block to move it sideways
