@@ -176,8 +176,6 @@ class RequirementsSettings:
         self.sword_beam = AND(COUNT(SWORD, 2), (options.hpmode != "5hit") | (options.hardmode == "ohko")) # L2 sword beams as damage or range weapon/switch hitter
         self.push_hardhat = OR(SHIELD, SWORD, HOOKSHOT, BOOMERANG)
         self.shuffled_magnifier = TRADING_ITEM_MAGNIFYING_GLASS # overwritten if vanilla trade items
-        print("(options.hpmode != 5hit) | (options.hardmode == ohko)")
-        print((options.hpmode != "5hit") | (options.hardmode == "ohko"))
         # trick directory
         self.throw_pot = POWER_BRACELET #TODO: rename: throw_kill throw pot or obstacle to kill enemies in obscure manner [*not* applicable for intended mechanics like opening doors, chests, or situations where killing enemy with pot is vanilla expectation (D2 pols voice)]
         self.throw_enemy = POWER_BRACELET # lift and throw stunned enemies to kill enemies
