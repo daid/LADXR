@@ -45,7 +45,7 @@ class SpoilerLog:
         # Assume the broadest settings if we're dumping a seed we didn't just create
         if args.dump:
             # The witch flag causes trouble if we blindly turn it on
-            if patches.witch.witchIsPatched(roms[0]):
+            if patches.witch.witchIsPatched(rom):
                 self.settings.witch = True
 
             self.settings.boomerang = "gift"
