@@ -35,24 +35,17 @@ class SpoilerLog:
         if rom.banks[0][7] == 0x01:
             raise RaceRomException()
 
+        if args.dump or not settings:
+            shortSettings = rom.readShortSettings()
+            settings = Settings()
+            settings.loadShortString(shortSettings)
+
         self.seed = rom.readHexSeed()
         self.testOnly = args.test
         self.accessibleItems = []
         self.inaccessibleItems = None
         self.outputFormat = args.spoilerformat
         self.settings = settings
-
-        # Assume the broadest settings if we're dumping a seed we didn't just create
-        if args.dump:
-            # The witch flag causes trouble if we blindly turn it on
-            if patches.witch.witchIsPatched(roms[0]):
-                self.settings.witch = True
-
-            self.settings.boomerang = "gift"
-            self.settings.heartpiece = True
-            self.settings.seashells = True
-            self.settings.heartcontainers = True
-            self.settings.owlstatues = "both"
 
         world_setup = worldSetup.WorldSetup()
         world_setup.loadFromRom(rom)
