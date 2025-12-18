@@ -36,8 +36,8 @@ def songSelectAfterOcarinaSelect(rom):
         ret
     """), fill_nop=True)
     # More code that opens the menu, use this to close the menu
-    rom.patch(0x20, 0x200D, 0x2027, ASM("""
-        jp $6027
+    rom.patch(0x20, 0x200D, 0x2020, ASM("""
+        jp $6036
     closeOcarinaMenu:
         ld  a, [$C1B5]
         and a
@@ -48,7 +48,7 @@ def songSelectAfterOcarinaSelect(rom):
         ld  [$C1B9], a ; shows the closing animation
         ret
     """), fill_nop=True)
-    rom.patch(0x20, 0x2027, 0x2036, "", fill_nop=True) # Code that closes the ocarina menu on item select
+    # Code that closes the ocarina menu from $6020 to $6035 is now unused and overwritten by Quickswap
 
     rom.patch(0x20, 0x22A2, ASM("""
         ld  a, [$C159]
@@ -337,7 +337,7 @@ def advancedInventorySubscreen(rom):
     # instead of doing an GBC specific check, jump to our custom handling
     rom.patch(0x20, 0x19DE, ASM("ldh a, [$FFFE]\nand a\njr z, $40"), ASM("call $7F00"), fill_nop=True)
 
-    rom.patch(0x20, 0x3F00, "00" * 0x100, ASM("""
+    rom.patch(0x20, 0x3F00, "00" * 0x90, ASM("""
         ld   a, [wIsIndoor]
         and  a
         jr   z, RenderKeysCounts
