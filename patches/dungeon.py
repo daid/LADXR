@@ -1,3 +1,4 @@
+import dungeongen.dungeongen
 from roomEditor import RoomEditor, Object, ObjectHorizontal, ObjectWarp
 from assembler import ASM
 
@@ -7,6 +8,8 @@ KEY_DOORS = {
     0xED: 0xF5,
     0xEE: 0xF6,
     0xEF: 0xF7,
+}
+NIGHTMARE_DOORS = {
     0xF8: 0xF4,
 }
 
@@ -22,6 +25,20 @@ def removeKeyDoors(rom):
                 update = True
             if obj.type_id == 0xDE: # Keyblocks
                 obj.type_id = re.floor_object & 0x0F
+                update = True
+        if update:
+            re.store(rom)
+
+
+def removeNightmareKeyDoors(rom):
+    for n in range(0x100, 0x316):
+        if n == 0x2FF:
+            continue
+        update = False
+        re = RoomEditor(rom, n)
+        for obj in re.objects:
+            if obj.type_id in NIGHTMARE_DOORS:
+                obj.type_id = NIGHTMARE_DOORS[obj.type_id]
                 update = True
         if update:
             re.store(rom)
@@ -147,29 +164,39 @@ def patchDungeonChain(rom, world_setup):
     single_rooms = {"shop", "mamu", "trendy", "dream", "chestcave"}
     order = world_setup.dungeon_chain + ["egg"]
 
-    if world_setup.cavegen:
-        for ri in [0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x285, 0x286, 0x2F3, 0x2ED, 0x2EE, 0x2EA, 0x2EB, 0x2EC, 0x287, 0x2F1, 0x2F2, 0x2EF, 0x2BA, 0x2BB, 0x2BC, 0x28D, 0x2F9, 0x2FA, 0x280, 0x281, 0x282, 0x283, 0x284, 0x28C, 0x288, 0x28A, 0x290, 0x291, 0x292, 0x28E, 0x29A, 0x289, 0x28B]:
+    for dungeon in order:
+        if not isinstance(dungeon, dungeongen.dungeongen.Generator):
+            continue
+        for ri in dungeongen.dungeongen.Generator.ROOM_IDS_PER_MAP[dungeon.map_id]:
             re = RoomEditor(rom, ri)
             re.entities = []
             re.objects = []
             re.store(rom)
+        if dungeon.map_id < 8:
+            rom.banks[0x14][0x0DF3 + dungeon.map_id] = dungeon.start.room_id & 0xFF
+            rom.banks[0x14][0x0E41 + dungeon.map_id] = dungeon.start.x + dungeon.start.y * 8
         for xy in range(8 * 8):
-            rom.banks[0x14][0x0220 + 10 * 8 * 8 + xy] = 0
-        for room in world_setup.cavegen.all_rooms:
-            rom.banks[0x14][0x0220 + 10 * 8 * 8 + room.x + room.y * 8] = room.room_id & 0xFF
-            rom.banks[0x14][0x0000 + room.room_id - 0x100] = room.event
+            rom.banks[0x14][0x0220 + dungeon.map_id * 8 * 8 + xy] = 0
+        for room in dungeon.all_rooms:
+            rom.banks[0x14][0x0220 + dungeon.map_id * 8 * 8 + room.x + room.y * 8] = room.room_id & 0xFF
+            rom.banks[0x14][0x0000 + room.room_id - 0x100] = room.template.event
             re = RoomEditor(rom, room.room_id)
             re.entities = room.entities
             re.buildObjectList(room.tiles)
-            if re.hasEntity(0xBE):
-                re.objects.append(ObjectWarp(1, 0x0A, world_setup.cavegen.start.room_id, 80, 80))
+            if re.hasEntity(0xBE):  # BLAINO
+                re.objects.append(ObjectWarp(1, 0x0A, dungeon.start.room_id, 80, 80))
+            rom.banks[0x20][0x2eB3 + room.room_id - 0x100] = room.get_tileset_id()
+            re.animation_id = room.get_animation_id()
             re.store(rom)
-            if room.type == "start":
-                entrance_rooms["cavegen"] = room.room_id
-            if room.type == "end":
-                exit_rooms["cavegen"] = room.room_id
         # Fix tile attributes for bombable walls
         rom.patch(0x24, 0x0400 + 0x3F * 4, "00000000040404040000000000000000", "04040404040404040404040404040404")
+        rom.patch(0x24, 0x0400 + 0x93 * 4, "00000000000000000000000000000000", "01050505050105050505010505050501")  # single tile corners
+        rom.patch(0x24, 0x0400 + 0xCE * 4, "07070707", "04040404")  # Small table
+
+        maps[dungeon] = dungeon.map_id
+        entrance_rooms[dungeon] = dungeon.start.room_id
+        exit_rooms[dungeon] = dungeon.end.room_id
+        print("DUNGEON!")
 
     last_exit_map = 0x10
     last_exit_room = 0x2A3  # Start house
@@ -192,11 +219,12 @@ def patchDungeonChain(rom, world_setup):
                 re.entities.append((0, 0, 0x44))  # yarna bones entity
         else:
             re.objects = [o for o in re.objects if not isinstance(o, ObjectWarp)]
-            if chain_step == "cavegen":
-                re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 80))
+            if isinstance(chain_step, dungeongen.dungeongen.Generator):
+                x, y = chain_step.start.template.get_stairs_position()
+                re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], x * 16 + 8, y * 16 + 16))
             else:
                 re.objects.append(ObjectWarp(1, maps[chain_step], entrance_rooms[chain_step], 80, 124))
-            if last_exit_chain != "start":
+            if last_exit_chain != "start" and not isinstance(last_exit_chain, dungeongen.dungeongen.Generator):
                 re.entities = []
                 re.objects.append(ObjectHorizontal(4, 2, 0x1D, 2))
             if last_exit_chain == 0:  # Remove the border in color dungeon room
@@ -214,6 +242,9 @@ def patchDungeonChain(rom, world_setup):
             re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 124))
         elif last_exit_chain in single_rooms:
             re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 112, 124))
+        elif isinstance(last_exit_chain, dungeongen.dungeongen.Generator):
+            x, y = last_exit_chain.end.template.get_stairs_position()
+            re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, x * 16 + 8, y * 16 + 16))
         else:
             re.objects.append(ObjectWarp(1, last_exit_map, last_exit_room, 80, 64))
         if chain_step == "egg":  # For the egg, don't give an option to enter the maze

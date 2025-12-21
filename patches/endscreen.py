@@ -121,7 +121,7 @@ loadLoop2:
     ret
     """), fill_nop=True)
 
-    cats = [f for f in os.listdir(os.path.join(os.path.dirname(__file__), "cats"))]
+    cats = [f for f in os.listdir(os.path.join(os.path.dirname(__file__), "cats")) if f.endswith(".bin")]
     filename = random.choice(cats)
     data = open(os.path.join(os.path.dirname(__file__), "cats", filename), "rb").read()
     assert len(data) < 0x2400, filename

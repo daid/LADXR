@@ -343,9 +343,9 @@ def ClearTrendyGameGoal(description, tile_info, group=None):
             ld  a, d
             cp  e
             ret c
-            jp  $7BD6
+            jp  $7FF3
         """)),
-        (0x04, 0x3BD6, "00" * 6, ASM("""
+        (0x04, 0x3FF3, "00" * 6, ASM("""
             %s
             ret
         """ % (set_code)))
@@ -581,7 +581,7 @@ BINGO_GOALS = [
     KillGoal("Kill an Armos Statue", 0x0F, TileInfo(0xEA6, 0xEB6, 0xEA7, 0xEB7)),
     KillGoal("Kill a Pokey", 0xE3, TileInfo(0x8C4, flipH=True, colormap=[2, 3, 1, 0]), extra_check="State1"),
     KillGoal("Kill a Piranha Plant", 0xA2, TileInfo(0x1640, flipH=True, colormap=[2, 3, 1, 0])),
-    KillGoal("Kill a Wizzrobe", 0x21, TileInfo(0x950, flipH=True, colormap=[2, 3, 1, 0])),
+    KillGoal("Kill a Wizrobe", 0x21, TileInfo(0x950, flipH=True, colormap=[2, 3, 1, 0])),
     KillGoal("Kill a group of Three-of-a-Kinds (hearts)", 0x90, TileInfo(0x1594, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=0, group="3-of-a-kind"),
     KillGoal("Kill a group of Three-of-a-Kinds (diamonds)", 0x90, TileInfo(0x1590, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=1, group="3-of-a-kind"),
     KillGoal("Kill a group of Three-of-a-Kinds (spades)", 0x90, TileInfo(0x1598, colormap=[2, 3, 1, 0]), extra_check="Direction", extra_value=2, group="3-of-a-kind"),
@@ -613,6 +613,10 @@ def setBingoGoal(rom, goals, mode):
     # Setup the bingo card visuals
     be = BackgroundEditor(rom, 0x15)
     ba = BackgroundEditor(rom, 0x15, attributes=True)
+    wall_tiles = []
+    for y in range(2):
+        for x in range(4):
+            wall_tiles.append(be.tiles[0x9800 + x + y * 0x20])
     for y in range(18):
         for x in range(20):
             be.tiles[0x9800 + x + y * 0x20] = (x + (y & 2)) % 4 | ((y % 2) * 4)
@@ -633,7 +637,9 @@ def setBingoGoal(rom, goals, mode):
     be.store(rom)
     ba.store(rom)
 
-    tiles = rom.banks[0x30][0x3000:0x3040] + rom.banks[0x30][0x3100:0x3140]
+    tiles = b''
+    for wall_tile_index in wall_tiles:
+        tiles += rom.banks[0x30][0x3000+wall_tile_index*0x10:0x3010+wall_tile_index*0x10]
     for goal in goals:
         tiles += goal.tile_info.get(rom)
     rom.banks[0x30][0x3000:0x3000 + len(tiles)] = tiles
@@ -1148,13 +1154,10 @@ done:   ; Return to normal item drop handler
     rom.patch(0x03, 0x0147, "00", "98")
     rom.patch(0x20, 0x00e4, "000000", ASM("dw $5e1b\ndb $18"))
 
-    # Add graphics for our bingo board to 2nd WRAM bank.
-    rom.banks[0x3F][0x3700:0x3780] = rom.banks[0x32][0x1500:0x1580]
-    rom.banks[0x3F][0x3728:0x373A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
-    rom.banks[0x3F][0x3748:0x375A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+    # Use graphics for our bingo board from 2nd WRAM bank.
     rom.patch(0x18, 0x1E0B,
               "00F85003" + "00005203" + "00085403" + "00105603",
-              "00F8F00B" + "0000F20B" + "0008F40B" + "0010F60B")
+              "00F8520B" + "0000540B" + "0008560B" + "0010580B")
 
     # Add the bingo board to marins house
     re = RoomEditor(rom, 0x2A3)

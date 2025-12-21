@@ -17,22 +17,18 @@ class Chest(ItemInfo):
         TRADING_ITEM_FISHING_HOOK,TRADING_ITEM_NECKLACE,TRADING_ITEM_SCALE,TRADING_ITEM_MAGNIFYING_GLASS,
         TAIL_CAVE_OPENED, KEY_CAVERN_OPENED, ANGLER_TUNNEL_OPENED, FACE_SHRINE_OPENED, CASTLE_GATE_OPENED, EAGLE_TOWER_OPENED
     ]
-    MULTIWORLD = True
 
     def __init__(self, room):
         super().__init__(room)
         self.addr = room + 0x560
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         rom.banks[0x14][self.addr] = CHEST_ITEMS[option]
 
         if self.room == 0x1B6:
             # Patch the code that gives the nightmare key when you throw the pot at the chest in dungeon 6
             # As this is hardcoded for a specific chest type
             rom.patch(3, 0x145D, ASM("ld a, $19"), ASM("ld a, $%02x" % (CHEST_ITEMS[option])))
-
-        if multiworld is not None:
-            rom.banks[0x3E][0x3300 + self.room] = multiworld
 
     def read(self, rom):
         value = rom.banks[0x14][self.addr]
@@ -46,12 +42,12 @@ class Chest(ItemInfo):
 
 
 class DungeonChest(Chest):
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
             if not option.endswith("OPENED"):
-                if self._location.dungeon == int(option[-1]) and multiworld is None:
+                if self._location.dungeon == int(option[-1]):
                     option = option[:-1]
-        super().patch(rom, option, multiworld=multiworld)
+        super().patch(rom, option)
 
     def read(self, rom):
         result = super().read(rom)

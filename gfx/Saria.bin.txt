@@ -1,0 +1,4 @@
+{
+    "name": "MoonSuccubus",
+    "url": "https://www.spriters-resource.com/custom_edited/thelegendofzeldacustoms/sheet/193204/"
+}

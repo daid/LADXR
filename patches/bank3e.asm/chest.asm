@@ -32,45 +32,6 @@ RenderChestItem:
     call $0AD2
     ret
 
-SendItemFromChestToOtherGameWait:
-    halt ; Wait a frame until we might have room to send
-    jr SendItemFromChestToOtherGame.retry
-
-SendItemFromChestToOtherGame:
-    call IncreaseCheckCounter
-.retry:
-    ld   hl, wLinkStatusBits
-    bit  1, [hl]
-    jp   nz, SendItemFromChestToOtherGameWait
-
-    ; Store send item data
-    ld   hl, $0000
-    call OffsetPointerByRoomNumber
-    ld   a, h
-    ld   [wLinkSendItemRoomHigh], a
-    ld   a, l
-    ld   [wLinkSendItemRoomLow], a
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   [wLinkSendItemTarget], a
-    ldh  a, [$FFF1] ; Load active sprite variant
-    ld   [wLinkSendItemItem], a
-
-    ; Finally set the status bit to indicate there is an item to send
-    ld   hl, wLinkStatusBits
-    set  1, [hl]
-    ret
-
-GiveItemFromChestMultiworld:
-    ; Check our "item is for other player" flag
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   hl, $0055
-    cp   [hl]
-    jr   nz, SendItemFromChestToOtherGame
-
 GiveItemFromChest:
     call IncreaseCheckCounter
     ldh  a, [$FFF1] ; Load active sprite variant
@@ -757,15 +718,6 @@ OpenEagleTower:
     set  4, [hl]
     ret
 
-ItemMessageMultiworld:
-    ; Check our "item is for other player" flag
-    ld   hl, $7300
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ld   hl, $0055
-    cp   [hl]
-    jr   nz, ItemMessageForOtherPlayer
-
 ItemMessage:
     ; Fill the custom message slot with this item message.
     call BuildItemMessage
@@ -802,17 +754,6 @@ ItemMessage:
     ld   a, $ED
     jp   $2385 ; Opendialog in $000-$0FF range
 
-ItemMessageForOtherPlayer:
-    push af
-    call BuildItemMessage
-    call MessageAddTargetPlayer
-    dec  de
-    pop  af
-    add  a, $31 ; '1'
-    ld   [de], a
-    ld   a, $C9
-    jp   $2385 ; Opendialog in $000-$0FF range
-
 ItemSpriteTable:
     db $82, $15        ; CHEST_POWER_BRACELET
     db $86, $15        ; CHEST_SHIELD
@@ -820,133 +761,133 @@ ItemSpriteTable:
     db $8A, $14        ; CHEST_HOOKSHOT
     db $8C, $14        ; CHEST_MAGIC_ROD
     db $98, $16        ; CHEST_PEGASUS_BOOTS
-    db $10, $1F        ; CHEST_OCARINA
-    db $12, $1D        ; CHEST_FEATHER
+    db $80, $1F        ; CHEST_OCARINA
+    db $82, $1D        ; CHEST_FEATHER
     db $96, $17        ; CHEST_SHOVEL
-    db $0E, $1C        ; CHEST_MAGIC_POWDER_BAG
+    db $84, $1C        ; CHEST_MAGIC_POWDER_BAG
     db $80, $15        ; CHEST_BOMB
     db $84, $15        ; CHEST_SWORD
     db $94, $15        ; CHEST_FLIPPERS
     db $9A, $10        ; CHEST_MAGNIFYING_LENS
-    db $24, $1C        ; Boomerang
-    db $4E, $1C        ; Slime key
+    db $A4, $14        ; Boomerang
+    db $8A, $1C        ; Slime key
     db $A0, $14        ; CHEST_MEDICINE
-    db $30, $1C        ; CHEST_TAIL_KEY
-    db $32, $1C        ; CHEST_ANGLER_KEY
-    db $34, $1C        ; CHEST_FACE_KEY
-    db $36, $1C        ; CHEST_BIRD_KEY
-    db $3A, $1C        ; CHEST_GOLD_LEAF
-    db $40, $1C        ; CHEST_MAP
-    db $42, $1D        ; CHEST_COMPASS
-    db $44, $1C        ; CHEST_STONE_BEAK
-    db $46, $1C        ; CHEST_NIGHTMARE_KEY
-    db $4A, $1F        ; CHEST_SMALL_KEY
+    db $8C, $1C        ; CHEST_TAIL_KEY
+    db $8E, $1C        ; CHEST_ANGLER_KEY
+    db $90, $1C        ; CHEST_FACE_KEY
+    db $92, $1C        ; CHEST_BIRD_KEY
+    db $94, $1C        ; CHEST_GOLD_LEAF
+    db $96, $1C        ; CHEST_MAP
+    db $98, $1D        ; CHEST_COMPASS
+    db $9A, $1C        ; CHEST_STONE_BEAK
+    db $9C, $1C        ; CHEST_NIGHTMARE_KEY
+    db $9E, $1F        ; CHEST_SMALL_KEY
     db $A6, $15        ; CHEST_RUPEES_50 (normal blue)
-    db $38, $19        ; CHEST_RUPEES_20 (red)
-    db $38, $18        ; CHEST_RUPEES_100 (green)
-    db $38, $1A        ; CHEST_RUPEES_200 (yellow)
-    db $38, $1A        ; CHEST_RUPEES_500 (yellow)
+    db $30, $19        ; CHEST_RUPEES_20 (red)
+    db $30, $18        ; CHEST_RUPEES_100 (green)
+    db $30, $1A        ; CHEST_RUPEES_200 (yellow)
+    db $30, $1A        ; CHEST_RUPEES_500 (yellow)
     db $9E, $14        ; CHEST_SEASHELL
     db $FF, $18        ; CHEST_MESSAGE
     db $FF, $18        ; CHEST_GEL
-    db $4A, $1D        ; KEY1
-    db $4A, $1D        ; KEY2
-    db $4A, $1D        ; KEY3
-    db $4A, $1D        ; KEY4
-    db $4A, $1D        ; KEY5
-    db $4A, $1D        ; KEY6
-    db $4A, $1D        ; KEY7
-    db $4A, $1D        ; KEY8
-    db $4A, $1D        ; KEY0
-    db $40, $1C        ; MAP1
-    db $40, $1C        ; MAP2
-    db $40, $1C        ; MAP3
-    db $40, $1C        ; MAP4
-    db $40, $1C        ; MAP5
-    db $40, $1C        ; MAP6
-    db $40, $1C        ; MAP7
-    db $40, $1C        ; MAP8
-    db $40, $1C        ; MAP0
-    db $42, $1D        ; COMPASS1
-    db $42, $1D        ; COMPASS2
-    db $42, $1D        ; COMPASS3
-    db $42, $1D        ; COMPASS4
-    db $42, $1D        ; COMPASS5
-    db $42, $1D        ; COMPASS6
-    db $42, $1D        ; COMPASS7
-    db $42, $1D        ; COMPASS8
-    db $42, $1D        ; COMPASS0
-    db $44, $1C        ; STONE_BEAK1
-    db $44, $1C        ; STONE_BEAK2
-    db $44, $1C        ; STONE_BEAK3
-    db $44, $1C        ; STONE_BEAK4
-    db $44, $1C        ; STONE_BEAK5
-    db $44, $1C        ; STONE_BEAK6
-    db $44, $1C        ; STONE_BEAK7
-    db $44, $1C        ; STONE_BEAK8
-    db $44, $1C        ; STONE_BEAK0
-    db $46, $1C        ; NIGHTMARE_KEY1
-    db $46, $1C        ; NIGHTMARE_KEY2
-    db $46, $1C        ; NIGHTMARE_KEY3
-    db $46, $1C        ; NIGHTMARE_KEY4
-    db $46, $1C        ; NIGHTMARE_KEY5
-    db $46, $1C        ; NIGHTMARE_KEY6
-    db $46, $1C        ; NIGHTMARE_KEY7
-    db $46, $1C        ; NIGHTMARE_KEY8
-    db $46, $1C        ; NIGHTMARE_KEY0
-    db $4C, $1C        ; Toadstool
+    db $9E, $1D        ; KEY1
+    db $9E, $1D        ; KEY2
+    db $9E, $1D        ; KEY3
+    db $9E, $1D        ; KEY4
+    db $9E, $1D        ; KEY5
+    db $9E, $1D        ; KEY6
+    db $9E, $1D        ; KEY7
+    db $9E, $1D        ; KEY8
+    db $9E, $1D        ; KEY0
+    db $96, $1C        ; MAP1
+    db $96, $1C        ; MAP2
+    db $96, $1C        ; MAP3
+    db $96, $1C        ; MAP4
+    db $96, $1C        ; MAP5
+    db $96, $1C        ; MAP6
+    db $96, $1C        ; MAP7
+    db $96, $1C        ; MAP8
+    db $96, $1C        ; MAP0
+    db $98, $1D        ; COMPASS1
+    db $98, $1D        ; COMPASS2
+    db $98, $1D        ; COMPASS3
+    db $98, $1D        ; COMPASS4
+    db $98, $1D        ; COMPASS5
+    db $98, $1D        ; COMPASS6
+    db $98, $1D        ; COMPASS7
+    db $98, $1D        ; COMPASS8
+    db $98, $1D        ; COMPASS0
+    db $9A, $1C        ; STONE_BEAK1
+    db $9A, $1C        ; STONE_BEAK2
+    db $9A, $1C        ; STONE_BEAK3
+    db $9A, $1C        ; STONE_BEAK4
+    db $9A, $1C        ; STONE_BEAK5
+    db $9A, $1C        ; STONE_BEAK6
+    db $9A, $1C        ; STONE_BEAK7
+    db $9A, $1C        ; STONE_BEAK8
+    db $9A, $1C        ; STONE_BEAK0
+    db $9C, $1C        ; NIGHTMARE_KEY1
+    db $9C, $1C        ; NIGHTMARE_KEY2
+    db $9C, $1C        ; NIGHTMARE_KEY3
+    db $9C, $1C        ; NIGHTMARE_KEY4
+    db $9C, $1C        ; NIGHTMARE_KEY5
+    db $9C, $1C        ; NIGHTMARE_KEY6
+    db $9C, $1C        ; NIGHTMARE_KEY7
+    db $9C, $1C        ; NIGHTMARE_KEY8
+    db $9C, $1C        ; NIGHTMARE_KEY0
+    db $86, $1C        ; Toadstool
     db $A6, $15 ; $51 ; Rupees50 disguise
-    db $38, $19 ; $52 ; Rupees20 disguise
-    db $38, $18 ; $53 ; Rupees100 disguise
+    db $30, $19 ; $52 ; Rupees20 disguise
+    db $30, $18 ; $53 ; Rupees100 disguise
     db $9E, $14 ; $54 ; Seashell disguise
     db $A0, $14 ; $55 ; Medicine disguise
     db $80, $15 ; $56 ; Bomb disguise
-    db $04, $4C       ; Hammer
-    db $30, $1D        ; TAIL_CAVE_OPENED
-    db $4E, $1D        ; KEY_CAVERN_OPENED
-    db $32, $1D        ; ANGLER_TUNNEL_OPENED
-    db $34, $1D        ; FACE_SHRINE_OPENED
-    db $3A, $1D        ; CASTLE_GATE_OPENED
-    db $36, $1D        ; EAGLE_TOWER_OPENED
+    db $52, $4C       ; Hammer
+    db $8C, $1D        ; TAIL_CAVE_OPENED
+    db $8A, $1D        ; KEY_CAVERN_OPENED
+    db $8E, $1D        ; ANGLER_TUNNEL_OPENED
+    db $90, $1D        ; FACE_SHRINE_OPENED
+    db $94, $1D        ; CASTLE_GATE_OPENED
+    db $92, $1D        ; EAGLE_TOWER_OPENED
 
 LargeItemSpriteTable:
     db $AC, $02, $AC, $22 ; heart piece
-    db $54, $0A, $56, $0A ; bowwow
+    db $74, $0A, $76, $0A ; bowwow
     db $2A, $41, $2A, $61 ; 10 arrows
     db $2A, $41, $2A, $61 ; single arrow
-    db $0E, $1C, $22, $0C ; powder upgrade
-    db $00, $0D, $22, $0C ; bomb upgrade
-    db $08, $1C, $22, $0C ; arrow upgrade
-    db $48, $0A, $48, $2A ; red tunic
-    db $48, $0B, $48, $2B ; blue tunic
-    db $2A, $0C, $2A, $2C ; heart container
-    db $2A, $0F, $2A, $2F ; bad heart container
-    db $70, $09, $70, $29 ; song 1
-    db $72, $0B, $72, $2B ; song 2
-    db $74, $08, $74, $28 ; song 3
-    db $80, $0E, $82, $0E ; Instrument1
-    db $84, $0E, $86, $0E ; Instrument2
-    db $88, $0E, $8A, $0E ; Instrument3
-    db $8C, $0E, $8E, $0E ; Instrument4
-    db $90, $0E, $92, $0E ; Instrument5
-    db $94, $0E, $96, $0E ; Instrument6
-    db $98, $0E, $9A, $0E ; Instrument7
-    db $9C, $0E, $9E, $0E ; Instrument8
-    db $A6, $2B, $A4, $2B ; Rooster
-    db $1A, $0E, $1C, $0E ; TradeItem1
-    db $B0, $0C, $B2, $0C ; TradeItem2
-    db $B4, $0C, $B6, $0C ; TradeItem3
-    db $B8, $0C, $BA, $0C ; TradeItem4
-    db $BC, $0C, $BE, $0C ; TradeItem5
-    db $C0, $0C, $C2, $0C ; TradeItem6
-    db $C4, $0C, $C6, $0C ; TradeItem7
-    db $C8, $0C, $CA, $0C ; TradeItem8
-    db $CC, $0C, $CE, $0C ; TradeItem9
-    db $D0, $0C, $D2, $0C ; TradeItem10
-    db $D4, $0D, $D6, $0D ; TradeItem11
-    db $D8, $0D, $DA, $0D ; TradeItem12
-    db $DC, $0D, $DE, $0D ; TradeItem13
-    db $E0, $0D, $E2, $0D ; TradeItem14
+    db $84, $1C, $32, $0C ; powder upgrade
+    db $80, $05, $32, $0C ; bomb upgrade
+    db $88, $14, $32, $0C ; arrow upgrade
+    db $34, $0A, $34, $2A ; red tunic
+    db $34, $0B, $34, $2B ; blue tunic
+    db $AA, $04, $AA, $24 ; heart container
+    db $AA, $07, $AA, $27 ; bad heart container
+    db $36, $09, $36, $29 ; song 1
+    db $38, $0B, $38, $2B ; song 2
+    db $3A, $08, $3A, $28 ; song 3
+    db $00, $0E, $02, $0E ; Instrument1
+    db $04, $0E, $06, $0E ; Instrument2
+    db $08, $0E, $0A, $0E ; Instrument3
+    db $0C, $0E, $0E, $0E ; Instrument4
+    db $10, $0E, $12, $0E ; Instrument5
+    db $14, $0E, $16, $0E ; Instrument6
+    db $18, $0E, $1A, $0E ; Instrument7
+    db $1C, $0E, $1E, $0E ; Instrument8
+    db $20, $0B, $22, $0B ; Rooster
+    db $A0, $0E, $A2, $0E ; TradeItem1
+    db $A4, $0C, $A6, $0C ; TradeItem2
+    db $A8, $0C, $AA, $0C ; TradeItem3
+    db $AC, $0C, $AE, $0C ; TradeItem4
+    db $B0, $0C, $B2, $0C ; TradeItem5
+    db $B4, $0C, $B6, $0C ; TradeItem6
+    db $B8, $0C, $BA, $0C ; TradeItem7
+    db $BC, $0C, $BE, $0C ; TradeItem8
+    db $C0, $0C, $C2, $0C ; TradeItem9
+    db $C4, $0C, $C6, $0C ; TradeItem10
+    db $C8, $0D, $CA, $0D ; TradeItem11
+    db $CC, $0D, $CE, $0D ; TradeItem12
+    db $D0, $0D, $D2, $0D ; TradeItem13
+    db $D4, $0D, $D6, $0D ; TradeItem14
 
 ItemMessageTable:
     db $90, $3D, $89, $93, $94, $95, $96, $97, $98, $99, $9A, $9B, $9C, $9D, $D9, $A2
@@ -1031,15 +972,6 @@ GiveItemAndMessageForRoom:
     ldh  [$FFF1], a
     call GiveItemFromChest
     jp ItemMessage
-
-GiveItemAndMessageForRoomMultiworld:
-    ;Load the chest type from the chest table.
-    ld   hl, $7800
-    call OffsetPointerByRoomNumber
-    ld   a, [hl]
-    ldh  [$FFF1], a
-    call GiveItemFromChestMultiworld
-    jp ItemMessageMultiworld
 
 RenderItemForRoom:
     ;Load the chest type from the chest table.

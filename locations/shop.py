@@ -46,8 +46,7 @@ class ShopItem(ItemInfo):
                 STONE_BEAK0, STONE_BEAK1, STONE_BEAK2, STONE_BEAK3, STONE_BEAK4, STONE_BEAK5, STONE_BEAK6, STONE_BEAK7, STONE_BEAK8,
             ]]
 
-    def patch(self, rom, option, *, multiworld=None):
-        assert multiworld is None
+    def patch(self, rom, option):
         if self.__index == 0:
             # First item goes into the drop key table
             rom.banks[0x3E][self.room + 0x3800] = CHEST_ITEMS[option]

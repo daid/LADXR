@@ -30,23 +30,19 @@ class Randomizer:
         if settings.race:
             self.rnd.random()  # Just pull 1 random number so race seeds are different then from normal seeds but still stable.
         if args.plan:
-            assert settings.multiworld is None
             self.plan = Plan(args.plan)
 
-        if settings.multiworld:
-            self.__logic = logic.main.MultiworldLogic(settings, self.rnd)
-        else:
-            for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                world_setup = worldSetup.WorldSetup()
-                world_setup.randomize(settings, self.rnd)
-                if settings.overworld == "random":
-                    world_setup.map = mapgen.generate(args.input_filename, 8, 8)
-                    if world_setup.map is None:
-                        continue
-                random.setstate(self.rnd.getstate())
-                self.__logic = logic.main.Logic(settings, world_setup=world_setup)
-                if settings.entranceshuffle not in ("split", "mixed", "wild", "chaos", "insane", "madness") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
-                    break
+        for n in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
+            world_setup = worldSetup.WorldSetup()
+            world_setup.randomize(settings, self.rnd)
+            if settings.overworld == "random":
+                world_setup.map = mapgen.generate(args.input_filename, 8, 8)
+                if world_setup.map is None:
+                    continue
+            random.setstate(self.rnd.getstate())
+            self.__logic = logic.main.Logic(settings, world_setup=world_setup)
+            if settings.entranceshuffle not in ("split", "mixed", "wild", "chaos", "insane", "madness") or len(self.__logic.iteminfo_list) == sum(itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict().values()):
+                break
 
         if self.plan:
             for ii in self.__logic.iteminfo_list:
@@ -56,71 +52,35 @@ class Randomizer:
                 elif item is not None:
                     ii.forced_item = item
 
-        if settings.multiworld:
-            item_placer = MultiworldItemPlacer(self.__logic, settings.forwardfactor if settings.forwardfactor > 0.0 else 0.5, settings.accessibility, settings.multiworld)
-        elif settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
+        if settings.forwardfactor > 0.0 or settings.overworld in {'dungeonchain'}:
             item_placer = ForwardItemPlacer(self.__logic, settings.forwardfactor, settings.accessibility)
         else:
-            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_items, settings.owlstatues, settings.accessibility)
+            item_placer = RandomItemPlacer(self.__logic, settings.dungeon_keys, settings.nightmare_keys, settings.dungeon_beaks, settings.dungeon_maps, settings.owlstatues, settings.accessibility)
         for item, count in self.readItemPool(settings, item_placer).items():
             if count > 0:
                 item_placer.addItem(item, count)
         item_placer.run(self.rnd)
 
-        if settings.multiworld:
-            z = None
-            if args.output_filename is not None:
-                z = zipfile.ZipFile(args.output_filename, "w")
-                z.write(os.path.join(os.path.dirname(__file__), "multiworld/bizhawkConnector.lua"), "bizhawkConnector.lua")
-                z.write(os.path.join(os.path.dirname(__file__), "multiworld/socket.dll"), "socket.dll")
-            roms = []
-            for n in range(settings.multiworld):
-                rom = generator.generateRom(args, settings.multiworld_settings[n], self.seed, self.__logic, rnd=self.rnd, multiworld=n)
-                fname = "LADXR_Multiworld_%d_%d.gbc" % (settings.multiworld, n + 1)
-                if z:
-                    handle = z.open(fname, "w")
-                    rom.save(handle, name="LADXR")
-                    handle.close()
-                else:
-                    rom.save(fname, name="LADXR")
-                roms.append(rom)
-            if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
-                log = spoilerLog.SpoilerLog(settings, args, roms)
-                if args.log_directory:
-                    filename = "LADXR_Multiworld_%d_%s_%s.json" % (settings.multiworld, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
-                    log_path = os.path.join(args.log_directory, filename)
-                    log.outputJson(log_path)
-                if args.spoilerformat != "none":
-                    extension = "json" if args.spoilerformat == "json" else "txt"
-                    sfname = "LADXR_Multiworld_%d.%s" % (settings.multiworld, extension)
-                    log.output(sfname, z)
-        else:
-            if args.input_filename != "SKIP_ROM_GENERATION":
-                rom = generator.generateRom(args, settings, self.seed, self.__logic, rnd=self.rnd)
-                filename = args.output_filename
-                if filename is None:
-                    filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
-                rom.save(filename, name="LADXR")
+        if args.input_filename != "SKIP_ROM_GENERATION":
+            rom = generator.generateRom(args, settings, self.seed, self.__logic, rnd=self.rnd)
+            filename = args.output_filename
+            if filename is None:
+                filename = "LADXR_%s.gbc" % (binascii.hexlify(self.seed).decode("ascii").upper())
+            rom.save(filename, name="LADXR")
 
-            if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
-                log = spoilerLog.SpoilerLog(settings, args, [rom])
-                if args.log_directory:
-                    filename = "LADXR_%s_%s.json" % (datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
-                    log_path = os.path.join(args.log_directory, filename)
-                    log.outputJson(log_path)
-                if args.spoilerformat != "none":
-                    log.output(args.spoiler_filename)
+        if (args.spoilerformat != "none" or args.log_directory) and not settings.race:
+            log = spoilerLog.SpoilerLog(settings, args, rom)
+            if args.log_directory:
+                filename = "LADXR_%s_%s.json" % (datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), log.seed)
+                log_path = os.path.join(args.log_directory, filename)
+                log.outputJson(log_path)
+            if args.spoilerformat != "none":
+                log.output(args.spoiler_filename)
 
     def readItemPool(self, settings: Settings, item_placer: "ItemPlacer") -> Dict[str, int]:
         item_pool = {}
         # Build the item pool to see which items we can randomize.
-        if settings.multiworld is None:
-            item_pool = itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict()
-        else:
-            for world in range(settings.multiworld):
-                world_item_pool = itempool.ItemPool(self.__logic.worlds[world], settings.multiworld_settings[world], self.rnd, self.plan != None).toDict()
-                for item, count in world_item_pool.items():
-                    item_pool["%s_W%d" % (item, world)] = count
+        item_pool = itempool.ItemPool(self.__logic, settings, self.rnd, self.plan != None).toDict()
 
         for spot in self.__logic.iteminfo_list:
             if spot.forced_item is not None:
@@ -227,9 +187,12 @@ class ItemPlacer:
 
 
 class RandomItemPlacer(ItemPlacer):
-    def __init__(self, logic: logic.main.Logic, dungeon_item_setting: str, owl_statue_setting: str, accessibility: str) -> None:
+    def __init__(self, logic: logic.main.Logic, dungeon_keys_setting: str, nightmare_keys_setting: str, dungeon_beaks_setting: str, dungeon_maps_setting: str, owl_statue_setting: str, accessibility: str) -> None:
         super().__init__(logic, accessibility)
-        self.dungeon_item_setting = dungeon_item_setting
+        self.dungeon_keys_setting = dungeon_keys_setting
+        self.nightmare_keys_setting = nightmare_keys_setting
+        self.dungeon_beaks_setting = dungeon_beaks_setting
+        self.dungeon_maps_setting = dungeon_maps_setting
         self.owl_statue_setting = owl_statue_setting
 
     def run(self, rnd: random.Random) -> None:
@@ -238,11 +201,11 @@ class RandomItemPlacer(ItemPlacer):
 
         # Place keys that are restricted to their dungeon first to avoid running out of valid spots
         dungeon_keys = []
-        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_item_setting in {'', 'keysy', 'smallkeys', 'nightmarekeys'}:
+        if self.owl_statue_setting in {'both', 'dungeon'} and self.dungeon_beaks_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("STONE_BEAK")]
-        if self.dungeon_item_setting in {'', 'localkeys', 'nightmarekeys'}:
+        if self.dungeon_keys_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("KEY")]
-        if self.dungeon_item_setting in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
+        if self.nightmare_keys_setting != 'keysanity':
             dungeon_keys += [item for item in self.getItemListWithMultiplicity() if item.startswith("NIGHTMARE_KEY")]
         rnd.shuffle(dungeon_keys)
 
@@ -328,7 +291,9 @@ class RandomItemPlacer(ItemPlacer):
                 if verbose:
                     for loc in self._logic.location_list:
                         if loc not in e.getAccessableLocations():
-                            print("Cannot access: ", loc.items)
+                            print("Cannot access: ", loc.items, loc)
+                            for target, req in loc.connections:
+                                print(f"  {target} {req}")
                     print("Not all locations are accessible anymore with the full item pool")
                 return False
         return True
@@ -423,56 +388,3 @@ class ForwardItemPlacer(ItemPlacer):
     def _chooseItem(self, rnd: random.Random, req_items: List[str]) -> str:
         return rnd.choice(req_items)
 
-
-class MultiworldItemPlacer(ForwardItemPlacer):
-    def __init__(self, logic: logic.main.Logic, forwardfactor: float, accessibility: str, world_count: int) -> None:
-        super().__init__(logic, forwardfactor, accessibility, verbose=True)
-        self.__world_count = world_count
-        self.__initial_spot_count = 0
-        self.DUNGEON_ITEMS = ["%s_W%d" % (item, w) for item in self.DUNGEON_ITEMS for w in range(world_count)]
-
-    def run(self, rnd: random.Random) -> None:
-        self.__initial_spot_count = len(self._spots)
-        super().run(rnd)
-
-    def _placeItem(self, rnd: random.Random) -> bool:
-        result = super()._placeItem(rnd)
-        if result:
-            return True
-        if len(self._spots) < self.__initial_spot_count / 10:
-            # At this point we assume the failure is because we can no longer place items across worlds.
-            # And that the items are not really important, so cheat, and change which players the items belong to.
-            spot_options = set()
-            for spot in self._spots:
-                for item in spot.getOptions():
-                    spot_options.add(item)
-            new_item_pool = {}
-            for item, amount in self._item_pool.items():
-                if item.startswith(BAD_HEART_CONTAINER):
-                    item = RUPEES_50 + item[item.rfind("_"):]
-                for n in range(self.__world_count):
-                    new_item = "%s%d" % (item[:-1], n)
-                    if new_item in spot_options:
-                        new_item_pool[new_item] = amount
-            print("Deploying cheat: %s -> %s" % (self._item_pool, new_item_pool))
-            self._item_pool = new_item_pool
-        return False
-
-    # def canStillPlaceItemPool(self) -> bool:
-    #     return True
-
-    def _chooseItem(self, rnd: random.Random, req_items: List[str]) -> str:
-        per_world: Dict[int, int] = {}
-        worlds = []
-        for item in req_items:
-            world = int(item[item.rfind("_W")+2:])
-            per_world[world] = per_world.get(world, 0) + 1
-            worlds.append(world)
-        if len(per_world) == 1:
-            return rnd.choice(req_items)
-
-        total = len(req_items)
-        weights = []
-        for item, world in zip(req_items, worlds):
-            weights.append(total / per_world[world])
-        return rnd.choices(req_items, weights)[0]

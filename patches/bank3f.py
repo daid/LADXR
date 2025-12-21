@@ -1,5 +1,6 @@
 from assembler import ASM
 import utils
+from patches import extragfx
 
 
 def addBank3F(rom):
@@ -82,11 +83,6 @@ def addBank3F(rom):
         ld   a, $7F
         ldh  [$FF55], a
 
-    waitTillTransferDone:
-        ldh  a, [$FF55]
-        and  $80
-        jr z, waitTillTransferDone
-
         ld   a, $70
         ldh  [$FF51], a
         ld   a, $00
@@ -100,28 +96,6 @@ def addBank3F(rom):
         ld   a, $7F
         ldh  [$FF55], a
 
-    waitTillTransferDone2:
-        ldh  a, [$FF55]
-        and  $80
-        jr z, waitTillTransferDone2
-
-        ld   a, $68
-        ldh  [$FF51], a
-        ld   a, $00
-        ldh  [$FF52], a
-
-        ld   a, $90
-        ldh  [$FF53], a
-        ld   a, $00
-        ldh  [$FF54], a
-
-        ld   a, $7F
-        ldh  [$FF55], a
-
-    waitTillTransferDone3:
-        ldh  a, [$FF55]
-        and  $80
-        jr z, waitTillTransferDone3
 
         ; Switch VRAM bank back
         ld   a, $00
@@ -261,126 +235,101 @@ blockBadEmu:
         jr   blockBadEmu
         
         """), fill_nop=True)
+    # Copy graphics we permanently want in VRAM bank 1, where we can use tile index 00-EF
+    #   (the rest is used during overworld map transitions)
+    #   Tiles 80-EF can be used in tilemaps/background. So are important for the inventory screen.
+    def addSprite(index, from_bank, from_addr, *, count=2):
+        rom.banks[0x3F][0x2800+index*0x10:0x2800+index*0x10+count*0x10] = rom.banks[from_bank][from_addr:from_addr+count*0x10]
+    addSprite(0x80, 0x2C, 0x0900)  # Ocarina
+    addSprite(0x82, 0x2C, 0x0920)  # Feather
+    addSprite(0x84, 0x2C, 0x08E0)  # Magic powder
+    addSprite(0x86, 0x2C, 0x28C0)  # Toadstool
+    # 0x88 is used for the hammer in inventory subscreen
+    addSprite(0x8A, 0x2C, 0x28E0)  # Slime key
+    addSprite(0x8C, 0x2C, 0x0C00)  # Tail key
+    addSprite(0x8E, 0x2C, 0x0C20)  # Angler key
+    addSprite(0x90, 0x2C, 0x0C40)  # Face key
+    addSprite(0x92, 0x2C, 0x0C60)  # Bird key
+    addSprite(0x94, 0x2C, 0x0CA0)  # Gold leaf
+    addSprite(0x96, 0x32, 0x3D00)  # Map
+    addSprite(0x98, 0x32, 0x3D20)  # Compass
+    addSprite(0x9A, 0x32, 0x3D40)  # Beak
+    addSprite(0x9C, 0x32, 0x3D60)  # Nightmare key
+    addSprite(0x9E, 0x32, 0x3DA0)  # Small key
 
-    # Copy all normal item graphics
-    rom.banks[0x3F][0x2800:0x2B00] = rom.banks[0x2C][0x0800:0x0B00]  # main items
-    rom.banks[0x3F][0x2B00:0x2C00] = rom.banks[0x2C][0x0C00:0x0D00]  # overworld key items
-    rom.banks[0x3F][0x2C00:0x2D00] = rom.banks[0x32][0x3D00:0x3E00]  # dungeon key items
-    # Create rupee for palettes 0-3
-    rom.banks[0x3F][0x2B80:0x2BA0] = rom.banks[0x3F][0x2A60:0x2A80]
-    for n in range(0x2B80, 0x2BA0, 2):
+    addSprite(0x30, 0x2C, 0x0A60) # Create rupee for palettes 0-3
+    for n in range(0x2800+0x300, 0x2800+0x300+0x20, 2):
         rom.banks[0x3F][n+1] ^= rom.banks[0x3F][n]
-
-    # Create capacity upgrade arrows
-    rom.banks[0x3F][0x2A30:0x2A40] = utils.createTileData("""
-   33
-  3113
- 311113
-33311333
-  3113
-  3333
-""")
-    rom.banks[0x3F][0x2A20:0x2A30] = rom.banks[0x3F][0x2A30:0x2A40]
-    for n in range(0x2A20, 0x2A40, 2):
-        rom.banks[0x3F][n] |= rom.banks[0x3F][n + 1]
-
-    # Add the slime key and mushroom which are not in the above sets
-    rom.banks[0x3F][0x2CC0:0x2D00] = rom.banks[0x2C][0x28C0:0x2900]
-    # Add tunic sprites as well.
-    rom.banks[0x3F][0x2C80:0x2CA0] = rom.banks[0x35][0x0F00:0x0F20]
-
-    # Add the bowwow sprites
-    rom.banks[0x3F][0x2D00:0x2E00] = rom.banks[0x2E][0x2400:0x2500]
-
-    # Zol sprites, so we can have zol anywhere from a chest
-    rom.banks[0x3F][0x2E00:0x2E60] = rom.banks[0x2E][0x1120:0x1180]
-    # Patch gel(zol) entity to load sprites from the 2nd bank
-    rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "600A602A620A622A" "6008602862086228")
-    rom.patch(0x07, 0x329B, "FFFFFFFF" "FFFFFFFF" "54005420" "52005220" "56005600",
-                            "FFFFFFFF" "FFFFFFFF" "62086228" "60086028" "64086408")
-    rom.patch(0x06, 0x3BFA, "56025622", "640A642A");
-
-
-    # Cucco
-    rom.banks[0x3F][0x2E80:0x2F00] = rom.banks[0x32][0x2500:0x2580]
-    # Patch the cucco graphics to load from 2nd vram bank
-    rom.patch(0x05, 0x0514,
-              "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
-              "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
+    # Capacity upgrade arrow (0x32)
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3660:0x3680] != bytes(0x20):  # Detect extended sprite sheet with Capacity upgrade
+        addSprite(0x32, 0x0C, 0x3660, count=2)  # Capacity upgrade
+    else:
+        rom.banks[0x3F][0x2800+0x320:0x2800+0x320+0x20] = extragfx.capacityUpgradeIcon() * 2
+    addSprite(0x34, 0x35, 0x0F00)  # Tunic
     # Song symbols
-    rom.banks[0x3F][0x2F00:0x2F60] = utils.createTileData("""
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3680:0x36E0] != bytes(0x60):  # Detect extended sprite sheet with song symbols
+        addSprite(0x36, 0x0C, 0x3680, count=6)
+    else:
+        rom.banks[0x3F][0x2800 + 0x360:0x2800 + 0x360+0x60] = extragfx.songItemGraphics()
 
-
-     ...
-  . .222
- .2.2222
-.22.222.
-.22222.3
-.2..22.3
- .33...3
- .33.3.3
- ..233.3
-.22.2333
-.222.233
- .222...
-  ...
-""" + """
-
-
-      ..
-     .22
-    .223
-   ..222
-  .33.22
-  .3..22
-  .33.33
-   ..23.
-  ..233.
- .22.333
-.22..233
- ..  .23
-      ..
-""" + """
-
-
-    ...
-   .222.
-  .2.332
-  .23.32
-  .233.2
- .222222
-.2222222
-.2..22.2
-.2.3.222
-.22...22
- .2333..
-  .23333
-   .....""", " .23")
-
-    # Ghost
-    rom.banks[0x3F][0x2F60:0x2FE0] = rom.banks[0x32][0x1800:0x1880]
+    addSprite(0xA0, 0x2C, 0x09A0, count=4)  # Yoshi
+    addSprite(0xA4, 0x2C, 0x0400, count=52)  # Other trading items
 
     # Instruments
-    rom.banks[0x3F][0x3000:0x3200] = rom.banks[0x31][0x1000:0x1200]
-    # Patch the egg song event to use the 2nd vram sprites
-    rom.patch(0x19, 0x0BAC,
-        "5006520654065606"
-        "58065A065C065E06"
-        "6006620664066606"
-        "68066A066C066E06",
-        "800E820E840E860E"
-        "880E8A0E8C0E8E0E"
-        "900E920E940E960E"
-        "980E9A0E9C0E9E0E"
+    addSprite(0x00, 0x31, 0x1000, count=32)  # Instruments
+    rom.patch(0x19, 0x0BAC,  # Patch egg song to use 2nd vram bank sprites
+          "5006520654065606"
+          "58065A065C065E06"
+          "6006620664066606"
+          "68066A066C066E06",
+          "000E020E040E060E"
+          "080E0A0E0C0E0E0E"
+          "100E120E140E160E"
+          "180E1A0E1C0E1E0E"
     )
 
     # Rooster
-    rom.banks[0x3F][0x3200:0x3300] = rom.banks[0x32][0x1D00:0x1E00]
-    rom.patch(0x19, 0x19BC,
+    addSprite(0x20, 0x32, 0x1D00, count=16)  # Rooster (side)
+    rom.patch(0x19, 0x19BC,  # Rooster OAM data
               "42234023" "46234423" "40034203" "44034603" "4C034C23" "4E034E23" "48034823" "4A034A23",
-              "A22BA02B" "A62BA42B" "A00BA20B" "A40BA60B" "AC0BAC2B" "AE0BAE2B" "A80BA82B" "AA0BAA2B")
-    # Replace some main item graphics with the rooster
+              "222B202B" "262B242B" "200B220B" "240B260B" "2C0B2C2B" "2E0B2E2B" "280B282B" "2A0B2A2B")
+    # Replace some main ocarina/feather item graphics with the rooster for subscreen display
     rom.banks[0x2C][0x0900:0x0940] = utils.createTileData(utils.tileDataToString(rom.banks[0x32][0x1D00:0x1D40]), " 321")
 
-    # Trade sequence items
-    rom.banks[0x3F][0x3300:0x3640] = rom.banks[0x2C][0x0400:0x0740]
+    addSprite(0x70, 0x2E, 0x2400, count=16)  # Bowwow
+    addSprite(0x68, 0x32, 0x2500, count=8)  # Cuccu
+    rom.patch(0x05, 0x0514,  # Patch the cucco graphics to load from 2nd vram bank
+              "5001" "5201" "5401" "5601" "5221" "5021" "5621" "5421",
+              "6809" "6A09" "6C09" "6E09" "6A29" "6829" "6E29" "6C29")
+    addSprite(0x62, 0x2E, 0x1120, count=6)  # Zol+MiniZol
+    # Patch gel(zol) entity to load sprites from the 2nd bank
+    rom.patch(0x06, 0x3C09, "5202522254025422" "5200522054005420", "620A622A640A642A" "6208622864086428")
+    rom.patch(0x07, 0x329B, "FFFFFFFF" "FFFFFFFF" "54005420" "52005220" "56005600",
+                            "FFFFFFFF" "FFFFFFFF" "64086428" "62086228" "66086608")
+    rom.patch(0x06, 0x3BFA, "56025622", "660A662A")  # MiniZol
+
+    addSprite(0x5A, 0x32, 0x1800, count=8)  # Ghost sprites (bah, only because sprite data in start house is full...)
+
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x36E0:0x3760] != bytes(0x80):  # Detect extended sprite sheet with bingo board
+        addSprite(0x52, 0x0C, 0x36E0, count=8)  # Bingo board
+    else:
+        addSprite(0x52, 0x32, 0x1500, count=8)  # Bingo board
+        rom.banks[0x3F][0x2800+0x520+0x28:0x2800+0x520+0x3A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+        rom.banks[0x3F][0x2800+0x520+0x48:0x2800+0x520+0x5A] = b'\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x55\xAA\x00\xFF\x00\xFF'
+
+    if rom.banks[0x0C][0x37C0:0x3800] == bytes(0x40) and rom.banks[0x0C][0x3600:0x3660] != bytes(0x60):  # Detect extended sprite sheet with magic rod
+        addSprite(0x3C, 0x0C, 0x3600, count=6)  # Magic rod attack (extended)
+    else:
+        addSprite(0x3C, 0x2C, 0x0040, count=6)  # Magic rod attack (sword)
+    rom.patch(0x02, 0x12F0,
+                "0608" "0806" "04FF" "FF04"
+                "04FF" "FF04" "0608" "0806"
+                "0202" "2222" "2202" "0242"
+                "2202" "0222" "0202" "2222",
+                "3E40" "403E" "3CFF" "FF3C"
+                "3CFF" "FF3C" "3E40" "403E"
+                "0A0A" "2A2A" "2A0A" "0A4A"
+                "2A0A" "022A" "0A0A" "2A2A")
+
+    # Reserve 8 tiles for pet followers (E8-EF)
+    addSprite(0xE8, 0x34, 0x3F00, count=8)

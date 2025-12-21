@@ -77,7 +77,7 @@ options.splice(idx, 0, {
     key: 'spoilerformat', category: "Main", label: "Spoiler Format",
     options: [{key: 'none', label: 'None'}, {key: "text", label: 'Text'}, {key: 'json', label: 'JSON'}], default: 'none',
     description: "Affects how the spoiler log is generated.\n[None] No spoiler log is generated. One can still be manually dumped later.\n[Text] Creates a .txt file meant for a human to read.\n[JSON] Creates a .json file with a little more information and meant for a computer to read."});
-buildUI(function(s) { return s.key == 'seed' || s.key == "spoilerformat"; });
+buildUI(function(s) { return s.key == 'seed' || s.key == "spoilerformat" || s.key == "gfxmod"; });
 
 async function startRomGeneration()
 {
@@ -101,6 +101,15 @@ async function startRomGeneration()
         args.push("--plan");
         args.push('/plan.txt');
         data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+    e = ID("gfxmod")
+    if (e.value == "custom" && ID('customgfxfile').value) {
+        args.push("-s");
+        args.push("gfxmod=custom.png");
+        data['gfx.png'] =  new Uint8Array(await ID("customgfxfile").files[0].arrayBuffer());
+    } else if (e.value != "") {
+        args.push("-s");
+        args.push("gfxmod=" + e.value);
     }
 
     await postToWorker(data);

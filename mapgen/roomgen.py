@@ -20,7 +20,7 @@ def find_random_clear_area(the_map: Map, w, h, *, tries):
     for n in range(tries):
         x = random.randint(0, the_map.w - w)
         y = random.randint(0, the_map.h - h)
-        if is_area_clear(the_map, x - 1, y - 1, w + 2, h + 2):
+        if is_area_clear(the_map, x, y, w + 1, h + 1):
             return x, y
     return None, None
 
@@ -33,6 +33,7 @@ def setup_room_types(the_map: Map):
             MountainEgg(the_map.get(x, 0))
         else:
             Mountain(the_map.get(x, 0))
+    the_map.get(egg_x, 0).edge_down.set_open()
 
     # Add some beach.
     width = the_map.w if random.random() < 0.5 else random.randint(max(2, the_map.w // 4), the_map.w // 2)

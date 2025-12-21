@@ -10,15 +10,15 @@ MainJumpTable:
         dw   ItemMessage                          ; 3
         dw   RenderDroppedKey                     ; 4
         dw   RenderHeartPiece                     ; 5
-        dw   GiveItemFromChestMultiworld          ; 6
+        dw   GiveItemFromChest                    ; 6 (duplicate of 2 due to old multiworld code)
         dw   CheckIfLoadBowWow                    ; 7
         dw   BowwowEat                            ; 8
         dw   HandleOwlStatue                      ; 9
-        dw   ItemMessageMultiworld                ; A
+        dw   ItemMessage                          ; A (duplicate of 3 due to old multiworld code)
         dw   GiveItemAndMessageForRoom            ; B
         dw   RenderItemForRoom                    ; C
         dw   StartGameMarinMessage                ; D
-        dw   GiveItemAndMessageForRoomMultiworld  ; E
+        dw   GiveItemAndMessageForRoom            ; E (duplicate of B due to old multiworld code)
         dw   RenderOwlStatueItem                  ; F
         dw   UpdateInventoryMenu                  ; 10
         dw   HandleSeashellMansionItem            ; 11
@@ -51,7 +51,7 @@ TradeSequenceItemData:
     ; tile attributes
     db $0D, $0A, $0D, $0D, $0E, $0E, $0D, $0D, $0D, $0E, $09, $0A, $0A, $0D
     ; tile index
-    db $1A, $B0, $B4, $B8, $BC, $C0, $C4, $C8, $CC, $D0, $D4, $D8, $DC, $E0
+    db $A0, $A4, $A8, $AC, $B0, $B4, $B8, $BC, $C0, $C4, $C8, $CC, $D0, $D4
 
 UpdateInventoryMenu:
         ld   a, [wTradeSequenceItem]

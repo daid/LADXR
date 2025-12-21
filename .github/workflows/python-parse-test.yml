@@ -22,9 +22,9 @@ jobs:
         python-version: "3.10"
     - run: python3 main.py -h
     - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 --output /dev/null
-    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s seashells=0 -s heartpiece=0 -s dungeon_items=keysanity --output /dev/null
-    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s logic=glitched -s dungeon_items=keysanity -s heartpiece=0 -s seashells=0 -s heartcontainers=0 -s instruments=1 -s owlstatues=both -s dungeonshuffle=1 -s witch=0 -s boomerang=gift -s steal=never -s goal=instruments -s goalcount=random --output /dev/null
-    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s logic=casual -s dungeon_items=keysy -s itempool=casual --output /dev/null
+    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s seashells=0 -s heartpiece=0 -s dungeon_keys=keysanity --output /dev/null
+    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s logic=glitched -s dungeon_keys=keysanity -s heartpiece=0 -s seashells=0 -s heartcontainers=0 -s instruments=1 -s owlstatues=both -s dungeonshuffle=1 -s witch=0 -s boomerang=gift -s steal=never -s goal=instruments -s goalcount=random --output /dev/null
+    - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s logic=casual -s dungeon_keys=removed -s itempool=casual --output /dev/null
     - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s textmode=none --output /dev/null
     - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s overworld=dungeondive --output /dev/null
     - run: python3 main.py SKIP_ROM_GENERATION --timeout 120 -s overworld=nodungeons --output /dev/null

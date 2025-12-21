@@ -1,1 +1,80 @@
-{"compressionlevel": -1, "height": 8, "infinite": false, "layers": [{"data": [4, 62, 79, 40, 41, 40, 41, 40, 41, 40, 10, 57, 60, 5, 5, 5, 5, 93, 93, 5, 10, 57, 5, 5, 99, 99, 5, 99, 99, 99, 4, 57, 5, 99, 99, 5, 5, 99, 5, 5, 10, 57, 93, 93, 99, 5, 99, 99, 99, 5, 4, 57, 93, 93, 99, 5, 5, 213, 99, 5, 62, 79, 93, 5, 99, 93, 99, 5, 99, 5, 57, 60, 99, 5, 5, 5, 99, 5, 5, 5], "height": 8, "id": 1, "name": "Tiles", "opacity": 1, "type": "tilelayer", "visible": true, "width": 10, "x": 0, "y": 0}, {"draworder": "topdown", "id": 2, "name": "EntityLayer", "objects": [], "opacity": 1, "type": "objectgroup", "visible": true, "x": 0, "y": 0}], "nextlayerid": 1, "nextobjectid": 8, "orientation": "orthogonal", "properties": [{"name": "animationset", "type": "string", "value": "03"}, {"name": "attribset", "type": "string", "value": "22:2800"}, {"name": "palette", "type": "string", "value": "0b"}, {"name": "tileset", "type": "string", "value": "26"}], "renderorder": "right-down", "tiledversion": "1.5.0", "tileheight": 16, "tilesets": [{"columns": 16, "firstgid": 1, "image": "tiles_26_03_0b_22_2800.png", "imageheight": 256, "imagewidth": 256, "margin": 0, "name": "main", "spacing": 0, "tilecount": 256, "tileheight": 16, "tilewidth": 16}], "tilewidth": 16, "type": "map", "version": 1.5, "width": 10}
+{ "compressionlevel":-1,
+ "height":8,
+ "infinite":false,
+ "layers":[
+        {
+         "data":[4, 62, 79, 40, 41, 40, 41, 40, 41, 40,
+            10, 57, 60, 246, 254, 254, 247, 93, 93, 5,
+            10, 57, 250, 249, 99, 99, 255, 99, 99, 99,
+            4, 57, 249, 99, 99, 246, 249, 99, 5, 246,
+            10, 57, 93, 93, 99, 255, 99, 99, 99, 252,
+            4, 57, 93, 93, 99, 248, 254, 213, 99, 252,
+            62, 79, 93, 5, 99, 93, 99, 255, 99, 252,
+            57, 60, 99, 246, 250, 247, 99, 252, 250, 256],
+         "height":8,
+         "id":1,
+         "name":"Tiles",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":10,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":2,
+         "name":"EntityLayer",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":1,
+ "nextobjectid":8,
+ "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"animationset",
+         "type":"string",
+         "value":"03"
+        }, 
+        {
+         "name":"attribset",
+         "type":"string",
+         "value":"22:2800"
+        }, 
+        {
+         "name":"palette",
+         "type":"string",
+         "value":"0b"
+        }, 
+        {
+         "name":"tileset",
+         "type":"string",
+         "value":"26"
+        }],
+ "renderorder":"right-down",
+ "tiledversion":"1.10.2",
+ "tileheight":16,
+ "tilesets":[
+        {
+         "columns":16,
+         "firstgid":1,
+         "image":"tiles_26_03_0b_22_2800.png",
+         "imageheight":256,
+         "imagewidth":256,
+         "margin":0,
+         "name":"main",
+         "spacing":0,
+         "tilecount":256,
+         "tileheight":16,
+         "tilewidth":16
+        }],
+ "tilewidth":16,
+ "type":"map",
+ "version":"1.10",
+ "width":10
+}

@@ -52,7 +52,6 @@ import patches.endscreen
 import patches.save
 import patches.bingo
 import patches.maze
-import patches.multiworld
 import patches.tradeSequence
 import patches.alttp
 import patches.colorBook
@@ -61,7 +60,7 @@ import locations.keyLocation
 
 
 # Function to generate a final rom, this patches the rom with all required patches
-def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
+def generateRom(args, settings, seed, logic, *, rnd=None):
     print("Loading: %s" % (args.input_filename))
     rom = ROMWithTables(open(args.input_filename, 'rb'))
 
@@ -81,13 +80,13 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     assembler.resetConsts()
     assembler.const("INV_SIZE", 16)
 
-    #assembler.const("HARDWARE_LINK", 1)
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
+    assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
-    if multiworld is not None:
-        patches.save.singleSaveSlot(rom)
+    patches.core.fixHealthFullCheck(rom)
+    # patches.save.singleSaveSlot(rom)
     patches.phone.patchPhone(rom)
     patches.photographer.fixPhotographer(rom)
     patches.core.bugfixWrittingWrongRoomStatus(rom)
@@ -98,6 +97,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.easyColorDungeonAccess(rom)
     patches.owl.removeOwlEvents(rom)
     patches.enemies.fixArmosKnightAsMiniboss(rom)
+    patches.enemies.enemyQoL(rom)
     patches.bank3e.addBank3E(rom, seed, settings)
     patches.bank3f.addBank3F(rom)
     patches.core.removeGhost(rom)
@@ -105,7 +105,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.core.fixWrongWarp(rom)
     patches.core.alwaysAllowSecretBook(rom)
     patches.core.injectMainLoop(rom)
-    if settings.dungeon_items in ('localnightmarekey', 'keysanity', 'smallkeys', 'nightmarekeys'):
+    if settings.dungeon_keys == 'keysanity' or settings.nightmare_keys == 'keysanity':
         patches.inventory.advancedInventorySubscreen(rom)
     patches.inventory.moreSlots(rom)
     if settings.witch:
@@ -126,6 +126,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.tarin.updateTarin(rom)
     patches.fishingMinigame.updateFinishingMinigame(rom)
     patches.health.upgradeHealthContainers(rom)
+    if settings.dungeon_beaks == "removed":
+        patches.owl.removeDungeonOwlBeakRequirement(rom)
     if settings.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)
     if settings.owlstatues in ("overworld", "both"):
@@ -161,8 +163,10 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     elif settings.overworld == 'random':
         patches.overworld.patchOverworldTilesets(rom)
         mapgen.store_map(rom, logic.world.map)
-    if settings.dungeon_items == 'keysy':
+    if settings.dungeon_keys == 'removed':
         patches.dungeon.removeKeyDoors(rom)
+    if settings.nightmare_keys == 'removed':
+        patches.dungeon.removeNightmareKeyDoors(rom)
     # patches.reduceRNG.slowdownThreeOfAKind(rom)
     patches.reduceRNG.fixHorseHeads(rom)
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
@@ -170,8 +174,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
-    if settings.overworld == "alttp":
-        # Only apply this to ALTTP right now, as it might cause issues otherwise.
+    if settings.overworld == "alttp" or settings.overworld == "random":
+        # Only apply this to ALTTP/random right now, as it might cause issues otherwise.
         patches.aesthetics.allowOverworldBackgroundTileTransitions(rom)
     if settings.music == 'random':
         patches.music.randomizeMusic(rom, rnd)
@@ -251,22 +255,10 @@ def generateRom(args, settings, seed, logic, *, rnd=None, multiworld=None):
     elif settings.quickswap == 'b':
         patches.core.quickswap(rom, 0)
 
-    if multiworld is None:
-        hints.addHints(rom, rnd, logic.iteminfo_list)
+    hints.addHints(rom, rnd, logic.iteminfo_list)
 
-        world_setup = logic.world_setup
-        item_list = logic.iteminfo_list
-    else:
-        patches.multiworld.addMultiworldShop(rom, multiworld, settings.multiworld)
-
-        # Set a unique ID in the rom for multiworld
-        for n in range(4):
-            rom.patch(0x00, 0x0051 + n, "00", "%02x" % (seed[n]))
-        rom.patch(0x00, 0x0055, "00", "%02x" % (multiworld))
-        rom.patch(0x00, 0x0056, "00", "01") # Set the Bizhawk connector version.
-
-        world_setup = logic.worlds[multiworld].world_setup
-        item_list = [spot for spot in logic.iteminfo_list if spot.world == multiworld]
+    world_setup = logic.world_setup
+    item_list = logic.iteminfo_list
 
     if world_setup.goal == "raft":
         patches.goal.setRaftGoal(rom)

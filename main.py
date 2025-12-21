@@ -33,6 +33,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Export the map (few graphical mistakes)")
     parser.add_argument('--emptyplan', dest="emptyplan", type=str, required=False,
         help="Write an unfilled plan file")
+    parser.add_argument('--gfxtemplate', dest="gfxtemplate", type=str, required=False,
+        help="Create a new gfx template")
     parser.add_argument('--timeout', type=float, required=False,
         help="Timeout generating the seed after the specified number of seconds")
     parser.add_argument('--logdirectory', dest="log_directory", type=str, required=False,
@@ -47,8 +49,6 @@ def main(mainargs: Optional[List[str]] = None) -> None:
 
     parser.add_argument('--plan', dest="plan", metavar='plandomizer', type=str, required=False,
         help="Read an item placement plan")
-    parser.add_argument('--multiworld', dest="multiworld", action="append", required=False,
-        help="Set configuration for a multiworld player, supply multiple times for settings per player, requires a short setting string per player.")
     parser.add_argument('--doubletrouble', dest="doubletrouble", action="store_true",
         help="Warning, bugged in various ways")
     parser.add_argument('--pymod', dest="pymod", action='append',
@@ -65,11 +65,6 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     if args.settings:
         for s in args.settings:
             settings.set(s)
-    if args.multiworld is not None:
-        for s in args.multiworld:
-            player_settings = Settings(len(args.multiworld))
-            player_settings.loadShortString(s)
-            settings.multiworld_settings.append(player_settings)
 
     settings.validate()
     print(f"Short settings string: {settings.getShortString()}")
@@ -114,15 +109,22 @@ def main(mainargs: Optional[List[str]] = None) -> None:
                 f.write("Location:%s: \n" % (ii.nameId))
         sys.exit(0)
 
+    if args.gfxtemplate:
+        import patches.aesthetics
+        rom = ROMWithTables(open(args.input_filename, 'rb'))
+        patches.aesthetics.createGfxImage(rom, args.gfxtemplate)
+        print(f"Created {args.gfxtemplate}")
+        sys.exit(0)
+
     if args.dump is not None or args.test:
         print("Loading: %s" % (args.input_filename))
-        roms = [ROMWithTables(open(f, 'rb')) for f in [args.input_filename] + args.dump]
+        rom = ROMWithTables(open(args.input_filename, 'rb'))
 
         if args.spoilerformat == "none":
             args.spoilerformat = "console"
 
         try:
-            log = spoilerLog.SpoilerLog(settings, args, roms)
+            log = spoilerLog.SpoilerLog(settings, args, rom)
             log.output(args.spoiler_filename)
             sys.exit(0)
         except spoilerLog.RaceRomException:

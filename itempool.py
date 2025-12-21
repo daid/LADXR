@@ -63,8 +63,17 @@ DEFAULT_ITEM_POOL = {
     TRADING_ITEM_SCALE: 1,
     TRADING_ITEM_MAGNIFYING_GLASS: 1,
 
-    "MEDICINE2": 1, "RAFT": 1,
+    "MEDICINE2": 1, "TOADSTOOL2": 1, "RAFT": 1, 
     TAIL_CAVE_OPENED: 1, KEY_CAVERN_OPENED: 1, ANGLER_TUNNEL_OPENED: 1, FACE_SHRINE_OPENED: 1, CASTLE_GATE_OPENED: 1, EAGLE_TOWER_OPENED: 1
+}
+
+STATIC_DUNGEON_ITEMS = {
+    3: { "D3_GEL_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_BOMBWALL": 1, "SWITCH3": 1, },
+    4: { "D4_PITKEY": 1, "D4_BOSS_CLEAR": 1, }, #TODO: "D4_PUZZLE_CLUE": 1
+    5: { "D5_ZOL_CLEAR": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1, },
+    6: { "D6_THREE_WIZROBE_CLEAR": 1, "SWITCH6A": 1, "SWITCH6A_RANGE": 1, "SWITCH6B_MIDRANGE": 1, "SWITCH6B_RANGE": 1, "SWITCH6C": 1, "SWITCH6D": 1, "SWITCH6E": 1, "SWITCH6F": 1, },
+    7: { "D7_BALL": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "D7_BOSS_CLEAR": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7C": 1, "SWITCH7C_RANGE": 1, },
+    8: { "SWITCH8": 1, },
 }
 
 
@@ -169,15 +178,6 @@ class ItemPool:
                     self.remove(f"STONE_BEAK{n}")
                     self.add(f"KEY{n}")
 
-        if settings.dungeon_items == 'keysy':
-            for n in range(9):
-                for amount, item_name in ((9, "KEY"), (1, "NIGHTMARE_KEY")):
-                    item_name = "%s%d" % (item_name, n)
-                    if item_name in self.__pool:
-                        self.add(RUPEES_20, self.__pool[item_name])
-                        self.remove(item_name, self.__pool[item_name])
-                    self.add(item_name, amount)
-
         if settings.overworld == "dungeondive":
             self.remove(SWORD)
             self.remove(SHOVEL)
@@ -204,6 +204,7 @@ class ItemPool:
             self.remove(ROOSTER)
             self.remove(GEL, 2)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)
@@ -240,6 +241,7 @@ class ItemPool:
             self.remove(GOLD_LEAF, 5)
             self.remove(HEART_PIECE, 8)
             self.remove("MEDICINE2")
+            self.remove("TOADSTOOL2")
             self.remove("RAFT")
             self.remove(TAIL_CAVE_OPENED)
             self.remove(KEY_CAVERN_OPENED)
@@ -282,60 +284,69 @@ class ItemPool:
             self.remove(GEL, 4)
             self.remove(MESSAGE, 1)
             self.add(RUPEES_500, 3)
+
+        if settings.overworld not in {"dungeonchain", "nodungeons", "random"}:
+            for dungeon,items in STATIC_DUNGEON_ITEMS.items():
+                for item, qty in items.items():
+                    self.add(item, qty)
+
         if settings.overworld == "dungeonchain":
             self.__pool = {}
             required_item_count = 1  # Start item
             key_counts = {1: 3, 2: 5, 3: 9, 4: 5, 5: 3, 6: 3, 7: 3, 8: 7, 0: 3}
             item_counts = {
                 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 7, 7: 4, 8: 7, 0: 0,
-                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1, "cavegen": 0,
+                "shop": 2, "mamu": 1, "trendy": 1, "dream": 2, "chestcave": 1,
             }
-            if logic.world_setup.cavegen:
-                item_counts["cavegen"] = logic.world_setup.cavegen.get_reward_count()
             if settings.owlstatues in {'both', 'dungeon'}:
                 for idx, count in {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 3, 0: 3}.items():
                     item_counts[idx] += count
             required_items_per_dungeon = {
-                1: {FEATHER, SHIELD, BOMB},
-                2: {POWER_BRACELET, FEATHER},
-                3: {POWER_BRACELET, PEGASUS_BOOTS},
-                4: {SHIELD, FLIPPERS, FEATHER, PEGASUS_BOOTS, BOMB},
-                5: {HOOKSHOT, FEATHER, BOMB, POWER_BRACELET, FLIPPERS},
-                6: {POWER_BRACELET, POWER_BRACELET+"2", BOMB, FEATHER, HOOKSHOT},
-                7: {POWER_BRACELET, SHIELD, SHIELD+"2", BOMB, HOOKSHOT},
-                8: {MAGIC_ROD, BOMB, FEATHER, POWER_BRACELET, HOOKSHOT},
-                0: {POWER_BRACELET, HOOKSHOT},
-                "shop": {RUPEES_100, RUPEES_200, RUPEES_500},
-                "mamu": {RUPEES_100, RUPEES_200, OCARINA},
-                "trendy": {RUPEES_50},
-                "dream": {PEGASUS_BOOTS},
-                "chestcave": set(),
-                "cavegen": {BOMB},
+                1: {FEATHER: 1, SHIELD: 1, BOMB: 1},
+                2: {POWER_BRACELET: 1, FEATHER: 1},
+                3: {POWER_BRACELET: 1, PEGASUS_BOOTS: 1},
+                4: {SHIELD: 1, FLIPPERS: 1, FEATHER: 1, PEGASUS_BOOTS: 1, BOMB: 1},
+                5: {HOOKSHOT: 1, FEATHER: 1, BOMB: 1, POWER_BRACELET: 1, FLIPPERS: 1},
+                6: {POWER_BRACELET: 2, BOMB: 1, FEATHER: 1, HOOKSHOT: 1},
+                7: {POWER_BRACELET: 1, SHIELD: 2, BOMB: 1, HOOKSHOT: 1},
+                8: {MAGIC_ROD: 1, BOMB: 1, FEATHER: 1, POWER_BRACELET: 1, HOOKSHOT: 1},
+                0: {POWER_BRACELET: 1, HOOKSHOT: 1},
+                "shop": {RUPEES_100: 1, RUPEES_200: 1, RUPEES_500: 1},
+                "mamu": {RUPEES_100: 1, RUPEES_200: 1, OCARINA: 1},
+                "trendy": {RUPEES_50: 1},
+                "dream": {PEGASUS_BOOTS: 1},
+                "chestcave": {}
             }
-            required_items = {SWORD, BOW, MAGIC_POWDER}
-            for dungeon_idx in logic.world_setup.dungeon_chain:
-                if isinstance(dungeon_idx, int):
-                    self.add(f"KEY{dungeon_idx}", key_counts[dungeon_idx])
-                    self.add(f"NIGHTMARE_KEY{dungeon_idx}")
-                    self.add(f"MAP{dungeon_idx}")
-                    self.add(f"COMPASS{dungeon_idx}")
-                    self.add(f"STONE_BEAK{dungeon_idx}")
-                    if 1 <= dungeon_idx <= 8:
+            required_items = {SWORD: 1, BOW if rnd.uniform(0, 100) < 50 else BOOMERANG: 1, MAGIC_POWDER: 1}
+            for dungeon in logic.world_setup.dungeon_chain:
+                if isinstance(dungeon, int):
+                    self.add(f"KEY{dungeon}", key_counts[dungeon])
+                    self.add(f"NIGHTMARE_KEY{dungeon}")
+                    self.add(f"MAP{dungeon}")
+                    self.add(f"COMPASS{dungeon}")
+                    self.add(f"STONE_BEAK{dungeon}")
+                    if 1 <= dungeon <= 8:
                         self.add(HEART_CONTAINER)
-                required_item_count += item_counts[dungeon_idx]
-                required_items.update(required_items_per_dungeon[dungeon_idx])
-            for item in required_items:
-                if item.endswith("2"):
-                    item = item[:-1]
-                self.add(item)
-                required_item_count -= 1
+                    if dungeon in STATIC_DUNGEON_ITEMS:
+                        for item, qty in STATIC_DUNGEON_ITEMS[dungeon].items():
+                            self.add(item, qty)
+                if isinstance(dungeon, str) or isinstance(dungeon, int):  # stock dungeon or single room
+                    required_item_count += item_counts[dungeon]
+                    for item, amount in required_items_per_dungeon[dungeon].items():
+                        required_items[item] = max(required_items.get(item, 0), amount)
+                else:  # generated dungeon
+                    required_item_count += dungeon.get_reward_count()
+                    dungeon.get_logic_requirements(required_items)
+            for item, amount in required_items.items():
+                self.add(item, amount)
+                required_item_count -= amount
             major_additions = [SWORD, FEATHER, HOOKSHOT, BOW, BOMB, MAGIC_POWDER, MAGIC_ROD, PEGASUS_BOOTS, POWER_BRACELET, SHIELD, BOOMERANG]
             minor_additions = [BOMB, MAGIC_POWDER, BLUE_TUNIC, RED_TUNIC, MAX_ARROWS_UPGRADE, MAX_BOMBS_UPGRADE, MAX_POWDER_UPGRADE, MEDICINE]
             junk_items = [RUPEES_100, RUPEES_20, RUPEES_50, SEASHELL, GEL, MESSAGE]
             max_counts = {BLUE_TUNIC: 1, RED_TUNIC: 1, MAX_ARROWS_UPGRADE: 1, MAX_BOMBS_UPGRADE: 1, MAX_POWDER_UPGRADE: 1, MEDICINE: 1, SWORD: 2, MESSAGE: 1}
             for n in range(3):
                 pick = rnd.choice(major_additions)
-                if pick not in required_items or pick in {SWORD, SHIELD} and required_item_count > 0:
+                if (pick not in required_items or pick in {SWORD, SHIELD}) and required_item_count > 0:
                     self.add(pick)
                     required_item_count -= 1
                     major_additions.remove(pick)
@@ -347,12 +358,40 @@ class ItemPool:
                     self.add(pick)
                     required_item_count -= 1
 
-            assert required_item_count >= 0
+            assert required_item_count >= 0, f"Need more items then I can place... shortage: {required_item_count}"
             while required_item_count > 0:
                 pick = rnd.choice(junk_items)
                 if required_item_count > 0 and self.get(pick) < max_counts.get(pick, 999):
                     self.add(pick)
                     required_item_count -= 1
+
+        if settings.dungeon_keys == 'removed':
+            for n in range(9):
+                item_name = f"KEY{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 9)
+        if settings.nightmare_keys == 'removed':
+            for n in range(9):
+                item_name = f"NIGHTMARE_KEY{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 1)
+        if settings.dungeon_beaks == 'removed':
+            for n in range(9):
+                item_name = f"STONE_BEAK{n}"
+                if item_name in self.__pool:
+                    self.add(RUPEES_20, self.__pool[item_name])
+                    self.remove(item_name, self.__pool[item_name])
+                self.add(item_name, 1)
+        if settings.dungeon_maps == 'removed':
+            for n in range(9):
+                for item_name in (f"MAP{n}", f"COMPASS{n}"):
+                    if item_name in self.__pool:
+                        self.add(RUPEES_20, self.__pool[item_name])
+                        self.remove(item_name, self.__pool[item_name])
 
         if settings.bowwow == 'always':
             # Bowwow mode takes a sword from the pool to give as bowwow. So we need to fix that.
@@ -374,16 +413,6 @@ class ItemPool:
         if heart_container_type != HEART_CONTAINER:
             self.add(heart_container_type, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
-
-        # In multiworld, put a bit more rupees in the seed, this helps with generation (2nd shop item)
-        #   As we cheat and can place rupees for the wrong player.
-        if settings.multiworld:
-            rupees20 = self.__pool.get(RUPEES_20, 0)
-            self.add(RUPEES_50, rupees20 // 2)
-            self.remove(RUPEES_20, rupees20 // 2)
-            rupees50 = self.__pool.get(RUPEES_50, 0)
-            self.add(RUPEES_200, rupees50 // 5)
-            self.remove(RUPEES_50, rupees50 // 5)
 
     def __randomizeRupees(self, options, rnd):
         # Remove rupees from the item pool and replace them with other items to create more variety

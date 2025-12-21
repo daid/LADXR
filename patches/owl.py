@@ -93,9 +93,17 @@ doNotGivePowder:
 doNotGiveBombs:
 
     ld   a, [$DB45]
+#IF DUNGEON_CHAIN
+    cp   $20
+#ELSE
     cp   $10
+#ENDIF
     jr   nc, doNotGiveArrows
+#IF DUNGEON_CHAIN
+    ld   a, $20
+#ELSE
     ld   a, $10
+#ENDIF
     ld   [$DB45], a
 doNotGiveArrows:
 
@@ -104,13 +112,17 @@ doNotGiveArrows:
     ret
 
 sprite:
-    db   $76, $09, $78, $09, $7A, $09, $7C, $09
+    db   $5A, $09, $5C, $09, $5E, $09, $60, $09
 """, 0x67F5), fill_nop=True)
     rom.patch(0x20, 0x0322 + 0x41 * 2, "734A", "564B")  # Remove the owl init handler
 
     re = RoomEditor(rom, 0x2A3)
     re.entities.append((7, 6, 0x41))
     re.store(rom)
+
+
+def removeDungeonOwlBeakRequirement(rom):
+    rom.patch(0x18, 0x1E9F, ASM("jp OpenDialogInTable1"), "", fill_nop=True)
 
 
 def upgradeDungeonOwlStatues(rom):
@@ -126,6 +138,7 @@ def upgradeDungeonOwlStatues(rom):
         jp   nz, $5EAD
         jp   $5EA8
     """), fill_nop=True)
+
 
 def upgradeOverworldOwlStatues(rom):
     # Replace the code that handles signs/owl statues on the overworld

@@ -96,15 +96,15 @@ class Logic:
                     te = world.entrances[target]
                 if te.location and te.location != se.location:
                     if se.requirement is not None and te.requirement is not None:
-                        se.location.connect(te.location, AND(se.requirement, te.requirement), one_way=True)
+                        se.location.connect(te.location, AND(se.requirement, te.requirement), back=False)
                     elif se.requirement is not None:
-                        se.location.connect(te.location, se.requirement, one_way=True)
+                        se.location.connect(te.location, se.requirement, back=False)
                     else:
-                        se.location.connect(te.location, te.requirement, one_way=True)
+                        se.location.connect(te.location, te.requirement, back=False)
                     if se.enterIsSet():
-                        se.location.connect(te.location, se.one_way_enter_requirement, one_way=True)
+                        se.location.connect(te.location, se.one_way_enter_requirement, back=False)
                     if te.exitIsSet():
-                        se.location.connect(te.location, te.one_way_exit_requirement, one_way=True)
+                        se.location.connect(te.location, te.one_way_exit_requirement, back=False)
 
         egg_trigger = AND(OCARINA, SONG1)
         if configuration_options.logic == 'glitched' or configuration_options.logic == 'hell':
@@ -127,11 +127,16 @@ class Logic:
         else:
             world.nightmare.connect(world.egg, AND(egg_trigger, COUNTS([INSTRUMENT1, INSTRUMENT2, INSTRUMENT3, INSTRUMENT4, INSTRUMENT5, INSTRUMENT6, INSTRUMENT7, INSTRUMENT8], world_setup.goal_count)))
 
-        if configuration_options.dungeon_items == 'keysy':
+        if configuration_options.dungeon_keys == 'removed':
             for n in range(9):
                 for count in range(9):
                     world.start.add(KeyLocation("KEY%d" % (n)))
+        if configuration_options.nightmare_keys == 'removed':
+            for n in range(9):
                 world.start.add(KeyLocation("NIGHTMARE_KEY%d" % (n)))
+        if configuration_options.dungeon_beaks == 'removed':
+            for n in range(9):
+                world.start.add(KeyLocation("STONE_BEAK%d" % (n)))
 
         self.world = world
         self.start = world.start
@@ -155,9 +160,7 @@ class Logic:
                 location.flat_requirements = new_flat_requirements
             else:
                 location.flat_requirements = requirements.flatten(req)
-            for connection, requirement in location.simple_connections:
-                __rec(connection, AND(req, requirement) if req else requirement)
-            for connection, requirement in location.gated_connections:
+            for connection, requirement in location.connections:
                 __rec(connection, AND(req, requirement) if req else requirement)
         __rec(self.start, None)
         for ii in self.iteminfo_list:
@@ -172,156 +175,5 @@ class Logic:
         self.__location_set.add(location)
         for ii in location.items:
             self.iteminfo_list.append(ii)
-        for connection, requirement in location.simple_connections:
+        for connection, requirement in location.connections:
             self.__recursiveFindAll(connection)
-        for connection, requirement in location.gated_connections:
-            self.__recursiveFindAll(connection)
-
-
-class MultiworldLogic:
-    def __init__(self, settings, rnd=None, *, world_setups=None):
-        assert rnd or world_setups
-        self.worlds = []
-        self.start = Location()
-        self.location_list = [self.start]
-        self.iteminfo_list = []
-
-        for n in range(settings.multiworld):
-            options = settings.multiworld_settings[n]
-            world = None
-            if world_setups:
-                world = Logic(options, world_setup=world_setups[n])
-            else:
-                for cnt in range(1000):  # Try the world setup in case entrance randomization generates unsolvable logic
-                    world_setup = worldSetup.WorldSetup()
-                    world_setup.randomize(options, rnd)
-                    world = Logic(options, world_setup=world_setup)
-                    if options.entranceshuffle not in {"split", "mixed", "wild", "chaos", "insane", "madness"} or len(world.iteminfo_list) == sum(itempool.ItemPool(world, options, rnd, False).toDict().values()):
-                        break
-
-            for ii in world.iteminfo_list:
-                ii.world = n
-
-            req_done_set = set()
-            for loc in world.location_list:
-                loc.simple_connections = [(target, addWorldIdToRequirements(req_done_set, n, req)) for target, req in loc.simple_connections]
-                loc.gated_connections = [(target, addWorldIdToRequirements(req_done_set, n, req)) for target, req in loc.gated_connections]
-                loc.items = [MultiworldItemInfoWrapper(n, options, ii) for ii in loc.items]
-                self.iteminfo_list += loc.items
-
-            self.worlds.append(world)
-            self.start.simple_connections += world.start.simple_connections
-            self.start.gated_connections += world.start.gated_connections
-            self.start.items += world.start.items
-            world.start.items.clear()
-            self.location_list += world.location_list
-
-        self.entranceMapping = None
-
-
-class MultiworldMetadataWrapper:
-    def __init__(self, world, metadata):
-        self.world = world
-        self.metadata = metadata
-
-    @property
-    def name(self):
-        return self.metadata.name
-
-    @property
-    def area(self):
-        return "P%d %s" % (self.world + 1, self.metadata.area)
-
-
-class MultiworldItemInfoWrapper:
-    def __init__(self, world, configuration_options, target):
-        self.world = world
-        self.world_count = configuration_options.multiworld
-        self.target = target
-        self.dungeon_items = configuration_options.dungeon_items
-        self.MULTIWORLD_OPTIONS = None
-        self.item = None
-
-    @property
-    def nameId(self):
-        return self.target.nameId
-
-    @property
-    def forced_item(self):
-        if self.target.forced_item is None:
-            return None
-        if "_W" in self.target.forced_item:
-            return self.target.forced_item
-        return "%s_W%d" % (self.target.forced_item, self.world)
-
-    @property
-    def room(self):
-        return self.target.room
-
-    @property
-    def metadata(self):
-        return MultiworldMetadataWrapper(self.world, self.target.metadata)
-
-    @property
-    def MULTIWORLD(self):
-        return self.target.MULTIWORLD
-
-    def read(self, rom):
-        world = rom.banks[0x3E][0x3300 + self.target.room] if self.target.MULTIWORLD else self.world
-        return "%s_W%d" % (self.target.read(rom), world)
-
-    def getOptions(self):
-        if self.MULTIWORLD_OPTIONS is None:
-            options = self.target.getOptions()
-            if self.target.MULTIWORLD and len(options) > 1:
-                self.MULTIWORLD_OPTIONS = []
-                for n in range(self.world_count):
-                    self.MULTIWORLD_OPTIONS += ["%s_W%d" % (t, n) for t in options if n == self.world or self.canMultiworld(t)]
-            else:
-                self.MULTIWORLD_OPTIONS = ["%s_W%d" % (t, self.world) for t in options]
-        return self.MULTIWORLD_OPTIONS
-
-    def patch(self, rom, option):
-        idx = option.rfind("_W")
-        world = int(option[idx+2:])
-        option = option[:idx]
-        if not self.target.MULTIWORLD:
-            assert self.world == world
-            self.target.patch(rom, option)
-        else:
-            self.target.patch(rom, option, multiworld=world)
-
-    # Return true if the item is allowed to be placed in any world, or false if it is
-    # world specific for this check.
-    def canMultiworld(self, option):
-        if self.dungeon_items in {'', 'smallkeys', 'nightmarekeys'}:
-            if option.startswith("MAP"):
-                return False
-            if option.startswith("COMPASS"):
-                return False
-            if option.startswith("STONE_BEAK"):
-                return False
-        if self.dungeon_items in {'', 'localkeys', 'nightmarekeys'}:
-            if option.startswith("KEY"):
-                return False
-        if self.dungeon_items in {'', 'localkeys', 'localnightmarekey', 'smallkeys'}:
-            if option.startswith("NIGHTMARE_KEY"):
-                return False
-        return True
-
-    @property
-    def location(self):
-        return self.target.location
-
-    def __repr__(self):
-        return "W%d:%s" % (self.world, repr(self.target))
-
-
-def addWorldIdToRequirements(req_done_set, world, req):
-    if req is None:
-        return None
-    if isinstance(req, str):
-        return "%s_W%d" % (req, world)
-    if req in req_done_set:
-        return req
-    return req.copyWithModifiedItemNames(lambda item: "%s_W%d" % (item, world))

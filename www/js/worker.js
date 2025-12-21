@@ -41,8 +41,6 @@ self.onmessage = async (event) => {
         }
         console.log(`Randomizer finished for seed: ${seed}`)
         var ext = ".gbc";
-        if (event.data.args.indexOf("--multiworld") > 0)
-            ext = ".zip";
         self.postMessage({type: "done", id: event.data.id, success: true, seed: seed, romFilename: "LADXR_" + seed + ext, rom: pyodide.FS.readFile("/output.gbc"), spoiler: pyodide.FS.readFile("/spoiler.txt", {"encoding": "utf8"})});
     } catch (error) {
         self.postMessage({type: "done", id: event.data.id, success: false, message: stdout + "\n" + error.message});

@@ -16,12 +16,11 @@ class DroppedKey(ItemInfo):
         TRADING_ITEM_FISHING_HOOK, TRADING_ITEM_NECKLACE, TRADING_ITEM_SCALE, TRADING_ITEM_MAGNIFYING_GLASS,
         TAIL_CAVE_OPENED, KEY_CAVERN_OPENED, ANGLER_TUNNEL_OPENED, FACE_SHRINE_OPENED, CASTLE_GATE_OPENED, EAGLE_TOWER_OPENED
     ]
-    MULTIWORLD = True
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         if option.startswith(MAP) or option.startswith(COMPASS) or option.startswith(STONE_BEAK) or option.startswith(NIGHTMARE_KEY) or option.startswith(KEY):
             if not option.endswith("OPENED"):
-                if self._location.dungeon == int(option[-1]) and multiworld is None and self.room not in {0x166, 0x223}:
+                if self._location.dungeon == int(option[-1]) and self.room not in {0x166, 0x223}:
                     option = option[:-1]
         item_id = CHEST_ITEMS[option]
         if option == GEL:
@@ -36,17 +35,6 @@ class DroppedKey(ItemInfo):
             rom.banks[0x3E][0x02E8 + 0x3800] = item_id
         elif self.room == 0x092:  # Marins song
             rom.banks[0x3E][0x00DC + 0x3800] = item_id
-
-        if multiworld is not None:
-            rom.banks[0x3E][0x3300 + self.room] = multiworld
-            if self.room == 0x169:  # Room in D4 where the key drops down the hole into the sidescroller
-                rom.banks[0x3E][0x3300 + 0x017C] = multiworld
-            elif self.room == 0x166:  # D4 boss, also place the item in out real boss room.
-                rom.banks[0x3E][0x3300 + 0x01ff] = multiworld
-            elif self.room == 0x223:  # D7 boss, also place the item in our real boss room.
-                rom.banks[0x3E][0x3300 + 0x02E8] = multiworld
-            elif self.room == 0x092:  # Marins song
-                rom.banks[0x3E][0x3300 + 0x00DC] = multiworld
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)

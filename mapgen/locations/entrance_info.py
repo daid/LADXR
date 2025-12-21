@@ -28,7 +28,7 @@ from logic.dungeonColor import DungeonColor
 
 def one_way(loc, req=None):
     res = Location()
-    loc.connect(res, req, one_way=True)
+    loc.connect(res, req, back=False)
     return res
 
 
@@ -54,27 +54,27 @@ INFO = {
         logic=lambda c, w, r: Dungeon2(c, w, r).entrance
     ),
     "d3": EntranceInfo(
-        items={None: 4, KEY3: 9, MAP3: 1, COMPASS3: 1, STONE_BEAK3: 1, NIGHTMARE_KEY3: 1, HEART_CONTAINER: 1, INSTRUMENT3: 1},
+        items={None: 4, KEY3: 9, MAP3: 1, COMPASS3: 1, STONE_BEAK3: 1, NIGHTMARE_KEY3: 1, HEART_CONTAINER: 1, INSTRUMENT3: 1, "D3_GEL_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_BOMBWALL": 1, "SWITCH3": 1},
         logic=lambda c, w, r: Dungeon3(c, w, r).entrance
     ),
     "d4": EntranceInfo(
-        items={None: 4, KEY4: 5, MAP4: 1, COMPASS4: 1, STONE_BEAK4: 1, NIGHTMARE_KEY4: 1, HEART_CONTAINER: 1, INSTRUMENT4: 1},
+        items={None: 4, KEY4: 5, MAP4: 1, COMPASS4: 1, STONE_BEAK4: 1, NIGHTMARE_KEY4: 1, HEART_CONTAINER: 1, INSTRUMENT4: 1, "D4_PITKEY": 1, "D4_BOSS_CLEAR": 1},
         logic=lambda c, w, r: Dungeon4(c, w, r).entrance
     ),
     "d5": EntranceInfo(
-        items={None: 5, KEY5: 3, MAP5: 1, COMPASS5: 1, STONE_BEAK5: 1, NIGHTMARE_KEY5: 1, HEART_CONTAINER: 1, INSTRUMENT5: 1},
+        items={None: 5, KEY5: 3, MAP5: 1, COMPASS5: 1, STONE_BEAK5: 1, NIGHTMARE_KEY5: 1, HEART_CONTAINER: 1, INSTRUMENT5: 1, "D5_ZOL_CLEAR": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1},
         logic=lambda c, w, r: Dungeon5(c, w, r).entrance
     ),
     "d6": EntranceInfo(
-        items={None: 6, KEY6: 3, MAP6: 1, COMPASS6: 1, STONE_BEAK6: 1, NIGHTMARE_KEY6: 1, HEART_CONTAINER: 1, INSTRUMENT6: 1},
+        items={None: 6, KEY6: 3, MAP6: 1, COMPASS6: 1, STONE_BEAK6: 1, NIGHTMARE_KEY6: 1, HEART_CONTAINER: 1, INSTRUMENT6: 1, "D6_THREE_WIZROBE_CLEAR": 1, "SWITCH6A": 1, "SWITCH6A_RANGE": 1, "SWITCH6B_MIDRANGE": 1, "SWITCH6B_RANGE": 1, "SWITCH6C": 1, "SWITCH6D": 1, "SWITCH6E": 1, "SWITCH6F": 1},
         logic=lambda c, w, r: Dungeon6(c, w, r, raft_game_chest=False).entrance
     ),
     "d7": EntranceInfo(
-        items={None: 4, KEY7: 3, MAP7: 1, COMPASS7: 1, STONE_BEAK7: 1, NIGHTMARE_KEY7: 1, HEART_CONTAINER: 1, INSTRUMENT7: 1},
+        items={None: 4, KEY7: 3, MAP7: 1, COMPASS7: 1, STONE_BEAK7: 1, NIGHTMARE_KEY7: 1, HEART_CONTAINER: 1, INSTRUMENT7: 1, "D7_BALL": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "D7_BOSS_CLEAR": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7C": 1, "SWITCH7C_RANGE": 1},
         logic=lambda c, w, r: Dungeon7(c, w, r).entrance
     ),
     "d8": EntranceInfo(
-        items={None: 6, KEY8: 7, MAP8: 1, COMPASS8: 1, STONE_BEAK8: 1, NIGHTMARE_KEY8: 1, HEART_CONTAINER: 1, INSTRUMENT8: 1},
+        items={None: 6, KEY8: 7, MAP8: 1, COMPASS8: 1, STONE_BEAK8: 1, NIGHTMARE_KEY8: 1, HEART_CONTAINER: 1, INSTRUMENT8: 1, "SWITCH8": 1},
         logic=lambda c, w, r: Dungeon8(c, w, r, back_entrance_heartpiece=None).entrance
     ),
 
@@ -214,7 +214,7 @@ INFO = {
     "toadstool_entrance": EntranceInfo(
         items={None: 2},
         logic=lambda c, w, r: Location().connect(Location().add(Chest(0x2BD)), SWORD).connect(  # chest in forest cave on route to mushroom
-            Location().add(HeartPiece(0x2AB), POWER_BRACELET)),  # piece of heart in the forest cave on route to the mushroom
+            Location().add(HeartPiece(0x2AB)), POWER_BRACELET),  # piece of heart in the forest cave on route to the mushroom
         exits=[("right_taltal_connector6", lambda loc: loc)],
     ),
     "toadstool_exit": EntranceInfo(),
@@ -316,6 +316,7 @@ INFO = {
         logic=lambda c, w, r: Location().connect(Location().add(KeyLocation("MEDICINE2")), FOUND("RUPEES", 50))
     ),
     "rooster_grave": EntranceInfo(
+        items={SONG3: 1},
         logic=lambda c, w, r: Location().connect(Location().add(DroppedKey(0x1E4)), AND(OCARINA, SONG3))
     ),
     "desert_cave": EntranceInfo(

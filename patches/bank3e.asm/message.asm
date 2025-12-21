@@ -96,18 +96,6 @@ MessagePad:
     jr   nz, .loop
     ret
 
-MessageAddTargetPlayer:
-    call MessagePad
-    ld   hl, M" for player X"
-    call MessageCopyString
-    ret
-
-MessageAddFromPlayer:
-    call MessagePad
-    ld   hl, M" from player X"
-    call MessageCopyString
-    ret
-
 MessageCopyString:
 .loop:
     ldi  a, [hl]
@@ -157,7 +145,7 @@ ItemNamePointers:
     dw M"Got 20 {RUPEES}"
     dw M"Got 100 {RUPEES}"
     dw M"Got 200 {RUPEES}"
-    dw M"Got 500 {RUPEES}"
+    dw M"Got 500 {RUPEES}!"
     dw M"Got a {SEASHELL}"
     dw M"Got ... nothing?"
     dw ItemNameZol
@@ -213,7 +201,7 @@ ItemNamePointers:
     dw ItemNameZol ; 0x54
     dw ItemNameZol ; 0x55
     dw ItemNameZol ; 0x56
-    dw M"Got a HAMMER!" ; 0x57
+    dw M"Got the {HAMMER}!" ; 0x57
     dw M"Tail Cave opened!" ; 0x58
     dw M"Key Cavern opened!" ; 0x59
     dw M"Angler Tunnel opened!" ; 0x5a
@@ -385,7 +373,7 @@ ShopItemNamePointers:
     dw ItemNameZol ; 0x54
     dw ItemNameZol ; 0x55
     dw ItemNameZol ; 0x56
-    dw M"HAMMER!" ; 0x57
+    dw M"{HAMMER}" ; 0x57
     dw M"Tail Cave opened!" ; 0x58
     dw M"Key Cavern opened!" ; 0x59
     dw M"Angler Tunnel opened!" ; 0x5a

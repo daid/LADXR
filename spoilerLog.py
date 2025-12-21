@@ -12,26 +12,15 @@ class RaceRomException(Exception):
 
 
 class SpoilerItemInfo:
-    def __init__(self, ii, rom, multiworld):
+    def __init__(self, ii, rom):
         self.id = ii.nameId
         self.area = ii.metadata.area
         self.locationName = ii.metadata.name
         self.sphere = ii.sphere if hasattr(ii, "sphere") else None
         self.itemName = str(ii.read(rom))
-        self.player = None
-        self.world = ii.world
-
-        if multiworld and ii.room is not None:
-            if ii.MULTIWORLD:
-                self.player = rom.banks[0x3E][0x3300 + ii.room] + 1
-            else:
-                self.player = rom.banks[0x00][0x0055] + 1
 
     def __repr__(self):
         itemName = self.itemName
-
-        if self.player:
-            itemName = "P%s's %s" % (self.player, itemName)
 
         result = "%25s at %s - %s" % (itemName, self.area, self.locationName)
 
@@ -42,12 +31,11 @@ class SpoilerItemInfo:
 
 
 class SpoilerLog:
-    def __init__(self, settings, args, roms):
-        for rom in roms:
-            if rom.banks[0][7] == 0x01:
-                raise RaceRomException()
+    def __init__(self, settings, args, rom):
+        if rom.banks[0][7] == 0x01:
+            raise RaceRomException()
 
-        self.seed = roms[0].readHexSeed()
+        self.seed = rom.readHexSeed()
         self.testOnly = args.test
         self.accessibleItems = []
         self.inaccessibleItems = None
@@ -66,35 +54,21 @@ class SpoilerLog:
             self.settings.heartcontainers = True
             self.settings.owlstatues = "both"
 
-            if len(roms) > 1:
-                #TODO: This broke with the settings change
-                self.settings.multiworld = len(roms)
-                if not hasattr(args, "multiworld_options"):
-                    self.settings.multiworld_options = [args] * args.multiworld
+        world_setup = worldSetup.WorldSetup()
+        world_setup.loadFromRom(rom)
 
-        world_setups = []
-        for rom in roms:
-            world_setup = worldSetup.WorldSetup()
-            world_setup.loadFromRom(rom)
-            world_setups.append(world_setup)
+        self.logic = logic.main.Logic(self.settings, world_setup=world_setup)
 
-        if len(world_setups) == 1:
-            self.logic = logic.main.Logic(self.settings, world_setup=world_setups[0])
-        else:
-            self.logic = logic.main.MultiworldLogic(self.settings, world_setups=world_setups)
+        self._loadItems(self.settings, rom)
 
-        self._loadItems(self.settings, roms)
-    
-    def _loadItems(self, settings, roms):
+    def _loadItems(self, settings, rom):
         remainingItems = set(self.logic.iteminfo_list)
 
         currentSphere = 0
         lastAccessibleLocations = set()
         itemContents = {}
         for ii in self.logic.iteminfo_list:
-            if not hasattr(ii, "world"):
-                ii.world = 0
-            itemContents[ii] = ii.read(roms[ii.world])
+            itemContents[ii] = ii.read(rom)
 
         # Feed the logic items one sphere at a time
         while remainingItems:
@@ -122,14 +96,14 @@ class SpoilerLog:
 
         for location in e.getAccessableLocations():
             for ii in location.items:
-                self.accessibleItems.append(SpoilerItemInfo(ii, roms[ii.world], settings.multiworld))
+                self.accessibleItems.append(SpoilerItemInfo(ii, rom))
 
         if len(e.getAccessableLocations()) != len(self.logic.location_list):
             self.inaccessibleItems = []
             for loc in self.logic.location_list:
                 if loc not in e.getAccessableLocations():
                     for ii in loc.items:
-                        self.inaccessibleItems.append(SpoilerItemInfo(ii, roms[ii.world], settings.multiworld))
+                        self.inaccessibleItems.append(SpoilerItemInfo(ii, rom))
 
     def output(self, filename=None, zipFile=None):
         if self.outputFormat == "text":
@@ -182,11 +156,6 @@ class SpoilerLog:
                 for entrance, target in sorted(self.logic.world_setup.entrance_mapping.items()):
                     if f"{entrance}:inside" != target and entrance != f"{target}:inside":
                         lines.append("Entrance: %s -> %s" % (entrance, target))
-            elif isinstance(self.logic, logic.main.MultiworldLogic):
-                for index, world in enumerate(self.logic.worlds):
-                    for entrance, target in sorted(world.world_setup.entrance_mapping.items()):
-                        if f"{entrance}:inside" != target and entrance != f"{target}:inside":
-                            lines.append("P%d Entrance: %s -> %s" % (index + 1, entrance, target))
             lines += [str(x) for x in sorted(self.accessibleItems, key=lambda x: (x.sphere if x.sphere is not None else sys.maxsize, x.area, x.locationName))]
 
         if self.inaccessibleItems:

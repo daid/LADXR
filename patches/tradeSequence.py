@@ -107,7 +107,7 @@ skip:   ld   c, $00 ; we need this as the code is bugged and does not properly p
         and  $20 ; Check for magnifier
         jr   z, $07
     """))
-    rom.patch(0x19, 0x2CE3, "9A159C15", "B41DB61D")  # Properly draw the dog food
+    rom.patch(0x19, 0x2CE3, "9A159C15", "A81DAA1D")  # Properly draw the dog food
 
 
 def patchKiki(rom):
@@ -118,7 +118,7 @@ def patchKiki(rom):
     """))
     rom.patch(0x07, 0x19AF, 0x19B4, "", fill_nop=True)  # Do not change trading item memory
     rom.patch(0x07, 0x19CC, 0x19D5, ASM("ld hl, wTradeSequenceItem\nres 3, [hl]"), fill_nop=True)  # Take the trade item
-    rom.patch(0x07, 0x194D, "9A179C17", "B81FBA1F")  # Properly draw the banana above kiki
+    rom.patch(0x07, 0x194D, "9A179C17", "AC1FAE1F")  # Properly draw the banana above kiki
 
 
 def patchTarin(rom):
@@ -235,7 +235,7 @@ def patchGrandmaUlrira(rom):
     rom.patch(0x18, 0x0DC4, 0x0DC7, "", fill_nop=True)
     rom.patch(0x18, 0x0DE2, 0x0DEB, ASM("ld hl, wTradeSequenceItem2\nres 1, [hl]"), fill_nop=True)  # Take the trade item
     rom.patch(0x18, 0x0E1D, 0x0E20, "", fill_nop=True)
-    rom.patch(0x18, 0x0D13, "9A149C14", "D01CD21C")
+    rom.patch(0x18, 0x0D13, "9A149C14", "C41CC61C")
 
 
 def patchFisherman(rom):

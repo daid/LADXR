@@ -31,8 +31,7 @@ class SeashellMansionBonus(ItemInfo):
         self.index = index
         super().__init__(0x2E9)
 
-    def patch(self, rom, option, *, multiworld=None):
-        assert multiworld is None
+    def patch(self, rom, option):
         rom.banks[0x3E][0x3E30 + self.index] = CHEST_ITEMS[option]
 
     def read(self, rom):

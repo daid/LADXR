@@ -26,7 +26,7 @@ class TradeSequenceItem(ItemInfo):
         if not options.tradequest:
             self.OPTIONS = [self.__default_item]
 
-    def patch(self, rom, option, *, multiworld=None):
+    def patch(self, rom, option):
         rom.banks[0x3E][self.room + 0x3B16] = CHEST_ITEMS[option]
 
         if option == self.__default_item:

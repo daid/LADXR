@@ -6,7 +6,6 @@ var options =
   "short_key": "<",
   "label": "Seed",
   "description": "For multiple people to generate the same randomization result, enter the generated seed number here.\nNote, not all strings are valid seeds.",
-  "multiworld": false,
   "aesthetic": false,
   "default": "",
   "placeholder": "Leave empty for random seed"
@@ -16,8 +15,7 @@ var options =
   "category": "Main",
   "short_key": "L",
   "label": "Logic",
-  "description": "Affects where items are allowed to be placed.\n[Casual] Same as normal, except that a few more complex options are removed, like removing bushes with powder and killing enemies with powder or bombs.\n[Normal] playable without using any tricks or glitches. Requires nothing to be done outside of normal item usage.\n[Hard] More advanced techniques may be required, but glitches are not. Examples include tricky jumps, killing enemies with only pots and skipping keys with smart routing.\n[Glitched] Advanced glitches and techniques may be required, but extremely difficult or tedious tricks are not required. Examples include Bomb Triggers, Super Jumps and Jesus Jumps.\n[Hell] Obscure and hard techniques may be required. Examples include featherless jumping with boots and/or hookshot, sequential pit buffers and unclipped superjumps. Things in here can be extremely hard to do or very time consuming. Only insane people go for this.",
-  "multiworld": true,
+  "description": "Affects where items are allowed to be placed.\n[Casual] Same as normal, except that a few more complex options are removed, like removing bushes with powder and killing enemies with powder or bombs.\n[Normal] playable without using any tricks or glitches. Requires nothing to be done outside of normal item usage.\n[Hard] More advanced techniques may be required, but glitches are not. Examples include tricky jumps, killing enemies with only pots and skipping keys with smart routing.\n[Glitched] Advanced glitches and techniques may be required, but extremely difficult or tedious tricks are not required. Examples include Bomb Triggers, Super Jumps and Jesus Jumps.\n[Hell] Obscure and hard techniques may be required. Examples include featherless jumping with Pegasus Boots and/or Hookshot, sequential pit buffers and unclipped superjumps. Things in here can be extremely hard to do or very time consuming. Only insane people go for this.",
   "aesthetic": false,
   "default": "",
   "options": [
@@ -54,7 +52,6 @@ var options =
   "short_key": "F",
   "label": "Forward Factor",
   "description": "Forward item weight adjustment factor, lower values generate more rear heavy seeds while higher values generate front heavy seeds. Default is 0.5.",
-  "multiworld": true,
   "aesthetic": false,
   "default": 0.0
  },
@@ -63,8 +60,7 @@ var options =
   "category": "Main",
   "short_key": "A",
   "label": "Accessibility",
-  "description": "\n[100% Locations] guaranteed that every single item can be reached and gained.\n[Beatable] only guarantees that the game is beatable. Certain items/chests might never be reachable.",
-  "multiworld": true,
+  "description": "\n[100% Locations] Guaranteed that every single item can be reached and gained.\n[Beatable] Only guarantees that the game is beatable. Certain items/chests might never be reachable.",
   "aesthetic": false,
   "default": "all",
   "options": [
@@ -86,7 +82,6 @@ var options =
   "short_key": "V",
   "label": "Race mode",
   "description": "\nSpoiler logs can not be generated for ROMs generated with race mode enabled, and seed generation is slightly different.",
-  "multiworld": false,
   "aesthetic": false,
   "default": false
  },
@@ -96,7 +91,6 @@ var options =
   "short_key": "h",
   "label": "Randomize heart pieces",
   "description": "Includes heart pieces in the item pool",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -105,8 +99,7 @@ var options =
   "category": "Items",
   "short_key": "s",
   "label": "Randomize hidden seashells",
-  "description": "Randomizes the secret sea shells hiding in the ground/trees/mansion. (chests are always randomized)",
-  "multiworld": true,
+  "description": "Randomizes the secret sea shells hiding in the ground/trees/mansion. (Chests are always randomized.)",
   "aesthetic": false,
   "default": true
  },
@@ -116,7 +109,6 @@ var options =
   "short_key": "H",
   "label": "Randomize heart containers",
   "description": "Includes boss heart container drops in the item pool",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -126,7 +118,6 @@ var options =
   "short_key": "I",
   "label": "Randomize instruments",
   "description": "Instruments are placed on random locations, dungeon goal will just contain a random item.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -135,8 +126,7 @@ var options =
   "category": "Items",
   "short_key": "T",
   "label": "Randomize trade quest",
-  "description": "Trade quest items are randomized, each NPC takes its normal trade quest item, but gives a random item",
-  "multiworld": true,
+  "description": "Trade quest items are randomized, each NPC takes its normal trade quest item, but gives a random item.",
   "aesthetic": false,
   "default": true
  },
@@ -145,8 +135,7 @@ var options =
   "category": "Items",
   "short_key": "W",
   "label": "Randomize item given by the witch",
-  "description": "Adds both the toadstool and the reward for giving the toadstool to the witch to the item pool",
-  "multiworld": true,
+  "description": "Adds both the Toadstool and the reward for giving the Toadstool to the witch to the item pool.",
   "aesthetic": false,
   "default": true
  },
@@ -156,7 +145,6 @@ var options =
   "short_key": "R",
   "label": "Add the rooster",
   "description": "Adds the rooster to the item pool. Without this option, the rooster spot is still a check giving an item. But you will never find the rooster. In that case, any rooster spot is accessible without rooster by other means.",
-  "multiworld": true,
   "aesthetic": false,
   "default": true
  },
@@ -165,8 +153,7 @@ var options =
   "category": "Items",
   "short_key": "Z",
   "label": "Boomerang trade",
-  "description": "\n[Normal], requires magnifier to get the boomerang.\n[Trade], allows to trade an inventory item for a random other inventory item boomerang is shuffled.\n[Gift], You get a random gift of any item, and the boomerang is shuffled.",
-  "multiworld": true,
+  "description": "\n[Normal] Requires Magnifying Lens to get the Boomerang.\n[Trade] Allows to trade an inventory item for a random other inventory item. The Boomerang is shuffled.\n[Gift] You get a random gift of any item, and the Boomerang is shuffled.",
   "aesthetic": false,
   "default": "gift",
   "options": [
@@ -188,12 +175,11 @@ var options =
   ]
  },
  {
-  "key": "dungeon_items",
-  "category": "Gameplay",
-  "short_key": "D",
-  "label": "Dungeon items",
-  "description": "Sets if dungeon items can only be in their respective dungeon, or everywhere.\n[Standard] dungeon items are only in their dungeon.\n[Maps/.../..] specified items can be anywhere\n[Keysanity] all dungeon items can be anywhere.\n[Keysy] no keys, key doors are already open.",
-  "multiworld": true,
+  "key": "dungeon_keys",
+  "category": "Dungeon Items",
+  "short_key": "k",
+  "label": "Dungeon keys",
+  "description": "Sets if dungeon keys can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon keys are only in their dungeon.\n[Keysanity] Dungeon keys can be anywhere.\n[Removed] No keys, key doors are already open. (also known as Keysy)",
   "aesthetic": false,
   "default": "",
   "options": [
@@ -203,34 +189,92 @@ var options =
     "label": "Standard"
    },
    {
-    "key": "smallkeys",
-    "short": "s",
-    "label": "Small keys"
-   },
-   {
-    "key": "nightmarekeys",
-    "short": "n",
-    "label": "Nightmare keys"
-   },
-   {
-    "key": "localkeys",
-    "short": "L",
-    "label": "Map/Compass/Beaks"
-   },
-   {
-    "key": "localnightmarekey",
-    "short": "N",
-    "label": "MCB + SmallKeys"
-   },
-   {
     "key": "keysanity",
-    "short": "K",
+    "short": "k",
     "label": "Keysanity"
    },
    {
-    "key": "keysy",
+    "key": "removed",
+    "short": "r",
+    "label": "Removed"
+   }
+  ]
+ },
+ {
+  "key": "nightmare_keys",
+  "category": "Dungeon Items",
+  "short_key": "n",
+  "label": "Nightmare keys",
+  "description": "Sets if dungeon keys can only be in their respective dungeon, or everywhere.\n[Standard] Nightmare keys are only in their dungeon.\n[Keysanity] Nightmare keys can be anywhere.\n[Removed] No nightmare keys, nightmare doors are already open. (also known as Keysy)",
+  "aesthetic": false,
+  "default": "",
+  "options": [
+   {
+    "key": "",
+    "short": "",
+    "label": "Standard"
+   },
+   {
+    "key": "keysanity",
     "short": "k",
-    "label": "Keysy"
+    "label": "Keysanity"
+   },
+   {
+    "key": "removed",
+    "short": "r",
+    "label": "Removed"
+   }
+  ]
+ },
+ {
+  "key": "dungeon_beaks",
+  "category": "Dungeon Items",
+  "short_key": "Y",
+  "label": "Dungeon beaks",
+  "description": "Sets if dungeon beaks can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon beaks are only in their dungeon.\n[Keysanity] Dungeon beaks can be anywhere.\n[Removed] No beaks.",
+  "aesthetic": false,
+  "default": "",
+  "options": [
+   {
+    "key": "",
+    "short": "",
+    "label": "Standard"
+   },
+   {
+    "key": "keysanity",
+    "short": "k",
+    "label": "Keysanity"
+   },
+   {
+    "key": "removed",
+    "short": "r",
+    "label": "Removed"
+   }
+  ]
+ },
+ {
+  "key": "dungeon_maps",
+  "category": "Dungeon Items",
+  "short_key": "D",
+  "label": "Dungeon map/compass",
+  "description": "Sets if dungeon maps/compasses can only be in their respective dungeon, or everywhere.\n[Standard] Dungeon maps/compasses are only in their dungeon.\n[Keysanity] Dungeon maps/compasses can be anywhere.\n[Removed] No maps/compasses.",
+  "aesthetic": false,
+  "default": "",
+  "options": [
+   {
+    "key": "",
+    "short": "",
+    "label": "Standard"
+   },
+   {
+    "key": "keysanity",
+    "short": "k",
+    "label": "Keysanity"
+   },
+   {
+    "key": "removed",
+    "short": "r",
+    "label": "Removed"
    }
   ]
  },
@@ -240,7 +284,6 @@ var options =
   "short_key": "r",
   "label": "Random start location",
   "description": "Randomize where your starting house is located",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -250,7 +293,6 @@ var options =
   "short_key": "u",
   "label": "Dungeon shuffle",
   "description": "Randomizes the dungeon that each dungeon entrance leads to",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -259,8 +301,7 @@ var options =
   "category": "Entrances",
   "short_key": "E",
   "label": "Entrance randomizer",
-  "description": "Randomizes where overworld entrances lead to.\n[Simple] single entrance caves that contain items are randomized\n[Split] Connector caves are also randomized, in a separate pool from single entrance caves\n[Mixed] Connector caves are also randomized, in the same pool as single entrance caves\n[Wild] Connections can go from overworld to overworld, or inside to inside\n[Chaos] Entrance and exits are decoupled.\n[Insane] Combines chaos and wild, anything goes anywhere, there is no god.\n[Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.",
-  "multiworld": true,
+  "description": "Randomizes where overworld entrances lead to.\n[Simple] Single entrance caves that contain items are randomized.\n[Split] Connector caves are also randomized, in a separate pool from single entrance caves.\n[Mixed] Connector caves are also randomized, in the same pool as single entrance caves.\n[Wild] Connections can go from overworld to overworld, or inside to inside.\n[Chaos] Entrance and exits are decoupled.\n[Insane] Combines chaos and wild, anything goes anywhere, there is no God.\n[Madness] Even worse then insane, it makes it so multiple entrances can lead to the same location.\nIf random start location and/or dungeon shuffle is enabled, then these will be shuffled with all the entrances.",
   "aesthetic": false,
   "default": "none",
   "options": [
@@ -311,8 +352,7 @@ var options =
   "category": "Entrances",
   "short_key": "j",
   "label": "Shuffle itemless entrances",
-  "description": "Caves/houses without items are also randomized when entranceshuffle is set",
-  "multiworld": true,
+  "description": "Caves/houses without items are also randomized when entrance shuffle is set.",
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -331,8 +371,7 @@ var options =
   "category": "Entrances",
   "short_key": "a",
   "label": "Shuffle annoying entrances",
-  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized when entranceshuffle is set",
-  "multiworld": true,
+  "description": "A few very annoying entrances (Mamu and the Raft House) will also be randomized when entrance shuffle is set.",
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -351,8 +390,7 @@ var options =
   "category": "Entrances",
   "short_key": "w",
   "label": "Shuffle water entrances",
-  "description": "Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entranceshuffle is set. Use the warp-to-home from the save&quit menu if you get stuck (hold A+B+Start+Select until it works).",
-  "multiworld": true,
+  "description": "Entrances that lead to water (Manbo and Damp Cave) will also be randomized when entrance shuffle is set. Use the warp-to-home from the Save & Quit menu if you get stuck (hold A+B+Start+Select until it works).",
   "aesthetic": false,
   "default": false,
   "visible_if": [
@@ -371,8 +409,7 @@ var options =
   "category": "Gameplay",
   "short_key": "B",
   "label": "Boss shuffle",
-  "description": "Randomizes the dungeon bosses that each dungeon has",
-  "multiworld": true,
+  "description": "Randomizes the dungeon bosses that each dungeon has.",
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -398,8 +435,7 @@ var options =
   "category": "Gameplay",
   "short_key": "b",
   "label": "Miniboss shuffle",
-  "description": "Randomizes the dungeon minibosses that each dungeon has",
-  "multiworld": true,
+  "description": "Randomizes the dungeon minibosses that each dungeon has.",
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -425,8 +461,7 @@ var options =
   "category": "Gameplay",
   "short_key": "e",
   "label": "Enemizer",
-  "description": "Randomizes which enemies are placed",
-  "multiworld": true,
+  "description": "Randomizes which enemies are placed.",
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -447,8 +482,7 @@ var options =
   "category": "Gameplay",
   "short_key": "G",
   "label": "Goal",
-  "description": "Changes the goal of the game.\n[Vanilla], 8 instruments required to open the egg.\n[X instruments], a number of instruments required to open the egg.\n[Egg already open] the egg is already open, just head for it once you have the items needed to defeat the boss.\n[Randomized instrument count] random number of instruments required to open the egg, between 0 and 8.\n[Random short/long game] random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.\n[Seashell hunt] egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.\n[Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!\n[Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!\n[Bingo-25] Bingo, but need to fill the whole bingo card to win!\n[Sign Maze] Go on a long trip on the overworld sign maze to open the egg.",
-  "multiworld": true,
+  "description": "Changes the goal of the game.\n[Vanilla] 8 instruments required to open the egg.\n[X instruments] A number of instruments required to open the egg.\n[X specific instruments] A number of specific instruments required to open the egg. The sign at Mt. Tamaranch will tell you what they are.\n[Egg already open] The egg is already open, just head for it once you have the items needed to defeat the boss.\n[Randomized instrument count] A random number of instruments required to open the egg, between 0 and 8.\n[Random short/long game] A random number of instruments required to open the egg, chosen between 0-4 and 5-8 respectively.\n[Seashell hunt] The egg will open once you collected 20 seashells. Instruments are replaced by seashells and shuffled.\n[Bingo] Generate a 5x5 bingo board with various goals. Complete one row/column or diagonal to win!\n[Double/Triple Bingo] Bingo, but need to complete multiple rows/columns/diagonals to win!\n[Bingo-25] Bingo, but need to fill the whole bingo card to win!\n[Sign Maze] Go on a long trip on the overworld sign maze to open the egg.",
   "aesthetic": false,
   "default": "vanilla",
   "options": [
@@ -461,6 +495,11 @@ var options =
     "key": "instruments",
     "short": "i",
     "label": "X instruments"
+   },
+   {
+    "key": "specific",
+    "short": "s",
+    "label": "X specific instruments"
    },
    {
     "key": "open",
@@ -506,11 +545,6 @@ var options =
     "key": "maze",
     "short": "m",
     "label": "Sign Maze"
-   },
-   {
-    "key": "specific",
-    "short": "s",
-    "label": "4 specific instruments"
    }
   ]
  },
@@ -520,7 +554,6 @@ var options =
   "short_key": "i",
   "label": "Goal count",
   "description": "Amount of instruments to find for the instruments goal.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "4",
   "options": [
@@ -572,7 +605,8 @@ var options =
   ],
   "visible_if": [
    "goal",
-   "instruments"
+   "instruments",
+   "specific"
   ]
  },
  {
@@ -580,8 +614,7 @@ var options =
   "category": "Gameplay",
   "short_key": "P",
   "label": "Item pool",
-  "description": "Effects which items are shuffled.\n[Casual] places more inventory and key items so the seed is easier.\n[More keys] adds more small keys and extra nightmare keys so dungeons are easier.\n[Path of pain]... just find out yourself.",
-  "multiworld": true,
+  "description": "Effects which items are shuffled.\n[Casual] Places more inventory and key items so the seed is easier.\n[More keys] Adds more small keys and extra nightmare keys so dungeons are easier.\n[Path of pain] ...just find out yourself.",
   "aesthetic": false,
   "default": "",
   "options": [
@@ -612,8 +645,7 @@ var options =
   "category": "Gameplay",
   "short_key": "m",
   "label": "Health mode",
-  "description": "\n[Normal} health works as you would expect.\n[Inverted] you start with 9 heart containers, but killing a boss will take a heartcontainer instead of giving one.\n[Start with 1] normal game, you just start with 1 heart instead of 3.\n[Low max] replace heart containers with heart pieces.\n[5 Hit Challenge] you can take 5 hits before you die, no healing, no saving.",
-  "multiworld": true,
+  "description": "\n[Normal] Health works as you would expect.\n[Inverted] You start with 9 heart containers, but killing a boss will take a heart container instead of giving one.\n[Start with 1] Normal game, you just start with 1 heart instead of 3.\n[Low max] Replace heart containers with heart pieces.\n[5 Hit Challenge] You can take 5 hits before you die, no healing, no saving.",
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -649,8 +681,7 @@ var options =
   "category": "Gameplay",
   "short_key": "X",
   "label": "Hard mode",
-  "description": "\n[Oracle] Less iframes and heath from drops. Bombs damage yourself. Water damages you without flippers. No piece of power or acorn.\n[Hero] Switch version hero mode, double damage, no heart/fairy drops.\n[One hit KO] You die on a single hit, always.",
-  "multiworld": true,
+  "description": "\n[Oracle] Less iframes and heath from drops. Bombs damage yourself. Water damages you without flippers. No Piece of Power or Guardian Acorn drops.\n[Hero] Switch version hero mode, double damage, no heart/fairy drops.\n[One hit KO] You die on a single hit, always.",
   "aesthetic": false,
   "default": "none",
   "options": [
@@ -681,8 +712,7 @@ var options =
   "category": "Gameplay",
   "short_key": "t",
   "label": "Stealing from the shop",
-  "description": "Effects when you can steal from the shop. Stealing is bad and never in logic.\n[Normal] requires the sword before you can steal.\n[Always] you can always steal from the shop.\n[Never] you can never steal from the shop.\n[GGS] Glitches get stitches, do not try to rob the shopkeeper by S&Q...",
-  "multiworld": true,
+  "description": "Effects when you can steal from the shop. Stealing is bad and never in logic.\n[Normal] Requires the sword before you can steal.\n[Always] You can always steal from the shop.\n[Never] You can never steal from the shop.\n[GGS] Glitches get stitches, do not try to rob the shopkeeper by S&Q...",
   "aesthetic": false,
   "default": "default",
   "options": [
@@ -714,7 +744,6 @@ var options =
   "short_key": "v",
   "label": "Evil shop",
   "description": "Replaces the grandpa house with an evil shop, where you can sell heart pieces.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "",
   "options": [
@@ -735,8 +764,7 @@ var options =
   "category": "Special",
   "short_key": "g",
   "label": "Good boy mode",
-  "description": "Allows BowWow to be taken into any area, damage bosses and more enemies. If enabled you always start with bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just bowwow.",
-  "multiworld": true,
+  "description": "Allows Bowwow to be taken into any area, damage bosses and more enemies. If enabled you always start with Bowwow. Swordless option removes the swords from the game and requires you to beat the game without a sword and just Bowwow.",
   "aesthetic": false,
   "default": "normal",
   "options": [
@@ -762,8 +790,7 @@ var options =
   "category": "Special",
   "short_key": "O",
   "label": "Overworld",
-  "description": "\n[Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.\n[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.\n[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.\n[Random] Creates a randomized overworld WARNING: This will error out often during generation, work in progress.",
-  "multiworld": true,
+  "description": "\n[Dungeon Dive] Create a different overworld where all the dungeons are directly accessible and almost no chests are located in the overworld.\n[No dungeons] All dungeons only consist of a boss fight and a instrument reward. Rest of the dungeon is removed.\n[Dungeon Chain] Overworld is fully removed and all dungeons are chained together.\n[Random] Creates a randomized overworld. WARNING: This will error out often during generation, work in progress.\n[ALttP] Overworld is replaced with one based on A Link to the Past. Also adds the Hammer to the item pool, along with stakes that require the Hammer to remove. WARNING: Work in progress, please report any bugs!",
   "aesthetic": false,
   "default": "normal",
   "options": [
@@ -805,7 +832,6 @@ var options =
   "short_key": "d",
   "label": "Chain length",
   "description": "Amount of dungeons in the dungeon chain.",
-  "multiworld": true,
   "aesthetic": false,
   "default": "5",
   "options": [
@@ -850,8 +876,7 @@ var options =
   "category": "Special",
   "short_key": "o",
   "label": "Owl statues",
-  "description": "Replaces the hints from owl statues with additional randomized items",
-  "multiworld": true,
+  "description": "Replaces the hints from owl statues with additional randomized items.",
   "aesthetic": false,
   "default": "",
   "options": [
@@ -882,8 +907,7 @@ var options =
   "category": "Special",
   "short_key": "K",
   "label": "Keyhole sanity",
-  "description": "Makes the overworld keyholes give rewards and turns opening dungeons into findable items",
-  "multiworld": true,
+  "description": "Makes the overworld keyholes give rewards and turns opening dungeons into findable items.",
   "aesthetic": false,
   "default": false
  },
@@ -892,8 +916,7 @@ var options =
   "category": "Special",
   "short_key": "N",
   "label": "Shopsanity",
-  "description": "\nTurns all the phone booths into extra shops, and lowers the prices, and allows buying the two shop items independent of each other.\n[Basic] Just extra shops\n[Important] Shops are guaranteed to have important items\n                ",
-  "multiworld": true,
+  "description": "\nTurns all the phone booths into extra shops, and lowers the prices, and allows buying the two shop items independent of each other.\n[Basic] Just extra shops.\n[Important] Shops are guaranteed to have important items.\n                ",
   "aesthetic": false,
   "default": "",
   "options": [
@@ -920,7 +943,6 @@ var options =
   "short_key": "q",
   "label": "Enable super weapons",
   "description": "All items will be more powerful, faster, harder, bigger stronger. You name it.",
-  "multiworld": true,
   "aesthetic": false,
   "default": false
  },
@@ -930,7 +952,6 @@ var options =
   "short_key": "Q",
   "label": "Quickswap",
   "description": "Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "none",
   "options": [
@@ -956,8 +977,7 @@ var options =
   "category": "User options",
   "short_key": "f",
   "label": "Text mode",
-  "description": "[Fast] makes text appear twice as fast.\n[No-Text] removes all text from the game",
-  "multiworld": true,
+  "description": "[Fast] Makes text appear twice as fast.\n[No-Text] Removes all text from the game",
   "aesthetic": true,
   "default": "fast",
   "options": [
@@ -984,7 +1004,6 @@ var options =
   "short_key": "p",
   "label": "Low HP beeps",
   "description": "Slows or disables the low health beeping sound",
-  "multiworld": true,
   "aesthetic": true,
   "default": "slow",
   "options": [
@@ -1011,7 +1030,6 @@ var options =
   "short_key": "l",
   "label": "Remove flashing lights",
   "description": "Remove the flashing light effects from Mamu, shopkeeper and MadBatter. Useful for capture cards and people that are sensitive for these things.",
-  "multiworld": true,
   "aesthetic": true,
   "default": true
  },
@@ -1020,8 +1038,7 @@ var options =
   "category": "User options",
   "short_key": "S",
   "label": "Show nag messages",
-  "description": "Enables the nag messages normally shown when touching stones and crystals",
-  "multiworld": true,
+  "description": "Enables the nag messages normally shown when touching stones and crystals.",
   "aesthetic": true,
   "default": false
  },
@@ -1030,8 +1047,7 @@ var options =
   "category": "User options",
   "short_key": "c",
   "label": "Graphics",
-  "description": "Generally affects at least Link's sprite, but can alter any graphics in the game",
-  "multiworld": true,
+  "description": "Generally affects at least Link's sprite, but can alter any graphics in the game.",
   "aesthetic": true,
   "default": "",
   "options": [
@@ -1044,6 +1060,11 @@ var options =
     "key": "AgesGirl.bin",
     "short": "AgesGirl.bin>",
     "label": "AgesGirl"
+   },
+   {
+    "key": "BasicNew.png",
+    "short": "BasicNew.png>",
+    "label": "BasicNew"
    },
    {
     "key": "Bowwow.bin",
@@ -1066,9 +1087,24 @@ var options =
     "label": "Kirby"
    },
    {
+    "key": "LuckwurstJoe.png",
+    "short": "LuckwurstJoe.png>",
+    "label": "LuckwurstJoe"
+   },
+   {
+    "key": "LuckwurstJoe2.png",
+    "short": "LuckwurstJoe2.png>",
+    "label": "LuckwurstJoe2"
+   },
+   {
     "key": "Luigi.bin",
     "short": "Luigi.bin>",
     "label": "Luigi"
+   },
+   {
+    "key": "MMLink.bin",
+    "short": "MMLink.bin>",
+    "label": "MMLink"
    },
    {
     "key": "Marin.bin",
@@ -1094,11 +1130,6 @@ var options =
     "key": "Matty.bin",
     "short": "Matty.bin>",
     "label": "Matty"
-   },
-   {
-    "key": "Matty_LA.png",
-    "short": "Matty_LA.png>",
-    "label": "Matty_LA"
    },
    {
     "key": "Meme.bin",
@@ -1136,6 +1167,16 @@ var options =
     "label": "Rosa"
    },
    {
+    "key": "Saria.bin",
+    "short": "Saria.bin>",
+    "label": "Saria"
+   },
+   {
+    "key": "Sig.bin",
+    "short": "Sig.bin>",
+    "label": "Sig"
+   },
+   {
     "key": "Subrosian.bin",
     "short": "Subrosian.bin>",
     "label": "Subrosian"
@@ -1146,49 +1187,9 @@ var options =
     "label": "Tarin"
    },
    {
-    "key": "TealMelancholy.png",
-    "short": "TealMelancholy.png>",
-    "label": "TealMelancholy"
-   },
-   {
-    "key": "Totally_Normal_LADX1.png",
-    "short": "Totally_Normal_LADX1.png>",
-    "label": "Totally_Normal_LADX1"
-   },
-   {
-    "key": "Totally_Normal_LADX2.png",
-    "short": "Totally_Normal_LADX2.png>",
-    "label": "Totally_Normal_LADX2"
-   },
-   {
     "key": "X.bin",
     "short": "X.bin>",
     "label": "X"
-   },
-   {
-    "key": "X.png",
-    "short": "X.png>",
-    "label": "X"
-   },
-   {
-    "key": "ladx_graphics.png",
-    "short": "ladx_graphics.png>",
-    "label": "ladx_graphics"
-   },
-   {
-    "key": "navi.png",
-    "short": "navi.png>",
-    "label": "navi"
-   },
-   {
-    "key": "new_link_test.png",
-    "short": "new_link_test.png>",
-    "label": "new_link_test"
-   },
-   {
-    "key": "ninja.png",
-    "short": "ninja.png>",
-    "label": "ninja"
    }
   ]
  },
@@ -1198,7 +1199,6 @@ var options =
   "short_key": "x",
   "label": "Follower",
   "description": "Gives you a pet follower in the game.",
-  "multiworld": true,
   "aesthetic": true,
   "default": "",
   "options": [
@@ -1234,8 +1234,7 @@ var options =
   "category": "User options",
   "short_key": "C",
   "label": "Link's color",
-  "description": "Allows you to force a certain color on link.\n[Normal] color of link depends on the tunic.\n[Green/Yellow/Red/Blue] forces link into one of these colors.\n[?? C/D] colors of link are usually inverted and color depends on the area you are in.",
-  "multiworld": true,
+  "description": "Allows you to force a certain color on Link.\n[Normal] Color of Link depends on the tunic.\n[Green/Yellow/Red/Blue] Forces Link into one of these colors.\n[?? C/D] Colors of Link are usually inverted and color depends on the area you are in.",
   "aesthetic": true,
   "default": "-1",
   "options": [
@@ -1291,8 +1290,7 @@ var options =
   "category": "User options",
   "short_key": "M",
   "label": "Music",
-  "description": "\n[Random] Randomizes overworld and dungeon music'\n[Disable] no music in the whole game\n[Tone shifted] Tone shifts the musics, making it sound different",
-  "multiworld": true,
+  "description": "\n[Random] Randomizes overworld and dungeon music.\n[Disable] No music in the whole game.\n[Tone shifted] Tone shifts the musics, making it sound different",
   "aesthetic": true,
   "default": "",
   "options": [

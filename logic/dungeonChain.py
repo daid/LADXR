@@ -1,3 +1,4 @@
+import dungeongen.dungeongen
 from . import dungeon1
 from . import dungeon2
 from . import dungeon3
@@ -17,11 +18,11 @@ def construct(configuration_options, *, world_setup, world, requirements_setting
     dungeon_constructors.update({
         "shop": Shop, "mamu": Mamu, "trendy": Trendy, "dream": DreamShrine, "chestcave": ChestCave,
     })
-    for index in world_setup.dungeon_chain:
-        if index == "cavegen":
-            world.chain(CaveGen(configuration_options, world_setup, requirements_settings))
+    for dungeon in world_setup.dungeon_chain:
+        if isinstance(dungeon, dungeongen.dungeongen.Generator):
+            world.chain(GeneratedDungeonLogic(dungeon, configuration_options, world_setup, requirements_settings))
         else:
-            world.chain(dungeon_constructors[index](configuration_options, world_setup, requirements_settings))
+            world.chain(dungeon_constructors[dungeon](configuration_options, world_setup, requirements_settings))
 
 
 class Shop:
@@ -68,21 +69,33 @@ class ChestCave:
         self.entrance.add(Chest(0x2CD))
 
 
-class CaveGen:
-    def __init__(self, configuration_options, world_setup, requirements_settings):
+class GeneratedDungeonLogic:
+    def __init__(self, generator, configuration_options, world_setup, requirements_settings):
+        self.generator = generator
+        self.dungeon = self.generator.map_id if self.generator.map_id < 8 else None
         self.requirements_settings = requirements_settings
         self.entrance = Location()
-        self._add_room(self.entrance, world_setup.cavegen.start)
+        self.total_keys = 0
+        self._add_room(self.entrance, generator.start)
+        assert generator.map_id < 8 or self.total_keys == 0
 
     def _add_room(self, location, room):
+        if room.template.logic:
+            location = Location(dungeon=self.dungeon).connect(location, room.template.logic)
         if room.type == "end":
             self.final_room = location
-        elif room.type == "chest":
-            location.add(Chest(room.room_id))
-        elif room.type == "miniboss":
-            location = Location().connect(location, self.requirements_settings.miniboss_requirements[room.hazard])
+        elif room.type == "reward":
+            if room.template.type == "chest":
+                location.add(Chest(room.room_id))
+            elif room.template.type == "item":
+                location.add(DroppedKey(room.room_id))
+            else:
+                raise RuntimeError(f"Reward room with no suitable template type? {room.template.type}")
         for c in room.connections:
             next_location = location
             if c.type == "bomb":
-                next_location = Location().connect(location, BOMB)
+                next_location = Location(dungeon=self.dungeon).connect(location, BOMB)
+            if c.type == "key":
+                self.total_keys += 1
+                next_location = Location(dungeon=self.dungeon).connect(location, AND(f"KEY{self.dungeon}", FOUND(F"KEY{self.dungeon}", self.total_keys)))
             self._add_room(next_location, c.target)

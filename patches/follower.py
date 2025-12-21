@@ -215,7 +215,7 @@ spawnFollowerEntity: ; param: c = entity ID
 
 def patchFoxFollower(rom):
     # Sprite variants
-    rom.patch(0x19, 0x1DF8, 0x1E10, ("E609E809" + "E609EA09" + "E829E629" + "EA29E629" + "00000000" + "00000000"))
+    rom.patch(0x19, 0x1DF8, 0x1E10, ("E809EA09" + "E809EC09" + "EA29E829" + "EC29E829" + "00000000" + "00000000"))
     # Main entity code
     rom.patch(0x19, 0x1E18, 0x20B3, ASM("""
     DogEntityHandler:
@@ -536,7 +536,7 @@ def patchFoxFollower(rom):
     rom.patch(0x03, 0x03C5, "00", "02")  # ignore in dungeons for kill-all triggers
     rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
     # Graphics in high VRAM bank
-    rom.banks[0x3F][0x3660:0x36C0] = rom.banks[0x32][0x2580:0x25E0]
+    rom.banks[0x3F][0x2800+0xE80:0x2800+0xE80+0x60] = rom.banks[0x32][0x2580:0x25E0]
 
 
 def patchNaviFollower(rom):
@@ -623,7 +623,7 @@ GhostEntity:
     # Load followers in dungeons, caves, etc
     rom.patch(0x03, 0x03C5, "00", "03")  # ignore in dungeons for kill-all triggers
 
-    rom.banks[0x3F][0x3680:0x36C0] = createTileData("""........
+    rom.banks[0x3F][0x2800+0xE80:0x2800+0xE80+0x40] = createTileData("""........
 ........
 ..11....
 ..121...
@@ -659,7 +659,7 @@ GhostEntity:
 
 def patchGhostFollower(rom):
     # Sprite variants
-    rom.patch(0x19, 0x1DF8, 0x1E10, ("E60BE80B" + "EA0BEC0B" + "E82BE62B" + "EC2BEA2B" + "00000000" + "00000000"))
+    rom.patch(0x19, 0x1DF8, 0x1E10, ("E80BEA0B" + "EC0BEE0B" + "EA2BE82B" + "EE2BEC2B" + "00000000" + "00000000"))
     # Main entity code
     rom.patch(0x19, 0x1E18, 0x20B3, ASM("""
     GhostEntityHandler:
@@ -737,12 +737,12 @@ def patchGhostFollower(rom):
     rom.patch(0x03, 0x03C5, "00", "02")  # ignore in dungeons for kill-all triggers
     rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
     # Graphics in high VRAM bank
-    rom.banks[0x3F][0x3660:0x36E0] = rom.banks[0x32][0x1800:0x1880]
+    rom.banks[0x3F][0x2800+0xE80:0x2800+0xE80+0x80] = rom.banks[0x32][0x1800:0x1880]
 
 
 def patchYipYipFollower(rom):
     # Sprite variants
-    rom.patch(0x19, 0x1DF8, 0x1E10, ("E60AE80A" + "EA0AEC0A" + "E82AE62A" + "EC2AEA2A" + "00000000" + "00000000"))
+    rom.patch(0x19, 0x1DF8, 0x1E10, ("E80AEA0A" + "EC0AEE0A" + "EA2AE82A" + "EE2AEC2A" + "00000000" + "00000000"))
     # Main entity code
     rom.patch(0x19, 0x1E18, 0x20B3, ASM("""
     YipYipEntityHandler:
@@ -884,4 +884,4 @@ def patchYipYipFollower(rom):
     rom.patch(0x03, 0x00D4, "d2", "92")  # physics flag
     rom.patch(0x03, 0x00FB + 0x00D4, "00", "80")  # hitbox flags
     # Graphics in high VRAM bank
-    rom.banks[0x3F][0x3660:0x36E0] = rom.banks[0x32][0x2100:0x2180]
+    rom.banks[0x3F][0x2800+0xE80:0x2800+0xE80+0x80] = rom.banks[0x32][0x2100:0x2180]

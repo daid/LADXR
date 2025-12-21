@@ -12,6 +12,12 @@ function getShareLink(data) {
     if(!seedProvided)
         ID("seed").value = data.seed;
     var hash = '#' + generateSettingsString(function(s) { return !s.aesthetic; });
+    for(var s of options) {
+        if (!s.aesthetic) continue;
+        if (typeof(s.default) != 'boolean') continue;
+        if (!s.default) continue;
+        hash += s.short_key;
+    }
     if(!seedProvided)
         ID("seed").value = "";
     var l = document.location;

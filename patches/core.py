@@ -46,7 +46,7 @@ up:
     """), fill_nop=True)
 
 def bugfixPowderBagSprite(rom):
-    rom.patch(0x03, 0x2055, "8E16", "0E1E")
+    rom.patch(0x03, 0x2055, "8E16", "841E")
 
 def easyColorDungeonAccess(rom):
     re = RoomEditor(rom, 0x312)
@@ -550,3 +550,8 @@ def fixD7exit(rom):
     re.objects.append(Object(5, 2, 0xE1))
     re.objects.append(Object(5, 3, 0x4A))
     re.store(rom)
+
+def fixHealthFullCheck(rom):
+    # Setup a different table for max health, override some DMG specific data.
+    rom.patch(0x14, 0x0EA8, 0x0EA8 + 15, "000810182028303840485058606870")
+    rom.patch(0x14, 0x0B11, ASM("ld hl, $4AAD"), ASM("ld hl, $4EA8"))

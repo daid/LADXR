@@ -1,6 +1,7 @@
 from typing import Optional
 
 from locations.items import *
+import random
 
 class Error(Exception):
     pass
@@ -149,7 +150,6 @@ _NAMES = {
     EAGLE_TOWER_OPENED: "Eagle Tower open"
 }
 
-
 _CHARACTERS = {
     b"'":  b"^",
     b'<agrave>': b'\x80',
@@ -200,6 +200,23 @@ _CHARACTERS = {
     b'<arrowL>': b'\xF2',
     b'<arrowR>': b'\xF3',
 }
+
+def randomOrdinal(min: int, max: int, rnd: random.Random) -> str:
+	n = randomNumber(min, max, rnd)
+	match n[-1]:
+		case "1":
+			ordinal = "st"
+		case "2":
+			ordinal = "nd"
+		case "3":
+			ordinal = "rd"
+		case _:
+			ordinal = "th"
+	return "{}{}".format(n, ordinal)
+
+
+def randomNumber(min: int, max: int, rnd: random.Random) -> str:
+	return str(random.randrange(min, max))
 
 def setReplacementName(key: str, value: str) -> None:
     _NAMES[key] = value

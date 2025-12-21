@@ -24,8 +24,7 @@ class Witch(ItemInfo):
         if not options.witch:
             self.OPTIONS = [MAGIC_POWDER]
 
-    def patch(self, rom, option, *, multiworld=None):
-        assert multiworld is None
+    def patch(self, rom, option):
         if len(self.OPTIONS) == 1:
             return
         rom.patch(0x05, 0x08D5, "09", "%02x" % (CHEST_ITEMS[option]))
