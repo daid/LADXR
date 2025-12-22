@@ -60,7 +60,7 @@ class Dungeon7:
         miniboss = Location("D7 Miniboss Room", dungeon=7)
         after_miniboss = Location("D7 After Miniboss Room", dungeon=7)
         after_miniboss_chest8 = Location(dungeon=7).add(DungeonChest(0x224)) # nightmare key
-        #TODO: after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D")) NOTE: enable this if switch is found to be logical
+        #TODO: after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D")) NOTE: enable this if miniboss switch is found to be logically relevant
         pre_cut_boss_backdoor = Location("D7 Boss Backdoor Room", dungeon=7)
         pre_cut_conveyor_area = Location("D7 Conveyor Horseheads Area (Before Cutscene)", dungeon=7)
         post_cut_conveyor_area = Location("D7 After Boss Door", dungeon=7)

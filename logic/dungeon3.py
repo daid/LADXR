@@ -146,7 +146,6 @@ class Dungeon3:
             fenced_walkway.connect(north_bombwall, OR(AND(FEATHER, OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD, BOOMERANG), back=False) # feather and close range weapon to trigger bouncing bombite to blow up the wall
 
         if options.logic == 'glitched' or options.logic == 'hell':
-            before_a_stairs.connect(west_hallway, r.hookshot_clip_block, back=False) # REMOVE and replace with below
             before_a_stairs.connect(west_hallway, OR(AND("SWITCH3", r.super_jump_feather), r.hookshot_clip_block), back=False) # hookshot clip through the pushblock using zols and their rupees, or hit the switch and superjump to pegs
             west_hallway.connect((before_a_stairs, before_a_stairs_chest6), OR(r.super_jump_feather, r.shaq_jump), back=False) # shaq jump off pushblock to land on pegs and grab the chest, or wall clip in hallway and super jump a few times to get on pegs #NOTE: shouldn't connect tricks to items
             swordstalfos_room.connect(swordstalfos_room_chest4, r.super_jump_feather, back=False) # use superjump to get over the bottom left block

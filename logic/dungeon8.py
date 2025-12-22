@@ -206,7 +206,7 @@ class Dungeon8:
             dodongo_area.connect(dodongo_area_drop3, OR(HOOKSHOT, MAGIC_ROD), back=False) # crack one of the floor tiles and hookshot the gibdos in, or burn the gibdos and make them jump into pit
             before_f_stairs.connect(dark_west, AND(BOMB, FEATHER), back=False) # pixel perfect bomb placement
             before_f_stairs.connect(miniboss4_cubby, r.throw_pot, back=False) # throw 4 of the 5 pots to kill 2 ropes and vire
-            before_f_stairs.connect(sw_vire_room_drop1, AND(r.miniboss_requirements["ROLLING_BONES"], r.enemy_requirements["VIRE"]), back=False) # allows bombs to kill vire but only from dropdown in unlit torch room #TODO: look for a better way to do this
+            before_f_stairs.connect(sw_vire_room_drop1, AND(r.miniboss_requirements["ROLLING_BONES"], r.enemy_requirements["VIRE"]), back=False) # allows bombs to kill vire but only from dropdown in unlit torch room
 
         if options.logic == 'glitched' or options.logic == 'hell':
             #south
@@ -230,35 +230,32 @@ class Dungeon8:
             lava_ledge.connect((after_g_passage, slime_corridor), False, back=AND(r.jesus_jump, r.super_jump_feather)) # jesus jump and buffer into bottom ledge to wall clip / super jump to reach chest
             dodongo_area.connect(after_f_stairs, r.super_jump_feather, back=False) # wall clip and superjump to dodongo ledge
             dodongo_area.connect(after_f_stairs_chest10, AND(r.miniboss_requirements["DODONGO"], r.super_jump_feather), back=False) # wall clip and superjump to dodongo ledge chest after killing dodongo
-            before_f_stairs.connect(after_c_passage, r.super_jump_feather, back=False) # superjump off the bottom or right wall to jump over to the boss door #TODO: add requirements to buffer into wall / open key door to wall clip
+            before_f_stairs.connect(after_c_passage, r.super_jump_feather, back=False) # superjump off the bottom or right wall to jump over to the boss door
 
         if options.logic == 'hell':
             #south
             entrance.connect((lava_beamos_room, pre_center_zamboni), AND(r.jesus_buffer, r.lava_swim_sword), back=False) # boots bonk around the top left corner at vire, get on top of the wall to bonk to the left, and transition while slashing sword #TODO: look into consistency of swordless
             entrance.connect(lava_beamos_room, r.jesus_jump, back=False) # jesus jump around the key door
-            #TODO: sw_zamboni_area.connect(before_f_stairs, r.zoomerang_shovel, back=False) # pixel perfect left-facing zoomerang followed up by another zoomerang to get un-stuck - probably impossible without shovel
-            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) #TODO: replace with row below, also consider moving this to hard
-            #TODO: before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit), back=False)
-            after_e_passage.connect(pot_pit_room, r.shaq_jump, back=False) # 1/16 chance shaq jump in lower right corner of staircase area - #TODO: replace with below additional logic for stair shuffle
-            #TODO: after_e_passage.connect(pot_pit_room, OR(r.shaq_jump, AND(r.hookshot_clip_block, r.hookshot_over_pit, OR(r.corner_walk, r.pit_buffer_itemless))), back=r.zoomerang) # repeatedly hookshot the pot from 1 tile away, once fully wall clipped face down > kill rope > face right > spam hookshot > clip through from lucky rupee drop. back is right-facing zoomerang
+            before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit), back=False) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
+            after_e_passage.connect(pot_pit_room, OR(r.shaq_jump, AND(r.hookshot_clip_block, r.hookshot_over_pit, OR(r.corner_walk, r.pit_buffer_itemless))), back=r.zoomerang) # repeatedly hookshot the pot from 1 tile away, once fully wall clipped face down > kill rope > face right > spam hookshot > clip through from lucky rupee drop. back is right-facing zoomerang
             pot_pit_room_doorway.connect(pot_pit_room, r.pit_buffer_itemless, back=OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room_doorway.connect(miniboss3_room, OR(AND(r.hookshot_spam_pit, r.enemy_requirements["SNAKE"]), AND(r.boots_bonk_pit, r.shield_bump)), back=False) # boots bonk to navigate room, or bump them into pits with shield
             after_e_passage.connect(before_e_passage, r.boots_bonk, back=False) # boots bonking from rope room to below peahats through passage
             zamboni_pit_west.connect(slime_trap_room, r.boots_bonk, back=False) # boots bonk to hop over 1 tile of lava
             #center
-            before_f_stairs.connect(peahat_area, AND(r.boots_bonk, r.jesus_buffer), back=False) # from refill room push block and boots bonk into jesus buffer then bonk again
-            #TODO: make connections for starting a jesus buffer with hookshot by pausing on the splash frame, also you can use hookshot to stop drowning in water or lava
+            before_f_stairs.connect(peahat_area, AND(r.boots_bonk, r.jesus_buffer), back=False) # from refill room push block into lava and boots bonk over the 1-tile of lava
+            #TODO: make connections for starting a jesus buffer assisted by hookshot hookshot to stop drowning in water or lava
             peahat_area.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim), back=False) # bonk to set up lava swim on the screen transition
             pre_center_zamboni.connect((before_e_passage, pre_center_keyblock, loop_ledge, before_c_passage, before_b_passage), False, back=r.jesus_buffer) # allows jesus buffer to any connection since zamboni ride is itemless
             before_b_passage.connect(loop_ledge, HOOKSHOT, back=False) # while standing on staircase, hookshot up, then hookshot right on the frame that you splash the lava - pausing on the splash frame to buffer seems easier
             loop_ledge.connect(heart_vire, r.hookshot_clip_block, back=False) # get in block walk-off-ledge and pause buffering, then walk-jump into block. hoookshot clip off vire to get out and skip key requirement
-            #TODO: before_g_passage.connect(after_g_passage, AND(HOOKSHOT, r.damage_boost_special, "TOADSTOOL2"), back=False) # new logic - use toadstool after hurt by goomba, and bouncing off goomba to freeze after gaining height. Hold "A" button during the damage boost to get extra boost
+            before_g_passage.connect(after_g_passage, AND(HOOKSHOT, r.damage_boost_special, "TOADSTOOL2"), back=False) # new logic - use toadstool after hurt by goomba, and bouncing off goomba to freeze after gaining height. Hold "A" button during the damage boost to get extra boost
             #dark
             before_f_stairs.connect(dark_west, AND(BOMB, r.jesus_buffer, r.lava_swim), back=False) # pixel perfect bomb placement to open door, return with lava swim
             peahat_area.connect((dark_west, dark_center), False, back=AND(BOMB, r.jesus_buffer)) # bomb the wall and boots bonk to start jesus buffer
             dark_west.connect(before_f_stairs, AND(BOMB, r.hookshot_wrap, r.jesus_buffer), back=False) # boots bonk then use hookshot when splashing to grab spark's block, will respawn near spark block
             dark_east_zol.connect(dark_east_spark, OR(r.hookshot_spam_pit, r.boots_bonk)) # spam hookshot or simply boots bonk to get over 1 block pit
-            #TODO: dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.shield_bump), back=False) # wall clip then superjump to the spot 2-tiles left of staircase. once rope is closeby, shield-backflip to staircase
+            dark_center.connect(before_d_passage, AND(r.super_jump_feather, r.shield_bump), back=False) # wall clip then superjump to the spot 2-tiles left of staircase - when rope is in front of link, shield-backflip to staircase
             dark_center_pre_keyblock.connect(before_d_passage, r.zoomerang_shovel, back=False) # right-facing zoomerang to get through keyblock. unreliable without shovel
             #miniboss
             before_d_passage.connect(after_d_passage, r.boots_bonk_2d_hell) # get through 2d section with boots bonks
@@ -268,14 +265,13 @@ class Dungeon8:
             slime_corridor.connect(before_f_stairs, AND(r.jesus_buffer, r.lava_swim)) # boots bonk and lava swim around small key door near boss
             #northwest
             before_b_passage.connect(after_b_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk in 2d to use magic rod on upper ice blocks
-            #TODO: before_f_stairs.connect(ledge_west_boss, r.super_bump, back=False) # super bump while wall clipped on stairs to tal tal
+            before_f_stairs.connect(ledge_west_boss, r.super_bump, back=False) # super bump while wall clipped on stairs to tal tal
             miniboss4_room.connect(nw_zamboni_room, AND(r.boots_bonk, r.jesus_buffer, r.miniboss_requirements["CUE_BALL"]), back=False) # use a boots bonk to cross the lava in cueball room
             #boss
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk through 2d ice section
             after_c_passage.connect(before_f_stairs, AND(r.jesus_jump, r.zoomerang), back=False) # jesus jump across lava and then a few dozen consecutive buffers to get lodged lower left corner of rail, the right-facing zoomerang to escape
             boss_room.connect(instrument, AND(r.boots_bonk, r.jesus_buffer, r.boss_requirements[world_setup.boss_mapping[7]]), back=False) # boots bonk in boss room to collect instrument
-            
-            #TODO: consider fake "SWITCH_8" item for conciseness and preparedness for stair shuffle
+
 
         self.entrance = entrance
         self.final_room = instrument
