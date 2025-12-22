@@ -398,13 +398,14 @@ class RequirementsSettings:
             self.enemy_requirements["BUZZ_BLOB"] = OR(OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), AND(HOOKSHOT, SWORD)) # only hookshot stuns, then you can kill with L1 sword, or by throwing something at it like another buzz blob
                  
         if options.logic == 'glitched' or options.logic == 'hell':
-            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, self.sword_beam, AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
+            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
             
         if options.logic == "hell":
             self.boss_requirements[7] = OR(MAGIC_ROD, self.sword_beam) # hot head sword beams
             self.miniboss_requirements["GHOMA"] = OR(BOW, HOOKSHOT, MAGIC_ROD, BOOMERANG, AND(OCARINA, BOMB, OR(SONG1, SONG3)))  # use bombs to kill gohma, with ocarina to get good timings
             self.miniboss_requirements["GIANT_BUZZ_BLOB"] = OR(MAGIC_POWDER, self.sword_beam) # use sword beams to damage buzz blob
             self.enemy_requirements["MASTER_STALFOS"] = SWORD # can beat m.stalfos with 255 sword spin hits #TODO: disable this and let it be handled in tracker hell note: l2 sword beams can kill but obscure
+            self.boss_requirements[6] = OR(MAGIC_ROD, BOMB, BOW, HOOKSHOT, self.sword_beam, AND(SWORD, SHIELD))  # evil eagle off screen kill or 3 cycle with bombs
             self.enemy_requirements["SHADOW_BLOB"] = OR(SWORD, MAGIC_POWDER) # have blob land on sword 3 times to deal damage/kill
             self.enemy_requirements["SHADOW_DETHL"] = OR(BOMB, BOW, BOOMERANG, self.sword_beam) # use bombs or L2 sword beams to damage dethl
             self.enemy_requirements["BUZZ_BLOB"] = OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, self.sword_beam) # use sword beams to damage buzz blob
