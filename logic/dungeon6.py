@@ -86,17 +86,15 @@ class Dungeon6:
         # owl statues
         if options.owlstatues == "both" or options.owlstatues == "dungeon":
             entrance_owl1.connect((entrance, fenced_walkway_switched), False, back=STONE_BEAK6)
-            blade_trap_room.connect(blade_trap_room_owl2, AND(POWER_BRACELET, STONE_BEAK6), back=False) #TODO: REMOVE and replace with if statement
-            #TODO: if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-                #TODO: blade_trap_room.connect(blade_trap_room_owl2, STONE_BEAK6, back=False) # face the pot while against north wall and press A
-            #TODO: else:
-                #TODO: blade_trap_room.connect(blade_trap_room_owl2, AND(POWER_BRACELET, STONE_BEAK6), back=False)
+            if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
+                blade_trap_room.connect(blade_trap_room_owl2, STONE_BEAK6, back=False) # face the pot while against north wall and press A
+            else:
+                blade_trap_room.connect(blade_trap_room_owl2, AND(POWER_BRACELET, STONE_BEAK6), back=False)
             pot_area.connect(pot_area_owl3, STONE_BEAK6, back=False)
         
         # connections
         # entrance
         entrance.connect(entrance_switch, r.hit_switch, back=False)
-        entrance.connect(entrance_switch_range, OR(BOMB, BOOMERANG), back=False) #TODO: delete in favor of casual logic statement
         entrance.connect(first_elephant_room, r.enemy_requirements["WIZROBE"], back=None)
         entrance.connect(second_elephant_room, COUNT(POWER_BRACELET, 2), back=None)
         dark_room.connect(entrance, BOMB) #NOTE: with a rom patch for remembering switch state, could connect dark room to fenced_walkway_switched with OR(all switches)
@@ -114,15 +112,15 @@ class Dungeon6:
         entrance.connect((fenced_walkway_switched, potbutton_area_switched), "SWITCH6A_RANGE", back=False)
         fenced_walkway_switched.connect(potbutton_area_switched, POWER_BRACELET, back=False) # ledge drop
         potbutton_area_switched.connect(three_wizrobe_area_switched, POWER_BRACELET, back=None)
-        after_potbutton_door.connect(three_wizrobe_area_clear, r.enemy_requirements["WIZROBE"], back=False) #TODO: REPLACE with below
-        #TODO: after_potbutton_door.connect(three_wizrobe_area_clear, OR(BOMB, MAGIC_ROD)) # excludes bow when can't reach arrow refill on the other side of pegs
-        after_potbutton_door.connect(after_potbutton_door_chest4, "D6_THREE_WIZROBE_CLEAR", back=False)
+        after_potbutton_door.connect(three_wizrobe_area_clear, OR(BOMB, MAGIC_ROD), back=False) # NOTE: excludes bow because you can't reach arrow refill on the other side of pegs
         three_wizrobe_area.connect(after_potbutton_door, "SWITCH6B_RANGE")
         three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT), back=False) # hit switch from above or when standing on lowered pegs
-        three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), back=False)  # get on right-side pegs before your item toggles the switch
+        three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), back=False) # get on right-side pegs before your item toggles the switch
         three_wizrobe_area.connect(three_wizrobe_area_switched, "SWITCH6B_MIDRANGE", back=OR(BOMB, BOW, MAGIC_ROD, BOOMERANG))
         three_wizrobe_area_clear.connect((three_wizrobe_area, three_wizrobe_area_switched), False, back=r.enemy_requirements["WIZROBE"])
         three_wizrobe_area_chest5.connect((three_wizrobe_area, three_wizrobe_area_switched), False, back=None)
+        for location in (after_potbutton_door, three_wizrobe_area_switched):
+            location.connect(after_potbutton_door_chest4, "D6_THREE_WIZROBE_CLEAR", back=False)
         three_wizrobe_area_switched.connect(star_area_switched, POWER_BRACELET, back=None)
         # northwest
         star_area.connect(three_wizrobe_area, back=False)
@@ -141,7 +139,7 @@ class Dungeon6:
         miniboss_room.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[5]], back=False) # miniboss portal
         miniboss_room.connect(after_miniboss, r.miniboss_requirements[world_setup.miniboss_mapping[5]], back=COUNT(POWER_BRACELET, 2))
         after_miniboss.connect(before_b_passage, COUNT(POWER_BRACELET, 2), back=None)
-        #TODO: after_miniboss.connect(before_miniboss, FOUND(KEY6, 1), back=False) # walk north in room north of miniboss to wrap around NOTE: will get stuck in door if don't have a key [stair shuffle prep]
+        after_miniboss.connect(before_miniboss, FOUND(KEY6, 3), back=False) # walk north in room north of miniboss to wrap around | will get stuck in door if lacking a small key
         # center
         before_b_passage.connect(after_b_passage, FEATHER)
         after_b_passage.connect(after_b_passage_drop2, back=False)
@@ -151,8 +149,7 @@ class Dungeon6:
         # southeast
         entrance.connect(four_wizrobe_room, COUNT(POWER_BRACELET, 2), back=False)
         four_wizrobe_room.connect((entrance, blade_trap_room, south_waterway), r.enemy_requirements["WIZROBE"], back=False)
-        south_waterway.connect(north_waterway) #TODO: REMOVE and replace with other commented logic
-        #TODO: south_waterway.connect(north_waterway, OR(r.enemy_requirements["TEKTITE"], FEATHER)) # impossible to avoid damage from tektites, so jump over or kill them
+        south_waterway.connect(north_waterway, OR(r.enemy_requirements["TEKTITE"], FEATHER)) # impossible to avoid damage from tektites, so jump over or kill them
         blade_trap_room.connect(four_wizrobe_room, r.enemy_requirements["STAR"], back=False)
         blade_trap_room.connect(after_blade_trap, AND(FEATHER, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")), back=None)
         after_blade_trap.connect((after_blade_trap_chest8, four_wizrobe_room), back=False)
@@ -161,8 +158,7 @@ class Dungeon6:
         # northeast
         after_c_passage.connect(south_spark_pot_maze, r.enemy_requirements["POLS_VOICE"], back=None)
         after_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], back=OR(FEATHER, r.miniboss_requirements["DODONGO"]))
-        south_spark_pot_maze.connect(north_spark_pot_maze, POWER_BRACELET) #TODO: REMOVE this and replace with below
-        #TODO: south_spark_pot_maze.connect(north_spark_pot_maze, AND(POWER_BRACELET, OR(FEATHER, AND(r.enemy_requirements["SPARK_COUNTER_CLOCKWISE"], r.enemy_requirements["SPARK_CLOCKWISE"]))), back=False)
+        south_spark_pot_maze.connect(north_spark_pot_maze, AND(POWER_BRACELET, OR(FEATHER, AND(r.enemy_requirements["SPARK_COUNTER_CLOCKWISE"], r.enemy_requirements["SPARK_CLOCKWISE"]))), back=False)
         north_spark_pot_maze.connect(top_right_room, POWER_BRACELET)
         top_right_room.connect(top_right_room_chest10, back=False)
         top_right_room.connect(top_right_room_switch, r.hit_switch, back=False)
@@ -174,33 +170,33 @@ class Dungeon6:
         pot_area.connect(pot_area_switch, r.hit_switch, back=False)
         # boss
         after_b_passage.connect(vacuum_room, back=False)
-        vacuum_room.connect(pre_boss_room, OR(SHIELD, AND(r.enemy_requirements["HIDING_ZOL"], r.enemy_requirements["WIZROBE"])), back=False) #TODO: REMOVE, replace with statement below as well as casual/hard logic
         vacuum_room.connect(entrance, FEATHER, back=False) # jump over pits and let vacuum warp you to entrance
-        #TODO: vacuum_room.connect(laser_turret_room, back=False) # vacuum pulls the zols into the pit
-        #TODO: laser_turret_room.connect(pre_boss_room, AND(FEATHER, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
+        vacuum_room.connect(laser_turret_room, back=False) # vacuum pulls the zols into the pit
+        laser_turret_room.connect(pre_boss_room, AND(FEATHER, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
 
-        #TODO: if options.logic == "casual":
-            #TODO: entrance.connect(entrance_switch_range, BOMB, back=False) # diagonal boomerang throw removed for casual
+        if options.logic == "casual":
+            entrance.connect(entrance_switch_range, BOMB, back=False) # diagonal boomerang throw removed for casual
 
-        #TODO: else:
-            #TODO: entrance.connect(entrance_switch_range, OR(BOMB, BOOMERANG)) # hit switch while standing on peg
+        else:
+            entrance.connect(entrance_switch_range, OR(BOMB, BOOMERANG)) # hit switch while standing on peg
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_switch, AND(r.stun_mask_mimic, r.throw_enemy), back=False) # stun and throw mask mimic into wall, so that it hits the switch while you're standing on the peg
             before_a_passage.connect(after_a_passage) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
             three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, AND(r.stun_wizrobe, r.throw_enemy), back=False) # stun wizrobe with powder and throw it at switch - hard due to obscurity
-            #TODO: three_wizrobe_area_clear.connect((three_wizrobe_area, three_wizrobe_area_switched), False, back=AND(FEATHER, BOW)) # bring 2 arrows + feather to grab 10 arrow refill - 12 needed to kill 3 wizrobes
-            #TODO: four_wizrobe_room.connect((entrance, blade_trap_room, south_waterway), AND(FEATHER, BOW), back=False) # bring 6 arrows, + feather to grab 10 arrow refill - 16 arrows total to clear room
-            #TODO: south_waterway.connect(north_waterway, r.damage_boost) # forced damage from tektites if no weapons
+            for location in (three_wizrobe_area, three_wizrobe_area_switched):
+                location.connect(three_wizrobe_area_clear, AND(FEATHER, BOW), back=False) # bring 2 arrows + feather to grab 10 arrow refill - 12 needed to kill 3 wizrobes
+            four_wizrobe_room.connect((entrance, blade_trap_room, south_waterway), AND(FEATHER, BOW), back=False) # bring 6 arrows, + feather to grab 10 arrow refill - 16 arrows total to clear room
+            south_waterway.connect(north_waterway, r.damage_boost) # forced damage from tektites if no weapons
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, back=AND(r.boots_dash_2d, r.boots_bonk)) # boots dash over 1 block gaps in sidescroller
             after_c_passage.connect(south_spark_pot_maze, AND(r.throw_pot, OR(BOW, AND(r.stun_wizrobe, r.throw_enemy))), back=False) # kill one pol with 4 arrows or stun+throw, kill remaining two with pots
             after_c_passage.connect(dodongo_room, AND(r.throw_pot, OR(BOW, AND(r.stun_wizrobe, r.throw_enemy))), back=False) # kill one pol with 4 arrows or stun+throw, kill remaining two with pots
-            after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the thwimps #TODO: consider removing damage_boost
-            #TODO: south_spark_pot_maze.connect(north_spark_pot_maze, AND(POWER_BRACELET, r.damage_boost)) #TODO: consider removing damage_boost
-            #TODO: laser_turret_room.connect(pre_boss_room, AND(OR(FEATHER, r.diagonal_walk), OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, AND(r.stun_wizrobe, r.throw_enemy), r.enemy_requirements["WIZROBE"])), back=False) # include obscure ways to clear room
-            #TODO: pot_area.connect(pot_area_switch, r.throw_pot, back=False) # [stair shuffle prep] - can't get normally here without bombs
+            after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the thwimps
+            south_spark_pot_maze.connect(north_spark_pot_maze, AND(POWER_BRACELET, r.damage_boost))
+            laser_turret_room.connect(pre_boss_room, AND(OR(FEATHER, r.diagonal_walk), OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, AND(r.stun_wizrobe, r.throw_enemy), r.enemy_requirements["WIZROBE"])), back=False) # include obscure ways to clear room
+            pot_area.connect(pot_area_switch, r.throw_pot, back=False)
             
         if options.logic == 'glitched' or options.logic == 'hell':
             first_elephant_room.connect(second_elephant_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.bomb_trigger), back=False) # kill moldorm in hallway, then bomb trigger through the doorway to break elephant statue, irrelevant in reverse since the door is L2 bracelet locked
@@ -212,21 +208,19 @@ class Dungeon6:
             after_miniboss.connect(before_b_passage, AND(r.bomb_trigger, r.miniboss_requirements[world_setup.miniboss_mapping[5]], FOUND(KEY6, 1)), back=False) # go through north door exits to wrap-around, then bomb trigger as you transition into 2-statue room #NOTE: left the requirements of entire loop in for stairs shuffle
             flying_bomb_room.connect(after_b_passage, OR(r.shaq_jump, r.super_jump_feather), back=False) # face left and shaq jump off keyblock to get into floating tile room
             flying_bomb_room.connect(entrance, r.super_jump_feather, back=False) # superjumps in corridor to get up to owl statue
-            #TODO: flying_bomb_room.connect(fenced_walkway_switched, AND(r.super_jump_feather, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")) back=False) # superjumps in corridor to get up to owl statue ledge in switched state [stair shuffle prep]
+            flying_bomb_room.connect(fenced_walkway_switched, AND(r.super_jump_feather, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")), back=False) # superjumps in corridor to get up to owl statue ledge in switched state
             north_waterway.connect(north_waterway_east_ledge, r.super_jump, back=False) # superjump from north_waterway towards dodongos - feather-only variant in hell only
             north_waterway.connect(north_waterway_west_ledge, r.super_jump_feather, back=False) # superjump from north_waterway to the left
 
         if options.logic == 'hell':
-            #TODO: entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.sword_poke, r.shield_bump)), back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door with it never closing
-            entrance.connect(entrance_switch_range, AND(r.stun_mask_mimic, r.throw_enemy), back=False) #TODO: REMOVE and replace with below
-            #TODO: entrance.connect(entrance_switch_range, OR(AND(r.stun_mask_mimic, r.throw_enemy), SWORD), back=False) # spin attack while walking up to step onto peg as it raises, or stun and throw mask mimic
+            entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL, "TOADSTOOL2"), OR(r.sword_poke, r.shield_bump)), back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door without it closing
+            entrance.connect(entrance_switch_range, OR(AND(r.stun_mask_mimic, r.throw_enemy), SWORD), back=False) # spin attack while walking up to step onto peg as it raises, or stun and throw mask mimic
             entrance.connect(potbutton_area_switched, AND("SWITCH6A", OR(r.boots_superhop, AND(r.super_jump_feather, r.boots_jump))), back=r.boots_superhop) # boots superhop onto top left peg or wall clip and superjump to bottom-left peg and then boots jump to top left peg
             after_potbutton_door.connect(three_wizrobe_area, r.boots_superhop, back=OR(r.boots_superhop, r.super_jump_boots, "SWITCH6B_RANGE")) # get over the pegs blocking the east doorway
-            #TODO: three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, SWORD, back=False) # spin attack while walking up to step onto peg as it raise
-            #TODO: three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(AND(r.stun_wizrobe, r.throw_enemy), r.sword_beam, AND(HOOKSHOT, FEATHER)), back=False) # stun+throw wizrobe or while on raised pegs, L2 sword beam, or hit switch with hookshot and feather on the frame the hookshot returns to link to stay on second layer
+            three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, SWORD, back=False) # spin attack while walking up to step onto peg as it raise
+            three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(AND(r.stun_wizrobe, r.throw_enemy), r.sword_beam, AND(HOOKSHOT, FEATHER)), back=False) # stun+throw wizrobe or while on raised pegs, L2 sword beam, or hit switch with hookshot and feather on the frame the hookshot returns to link to stay on second layer
             three_wizrobe_area.connect(star_area, AND(r.boots_superhop, POWER_BRACELET), back=False) # boots superhop onto peg to get to pots needed to break door
-            before_b_passage.connect(after_b_passage, r.damage_boost_special, back=False) #TODO: REPLACE with below
-            #TODO: before_b_passage.connect(after_b_passage, r.damage_boost_special, back="TOADSTOOL2") # going left: damage boost off both sparks to get across or going right: use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne [stair shuffle prep]
+            before_b_passage.connect(after_b_passage, r.damage_boost_special, back=r.toadstool_bounce_2d_spikepit) # going left: damage boost off both sparks to get across or going right: use toadstool to damage boost off of spikes and get through passageway. Also helps to hold A button when airborne
             blade_trap_room.connect(after_blade_trap, r.boots_superhop, back=False) # can boots superhop off the top wall with bow or magic rod
             north_waterway.connect(north_waterway_east_ledge, r.super_jump_feather, back=False) # superjump from north_waterway towards dodongos. glitched with weapon assisted superjump, but hell when feather-only
             dodongo_room.connect(after_c_passage, r.boots_bonk, back=False) # boots bonk to escape dodongo room NE corner
