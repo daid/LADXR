@@ -116,7 +116,7 @@ class Dungeon3:
         after_b_stairs.connect(big_pit_room, BOMB)
         big_pit_room.connect(ledge_pre_pit, AND(FEATHER, PEGASUS_BOOTS))
         ledge_pre_pit.connect((after_b_stairs, big_pit_room), back=False)
-        ledge_pre_pit.connect(ledge_post_pit, OR(HOOKSHOT, FEATHER), back=False) #TODO: should two-block feather jump be hard?
+        ledge_pre_pit.connect(ledge_post_pit, OR(HOOKSHOT, FEATHER), back=False) #NOTE: should two-block feather jump be hard?
         ledge_post_pit.connect((after_b_stairs, ledge_post_pit_chest_9), back=False)
         # boss
         after_b_stairs.connect(towards_boss1, FOUND(KEY3, 5))
@@ -148,11 +148,11 @@ class Dungeon3:
         if options.logic == 'glitched' or options.logic == 'hell':
             before_a_stairs.connect(west_hallway, r.hookshot_clip_block, back=False) # REMOVE and replace with below
             before_a_stairs.connect(west_hallway, OR(AND("SWITCH3", r.super_jump_feather), r.hookshot_clip_block), back=False) # hookshot clip through the pushblock using zols and their rupees, or hit the switch and superjump to pegs
-            west_hallway.connect((before_a_stairs, before_a_stairs_chest6), OR(r.super_jump_feather, r.shaq_jump), back=False) # shaq jump off pushblock to land on pegs and grab the chest, or wall clip in hallway and super jump a few times to get on pegs #TODO: shouldn't connect tricks to items
+            west_hallway.connect((before_a_stairs, before_a_stairs_chest6), OR(r.super_jump_feather, r.shaq_jump), back=False) # shaq jump off pushblock to land on pegs and grab the chest, or wall clip in hallway and super jump a few times to get on pegs #NOTE: shouldn't connect tricks to items
             swordstalfos_room.connect(swordstalfos_room_chest4, r.super_jump_feather, back=False) # use superjump to get over the bottom left block
             big_pit_room.connect(ledge_pre_pit, AND(r.corner_walk, r.super_jump_feather), back=False) # superjump to right side 3 of the big pit
             towards_boss1.connect(miniboss_room, r.super_jump_feather, back=False) # superjump out between keyblock 1 & 2
-            towards_boss2.connect(after_miniboss_room, r.super_jump_feather, back=False) # superjump out between keyblock 2 & 3
+            towards_boss2.connect(after_miniboss_room, r.super_jump_feather, back=False) # superjump out between keyblock 2 & 3 - key requirement for wall clip
             towards_boss3.connect((after_miniboss_room, after_b_stairs), r.super_jump_feather, back=False) # superjump out between keyblock 3 & 4
         
         if options.logic == 'hell':
@@ -167,7 +167,6 @@ class Dungeon3:
             after_b_stairs.connect(ledge_pre_pit, AND(r.super_jump_feather, r.shield_bump), back=False) # superjump into jumping stalfos and shield bump to right ledge
             big_pit_room.connect(ledge_pre_pit, r.pit_buffer_boots) # boots bonk across the pits with pit buffering and then hookshot or shield bump to the chest
             after_b_stairs.connect(towards_boss3, r.super_bump, back=False) # super bump off stalfos to get in between boss key block 3 and 4
-            before_c_passage.connect(after_c_passage, OR(r.boots_bonk_2d_spikepit, AND(FEATHER, POWER_BRACELET))) # TODO: REMOVE and replace with below
             before_c_passage.connect(after_c_passage, OR(r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.boots_bonk_2d_spikepit), back=OR(r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.boots_bonk_2d_hell)) # bracelet or toadstool to bounce off spikes (no medicine) or boots bonk with medicine invulnerability. holding the "A" button while airborne in sidescroller makes you lighter
 
 
