@@ -97,31 +97,31 @@ class Dungeon2:
         # boss
         after_b_passage.connect(pot_pol_room_doorway, FOUND(KEY2, 5))
         pot_pol_room_doorway.connect(pot_pol_room, POWER_BRACELET)
-        pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"]), back=None) #TODO: REMOVE, it's now in casual logic. Normal logic will be OR(enemy reqs, bracelet)
         before_c_passage.connect(pre_boss_room, POWER_BRACELET, back=None)
         pre_boss_room.connect(pre_boss, FEATHER, back=False)
         pre_boss.connect(boss_room, NIGHTMARE_KEY2, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[1]], back=False)
 
         
-        #TODO: if options.logic == "casual":
-            #TODO: pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"]), back=None) # intended to kill pols with pots since in vanilla there's no other way
-        if options.logic != "casual": #TODO: change to else
+        if options.logic == "casual":
+            pot_pol_room.connect(before_c_passage, AND(OR(POWER_BRACELET, r.enemy_requirements["POLS_VOICE"]), r.enemy_requirements["ZOL"]), back=None) # intended to kill pols with pots since in vanilla there's no other way
+        else:
             statue_switch_room.connect(statue_switch_room_drop2, r.rear_attack, back=False) # defeat mimics from where key drops
-            #TODO: pot_pol_room.connect(before_c_passage, OR(POWER_BRACELET, AND(r.enemy_requirements["POLS_VOICE"], r.enemy_requirements["ZOL"])), back=None) # clear while room with pots
+            pot_pol_room.connect(before_c_passage, OR(POWER_BRACELET, AND(r.enemy_requirements["POLS_VOICE"], r.enemy_requirements["ZOL"])), back=None) # allows to kill pols with ocarina as well when not using casual logic
 
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-            #TODO: before_b_passage.connect(vacuum_room, AND(POWER_BRACELET, r.corner_walk), back=False) # lift pot and corner walk over pit [stair shuffle prep]
-            #TODO: final_switch_west.connect(final_switch_east, r.tight_jump) # jump around the single peg blocking the switch [stair shuffle prep]
+            before_a_passage.connect(after_a_passage, r.boots_dash_2d) # use boots to dash over the spikes in the 2d section
+            before_b_passage.connect(vacuum_room, AND(POWER_BRACELET, r.corner_walk), back=False) # lift pot and corner walk over pit
+            final_switch_west.connect(final_switch_east, r.tight_jump) # jump around the single peg blocking the switch
             after_b_passage.connect((final_switch_west, final_switch_east), AND(r.hit_switch, r.tight_jump), back=False) # hit 4-keese switch, then jump to south hallway, and tight jump around 4 pots to get to the next switch, hit is and go left or right
-            #TODO: after_b_passage.connect(vacuum_room, AND(BOOMERANG, POWER_BRACELET)) # diagonal boomerang throw from south wall to hit north wall switch [stair shuffle prep]
-            #TODO: after_b_passage.connect((final_switch_west, final_switch_east), AND(BOOMERANG, OR(HOOKSHOT, FEATHER)), back=False) # diagonal boomerang throw from south wall to hit switch, then cross to chest [stair shuffle prep]
+            after_b_passage.connect(vacuum_room, AND(BOOMERANG, POWER_BRACELET)) # diagonal boomerang throw from south wall to hit north wall switch
+            after_b_passage.connect((final_switch_west, final_switch_east), AND(BOOMERANG, HOOKSHOT), back=False) # diagonal boomerang throw from south wall to hit switch twice, to be ontop of raised pegs, then hookshot to chest
 
         if options.logic == 'glitched' or options.logic == 'hell':
             boo_room.connect(boo_room_chest8, SWORD, back=False) # use sword to spawn ghosts on other side of the room so they run away (logically irrelevant because player will have fire)
             after_miniboss.connect(before_b_passage, r.super_jump_feather, back=False) # superjump after hinox to access stairs
-            #TODO: after_b_passage.connect((vacuum_room, final_switch_west, final_switch_east), r.super_jump_feather, back=False) # starting from enemy order room, wall clip on bottom wall and low superjump onto pegs, jump pit or setup wall clips/superjumps in SW to get over to vacuum ares [stair shuffle prep]
-            #TODO: before_c_passage.connect(pot_pol_room, AND(r.hookshot_clip, r.super_jump_feather), back=False) #hookshot top center pot while touching north wall several times until wall clipped, superjump over pots to key door [stair shuffle prep]
+            after_b_passage.connect((vacuum_room, final_switch_west, final_switch_east), r.super_jump_feather, back=False) # starting from enemy order room, wall clip on bottom wall and low superjump onto pegs, jump pit or setup wall clips/superjumps in SW to get over to vacuum ares
+            pot_pol_room.connect(pot_pol_room_doorway, AND(r.hookshot_clip, r.super_jump_feather), back=False) #hookshot top center pot while touching north wall several times until wall clipped, superjump over pots to key door
             before_c_passage.connect(pre_boss_room, BOMB, back=False) # use a bomb to lower the second platform
 
         if options.logic == 'hell':    
@@ -129,18 +129,17 @@ class Dungeon2:
             pit_peg_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             mimic_beetle_room.connect(statue_switch_room_drop2, AND(r.enemy_requirements["MASKED_MIMIC_GORIYA"], OR(r.boots_bonk_pit, r.hookshot_spam_pit), r.hit_switch), back=False)
             pit_peg_room_chest5.connect((pit_peg_room, mimic_beetle_room), False, back=OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
-            before_a_passage.connect(after_a_passage, r.boots_dash_2d) # TODO: Move to HARD logic - # use boots to dash over the spikes in the 2d section
-            #TODO: before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
-            between_pits.connect((after_miniboss, vacuum_room), r.boots_bonk_pit) # boots bonk to get over 1 tile pits to or from owl statue
+            before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
+            between_pits.connect((after_miniboss, vacuum_room), OR(r.hookshot_spam_pit, r.boots_bonk_pit)) # boots bonk to get over 1 tile pits to or from owl statue
+            vacuum_room.connect(before_b_passage, AND(r.pit_buffer_itemless, POWER_BRACELET), back=False) # pit buffer into the pot, look down, and lift the pot
             vacuum_room.connect(entrance, back=False) # let vacuum pull you over pits and warp you to entrance
-            #TODO: after_miniboss.connect(vacuum_room, r.hookshot_spam_pit) # hookshot spam to cross single tile pits by owl statue
-            #TODO: before_b_passage.connect(after_b_passage, r.boots_bonk_2d_hell) # boots bonk through pirahna passage either way [stair shuffle prep]
-            #TODO: after_b_passage.connect(final_switch_east, AND(r.boots_superhop, r.boots_bonk_pit), back=False) # boots superhop up on peg, then boots bonk on pot or wall to cross to chest [stair shuffle prep]
-            #TODO: final_switch_west.connect(final_switch_east, r.pit_buffer_boots) # pit buffer onto one of the pots and boots bonk upwards go get to the other side of the peg [stair shuffle prep]
-            #TODO: final_switch_east.connect(after_b_passage, r.pit_buffer_itemless, back=False) # pit buffer on pits below chest to get on pegs and leave from lower right exit [stair shuffle prep]
+            before_b_passage.connect(after_b_passage, r.boots_bonk_2d_hell) # boots bonk through pirahna passage either way
+            after_b_passage.connect(final_switch_east, AND(OR(r.boots_superhop, BOOMERANG), r.boots_bonk_pit), back=False) # boots superhop or diagonal boomerang throw twice, to be ontop of raised pegs then boots bonk on pot or wall to cross to chest
+            final_switch_west.connect(final_switch_east, r.pit_buffer_boots) # pit buffer onto one of the pots and boots bonk upwards go get to the other side of the peg
+            final_switch_east.connect(after_b_passage, r.pit_buffer_itemless, back=False) # pit buffer on pits below chest to get on pegs and leave from lower right exit
             pot_pol_room_doorway.connect(pot_pol_room, AND(r.hookshot_clip_block), back=False) # hookshot clip through the pots using both pol's voice
             before_c_passage.connect(pre_boss_room, r.boots_jump, back=False) # boots + feather to cross over top and skip the lowering platform
-            pre_boss_room.connect(pre_boss, AND(r.boots_bonk_pit, r.hookshot_spam_pit), back=False) # TODO: enclose in OR statement
+            pre_boss_room.connect(pre_boss, OR(r.boots_bonk_pit, r.hookshot_spam_pit), back=False) # boots bonk off bottom wall or hookshot spam to get to the island, then boots bonk off rail or hookshot spam to get to boss door.
 
         self.entrance = entrance
         self.final_room = instrument
