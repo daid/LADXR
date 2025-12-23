@@ -183,7 +183,7 @@ class RequirementsSettings:
         self.running_turn = OR(BOW, MAGIC_ROD) # while dashing with pegasus boots in some rooms, pause and buffer bow/rod in another direction to continue running while facing the wrong way
         self.tight_jump = FEATHER # any jump that spans 2 pit/water tiles cardinally | also applies to jumps which have special requirements like abusing diagonal speed or wall clips
         self.shield_bump = SHIELD # use shield to knock back enemies or knock off enemies/objects when used in combination with superjumps
-        self.sword_poke = SHIELD # use sword to knock back enemies or knock off enemies/objects when used in combination with superjumps
+        self.sword_poke = SWORD # use sword to knock back enemies or knock off enemies/objects when used in combination with superjumps
         self.super_jump = AND(FEATHER, self.midair_turn) # standard superjump for glitch logic
         self.super_jump_boots = AND(PEGASUS_BOOTS, FEATHER, self.midair_turn) # boots jump into wall for unclipped superjump
         self.super_jump_feather = FEATHER # using only feather to align and jump off walls
