@@ -77,13 +77,13 @@ class Dungeon1:
 
         if options.logic == "casual":
             entrance.connect(entrance_chest3, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["KEESE"]), back=False)
-            northwest_room.connect(before_a_passage, r.enemy_requirements["SPIKED_BEETLE"], back=None) # remove shield bump method, guarantee a weapon to not rely on pits
+            northwest_room.connect(before_a_passage, r.enemy_requirements["SPIKED_BEETLE"], back=None)
         else:
             entrance.connect(entrance_chest3, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], r.shield_bump), r.enemy_requirements["KEESE"]), back=False)
             northwest_room.connect(before_a_passage, OR(r.enemy_requirements["SPIKED_BEETLE"], r.shield_bump), back=None)
 
         if options.bowwow != "normal":
-            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], FEATHER), back=FEATHER) # crystals in main room are pits in good boy mode
+            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], FEATHER), back=FEATHER) # crystals in main room are pits in swordless (good boy) mode
         else:
             cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], SWORD), back=SWORD)
 
@@ -94,8 +94,8 @@ class Dungeon1:
 
         if options.logic == 'glitched' or options.logic == 'hell':
             if options.bowwow != "normal":
-                main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in swordless good boy mode
-            main_room.connect(fenced_walkway, r.super_jump_feather) # super jump works over keyblock, reverse is done by clipping into fence and jumping while holding down+side
+                main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in swordless (good boy) mode
+            pre_keyblock.connect(fenced_walkway, r.super_jump_feather) # wall clip, hop over the pit and superjump over the keyblock
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=AND(r.pit_buffer_itemless, r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # itemless pit buffer to/from miniboss door
         
         if options.logic == 'hell':
