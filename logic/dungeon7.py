@@ -83,6 +83,7 @@ class Dungeon7:
         before_b_stairs.connect(before_b_stairs_chest1, back=False)
         before_b_stairs.connect(before_b_stairs_switch, r.hit_switch, back=False)
         before_b_stairs.connect(before_b_stairs_switch_range, OR(BOOMERANG, BOW, BOMB, HOOKSHOT, MAGIC_ROD), back=False)
+        before_b_stairs.connect(before_c_stairs, AND("SWITCH7A_RANGE", FEATHER), back=False)
         before_b_stairs.connect(before_d_stairs, "SWITCH7A", back=False)
         before_b_stairs.connect(entrance, "SWITCH7A", back=False)
         west_ledge.connect((entrance, before_b_stairs, west_ledge_chest4), back=False)
