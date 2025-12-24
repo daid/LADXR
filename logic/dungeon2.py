@@ -140,9 +140,9 @@ class Dungeon2:
             pot_pol_room_doorway.connect(pot_pol_room, AND(r.hookshot_clip_block), back=False) # hookshot clip through the pots using both pol's voice
             before_c_passage.connect(pre_boss_room, r.boots_jump, back=False) # boots + feather to cross over top and skip the lowering platform
             pre_boss_room.connect(pre_boss, OR(r.boots_bonk_pit, r.hookshot_spam_pit), back=False) # boots bonk off bottom wall or hookshot spam to get to the island, then boots bonk off rail or hookshot spam to get to boss door.
-            # connections that require standard overworld items such as "TOADSTOOL2" and "MEDICINE2"
+            # connections that require overworld-only replenishable items such as "TOADSTOOL2" and "MEDICINE2"
             if options.overworld != 'alttp' and options.overworld != 'dungeondive':
-                before_a_passage.connect(after_a_passage, r.toadstool_bounce_2d_spikepit) # bracelet to get damage boost from 2d spikes to get through passage
+                before_a_passage.connect(after_a_passage, r.toadstool_bounce_2d_spikepit) # toadstool to get damage boost from 2d spikes to get through passage
 
         self.entrance = entrance
         self.final_room = instrument

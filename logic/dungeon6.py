@@ -225,7 +225,7 @@ class Dungeon6:
             north_waterway.connect(north_waterway_east_ledge, r.super_jump_feather, back=False) # superjump from north_waterway towards dodongos. glitched with weapon assisted superjump, but hell when feather-only
             dodongo_room.connect(after_c_passage, r.boots_bonk, back=False) # boots bonk to escape dodongo room NE corner
             vacuum_room.connect(entrance, back=False) # let vacuum pull you over pits and warp you to entrance
-            # connections that require standard overworld items such as "TOADSTOOL2" and "MEDICINE2"
+            # connections that require overworld-only replenishable items such as "TOADSTOOL2" and "MEDICINE2"
             if options.overworld != 'alttp' and options.overworld != 'dungeondive':
                 entrance.connect(second_elephant_room, "TOADSTOOL2", back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door without it closing
                 after_b_passage.connect(before_b_passage, r.toadstool_bounce_2d_spikepit, back=False)
