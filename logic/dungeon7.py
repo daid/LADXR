@@ -142,6 +142,8 @@ class Dungeon7:
         after_e_stairs.connect(post_cut_floor3, FOUND("D7_PILLAR", 4), back=False)
         # floor 3 before cutscene NOTE: these connections work before or after cutscene
         pre_cut_floor3.connect(miniboss, back=False)
+        for location in (pre_cut_conveyor_area, post_cut_conveyor_area):
+            location.connect(before_c_stairs, back=False) # fall down from floor 3 1-tile pit
         miniboss.connect(entrance, r.miniboss_requirements[world_setup.miniboss_mapping[6]], back=False) # miniboss portal
         miniboss.connect((pre_cut_floor3, after_miniboss), r.miniboss_requirements[world_setup.miniboss_mapping[6]], back=None)
         after_miniboss.connect(after_miniboss_chest8, back=False)
@@ -149,10 +151,8 @@ class Dungeon7:
         pre_cut_floor3.connect(pre_cut_boss_backdoor, FOUND(KEY7, 3))
         for location in (pre_cut_conveyor_area, post_cut_conveyor_area):
             location.connect(conveyor_area_chest9, POWER_BRACELET, back=False)
-        pre_cut_conveyor_area.connect((nw_pillar, before_b_stairs, before_c_stairs), back=False) # fall down from floor 3 big pit
         # floor 3 after cutscene 
         post_cut_floor3.connect(post_cut_conveyor_area, NIGHTMARE_KEY7)
-        post_cut_conveyor_area.connect((before_b_stairs, before_c_stairs), back=False) # fall down from floor 3 1-tile pit
         post_cut_conveyor_area.connect(pre_boss_stairs, HOOKSHOT, back=None)
         pre_boss_stairs.connect(boss_room)
         boss_room.connect(boss_room_drop3, r.boss_requirements[world_setup.boss_mapping[6]], back=False)
@@ -186,7 +186,6 @@ class Dungeon7:
             before_b_stairs.connect((west_ledge, east_ledge), PEGASUS_BOOTS, back=False) # dash downwards while kirby is near top ledge, after inhaled, kirby spits you out it will cause a sideways superjump
             spike_corridor.connect(nw_pillar, OR(r.shaq_jump, r.super_jump_feather), back=False) # superjump from right wall or shaq jump off pushblock
             west_ledge.connect(before_d_stairs, r.boots_jump, back=False) # without hitting the switch, drop off ledge onto peg wall, and boots jump to pegs blocking stairs
-            after_d_stairs.connect(bombwall_corridor, r.sideways_block_push, back=False) # sideways block push to get to owl statue by bomb wall
             after_d_stairs.connect((bombwall_pit, sw_pillar), r.sideways_block_push, back=False) # sideways block push to get to SW pillar area
             after_d_stairs.connect(se_pillar, r.super_jump_feather, back=False) # wall clip by torch or stairs and superjump into fenced switch area
             after_d_stairs.connect(bombwall_corridor, r.shaq_jump, back=False)
