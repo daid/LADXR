@@ -180,8 +180,14 @@ class Dungeon5:
 
 class NoDungeon5:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D5 Entrance", dungeon=5)
-        Location(dungeon=5).add(HeartContainer(0x185), Instrument(0x182)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[4]])
+        boss_room = Location("D5 Boss Room", dungeon=5)
+        boss_room_drop3 = Location(dungeon=5).add(HeartContainer(0x185)) # heart container
+        instrument = Location("D5 Instrument Room", dungeon=5).add(Instrument(0x182)) # wind marimba
+        # connections   
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[4]], back=False)
 
         self.entrance = entrance

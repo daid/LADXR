@@ -147,8 +147,16 @@ class Dungeon2:
 
 class NoDungeon2:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D2 Entrance", dungeon=2)
-        Location(dungeon=2).add(DungeonChest(0x136)).connect(entrance, POWER_BRACELET)  # chest at entrance
-        Location(dungeon=2).add(HeartContainer(0x12B), Instrument(0x12a)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[1]])
+        entrance_chest1 = Location(dungeon=2).add(DungeonChest(0x136))
+        boss_room = Location("D2 Boss Room", dungeon=2)
+        boss_room_drop3 = Location(dungeon=2).add(HeartContainer(0x12B)) # heart container
+        instrument = Location("D2 Instrument Room", dungeon=2).add(Instrument(0x12a)) # conch horn
+        # connections
+        entrance.connect(entrance_chest1, POWER_BRACELET, back=False)
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[1]], back=False)
+
         self.entrance = entrance

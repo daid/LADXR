@@ -231,8 +231,14 @@ class Dungeon7:
 
 class NoDungeon7:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D7 Entrance", dungeon=7)
-        boss = Location(dungeon=7).add(HeartContainer(0x223), Instrument(0x22c)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[6]])
+        boss_room = Location("D7 Boss Room", dungeon=7) 
+        boss_room_drop3 = Location(dungeon=7).add(HeartContainer(0x223)) # heart container & instrument room door flag
+        instrument = Location("D7 Instrument Room", dungeon=7).add(Instrument(0x22c)) # organ of evening calm
+        # connections
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[6]], back=False)
 
         self.entrance = entrance

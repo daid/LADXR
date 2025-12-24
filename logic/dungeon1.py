@@ -109,7 +109,14 @@ class Dungeon1:
 
 class NoDungeon1:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D1 Entrance", dungeon=1)
-        Location(dungeon=1).add(HeartContainer(0x106), Instrument(0x102)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[0]])
+        boss_room = Location("D1 Boss Room", dungeon=1)
+        boss_room_drop2 = Location(dungeon=1).add(HeartContainer(0x106)) # heart container
+        instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
+        # connections
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop2, instrument), r.boss_requirements[world_setup.boss_mapping[0]], back=False)
+        
         self.entrance = entrance

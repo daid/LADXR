@@ -232,7 +232,14 @@ class Dungeon6:
 
 class NoDungeon6:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D6 Entrance", dungeon=6)
-        Location(dungeon=6).add(HeartContainer(0x1BC), Instrument(0x1b5)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[5]])
+        boss_room = Location("D6 Boss Room", dungeon=6)
+        boss_room_drop3 = Location(dungeon=6).add(HeartContainer(0x1BC)) # heart container
+        instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
+        # connections
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
+
         self.entrance = entrance

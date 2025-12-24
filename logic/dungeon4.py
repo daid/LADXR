@@ -161,8 +161,14 @@ class Dungeon4:
 
 class NoDungeon4:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D4 Entrance", dungeon=4)
-        Location(dungeon=4).add(HeartContainer(0x166), Instrument(0x162)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[3]])
+        boss_room = Location("D4 Boss Room", dungeon=4)
+        boss_room_drop2 = Location(dungeon=4).add(HeartContainer(0x166))
+        instrument = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162))
+        # connections
+        entrance.connect(boss_room, back=False)
+        boss_room.connect((boss_room_drop2, instrument), r.boss_requirements[world_setup.boss_mapping[3]], back=False)
 
         self.entrance = entrance

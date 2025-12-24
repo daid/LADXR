@@ -167,7 +167,7 @@ class Dungeon8:
         miniboss_cubby.connect(rod_ledge, "SWITCH8", back=False)
         rod_ledge.connect(rod_ledge_chest8, back=False)
         # northeast
-        dodongo_area.connect(dodongo_area_drop3, r.enemy_requirements["GIBDO"], back=False) # technically possible to use pits to kill gibdos but dumb
+        dodongo_area.connect(dodongo_area_drop3, r.enemy_requirements["GIBDO"], back=False)
         dodongo_area.connect(pre_lava_ledge, FEATHER)
         pre_lava_ledge.connect((slime_corridor, after_g_passage), back=False)
         pre_lava_ledge.connect(lava_ledge, HOOKSHOT, back=False)
@@ -279,9 +279,15 @@ class Dungeon8:
 
 class NoDungeon8:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D8 Entrance", dungeon=8)
-        boss = Location(dungeon=8).add(HeartContainer(0x234)).connect(entrance, r.boss_requirements[
-            world_setup.boss_mapping[7]])
-        instrument = Location(dungeon=8).add(Instrument(0x230)).connect(boss, FEATHER) # jump over the lava to get to the instrument
+        boss_room = Location("D8 Boss Room", dungeon=8)
+        boss_room_drop5 = Location(dungeon=8).add(HeartContainer(0x234)) # heart container
+        instrument = Location("D8 Instrument Room", dungeon=8).add(Instrument(0x230)) # instrument
+        # connections
+        entrance.connect(boss_room, back=False)
+        boss_room.connect(boss_room_drop5, r.boss_requirements[world_setup.boss_mapping[7]], back=False)
+        boss_room.connect(instrument, AND(FEATHER, r.boss_requirements[world_setup.boss_mapping[7]]), back=False)
 
         self.entrance = entrance

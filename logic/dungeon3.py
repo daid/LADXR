@@ -58,8 +58,8 @@ class Dungeon3:
         towards_boss3 = Location("D3 Boss Path 3", dungeon=3)
         before_c_passage = Location("D3 Boss Path 4", dungeon=3)
         after_c_passage = Location("D3 Three Pairodd Room", dungeon=3)
-        pre_boss_room = Location("D3 Room Before Boss", dungeon=3)
-        pre_boss_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
+        conveyor_room = Location("D3 Room Before Boss", dungeon=3)
+        conveyor_room_drop7 = Location(dungeon=3).add(DroppedKey(0x15B)) # small key
         boss_room = Location("D3 Boss Room", dungeon=3)
         boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
         instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
@@ -124,9 +124,9 @@ class Dungeon3:
         towards_boss2.connect(towards_boss3, FOUND(KEY3, 7))
         towards_boss3.connect(before_c_passage, FOUND(KEY3, 8))
         before_c_passage.connect(after_c_passage, AND(FEATHER, PEGASUS_BOOTS))
-        after_c_passage.connect(pre_boss_room, r.enemy_requirements["PAIRODD"], back=False)
-        pre_boss_room.connect(pre_boss_room_drop7, r.enemy_requirements["KEESE"], back=False)
-        pre_boss_room.connect(boss_room, NIGHTMARE_KEY3, back=False)
+        after_c_passage.connect(conveyor_room, r.enemy_requirements["PAIRODD"], back=False)
+        conveyor_room.connect(conveyor_room_drop7, r.enemy_requirements["KEESE"], back=False)
+        conveyor_room.connect(boss_room, NIGHTMARE_KEY3, back=False)
         boss_room.connect((boss_room_drop8, instrument), r.boss_requirements[world_setup.boss_mapping[2]], back=False)
 
         if options.dungeon_keys == '':
@@ -175,8 +175,14 @@ class Dungeon3:
 
 class NoDungeon3:
     def __init__(self, options, world_setup, r):
+
+        # locations
         entrance = Location("D3 Entrance", dungeon=3)
-        Location(dungeon=3).add(HeartContainer(0x15A), Instrument(0x159)).connect(entrance, AND(POWER_BRACELET, r.boss_requirements[
-            world_setup.boss_mapping[2]]))
+        boss_room = Location("D3 Boss Room", dungeon=3)
+        boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
+        instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
+        # connections
+        entrance.connect(boss_room, POWER_BRACELET, back=False)
+        boss_room.connect((boss_room_drop8, instrument), r.boss_requirements[world_setup.boss_mapping[2]], back=False)
 
         self.entrance = entrance
