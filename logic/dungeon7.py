@@ -12,7 +12,7 @@ class Dungeon7:
         before_a_stairs = Location("D7 Key Locked Staircase", dungeon=7)
         after_a_stairs = Location("D7 Ball Room", dungeon=7)
         after_a_stairs_switch = Location("D7 Pit Switch", dungeon=7).add(KeyLocation("SWITCH7B"))
-        after_a_stairs_switch_range = Location("D7 Pit Switch (Range)", dungeon=7).add(KeyLocation("SWITCH7B_RANGE"))
+        after_a_stairs_switch_range = Location("D7 Pit Switch (Range)", dungeon=7).add(KeyLocation("SWITCH7B_RANGE")) #NOTE: This switch is not used in casual logic (diagonal boomerang), so it's been omitted from casual in itempool.py
         after_a_stairs_owl1 = Location(dungeon=7).add(OwlStatue(0x216))
         ball_access = Location("D7 Ball Access", dungeon=7).add(KeyLocation("D7_BALL"))
         before_b_stairs = Location("D7 1st Floor North Area", dungeon=7)

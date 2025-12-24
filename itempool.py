@@ -154,6 +154,7 @@ class ItemPool:
             self.add(POWER_BRACELET)
             self.add(SHOVEL)
             self.add(RUPEES_200, 2)
+            self.remove("SWITCH7B_RANGE")
             self.removeRupees(14)
 
             for n in range(9):
