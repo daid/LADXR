@@ -37,13 +37,13 @@ class Dungeon7:
         se_pillar = Location("D7 SE Pillar Area", dungeon=7)
         se_pillar_fall = Location("D7 SE Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
         se_pillar_switch = Location("D7 Fenced Switch", dungeon=7).add(KeyLocation("SWITCH7C"))
-        se_pillar_switch_midrange = Location("D7 Fenced Switch (From Below)", dungeon=7).add(KeyLocation("SWITCH7C_MIDRANGE"))
+        se_pillar_switch_midrange = Location("D7 Fenced Switch (From Below)", dungeon=7).add(KeyLocation("SWITCH7C_MIDRANGE")) #NOTE: This switch variant is only accessible via hard or higher logic tricks
         se_pillar_switch_range = Location("D7 Fenced Switch (From Pegs)", dungeon=7).add(KeyLocation("SWITCH7C_RANGE"))
         nw_pillar = Location("D7 NW Pillar Area", dungeon=7)
         nw_pillar_fall = Location("D7 NW Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
         sw_pillar = Location("D7 SW Pillar Area", dungeon=7)
         sw_pillar_fall = Location("D7 SW Pillar Fallen", dungeon=7).add(KeyLocation("D7_PILLAR"))
-        sw_pillar_toak_clear = Location("D7 South Three-of-a-Kind Clear", dungeon=7).add(KeyLocation("D7_TOAK_CLEAR"))  #NOTE: unopened chest despawns after 6 screen transitions or enter stairs, but never despawns if opened
+        sw_pillar_toak_clear = Location("D7 South Three-of-a-Kind Clear", dungeon=7).add(KeyLocation("D7_TOAK_CLEAR")) #NOTE: unopened chest despawns after 6 screen transitions or enter stairs, but never despawns if opened
         sw_pillar_chest6 = Location(dungeon=7).add(DungeonChest(0x21C))
         tile_room = Location("D7 Floating Tile Fight", dungeon=7)
         spike_corridor = Location("D7 Corridor Between Pillars", dungeon=7)
@@ -60,7 +60,7 @@ class Dungeon7:
         miniboss = Location("D7 Miniboss Room", dungeon=7)
         after_miniboss = Location("D7 After Miniboss Room", dungeon=7)
         after_miniboss_chest8 = Location(dungeon=7).add(DungeonChest(0x224)) # nightmare key
-        #TODO: after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D")) NOTE: enable this if miniboss switch is found to be logically relevant
+        #TODO: after_miniboss_switch = Location("D7 Switch After Miniboss").add(KeyLocation("SWITCH7D")) #NOTE: enable this if miniboss switch is found to be logically relevant
         pre_cut_boss_backdoor = Location("D7 Boss Backdoor Room", dungeon=7)
         pre_cut_conveyor_area = Location("D7 Conveyor Horseheads Area (Before Cutscene)", dungeon=7)
         post_cut_conveyor_area = Location("D7 After Boss Door", dungeon=7)
@@ -123,7 +123,7 @@ class Dungeon7:
         after_d_stairs.connect(tile_room, back=False)
         after_d_stairs.connect(after_d_stairs_drop2, r.miniboss_requirements["HINOX"], back=False)
         after_d_stairs.connect(sw_pillar_toak_clear, r.enemy_requirements["THREE_OF_A_KIND"], back=False) #NOTE: add bracelet method if rom patched
-        after_d_stairs.connect(se_pillar_switch_range, OR(BOOMERANG, BOW, BOMB, MAGIC_ROD), back=False)
+        after_d_stairs.connect((se_pillar_switch_midrange, se_pillar_switch_range), OR(BOOMERANG, BOW, BOMB, MAGIC_ROD), back=False)
         after_d_stairs.connect(pegs_before_ball, "SWITCH7C_RANGE", back=None)
         after_d_stairs.connect(keylock_ledge, FOUND(KEY7, 3))
         keylock_ledge.connect((se_pillar, pegs_before_ball, after_d_stairs), back=False)
