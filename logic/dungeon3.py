@@ -166,8 +166,10 @@ class Dungeon3:
             after_b_stairs.connect(ledge_pre_pit, AND(r.super_jump_feather, r.shield_bump), back=False) # superjump into jumping stalfos and shield bump to right ledge
             big_pit_room.connect(ledge_pre_pit, r.pit_buffer_boots) # boots bonk across the pits with pit buffering and then hookshot or shield bump to the chest
             after_b_stairs.connect(towards_boss3, r.super_bump, back=False) # super bump off stalfos to get in between boss key block 3 and 4
-            before_c_passage.connect(after_c_passage, OR(r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.boots_bonk_2d_spikepit), back=OR(r.toadstool_bounce_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.boots_bonk_2d_hell)) # bracelet or toadstool to bounce off spikes (no medicine) or boots bonk with medicine invulnerability. holding the "A" button while airborne in sidescroller makes you lighter
-
+            after_c_passage.connect(before_c_passage, OR(r.boots_bonk_2d_hell), back=False) # dash left from piranha, bonk and climb the wall, then dash into the thwomp and leave
+            # connections that require standard overworld items such as "TOADSTOOL2" and "MEDICINE2"
+            if options.overworld != 'alttp' and options.overworld != 'dungeondive':
+                before_c_passage.connect(after_c_passage, OR(r.bracelet_bounce_2d_spikepit, r.boots_bonk_2d_spikepit, r.toadstool_bounce_2d_spikepit), back=OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet to bounce off spikes (no medicine) or boots bonk with medicine invulnerability. holding the "A" button while airborne in sidescroller makes you lighter
 
         self.entrance = entrance
         self.final_room = instrument

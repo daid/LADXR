@@ -129,7 +129,7 @@ class Dungeon2:
             pit_peg_room.connect(mimic_beetle_room, OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
             mimic_beetle_room.connect(statue_switch_room_drop2, AND(r.enemy_requirements["MASKED_MIMIC_GORIYA"], OR(r.boots_bonk_pit, r.hookshot_spam_pit), r.hit_switch), back=False)
             pit_peg_room_chest5.connect((pit_peg_room, mimic_beetle_room), False, back=OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # can use both pegasus boots bonks or hookshot spam to cross the pit room
-            before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
+            before_a_passage.connect(after_a_passage, r.bracelet_bounce_2d_spikepit) # bracelet to get damage boost from 2d spikes to get through passage
             between_pits.connect((after_miniboss, vacuum_room), OR(r.hookshot_spam_pit, r.boots_bonk_pit)) # boots bonk to get over 1 tile pits to or from owl statue
             vacuum_room.connect(before_b_passage, AND(r.pit_buffer_itemless, POWER_BRACELET), back=False) # pit buffer into the pot, look down, and lift the pot
             vacuum_room.connect(entrance, back=False) # let vacuum pull you over pits and warp you to entrance
@@ -140,6 +140,9 @@ class Dungeon2:
             pot_pol_room_doorway.connect(pot_pol_room, AND(r.hookshot_clip_block), back=False) # hookshot clip through the pots using both pol's voice
             before_c_passage.connect(pre_boss_room, r.boots_jump, back=False) # boots + feather to cross over top and skip the lowering platform
             pre_boss_room.connect(pre_boss, OR(r.boots_bonk_pit, r.hookshot_spam_pit), back=False) # boots bonk off bottom wall or hookshot spam to get to the island, then boots bonk off rail or hookshot spam to get to boss door.
+            # connections that require standard overworld items such as "TOADSTOOL2" and "MEDICINE2"
+            if options.overworld != 'alttp' and options.overworld != 'dungeondive':
+                before_a_passage.connect(after_a_passage, r.toadstool_bounce_2d_spikepit) # bracelet to get damage boost from 2d spikes to get through passage
 
         self.entrance = entrance
         self.final_room = instrument

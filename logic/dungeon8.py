@@ -236,7 +236,7 @@ class Dungeon8:
             #south
             entrance.connect((lava_beamos_room, pre_center_zamboni), AND(r.jesus_buffer, r.lava_swim_sword), back=False) # boots bonk around the top left corner at vire, get on top of the wall to bonk to the left, and transition while slashing sword #TODO: look into consistency of swordless
             entrance.connect(lava_beamos_room, r.jesus_jump, back=False) # jesus jump around the key door
-            before_a_passage.connect(after_a_passage, OR(r.boots_bonk_2d_hell, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit), back=False) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
+            before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) # bracelet or toadstool to get damage boost from 2d spikes to get through passage
             after_e_passage.connect(pot_pit_room, OR(r.shaq_jump, AND(r.hookshot_clip_block, r.hookshot_over_pit, OR(r.corner_walk, r.pit_buffer_itemless))), back=r.zoomerang) # repeatedly hookshot the pot from 1 tile away, once fully wall clipped face down > kill rope > face right > spam hookshot > clip through from lucky rupee drop. back is right-facing zoomerang
             pot_pit_room_doorway.connect(pot_pit_room, r.pit_buffer_itemless, back=OR(r.boots_bonk_pit, r.hookshot_spam_pit)) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room_doorway.connect(miniboss3_room, OR(AND(r.hookshot_spam_pit, r.enemy_requirements["SNAKE"]), AND(r.boots_bonk_pit, r.shield_bump)), back=False) # boots bonk to navigate room, or bump them into pits with shield
@@ -271,7 +271,9 @@ class Dungeon8:
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk through 2d ice section
             after_c_passage.connect(before_f_stairs, AND(r.jesus_jump, r.zoomerang), back=False) # jesus jump across lava and then a few dozen consecutive buffers to get lodged lower left corner of rail, the right-facing zoomerang to escape
             boss_room.connect(instrument, AND(r.boots_bonk, r.jesus_buffer, r.boss_requirements[world_setup.boss_mapping[7]]), back=False) # boots bonk in boss room to collect instrument
-
+            # connections that require standard overworld items such as "TOADSTOOL2" and "MEDICINE2"
+            if options.overworld != 'alttp' and options.overworld != 'dungeondive':
+                before_a_passage.connect(after_a_passage, OR(r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit), back=False)
 
         self.entrance = entrance
         self.final_room = instrument

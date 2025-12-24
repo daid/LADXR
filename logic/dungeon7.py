@@ -223,7 +223,6 @@ class Dungeon7:
             post_cut_floor3.connect(pre_boss_stairs, r.boots_superhop, back=False) # boots superhop on top of goomba to extend superhop to boss door plateau
             pre_cut_floor3.connect((pre_cut_conveyor_area, post_cut_conveyor_area), OR(r.super_bump, r.super_poke), back=False)
             pre_cut_boss_backdoor.connect((pre_cut_conveyor_area, post_cut_conveyor_area), OR(r.shaq_jump, r.boots_superhop), back=False) # superhop or shaw jump followed by shield bumping off peahat onto pegs
-
         
         self.entrance = entrance
         self.final_room = instrument
