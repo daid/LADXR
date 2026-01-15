@@ -45,7 +45,7 @@ class MusicData:
             else:
                 idx += 1
         # for a, s in self.__blocks:
-        #     print(f"{a:04x} {a+s:04x}")
+        #     print(f"{a:04x} {a+s:04x} ({s})")
 
     def _get_block(self, addr, size):
         assert addr >= 0x4000
@@ -107,8 +107,10 @@ class MusicData:
                 addr += 3
                 block.append((0x9D, self._rb[addr-0x4000-2], self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
             elif self._rb[addr-0x4000] == 0x9E: # Set speed
+                speed_ptr = self._get_ptr(addr + 1)
+                speed_data = self._get_block(speed_ptr, 16)
                 addr += 2
-                block.append((0x9E, self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
+                block.append((0x9E, speed_data))
             elif self._rb[addr-0x4000] == 0x9F: # Set transpose
                 addr += 1
                 block.append((0x9F, self._rb[addr-0x4000]))
@@ -145,9 +147,12 @@ class MusicData:
             for block in channel.blocks:
                 bin_block = bytearray()
                 for op in block:
-                    if op[0] == 0x9D and channel_type == 3:
+                    if op[0] == 0x9D and channel_type == 3: # Waveform special case which has a pointer
                         addr = store_block(op[2])
                         bin_block += struct.pack("<BHB", 0x9D, addr, op[1])
+                    elif op[0] == 0x9E:
+                        addr = store_block(op[1])
+                        bin_block += struct.pack("<BH", 0x9E, addr)
                     else:
                         for c in op:
                             bin_block.append(c)
