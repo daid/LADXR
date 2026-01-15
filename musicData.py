@@ -1,6 +1,27 @@
 import struct
 
 
+OP_END = 0x00
+OP_REST = 0x01
+OP_LOOP_START = 0x9B
+OP_LOOP_END = 0x9C
+OP_CHANNEL3_SET_WAVEFORM = 0x9D
+OP_CHANNEL12_SET_INSTRUMENT = 0x9D
+OP_SET_SPEED_DATA = 0x9E
+OP_SET_TRANSPOSE = 0x9F
+
+
+class SongBlock:
+    def __init__(self):
+        self.ops = []
+    
+    def oopsAllRest(self):
+        for op in self.ops:
+            if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_CHANNEL12_SET_INSTRUMENT} and (op[0] < 0xA0 or op[0] > 0xAF):
+                return False
+        return True
+
+
 class SongChannel:
     def __init__(self):
         self.blocks = []
@@ -8,12 +29,110 @@ class SongChannel:
         self.next = None
         self.addr = None
 
+    def oopsAllRest(self):
+        for block in self.blocks:
+            if not block.oopsAllRest():
+                return False
+        return True
+
 
 class Song:
     def __init__(self):
         self.initial_transpose = 0
         self.speed_data = b''
         self.channels = []
+
+
+class SongPlayback:
+    def __init__(self, song: Song):
+        self.delay = [0, 0, 0, 0]
+        self.speed_data = song.speed_data
+        self.channel = [None if channel is None or channel.oopsAllRest() else channel for channel in song.channels]
+        self.speed = [0, 0, 0, 0]
+        self.block_index = [0, 0, 0, 0]
+        self.block_offset = [0, 0, 0, 0]
+        self.loop_start = [None, None, None, None]
+        self.loop_count = [None, None, None, None]
+    
+    def step(self, callback) -> int:
+        for channel_idx in range(4):
+            if self.channel[channel_idx] is None:
+                self.delay[channel_idx] = 256
+            while self.delay[channel_idx] == 0:
+                if self.block_offset[channel_idx] == len(self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops):
+                    self.block_index[channel_idx] += 1
+                    self.block_offset[channel_idx] = 0
+                    if self.block_index[channel_idx] == len(self.channel[channel_idx].blocks):
+                        assert self.channel[channel_idx].next is None
+                        self.channel[channel_idx] = None
+                        break
+                op = self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops[self.block_offset[channel_idx]]
+                if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END} and (op[0] < 0xA0 or op[0] > 0xAF):
+                    callback(channel_idx, op)
+                self.block_offset[channel_idx] += 1
+                if 0x01 <= op[0] <= 0x90: # A note or rest
+                    self.delay[channel_idx] = self.speed[channel_idx]
+                elif 0xA0 <= op[0] <= 0xAF: # notlen
+                    self.speed[channel_idx] = self.speed_data[op[0] & 0x0F]
+                elif op[0] == OP_CHANNEL12_SET_INSTRUMENT:
+                    pass
+                elif op[0] == OP_SET_SPEED_DATA:
+                    self.speed_data = op[1]
+                elif op[0] in {0x99, 0x9A}:
+                    pass
+                elif op[0] == OP_LOOP_START:
+                    self.loop_start[channel_idx] = self.block_offset[channel_idx]
+                    self.loop_count[channel_idx] = op[1]
+                elif op[0] == OP_LOOP_END:
+                    self.loop_count[channel_idx] -= 1
+                    if self.loop_count[channel_idx] != 0:
+                        self.block_offset[channel_idx] = self.loop_start[channel_idx]
+                else:
+                    print(f"{channel_idx}: {op[0]:02x}: {op}")
+        time_pass = min(self.delay)
+        self.delay = [d - time_pass for d in self.delay]
+        return time_pass
+
+    def isFinished(self):
+        for channel in self.channel:
+            if channel is not None:
+                return False
+        return True
+
+
+class LADXMExporter:
+    def __init__(self, song: Song, filename: str):
+        sp = SongPlayback(song)
+        timestep = 0
+        export_block = [[]]
+        while not sp.isFinished():
+            def f(channel_idx, op):
+                export_block[-1].append((channel_idx, op))
+            timestep += sp.step(f)
+            for n in range(timestep):
+                export_block.append([])
+        export_block.pop()
+
+        f = open(filename, "wt")
+        f.write("version: 1\n")
+        f.write("speed: 1\n")
+        f.write("sequence:\n")
+        f.write("  intro\n")
+        f.write("  main\n")
+        f.write("pattern: into\n")
+        f.write("pattern: main\n")
+        for block in export_block:
+            notes = [None, None, None, None]
+            effects = [[], [], [], []]
+            for channel_idx, op in block:
+                if 0x02 <= op[0] <= 0x90 or (op[0] == 0x01 and channel_idx == 3): # A note to play
+                    notes[channel_idx] = op[0]
+                elif op[0] == 0x01:
+                    pass # Ignore rests
+                else:
+                    effects[channel_idx].append(op)
+            print(notes, effects)
+        f.close()
 
 
 class MusicData:
@@ -91,31 +210,31 @@ class MusicData:
             sc.blocks.append(self._read_channel_block(data_ptr, channel_type))
         return sc
 
-    def _read_channel_block(self, base_addr, channel_type):
-        block = []
+    def _read_channel_block(self, base_addr, channel_type) -> SongBlock:
+        block = SongBlock()
         addr = base_addr
         while self._rb[addr-0x4000] != 0:
-            if self._rb[addr-0x4000] == 0x9B: # Loop
+            if self._rb[addr-0x4000] == OP_LOOP_START: # Loop
                 addr += 1
-                block.append((0x9B, self._rb[addr-0x4000]))
-            elif self._rb[addr-0x4000] == 0x9D and channel_type == 3: # Set waveform (channel 3)
+                block.ops.append((OP_LOOP_START, self._rb[addr-0x4000]))
+            elif self._rb[addr-0x4000] == OP_CHANNEL3_SET_WAVEFORM and channel_type == 3: # Set waveform (channel 3)
                 wave_ptr = self._get_ptr(addr + 1)
                 wave_data = self._get_block(wave_ptr, 16)
                 addr += 3
-                block.append((0x9D, self._rb[addr-0x4000], wave_data))
-            elif self._rb[addr-0x4000] == 0x9D: # Set envelope duty (channel 1/2)
+                block.ops.append((OP_CHANNEL3_SET_WAVEFORM, self._rb[addr-0x4000], wave_data))
+            elif self._rb[addr-0x4000] == OP_CHANNEL12_SET_INSTRUMENT: # Set envelope duty (channel 1/2)
                 addr += 3
-                block.append((0x9D, self._rb[addr-0x4000-2], self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
-            elif self._rb[addr-0x4000] == 0x9E: # Set speed
+                block.ops.append((OP_CHANNEL12_SET_INSTRUMENT, self._rb[addr-0x4000-2], self._rb[addr-0x4000-1], self._rb[addr-0x4000]))
+            elif self._rb[addr-0x4000] == OP_SET_SPEED_DATA: # Set speed
                 speed_ptr = self._get_ptr(addr + 1)
                 speed_data = self._get_block(speed_ptr, 16)
                 addr += 2
-                block.append((0x9E, speed_data))
-            elif self._rb[addr-0x4000] == 0x9F: # Set transpose
+                block.ops.append((OP_SET_SPEED_DATA, speed_data))
+            elif self._rb[addr-0x4000] == OP_SET_TRANSPOSE: # Set transpose
                 addr += 1
-                block.append((0x9F, self._rb[addr-0x4000]))
+                block.ops.append((OP_SET_TRANSPOSE, self._rb[addr-0x4000]))
             else:
-                block.append((self._rb[addr-0x4000],))
+                block.ops.append((self._rb[addr-0x4000],))
             addr += 1
         self._get_block(base_addr, addr - base_addr + 1)
         return block
@@ -146,16 +265,17 @@ class MusicData:
             channel_data = b''
             for block in channel.blocks:
                 bin_block = bytearray()
-                for op in block:
-                    if op[0] == 0x9D and channel_type == 3: # Waveform special case which has a pointer
+                for op in block.ops:
+                    if op[0] == OP_CHANNEL3_SET_WAVEFORM and channel_type == 3: # Waveform special case which has a pointer
                         addr = store_block(op[2])
-                        bin_block += struct.pack("<BHB", 0x9D, addr, op[1])
-                    elif op[0] == 0x9E:
+                        bin_block += struct.pack("<BHB", OP_CHANNEL3_SET_WAVEFORM, addr, op[1])
+                    elif op[0] == OP_SET_SPEED_DATA:
                         addr = store_block(op[1])
-                        bin_block += struct.pack("<BH", 0x9E, addr)
+                        bin_block += struct.pack("<BH", OP_SET_SPEED_DATA, addr)
                     else:
                         for c in op:
                             bin_block.append(c)
+                bin_block.append(0)
                 addr = store_block(bytes(bin_block))
                 channel_data += struct.pack("<H", addr)
             if channel.loop is not None:
@@ -197,3 +317,11 @@ if __name__ == "__main__":
     b = MusicData(r, 0x1E, 0x007F, 0x40)
     a.store(r)
     b.store(r)
+
+    song_idx = 3
+    LADXMExporter(a.songs[song_idx], f"music/a_{song_idx:02}.ladxm")
+    exit(0)
+
+    for song_idx, song in enumerate(a.songs):
+        LADXMExporter(song, f"music/a_{song_idx:02}.ladxm")
+        break
