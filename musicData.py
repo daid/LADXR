@@ -1,6 +1,6 @@
 import struct
 import binascii
-
+from typing import Optional, List
 
 OP_END = 0x00
 OP_REST = 0x01
@@ -67,8 +67,8 @@ class SongPlayback:
         self.speed = [0, 0, 0, 0]
         self.block_index = [0, 0, 0, 0]
         self.block_offset = [0, 0, 0, 0]
-        self.loop_start = [None, None, None, None]
-        self.loop_count = [None, None, None, None]
+        self.loop_start: List[Optional[int]] = [None, None, None, None]
+        self.loop_count: List[Optional[int]] = [None, None, None, None]
     
     def step(self, callback) -> int:
         for channel_idx in range(4):
@@ -372,7 +372,7 @@ class MusicData:
         #     print(f"{a:04x} {a+s:04x} ({s})")
 
 
-if __name__ == "__main__":
+def main():
     import rom
     r = rom.ROM(open("input.gbc", "rb"))
     a = MusicData(r, 0x1B, 0x0077, 0x30)
@@ -387,3 +387,7 @@ if __name__ == "__main__":
     for song_idx, song in enumerate(a.songs):
         LADXMExporter(song, f"music/a_{song_idx:02}.ladxm")
         break
+
+
+if __name__ == "__main__":
+    main()
