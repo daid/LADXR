@@ -15,11 +15,13 @@ OP_DISABLE_UNKNOWN3 = 0x9A
 OP_SET_INSTRUMENT = 0x9D
 OP_SET_SPEED_DATA = 0x9E
 OP_SET_TRANSPOSE = 0x9F
-
+OP_COMMENT = 0x100  # virtual opcode
 
 def noteToString(channel_idx, note):
     if note is None:
         return "   "
+    if channel_idx == 3:
+        return f"N{note:02x}"
     assert 2 <= note <= 0x90
     assert (note & 1) == 0
     octave = note // 24
@@ -28,7 +30,8 @@ def noteToString(channel_idx, note):
 
 
 class SongBlock:
-    def __init__(self):
+    def __init__(self, addr):
+        self.addr = addr
         self.ops = []
     
     def oopsAllRest(self):
@@ -61,6 +64,7 @@ class Song:
 
 class SongPlayback:
     def __init__(self, song: Song):
+        self.transpose = song.initial_transpose
         self.delay = [0, 0, 0, 0]
         self.speed_data = song.speed_data
         self.channel = [None if channel is None or channel.oopsAllRest() else channel for channel in song.channels]
@@ -69,22 +73,31 @@ class SongPlayback:
         self.block_offset = [0, 0, 0, 0]
         self.loop_start: List[Optional[int]] = [None, None, None, None]
         self.loop_count: List[Optional[int]] = [None, None, None, None]
-    
+
+        if self.transpose:
+            raise NotImplementedError("Transpose not implemented")
+        if self.channel[3]:
+            raise NotImplementedError("Channel 4 not implemented")
+
     def step(self, callback) -> int:
         for channel_idx in range(4):
             if self.channel[channel_idx] is None:
                 self.delay[channel_idx] = 256
             while self.delay[channel_idx] == 0:
                 if self.block_offset[channel_idx] == len(self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops):
+                    callback(-1, 0, (OP_COMMENT, f"End of block for channel {channel_idx+1} ({self.channel[channel_idx].blocks[self.block_index[channel_idx]].addr:04x})"))
                     self.block_index[channel_idx] += 1
                     self.block_offset[channel_idx] = 0
                     if self.block_index[channel_idx] == len(self.channel[channel_idx].blocks):
-                        assert self.channel[channel_idx].next is None
+                        if self.channel[channel_idx].next is not None:
+                            raise NotImplementedError("Move to next not implemented")
+                        if self.channel[channel_idx].loop is not None:
+                            callback(-1, 0, (OP_COMMENT, f"Channel {channel_idx+1} loop to: {self.channel[channel_idx].blocks[self.channel[channel_idx].loop].addr:04x}"))
                         self.channel[channel_idx] = None
                         break
                 op = self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops[self.block_offset[channel_idx]]
                 if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END} and (op[0] < 0xA0 or op[0] > 0xAF):
-                    callback(channel_idx, op)
+                    callback(channel_idx, self.speed[channel_idx], op)
                 self.block_offset[channel_idx] += 1
                 if 0x01 <= op[0] <= 0x90: # A note or rest
                     self.delay[channel_idx] = self.speed[channel_idx]
@@ -104,7 +117,7 @@ class SongPlayback:
                     if self.loop_count[channel_idx] != 0:
                         self.block_offset[channel_idx] = self.loop_start[channel_idx]
                 else:
-                    print(f"{channel_idx}: {op[0]:02x}: {op}")
+                    raise NotImplementedError(f"Not implemented opcode: {channel_idx}: {op[0]:02x}: {op}")
         time_pass = min(self.delay)
         self.delay = [d - time_pass for d in self.delay]
         return time_pass
@@ -119,27 +132,23 @@ class SongPlayback:
 class LADXMExporter:
     def __init__(self, song: Song, filename: str):
         sp = SongPlayback(song)
-        pattern = [[]]
+        pattern = []
         pulse_instruments = []
         wave_instruments = []
+        timestep = 0
         while not sp.isFinished():
-            def f(channel_idx, op):
+            def f(channel_idx, length, op):
                 if op[0] == OP_SET_INSTRUMENT:
                     if channel_idx == 2:
                         if op not in wave_instruments:
                             wave_instruments.append(op)
                     elif op not in pulse_instruments:
                         pulse_instruments.append(op)
-                pattern[-1].append((channel_idx, op))
-            timestep = sp.step(f)
-            for n in range(timestep):
-                pattern.append([])
-        pattern.pop()
+                pattern.append((timestep, channel_idx, length, op))
+            timestep += sp.step(f)
 
         f = open(filename, "wt")
         f.write("version: 1\n")
-        current_speed = 1
-        f.write(f"speed: {current_speed}\n")
         for instrument_index, instrument in enumerate(pulse_instruments):
             length = 0x3F - instrument[3] & 0x3F
             duty = instrument[3] >> 6
@@ -154,46 +163,28 @@ class LADXMExporter:
         f.write("  main\n")
         f.write("pattern: intro\n")
         f.write("pattern: main\n")
-        pattern_index = 0
-        while pattern_index < len(pattern):
-            notes = [None, None, None, None]
-            effects = [[], [], [], []]
-            for n in range(0, current_speed):
-                if pattern_index + n >= len(pattern):
-                    continue
-                block = pattern[pattern_index + n]
-                if n != 0 and any(block):
-                    print(f"Warning slight time shift at {pattern_index//current_speed} -{n} frames")
-                for channel_idx, op in block:
-                    if 0x02 <= op[0] <= 0x90 or (op[0] == 0x01 and channel_idx == 3): # A note to play
-                        if notes[channel_idx] is not None:
-                            print(f"Major warning, note erased at {pattern_index//current_speed}")
-                        notes[channel_idx] = op[0]
-                    elif op[0] == 0x01:
-                        pass # Ignore rests
-                    else:
-                        effects[channel_idx].append(op)
-            if (pattern_index // current_speed) % 8 == 0:
-                f.write("= ")
+        pattern.sort(key=lambda p: (p[0], p[1], -p[3][0]))
+        for timestep, channel_idx, length, op in pattern:
+            if 0x02 <= op[0] <= 0x90 or (op[0] == 0x01 and channel_idx == 3): # A note to play
+                f.write(f"  {timestep:04} {channel_idx+1} {noteToString(channel_idx, op[0])} {length}\n")
+            elif op[0] == 0x01:
+                pass # Ignore rests
             else:
-                f.write("- ")
-            pattern_index += current_speed
-            for channel_idx in range(4):
-                f.write(noteToString(channel_idx, notes[channel_idx]))
-                for effect in effects[channel_idx]:
-                    if effect[0] == OP_SET_INSTRUMENT:
-                        if channel_idx == 2:
-                            f.write(f" I{wave_instruments.index(effect):02}")
-                        else:
-                            f.write(f" I{pulse_instruments.index(effect):02}")
-                    elif effect[0] == OP_ENABLE_UNKNOWN3:
-                        f.write(f" EU3")
-                    elif effect[0] == OP_DISABLE_UNKNOWN3:
-                        f.write(f" DU3")
+                f.write(f"  {timestep:04} {channel_idx+1} ")
+                if op[0] == OP_SET_INSTRUMENT:
+                    if channel_idx == 2:
+                        f.write(f"={wave_instruments.index(op):02}")
                     else:
-                        raise NotImplementedError(hex(effect[0]))
-                f.write("    " * (4 - len(effects[channel_idx])))
-            f.write("\n")
+                        f.write(f"={pulse_instruments.index(op):02}")
+                elif op[0] == OP_ENABLE_UNKNOWN3:
+                    f.write(f"+U3")
+                elif op[0] == OP_DISABLE_UNKNOWN3:
+                    f.write(f"-U3")
+                elif op[0] == OP_COMMENT:
+                    f.write(op[1])
+                else:
+                    raise NotImplementedError(hex(op[0]))
+                f.write("\n")
         f.close()
 
 
@@ -273,7 +264,7 @@ class MusicData:
         return sc
 
     def _read_channel_block(self, base_addr, channel_type) -> SongBlock:
-        block = SongBlock()
+        block = SongBlock(base_addr)
         addr = base_addr
         while self._rb[addr-0x4000] != 0:
             if self._rb[addr-0x4000] == OP_LOOP_START: # Loop
@@ -380,13 +371,12 @@ def main():
     a.store(r)
     b.store(r)
 
-    song_idx = 4
-    LADXMExporter(a.songs[song_idx], f"music/a_{song_idx:02}.ladxm")
-    exit(0)
-
-    for song_idx, song in enumerate(a.songs):
-        LADXMExporter(song, f"music/a_{song_idx:02}.ladxm")
-        break
+    for name, md in [("a", a), ("b", b)]:
+        for song_idx, song in enumerate(a.songs):
+            try:
+                LADXMExporter(song, f"music/{name}_{song_idx:02}.ladxm")
+            except NotImplementedError as e:
+                print(f"NotImplementedError on song {name}_{song_idx}: {e}")
 
 
 if __name__ == "__main__":
