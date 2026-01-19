@@ -146,9 +146,9 @@ class LADXMExporter:
             volume = instrument[1] >> 4
             env_dir_inc = "-" if (instrument[1] & 0x08) == 0 else "+"
             env_pace = instrument[1] & 0x07
-            f.write(f"pulse_instrument{instrument_index}: length: {length} duty: {duty} volume: {volume} vol_change: {env_dir_inc}{env_pace} unk1: {instrument[2]}\n")
+            f.write(f"pulse_instrument: length: {length} duty: {duty} volume: {volume} vol_change: {env_dir_inc}{env_pace} unk1: {instrument[2]}\n")
         for instrument_index, instrument in enumerate(wave_instruments):
-            f.write(f"wave_instrument{instrument_index}: {binascii.hexlify(instrument[2]).decode('ascii')} unk1: {instrument[1]}\n")
+            f.write(f"wave_instrument: {binascii.hexlify(instrument[2]).decode('ascii')} unk1: {instrument[1]}\n")
         f.write("sequence:\n")
         f.write("  intro\n")
         f.write("  main\n")
