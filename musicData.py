@@ -146,6 +146,7 @@ class LADXMExporter:
                         pulse_instruments.append(op)
                 pattern.append((timestep, channel_idx, length, op))
             timestep += sp.step(f)
+        pattern.append((timestep, 4, 0, (OP_END, )))
 
         f = open(filename, "wt")
         f.write("version: 1\n")
@@ -182,6 +183,8 @@ class LADXMExporter:
                     f.write(f"-U3")
                 elif op[0] == OP_COMMENT:
                     f.write(op[1])
+                elif op[0] == OP_END:
+                    f.write("END")
                 else:
                     raise NotImplementedError(hex(op[0]))
                 f.write("\n")
@@ -372,7 +375,7 @@ def main():
     b.store(r)
 
     for name, md in [("a", a), ("b", b)]:
-        for song_idx, song in enumerate(a.songs):
+        for song_idx, song in enumerate(md.songs):
             try:
                 LADXMExporter(song, f"music/{name}_{song_idx:02}.ladxm")
             except NotImplementedError as e:
