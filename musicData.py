@@ -1,3 +1,4 @@
+import re
 import struct
 import binascii
 from typing import Optional, List
@@ -17,6 +18,7 @@ OP_SET_SPEED_DATA = 0x9E
 OP_SET_TRANSPOSE = 0x9F
 OP_COMMENT = 0x100  # virtual opcode
 
+
 def noteToString(channel_idx, note):
     if note is None:
         return "   "
@@ -27,6 +29,25 @@ def noteToString(channel_idx, note):
     octave = note // 24
     note = ["C_",  "C#", "D_", "D#", "E_", "F_", "F#", "G_", "G#", "A_", "A#", "B_"][(note // 2) % 12]
     return f"{note}{octave+1}"
+
+
+def noteFromString(channel_idx, data):
+    assert len(data) == 3
+    octave = int(data[2]) - 1
+    match data[:2]:
+        case "C_": return 2 + octave * 24
+        case "C#": return 4 + octave * 24
+        case "D_": return 6 + octave * 24
+        case "D#": return 8 + octave * 24
+        case "E_": return 10 + octave * 24
+        case "F_": return 12 + octave * 24
+        case "F#": return 14 + octave * 24
+        case "G_": return 16 + octave * 24
+        case "G#": return 18 + octave * 24
+        case "A_": return 20 + octave * 24
+        case "A#": return 22 + octave * 24
+        case "B_": return 24 + octave * 24
+    raise ValueError(f"Cannot parse note: {data}")
 
 
 class SongBlock:
@@ -59,7 +80,7 @@ class Song:
     def __init__(self):
         self.initial_transpose = 0
         self.speed_data = b''
-        self.channels = []
+        self.channels: List[Optional[SongChannel]] = []
 
 
 class SongPlayback:
@@ -107,6 +128,9 @@ class SongPlayback:
                     pass
                 elif op[0] == OP_SET_SPEED_DATA:
                     self.speed_data = op[1]
+                elif op[0] == OP_SET_TRANSPOSE:
+                    self.transpose = op[1]
+                    raise NotImplementedError("Transpose not implemented")
                 elif op[0] in {0x99, 0x9A}:
                     pass
                 elif op[0] == OP_LOOP_START:
@@ -151,12 +175,13 @@ class LADXMExporter:
         f = open(filename, "wt")
         f.write("version: 1\n")
         for instrument_index, instrument in enumerate(pulse_instruments):
-            length = 0x3F - instrument[3] & 0x3F
+            assert (instrument[3] & 0x3F) in (0, 1, 3), f"Unexpected setting for pulse channel vibrato: {instrument[3] & 0x3F:02x}"
+            vibrato = instrument[3] & 0x3F
             duty = instrument[3] >> 6
             volume = instrument[1] >> 4
             env_dir_inc = "-" if (instrument[1] & 0x08) == 0 else "+"
             env_pace = instrument[1] & 0x07
-            f.write(f"pulse_instrument: length: {length} duty: {duty} volume: {volume} vol_change: {env_dir_inc}{env_pace} unk1: {instrument[2]}\n")
+            f.write(f"pulse_instrument: vibrato: {vibrato} duty: {duty} volume: {volume} vol_change: {env_dir_inc}{env_pace} unk1: 0x{instrument[2]:02x}\n")
         for instrument_index, instrument in enumerate(wave_instruments):
             f.write(f"wave_instrument: {binascii.hexlify(instrument[2]).decode('ascii')} unk1: {instrument[1]}\n")
         f.write("sequence:\n")
@@ -177,6 +202,14 @@ class LADXMExporter:
                         f.write(f"={wave_instruments.index(op):02}")
                     else:
                         f.write(f"={pulse_instruments.index(op):02}")
+                elif op[0] == OP_ENABLE_UNKNOWN1:
+                    f.write(f"+U1")
+                elif op[0] == OP_DISABLE_UNKNOWN1:
+                    f.write(f"-U1")
+                elif op[0] == OP_ENABLE_UNKNOWN2:
+                    f.write(f"+U2")
+                elif op[0] == OP_DISABLE_UNKNOWN2:
+                    f.write(f"-U2")
                 elif op[0] == OP_ENABLE_UNKNOWN3:
                     f.write(f"+U3")
                 elif op[0] == OP_DISABLE_UNKNOWN3:
@@ -366,6 +399,105 @@ class MusicData:
         #     print(f"{a:04x} {a+s:04x} ({s})")
 
 
+def import_ladxm(filename):
+    pulse_instruments = []
+    wave_instruments = []
+    sequence = []
+    patterns = {}
+
+    lines = open(filename, "rt").readlines()
+    while lines:
+        line = lines.pop(0).rstrip()
+        key, _, data = line.partition(":")
+        data = data.strip()
+        match key:
+            case "version":
+                assert data == "1"
+            case "pulse_instrument":
+                data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data))
+                b1 = (int(data['volume']) << 4) | (abs(int(data['vol_change'])))
+                if int(data['vol_change']) > 0:
+                    b1 |= 0x08
+                b3 = int(data['vibrato']) | (int(data['duty']) << 6)
+                pulse_instruments.append((OP_SET_INSTRUMENT, b1, int(data['unk1'], 0), b3))
+            case "wave_instrument":
+                wave_data = data[:32]
+                data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data[32:]))
+                wave_instruments.append((OP_SET_INSTRUMENT, int(data['unk1'], 0), binascii.unhexlify(wave_data)))
+            case "sequence":
+                while lines and lines[0].startswith(" "):
+                    sequence.append(lines.pop(0).strip())
+            case "pattern":
+                pattern = []
+                patterns[data] = pattern
+                while lines and lines[0].startswith(" "):
+                    line = lines.pop(0).strip().split()
+                    frame_nr = int(line[0])
+                    channel_nr = int(line[1])
+                    if channel_nr < 1:  # ignore comments
+                        continue
+                    if len(line) > 3:
+                        pattern.append((frame_nr, channel_nr - 1, line[2], int(line[3])))
+                    else:
+                        pattern.append((frame_nr, channel_nr - 1, line[2], 0))
+            case _:
+                print(f"? {key}={data}")
+
+    speed_table = []
+    for pattern in patterns.values():
+        for frame_nr, channel_nr, data, length in pattern:
+            if length > 0 and length not in speed_table:
+                speed_table.append(length)
+    speed_table.append(1)
+    speed_table.append(2)
+
+    song = Song()
+    song.initial_transpose = 0
+    song.speed_data = bytes(speed_table)
+    song.channels = [None, None, None, None]
+    for channel_idx in range(3):
+        channel = SongChannel()
+        song.channels[channel_idx] = channel
+        channel.loop = 1
+        for s in sequence:
+            block = SongBlock(None)
+            channel.blocks.append(block)
+            current_time = 0
+            current_delay = -1
+            for frame_nr, channel_nr, data, length in patterns[s]:
+                if channel_nr != channel_idx and channel_nr != 4:
+                    continue
+                time_delta = frame_nr - current_time
+                while time_delta > 0:
+                    best_idx = -1
+                    for idx in range(16):
+                        if speed_table[idx] <= time_delta and (best_idx == -1 or speed_table[best_idx] < speed_table[idx]):
+                            best_idx = idx
+                    if current_delay != speed_table[best_idx]:
+                        current_delay = speed_table[best_idx]
+                        block.ops.append((0xA0 + best_idx,))
+                    block.ops.append((OP_REST,))
+                    time_delta -= current_delay
+                    current_time += current_delay
+                if length > 0:
+                    if current_delay != length:
+                        current_delay = length
+                        block.ops.append((0xA0 + speed_table.index(length),))
+                    block.ops.append((noteFromString(channel_idx, data),))
+                    current_time += current_delay
+                elif data == "END":
+                    pass
+                elif data == "+U3":
+                    block.ops.append((OP_ENABLE_UNKNOWN3,))
+                elif data.startswith("="):
+                    if channel_idx < 2:
+                        block.ops.append(pulse_instruments[int(data[1:])])
+                    elif channel_idx == 2:
+                        block.ops.append(wave_instruments[int(data[1:])])
+                else:
+                    print("?????", data)
+    return song
+
 def main():
     import rom
     r = rom.ROM(open("input.gbc", "rb"))
@@ -373,13 +505,17 @@ def main():
     b = MusicData(r, 0x1E, 0x007F, 0x40)
     a.store(r)
     b.store(r)
+    #
+    # for name, md in [("a", a), ("b", b)]:
+    #     for song_idx, song in enumerate(md.songs):
+    #         try:
+    #             LADXMExporter(song, f"music/{name}_{song_idx:02}.ladxm")
+    #         except NotImplementedError as e:
+    #             print(f"NotImplementedError on song {name}_{song_idx}: {e}")
 
-    for name, md in [("a", a), ("b", b)]:
-        for song_idx, song in enumerate(md.songs):
-            try:
-                LADXMExporter(song, f"music/{name}_{song_idx:02}.ladxm")
-            except NotImplementedError as e:
-                print(f"NotImplementedError on song {name}_{song_idx}: {e}")
+    a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/song.ladxm")
+    a.store(r)
+    r.save("LADXR_DEFAULT.gbc")
 
 
 if __name__ == "__main__":
