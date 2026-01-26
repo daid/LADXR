@@ -454,8 +454,13 @@ def import_ladxm(filename):
         for frame_nr, channel_nr, data, length in pattern:
             if length > 0 and length not in speed_table:
                 speed_table.append(length)
-    speed_table.append(1)
-    speed_table.append(2)
+    while len(speed_table) < 16:
+        add_value = 1
+        while add_value in speed_table:
+            add_value *= 2
+            if add_value > 0xFF:
+                add_value = 3
+        speed_table.append(add_value)
 
     song = Song()
     song.initial_transpose = 0
