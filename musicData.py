@@ -25,7 +25,7 @@ def noteToString(channel_idx, note):
     if channel_idx == 3:
         assert note >= 6, f"Odd noise note: {note:02x}"
         assert ((note - 1) % 5) == 0, f"Odd noise note: {note:02x}"
-        return f"N{(note-1)//5:02x}"
+        return f"N{(note-1)//5:02}"
     assert 2 <= note <= 0x90
     assert (note & 1) == 0
     octave = note // 24
