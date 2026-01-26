@@ -23,7 +23,9 @@ def noteToString(channel_idx, note):
     if note is None:
         return "   "
     if channel_idx == 3:
-        return f"N{note:02x}"
+        assert note >= 6, f"Odd noise note: {note:02x}"
+        assert ((note - 1) % 5) == 0, f"Odd noise note: {note:02x}"
+        return f"N{(note-1)//5:02x}"
     assert 2 <= note <= 0x90
     assert (note & 1) == 0
     octave = note // 24
@@ -33,21 +35,25 @@ def noteToString(channel_idx, note):
 
 def noteFromString(channel_idx, data):
     assert len(data) == 3
-    octave = int(data[2]) - 1
-    match data[:2]:
-        case "C_": return 2 + octave * 24
-        case "C#": return 4 + octave * 24
-        case "D_": return 6 + octave * 24
-        case "D#": return 8 + octave * 24
-        case "E_": return 10 + octave * 24
-        case "F_": return 12 + octave * 24
-        case "F#": return 14 + octave * 24
-        case "G_": return 16 + octave * 24
-        case "G#": return 18 + octave * 24
-        case "A_": return 20 + octave * 24
-        case "A#": return 22 + octave * 24
-        case "B_": return 24 + octave * 24
-    raise ValueError(f"Cannot parse note: {data}")
+    if channel_idx == 3:
+        assert data[0] == "N"
+        return 1 + int(data[1:]) * 5
+    else:
+        octave = int(data[2]) - 1
+        match data[:2]:
+            case "C_": return 2 + octave * 24
+            case "C#": return 4 + octave * 24
+            case "D_": return 6 + octave * 24
+            case "D#": return 8 + octave * 24
+            case "E_": return 10 + octave * 24
+            case "F_": return 12 + octave * 24
+            case "F#": return 14 + octave * 24
+            case "G_": return 16 + octave * 24
+            case "G#": return 18 + octave * 24
+            case "A_": return 20 + octave * 24
+            case "A#": return 22 + octave * 24
+            case "B_": return 24 + octave * 24
+        raise ValueError(f"Cannot parse note: {data}")
 
 
 class SongBlock:
@@ -95,11 +101,6 @@ class SongPlayback:
         self.loop_start: List[Optional[int]] = [None, None, None, None]
         self.loop_count: List[Optional[int]] = [None, None, None, None]
 
-        if self.transpose:
-            raise NotImplementedError("Transpose not implemented")
-        if self.channel[3]:
-            raise NotImplementedError("Channel 4 not implemented")
-
     def step(self, callback) -> int:
         for channel_idx in range(4):
             if self.channel[channel_idx] is None:
@@ -117,7 +118,10 @@ class SongPlayback:
                         self.channel[channel_idx] = None
                         break
                 op = self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops[self.block_offset[channel_idx]]
-                if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END} and (op[0] < 0xA0 or op[0] > 0xAF):
+                if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END, OP_SET_TRANSPOSE} and (op[0] < 0xA0 or op[0] > 0xAF):
+                    if 0x02 <= op[0] <= 0x90 and channel_idx != 3: # A note or rest, apply transpose
+                        op = (op[0] + self.transpose, )
+                        assert 0x02 <= op[0] <= 0x90, "Note out of range after transpose?"
                     callback(channel_idx, self.speed[channel_idx], op)
                 self.block_offset[channel_idx] += 1
                 if 0x01 <= op[0] <= 0x90: # A note or rest
@@ -130,8 +134,9 @@ class SongPlayback:
                     self.speed_data = op[1]
                 elif op[0] == OP_SET_TRANSPOSE:
                     self.transpose = op[1]
-                    raise NotImplementedError("Transpose not implemented")
-                elif op[0] in {0x99, 0x9A}:
+                    if self.transpose & 0x80:
+                        self.transpose = -(0x100 - self.transpose)
+                elif op[0] in {OP_ENABLE_UNKNOWN1, OP_DISABLE_UNKNOWN1, OP_ENABLE_UNKNOWN2, OP_DISABLE_UNKNOWN2, OP_ENABLE_UNKNOWN3, OP_DISABLE_UNKNOWN3}:
                     pass
                 elif op[0] == OP_LOOP_START:
                     self.loop_start[channel_idx] = self.block_offset[channel_idx]
@@ -183,7 +188,7 @@ class LADXMExporter:
             env_pace = instrument[1] & 0x07
             f.write(f"pulse_instrument: vibrato: {vibrato} duty: {duty} volume: {volume} vol_change: {env_dir_inc}{env_pace} unk1: 0x{instrument[2]:02x}\n")
         for instrument_index, instrument in enumerate(wave_instruments):
-            f.write(f"wave_instrument: {binascii.hexlify(instrument[2]).decode('ascii')} unk1: {instrument[1]}\n")
+            f.write(f"wave_instrument: {binascii.hexlify(instrument[2]).decode('ascii')} volume: {(instrument[1] >> 5) & 0x03} effect: 0x{instrument[1] & 0x9F:02x}\n")
         f.write("sequence:\n")
         f.write("  intro\n")
         f.write("  main\n")
@@ -191,7 +196,7 @@ class LADXMExporter:
         f.write("pattern: main\n")
         pattern.sort(key=lambda p: (p[0], p[1], -p[3][0]))
         for timestep, channel_idx, length, op in pattern:
-            if 0x02 <= op[0] <= 0x90 or (op[0] == 0x01 and channel_idx == 3): # A note to play
+            if 0x02 <= op[0] <= 0x90: # A note to play
                 f.write(f"  {timestep:04} {channel_idx+1} {noteToString(channel_idx, op[0])} {length}\n")
             elif op[0] == 0x01:
                 pass # Ignore rests
@@ -219,7 +224,7 @@ class LADXMExporter:
                 elif op[0] == OP_END:
                     f.write("END")
                 else:
-                    raise NotImplementedError(hex(op[0]))
+                    raise NotImplementedError(f"Unknown opcode in export: {op[0]:02x}")
                 f.write("\n")
         f.close()
 
@@ -423,7 +428,8 @@ def import_ladxm(filename):
             case "wave_instrument":
                 wave_data = data[:32]
                 data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data[32:]))
-                wave_instruments.append((OP_SET_INSTRUMENT, int(data['unk1'], 0), binascii.unhexlify(wave_data)))
+                b1 = (int(data['volume'], 0) << 5) | int(data['effect'], 0)
+                wave_instruments.append((OP_SET_INSTRUMENT, b1, binascii.unhexlify(wave_data)))
             case "sequence":
                 while lines and lines[0].startswith(" "):
                     sequence.append(lines.pop(0).strip())
@@ -487,8 +493,18 @@ def import_ladxm(filename):
                     current_time += current_delay
                 elif data == "END":
                     pass
+                elif data == "+U1":
+                    block.ops.append((OP_ENABLE_UNKNOWN1,))
+                elif data == "-U1":
+                    block.ops.append((OP_DISABLE_UNKNOWN1,))
+                elif data == "+U2":
+                    block.ops.append((OP_ENABLE_UNKNOWN2,))
+                elif data == "-U2":
+                    block.ops.append((OP_DISABLE_UNKNOWN2,))
                 elif data == "+U3":
                     block.ops.append((OP_ENABLE_UNKNOWN3,))
+                elif data == "-U3":
+                    block.ops.append((OP_DISABLE_UNKNOWN3,))
                 elif data.startswith("="):
                     if channel_idx < 2:
                         block.ops.append(pulse_instruments[int(data[1:])])
@@ -505,17 +521,18 @@ def main():
     b = MusicData(r, 0x1E, 0x007F, 0x40)
     a.store(r)
     b.store(r)
-    #
-    # for name, md in [("a", a), ("b", b)]:
-    #     for song_idx, song in enumerate(md.songs):
-    #         try:
-    #             LADXMExporter(song, f"music/{name}_{song_idx:02}.ladxm")
-    #         except NotImplementedError as e:
-    #             print(f"NotImplementedError on song {name}_{song_idx}: {e}")
 
-    a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/song.ladxm")
-    a.store(r)
-    r.save("LADXR_DEFAULT.gbc")
+    for name, md in [("a", a), ("b", b)]:
+         for song_idx, song in enumerate(md.songs):
+            try:
+                print(f"Exporting {name}_{song_idx:02}")
+                LADXMExporter(song, f"../LADX-MusicEditor/editor/songs/ladx/{name}_{song_idx:02}.ladxm")
+            except NotImplementedError as e:
+                print(f"NotImplementedError on song {name}_{song_idx}: {e}")
+
+    #a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/song.ladxm")
+    #a.store(r)
+    #r.save("LADXR_DEFAULT.gbc")
 
 
 if __name__ == "__main__":
