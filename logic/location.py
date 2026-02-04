@@ -69,7 +69,7 @@ class Location:
             return self.items[0].nameId
         
         if recurse:
-            uniqueConnections = {x[0].friendlyName(recurse=False) for x in self.connections}
+            uniqueConnections = sorted({x[0].friendlyName(recurse=False) for x in self.connections})
             
             return 'Unnamed - ' + ','.join(uniqueConnections)
         
