@@ -56,11 +56,59 @@ def noteFromString(channel_idx, data):
         raise ValueError(f"Cannot parse note: {data}")
 
 
+def songOpsEqual(ops_a, ops_b) -> bool:
+    if len(ops_a) != len(ops_b):
+        return False
+    for a, b in zip(ops_a, ops_b):
+        if a != b:
+            return False
+    return True
+
+
+def songOpsSize(ops):
+    return sum(len(op) for op in ops)
+
+
+def songOpsHasUnclosedLoop(ops):
+    open_loop_count = 0
+    for op in ops:
+        if op[0] == OP_LOOP_START:
+            open_loop_count += 1
+        elif op[0] == OP_LOOP_END:
+            open_loop_count -= 1
+    return open_loop_count == 0
+
+
 class SongBlock:
     def __init__(self, addr):
         self.addr = addr
         self.ops = []
     
+    def optimizeWithLoops(self):
+        while True:
+            best_loop = None
+            for start in range(len(self.ops)):
+                for length in range(1, min(32, len(self.ops) - start)):
+                    base_list = self.ops[start:start+length]
+                    skip = False
+                    for op in base_list:
+                        if op[0] == OP_LOOP_START:
+                            skip = True
+                            break
+                    if skip:
+                        continue
+                    repeat_count = 1
+                    while songOpsEqual(self.ops[start+repeat_count*length:start+repeat_count*length+length], base_list):
+                        repeat_count += 1
+                    if repeat_count > 1:
+                        saved_size = songOpsSize(base_list) * (repeat_count - 1)
+                        if saved_size > 3 and (best_loop is None or best_loop[0] < saved_size):
+                            best_loop = (saved_size, start, length, repeat_count)
+            if best_loop is None:
+                break
+            saved_size, start, length, repeat_count = best_loop
+            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + self.ops[start:start+length] + [(OP_LOOP_START,)] + self.ops[start+length*repeat_count:]
+
     def oopsAllRest(self):
         for op in self.ops:
             if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT} and (op[0] < 0xA0 or op[0] > 0xAF):
@@ -74,6 +122,54 @@ class SongChannel:
         self.loop = None
         self.next = None
         self.addr = None
+    
+    def optimize(self, *, already_done=None):
+        if already_done is None:
+            already_done = set()
+        if self in already_done:
+            return
+        already_done.add(self)
+        for block in self.blocks:
+            block.optimizeWithLoops()
+        while self._findBlockToSplit():
+            pass
+        if self.next:
+            self.next.optimize(already_done=already_done)
+    
+    def _findBlockToSplit(self):
+        for block_idx, block in enumerate(self.blocks):
+            best_block = None
+            for start in range(len(block.ops) // 2):
+                for length in range(2, len(block.ops) - start):
+                    base_list = block.ops[start:start+length]
+                    if songOpsHasUnclosedLoop(base_list):
+                        continue
+                    overlap_positions = []
+                    for check_start in range(start, len(block.ops) - length):
+                        if songOpsEqual(base_list, block.ops[check_start:check_start+length]):
+                            overlap_positions.append(check_start)
+                    if len(overlap_positions) > 1:
+                        space_saved = songOpsSize(base_list) * (len(overlap_positions) - 1) - len(overlap_positions) * 4
+                        if space_saved > 0:
+                            if best_block is None or best_block[0] < space_saved:
+                                best_block = (space_saved, overlap_positions, length)
+            if best_block:
+                space_saved, overlap_positions, length = best_block
+                input_ops = self.blocks.pop(block_idx).ops
+                start = 0
+                for position in overlap_positions:
+                    self.blocks.insert(block_idx, SongBlock(None))
+                    self.blocks[block_idx].ops = input_ops[start:position]
+                    block_idx += 1
+                    self.blocks.insert(block_idx, SongBlock(None))
+                    self.blocks[block_idx].ops = input_ops[position:position+length]
+                    block_idx += 1
+                    start = position + length
+                self.blocks.insert(block_idx, SongBlock(None))
+                self.blocks[block_idx].ops = input_ops[start:]
+                block_idx += 1
+                return True
+        return False
 
     def oopsAllRest(self):
         for block in self.blocks:
@@ -87,6 +183,11 @@ class Song:
         self.initial_transpose = 0
         self.speed_data = b''
         self.channels: List[Optional[SongChannel]] = []
+    
+    def optimize(self):
+        for channel in self.channels:
+            if channel:
+                channel.optimize()
 
 
 class SongPlayback:
@@ -235,11 +336,11 @@ class MusicData:
         self.__bank = bank
         self.__table_addr = table_addr
         if bank == 0x1B:
-            self.__blocks = [(0x4ED6, 0x8000 - 0x4ED6)]
+            self.__free_blocks = [(0x4ED6, 0x8000 - 0x4ED6)]
         elif bank == 0x1E:
-            self.__blocks = [(0x4DA9, 0x8000 - 0x4DA9)]
+            self.__free_blocks = [(0x4DA9, 0x8000 - 0x4DA9)]
         else:
-            self.__blocks = [(0x5000, 0x3000)]
+            self.__free_blocks = [(0x5000, 0x3000)]
         self.songs = []
         for n in range(count):
             ptr = self._rb[table_addr + n * 2]
@@ -247,22 +348,25 @@ class MusicData:
             #print(f"Song {n} {bank:x} {ptr:x}")
             self.songs.append(self._read_song(ptr))
         self._rb = None
-        self.__blocks.sort()
+        self.__free_blocks.sort()
         idx = 0
-        while idx < len(self.__blocks) - 1:
-            a0, s0 = self.__blocks[idx]
-            a1, s1 = self.__blocks[idx+1]
+        while idx < len(self.__free_blocks) - 1:
+            a0, s0 = self.__free_blocks[idx]
+            a1, s1 = self.__free_blocks[idx+1]
             if a1 <= a0 + s0:
-                self.__blocks[idx] = (a0, max(a0 + s0, a1 + s1) - a0)
-                self.__blocks.pop(idx + 1)
+                self.__free_blocks[idx] = (a0, max(a0 + s0, a1 + s1) - a0)
+                self.__free_blocks.pop(idx + 1)
             else:
                 idx += 1
-        # for a, s in self.__blocks:
+        # for a, s in self.__free_blocks:
         #     print(f"{a:04x} {a+s:04x} ({s})")
+
+    def free_space(self):
+        return sum(size for start, size in self.__free_blocks)
 
     def _get_block(self, addr, size):
         assert addr >= 0x4000
-        self.__blocks.append((addr, size))
+        self.__free_blocks.append((addr, size))
         return bytes(self._rb[addr-0x4000:addr-0x4000+size])
 
     def _get_ptr(self, addr):
@@ -334,9 +438,9 @@ class MusicData:
         return block
 
     def _alloc(self, size: int) -> int:
-        for idx, (addr, bsize) in enumerate(self.__blocks):
+        for idx, (addr, bsize) in enumerate(self.__free_blocks):
             if size <= bsize:
-                self.__blocks[idx] = (addr + size, bsize - size)
+                self.__free_blocks[idx] = (addr + size, bsize - size)
                 return addr
         raise RuntimeError("Not enough space for song data")
 
@@ -393,6 +497,7 @@ class MusicData:
             channel.addr = addr
             return addr
         for sidx, song in enumerate(self.songs):
+            before_store_space = self.free_space()
             speed_ptr = store_block(song.speed_data)
             ptr1 = store_channel(song.channels[0], 1)
             ptr2 = store_channel(song.channels[1], 2)
@@ -400,6 +505,7 @@ class MusicData:
             ptr4 = store_channel(song.channels[3], 4)
             baddr = store_block(struct.pack("<BHHHHH", song.initial_transpose, speed_ptr, ptr1, ptr2, ptr3, ptr4))
             rb[self.__table_addr + sidx * 2:self.__table_addr + sidx * 2+2] = struct.pack("<H", baddr)
+            # print(f"Size: {sidx}: {before_store_space - self.free_space()}")
         # for a, s in self.__blocks:
         #     print(f"{a:04x} {a+s:04x} ({s})")
 
@@ -524,19 +630,32 @@ def main():
     r = rom.ROM(open("input.gbc", "rb"))
     a = MusicData(r, 0x1B, 0x0077, 0x30)
     b = MusicData(r, 0x1E, 0x007F, 0x40)
+    # a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/songs/ffa/13.ladxm")
+    # a.songs[4].optimize()
     a.store(r)
+    print(f"Free space: a: {a.free_space()}")
     b.store(r)
+    print(f"Free space: b: {b.free_space()}")
 
-    for name, md in [("a", a), ("b", b)]:
-         for song_idx, song in enumerate(md.songs):
-            try:
-                print(f"Exporting {name}_{song_idx:02}")
-                LADXMExporter(song, f"../LADX-MusicEditor/editor/songs/ladx/{name}_{song_idx:02}.ladxm")
-            except NotImplementedError as e:
-                print(f"NotImplementedError on song {name}_{song_idx}: {e}")
+    #for name, md in [("a", a), ("b", b)]:
+    #     for song_idx, song in enumerate(md.songs):
+    #        try:
+    #            print(f"Exporting {name}_{song_idx:02}")
+    #            LADXMExporter(song, f"../LADX-MusicEditor/editor/songs/ladx/{name}_{song_idx:02}.ladxm")
+    #        except NotImplementedError as e:
+    #            print(f"NotImplementedError on song {name}_{song_idx}: {e}")
 
-    #a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/song.ladxm")
-    #a.store(r)
+    r = rom.ROM(open("input.gbc", "rb"))
+    a = MusicData(r, 0x1B, 0x0077, 0x30)
+    b = MusicData(r, 0x1E, 0x007F, 0x40)
+    for song in a.songs:
+       song.optimize()
+    a.store(r)
+    print(f"Free space: a: {a.free_space()}")
+    for song in b.songs:
+        song.optimize()
+    b.store(r)
+    print(f"Free space: b: {b.free_space()}")
     #r.save("LADXR_DEFAULT.gbc")
 
 
