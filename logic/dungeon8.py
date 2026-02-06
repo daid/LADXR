@@ -244,7 +244,7 @@ class Dungeon8:
             pot_pit_room_doorway.connect(pot_pit_room, r.pit_buffer_itemless, back=r.hookshot_spam_pit) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room_doorway.connect(miniboss3_room, OR(AND(r.hookshot_spam_pit, r.enemy_requirements["SNAKE"]), AND(r.boots_bonk_pit, r.shield_bump)), back=False) # boots bonk to navigate room, or bump them into pits with shield
             after_e_passage.connect(before_e_passage, r.boots_bonk, back=False) # boots bonking from rope room to below peahats through passage
-            zamboni_pit_west.connect(slime_trap_room, r.boots_bonk, back=False) # boots bonk to hop over 1 tile of lava
+            zamboni_pit_west.connect(slime_trap_room, r.boots_bonk, back=r.boots_bonk) # boots bonk to hop over 1 tile of lava
             zamboni_pit_west.connect(zamboni_pit_east, AND(r.hookshot_spam_pit, r.hookshot_over_pit), back=False) # hookshot spam to get to east side of zamboni room, and you can hookshot block to make 70% of the journey easy
             #center
             before_f_stairs.connect(peahat_area, AND(r.boots_bonk, r.jesus_buffer), back=False) # from refill room push block into lava and boots bonk over the 1-tile of lava
