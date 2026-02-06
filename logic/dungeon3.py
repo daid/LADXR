@@ -63,12 +63,6 @@ class Dungeon3:
         boss_room = Location("D3 Boss Room", dungeon=3)
         boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
         instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
-
-        # owl statues
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            north_4way.connect(north_4way_owl1, STONE_BEAK3, back=False)
-            after_b_stairs.connect(after_b_stairs_owl2, STONE_BEAK3, back=False)
-            fenced_walkway.connect(fenced_walkway_owl3, STONE_BEAK3, back=False)
             
         # connections
         # entrance
@@ -119,23 +113,27 @@ class Dungeon3:
         ledge_pre_pit.connect(ledge_post_pit, OR(HOOKSHOT, FEATHER), back=False) #NOTE: should two-block feather jump be hard?
         ledge_post_pit.connect((after_b_stairs, ledge_post_pit_chest_9), back=False)
         # boss
-        after_b_stairs.connect(towards_boss1, FOUND(KEY3, 5))
-        towards_boss1.connect(towards_boss2, FOUND(KEY3, 6))
-        towards_boss2.connect(towards_boss3, FOUND(KEY3, 7))
-        towards_boss3.connect(before_c_passage, FOUND(KEY3, 8))
+        after_b_stairs.connect(towards_boss1, FOUND(KEY3, 5), back=FOUND(KEY3, 4))
+        towards_boss1.connect(towards_boss2, FOUND(KEY3, 6), back=FOUND(KEY3, 3))
+        towards_boss2.connect(towards_boss3, FOUND(KEY3, 7), back=FOUND(KEY3, 2))
+        towards_boss3.connect(before_c_passage, FOUND(KEY3, 8), back=FOUND(KEY3, 1))
         before_c_passage.connect(after_c_passage, AND(FEATHER, PEGASUS_BOOTS))
         after_c_passage.connect(conveyor_room, r.enemy_requirements["PAIRODD"], back=False)
         conveyor_room.connect(conveyor_room_drop7, r.enemy_requirements["KEESE"], back=False)
         conveyor_room.connect(boss_room, NIGHTMARE_KEY3, back=False)
         boss_room.connect((boss_room_drop8, instrument), r.boss_requirements[world_setup.boss_mapping[2]], back=False)
-
+        # owl statues
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            north_4way.connect(north_4way_owl1, STONE_BEAK3, back=False)
+            after_b_stairs.connect(after_b_stairs_owl2, STONE_BEAK3, back=False)
+            fenced_walkway.connect(fenced_walkway_owl3, STONE_BEAK3, back=False)
+        # without keysanity we need to fix the keylogic here, else we can never generate proper placement.
         if options.dungeon_keys == '':
-            # Without keysanity we need to fix the keylogic here, else we can never generate proper placement.
             after_a_stairs.connect(west_4way, FOUND(KEY3, 1), back=False)
             west_4way_drop2.items[0].forced_item = KEY3
             after_a_stairs.connect(south_4way, FOUND(KEY3, 1), back=False)
             south_4way_drop1.items[0].forced_item = KEY3
-
+        # hard
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest1, r.hookshot_over_pit, back=False) # hookshot the chest to get past vacuum trap
             north_4way.connect(north_4way_switch, r.throw_pot, back=False) # use pots to hit switch
@@ -144,7 +142,7 @@ class Dungeon3:
             fenced_walkway.connect(bouncing_bombite_room_drop_6, BOOMERANG, back=False) # 3 bombite room from the walkway, grab item with boomerang
             fenced_walkway.connect(two_zol_stalfos_room_clear, OR(BOOMERANG, BOMB, BOW), back=False) #NOTE: requires 7 arrows to clear room, exceeds 10 from entrance with some itemsets
             fenced_walkway.connect(north_bombwall, OR(AND(FEATHER, OR(SWORD, MAGIC_POWDER)), BOW, MAGIC_ROD, BOOMERANG), back=False) # feather and close range weapon to trigger bouncing bombite to blow up the wall
-
+        # glitched
         if options.logic == 'glitched' or options.logic == 'hell':
             before_a_stairs.connect(west_hallway, OR(AND("SWITCH3", r.super_jump_feather), r.hookshot_clip_block), back=False) # hookshot clip through the pushblock using zols and their rupees, or hit the switch and superjump to pegs
             west_hallway.connect((before_a_stairs, before_a_stairs_chest6), OR(r.super_jump_feather, r.shaq_jump), back=False) # shaq jump off pushblock to land on pegs and grab the chest, or wall clip in hallway and super jump a few times to get on pegs #NOTE: shouldn't connect tricks to items
@@ -153,12 +151,12 @@ class Dungeon3:
             towards_boss1.connect(miniboss_room, r.super_jump_feather, back=False) # superjump out between keyblock 1 & 2
             towards_boss2.connect(after_miniboss_room, r.super_jump_feather, back=False) # superjump out between keyblock 2 & 3 - key requirement for wall clip
             towards_boss3.connect((after_miniboss_room, after_b_stairs), r.super_jump_feather, back=False) # superjump out between keyblock 3 & 4
-        
+        # hell
         if options.logic == 'hell':
             entrance.connect(entrance_chest1, SWORD, back=False) # hold right for ~2:00 and kill vacuum with sword
             west_hallway.connect((before_a_stairs, before_a_stairs_chest6), r.boots_superhop, back=False) # use boots superhop off top wall or left wall to get on raised blocks
             swordstalfos_room.connect(swordstalfos_room_chest4, OR(r.boots_superhop, r.hookshot_clip_block), back=False) # boots superhop to get over the bottom left block, OR spam hookshot while a keese passes by to clip through pushblock
-            before_a_stairs.connect((west_hallway, before_a_stairs_chest6), OR(AND(r.boots_superhop, r.shield_bump), r.super_bump), back=False) # setup shaq jump or boots superhop above staircase and shield bump on zol to hop over pushblock
+            before_a_stairs.connect((west_hallway, before_a_stairs_chest6), OR(r.boots_superbump, AND(r.shaq_jump, r.super_bump)), back=False) # setup shaq jump or boots superhop above staircase and shield bump on zol to hop over pushblock
             west_4way.connect(west_4way_drop2, r.shield_bump, back=False) # knock everything into the pit including the teleporting owls
             south_4way.connect(south_4way_drop1, r.shield_bump, back=False) # knock everything into the pit including the teleporting owls
             after_b_stairs.connect(fenced_walkway, r.super_bump, back=False) # super bump off zols to go past pushblock to the fenced walkway
@@ -184,7 +182,7 @@ class NoDungeon3:
         boss_room_drop8 = Location(dungeon=3).add(HeartContainer(0x15A)) # heart container
         instrument = Location("D3 Instrument Room", dungeon=3).add(Instrument(0x159)) # sea lily's bell
         # connections
-        entrance.connect(boss_room, POWER_BRACELET, back=False)
+        entrance.connect(boss_room, POWER_BRACELET, back=r.boss_requirements[world_setup.boss_mapping[2]])
         boss_room.connect((boss_room_drop8, instrument), r.boss_requirements[world_setup.boss_mapping[2]], back=False)
 
         self.entrance = entrance

@@ -52,10 +52,6 @@ class Dungeon4:
         boss_room_drop2 = Location(dungeon=4).add(HeartContainer(0x166)).add(KeyLocation("D4_BOSS_CLEAR")) # heart container & instrument room door flag
         instrument = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162)) # surf harp
 
-        # owl statues
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            before_miniboss.connect(before_miniboss_owl1, STONE_BEAK4)
-
         # connections
         # entrance
         entrance.connect((entrance_chest1, entrance_chest2), back=False)
@@ -86,30 +82,32 @@ class Dungeon4:
         before_miniboss_pit.connect(sidescroller_pit, back=False) # connects pit to sidescroller, the superjump remains in glitched logic
         sidescroller_pit.connect(sidescroller_stairs, FLIPPERS, back=False) # be able to fall into sidescroller and logically exit ladder
         miniboss_room.connect((entrance, before_miniboss, after_miniboss), r.miniboss_requirements[world_setup.miniboss_mapping[3]], back=False) # miniboss portal and both exits
+        after_miniboss.connect((miniboss_room, flippers_room), POWER_BRACELET, back=False)
         flippers_room.connect((after_miniboss, north_tile_puzzle), r.enemy_requirements["ZOL"], back=False)
         flippers_room.connect(flippers_room_chest11, back=False)
         north_tile_puzzle.connect((tile_puzzle_clue, flippers_room, south_tile_puzzle), back=False)
         # west
         south_tile_puzzle.connect((south_tile_puzzle_chest9, south_tile_puzzle_chest10), back=False)
+        south_tile_puzzle.connect(before_a_passage, AND("D4_PUZZLE_CLUE", OR(AND(FEATHER, PEGASUS_BOOTS), FLIPPERS)), back=False)
         before_a_passage.connect(after_a_passage, FEATHER)
         after_a_passage.connect((south_tile_puzzle, after_a_passage_chest12), back=False)
         south_tile_puzzle.connect(outside_b_passage_keyblock, FLIPPERS)
         outside_b_passage_keyblock.connect(before_b_passage, FOUND(KEY4, 5))
+        before_b_passage.connect(after_b_passage, AND(FLIPPERS, AND(r.enemy_requirements["CHEEP_CHEEP_HORIZONTAL"], r.enemy_requirements["CHEEP_CHEEP_VERTICAL"])))
         # boss
         after_b_passage.connect(pre_boss, NIGHTMARE_KEY4, back=None) # you don't need a nightmare key to leave this room, if you arrived here in the unimplemented stair shuffle
         pre_boss.connect(boss_room)
         boss_room.connect(boss_room_drop2, r.boss_requirements[world_setup.boss_mapping[3]], back=False)
         pre_boss.connect(instrument, "D4_BOSS_CLEAR", back=False)
-
-        if options.logic == "casual":
-            after_miniboss.connect((miniboss_room, flippers_room), POWER_BRACELET, back=False)
-            before_b_passage.connect(after_b_passage, AND(FLIPPERS, AND(r.enemy_requirements["CHEEP_CHEEP_HORIZONTAL"], r.enemy_requirements["CHEEP_CHEEP_VERTICAL"])))
-            south_tile_puzzle.connect(before_a_passage, AND("D4_PUZZLE_CLUE", OR(AND(FEATHER, PEGASUS_BOOTS), FLIPPERS)), back=False)
-        else:
+        # owl statues
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            before_miniboss.connect(before_miniboss_owl1, STONE_BEAK4)
+        # normal
+        if options.logic != "casual":
             after_miniboss.connect((miniboss_room, flippers_room), back=False)
             before_b_passage.connect(after_b_passage, FLIPPERS)
             south_tile_puzzle.connect(before_a_passage, OR(AND(FEATHER, PEGASUS_BOOTS), FLIPPERS), back=False)
-
+        # hard
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             for location in (entrance, east_crossroads):
                 location.connect((north_crossroads, south_crossroads), r.tight_jump) # jump diagonally over crossroads
@@ -117,41 +115,45 @@ class Dungeon4:
             south_crossroads.connect(south_crossroads_chest7, r.tight_jump, back=False) # precise feather jump is enough to cross the water without flippers
             before_miniboss.connect(before_miniboss_zol_clear, back=False) # bait zols to drown to spawn key
             before_miniboss.connect(before_miniboss_chest8, r.tight_jump) # precise feather jump is enough to cross the water without flippers
-            sidescroller_drop1.connect((before_miniboss, sidescroller_stairs), False, back=AND("D4_PITKEY", BOOMERANG)) # boomerang item before falls in pit or from the sidescroller by walking off ledge and throwing the boomerang
+            for location in (before_miniboss, sidescroller_stairs):
+                location.connect(sidescroller_drop1, AND("D4_PITKEY", BOOMERANG), back=False) # boomerang item before falls in pit or from the sidescroller by walking off ledge and throwing the boomerang
             sidescroller_pit.connect(sidescroller_drop1, "D4_PITKEY", back=False) # hold left after falling in pit to grab the drop before it touches the water #NOTE: this particular connection shows up in magpie as glitched still for some reason?
             south_tile_puzzle.connect(before_a_passage, r.tight_jump, back=False) # precise feather jump is enough to reach the top left puzzle tile without flippers
             south_tile_puzzle.connect(after_b_passage, r.tight_jump) # tight diagonal feather jump in or out of pre boss door room
             after_a_passage.connect(before_a_passage, back=False) # diagonal walk off the stairs in to fake jump over the little ledge then bait and walk past thwomps
-            
+        # glitched       
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(west_statue_room, r.super_jump_feather, back=False) # super jump off the tile to the right of the staircase to below statues
             east_crossroads.connect(east_crossroads_chest5, AND(r.sideways_block_push, FLIPPERS), back=False) # sideways block push while swimming to skip bombs
-            before_miniboss.connect(north_crossroads, r.super_jump_feather, back=False) # push block down and superjump to the right
+            before_miniboss.connect(north_crossroads, OR(r.hookshot_clip, r.super_jump_feather), back=False) # hookshot the block mid-push to clip through, or push block down and superjump to the right
             before_miniboss.connect(before_miniboss_pit, r.super_jump_feather, back=False) # superjump into pits outside miniboss
             before_miniboss.connect(north_tile_puzzle, r.jesus_jump) # use jesus jump to transition over the water left of miniboss
             before_miniboss.connect(outside_b_passage_shallows, r.jesus_jump) # jesus jump to shallow water to the right of the boss passage staircase
             south_tile_puzzle.connect(outside_b_passage_keyblock, r.jesus_jump) # jesus jump to get to the button
             south_tile_puzzle.connect(after_a_passage, AND(POWER_BRACELET, r.super_poke), back=False) # wall clip in the two stalfos room, lift pots, then superjump and knockback off the peahat to get on ledge
-            outside_b_passage_shallows.connect(before_b_passage, r.shaq_jump, back=AND(r.hookshot_clip, r.shaq_jump)) # to get out, hookshot clip into the top wall, then shaq jump down, recommend pause buffering while airborne to land short.
-
+            outside_b_passage_shallows.connect(before_b_passage, r.shaq_jump, back=AND(r.hookshot_clip_wall, r.super_jump_feather)) # to get out, hookshot clip into the top wall, then shaq jump down, recommend pause buffering while airborne to land short.
+        # hell
         if options.logic == 'hell':
             entrance.connect(after_a_passage, r.super_bump, back=False) # wall clip and super bump off tektite to land on boss key ledge
-            entrance.connect((south_tile_puzzle, before_miniboss), False, back=OR(r.super_poke, r.super_bump)) # super jump and rebound off peahat to entrance
-            north_crossroads.connect((entrance, east_crossroads), AND(r.pit_buffer_itemless, r.hookshot_spam_pit), back=AND(r.pit_buffer_boots, r.hookshot_spam_pit)) # left <> right: pit buffer, bonk across gap, hookshot spam to finish | sides > top: pit buffer, bonk to center, hookshot spam up | top > sides: pit buffer down, hookshot spam across
+            for location in (south_tile_puzzle, before_miniboss):
+                location.connect(entrance, OR(r.super_poke, r.super_bump), back=False) # super jump and rebound off peahat to entrance
+            for location in (entrance, east_crossroads):
+                location.connect(north_crossroads, AND(r.pit_buffer_boots, r.hookshot_spam_pit), back=AND(r.pit_buffer_itemless, r.hookshot_spam_pit)) # left <> right: pit buffer, bonk across gap, hookshot spam to finish | sides > top: pit buffer, bonk to center, hookshot spam up | top > sides: pit buffer down, hookshot spam across
             north_crossroads.connect(south_crossroads, r.pit_buffer_itemless, back=False) #logic prep for staircase rando
-            south_crossroads.connect((entrance, east_crossroads), AND(OR(BOMB, BOW), r.hookshot_clip_block), back=AND(r.pit_buffer_itemless, OR(r.pit_buffer_boots, r.hookshot_spam_pit))) # boots buffer or hookshot spam to center of pit and buffer down, return with splitting zols and hookshot clipping through block
+            for location in (entrance, east_crossroads):
+                location.connect(south_crossroads, AND(r.pit_buffer_itemless, OR(r.pit_buffer_boots, r.hookshot_spam_pit)), back=AND(OR(BOMB, BOW), r.hookshot_clip_block)) # boots buffer or hookshot spam to center of pit and buffer down, return with splitting zols and hookshot clipping through block
             east_crossroads.connect(east_crossroads_chest5, AND(r.sideways_block_push, OR(r.jesus_buffer, r.jesus_jump)), back=False) # use feather to water clip into the top right corner of the bombable block, and sideways block push to gain access. Can boots bonk of top right wall, then water buffer to top of chest and boots bonk to water buffer next to chest
             west_statue_room.connect(north_statue_room, r.boots_bonk) # two boots bonks to cross the water tiles
-            south_crossroads.connect(south_crossroads_chest7, AND(r.jesus_buffer_hookshot, r.hookshot_clip_block), back=False) # hookshot the pot to stand atop chest. repeat until clipped into pot enough to walk through diagonally. can pause after hookshot animation to jesus buffer back onto chest anytime. recommend s&q menu during hookshot animation to act as frame-advance
+            south_crossroads.connect(south_crossroads_chest7, AND(r.jesus_buffer_hookshot, r.hookshot_clip), back=False) # hookshot the pot to stand atop chest. repeat until clipped into pot enough to walk through diagonally. can pause after hookshot animation to jesus buffer back onto chest anytime. recommend s&q menu during hookshot animation to act as frame-advance
             north_crossroads.connect(before_miniboss, OR(AND(OR(r.shaq_jump, BOMB, BOW), r.hookshot_clip_block), AND(r.shaq_jump, r.super_bump)), back=False) # push block left of keyblock up, then shaq jump off the left wall, push another block up, and hookshot clip through | split zol for more entities, and clip through the block left of keyblock by hookshot spam | shaq jump off pushblock, then shield bump/ pause buffer in such a way to land in push block
             before_miniboss.connect(north_tile_puzzle, AND(r.jesus_buffer, r.jesus_buffer_hookshot), back=False) # boots bonk and jesus buffer to screen transition, s&q menu to stop drowning and buffer hookshot to get back on land
             for location in (before_miniboss, outside_b_passage_shallows):
                 location.connect(south_tile_puzzle, AND(r.jesus_buffer, r.jesus_buffer_hookshot), back=False) # bonk on wall above puddle chest, buffer all the way to screen transition, hookshot can get you above water after screen transition to restart buffer
-            south_tile_puzzle.connect(north_tile_puzzle, r.hookshot_clip_block, back=False) # facing downwards at the pushblock in statue+spark room, spam hookshot while spark passes you by
+            south_tile_puzzle.connect(north_tile_puzzle, AND(r.damage_boost_special, r.hookshot_clip_block), back=False) # facing downwards at the pushblock in statue+spark room, spam hookshot while spark passes you by
             outside_b_passage_shallows.connect(before_b_passage, r.hookshot_clip_block, back=False) # clip into the block, then hookshot clip off a tektite
             outside_b_passage_shallows.connect(before_miniboss_chest8, AND(r.boots_bonk, r.jesus_buffer), back=False) # boots bonk to one pixel right of the chest, pause buffer until you are below the chest, and hold left as you unpause to step onto shallow water
             outside_b_passage_keyblock.connect(south_tile_puzzle, r.jesus_buffer, back=False) # start a buffer by the button to get to the shallow water below
-            south_tile_puzzle.connect(after_a_passage, r.super_poke, back=False) # superjump and knockback off the peahat twice to get on ledge
+            south_tile_puzzle.connect(after_a_passage, OR(r.super_poke, AND(POWER_BRACELET, r.super_bump)), back=False) # superjump and knockback off the peahat twice to get on ledge
             before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) # boots bonk to get through 2d section
             south_tile_puzzle.connect(after_b_passage, r.pit_buffer_boots) # boots bonk across bottom wall then boots bonk to the platform before boss door
             
@@ -168,7 +170,7 @@ class NoDungeon4:
         boss_room_drop2 = Location(dungeon=4).add(HeartContainer(0x166))
         instrument = Location("D4 Instrument Room", dungeon=4).add(Instrument(0x162))
         # connections
-        entrance.connect(boss_room, back=False)
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[3]])
         boss_room.connect((boss_room_drop2, instrument), r.boss_requirements[world_setup.boss_mapping[3]], back=False)
 
         self.entrance = entrance

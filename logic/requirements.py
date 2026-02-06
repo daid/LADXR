@@ -190,9 +190,11 @@ class RequirementsSettings:
         self.super_jump_sword = AND(FEATHER, SWORD) # unclipped superjumps
         self.super_jump_rooster = AND(ROOSTER, self.midair_turn) # use rooster instead of feather to superjump off walls (only where rooster is allowed to be used)
         self.shaq_jump = FEATHER # use interactable objects (keyblocks / pushable blocks)
-        self.super_bump = AND(FEATHER, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
-        self.super_poke = AND(SWORD, FEATHER) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.super_bump = AND(self.super_jump_feather, SHIELD) # perform naked super jump, but use shield to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
+        self.super_poke = AND(self.super_jump_feather, SWORD) # perform naked super jump, but use sword to get knocked back from enemies or objects, allowing to superjump sideways or diagonally
         self.boots_superhop = AND(PEGASUS_BOOTS, self.running_turn) # dash into walls, pause, unpause and use weapon + hold direction away from wall. Only works in peg rooms
+        self.boots_superbump = AND(self.boots_superhop, SHIELD) # after you're running backwardd for the superhop setup, hold shield to bump off enemies or nearby objects, and you'll superhop sideways from recoil
+        self.boots_superpoke = AND(self.boots_superhop, SWORD) # after the superhop occurs, swing the sourd to poke certain objects and you'll superhop sideways from recoil
         self.boots_roosterhop = AND(PEGASUS_BOOTS, ROOSTER) # dash towards a wall, pick up the rooster and throw it away from the wall before hitting the wall to get a superjump
         self.jesus_jump = FEATHER # pause on the frame of splashing on liquid (water / lava) to be able to jump again on unpause
         #NOTE: consider standardise buffers to "jesus_buffer_item" (each item being a tool to start the buffer)
@@ -222,6 +224,7 @@ class RequirementsSettings:
         self.hookshot_clip = AND(HOOKSHOT, options.superweapons == False) # use hookshot at specific angles to hookshot past blocks (see forest north log cave, dream shrine entrance for example)
         self.hookshot_clip_block = HOOKSHOT # use hookshot spam with enemies to clip through entire blocks (d5 room before gohma, d2 pots room before boss)
         self.hookshot_over_pit = HOOKSHOT # use hookshot while over a pit to reach certain areas (see d3 vacuum room, d5 north of crossroads for example)
+        self.hookshot_clip_wall = HOOKSHOT # use hookshot on a block to your left or right, while hugging a wall to your north to become wall clipped
         self.hookshot_jump = AND(HOOKSHOT, FEATHER) # while over pits, on the first frame after the hookshot is retracted you can input a jump to cross big pit gaps
         self.hookshot_wrap = HOOKSHOT # hookshotting when link's feet touch water /lava results in bazarre behavior including wrong respawns and screen transitions
         self.bookshot = AND(FEATHER, HOOKSHOT) # use feather on A, hookshot on B on the same frame to get a speedy hookshot that can be used to clip past blocks

@@ -63,11 +63,6 @@ class Dungeon5:
         boss_room_drop3 = Location(dungeon=5).add(HeartContainer(0x185)) # heart container
         instrument = Location("D5 Instrument Room", dungeon=5).add(Instrument(0x182)) # wind marimba
 
-        # owl statues
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            crystal_puddle_room.connect(crystal_puddle_room_owl1, STONE_BEAK5)
-            star_room.connect(star_room_owl2, STONE_BEAK5)
-
         # connections
         # entrance / ms1
         entrance.connect(entrance_ledge, HOOKSHOT, back=False)
@@ -129,7 +124,11 @@ class Dungeon5:
         after_boss_keyblock.connect(pre_boss_room, HOOKSHOT)
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY5, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[4]], back=False)
-
+        # owl statues
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            crystal_puddle_room.connect(crystal_puddle_room_owl1, STONE_BEAK5)
+            star_room.connect(star_room_owl2, STONE_BEAK5)
+        # hard
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             statue_room.connect(after_blade_trap, FEATHER, back=False) # jump past the blade traps
             after_blade_trap.connect(pot_column_room, r.tight_jump, back=False) # tight jump south to get across huge pit
@@ -145,15 +144,15 @@ class Dungeon5:
             middle_ledge.connect(north_crossroads, r.tight_jump) # tight jump to/from first chest ledge, helps but not required to start wall clipped
             after_b_passage.connect(boss_key_room, r.boots_jump, back=False) # boots jump across
             north_crossroads.connect(west_crossroads_zol_clear, OR(SWORD, BOMB), back=False) # left side zol can only be killed with sword or bomb unless you have power bracelet or glitches
-            
+        # glitched    
         if options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer, back=False) # pit buffer to clip bottom wall and jump across the pits
-            before_miniboss.connect(before_c_passage, r.hookshot_clip_block, back=False) # clip through block from below with hookshot spam by clipping on pot
+            before_miniboss.connect(before_c_passage, r.hookshot_clip_wall, back=False) # clip through block from below with hookshot spam by clipping on pot
             before_miniboss.connect(before_c_passage, AND(r.sideways_block_push, POWER_BRACELET), back=False) # Sideways block push + pick up pots to reach stairs after gohma
             north_crossroads.connect(north_ledge, r.pit_buffer) # 1 pit buffer to clip bottom wall and jump across the pits
             middle_ledge.connect(east_ledge, r.pit_buffer) # pit buffer to clip bottom wall and jump across the pits
             after_c_passage.connect(spark_hallway, r.super_jump_boots, back=False) # charge a boots dash in bottom right corner to the right, jump before hitting the wall and use weapon to turn left before hitting the wall
-            
+        # hell    
         if  options.logic == 'hell':
             entrance.connect(entrance_ledge, r.pit_buffer_boots, back=False) # use pit buffer to clip into the bottom wall and boots bonk off the wall again
             before_a_passage.connect(after_a_passage, r.boots_bonk_2d_hell, back=False) # do an incredibly hard boots bonk setup to get across the hanging platforms in the 2d section
@@ -161,7 +160,7 @@ class Dungeon5:
             after_blade_trap.connect(pot_column_room, r.pit_buffer_itemless, back=False) # pit buffer down 3 tiles
             before_miniboss.connect(statue_room, r.boots_jump, back=False) # boots jump across
             statue_room.connect(before_miniboss, AND(r.boots_jump, r.pit_buffer_boots), back=False) # use boots jump in room with 2 zols + flying arrows to pit buffer above pot, then jump across.
-            before_miniboss.connect(before_c_passage, AND(FOUND(KEY5, 3), AND(r.super_jump, r.super_bump)), back=False) # open key block to wall clip, then superbump over the block using zol or antifairy
+            before_miniboss.connect(before_c_passage, AND(FOUND(KEY5, 3), r.super_bump), back=False) # open key block to wall clip, then superbump over the block using zol or antifairy
             before_c_passage.connect(after_c_passage, r.boots_jump, back=False) # to pass 2d section, tight jump on left screen: hug left wall on little platform, then dash right off platform and jump while in midair to bonk against right wall
             after_c_passage.connect(spark_hallway, OR(r.super_jump_sword, r.zoomerang), back=False) # unclipped superjump in bottom right corner of staircase before boss room or left-facing zoomerang to superjump off right wall
             before_d_passage.connect(after_d_passage) # hold the A button when itemless to bounce higher off the cheep-cheeps to cover 2-block gaps. helpful to stand on edge and pause/map buffer to catch the frame where fish starts to leap, then hold left
@@ -187,7 +186,7 @@ class NoDungeon5:
         boss_room_drop3 = Location(dungeon=5).add(HeartContainer(0x185)) # heart container
         instrument = Location("D5 Instrument Room", dungeon=5).add(Instrument(0x182)) # wind marimba
         # connections   
-        entrance.connect(boss_room, back=False)
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[4]])
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[4]], back=False)
 
         self.entrance = entrance

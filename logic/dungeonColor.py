@@ -84,7 +84,7 @@ class NoDungeonColor:
         boss_room = Location("D0 Boss Room", dungeon=0)
         fairy_rewards = Location("D0 Fairy Room", dungeon=0).add(TunicFairy(0), TunicFairy(1))
         # connections
-        entrance.connect(boss_room, back=False)
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[8]])
         boss_room.connect(fairy_rewards, r.boss_requirements[world_setup.boss_mapping[8]], back=False)
 
         self.entrance = entrance

@@ -82,19 +82,11 @@ class Dungeon6:
         if raft_game_chest:
             rapids_island_chest11 = Location().add(Chest(0x06C)) # seashell
             rapids_island.connect(rapids_island_chest11, back=False)
-
-        # owl statues
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            entrance_owl1.connect((entrance, fenced_walkway_switched), False, back=STONE_BEAK6)
-            if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
-                blade_trap_room.connect(blade_trap_room_owl2, STONE_BEAK6, back=False) # face the pot while against north wall and press A
-            else:
-                blade_trap_room.connect(blade_trap_room_owl2, AND(POWER_BRACELET, STONE_BEAK6), back=False)
-            pot_area.connect(pot_area_owl3, STONE_BEAK6, back=False)
         
         # connections
         # entrance
         entrance.connect(entrance_switch, r.hit_switch, back=False)
+        entrance.connect(entrance_switch_range, BOMB, back=False) # diagonal boomerang throw removed for casual
         entrance.connect(first_elephant_room, r.enemy_requirements["WIZROBE"], back=None)
         entrance.connect(second_elephant_room, COUNT(POWER_BRACELET, 2), back=None)
         dark_room.connect(entrance, BOMB) #NOTE: with a rom patch for remembering switch state, could connect dark room to fenced_walkway_switched with OR(all switches)
@@ -117,16 +109,20 @@ class Dungeon6:
         three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG, HOOKSHOT), back=False) # hit switch from above or when standing on lowered pegs
         three_wizrobe_area.connect(three_wizrobe_area_switch_range, OR(BOMB, BOW, MAGIC_ROD, BOOMERANG), back=False) # get on right-side pegs before your item toggles the switch
         three_wizrobe_area.connect(three_wizrobe_area_switched, "SWITCH6B_MIDRANGE", back=OR(BOMB, BOW, MAGIC_ROD, BOOMERANG))
-        three_wizrobe_area_clear.connect((three_wizrobe_area, three_wizrobe_area_switched), False, back=r.enemy_requirements["WIZROBE"])
-        three_wizrobe_area_chest5.connect((three_wizrobe_area, three_wizrobe_area_switched), False, back=None)
+        for location in (three_wizrobe_area, three_wizrobe_area_switched):
+            location.connect(three_wizrobe_area_clear, r.enemy_requirements["WIZROBE"], back=False)
+        for location in (three_wizrobe_area, three_wizrobe_area_switched):
+            location.connect(three_wizrobe_area_chest5, None, back=False)
         for location in (after_potbutton_door, three_wizrobe_area_switched):
             location.connect(after_potbutton_door_chest4, "D6_THREE_WIZROBE_CLEAR", back=False)
         three_wizrobe_area_switched.connect(star_area_switched, POWER_BRACELET, back=None)
         # northwest
         star_area.connect(three_wizrobe_area, back=False)
-        star_area_switch.connect((star_area, star_area_switched), False, back=r.hit_switch)
+        for location in (star_area, star_area_switched):
+            location.connect(star_area_switch, r.hit_switch, back=False)
         star_area_switched.connect(star_area, "SWITCH6C")
-        star_area_chest6.connect((star_area, star_area_switched), False, back=None)
+        for location in (star_area, star_area_switched):
+            location.connect(star_area_chest6, None, back=False)
         star_area.connect(star_area_drop1, OR(r.enemy_requirements["WIZROBE"], BOW), back=False) # add bow since it's just two wizrobes (8 arrows)
         star_area.connect(top_left_room, COUNT(POWER_BRACELET, 2), back=POWER_BRACELET) # solve horseheads and then jump off return ledge to skip L2 bracelet requirement
         top_left_room.connect(top_left_room_chest7, back=False)
@@ -154,7 +150,8 @@ class Dungeon6:
         blade_trap_room.connect(after_blade_trap, AND(FEATHER, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")), back=None)
         after_blade_trap.connect((after_blade_trap_chest8, four_wizrobe_room), back=False)
         north_waterway.connect(north_waterway_chest9, back=False)
-        north_waterway.connect((hookshot_block, north_waterway_east_ledge), False, back=None) # jump down into north_waterway
+        for location in (hookshot_block, north_waterway_east_ledge):
+            location.connect(north_waterway, None, back=False) # jump down into north_waterway
         # northeast
         after_c_passage.connect(south_spark_pot_maze, r.enemy_requirements["POLS_VOICE"], back=None)
         after_c_passage.connect(dodongo_room, r.enemy_requirements["POLS_VOICE"], back=OR(FEATHER, r.miniboss_requirements["DODONGO"]))
@@ -175,29 +172,35 @@ class Dungeon6:
         laser_turret_room.connect(pre_boss_room, AND(FEATHER, OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, r.enemy_requirements["WIZROBE"])), back=False) 
         pre_boss_room.connect(boss_room, NIGHTMARE_KEY6, back=False)
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
-
-        if options.logic == "casual":
-            entrance.connect(entrance_switch_range, BOMB, back=False) # diagonal boomerang throw removed for casual
-
-        else:
+        # owl statues
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            for location in (entrance, fenced_walkway_switched):
+                location.connect(entrance_owl1, STONE_BEAK6, back=False)
+            if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
+                blade_trap_room.connect(blade_trap_room_owl2, STONE_BEAK6, back=False) # face the pot while against north wall and press A
+            else:
+                blade_trap_room.connect(blade_trap_room_owl2, AND(POWER_BRACELET, STONE_BEAK6), back=False)
+            pot_area.connect(pot_area_owl3, STONE_BEAK6, back=False)
+        # normal
+        if options.logic != "casual":
             entrance.connect(entrance_switch_range, OR(BOMB, BOOMERANG)) # hit switch while standing on peg
-
+        # hard
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_switch, AND(r.stun_mask_mimic, r.throw_enemy), back=False) # stun and throw mask mimic into wall, so that it hits the switch while you're standing on the peg
             before_a_passage.connect(after_a_passage) # get through 2d section by "fake" jumping to the ladders, if in reverse, hold A to get more distance
             three_wizrobe_area.connect(three_wizrobe_area_switch_midrange, AND(r.stun_wizrobe, r.throw_enemy), back=False) # stun wizrobe with powder and throw it at switch - hard due to obscurity
             for location in (three_wizrobe_area, three_wizrobe_area_switched):
-                location.connect(three_wizrobe_area_clear, AND(FEATHER, BOW), back=False) # bring 2 arrows + feather to grab 10 arrow refill - 12 needed to kill 3 wizrobes
-            four_wizrobe_room.connect((entrance, blade_trap_room, south_waterway), AND(FEATHER, BOW), back=False) # bring 6 arrows, + feather to grab 10 arrow refill - 16 arrows total to clear room
-            south_waterway.connect(north_waterway, r.damage_boost) # forced damage from tektites if no weapons
+                location.connect(three_wizrobe_area_clear, AND(OR(FEATHER, AND(r.stun_wizrobe, r.throw_enemy)), BOW), back=False) # bring 2 arrows + feather to grab 10 arrow refill - 12 needed to kill 3 wizrobes - alternatively, stun & throw wizrobes to eliminate need for refill
+            four_wizrobe_room.connect((entrance, blade_trap_room, south_waterway), AND(OR(FEATHER, AND(r.stun_wizrobe, r.throw_enemy)), BOW), back=False) # bring 6 arrows, + feather to grab 10 arrow refill - 16 arrows total to clear room - alternatively, stun & throw wizrobes to eliminate need for refill
+            south_waterway.connect(north_waterway, OR(r.throw_pot, r.damage_boost), back=r.damage_boost) # forced damage from tektites if no weapons
             before_b_passage.connect(after_b_passage, r.boots_dash_2d, back=AND(r.boots_dash_2d, r.boots_bonk)) # boots dash over 1 block gaps in sidescroller
             after_c_passage.connect(south_spark_pot_maze, AND(r.throw_pot, OR(BOW, AND(r.stun_wizrobe, r.throw_enemy))), back=False) # kill one pol with 4 arrows or stun+throw, kill remaining two with pots
             after_c_passage.connect(dodongo_room, AND(r.throw_pot, OR(BOW, AND(r.stun_wizrobe, r.throw_enemy))), back=False) # kill one pol with 4 arrows or stun+throw, kill remaining two with pots
             after_c_passage.connect(before_c_passage, r.damage_boost) # damage_boost past the thwimps
-            south_spark_pot_maze.connect(north_spark_pot_maze, AND(POWER_BRACELET, r.damage_boost))
+            south_spark_pot_maze.connect(north_spark_pot_maze, POWER_BRACELET) # walk past the sparks by hugging the walls
             laser_turret_room.connect(pre_boss_room, AND(OR(FEATHER, r.diagonal_walk), OR(SWORD, SHIELD, HOOKSHOT, BOOMERANG, AND(r.stun_wizrobe, r.throw_enemy), r.enemy_requirements["WIZROBE"])), back=False) # include obscure ways to clear room
             pot_area.connect(pot_area_switch, r.throw_pot, back=False)
-            
+        # glitched    
         if options.logic == 'glitched' or options.logic == 'hell':
             first_elephant_room.connect(second_elephant_room, AND(r.enemy_requirements["MINI_MOLDORM"], r.bomb_trigger), back=False) # kill moldorm in hallway, then bomb trigger through the doorway to break elephant statue, irrelevant in reverse since the door is L2 bracelet locked
             potbutton_area_switched.connect(fenced_walkway_switched, AND(POWER_BRACELET, r.shaq_jump))
@@ -211,9 +214,9 @@ class Dungeon6:
             flying_bomb_room.connect(fenced_walkway_switched, AND(r.super_jump_feather, OR("SWITCH6A", "SWITCH6E", "SWITCH6F")), back=False) # superjumps in corridor to get up to owl statue ledge in switched state
             north_waterway.connect(north_waterway_east_ledge, r.super_jump, back=False) # superjump from north_waterway towards dodongos - feather-only variant in hell only
             north_waterway.connect(north_waterway_west_ledge, r.super_jump_feather, back=False) # superjump from north_waterway to the left
-
+        # hell
         if options.logic == 'hell':
-            entrance.connect(second_elephant_room, AND(OR(FEATHER, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL), OR(r.sword_poke, r.shield_bump)), back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door without it closing
+            entrance.connect(second_elephant_room, AND(OR(r.super_jump_feather, r.boots_superhop), OR(SWORD, HOOKSHOT, POWER_BRACELET, SHOVEL), OR(r.sword_poke, r.shield_bump)), back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door without it closing
             entrance.connect(entrance_switch_range, OR(AND(r.stun_mask_mimic, r.throw_enemy), SWORD), back=False) # spin attack while walking up to step onto peg as it raises, or stun and throw mask mimic
             entrance.connect(potbutton_area_switched, AND("SWITCH6A", OR(r.boots_superhop, AND(r.super_jump_feather, r.boots_jump))), back=r.boots_superhop) # boots superhop onto top left peg or wall clip and superjump to bottom-left peg and then boots jump to top left peg
             after_potbutton_door.connect(three_wizrobe_area, r.boots_superhop, back=OR(r.boots_superhop, r.super_jump_boots, "SWITCH6B_RANGE")) # get over the pegs blocking the east doorway
@@ -227,7 +230,7 @@ class Dungeon6:
             vacuum_room.connect(entrance, back=False) # let vacuum pull you over pits and warp you to entrance
             # connections that require overworld-only replenishable items such as "TOADSTOOL2" and "MEDICINE2"
             if options.overworld != 'alttp' and options.overworld != 'dungeondive':
-                entrance.connect(second_elephant_room, "TOADSTOOL2", back=False) # super jump or hop into wall, manipulate mimic into position, walk off the ledge while holding sword or shield to slowly get to door without it closing
+                entrance.connect(second_elephant_room, AND(OR(r.super_jump_feather, r.boots_superhop), "TOADSTOOL2", OR(r.sword_poke, r.shield_bump)), back=False) # super jump or hop into wall, manipulate mimic into position using toadstool, walk off the ledge while holding sword or shield to slowly get to door without it closing
                 after_b_passage.connect(before_b_passage, r.toadstool_bounce_2d_spikepit, back=False)
 
         self.entrance = entrance
@@ -243,7 +246,7 @@ class NoDungeon6:
         boss_room_drop3 = Location(dungeon=6).add(HeartContainer(0x1BC)) # heart container
         instrument = Location("D6 Instrument Room", dungeon=6).add(Instrument(0x1b5)) # coral triangle
         # connections
-        entrance.connect(boss_room, back=False)
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[5]])
         boss_room.connect((boss_room_drop3, instrument), r.boss_requirements[world_setup.boss_mapping[5]], back=False)
 
         self.entrance = entrance

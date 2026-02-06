@@ -38,19 +38,13 @@ class Dungeon1:
         boss_room_drop2 = Location(dungeon=1).add(HeartContainer(0x106)) # heart container
         instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
 
-        # owl statues
-        if options.owlstatues == "both" or options.owlstatues == "dungeon":
-            north_room.connect(north_room_owl1, STONE_BEAK1, back=False)
-            northwest_room.connect(northwest_room_owl2, STONE_BEAK1, back=False)
-            east_room.connect(east_room_owl3, STONE_BEAK1, back=False)
-
         # connections
         # entrance
         entrance.connect(entrance_drop1, OR(r.enemy_requirements["HARDHAT_BEETLE"], r.push_hardhat), back=False)
         entrance.connect((entrance_chest1, entrance_chest2), back=False)
+        entrance.connect(entrance_chest3, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["KEESE"]), back=False)
         entrance.connect(main_room, back=False)
         entrance.connect(cracked_pit_room, back=r.enemy_requirements["KEESE"])
-
         # main area
         main_room.connect(main_room_chest4, back=False)
         main_room.connect(main_room_chest5, OR(r.enemy_requirements["MINI_MOLDORM"], SHIELD), back=False)
@@ -63,6 +57,7 @@ class Dungeon1:
         bombable_room.connect(bombable_room_chest7, back=False)
         # northwest
         north_room.connect(northwest_room)
+        northwest_room.connect(before_a_passage, r.enemy_requirements["SPIKED_BEETLE"], back=None)
         before_a_passage.connect(after_a_passage)
         after_a_passage.connect(after_a_passage_chest8, back=False)
         # boss
@@ -74,30 +69,32 @@ class Dungeon1:
         boss_room.connect(boss_basement, back=False)
         boss_basement.connect(fourblade_room)
         boss_room.connect((boss_room_drop2, instrument), r.boss_requirements[world_setup.boss_mapping[0]], back=False)
-
-        if options.logic == "casual":
-            entrance.connect(entrance_chest3, AND(r.enemy_requirements["STALFOS_EVASIVE"], r.enemy_requirements["KEESE"]), back=False)
-            northwest_room.connect(before_a_passage, r.enemy_requirements["SPIKED_BEETLE"], back=None)
-        else:
-            entrance.connect(entrance_chest3, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], r.shield_bump), r.enemy_requirements["KEESE"]), back=False)
-            northwest_room.connect(before_a_passage, OR(r.enemy_requirements["SPIKED_BEETLE"], r.shield_bump), back=None)
-
+        # owl statues
+        if options.owlstatues == "both" or options.owlstatues == "dungeon":
+            north_room.connect(north_room_owl1, STONE_BEAK1, back=False)
+            northwest_room.connect(northwest_room_owl2, STONE_BEAK1, back=False)
+            east_room.connect(east_room_owl3, STONE_BEAK1, back=False)
+        # good boy
         if options.bowwow != "normal":
-            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], FEATHER), back=FEATHER) # crystals in main room are pits in swordless (good boy) mode
+            cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], FEATHER), back=FEATHER) # crystals in main room are pits in good boy mode
         else:
             cracked_pit_room.connect(main_room, AND(r.enemy_requirements["KEESE"], SWORD), back=SWORD)
-
+        # normal
+        if options.logic != "casual":
+            entrance.connect(entrance_chest3, AND(OR(r.enemy_requirements["STALFOS_EVASIVE"], r.shield_bump), r.enemy_requirements["KEESE"]), back=False)
+            northwest_room.connect(before_a_passage, OR(r.enemy_requirements["SPIKED_BEETLE"], r.shield_bump), back=None)
+        # hard
         if options.logic == 'hard' or options.logic == 'glitched' or options.logic == 'hell':
             entrance.connect(entrance_chest3, r.enemy_requirements["KEESE"], back=False) # make stalfos jump into when you press A or B button
             if options.bowwow != "normal":
-                cracked_pit_room.connect(main_room, r.boots_bonk, back=False) # crystals in main room are pits in swordless good boy mode
-
+                cracked_pit_room.connect(main_room, r.boots_bonk, back=False) # crystals in main room are pits in good boy mode
+        # glitched
         if options.logic == 'glitched' or options.logic == 'hell':
             if options.bowwow != "normal":
-                main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in swordless (good boy) mode
-            pre_keyblock.connect(fenced_walkway, r.super_jump_feather) # wall clip, hop over the pit and superjump over the keyblock
+                main_room.connect(cracked_pit_room, r.pit_buffer_itemless, back=False) # crystals in main room are pits in good boy mode
+            main_room.connect(fenced_walkway, AND(r.wall_clip, r.super_jump_feather)) # wall clip, hop over the pit and superjump over the keyblock
             east_room.connect(miniboss_room, OR(r.damage_boost, r.pit_buffer_itemless), back=AND(r.pit_buffer_itemless, r.miniboss_requirements[world_setup.miniboss_mapping[0]])) # itemless pit buffer to/from miniboss door
-        
+        # hell
         if options.logic == 'hell':
             main_room.connect(pre_keyblock, r.boots_bonk) # boots bonk off wall to cross 1-tile pit by hardhat
             main_room.connect(pre_keyblock, r.damage_boost, back=False) # damage boost off the hardhat to cross the pit
@@ -116,7 +113,7 @@ class NoDungeon1:
         boss_room_drop2 = Location(dungeon=1).add(HeartContainer(0x106)) # heart container
         instrument = Location("D1 Instrument Room", dungeon=1).add(Instrument(0x102)) # full moon cello
         # connections
-        entrance.connect(boss_room, back=False)
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[0]])
         boss_room.connect((boss_room_drop2, instrument), r.boss_requirements[world_setup.boss_mapping[0]], back=False)
         
         self.entrance = entrance
