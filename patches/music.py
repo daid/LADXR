@@ -1,4 +1,6 @@
 from assembler import ASM
+import musicData
+import os
 
 
 _LOOPING_MUSIC = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -37,3 +39,67 @@ def shiftedMusic(rom):
         freq = max(0x20, min(int((freq - 8) * 0.95), 0x7FF))
         rom.banks[0x1E][0x09BF + n * 2] = freq & 0xFF
         rom.banks[0x1E][0x09C0 + n * 2] = (freq >> 8) & 0xFF
+
+def importMusic(rom, rnd, music_directory):
+    directory = os.path.join(os.path.dirname(__file__), "..", "music", music_directory)
+    song_files = os.listdir(directory)
+    rnd.shuffle(song_files)
+    songs_a = musicData.MusicData(rom, 0x1B, 0x0077, 0x30)
+    songs_b = musicData.MusicData(rom, 0x1E, 0x007F, 0x40)
+
+    song_spots = {
+        "dungeon": [
+            (songs_b, 0x03, "D1"),
+            (songs_b, 0x04, "D2"),
+            (songs_b, 0x05, "D3"),
+            (songs_b, 0x06, "D4"),
+            (songs_b, 0x2A, "D5"),
+            (songs_b, 0x37, "D6"),
+            (songs_b, 0x3A, "D7"),
+            (songs_b, 0x39, "D8"),
+            (songs_a, 0x20, "D0"),
+        ],
+        "town": [
+            (songs_a, 0x03, "Mabe"),
+            (songs_a, 0x0A, "Animal"),
+            (songs_a, 0x11, "MrWriteHouse"),
+            (songs_a, 0x12, "Ulrira"),
+            (songs_a, 0x16, "ChristineHouse"),
+            (songs_a, 0x2F, "RichardHouse"),
+        ],
+        "overworld": [
+            (songs_a, 0x04, "Overworld"),
+            (songs_a, 0x05, "TalTalRange"),
+            (songs_a, 0x07, "RaftRideRapids"),
+            (songs_a, 0x08, "MysteriousForest"),
+        ],
+        "battle": [
+            (songs_a, 0x1D, "MoblinHideout"),
+            (songs_b, 0x08, "Boss"),
+            (songs_b, 0x12, "FinalBoss"),
+            (songs_b, 0x2F, "Miniboss"),
+        ],
+    }
+
+    for song_file in song_files:
+        song = musicData.import_ladxm(os.path.join(directory, song_file))
+        song.optimize()
+        if song_file == "battle_0e.ladxm":
+            song.channels[0], song.channels[1] = song.channels[1], song.channels[0]
+            song.dump()
+        song_type, _, _ = song_file.partition("_")
+        if song_type in song_spots and song_spots[song_type]:
+            list_idx = rnd.randrange(0, len(song_spots[song_type]))
+            songs, idx, name = song_spots[song_type].pop(list_idx)
+            print(f"Replaced song {name} with {song_file}")
+            songs.songs[idx] = song
+        else:
+            print(f"??? {song_type}")
+
+    # TMP hack to save some space until we can compress song data better
+    for n in range(6):
+        songs_b.songs[0x20 + n] = songs_b.songs[0x26]
+    songs_b.songs[0x3F] = songs_b.songs[0x00]
+
+    songs_a.store(rom)
+    songs_b.store(rom)

@@ -1,3 +1,4 @@
+import random
 import re
 import struct
 import binascii
@@ -16,6 +17,7 @@ OP_DISABLE_UNKNOWN3 = 0x9A
 OP_SET_INSTRUMENT = 0x9D
 OP_SET_SPEED_DATA = 0x9E
 OP_SET_TRANSPOSE = 0x9F
+OP_NOISE_SPECIAL = 0xFF
 OP_COMMENT = 0x100  # virtual opcode
 
 
@@ -23,13 +25,15 @@ def noteToString(channel_idx, note):
     if note is None:
         return "   "
     if channel_idx == 3:
+        if note == OP_NOISE_SPECIAL:
+            return "NFF"
         assert note >= 6, f"Odd noise note: {note:02x}"
         assert ((note - 1) % 5) == 0, f"Odd noise note: {note:02x}"
         return f"N{(note-1)//5:02}"
     assert 2 <= note <= 0x90
     assert (note & 1) == 0
-    octave = note // 24
-    note = ["C_",  "C#", "D_", "D#", "E_", "F_", "F#", "G_", "G#", "A_", "A#", "B_"][(note // 2) % 12]
+    octave = (note - 2) // 24
+    note = ["C_",  "C#", "D_", "D#", "E_", "F_", "F#", "G_", "G#", "A_", "A#", "B_"][((note - 2) // 2) % 12]
     return f"{note}{octave+1}"
 
 
@@ -37,6 +41,8 @@ def noteFromString(channel_idx, data):
     assert len(data) == 3
     if channel_idx == 3:
         assert data[0] == "N"
+        if data == "NFF":
+            return OP_NOISE_SPECIAL
         return 1 + int(data[1:]) * 5
     else:
         octave = int(data[2]) - 1
@@ -87,7 +93,14 @@ class SongBlock:
     def optimizeWithLoops(self):
         while True:
             best_loop = None
+            loop_counter = 0
             for start in range(len(self.ops)):
+                if self.ops[start][0] == OP_LOOP_START:
+                    loop_counter += 1
+                elif self.ops[start][0] == OP_LOOP_END:
+                    loop_counter -= 1
+                if loop_counter > 0:
+                    continue
                 for length in range(1, min(32, len(self.ops) - start)):
                     base_list = self.ops[start:start+length]
                     skip = False
@@ -107,13 +120,30 @@ class SongBlock:
             if best_loop is None:
                 break
             saved_size, start, length, repeat_count = best_loop
-            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + self.ops[start:start+length] + [(OP_LOOP_START,)] + self.ops[start+length*repeat_count:]
+            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + self.ops[start:start+length] + [(OP_LOOP_END,)] + self.ops[start+length*repeat_count:]
 
     def oopsAllRest(self):
         for op in self.ops:
             if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT} and (op[0] < 0xA0 or op[0] > 0xAF):
                 return False
         return True
+
+    def dump(self):
+        for op in self.ops:
+            if op[0] == OP_REST:
+                print(f"   REST")
+            elif op[0] == OP_END:
+                print(f"   END")
+            elif op[0] == OP_LOOP_START:
+                print(f"   LOOP {op[1]}")
+            elif op[0] == OP_LOOP_END:
+                print(f"   LOOPEND")
+            elif 0xA0 <= op[0] < 0xB0:
+                print(f"   NoteLen: {op[0] & 0x0F}")
+            elif op[0] < 0x90 and (op[0] & 1) == 0:
+                print(f"   {noteToString(0, op[0])}")
+            else:
+                print(f"   {op}")
 
 
 class SongChannel:
@@ -131,8 +161,8 @@ class SongChannel:
         already_done.add(self)
         for block in self.blocks:
             block.optimizeWithLoops()
-        while self._findBlockToSplit():
-            pass
+        # while self._findBlockToSplit():
+        #     pass
         if self.next:
             self.next.optimize(already_done=already_done)
     
@@ -158,6 +188,8 @@ class SongChannel:
                 input_ops = self.blocks.pop(block_idx).ops
                 start = 0
                 for position in overlap_positions:
+                    if self.loop and self.loop > block_idx:
+                        self.loop += 2
                     self.blocks.insert(block_idx, SongBlock(None))
                     self.blocks[block_idx].ops = input_ops[start:position]
                     block_idx += 1
@@ -177,6 +209,11 @@ class SongChannel:
                 return False
         return True
 
+    def dump(self):
+        for idx, block in enumerate(self.blocks):
+            print(f"  Block: {idx}")
+            block.dump()
+
 
 class Song:
     def __init__(self):
@@ -189,6 +226,12 @@ class Song:
             if channel:
                 channel.optimize()
 
+    def dump(self):
+        print("Song:")
+        for idx, channel in enumerate(self.channels):
+            print(f" Channel {idx}:")
+            if channel:
+                channel.dump()
 
 class SongPlayback:
     def __init__(self, song: Song):
@@ -229,6 +272,8 @@ class SongPlayback:
                     self.delay[channel_idx] = self.speed[channel_idx]
                 elif 0xA0 <= op[0] <= 0xAF: # notlen
                     self.speed[channel_idx] = self.speed_data[op[0] & 0x0F]
+                elif op[0] == OP_NOISE_SPECIAL and channel_idx == 3:
+                    self.delay[channel_idx] = self.speed[channel_idx]
                 elif op[0] == OP_SET_INSTRUMENT:
                     pass
                 elif op[0] == OP_SET_SPEED_DATA:
@@ -266,7 +311,7 @@ class LADXMExporter:
         pulse_instruments = []
         wave_instruments = []
         timestep = 0
-        while not sp.isFinished():
+        while not sp.isFinished() and timestep < 10000:
             def f(channel_idx, length, op):
                 if op[0] == OP_SET_INSTRUMENT:
                     if channel_idx == 2:
@@ -324,6 +369,8 @@ class LADXMExporter:
                     f.write(op[1])
                 elif op[0] == OP_END:
                     f.write("END")
+                elif op[0] == OP_NOISE_SPECIAL and channel_idx == 3:
+                    f.write(f"NFF {length}")
                 else:
                     raise NotImplementedError(f"Unknown opcode in export: {op[0]:02x}")
                 f.write("\n")
@@ -564,8 +611,10 @@ def import_ladxm(filename):
         add_value = 1
         while add_value in speed_table:
             add_value *= 2
-            if add_value > 0xFF:
+            if add_value == 0x100:
                 add_value = 3
+            if add_value == 0x180:
+                add_value = 5
         speed_table.append(add_value)
 
     song = Song()
@@ -577,7 +626,7 @@ def import_ladxm(filename):
         song.channels[channel_idx] = channel
         channel.loop = 1
         for s in sequence:
-            block = SongBlock(None)
+            block = SongBlock(random.randint(0, 0x40) * 0x100)
             channel.blocks.append(block)
             current_time = 0
             current_delay = -1

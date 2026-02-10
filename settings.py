@@ -290,11 +290,12 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
 [Normal] Color of Link depends on the tunic.
 [Green/Yellow/Red/Blue] Forces Link into one of these colors.
 [?? C/D] Colors of Link are usually inverted and color depends on the area you are in."""),
-            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable'), ('shifted', 's', 'Tone shifted')], default='',
+            Setting('music', 'User options', 'M', 'Music', options=[('', '', 'Default'), ('random', 'r', 'Random'), ('off', 'o', 'Disable'), ('shifted', 's', 'Tone shifted'), ('ffa', 'f', 'FinalFantasyAdventure')], default='',
                 description="""
 [Random] Randomizes overworld and dungeon music.
 [Disable] No music in the whole game.
-[Tone shifted] Tone shifts the musics, making it sound different""",
+[Tone shifted] Tone shifts the musics, making it sound different
+[FinalFantasyAdventure] Imports various songs from Final Fantasy Adventure""",
                 aesthetic=True),
         ]
         self.__by_key = {s.key: s for s in self.__all}
