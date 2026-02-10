@@ -17,6 +17,8 @@ OP_DISABLE_UNKNOWN3 = 0x9A
 OP_SET_INSTRUMENT = 0x9D
 OP_SET_SPEED_DATA = 0x9E
 OP_SET_TRANSPOSE = 0x9F
+OP_NOTELEN_0 = 0xA0
+OP_NOTELEN_F = 0xAF
 OP_NOISE_SPECIAL = 0xFF
 OP_COMMENT = 0x100  # virtual opcode
 
@@ -115,16 +117,27 @@ class SongBlock:
                         repeat_count += 1
                     if repeat_count > 1:
                         saved_size = songOpsSize(base_list) * (repeat_count - 1)
+                        if not (OP_NOTELEN_0 <= base_list[0][0] <= OP_NOTELEN_F):
+                            saved_size -= 1  # We need to add a notelen
                         if saved_size > 3 and (best_loop is None or best_loop[0] < saved_size):
                             best_loop = (saved_size, start, length, repeat_count)
             if best_loop is None:
                 break
             saved_size, start, length, repeat_count = best_loop
-            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + self.ops[start:start+length] + [(OP_LOOP_END,)] + self.ops[start+length*repeat_count:]
+            base_list = self.ops[start:start+length]
+            if not (OP_NOTELEN_0 <= base_list[0][0] <= OP_NOTELEN_F):
+                # Find the notelen to add
+                for idx in range(start - 1, -1, -1):
+                    if OP_NOTELEN_0 <= self.ops[idx][0] <= OP_NOTELEN_F:
+                        base_list.insert(0, self.ops[idx])
+                        if idx == start - 1:
+                            start -= 1
+                        break
+            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + base_list + [(OP_LOOP_END,)] + self.ops[start+length*repeat_count:]
 
     def oopsAllRest(self):
         for op in self.ops:
-            if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT} and (op[0] < 0xA0 or op[0] > 0xAF):
+            if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT} and (op[0] < OP_NOTELEN_0 or op[0] > OP_NOTELEN_F):
                 return False
         return True
 
@@ -138,7 +151,7 @@ class SongBlock:
                 print(f"   LOOP {op[1]}")
             elif op[0] == OP_LOOP_END:
                 print(f"   LOOPEND")
-            elif 0xA0 <= op[0] < 0xB0:
+            elif OP_NOTELEN_0 <= op[0] <= OP_NOTELEN_F:
                 print(f"   NoteLen: {op[0] & 0x0F}")
             elif op[0] < 0x90 and (op[0] & 1) == 0:
                 print(f"   {noteToString(0, op[0])}")
@@ -262,7 +275,7 @@ class SongPlayback:
                         self.channel[channel_idx] = None
                         break
                 op = self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops[self.block_offset[channel_idx]]
-                if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END, OP_SET_TRANSPOSE} and (op[0] < 0xA0 or op[0] > 0xAF):
+                if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END, OP_SET_TRANSPOSE} and (op[0] < OP_NOTELEN_0 or op[0] > OP_NOTELEN_F):
                     if 0x02 <= op[0] <= 0x90 and channel_idx != 3: # A note or rest, apply transpose
                         op = (op[0] + self.transpose, )
                         assert 0x02 <= op[0] <= 0x90, "Note out of range after transpose?"
@@ -270,7 +283,7 @@ class SongPlayback:
                 self.block_offset[channel_idx] += 1
                 if 0x01 <= op[0] <= 0x90: # A note or rest
                     self.delay[channel_idx] = self.speed[channel_idx]
-                elif 0xA0 <= op[0] <= 0xAF: # notlen
+                elif OP_NOTELEN_0 <= op[0] <= OP_NOTELEN_F: # notlen
                     self.speed[channel_idx] = self.speed_data[op[0] & 0x0F]
                 elif op[0] == OP_NOISE_SPECIAL and channel_idx == 3:
                     self.delay[channel_idx] = self.speed[channel_idx]
@@ -641,14 +654,14 @@ def import_ladxm(filename):
                             best_idx = idx
                     if current_delay != speed_table[best_idx]:
                         current_delay = speed_table[best_idx]
-                        block.ops.append((0xA0 + best_idx,))
+                        block.ops.append((OP_NOTELEN_0 + best_idx,))
                     block.ops.append((OP_REST,))
                     time_delta -= current_delay
                     current_time += current_delay
                 if length > 0:
                     if current_delay != length:
                         current_delay = length
-                        block.ops.append((0xA0 + speed_table.index(length),))
+                        block.ops.append((OP_NOTELEN_0 + speed_table.index(length),))
                     block.ops.append((noteFromString(channel_idx, data),))
                     current_time += current_delay
                 elif data == "END":

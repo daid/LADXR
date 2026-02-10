@@ -84,9 +84,6 @@ def importMusic(rom, rnd, music_directory):
     for song_file in song_files:
         song = musicData.import_ladxm(os.path.join(directory, song_file))
         song.optimize()
-        if song_file == "battle_0e.ladxm":
-            song.channels[0], song.channels[1] = song.channels[1], song.channels[0]
-            song.dump()
         song_type, _, _ = song_file.partition("_")
         if song_type in song_spots and song_spots[song_type]:
             list_idx = rnd.randrange(0, len(song_spots[song_type]))
