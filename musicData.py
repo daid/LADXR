@@ -178,7 +178,8 @@ class SongChannel:
         #     pass
         if self.next:
             self.next.optimize(already_done=already_done)
-    
+
+    # TODO: This is not working as it should.
     def _findBlockToSplit(self):
         for block_idx, block in enumerate(self.blocks):
             best_block = None
@@ -420,6 +421,7 @@ class MusicData:
                 idx += 1
         # for a, s in self.__free_blocks:
         #     print(f"{a:04x} {a+s:04x} ({s})")
+        self.__over_spend_size = 0
 
     def free_space(self):
         return sum(size for start, size in self.__free_blocks)
@@ -502,7 +504,9 @@ class MusicData:
             if size <= bsize:
                 self.__free_blocks[idx] = (addr + size, bsize - size)
                 return addr
-        raise RuntimeError("Not enough space for song data")
+        addr = 0x4000 + self.__over_spend_size
+        self.__over_spend_size += size
+        return addr
 
     def store(self, rom):
         rb = rom.banks[self.__bank]
@@ -556,6 +560,7 @@ class MusicData:
                 addr = store_block(channel_data)
             channel.addr = addr
             return addr
+        print(f"Song space total: {self.free_space()}")
         for sidx, song in enumerate(self.songs):
             before_store_space = self.free_space()
             speed_ptr = store_block(song.speed_data)
@@ -565,9 +570,11 @@ class MusicData:
             ptr4 = store_channel(song.channels[3], 4)
             baddr = store_block(struct.pack("<BHHHHH", song.initial_transpose, speed_ptr, ptr1, ptr2, ptr3, ptr4))
             rb[self.__table_addr + sidx * 2:self.__table_addr + sidx * 2+2] = struct.pack("<H", baddr)
-            # print(f"Size: {sidx}: {before_store_space - self.free_space()}")
-        # for a, s in self.__blocks:
-        #     print(f"{a:04x} {a+s:04x} ({s})")
+            print(f"Song: 0x{sidx:02x}: ~size: {before_store_space - self.free_space()}")
+        print(f"Song space left: {self.free_space()}")
+
+        if self.__over_spend_size > 0:
+            raise RuntimeError(f"Not enough space for song data in bank: 0x{self.__bank:02x}. Needed {self.__over_spend_size} more bytes.")
 
 
 def import_ladxm(filename):

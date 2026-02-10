@@ -94,9 +94,10 @@ def importMusic(rom, rnd, music_directory):
             print(f"??? {song_type}")
 
     # TMP hack to save some space until we can compress song data better
-    for n in range(6):
+    for n in range(6):  # Make all egg open songs the same
         songs_b.songs[0x20 + n] = songs_b.songs[0x26]
     songs_b.songs[0x3F] = songs_b.songs[0x00]
+    # investigate Data_01E_41AF for some more space?
 
     songs_a.store(rom)
     songs_b.store(rom)
