@@ -65,7 +65,7 @@ def importMusic(rom, rnd, music_directory):
             (songs_a, 0x11, "MrWriteHouse"),
             (songs_a, 0x12, "Ulrira"),
             (songs_a, 0x16, "ChristineHouse"),
-            (songs_a, 0x2F, "RichardHouse"),
+            (songs_a, 0x1F, "RichardHouse"),
         ],
         "overworld": [
             (songs_a, 0x04, "Overworld"),

@@ -176,12 +176,13 @@ class SongChannel:
         already_done.add(self)
         for block in self.blocks:
             block.optimizeWithLoops()
+        split_count = 0
         while self._findBlockToSplit():
-            pass
+            split_count += 1
+        print(f"Optimized with {split_count} splits, using {len(self.blocks)} blocks.")
         if self.next:
             self.next.optimize(already_done=already_done)
 
-    # TODO: This is not working as it should.
     def _findBlockToSplit(self):
         for block_idx, block in enumerate(self.blocks):
             best_block = None
@@ -193,14 +194,18 @@ class SongChannel:
                     in_loop_counter -= 1
                 if in_loop_counter > 0:
                     continue
-                for length in range(2, len(block.ops) - start):
+                for length in range(2, (len(block.ops) - start) // 2):
                     base_list = block.ops[start:start+length]
                     if songOpsHasUnclosedLoop(base_list):
                         continue
-                    overlap_positions = []
-                    for check_start in range(start, len(block.ops) - length):
+                    overlap_positions = [start]
+                    check_start = start + length
+                    while check_start < len(block.ops) - length:
                         if songOpsEqual(base_list, block.ops[check_start:check_start+length]):
                             overlap_positions.append(check_start)
+                            check_start += length
+                        else:
+                            check_start += 1
                     if len(overlap_positions) > 1:
                         space_saved = songOpsSize(base_list) * (len(overlap_positions) - 1) - len(overlap_positions) * 4
                         if space_saved > 0:
@@ -218,12 +223,12 @@ class SongChannel:
                     start = position + length
                 if start < len(input_ops):
                     new_blocks.append(input_ops[start:])
+                if self.loop is not None and self.loop > block_idx:
+                    self.loop += len(new_blocks) - 1
                 for block_ops in new_blocks:
                     block = SongBlock(None)
                     block.ops = block_ops
                     self.blocks.insert(block_idx, block)
-                    if self.loop is not None and self.loop > block_idx:
-                        self.loop += 1
                     block_idx += 1
                 return True
         return False
