@@ -84,7 +84,9 @@ def songOpsHasUnclosedLoop(ops):
             open_loop_count += 1
         elif op[0] == OP_LOOP_END:
             open_loop_count -= 1
-    return open_loop_count == 0
+            if open_loop_count < 0:
+                return True
+    return open_loop_count != 0
 
 
 class SongBlock:
@@ -174,8 +176,8 @@ class SongChannel:
         already_done.add(self)
         for block in self.blocks:
             block.optimizeWithLoops()
-        # while self._findBlockToSplit():
-        #     pass
+        while self._findBlockToSplit():
+            pass
         if self.next:
             self.next.optimize(already_done=already_done)
 
@@ -183,7 +185,14 @@ class SongChannel:
     def _findBlockToSplit(self):
         for block_idx, block in enumerate(self.blocks):
             best_block = None
+            in_loop_counter = 0
             for start in range(len(block.ops) // 2):
+                if block.ops[start][0] == OP_LOOP_START:
+                    in_loop_counter += 1
+                elif block.ops[start][0] == OP_LOOP_END:
+                    in_loop_counter -= 1
+                if in_loop_counter > 0:
+                    continue
                 for length in range(2, len(block.ops) - start):
                     base_list = block.ops[start:start+length]
                     if songOpsHasUnclosedLoop(base_list):
@@ -200,20 +209,22 @@ class SongChannel:
             if best_block:
                 space_saved, overlap_positions, length = best_block
                 input_ops = self.blocks.pop(block_idx).ops
+                new_blocks = []
                 start = 0
                 for position in overlap_positions:
-                    if self.loop and self.loop > block_idx:
-                        self.loop += 2
-                    self.blocks.insert(block_idx, SongBlock(None))
-                    self.blocks[block_idx].ops = input_ops[start:position]
-                    block_idx += 1
-                    self.blocks.insert(block_idx, SongBlock(None))
-                    self.blocks[block_idx].ops = input_ops[position:position+length]
-                    block_idx += 1
+                    if position > start:
+                        new_blocks.append(input_ops[start:position])
+                    new_blocks.append(input_ops[position:position+length])
                     start = position + length
-                self.blocks.insert(block_idx, SongBlock(None))
-                self.blocks[block_idx].ops = input_ops[start:]
-                block_idx += 1
+                if start < len(input_ops):
+                    new_blocks.append(input_ops[start:])
+                for block_ops in new_blocks:
+                    block = SongBlock(None)
+                    block.ops = block_ops
+                    self.blocks.insert(block_idx, block)
+                    if self.loop is not None and self.loop > block_idx:
+                        self.loop += 1
+                    block_idx += 1
                 return True
         return False
 
@@ -224,6 +235,7 @@ class SongChannel:
         return True
 
     def dump(self):
+        print(f"  Loop: {self.loop}")
         for idx, block in enumerate(self.blocks):
             print(f"  Block: {idx}")
             block.dump()
