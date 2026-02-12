@@ -2,10 +2,12 @@ import random
 import re
 import struct
 import binascii
-from typing import Optional, List
+from typing import Optional, List, Dict, Tuple, Any
 
 OP_END = 0x00
 OP_REST = 0x01
+OP_NOTE_MIN = 0x02
+OP_NOTE_MAX = 0x90
 OP_LOOP_START = 0x9B
 OP_LOOP_END = 0x9C
 OP_ENABLE_UNKNOWN1 = 0x95
@@ -32,7 +34,7 @@ def noteToString(channel_idx, note):
         assert note >= 6, f"Odd noise note: {note:02x}"
         assert ((note - 1) % 5) == 0, f"Odd noise note: {note:02x}"
         return f"N{(note-1)//5:02}"
-    assert 2 <= note <= 0x90
+    assert 2 <= note <= OP_NOTE_MAX
     assert (note & 1) == 0
     octave = (note - 2) // 24
     note = ["C_",  "C#", "D_", "D#", "E_", "F_", "F#", "G_", "G#", "A_", "A#", "B_"][((note - 2) // 2) % 12]
@@ -77,6 +79,21 @@ def songOpsSize(ops):
     return sum(len(op) for op in ops)
 
 
+def songPseudoOpsSize(ops):
+    current_len = -1
+    size = 0
+    for op in ops:
+        if op[0] < OP_NOTE_MAX:
+            if op[1] == current_len:
+                size += 1
+            else:
+                current_len = op[1]
+                size += 2
+        else:
+            size += len(op)
+    return size
+
+
 def songOpsHasUnclosedLoop(ops):
     open_loop_count = 0
     for op in ops:
@@ -94,49 +111,6 @@ class SongBlock:
         self.addr = addr
         self.ops = []
     
-    def optimizeWithLoops(self):
-        while True:
-            best_loop = None
-            loop_counter = 0
-            for start in range(len(self.ops)):
-                if self.ops[start][0] == OP_LOOP_START:
-                    loop_counter += 1
-                elif self.ops[start][0] == OP_LOOP_END:
-                    loop_counter -= 1
-                if loop_counter > 0:
-                    continue
-                for length in range(1, min(32, len(self.ops) - start)):
-                    base_list = self.ops[start:start+length]
-                    skip = False
-                    for op in base_list:
-                        if op[0] == OP_LOOP_START:
-                            skip = True
-                            break
-                    if skip:
-                        continue
-                    repeat_count = 1
-                    while songOpsEqual(self.ops[start+repeat_count*length:start+repeat_count*length+length], base_list):
-                        repeat_count += 1
-                    if repeat_count > 1:
-                        saved_size = songOpsSize(base_list) * (repeat_count - 1)
-                        if not (OP_NOTELEN_0 <= base_list[0][0] <= OP_NOTELEN_F):
-                            saved_size -= 1  # We need to add a notelen
-                        if saved_size > 3 and (best_loop is None or best_loop[0] < saved_size):
-                            best_loop = (saved_size, start, length, repeat_count)
-            if best_loop is None:
-                break
-            saved_size, start, length, repeat_count = best_loop
-            base_list = self.ops[start:start+length]
-            if not (OP_NOTELEN_0 <= base_list[0][0] <= OP_NOTELEN_F):
-                # Find the notelen to add
-                for idx in range(start - 1, -1, -1):
-                    if OP_NOTELEN_0 <= self.ops[idx][0] <= OP_NOTELEN_F:
-                        base_list.insert(0, self.ops[idx])
-                        if idx == start - 1:
-                            start -= 1
-                        break
-            self.ops = self.ops[:start] + [(OP_LOOP_START, repeat_count)] + base_list + [(OP_LOOP_END,)] + self.ops[start+length*repeat_count:]
-
     def oopsAllRest(self):
         for op in self.ops:
             if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT} and (op[0] < OP_NOTELEN_0 or op[0] > OP_NOTELEN_F):
@@ -155,7 +129,7 @@ class SongBlock:
                 print(f"   LOOPEND")
             elif OP_NOTELEN_0 <= op[0] <= OP_NOTELEN_F:
                 print(f"   NoteLen: {op[0] & 0x0F}")
-            elif op[0] < 0x90 and (op[0] & 1) == 0:
+            elif op[0] < OP_NOTE_MAX and (op[0] & 1) == 0:
                 print(f"   {noteToString(0, op[0])}")
             else:
                 print(f"   {op}")
@@ -168,71 +142,6 @@ class SongChannel:
         self.next = None
         self.addr = None
     
-    def optimize(self, *, already_done=None):
-        if already_done is None:
-            already_done = set()
-        if self in already_done:
-            return
-        already_done.add(self)
-        for block in self.blocks:
-            block.optimizeWithLoops()
-        split_count = 0
-        while self._findBlockToSplit():
-            split_count += 1
-        print(f"Optimized with {split_count} splits, using {len(self.blocks)} blocks.")
-        if self.next:
-            self.next.optimize(already_done=already_done)
-
-    def _findBlockToSplit(self):
-        for block_idx, block in enumerate(self.blocks):
-            best_block = None
-            in_loop_counter = 0
-            for start in range(len(block.ops) // 2):
-                if block.ops[start][0] == OP_LOOP_START:
-                    in_loop_counter += 1
-                elif block.ops[start][0] == OP_LOOP_END:
-                    in_loop_counter -= 1
-                if in_loop_counter > 0:
-                    continue
-                for length in range(2, (len(block.ops) - start) // 2):
-                    base_list = block.ops[start:start+length]
-                    if songOpsHasUnclosedLoop(base_list):
-                        continue
-                    overlap_positions = [start]
-                    check_start = start + length
-                    while check_start < len(block.ops) - length:
-                        if songOpsEqual(base_list, block.ops[check_start:check_start+length]):
-                            overlap_positions.append(check_start)
-                            check_start += length
-                        else:
-                            check_start += 1
-                    if len(overlap_positions) > 1:
-                        space_saved = songOpsSize(base_list) * (len(overlap_positions) - 1) - len(overlap_positions) * 4
-                        if space_saved > 0:
-                            if best_block is None or best_block[0] < space_saved:
-                                best_block = (space_saved, overlap_positions, length)
-            if best_block:
-                space_saved, overlap_positions, length = best_block
-                input_ops = self.blocks.pop(block_idx).ops
-                new_blocks = []
-                start = 0
-                for position in overlap_positions:
-                    if position > start:
-                        new_blocks.append(input_ops[start:position])
-                    new_blocks.append(input_ops[position:position+length])
-                    start = position + length
-                if start < len(input_ops):
-                    new_blocks.append(input_ops[start:])
-                if self.loop is not None and self.loop > block_idx:
-                    self.loop += len(new_blocks) - 1
-                for block_ops in new_blocks:
-                    block = SongBlock(None)
-                    block.ops = block_ops
-                    self.blocks.insert(block_idx, block)
-                    block_idx += 1
-                return True
-        return False
-
     def oopsAllRest(self):
         for block in self.blocks:
             if not block.oopsAllRest():
@@ -252,11 +161,6 @@ class Song:
         self.speed_data = b''
         self.channels: List[Optional[SongChannel]] = []
     
-    def optimize(self):
-        for channel in self.channels:
-            if channel:
-                channel.optimize()
-
     def dump(self):
         print("Song:")
         for idx, channel in enumerate(self.channels):
@@ -294,12 +198,12 @@ class SongPlayback:
                         break
                 op = self.channel[channel_idx].blocks[self.block_index[channel_idx]].ops[self.block_offset[channel_idx]]
                 if op[0] not in {OP_SET_SPEED_DATA, OP_LOOP_START, OP_LOOP_END, OP_SET_TRANSPOSE} and (op[0] < OP_NOTELEN_0 or op[0] > OP_NOTELEN_F):
-                    if 0x02 <= op[0] <= 0x90 and channel_idx != 3: # A note or rest, apply transpose
+                    if OP_NOTE_MIN <= op[0] <= OP_NOTE_MAX and channel_idx != 3: # A note or rest, apply transpose
                         op = (op[0] + self.transpose, )
-                        assert 0x02 <= op[0] <= 0x90, "Note out of range after transpose?"
+                        assert OP_NOTE_MIN <= op[0] <= OP_NOTE_MAX, "Note out of range after transpose?"
                     callback(channel_idx, self.speed[channel_idx], op)
                 self.block_offset[channel_idx] += 1
-                if 0x01 <= op[0] <= 0x90: # A note or rest
+                if OP_REST <= op[0] <= OP_NOTE_MAX: # A note or rest
                     self.delay[channel_idx] = self.speed[channel_idx]
                 elif OP_NOTELEN_0 <= op[0] <= OP_NOTELEN_F: # notlen
                     self.speed[channel_idx] = self.speed_data[op[0] & 0x0F]
@@ -373,9 +277,9 @@ class LADXMExporter:
         f.write("pattern: main\n")
         pattern.sort(key=lambda p: (p[0], p[1], -p[3][0]))
         for timestep, channel_idx, length, op in pattern:
-            if 0x02 <= op[0] <= 0x90: # A note to play
+            if OP_NOTE_MIN <= op[0] <= OP_NOTE_MAX: # A note to play
                 f.write(f"  {timestep:04} {channel_idx+1} {noteToString(channel_idx, op[0])} {length}\n")
-            elif op[0] == 0x01:
+            elif op[0] == OP_REST:
                 pass # Ignore rests
             else:
                 f.write(f"  {timestep:04} {channel_idx+1} ")
@@ -594,155 +498,270 @@ class MusicData:
             raise RuntimeError(f"Not enough space for song data in bank: 0x{self.__bank:02x}. Needed {self.__over_spend_size} more bytes.")
 
 
-def import_ladxm(filename):
-    pulse_instruments = []
-    wave_instruments = []
-    sequence = []
-    patterns = {}
+class LADXMImporter:
+    def __init__(self):
+        self._speed_table: List[int] = []
+        # Store per channel/pattern name a list of blocks containing pseudo-song-ops
+        self._patterns: Dict[Tuple[int, str], List[List[Any]]] = {}
+        self._sequence: List[str] = []
 
-    lines = open(filename, "rt").readlines()
-    while lines:
-        line = lines.pop(0).rstrip()
-        key, _, data = line.partition(":")
-        data = data.strip()
-        match key:
-            case "version":
-                assert data == "1"
-            case "pulse_instrument":
-                data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data))
-                b1 = (int(data['volume']) << 4) | (abs(int(data['vol_change'])))
-                if int(data['vol_change']) > 0:
-                    b1 |= 0x08
-                b3 = int(data['vibrato']) | (int(data['duty']) << 6)
-                pulse_instruments.append((OP_SET_INSTRUMENT, b1, int(data['unk1'], 0), b3))
-            case "wave_instrument":
-                wave_data = data[:32]
-                data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data[32:]))
-                b1 = (int(data['volume'], 0) << 5) | int(data['effect'], 0)
-                wave_instruments.append((OP_SET_INSTRUMENT, b1, binascii.unhexlify(wave_data)))
-            case "sequence":
-                while lines and lines[0].startswith(" "):
-                    sequence.append(lines.pop(0).strip())
-            case "pattern":
-                pattern = []
-                patterns[data] = pattern
-                while lines and lines[0].startswith(" "):
-                    line = lines.pop(0).strip().split()
-                    frame_nr = int(line[0])
-                    channel_nr = int(line[1])
-                    if channel_nr < 1:  # ignore comments
-                        continue
-                    if len(line) > 3:
-                        pattern.append((frame_nr, channel_nr - 1, line[2], int(line[3])))
-                    else:
-                        pattern.append((frame_nr, channel_nr - 1, line[2], 0))
-            case _:
-                print(f"? {key}={data}")
+    def _create_pattern(self, name: str):
+        assert (0, name) not in self._patterns
+        self._current_block = ([], [], [], [])
+        self._current_time = [0, 0, 0, 0]
+        for n in range(4):
+            self._patterns[(n, name)] = [self._current_block[n]]
 
-    speed_table = []
-    for pattern in patterns.values():
-        for frame_nr, channel_nr, data, length in pattern:
-            if length > 0 and length not in speed_table:
-                speed_table.append(length)
-    while len(speed_table) < 16:
-        add_value = 1
-        while add_value in speed_table:
-            add_value *= 2
-            if add_value == 0x100:
-                add_value = 3
-            if add_value == 0x180:
-                add_value = 5
-        speed_table.append(add_value)
+    def _rest_till(self, channel: int, frame_nr: int):
+        time_delta = frame_nr - self._current_time[channel]
+        while time_delta > 0:
+            best_idx = -1
+            for idx in range(16):
+                if self._speed_table[idx] <= time_delta and (best_idx == -1 or self._speed_table[best_idx] < self._speed_table[idx]):
+                    best_idx = idx
+            self._current_block[channel].append((OP_REST, best_idx))
+            time_delta -= self._speed_table[best_idx]
+        self._current_time[channel] = frame_nr
 
-    song = Song()
-    song.initial_transpose = 0
-    song.speed_data = bytes(speed_table)
-    song.channels = [None, None, None, None]
-    for channel_idx in range(3):
-        channel = SongChannel()
-        song.channels[channel_idx] = channel
-        channel.loop = 1
-        for s in sequence:
-            block = SongBlock(random.randint(0, 0x40) * 0x100)
-            channel.blocks.append(block)
-            current_time = 0
-            current_delay = -1
-            for frame_nr, channel_nr, data, length in patterns[s]:
-                if channel_nr != channel_idx and channel_nr != 4:
+    def _add(self, channel: int, frame_nr: int, opcode: Any):
+        self._rest_till(channel, frame_nr)
+        self._current_block[channel].append(opcode)
+
+    def _is_all_rest(self, channel: int) -> bool:
+        for (channel_idx, name), blocks in self._patterns.items():
+            if channel != channel_idx:
+                continue
+            for block in blocks:
+                for op in block:
+                    if op[0] not in {OP_REST, OP_LOOP_START, OP_LOOP_END, OP_SET_INSTRUMENT}:
+                        return False
+        return True
+
+    def load_ladxm(self, filename):
+        assert not self._speed_table and not self._patterns
+        # First load the ladxm file raw
+        pulse_instruments = []
+        wave_instruments = []
+        patterns = {}
+
+        lines = open(filename, "rt").readlines()
+        while lines:
+            line = lines.pop(0).rstrip()
+            key, _, data = line.partition(":")
+            data = data.strip()
+            match key:
+                case "version":
+                    assert data == "1"
+                case "pulse_instrument":
+                    data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data))
+                    b1 = (int(data['volume']) << 4) | (abs(int(data['vol_change'])))
+                    if int(data['vol_change']) > 0:
+                        b1 |= 0x08
+                    b3 = int(data['vibrato']) | (int(data['duty']) << 6)
+                    pulse_instruments.append((OP_SET_INSTRUMENT, b1, int(data['unk1'], 0), b3))
+                case "wave_instrument":
+                    wave_data = data[:32]
+                    data = dict(re.findall(r"(\w+):\s+([\w\-]+)", data[32:]))
+                    b1 = (int(data['volume'], 0) << 5) | int(data['effect'], 0)
+                    wave_instruments.append((OP_SET_INSTRUMENT, b1, binascii.unhexlify(wave_data)))
+                case "sequence":
+                    while lines and lines[0].startswith(" "):
+                        self._sequence.append(lines.pop(0).strip())
+                case "pattern":
+                    pattern = []
+                    patterns[data] = pattern
+                    while lines and lines[0].startswith(" "):
+                        line = lines.pop(0).strip().split()
+                        frame_nr = int(line[0])
+                        channel_nr = int(line[1])
+                        if channel_nr < 1:  # ignore comments
+                            continue
+                        if len(line) > 3:
+                            pattern.append((frame_nr, channel_nr - 1, line[2], int(line[3])))
+                        else:
+                            pattern.append((frame_nr, channel_nr - 1, line[2], 0))
+                case _:
+                    print(f"? {key}={data}")
+
+        # Figure out our speed table.
+        self._speed_table = []
+        for pattern in patterns.values():
+            for frame_nr, channel_nr, data, length in pattern:
+                if length > 0 and length not in self._speed_table:
+                    self._speed_table.append(length)
+        while len(self._speed_table) < 16:
+            add_value = 1
+            while add_value in self._speed_table:
+                add_value *= 2
+                if add_value == 0x100:
+                    add_value = 3
+                if add_value == 0x180:
+                    add_value = 5
+            self._speed_table.append(add_value)
+        assert len(self._speed_table) <= 16, "Too many entries in speed table."
+
+        # Build patterns of blocks with pseudo ops
+        for key, pattern in patterns.items():
+            self._create_pattern(key)
+            for frame_nr, channel_nr, data, length in pattern:
+                if channel_nr < 0:
                     continue
-                time_delta = frame_nr - current_time
-                while time_delta > 0:
-                    best_idx = -1
-                    for idx in range(16):
-                        if speed_table[idx] <= time_delta and (best_idx == -1 or speed_table[best_idx] < speed_table[idx]):
-                            best_idx = idx
-                    if current_delay != speed_table[best_idx]:
-                        current_delay = speed_table[best_idx]
-                        block.ops.append((OP_NOTELEN_0 + best_idx,))
-                    block.ops.append((OP_REST,))
-                    time_delta -= current_delay
-                    current_time += current_delay
-                if length > 0:
-                    if current_delay != length:
-                        current_delay = length
-                        block.ops.append((OP_NOTELEN_0 + speed_table.index(length),))
-                    block.ops.append((noteFromString(channel_idx, data),))
-                    current_time += current_delay
+                elif channel_nr == 4:
+                    for n in range(4):
+                        self._rest_till(n, frame_nr)
                 elif data == "END":
                     pass
                 elif data == "+U1":
-                    block.ops.append((OP_ENABLE_UNKNOWN1,))
+                    self._add(channel_nr, frame_nr, (OP_ENABLE_UNKNOWN1,))
                 elif data == "-U1":
-                    block.ops.append((OP_DISABLE_UNKNOWN1,))
+                    self._add(channel_nr, frame_nr, (OP_DISABLE_UNKNOWN1,))
                 elif data == "+U2":
-                    block.ops.append((OP_ENABLE_UNKNOWN2,))
+                    self._add(channel_nr, frame_nr, (OP_ENABLE_UNKNOWN2,))
                 elif data == "-U2":
-                    block.ops.append((OP_DISABLE_UNKNOWN2,))
+                    self._add(channel_nr, frame_nr, (OP_DISABLE_UNKNOWN2,))
                 elif data == "+U3":
-                    block.ops.append((OP_ENABLE_UNKNOWN3,))
+                    self._add(channel_nr, frame_nr, (OP_ENABLE_UNKNOWN3,))
                 elif data == "-U3":
-                    block.ops.append((OP_DISABLE_UNKNOWN3,))
+                    self._add(channel_nr, frame_nr, (OP_DISABLE_UNKNOWN3,))
                 elif data.startswith("="):
-                    if channel_idx < 2:
-                        block.ops.append(pulse_instruments[int(data[1:])])
-                    elif channel_idx == 2:
-                        block.ops.append(wave_instruments[int(data[1:])])
+                    if channel_nr < 2:
+                        self._add(channel_nr, frame_nr, pulse_instruments[int(data[1:])])
+                    elif channel_nr == 2:
+                        self._add(channel_nr, frame_nr, wave_instruments[int(data[1:])])
                 else:
-                    print("?????", data)
-    return song
+                    self._add(channel_nr, frame_nr, (noteFromString(channel_nr, data), self._speed_table.index(length)))
+                    self._current_time[channel_nr] += length
+
+    def _optimize_with_loops(self, block):
+        while True:
+            best_loop = None
+            loop_counter = 0
+            for start in range(len(block)):
+                if block[start][0] == OP_LOOP_START:
+                    loop_counter += 1
+                elif block[start][0] == OP_LOOP_END:
+                    loop_counter -= 1
+                if loop_counter > 0:
+                    continue
+                for length in range(1, min(32, len(block) - start)):
+                    base_list = block[start:start + length]
+                    skip = False
+                    for op in base_list:
+                        if op[0] == OP_LOOP_START:
+                            skip = True
+                            break
+                    if skip:
+                        continue
+                    repeat_count = 1
+                    while songOpsEqual(block[start + repeat_count * length:start + repeat_count * length + length], base_list):
+                        repeat_count += 1
+                    if repeat_count > 1:
+                        saved_size = songPseudoOpsSize(base_list) * (repeat_count - 1)
+                        if saved_size > 3 and (best_loop is None or best_loop[0] < saved_size):
+                            best_loop = (saved_size, start, length, repeat_count)
+            if best_loop is None:
+                break
+            saved_size, start, length, repeat_count = best_loop
+            base_list = block[start:start + length]
+            block = block[:start] + [(OP_LOOP_START, repeat_count)] + base_list + [(OP_LOOP_END,)] + block[start + length * repeat_count:]
+        return block
+
+    def _find_block_to_split(self):
+        best_block = None
+        for blocks in self._patterns.values():
+            for block_idx, block in enumerate(blocks):
+                in_loop_counter = 0
+                for start in range(len(block) // 2):
+                    if block[start][0] == OP_LOOP_START:
+                        in_loop_counter += 1
+                    elif block[start][0] == OP_LOOP_END:
+                        in_loop_counter -= 1
+                    if in_loop_counter > 0:
+                        continue
+                    for length in range(2, (len(block) - start) // 2):
+                        base_list = block[start:start+length]
+                        if songOpsHasUnclosedLoop(base_list):
+                            continue
+                        overlap_positions = [start]
+                        check_start = start + length
+                        while check_start < len(block) - length:
+                            if songOpsEqual(base_list, block[check_start:check_start+length]):
+                                overlap_positions.append(check_start)
+                                check_start += length
+                            else:
+                                check_start += 1
+                        if len(overlap_positions) > 1:
+                            space_saved = songOpsSize(base_list) * (len(overlap_positions) - 1) - len(overlap_positions) * 4
+                            if space_saved > 0:
+                                if best_block is None or best_block[0] < space_saved:
+                                    best_block = (space_saved, overlap_positions, length, blocks, block_idx)
+        if best_block:
+            space_saved, overlap_positions, length, blocks, block_idx = best_block
+            input_ops = blocks.pop(block_idx)
+            new_blocks = []
+            start = 0
+            for position in overlap_positions:
+                if position > start:
+                    new_blocks.append(input_ops[start:position])
+                new_blocks.append(input_ops[position:position+length])
+                start = position + length
+            if start < len(input_ops):
+                new_blocks.append(input_ops[start:])
+            for new_block in new_blocks:
+                blocks.insert(block_idx, new_block)
+                block_idx += 1
+            return True
+        return False
+
+    def optimize(self):
+        # Remove channels that are just all rest.
+        for n in range(4):
+            if self._is_all_rest(n):
+                self._patterns = {k: v for k, v in self._patterns.items() if k[0] != n}
+        # Optimize blocks by searching and adding loops
+        for channel, name in self._patterns:
+            self._patterns[(channel, name)] = [self._optimize_with_loops(block) for block in self._patterns[(channel, name)]]
+        # Find blocks to split to save space
+        split_count = 0
+        while self._find_block_to_split():
+            split_count += 1
+        print(f"Optimized with {split_count} splits, using {sum(len(blocks) for blocks in self._patterns.values())} blocks.")
+
+    def to_song(self) -> Song:
+        song = Song()
+        song.initial_transpose = 0
+        song.speed_data = bytes(self._speed_table)
+        song.channels = [None, None, None, None]
+        for channel_idx in range(4):
+            for sequence in self._sequence:
+                pattern = self._patterns.get((channel_idx, sequence))
+                if pattern is None:
+                    continue
+                if song.channels[channel_idx] is None:
+                    song.channels[channel_idx] = SongChannel()
+                    song.channels[channel_idx].loop = len(pattern)
+                for block in pattern:
+                    song_block = SongBlock(random.randint(0, 0x40) * 0x100)
+                    song.channels[channel_idx].blocks.append(song_block)
+                    current_notelen = -1
+                    for op in block:
+                        if op[0] < OP_NOTE_MAX:
+                            if current_notelen != op[1]:
+                                current_notelen = op[1]
+                                song_block.ops.append((OP_NOTELEN_0 + current_notelen, ))
+                            song_block.ops.append((op[0],))
+                        else:
+                            song_block.ops.append(op)
+                            if op[0] in {OP_LOOP_START, OP_SET_INSTRUMENT}:
+                                current_notelen = -1
+        return song
 
 def main():
-    import rom
-    r = rom.ROM(open("input.gbc", "rb"))
-    a = MusicData(r, 0x1B, 0x0077, 0x30)
-    b = MusicData(r, 0x1E, 0x007F, 0x40)
-    # a.songs[4] = import_ladxm("../LADX-MusicEditor/editor/songs/ffa/13.ladxm")
-    # a.songs[4].optimize()
-    a.store(r)
-    print(f"Free space: a: {a.free_space()}")
-    b.store(r)
-    print(f"Free space: b: {b.free_space()}")
-
-    #for name, md in [("a", a), ("b", b)]:
-    #     for song_idx, song in enumerate(md.songs):
-    #        try:
-    #            print(f"Exporting {name}_{song_idx:02}")
-    #            LADXMExporter(song, f"../LADX-MusicEditor/editor/songs/ladx/{name}_{song_idx:02}.ladxm")
-    #        except NotImplementedError as e:
-    #            print(f"NotImplementedError on song {name}_{song_idx}: {e}")
-
-    r = rom.ROM(open("input.gbc", "rb"))
-    a = MusicData(r, 0x1B, 0x0077, 0x30)
-    b = MusicData(r, 0x1E, 0x007F, 0x40)
-    for song in a.songs:
-       song.optimize()
-    a.store(r)
-    print(f"Free space: a: {a.free_space()}")
-    for song in b.songs:
-        song.optimize()
-    b.store(r)
-    print(f"Free space: b: {b.free_space()}")
-    #r.save("LADXR_DEFAULT.gbc")
+    i = LADXMImporter()
+    i.load_ladxm("music/ffa/overworld_12.ladxm")
+    i.optimize()
+    song = i.to_song()
+    song.dump()
 
 
 if __name__ == "__main__":

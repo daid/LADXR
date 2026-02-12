@@ -82,8 +82,12 @@ def importMusic(rom, rnd, music_directory):
     }
 
     for song_file in song_files:
-        song = musicData.import_ladxm(os.path.join(directory, song_file))
-        song.optimize()
+        importer = musicData.LADXMImporter()
+        importer.load_ladxm(os.path.join(directory, song_file))
+        importer.optimize()
+        song = importer.to_song()
+        if song_file == "town_1a.ladxm":
+            song.dump()
         song_type, _, _ = song_file.partition("_")
         if song_type in song_spots and song_spots[song_type]:
             list_idx = rnd.randrange(0, len(song_spots[song_type]))
