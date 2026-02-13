@@ -78,9 +78,13 @@ class DungeonColor:
 
 class NoDungeonColor:
     def __init__(self, options, world_setup, r):
-        entrance = Location(dungeon=0)
-        fairy_rewards = Location(dungeon=0)
-        entrance.connect(fairy_rewards, r.boss_requirements[world_setup.boss_mapping[8]])
-        fairy_rewards.add(TunicFairy(0), TunicFairy(1))
+
+        # locations
+        entrance = Location("D0 Entrance", dungeon=0)
+        boss_room = Location("D0 Boss Room", dungeon=0)
+        fairy_rewards = Location("D0 Fairy Room", dungeon=0).add(TunicFairy(0), TunicFairy(1))
+        # connections
+        entrance.connect(boss_room, back=r.boss_requirements[world_setup.boss_mapping[8]])
+        boss_room.connect(fairy_rewards, r.boss_requirements[world_setup.boss_mapping[8]], back=False)
 
         self.entrance = entrance

@@ -68,11 +68,11 @@ DEFAULT_ITEM_POOL = {
 }
 
 STATIC_DUNGEON_ITEMS = {
-    3: { "D3_GEL_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_BOMBWALL": 1, "SWITCH3": 1, },
-    4: { "D4_PITKEY": 1, "D4_BOSS_CLEAR": 1, }, #TODO: "D4_PUZZLE_CLUE": 1
+    3: { "D3_BOMBWALL": 1, "D3_GEL_CLEAR": 1, "D3_STALFOS_CLEAR": 1, "D3_ZOLS_CLEAR": 1, "SWITCH3": 1, },
+    4: { "D4_BOSS_CLEAR": 1, "D4_PITKEY": 1, "D4_PUZZLE_CLUE": 1, },
     5: { "D5_ZOL_CLEAR": 1, "MS1_KILL": 1, "MS2_KILL": 1, "MS3_KILL": 1, },
     6: { "D6_THREE_WIZROBE_CLEAR": 1, "SWITCH6A": 1, "SWITCH6A_RANGE": 1, "SWITCH6B_MIDRANGE": 1, "SWITCH6B_RANGE": 1, "SWITCH6C": 1, "SWITCH6D": 1, "SWITCH6E": 1, "SWITCH6F": 1, },
-    7: { "D7_BALL": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "D7_BOSS_CLEAR": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7C": 1, "SWITCH7C_RANGE": 1, },
+    7: { "D7_BALL": 1, "D7_BOSS_CLEAR": 1, "D7_PILLAR": 4, "D7_TOAK_CLEAR": 1, "SWITCH7A": 1, "SWITCH7A_RANGE": 1, "SWITCH7B": 1, "SWITCH7B_RANGE": 1, "SWITCH7C": 1, "SWITCH7C_MIDRANGE": 1, "SWITCH7C_RANGE": 1, },
     8: { "SWITCH8": 1, },
 }
 
@@ -154,6 +154,7 @@ class ItemPool:
             self.add(POWER_BRACELET)
             self.add(SHOVEL)
             self.add(RUPEES_200, 2)
+            self.remove("SWITCH7B_RANGE")
             self.removeRupees(14)
 
             for n in range(9):
