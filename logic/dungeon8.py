@@ -244,7 +244,7 @@ class Dungeon8:
             pot_pit_room_doorway.connect(pot_pit_room, r.pit_buffer_itemless, back=r.hookshot_spam_pit) # pit buffer from south smasher doorway to the SE room chest
             pot_pit_room_doorway.connect(miniboss3_room, OR(AND(r.hookshot_spam_pit, r.enemy_requirements["SNAKE"]), AND(r.boots_bonk_pit, r.shield_bump)), back=False) # boots bonk to navigate room, or bump them into pits with shield
             after_e_passage.connect(before_e_passage, r.boots_bonk, back=False) # boots bonking from rope room to below peahats through passage
-            zamboni_pit_west.connect(slime_trap_room, r.boots_bonk, back=AND(r.boots_bonk, r.damage_boost_special)) # boots bonk to hop over 1 tile of lava | the boots bonk headed east is sub-pixel dependant and link may take damage
+            zamboni_pit_west.connect(slime_trap_room, AND(r.boots_bonk, r.jesus_buffer), back=r.boots_bonk_lava) # boots bonk to hop over 1 tile of lava | the boots bonk headed east is sub-pixel dependant and link may take damage
             zamboni_pit_west.connect(zamboni_pit_east, AND(r.hookshot_spam_pit, r.hookshot_over_pit), back=False) # hookshot spam to get to east side of zamboni room, and you can hookshot block to make 70% of the journey easy
             #center
             before_f_stairs.connect(peahat_area, AND(r.boots_bonk, r.jesus_buffer), back=False) # from refill room push block into lava and boots bonk over the 1-tile of lava
@@ -276,7 +276,7 @@ class Dungeon8:
             #boss
             before_c_passage.connect(after_c_passage, AND(r.boots_bonk_2d_hell, MAGIC_ROD), back=False) # boots bonk through 2d ice section
             after_c_passage.connect(before_f_stairs, AND(r.jesus_jump, r.zoomerang), back=False) # jesus jump across lava and then a few dozen consecutive buffers to get lodged lower left corner of rail, the right-facing zoomerang to escape
-            boss_room.connect(instrument, AND(r.boots_bonk, r.jesus_buffer, r.boss_requirements[world_setup.boss_mapping[7]]), back=False) # boots bonk in boss room to collect instrument
+            boss_room.connect(instrument, AND(r.boots_bonk_lava, r.boss_requirements[world_setup.boss_mapping[7]]), back=False) # boots bonk in boss room to collect instrument
             # connections that require overworld-only replenishable items such as "TOADSTOOL2" and "MEDICINE2"
             if options.overworld != 'alttp' and options.overworld != 'dungeondive':
                 before_a_passage.connect(after_a_passage, r.toadstool_bounce_2d_spikepit, back=False) # toadstool to get damage boost from 2d spikes to get through passage

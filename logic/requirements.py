@@ -214,6 +214,7 @@ class RequirementsSettings:
         self.boots_jump = AND(PEGASUS_BOOTS, FEATHER) # use boots jumps to cross 4 gap spots or other hard to reach spots
         self.boots_bonk = PEGASUS_BOOTS # bonk against walls as a replacement for feather - clear 1-tile pits/liquids, get height for any reason, easy 2d bonks (not used for pit buffer bonks)
         self.boots_bonk_pit = PEGASUS_BOOTS # use boots bonks to cross 1 tile gaps NOTE: it's used identical to boots_bonk, could remove this?
+        self.boots_bonk_lava = AND(PEGASUS_BOOTS, (options.hpmode != "5hit")) # useboots bonks to cross 1 tile of lava, which has a chance of forced damage even with perfect execution
         self.boots_dash_2d = PEGASUS_BOOTS # use boots to dash over 1 tile gaps in 2d sections
         self.boots_bonk_2d_hell = PEGASUS_BOOTS # seperate boots bonks from hell logic which are harder?
         self.boots_bonk_2d_spikepit = AND(self.damage_boost_special, PEGASUS_BOOTS, "MEDICINE2") # use iframes from medicine to get a boots dash going in 2d spike pits (kanalet secret passage, d3 2d section to boss)
