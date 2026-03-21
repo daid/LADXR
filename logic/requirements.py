@@ -8,6 +8,10 @@ class OR:
     def __new__(cls, *args):
         if True in args:
             return True
+
+        if not [x for x in args if x != False]:
+            return False
+
         return super().__new__(cls)
 
     def __init__(self, *args):
@@ -50,6 +54,10 @@ class AND:
     def __new__(cls, *args):
         if False in args:
             return False
+
+        if not [x for x in args if x != True]:
+            return True
+
         return super().__new__(cls)
 
     def __init__(self, *args):
