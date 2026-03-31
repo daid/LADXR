@@ -154,7 +154,6 @@ class ItemPool:
             self.add(POWER_BRACELET)
             self.add(SHOVEL)
             self.add(RUPEES_200, 2)
-            self.remove("SWITCH7B_RANGE")
             self.removeRupees(14)
 
             for n in range(9):
@@ -414,6 +413,9 @@ class ItemPool:
         if heart_container_type != HEART_CONTAINER:
             self.add(heart_container_type, self.get(HEART_CONTAINER))
             self.remove(HEART_CONTAINER, self.get(HEART_CONTAINER))
+
+        if settings.logic == 'casual':
+            self.remove("SWITCH7B_RANGE", self.get("SWITCH7B_RANGE"))
 
     def __randomizeRupees(self, options, rnd):
         # Remove rupees from the item pool and replace them with other items to create more variety
