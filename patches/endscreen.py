@@ -15,6 +15,10 @@ def updateEndScreen(rom):
         jp   $4200
     """))
     rom.patch(0x17, 0x2FCE, "B170", "D070") # Ignore the final tile data load
+    rom.patch(0x17, 0x05CD, ASM("jr z, $2A"), ASM("jr $2A"))  # Always goto cats screen
+    rom.patch(0x17, 0x0664, ASM("jr nz, $04"), "", fill_nop=True)  # Always goto cats screen
+    rom.patch(0x17, 0x3002, ASM("ret nz"), "", fill_nop=True)  # Always goto cats screen
+    rom.patch(0x17, 0x3264, ASM("jr nz, $2D"), "", fill_nop=True)  # Always goto cats screen
     
     rom.patch(0x3F, 0x0200, "00" * 0xA0, ASM("""
     ; Disable LCD
