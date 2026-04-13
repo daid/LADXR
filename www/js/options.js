@@ -951,7 +951,7 @@ var options =
   "category": "User options",
   "short_key": "Q",
   "label": "Quickswap",
-  "description": "Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.",
+  "description": "\nAdds that the select button swaps with either A or B. The map is not available when quickswap is enabled.\n[Swap A button] Press select to swap the A button item with the top-right inventory item.\n[Swap B button] Press select to swap the B button item with the top-left inventory item.\n[Dynamic] Press select to swap whichever equipped item was not used last with any inventory item, sorted by recently used on that button, cycling through them with repeated select presses.\n                ",
   "aesthetic": true,
   "default": "none",
   "options": [
@@ -969,6 +969,11 @@ var options =
     "key": "b",
     "short": "b",
     "label": "Swap B button"
+   },
+   {
+    "key": "dynamic",
+    "short": "d",
+    "label": "Dynamic"
    }
   ]
  },
@@ -1062,11 +1067,6 @@ var options =
     "label": "AgesGirl"
    },
    {
-    "key": "BasicNew.png",
-    "short": "BasicNew.png>",
-    "label": "BasicNew"
-   },
-   {
     "key": "Bowwow.bin",
     "short": "Bowwow.bin>",
     "label": "Bowwow"
@@ -1085,16 +1085,6 @@ var options =
     "key": "Kirby.bin",
     "short": "Kirby.bin>",
     "label": "Kirby"
-   },
-   {
-    "key": "LuckwurstJoe.png",
-    "short": "LuckwurstJoe.png>",
-    "label": "LuckwurstJoe"
-   },
-   {
-    "key": "LuckwurstJoe2.png",
-    "short": "LuckwurstJoe2.png>",
-    "label": "LuckwurstJoe2"
    },
    {
     "key": "Luigi.bin",
