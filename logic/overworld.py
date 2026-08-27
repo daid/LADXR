@@ -13,7 +13,8 @@ class World:
         Location().add(FishingMinigame()).connect(mabe_village, AND(r.bush, FOUND("RUPEES", 50)))  # fishing game, heart piece is directly done by the minigame.
         Location().add(Seashell(0x0A3)).connect(mabe_village, r.bush)  # bushes below the shop
         Location().add(Seashell(0x0D2)).connect(mabe_village, PEGASUS_BOOTS)  # smash into tree next to lv1
-        Location().add(Song(0x092)).connect(mabe_village, OCARINA)  # Marins song
+        marin_song = Location().add(Song(0x092))
+        mabe_village.connect(marin_song, OCARINA, back=False)
         Location().add(KeyHole(0x0D3, TAIL_CAVE_OPENED)).connect(mabe_village, TAIL_KEY)  # Marins song
         rooster_cave = Location("Rooster Cave")
         Location().add(DroppedKey(0x1E4)).connect(rooster_cave, AND(OCARINA, SONG3))
@@ -286,6 +287,7 @@ class World:
 
         animal_village = Location("Animal Village")
         animal_village.connect(Location().add(TradeSequenceItem(0x0CD, TRADING_ITEM_FISHING_HOOK)), TRADING_ITEM_BROOM)
+        animal_village.connect(marin_song, OCARINA, back=False)
         cookhouse = Location("Bear Chef's House")
         cookhouse.connect(Location().add(TradeSequenceItem(0x2D7, TRADING_ITEM_PINEAPPLE)), TRADING_ITEM_HONEYCOMB)
         goathouse = Location("Goat's House")
@@ -629,6 +631,8 @@ class World:
             self._addEntranceRequirement("castle_jump_cave", r.pit_buffer_boots) # pit buffer to clip bottom wall and boots bonk across
             prairie_cave_secret_exit.connect(prairie_cave, AND(BOMB, OR(r.boots_bonk_pit, r.hookshot_spam_pit))) # hookshot spam or boots bonk across pits can go from left to right by pit buffering on top of the bottom wall then boots bonk across
             richard_cave_chest.connect(richard_cave, r.damage_boost) # use the zol on the other side of the pit to damage boost across (requires damage from pit + zol)
+            richard_cave_chest.connect(richard_cave, r.boots_bonk) # bonk over the pit instead of damage boosting
+            ukuku_prairie.connect(dungeon3_entrance, AND(r.jesus_buffer, r.jesus_buffer_hookshot), back=False) # boots bonk from the right into a jesus buffer down to the bottom wall, then bonk all the way across. Hookshot is needed to restart the buffer after transitions
             castle_secret_entrance_right.connect(castle_secret_entrance_left, OR(r.boots_bonk_2d_spikepit, r.bracelet_bounce_2d_spikepit, r.toadstool_bounce_2d_spikepit)) # use bracelet or toadstool to damage boost off of spikes and get through passageway. Also need to hold A button when bouncing off spikes or goombas
             left_bay_area.connect(ghost_hut_outside, r.pit_buffer_boots) # multiple pit buffers to bonk across the bottom wall
             left_bay_area.connect(ukuku_prairie, r.hookshot_clip_block, back=False) # clip through the donuts blocking the path next to prairie plateau cave by hookshotting up and killing the two moblins that way which clips you further up two times. This is enough to move right

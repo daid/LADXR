@@ -26,6 +26,16 @@ class OR:
     def remove(self, item) -> None:
         if item in self.__items:
             self.__items.remove(item)
+        elif item in self.__children:
+            self.__children.remove(item)
+
+    def add(self, item) -> None:
+        if isinstance(item, str):
+            if item not in self.__items:
+                self.__items.append(item)
+        else:
+            if item not in self.__children:
+                self.__children.append(item)
 
     def test(self, inventory) -> bool:
         for item in self.__items:
@@ -70,6 +80,16 @@ class AND:
     def remove(self, item) -> None:
         if item in self.__items:
             self.__items.remove(item)
+        elif item in self.__children:
+            self.__children.remove(item)
+
+    def add(self, item) -> None:
+        if isinstance(item, str):
+            if item not in self.__items:
+                self.__items.append(item)
+        else:
+            if item not in self.__children:
+                self.__children.append(item)
 
     def test(self, inventory) -> bool:
         for item in self.__items:
@@ -374,11 +394,17 @@ class RequirementsSettings:
         if options.hardmode == "ohko":
             self.miniboss_requirements["ROLLING_BONES"] = OR(BOW, MAGIC_ROD, BOOMERANG, AND(FEATHER, self.attack_hookshot)) # should not deal with roller damage
         if options.bowwow != "normal":
-            # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword ca$            # Except for taking out bushes (and crystal pillars are removed)
+            # We cheat in bowwow mode, we pretend we have the sword, as bowwow can pretty much do all what the sword can
+            # Except for taking out bushes (and crystal pillars are removed)
             self.bush.remove(SWORD)
             self.pit_bush.remove(SWORD)
             self.hit_switch.remove(SWORD)
             self.hit_switch_color.remove(SWORD)
+            # 2 swords means we picked up a real one
+            self.bush.add(COUNT(SWORD, 2))
+            self.pit_bush.add(COUNT(SWORD, 2))
+            self.hit_switch.add(COUNT(SWORD, 2))
+            self.hit_switch_color.add(COUNT(SWORD, 2))
         if options.logic == "casual":
             # In casual mode, remove the more complex kill methods
             self.bush.remove(MAGIC_POWDER)
