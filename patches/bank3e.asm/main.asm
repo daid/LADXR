@@ -26,6 +26,17 @@ MainJumpTable:
         dw   EvilShopQuestion                     ; 13
         dw   EvilShopBuy                          ; 14
         dw   OverrideShopMessage                  ; 15
+        dw   QuickswapDraw                        ; 16
+        dw   QuickswapResetB                      ; 17
+        dw   QuickswapResetA                      ; 18
+        dw   QuickswapResetMenuB                  ; 19
+        dw   QuickswapResetMenuA                  ; 1A
+        dw   QuickswapResetOnNewItem              ; 1B
+        dw   Quickswap                            ; 1C
+        dw   QuickswapRemoveArrow                 ; 1D
+        dw   QuickswapResetOnGrab                 ; 1E
+        dw   QuickswapUpdatePreview               ; 1F
+        dw   QuickswapResetOnFileLoad             ; 20
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter
@@ -42,6 +53,18 @@ StartGameMarinMessage:
         ld   hl, $B010
         ldi  [hl], a ;check counter low
         ldi  [hl], a ;check counter high
+
+        push bc
+        ld   hl, wRecentItemListSlotB
+        ld   bc, wRecentItemListSlotA
+        ld   d, $10
+.loop:
+        ldi  [hl], a
+        ld   [bc], a
+        inc  bc
+        dec  d
+        jr   nz, .loop
+        pop  bc
 
         ; Show the normal message
         ld   a, $01
@@ -156,3 +179,4 @@ WriteToVRAM:
 #INCLUDE "owl.asm"
 #INCLUDE "evilshop.asm"
 #INCLUDE "nightmareminiboss.asm"
+#INCLUDE "quickswap.asm"

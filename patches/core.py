@@ -77,6 +77,8 @@ def cleanup(rom):
 
     rom.texts[0x02B] = b'' # unused text
 
+    rom.patch(0x03, 0x10B2, 0x112A, "", fill_nop=True) # unused chest code
+
 
 def disablePhotoPrint(rom):
     rom.patch(0x28, 0x07CC, ASM("ldh [$FF01], a\nldh [$FF02], a"), "", fill_nop=True) # do not reset the serial link
@@ -98,19 +100,6 @@ def fixMarinFollower(rom):
     rom.patch(0x18, 0x2139, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
     rom.patch(0x18, 0x214F, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
     rom.patch(0x18, 0x2166, ASM("ld a, [$C50F]"), ASM("ld a, [$C5AA]"))
-
-def quickswap(rom, button):
-    rom.patch(0x00, 0x1094, ASM("jr c, $49"), ASM("jr nz, $49"))  # prevent agressive key repeat
-    rom.patch(0x00, 0x10BC,  # Patch the open minimap code to swap the your items instead
-        ASM("xor a\nld [$C16B], a\nld [$C16C], a\nld [$DB96], a\nld a, $07\nld [$DB95], a"), ASM("""
-        ld a, [$DB%02X]
-        ld e, a
-        ld a, [$DB%02X]
-        ld [$DB%02X], a
-        ld a, e
-        ld [$DB%02X], a
-        ret
-    """ % (button, button + 2, button, button + 2)))
 
 def injectMainLoop(rom):
     rom.patch(0x00, 0x0346, ASM("""
@@ -434,7 +423,7 @@ OAMData:
 
         ld   a, [$B011] ; check count high
         call updateOAM
-        ld   a, [$B010] ; death count low
+        ld   a, [$B010] ; check count low
         call updateOAM
         ret
 
