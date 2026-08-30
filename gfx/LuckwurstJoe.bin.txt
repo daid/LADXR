@@ -1,4 +1,4 @@
 {
-    "name": "LuckwurstJoe",
+    "name": "Nekoni, LuckwurstJoe",
     "url": ""
 }
