@@ -977,7 +977,7 @@ var options =
   "category": "User options",
   "short_key": "f",
   "label": "Text mode",
-  "description": "[Fast] Makes text appear twice as fast.\n[No-Text] Removes all text from the game",
+  "description": "[Fast] Makes text appear twice as fast.\n[No-Text] Removes all text from the game.\n[No text boxes] Removes most of the text boxes from the game",
   "aesthetic": true,
   "default": "fast",
   "options": [
@@ -995,6 +995,11 @@ var options =
     "key": "none",
     "short": "n",
     "label": "No-text"
+   },
+   {
+    "key": "notextbox",
+    "short": "b",
+    "label": "No text boxes"
    }
   ]
  },
