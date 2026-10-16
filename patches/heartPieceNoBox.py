@@ -1,0 +1,49 @@
+from assembler import ASM
+
+
+def fixHeartPiece(rom):
+    # Patch all locations where the piece of heart is rendered.
+    rom.patch(0x03, 0x1b52, ASM("ld de, $5A4D\ncall RenderActiveEntitySpritesPair"), ASM("ld a, $04\nrst 8"), fill_nop=True)  # state 0
+
+    # Write custom code in the first state handler, this overwrites all state handlers
+    # Till state 5.
+    rom.patch(0x03, 0x1A74, 0x1A98, ASM("""
+        ; Render sprite
+        ld   a, $05
+        rst  8
+    
+        ; Handle item effect
+        ld   a, $06 ; giveItemMultiworld
+        rst  8
+
+        ; Show the message only for the two underwater checks (rooms 0x078 and 0x1F2)
+        ldh  a, [hMapRoom]
+        cp   $78
+        jr   z, showMessage
+        cp   $F2
+        jr   nz, skipMessage
+showMessage:
+        ld   a, $0A
+        rst  8
+skipMessage:
+        
+        ; Switch to state 5
+        ld   hl, wEntitiesStateTable
+        add  hl, bc
+        ld   [hl], $05
+        ret
+    """), fill_nop=True)
+    # Insert a state 5 handler
+    rom.patch(0x03, 0x1A98, 0x1B17, ASM("""
+        ; Render sprite
+        ld   a, $05
+        rst  8
+
+        ld   a, [wDialogState]
+        and  a
+        ret  nz
+
+        call $512A ; mark room as done
+        call UnloadEntity
+        ret
+    """), fill_nop=True)
