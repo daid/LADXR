@@ -1087,14 +1087,9 @@ var options =
     "label": "Kirby"
    },
    {
-    "key": "LuckwurstJoe.png",
-    "short": "LuckwurstJoe.png>",
+    "key": "LuckwurstJoe.bin",
+    "short": "LuckwurstJoe.bin>",
     "label": "LuckwurstJoe"
-   },
-   {
-    "key": "LuckwurstJoe2.png",
-    "short": "LuckwurstJoe2.png>",
-    "label": "LuckwurstJoe2"
    },
    {
     "key": "Luigi.bin",
