@@ -15,7 +15,7 @@ def patchTradeSequence(rom, settings):
     patchFisherman(rom)
     patchMermaid(rom)
     patchMermaidStatue(rom)
-    patchSharedCode(rom)
+    patchSharedCode(rom, settings)
     patchVarious(rom, settings)
     patchInventoryMenu(rom)
 
@@ -280,7 +280,7 @@ def patchMermaidStatue(rom):
     """), fill_nop=True)
 
 
-def patchSharedCode(rom):
+def patchSharedCode(rom, settings):
     # Trade item render code override.
     rom.patch(0x07, 0x1535, 0x1575, ASM("""
         ldh  a, [hIsSideScrolling] 
@@ -296,10 +296,12 @@ notSideScroll:
         rst  8
     """), fill_nop=True)
     # Trade item message code
+    # $09 gives item and message, $16 (HandleTradeItem) gives the item without message
+    trade_item_handler = 0x16 if settings.textmode == 'notextbox' else 0x09
     rom.patch(0x07, 0x159F, 0x15B9, ASM("""
-        ld   a, $09 ; give message and item (from alt item table)
-        rst  8
-    """), fill_nop=True)
+        ld a, $%02X ; give item (from alt item table), with or without message
+        rst 8
+    """ % trade_item_handler), fill_nop=True)
     # Prevent changing the 2nd trade item memory
     rom.patch(0x07, 0x15BD, 0x15C1, ASM("""
         call $7F7F

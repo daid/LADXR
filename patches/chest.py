@@ -3,7 +3,7 @@ from utils import formatText
 from locations.constants import CHEST_ITEMS
 
 
-def fixChests(rom):
+def fixChests(rom, show_item_message=True):
     # Patch the chest code, so it can give a lvl1 sword.
     # Normally, there is some code related to the owl event when getting the tail key,
     # as we patched out the owl. We use it to jump to our custom code in bank $3E to handle getting the item
@@ -35,11 +35,16 @@ def fixChests(rom):
     """), fill_nop=True)
 
     # Instead of the normal logic of showing the proper dialog, we jump to our custom code in bank 3E.
-    rom.patch(0x07, 0x3C9C, None, ASM("""
-        ld   a, $0A ; showItemMessageMultiworld
-        rst  8
-        jp $7CE9
-    """))
+    if show_item_message:
+        rom.patch(0x07, 0x3C9C, None, ASM("""
+            ld a, $0A ; showItemMessageMultiworld
+            rst 8
+            jp $7CE9
+        """))
+    else:
+        rom.patch(0x07, 0x3C9C, None, ASM("""
+            jp $7CE9
+        """))
 
     # Sound to play is normally loaded from a table, which is no longer big enough. So always use the same sound.
     rom.patch(0x07, 0x3C81, ASM("""

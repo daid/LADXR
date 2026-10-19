@@ -1,7 +1,7 @@
 from assembler import ASM
 
 
-def fixGoldenLeaf(rom):
+def fixGoldenLeaf(rom, show_item_message=True):
     # Patch the golden leaf code so it jumps to the dropped key handling in bank 3E
     rom.patch(3, 0x2007, ASM("""
         ld   de, $5FFB
@@ -15,11 +15,16 @@ def fixGoldenLeaf(rom):
         rst  8
         jp   $602F
     """))
-    rom.patch(3, 0x2037, None, ASM("""
-        ld   a, $0a ; showMessageMultiworld
-        rst  8
-        jp   $604B
-    """))
+    if show_item_message:
+        rom.patch(3, 0x2037, None, ASM("""
+            ld a, $0a ; showMessageMultiworld
+            rst 8
+            jp $604B
+        """))
+    else:
+        rom.patch(3, 0x2037, None, ASM("""
+            jp $604B
+        """))
 
     # Patch all over the place to move the golden leafs to a different memory location.
     # We use $DB6D (dungeon 9 status), but we could also use $DB7A (wGhostSeeksGrave, which is only used by the ghost)

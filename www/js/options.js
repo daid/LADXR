@@ -995,6 +995,11 @@ var options =
     "key": "none",
     "short": "n",
     "label": "No-text"
+   },
+   {
+    "key": "notextbox",
+    "short": "b",
+    "label": "No text boxes"
    }
   ]
  },

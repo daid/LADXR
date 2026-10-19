@@ -7,7 +7,7 @@ def setStartHealth(rom, amount):
     rom.patch(0x01, 0x0B14, ASM("ld  [hl], $18"), ASM("ld  [hl], $%02X" % (amount * 8)))  # current health of new save
 
 
-def upgradeHealthContainers(rom):
+def upgradeHealthContainers(rom, show_item_message=True):
     # Reuse 2 unused shop messages for the heart containers.
     rom.texts[0x2A] = formatText("You found a {HEART_CONTAINER}!")
     rom.texts[0x2B] = formatText("You lost a heart!")
@@ -19,18 +19,30 @@ def upgradeHealthContainers(rom):
         ld   a, $05  ; renderHeartPiece
         rst  8
     """), fill_nop=True)
-    rom.patch(0x03, 0x19F0, ASM("""
-        ld   hl, $DB5B
-        inc  [hl]
-        ld   hl, $DB93
-        ld   [hl], $FF
-    """), ASM("""
-        ld   a, $06 ; giveItemMultiworld
-        rst  8
-        ld   a, $0A ; messageForItemMultiworld
-        rst  8
+    if show_item_message:
+        rom.patch(0x03, 0x19F0, ASM("""
+            ld hl, $DB5B
+            inc [hl]
+            ld hl, $DB93
+            ld [hl], $FF
+        """), ASM("""
+            ld a, $06 ; giveItemMultiworld
+            rst 8
+            ld a, $0A ; messageForItemMultiworld
+            rst 8
 skip:
-    """), fill_nop=True)  # add heart->remove heart on heart container
+        """), fill_nop=True) # add heart->remove heart on heart container
+    else:
+        rom.patch(0x03, 0x19F0, ASM("""
+            ld hl, $DB5B
+            inc [hl]
+            ld hl, $DB93
+            ld [hl], $FF
+        """), ASM("""
+            ld a, $06 ; giveItemMultiworld
+            rst 8
+skip:
+        """), fill_nop=True) # add heart->remove heart on heart container
 
 
 def limitHitChallange(rom):

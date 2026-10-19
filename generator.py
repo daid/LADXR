@@ -114,28 +114,29 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if not settings.rooster:
         patches.maptweaks.tweakMap(rom)
         patches.maptweaks.tweakBirdKeyRoom(rom)
-    patches.chest.fixChests(rom)
+    show_item_message = settings.textmode != 'notextbox'
+    patches.chest.fixChests(rom, show_item_message)
     patches.shop.fixShop(rom, allow_both=settings.shopsanity != '', shopsanity=settings.shopsanity != '')
     if settings.evilshop != '':
         patches.evilshop.addEvilShop(rom)
     patches.rooster.patchRooster(rom)
     patches.trendy.fixTrendy(rom)
-    patches.droppedKey.fixDroppedKey(rom)
+    patches.droppedKey.fixDroppedKey(rom, show_item_message)
     patches.madBatter.upgradeMadBatter(rom)
     patches.tunicFairy.upgradeTunicFairy(rom)
     patches.tarin.updateTarin(rom)
     patches.fishingMinigame.updateFinishingMinigame(rom)
-    patches.health.upgradeHealthContainers(rom)
+    patches.health.upgradeHealthContainers(rom, show_item_message)
     if settings.dungeon_beaks == "removed":
         patches.owl.removeDungeonOwlBeakRequirement(rom)
     if settings.owlstatues in ("dungeon", "both"):
         patches.owl.upgradeDungeonOwlStatues(rom)
     if settings.owlstatues in ("overworld", "both"):
         patches.owl.upgradeOverworldOwlStatues(rom)
-    patches.goldenLeaf.fixGoldenLeaf(rom)
-    patches.heartPiece.fixHeartPiece(rom)
-    patches.seashell.fixSeashell(rom)
-    patches.instrument.fixInstruments(rom)
+    patches.goldenLeaf.fixGoldenLeaf(rom, show_item_message)
+    patches.heartPiece.fixHeartPiece(rom, show_item_message)
+    patches.seashell.fixSeashell(rom, show_item_message)
+    patches.instrument.fixInstruments(rom, show_item_message)
     patches.seashell.upgradeMansion(rom)
     patches.songs.upgradeMarin(rom)
     patches.songs.upgradeManbo(rom)
@@ -200,6 +201,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if settings.textmode == 'none':
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
+    if settings.textmode == 'notextbox':
+        patches.aesthetics.fastText(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':

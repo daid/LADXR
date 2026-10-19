@@ -1,7 +1,7 @@
 from assembler import ASM
 
 
-def fixSeashell(rom):
+def fixSeashell(rom, show_item_message=True):
     # Do not unload if we have the lvl2 sword.
     rom.patch(0x03, 0x1FD3, ASM("ld a, [wSwordLevel]\ncp $02\njp nc, UnloadEntity"), "", fill_nop=True)
     # Do not unload in the ghost house
@@ -11,12 +11,20 @@ def fixSeashell(rom):
     rom.patch(0x03, 0x1FF2, ASM("ld de, $5FD1\ncall $3C77"), ASM("ld a, $05\nrst 8"), fill_nop=True)
 
     # Call our special handlers for messages and pickup
-    rom.patch(0x03, 0x2368, 0x237C, ASM("""
-        ld   a, $0A  ; showMessageMultiworld
-        rst  8
-        ld   a, $06  ; giveItemMultiworld
-        rst  8
-        call $512A
+    if show_item_message:
+        rom.patch(0x03, 0x2368, 0x237C, ASM("""
+            ld a, $0A ; showMessageMultiworld
+            rst 8
+            ld a, $06 ; giveItemMultiworld
+            rst 8
+            call $512A
+            ret
+        """), fill_nop=True)
+    else:
+        rom.patch(0x03, 0x2368, 0x237C, ASM("""
+            ld a, $06 ; giveItemMultiworld
+            rst 8
+            call $512A
         ret
     """), fill_nop=True)
 
