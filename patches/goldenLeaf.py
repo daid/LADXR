@@ -16,8 +16,10 @@ def fixGoldenLeaf(rom):
         jp   $602F
     """))
     rom.patch(3, 0x2037, None, ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0a ; showMessageMultiworld
         rst  8
+#ENDIF
         jp   $604B
     """))
 

@@ -9,21 +9,34 @@ def fixHeartPiece(rom):
     # Till state 5.
     rom.patch(0x03, 0x1A74, 0x1A98, ASM("""
         ; Render sprite
-        ld   a, $05
-        rst  8
-    
+        ld a, $05
+        rst 8
+        
         ; Handle item effect
-        ld   a, $06 ; giveItemMultiworld
-        rst  8
-        
+        ld a, $06 ; giveItemMultiworld
+        rst 8
+#IF ITEM_DIALOGS
         ;Show message
-        ld   a, $0A ; showMessageMultiworld
-        rst  8
-        
+        ld a, $0A ; showMessageMultiworld
+        rst 8
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ; Show the message only for the underwater checks (rooms 0x078 and 0x1F2)
+        ldh a, [hMapRoom]
+        cp $78
+        jr z, showMessage
+        cp $F2
+        jr nz, skipMessage
+showMessage:
+        ld a, $0A
+        rst 8
+skipMessage:
+#ENDIF
+
         ; Switch to state 5
-        ld   hl, wEntitiesStateTable
-        add  hl, bc
-        ld   [hl], $05
+        ld hl, wEntitiesStateTable
+        add hl, bc
+        ld [hl], $05
         ret
     """), fill_nop=True)
     # Insert a state 5 handler

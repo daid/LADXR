@@ -281,9 +281,10 @@ Turns all the phone booths into extra shops, and lowers the prices, and allows b
             Setting('quickswap', 'User options', 'Q', 'Quickswap', options=[('none', '', 'Disabled'), ('a', 'a', 'Swap A button'), ('b', 'b', 'Swap B button')], default='none',
                 description='Adds that the select button swaps with either A or B. The item is swapped with the top inventory slot. The map is not available when quickswap is enabled.',
                 aesthetic=True),
-            Setting('textmode', 'User options', 'f', 'Text mode', options=[('fast', '', 'Fast'), ('default', 'd', 'Normal'), ('none', 'n', 'No-text')], default='fast',
+            Setting('textmode', 'User options', 'f', 'Text mode', options=[('fast', '', 'Fast'), ('default', 'd', 'Normal'), ('none', 'n', 'No-text'), ('notextbox', 'b', 'No text boxes')], default='fast',
                 description="""[Fast] Makes text appear twice as fast.
-[No-Text] Removes all text from the game""", aesthetic=True),
+[No-Text] Removes all text from the game
+[No text boxes] Removes the text box when receiving an item (chests, dropped items, trade items)""", aesthetic=True),
             Setting('lowhpbeep', 'User options', 'p', 'Low HP beeps', options=[('none', 'D', 'Disabled'), ('slow', 'S', 'Slow'), ('default', 'N', 'Normal')], default='slow',
                 description='Slows or disables the low health beeping sound', aesthetic=True),
             Setting('noflash', 'User options', 'l', 'Remove flashing lights', default=True,

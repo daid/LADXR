@@ -297,8 +297,13 @@ notSideScroll:
     """), fill_nop=True)
     # Trade item message code
     rom.patch(0x07, 0x159F, 0x15B9, ASM("""
-        ld   a, $09 ; give message and item (from alt item table)
-        rst  8
+#IF ITEM_DIALOGS
+        ld a, $09 ; give message and item (from alt item table)
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ld a, $16 ; give item (from alt item table), without message
+#ENDIF
+        rst 8
     """), fill_nop=True)
     # Prevent changing the 2nd trade item memory
     rom.patch(0x07, 0x15BD, 0x15C1, ASM("""

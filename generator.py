@@ -82,6 +82,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
 
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
     assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
+    assembler.const("ITEM_DIALOGS", 1 if settings.textmode != 'notextbox' else 0)
+    assembler.const("NO_ITEM_DIALOGS", 0 if settings.textmode != 'notextbox' else 1)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
@@ -200,6 +202,8 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if settings.textmode == 'none':
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
+    if settings.textmode == 'notextbox':
+        patches.aesthetics.fastText(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':

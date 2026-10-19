@@ -11,27 +11,40 @@ def fixDroppedKey(rom):
 
     # Patch the key pickup code to use the chest pickup code.
     rom.patch(0x03, 0x248F, None, ASM("""
-        ldh  a, [hMapRoom] ; load room nr
-        cp   $7C  ; L4 Side-view room where the key drops
-        jr   nz, notSpecialSideView
-
-        ld   hl, $D969 ; status of the room above the side-view where the key drops in dungeon 4 
-        set  4, [hl]
+        ldh a, [hMapRoom] ; load room nr
+        cp $7C ; L4 Side-view room where the key drops
+        jr nz, notSpecialSideView
+        
+        ld hl, $D969 ; status of the room above the side-view where the key drops in dungeon 4
+        set 4, [hl]
 notSpecialSideView:
         call $512A ; mark room as done
         
         ; Handle item effect
-        ld   a, $06 ; giveItemMultiworld
-        rst  8
-        
-        ldh  a, [hActiveEntitySpriteVariant] ; Load active sprite variant to see if this is just a normal small key
-        cp   $1A
-        jr   z, isAKey
+        ld a, $06 ; giveItemMultiworld
+        rst 8
+#IF ITEM_DIALOGS
+        ldh a, [hActiveEntitySpriteVariant] ; Load active sprite variant to see if this is just a normal small key
+        cp $1A
+        jr z, isAKey
         
         ;Show message (if not a key)
-        ld   a, $0A ; showMessageMultiworld
-        rst  8
+        ld a, $0A ; showMessageMultiworld
+        rst 8
 isAKey:
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ; Show the message only for the underwater check in overworld room 0x078
+        ld a, [$DBA5] ; isIndoor
+        and a
+        jr nz, skipMessageDK
+        ldh a, [hMapRoom]
+        cp $78
+        jr nz, skipMessageDK
+        ld a, $0A
+        rst 8
+skipMessageDK:
+#ENDIF
         ret
     """))
     rom.patch(0x03, 0x24B7, "3E", "3E")  # sanity check

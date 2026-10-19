@@ -26,6 +26,7 @@ MainJumpTable:
         dw   EvilShopQuestion                     ; 13
         dw   EvilShopBuy                          ; 14
         dw   OverrideShopMessage                  ; 15
+        dw   HandleTradeItem                      ; 16
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter

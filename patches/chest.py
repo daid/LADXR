@@ -36,8 +36,10 @@ def fixChests(rom):
 
     # Instead of the normal logic of showing the proper dialog, we jump to our custom code in bank 3E.
     rom.patch(0x07, 0x3C9C, None, ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0A ; showItemMessageMultiworld
         rst  8
+#ENDIF
         jp $7CE9
     """))
 
