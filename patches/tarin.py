@@ -16,7 +16,12 @@ def updateTarin(rom):
         ld   a, $91
         call $2385
     """), ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0B ; GiveItemAndMessageForRoom
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ld   a, $17 ; GiveItemForRoom
+#ENDIF
         rst  8
     """), fill_nop=True)
 

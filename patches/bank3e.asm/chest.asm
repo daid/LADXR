@@ -973,6 +973,15 @@ GiveItemAndMessageForRoom:
     call GiveItemFromChest
     jp ItemMessage
 
+GiveItemForRoom:
+    ;Load the chest type from the chest table.
+    ld   hl, $7800
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ldh  [$FFF1], a
+    call GiveItemFromChest
+    ret
+
 RenderItemForRoom:
     ;Load the chest type from the chest table.
     ld   hl, $7800

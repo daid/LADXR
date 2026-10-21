@@ -68,7 +68,12 @@ def upgradeMarin(rom):
         ld   a, $13
         call $2385
     """), ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0E
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ld   a, $17
+#ENDIF
         rst  8
     """), fill_nop=True)
 
@@ -110,7 +115,12 @@ def upgradeManbo(rom):
         ld   hl, $DAFD
         set  5, [hl]
         ; Show item message and give item
+#IF ITEM_DIALOGS
         ld   a, $0E
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ld   a, $17
+#ENDIF
         rst  8
     """), fill_nop=True)
     # Remove the normal "got song message")
@@ -158,6 +168,11 @@ def upgradeMamu(rom):
         call $4087
     """), ASM("""
         ; Give item and message for room.
+#IF ITEM_DIALOGS
         ld   a, $0E
+#ENDIF
+#IF NO_ITEM_DIALOGS
+        ld   a, $17
+#ENDIF
         rst  8
     """), fill_nop=True)
