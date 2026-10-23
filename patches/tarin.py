@@ -18,8 +18,7 @@ def updateTarin(rom):
     """), ASM("""
 #IF ITEM_DIALOGS
         ld   a, $0B ; GiveItemAndMessageForRoom
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $17 ; GiveItemForRoom
 #ENDIF
         rst  8

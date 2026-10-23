@@ -38,8 +38,7 @@ def fixChests(rom):
     rom.patch(0x07, 0x3C9C, None, ASM("""
 #IF ITEM_DIALOGS
         ld   a, $0A ; showItemMessageMultiworld
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $18 ; ItemMessageDungeonItem
 #ENDIF
         rst  8

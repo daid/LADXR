@@ -299,8 +299,7 @@ notSideScroll:
     rom.patch(0x07, 0x159F, 0x15B9, ASM("""
 #IF ITEM_DIALOGS
         ld a, $09 ; give message and item (from alt item table)
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld a, $16 ; give item (from alt item table), without message
 #ENDIF
         rst 8

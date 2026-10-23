@@ -14,8 +14,7 @@ def fixSeashell(rom):
     rom.patch(0x03, 0x2368, 0x237C, ASM("""
 #IF ITEM_DIALOGS
         ld   a, $0A  ; showMessageMultiworld
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $18  ; ItemMessageDungeonItem
 #ENDIF
         rst  8

@@ -29,8 +29,7 @@ def upgradeHealthContainers(rom):
         rst  8
 #IF ITEM_DIALOGS
         ld   a, $0A ; messageForItemMultiworld
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $18 ; ItemMessageDungeonItem
 #ENDIF
         rst  8

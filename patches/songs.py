@@ -70,8 +70,7 @@ def upgradeMarin(rom):
     """), ASM("""
 #IF ITEM_DIALOGS
         ld   a, $0E
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $17
 #ENDIF
         rst  8

@@ -17,8 +17,7 @@ def fixInstruments(rom):
 #IF ITEM_DIALOGS
         ;Show message
         ld   a, $0A ; showMessageMultiworld
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $18 ; ItemMessageDungeonItem
 #ENDIF
         rst  8

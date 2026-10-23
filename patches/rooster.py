@@ -14,10 +14,9 @@ def patchRooster(rom):
     rom.patch(0x19, 0x0E7B, ASM("ld hl, $4E37\nld c, $03\ncall RenderActiveEntitySpritesRect"), ASM("ld a, $0C\nrst $08"), fill_nop=True)
     # Give the item and message
     rom.patch(0x19, 0x0E69, ASM("ld a, $6D\ncall $2373"), ASM("""
-    #IF ITEM_DIALOGS
+#IF ITEM_DIALOGS
         ld   a, $0E
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $17
 #ENDIF
         rst  $08
