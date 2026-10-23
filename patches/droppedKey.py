@@ -32,8 +32,7 @@ notSpecialSideView:
         ld a, $0A ; showMessageMultiworld
         rst 8
 isAKey:
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ; Underwater check in overworld room 0x078: full message, otherwise dungeon items only
         ld   a, [$DBA5] ; isIndoor
         and  a

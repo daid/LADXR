@@ -19,8 +19,7 @@ def fixHeartPiece(rom):
         ;Show message
         ld a, $0A ; showMessageMultiworld
         rst 8
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ; Underwater checks (rooms 0x078 and 0x1F2): full message, otherwise dungeon items only
         ldh  a, [hMapRoom]
         cp   $78

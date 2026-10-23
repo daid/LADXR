@@ -116,8 +116,7 @@ def upgradeManbo(rom):
         ; Show item message and give item
 #IF ITEM_DIALOGS
         ld   a, $0E
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $17
 #ENDIF
         rst  8
@@ -169,8 +168,7 @@ def upgradeMamu(rom):
         ; Give item and message for room.
 #IF ITEM_DIALOGS
         ld   a, $0E
-#ENDIF
-#IF NO_ITEM_DIALOGS
+#ELSE
         ld   a, $17
 #ENDIF
         rst  8
