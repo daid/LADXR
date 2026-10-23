@@ -120,7 +120,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if not settings.rooster:
         patches.maptweaks.tweakMap(rom)
         patches.maptweaks.tweakBirdKeyRoom(rom)
-    patches.chest.fixChests(rom)
+    patches.chest.fixChests(rom)        
     patches.shop.fixShop(rom, allow_both=settings.shopsanity != '', shopsanity=settings.shopsanity != '')
     if settings.evilshop != '':
         patches.evilshop.addEvilShop(rom)
@@ -207,6 +207,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
     if settings.textmode == 'notextbox':
+        patches.chest.shortenDungeonItemTexts(rom)
         patches.aesthetics.fastText(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
