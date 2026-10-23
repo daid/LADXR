@@ -60,11 +60,11 @@ def fixChests(rom):
 def shortenDungeonItemTexts(rom):
     # Short messages for dungeon items found in their own dungeon (generic item ids).
     # Used with the "no text boxes" option, where these messages are shown with keysanity.
-    rom.texts[0xA6] = formatText("Got a Map for\nthis dungeon!")
-    rom.texts[0xA7] = formatText("Got a Compass\nfor this dungeon")
-    rom.texts[0xA8] = formatText("Got a Stone Beak\nfor this dungeon")
-    rom.texts[0xA9] = formatText("Got a Nightmare\nKey for this\ndungeon!")
-    rom.texts[0xAA] = formatText("Got a Key for\nthis dungeon!")
+    rom.texts[0xA6] = formatText("Got the {MAP}")
+    rom.texts[0xA7] = formatText("Got the {COMPASS}")
+    rom.texts[0xA8] = formatText("Got the dungeon {STONE_BEAK}")
+    rom.texts[0xA9] = formatText("Got the dungeon {NIGHTMARE_KEY}")
+    rom.texts[0xAA] = formatText("Got a {KEY} for this dungeon")
 
 def setMultiChest(rom, option):
     room = 0x2F2
