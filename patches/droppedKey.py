@@ -34,16 +34,20 @@ notSpecialSideView:
 isAKey:
 #ENDIF
 #IF NO_ITEM_DIALOGS
-        ; Show the message only for the underwater check in overworld room 0x078
-        ld a, [$DBA5] ; isIndoor
-        and a
-        jr nz, skipMessageDK
-        ldh a, [hMapRoom]
-        cp $78
-        jr nz, skipMessageDK
-        ld a, $0A
-        rst 8
-skipMessageDK:
+        ; Underwater check in overworld room 0x078: full message, otherwise dungeon items only
+        ld   a, [$DBA5] ; isIndoor
+        and  a
+        jr   nz, filteredMessageDK
+        ldh  a, [hMapRoom]
+        cp   $78
+        jr   nz, filteredMessageDK
+        ld   a, $0A
+        rst  8
+        jr   doneDK
+filteredMessageDK:
+        ld   a, $18 ; ItemMessageDungeonItem
+        rst  8
+doneDK:
 #ENDIF
         ret
     """))

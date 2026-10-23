@@ -28,6 +28,7 @@ MainJumpTable:
         dw   OverrideShopMessage                  ; 15
         dw   HandleTradeItem                      ; 16
         dw   GiveItemForRoom                      ; 17
+        dw   ItemMessageDungeonItem               ; 18
 
 StartGameMarinMessage:
         ; Injection to reset our frame counter

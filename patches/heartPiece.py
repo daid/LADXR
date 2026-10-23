@@ -21,16 +21,18 @@ def fixHeartPiece(rom):
         rst 8
 #ENDIF
 #IF NO_ITEM_DIALOGS
-        ; Show the message only for the underwater checks (rooms 0x078 and 0x1F2)
-        ldh a, [hMapRoom]
-        cp $78
-        jr z, showMessage
-        cp $F2
-        jr nz, skipMessage
-showMessage:
-        ld a, $0A
-        rst 8
-skipMessage:
+        ; Underwater checks (rooms 0x078 and 0x1F2): full message, otherwise dungeon items only
+        ldh  a, [hMapRoom]
+        cp   $78
+        jr   z, hpFullMessage
+        cp   $F2
+        jr   z, hpFullMessage
+        ld   a, $18 ; ItemMessageDungeonItem
+        jr   hpShowMessage
+hpFullMessage:
+        ld   a, $0A
+hpShowMessage:
+        rst  8
 #ENDIF
 
         ; Switch to state 5

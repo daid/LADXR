@@ -29,8 +29,11 @@ def upgradeHealthContainers(rom):
         rst  8
 #IF ITEM_DIALOGS
         ld   a, $0A ; messageForItemMultiworld
-        rst  8
 #ENDIF
+#IF NO_ITEM_DIALOGS
+        ld   a, $18 ; ItemMessageDungeonItem
+#ENDIF
+        rst  8
 skip:
     """), fill_nop=True)  # add heart->remove heart on heart container
 

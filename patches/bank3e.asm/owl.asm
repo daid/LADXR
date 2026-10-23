@@ -28,6 +28,7 @@ HandleTradeItem:
     ld a, [hl]
     ldh [$FFF1], a
     call GiveItemFromChest
+    call ItemMessageDungeonItem
     ld d, $00
     ret
 

@@ -84,6 +84,10 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
     assembler.const("ITEM_DIALOGS", 1 if settings.textmode != 'notextbox' else 0)
     assembler.const("NO_ITEM_DIALOGS", 0 if settings.textmode != 'notextbox' else 1)
+    assembler.const("KEYSANITY_KEYS", 1 if settings.dungeon_keys == 'keysanity' else 0)
+    assembler.const("KEYSANITY_NIGHTMARE_KEYS", 1 if settings.nightmare_keys == 'keysanity' else 0)
+    assembler.const("KEYSANITY_BEAKS", 1 if settings.dungeon_beaks == 'keysanity' else 0)
+    assembler.const("KEYSANITY_MAPS", 1 if settings.dungeon_maps == 'keysanity' else 0)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
