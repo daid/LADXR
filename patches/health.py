@@ -27,7 +27,11 @@ def upgradeHealthContainers(rom):
     """), ASM("""
         ld   a, $06 ; giveItemMultiworld
         rst  8
+#IF ITEM_DIALOGS
         ld   a, $0A ; messageForItemMultiworld
+#ELSE
+        ld   a, $18 ; ItemMessageDungeonItem
+#ENDIF
         rst  8
 skip:
     """), fill_nop=True)  # add heart->remove heart on heart container

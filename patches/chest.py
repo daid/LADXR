@@ -36,7 +36,11 @@ def fixChests(rom):
 
     # Instead of the normal logic of showing the proper dialog, we jump to our custom code in bank 3E.
     rom.patch(0x07, 0x3C9C, None, ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0A ; showItemMessageMultiworld
+#ELSE
+        ld   a, $18 ; ItemMessageDungeonItem
+#ENDIF
         rst  8
         jp $7CE9
     """))
@@ -52,6 +56,14 @@ def fixChests(rom):
 
     rom.texts[0x9A] = formatText("You found 10 {BOMB}!")
 
+def shortenDungeonItemTexts(rom):
+    # Short messages for dungeon items found in their own dungeon (generic item ids).
+    # Used with the "no text boxes" option, where these messages are shown with keysanity.
+    rom.texts[0xA6] = formatText("Got the {MAP}")
+    rom.texts[0xA7] = formatText("Got the {COMPASS}")
+    rom.texts[0xA8] = formatText("Got the dungeon {STONE_BEAK}")
+    rom.texts[0xA9] = formatText("Got the dungeon {NIGHTMARE_KEY}")
+    rom.texts[0xAA] = formatText("Got a {KEY} for this dungeon")
 
 def setMultiChest(rom, option):
     room = 0x2F2

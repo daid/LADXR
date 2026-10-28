@@ -14,9 +14,12 @@ def fixInstruments(rom):
         ; Handle item effect
         ld   a, $06 ; giveItemMultiworld
         rst  8
-        
+#IF ITEM_DIALOGS
         ;Show message
         ld   a, $0A ; showMessageMultiworld
+#ELSE
+        ld   a, $18 ; ItemMessageDungeonItem
+#ENDIF
         rst  8
     """), fill_nop=True)
 

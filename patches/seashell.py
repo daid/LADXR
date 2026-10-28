@@ -12,7 +12,11 @@ def fixSeashell(rom):
 
     # Call our special handlers for messages and pickup
     rom.patch(0x03, 0x2368, 0x237C, ASM("""
+#IF ITEM_DIALOGS
         ld   a, $0A  ; showMessageMultiworld
+#ELSE
+        ld   a, $18  ; ItemMessageDungeonItem
+#ENDIF
         rst  8
         ld   a, $06  ; giveItemMultiworld
         rst  8

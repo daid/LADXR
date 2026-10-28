@@ -16,6 +16,24 @@ HandleOwlStatue:
 
 
 
+HandleTradeItem:
+    call GetRoomStatusAddressInHL
+    bit 5, [hl]
+    ld d, $01
+    ret nz
+    set 5, [hl]
+	
+    ld hl, $7B16
+    call OffsetPointerByRoomNumber
+    ld a, [hl]
+    ldh [$FFF1], a
+    call GiveItemFromChest
+    call ItemMessageDungeonItem
+    ld d, $00
+    ret
+
+
+
 GetRoomStatusAddressInHL:
     ld   a, [$DBA5] ; isIndoor
     ld   d, a

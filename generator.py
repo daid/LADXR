@@ -82,6 +82,11 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
 
     assembler.const("HARD_MODE", 1 if settings.hardmode != "none" else 0)
     assembler.const("DUNGEON_CHAIN", 1 if settings.overworld == 'dungeonchain' else 0)
+    assembler.const("ITEM_DIALOGS", 1 if settings.textmode != 'notextbox' else 0)
+    assembler.const("KEYSANITY_KEYS", 1 if settings.dungeon_keys == 'keysanity' else 0)
+    assembler.const("KEYSANITY_NIGHTMARE_KEYS", 1 if settings.nightmare_keys == 'keysanity' else 0)
+    assembler.const("KEYSANITY_BEAKS", 1 if settings.dungeon_beaks == 'keysanity' else 0)
+    assembler.const("KEYSANITY_MAPS", 1 if settings.dungeon_maps == 'keysanity' else 0)
 
     patches.core.cleanup(rom)
     patches.core.fixD7exit(rom)
@@ -114,7 +119,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if not settings.rooster:
         patches.maptweaks.tweakMap(rom)
         patches.maptweaks.tweakBirdKeyRoom(rom)
-    patches.chest.fixChests(rom)
+    patches.chest.fixChests(rom)        
     patches.shop.fixShop(rom, allow_both=settings.shopsanity != '', shopsanity=settings.shopsanity != '')
     if settings.evilshop != '':
         patches.evilshop.addEvilShop(rom)
@@ -200,6 +205,9 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if settings.textmode == 'none':
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
+    if settings.textmode == 'notextbox':
+        patches.chest.shortenDungeonItemTexts(rom)
+        patches.aesthetics.fastText(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':

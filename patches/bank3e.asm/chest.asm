@@ -973,6 +973,45 @@ GiveItemAndMessageForRoom:
     call GiveItemFromChest
     jp ItemMessage
 
+GiveItemForRoom:
+    ;Load the chest type from the chest table.
+    ld   hl, $7800
+    call OffsetPointerByRoomNumber
+    ld   a, [hl]
+    ldh  [$FFF1], a
+    call GiveItemFromChest
+    jp   ItemMessageDungeonItem
+	
+ItemMessageDungeonItem:
+    ; Show the item message only for dungeon items:
+    ; dungeon specific ones (KEY1..NIGHTMARE_KEY0, ids $23-$4F) and, for each item type
+    ; that is shuffled (keysanity), the generic id for the own dungeon
+    ldh  a, [$FFF1]
+#IF KEYSANITY_MAPS
+    cp   $16 ; MAP
+    jr   z, .show
+    cp   $17 ; COMPASS
+    jr   z, .show
+#ENDIF
+#IF KEYSANITY_BEAKS
+    cp   $18 ; STONE_BEAK
+    jr   z, .show
+#ENDIF
+#IF KEYSANITY_NIGHTMARE_KEYS
+    cp   $19 ; NIGHTMARE_KEY
+    jr   z, .show
+#ENDIF
+#IF KEYSANITY_KEYS
+    cp   $1A ; SMALL_KEY
+    jr   z, .show
+#ENDIF
+    cp   $23
+    ret  c
+    cp   $50
+    ret  nc
+.show:
+    jp   ItemMessage
+
 RenderItemForRoom:
     ;Load the chest type from the chest table.
     ld   hl, $7800
