@@ -129,6 +129,10 @@ class PointerTable:
                         if st["end"] - st["start"] >= len(s) and st["bank"] == bank:
                             my_storage = st
                             break
+                    if my_storage is None and self.__info.get("flexible_banks"):
+                        my_storage = self.__moveToOtherBank(rom, n, len(s), storage)
+                        if my_storage is not None:
+                            bank = my_storage["bank"]
                     assert my_storage is not None, "Not enough room in storage... %d/%d %s id:%x(%d) bank:%d" % (n, len(self.__data), storage, n, n, bank)
 
                     pointer = my_storage["start"]
@@ -154,6 +158,24 @@ class PointerTable:
         space_left = sum(map(lambda n: n["end"] - n["start"], storage))
         # print(self.__class__.__name__, "Space left:", space_left)
         return storage
+
+    def __moveToOtherBank(self, rom, n, size, storage):
+        # When the table has a bank per entry, an entry that doesn't fit in its
+        # own bank can go to the bank with the most room left.
+        free = {}
+        for st in storage:
+            if st["end"] - st["start"] >= size:
+                free[st["bank"]] = free.get(st["bank"], 0) + st["end"] - st["start"]
+        if not free:
+            return None
+        bank = max(free, key=free.get)
+        banks_table = rom.banks[self.__info["banks_bank"]]
+        addr = self.__info["banks_addr"] + n
+        banks_table[addr] = (banks_table[addr] & 0xC0) | bank
+        self.__banks[n] = bank
+        for st in storage:
+            if st["bank"] == bank and st["end"] - st["start"] >= size:
+                return st
 
     def _readData(self, rom, bank_nr, pointer):
         bank = rom.banks[bank_nr]

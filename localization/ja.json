@@ -1,0 +1,15 @@
+{
+  "name": "日本語",
+  "checksums": {
+    "87464316": "Japan v1.0",
+    "87479931": "Japan v1.1",
+    "87503721": "Japan v1.2"
+  },
+  "diacritics": true,
+  "graphics": false,
+  "charmap": {},
+  "names": {},
+  "asks": {},
+  "texts": {},
+  "patterns": []
+}

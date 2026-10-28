@@ -57,12 +57,19 @@ import patches.alttp
 import patches.colorBook
 import hints
 import locations.keyLocation
+import localization
 
 
 # Function to generate a final rom, this patches the rom with all required patches
 def generateRom(args, settings, seed, logic, *, rnd=None):
     print("Loading: %s" % (args.input_filename))
     rom = ROMWithTables(open(args.input_filename, 'rb'))
+
+    localization.reset()
+    language = None
+    if getattr(args, "language_rom", None):
+        language = localization.Localization(open(args.language_rom, 'rb').read())
+        language.prePatch(rom)
 
     pymods = []
     if args.pymod:
@@ -301,4 +308,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
         patches.enemies.doubleTrouble(rom)
     for pymod in pymods:
         pymod.postPatch(rom)
+    if language:
+        language.postPatch(rom)
     return rom

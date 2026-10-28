@@ -4,6 +4,18 @@ var worker;
 var spoilerContent;
 var romArray;
 var storedRomArray;
+var languageRomArray;
+
+// Byte sums of the ROMs that localization/ knows, see localization/<code>.json.
+var LANGUAGE_ROMS = {
+    89199617: {name: "French", supported: true},
+    89757956: {name: "French", supported: true},
+    89992511: {name: "German", supported: false},
+    90082342: {name: "German", supported: false},
+    87464316: {name: "Japanese", supported: false},
+    87479931: {name: "Japanese", supported: false},
+    87503721: {name: "Japanese", supported: false},
+};
 
 function ID(s) { return document.getElementById(s); }
 
@@ -272,6 +284,10 @@ function buildUI(filter_function) {
 
     ID("rom").onchange = updateForm
 
+    checkStoredLanguageRom();
+    ID("languagerom").onchange = updateLanguageRom;
+    ID("languageromclear").onclick = clearLanguageRom;
+
     ID("submitbutton").onclick = startRomGeneration;
 }
 
@@ -338,7 +354,7 @@ function updateForm()
                 else if (checksum == 89653611)
                     setValidRom(false, "Supplied English 1.2 instead of 1.0");
                 else if (checksum == 89199617 || checksum == 89757956)
-                    setValidRom(false, "Supplied French instead of English version");
+                    setValidRom(false, "Supplied French instead of English version (use it as language ROM)");
                 else if (checksum == 89992511 || checksum == 90082342)
                     setValidRom(false, "Supplied German instead of English version");
                 else if (checksum == 87464316 || checksum == 87479931 || checksum == 87503721)
@@ -379,6 +395,95 @@ function setValidRom(valid, msg)
         ID("romlabel").innerHTML = "Select input ROM";
 }
 
+function checkStoredLanguageRom()
+{
+    try
+    {
+        var storedRom = localStorage.getItem("ladx_language_rom");
+        if (storedRom)
+        {
+            var bin = atob(storedRom);
+            var array = new Uint8Array(bin.length);
+            for (var k = 0; k < bin.length; k++)
+            {
+                array[k] = bin.charCodeAt(k);
+            }
+            var language = LANGUAGE_ROMS[getRomChecksum(array)];
+            if (language && language.supported)
+                setLanguageRom(array, language.name);
+            else
+                localStorage.removeItem("ladx_language_rom");
+        }
+    }
+    catch(e)
+    {
+        console.log("Error while loading stored language ROM:")
+        console.log(e);
+    }
+}
+
+function updateLanguageRom()
+{
+    var rom = ID("languagerom");
+    if (rom.files.length < 1)
+        return;
+    if (rom.files[0].size != 1024 * 1024)
+    {
+        setLanguageRom(null, null, "Invalid language ROM size, needs to be 1048576 bytes (unzipped).");
+        return;
+    }
+    rom.files[0].arrayBuffer().then(function(buffer) {
+        var a = new Uint8Array(buffer);
+        var checksum = getRomChecksum(a);
+        console.log("Language ROM checksum: " + rom.files[0].name + ": " + checksum);
+        var language = LANGUAGE_ROMS[checksum];
+        if (checksum == 89122269)
+            setLanguageRom(null, null, "This is the English ROM, select a ROM in another language");
+        else if (!language)
+            setLanguageRom(null, null, "Unknown language ROM");
+        else if (!language.supported)
+            setLanguageRom(null, null, language.name + " is not supported yet");
+        else
+        {
+            setLanguageRom(a, language.name);
+            try
+            {
+                var s = "";
+                for(var b of a) { s += String.fromCharCode(b); }
+                localStorage.setItem("ladx_language_rom", btoa(s));
+            }
+            catch(e)
+            {
+                console.log("Error while storing language ROM:")
+                console.log(e);
+            }
+        }
+    });
+}
+
+function clearLanguageRom()
+{
+    ID("languagerom").value = "";
+    try { localStorage.removeItem("ladx_language_rom"); } catch(e) {}
+    setLanguageRom(null, null);
+}
+
+function setLanguageRom(array, name, error)
+{
+    languageRomArray = array;
+    ID("languageromclear").disabled = !array;
+    if (error)
+        ID("languageromlabel").classList.add("selectromwarning");
+    else
+        ID("languageromlabel").classList.remove("selectromwarning");
+    if (error)
+        ID("languageromlabel").innerHTML = error;
+    else if (array)
+        ID("languageromlabel").innerHTML = "Language: " + name;
+    else
+        ID("languageromlabel").innerHTML = "Select language ROM (optional)";
+}
+
 function getRomChecksum(array)
 {
     var checksum = 0;
@@ -403,6 +508,11 @@ async function startRomGeneration()
         args.push("--plan");
         args.push('/plan.txt');
         data['plan.txt'] = new Uint8Array(await e.files[0].arrayBuffer());
+    }
+    if (languageRomArray) {
+        args.push("--language-rom");
+        args.push("/language.gbc");
+        data['language.gbc'] = languageRomArray;
     }
     e = ID("gfxmod")
     if (e.value == "custom" && ID('customgfxfile').value) {

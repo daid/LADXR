@@ -27,6 +27,9 @@ self.onmessage = async (event) => {
         if ("plan.txt" in event.data) {
             self.pyodide.FS.writeFile("/plan.txt", event.data["plan.txt"]);
         }
+        if ("language.gbc" in event.data) {
+            self.pyodide.FS.writeFile("/language.gbc", event.data["language.gbc"]);
+        }
         if ("gfx.png" in event.data) {
             await pyodide.loadPackage("pillow");
             self.pyodide.FS.writeFile("gfx/custom.png", event.data["gfx.png"]);

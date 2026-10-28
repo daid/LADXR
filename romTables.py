@@ -13,6 +13,9 @@ class Texts(PointerTable):
             "pointers_bank": 0x1C,
             "banks_addr": 0x741,
             "banks_bank": 0x1C,
+            # Translated dialogs (see localization/) don't have the English
+            # sizes: let a dialog go to another dialog bank when its own is full.
+            "flexible_banks": True,
         })
 
 

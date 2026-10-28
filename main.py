@@ -53,6 +53,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Warning, bugged in various ways")
     parser.add_argument('--pymod', dest="pymod", action='append',
         help="Load python code mods.")
+    parser.add_argument('--language-rom', dest="language_rom", type=str, required=False,
+        help="Your Link's Awakening DX ROM in another language (French...): its texts, font and menus are used in the generated rom. See localization/README.md")
 
     settings = Settings()
     args = parser.parse_args(mainargs)

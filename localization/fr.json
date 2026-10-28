@@ -1,0 +1,579 @@
+{
+  "name": "Français",
+  "checksums": {
+    "89199617": "France v1.0",
+    "89757956": "France v1.1 (Rev A)"
+  },
+  "diacritics": false,
+  "charmap": {
+    "â": "24",
+    "à": "25",
+    "é": "2A",
+    "è": "2B",
+    "î": "2F",
+    "ê": "3C",
+    "ù": "3D",
+    "Ç": "40",
+    "ï": "5B",
+    "û": "5C",
+    "ô": "5D",
+    "ç": "5F",
+    "É": "CE",
+    "È": "CE",
+    "Ó": "7D",
+    "À": "41",
+    "Â": "41",
+    "Ê": "45",
+    "Î": "49",
+    "Ô": "4F",
+    "Û": "55"
+  },
+  "save_menu_home": {
+    "comment": "REVENIR AU (tiles C2-C8 of the French menu) + LIT, drawn in CE/CF, the two tiles LADXR already takes for HOME",
+    "blank_in_backgrounds": [
+      "0A"
+    ],
+    "start_col": 5,
+    "row": [
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8",
+      "7F",
+      "CE",
+      "CF"
+    ],
+    "custom_tiles": {
+      "CE": [
+        "........",
+        "3....333",
+        "3.....3.",
+        "3.....3.",
+        "3.....3.",
+        "3.....3.",
+        "3.....3.",
+        "3333.333"
+      ],
+      "CF": [
+        "........",
+        ".33333..",
+        "...3....",
+        "...3....",
+        "...3....",
+        "...3....",
+        "...3....",
+        "...3...."
+      ]
+    }
+  },
+  "dungeons": [
+    "du Donjon des Couleurs",
+    "de la Cave Flagello",
+    "de la Grotte du Génie",
+    "de la Cave aux Clés",
+    "de l'Abîme du Poisson",
+    "du Poisson-Chat",
+    "du Temple du Masque",
+    "de la Tour du Vautour",
+    "du Roc de la Tortue"
+  ],
+  "dungeon_item_format": "{item} {dungeon}",
+  "dungeon_items": {
+    "KEY": "Petite Clé",
+    "MAP": "Carte",
+    "COMPASS": "Boussole",
+    "STONE_BEAK": "Bec de Pierre",
+    "NIGHTMARE_KEY": "Clé du Boss"
+  },
+  "names": {
+    "SWORD": "Epée",
+    "BOMB": "Bombes",
+    "POWER_BRACELET": "Bracelet",
+    "SHIELD": "Bouclier",
+    "BOW": "Arc",
+    "HOOKSHOT": "Grappin",
+    "MAGIC_ROD": "Bâton de Feu",
+    "PEGASUS_BOOTS": "Bottes de Pégase",
+    "OCARINA": "Ocarina",
+    "FEATHER": "Plume",
+    "SHOVEL": "Pelle",
+    "MAGIC_POWDER": "Poudre Magique",
+    "BOOMERANG": "Boomerang",
+    "ROOSTER": "Coq Volant",
+    "HAMMER": "Marteau",
+    "FLIPPERS": "Palmes",
+    "SLIME_KEY": "Clé Cyclope",
+    "TAIL_KEY": "Clé Flagello",
+    "ANGLER_KEY": "Clé Poisson",
+    "FACE_KEY": "Clé Masque",
+    "BIRD_KEY": "Clé Vautour",
+    "GOLD_LEAF": "Feuille d'Or",
+    "RUPEE": "Rubis",
+    "RUPEES": "Rubis",
+    "RUPEES_50": "50 Rubis",
+    "RUPEES_20": "20 Rubis",
+    "RUPEES_100": "100 Rubis",
+    "RUPEES_200": "200 Rubis",
+    "RUPEES_500": "500 Rubis",
+    "SEASHELL": "Coquillage",
+    "KEY": "Petite Clé",
+    "MAP": "Carte",
+    "COMPASS": "Boussole",
+    "STONE_BEAK": "Bec de Pierre",
+    "NIGHTMARE_KEY": "Clé du Boss",
+    "HEART_PIECE": "Quart de Coeur",
+    "BOWWOW": "Toutou",
+    "ARROWS_10": "10 Flèches",
+    "SINGLE_ARROW": "Flèche",
+    "MEDICINE": "Remède",
+    "MAX_POWDER_UPGRADE": "Plus de Poudre",
+    "MAX_BOMBS_UPGRADE": "Plus de Bombes",
+    "MAX_ARROWS_UPGRADE": "Plus de Flèches",
+    "RED_TUNIC": "Habits Rouges",
+    "BLUE_TUNIC": "Habits Bleus",
+    "HEART_CONTAINER": "Coeur",
+    "BAD_HEART_CONTAINER": "Anti-Coeur",
+    "TOADSTOOL": "Champignon",
+    "SONG1": "Ballade du Poisson-Rêve",
+    "SONG2": "Mambo de Manbo",
+    "SONG3": "Chanson des Grenouilles",
+    "INSTRUMENT1": "Violon des Vagues",
+    "INSTRUMENT2": "Conque de l'Ecume",
+    "INSTRUMENT3": "Cloche des Algues",
+    "INSTRUMENT4": "Harpe du Reflux",
+    "INSTRUMENT5": "Xylophone Marin",
+    "INSTRUMENT6": "Triangle de Corail",
+    "INSTRUMENT7": "Orgue de l'Embellie",
+    "INSTRUMENT8": "Tambour des Marées",
+    "TRADING_ITEM_YOSHI_DOLL": "Yoshi",
+    "TRADING_ITEM_RIBBON": "Ruban",
+    "TRADING_ITEM_DOG_FOOD": "Pâtée",
+    "TRADING_ITEM_BANANAS": "Bananes",
+    "TRADING_ITEM_STICK": "Bâton",
+    "TRADING_ITEM_HONEYCOMB": "Ruche",
+    "TRADING_ITEM_PINEAPPLE": "Ananas",
+    "TRADING_ITEM_HIBISCUS": "Hibiscus",
+    "TRADING_ITEM_LETTER": "Lettre",
+    "TRADING_ITEM_BROOM": "Balai",
+    "TRADING_ITEM_FISHING_HOOK": "Hameçon",
+    "TRADING_ITEM_NECKLACE": "Collier",
+    "TRADING_ITEM_SCALE": "Ecaille",
+    "TRADING_ITEM_MAGNIFYING_GLASS": "Loupe",
+    "TAIL_CAVE_OPENED": "Cave Flagello ouverte",
+    "KEY_CAVERN_OPENED": "Cave aux Clés ouverte",
+    "ANGLER_TUNNEL_OPENED": "Abîme du Poisson ouvert",
+    "FACE_SHRINE_OPENED": "Temple du Masque ouvert",
+    "CASTLE_GATE_OPENED": "Grille du Château ouverte",
+    "EAGLE_TOWER_OPENED": "Tour du Vautour ouverte"
+  },
+  "places": {
+    "Angler's Tunnel": "Abîme du Poisson",
+    "Animal Village": "Village des Animaux",
+    "Bottle Grotto": "Grotte du Génie",
+    "Catfish's Maw": "Poisson-Chat",
+    "Color Dungeon": "Donjon des Couleurs",
+    "Death Mountain": "Montagne de la Mort",
+    "Desert Shelf": "Plateau du Désert",
+    "Desert": "Désert",
+    "Donut Plains": "Plaine Donut",
+    "Eagle's Tower": "Tour du Vautour",
+    "Eastern Palace": "Palais de l'Est",
+    "Southern Face Shrine": "Sud du Temple du Masque",
+    "Face Shrine": "Temple du Masque",
+    "Goponga Swamp": "Marais des Anémones",
+    "Graveyard": "Cimetière",
+    "Kakariko Village": "Village Cocorico",
+    "Kanalet Castle": "Château Kanalet",
+    "Key Cavern": "Cave aux Clés",
+    "Koholint Prairie": "Prairie de Cocolint",
+    "Lost Woods": "Bois Perdus",
+    "Mabe Village": "Village des Mouettes",
+    "Martha's Bay": "Baie de Martha",
+    "Mysterious Woods": "Forêt Enchantée",
+    "Pothole Field": "Champ de Trous",
+    "Rapids Ride": "Rapides",
+    "Swamp": "Marais",
+    "Tail Cave": "Cave Flagello",
+    "Tal Tal Heights": "Plateau Tartare",
+    "Tal Tal Mountains": "Monts Tartare",
+    "Toronbo Shores": "Plage Coco",
+    "Turtle Rock": "Roc de la Tortue",
+    "Ukuku Prairie": "La Prairie",
+    "Yarna Desert": "Dunes de Yarna"
+  },
+  "words": {
+    "Egg": "l'Oeuf",
+    "Marin": "Marine",
+    "Witch": "la Sorcière",
+    "Mermaid": "la Sirène",
+    "Nothing": "Rien",
+    "Animals": "les Animaux",
+    "Sand": "le Sable",
+    "Mt. Tamaranch": "Mt Tamaranch",
+    "Tabahl Wasteland": "Terres de Tabahl"
+  },
+  "marin": [
+    "Ah! Enfin réveillé! Tu ronflais comme un Moblin.",
+    "Tu as dormi trois jours. Tarkin a mangé ta part de champignons.",
+    "Je t'ai trouvé sur la plage. Tu serrais un coquillage en marmonnant 'seed'...",
+    "Bienvenue sur l'île Cocolint! Ici, rien n'est jamais au même endroit.",
+    "Tu cherches ton épée? Elle pourrait être n'importe où... vraiment n'importe où.",
+    "Les mouettes m'ont dit que tu allais beaucoup courir aujourd'hui.",
+    "J'espère que tu as de la chance, #####. Tu vas en avoir besoin.",
+    "Psst... Le Poisson-Rêve m'a dit que cette partie serait différente.",
+    "Tu as rêvé de moi? ... Non? Tant pis.",
+    "Le Coq Volant te passe le bonjour. Enfin, je crois.",
+    "Ne fais pas confiance aux coffres. Ils changent d'avis tout le temps.",
+    "Si tu croises un Zol, dis-lui bonjour de ma part.",
+    "On raconte qu'un héros a fini cette seed sans mourir. Personne ne l'a cru.",
+    "Les objets ne sont plus à leur place... C'est encore un coup de Daid!",
+    "Tu veux que je te chante la Ballade? ... Plus tard, peut-être.",
+    "Bonjour #####! Tarkin est parti chercher des champignons... comme d'habitude.",
+    "Tu n'as pas l'air dans ton assiette. C'est le mal de mer?",
+    "Respire un bon coup. L'aventure commence!",
+    "Ton nom est gravé sur ton épée... Mais où est-elle passée?",
+    "Ce n'est pas le jeu où on sort avec une mouette?"
+  ],
+  "asks": {
+    "Buy  Don't": "Oui  Non",
+    "Buy  No Way": "Oui  Non",
+    "Cast Not Now": "Oui  Non",
+    "Fish Not Now": "Oui  Non",
+    "Give Don't": "Oui  Non",
+    "Okay No": "Oui  Non",
+    "Pay Leave": "Oui Non",
+    "YES  NO": "OUI  NON",
+    "Yes No Way": "Oui Non"
+  },
+  "texts": {
+    "#####, it is dangerous to go alone!\nTake this!": "#####, c'est dangereux de partir seul!\nPrends ceci!",
+    "Take this!": "Prends ceci!",
+    "...You're so cute! I'll give you a 7 {RUPEE} discount!": "...Tu es trop mignon! Je te fais 7 {RUPEE} de remise!",
+    "1 to 3 Seashells": "1 à 3 Coquillages",
+    "100 to 200 Rupees": "100 à 200 Rubis",
+    "Ahhh... It has  the Sleepy {TOADSTOOL}, it does! We'll mix it up something in a jiffy, we will!": "Ahhh... C'est bien le {TOADSTOOL} Dormeur! Je vais te concocter quelque chose en un clin d'oeil!",
+    "Angler Tunnel opened!": "L'Abîme du Poisson est ouvert!",
+    "At last, you got a {MAP}! Press the START Button to look at it!": "Tu obtiens: {MAP}! Appuie sur START pour la consulter!",
+    "Castle gate opened!": "La grille du château est ouverte!",
+    "DX key for you! He he he...": "Une clé DX pour toi! Hé hé hé...",
+    "Deluxe {SEASHELL} 200 {RUPEES}!": "{SEASHELL} de luxe: 200 {RUPEES}!",
+    "Eagle tower opened!": "La Tour du Vautour est ouverte!",
+    "Everybody hates me, so I give away free things in the hope people will love me. Want something?": "Tout le monde me déteste, alors je donne des choses en espérant qu'on m'aime. Tu veux quelque chose?",
+    "Face Shrine opened!": "Le Temple du Masque est ouvert!",
+    "Found a {SINGLE_ARROW}... joy?": "Tu trouves: {SINGLE_ARROW}... Youpi?",
+    "Found {BOWWOW}! Which monster put him in a chest? He is a good boi, and waits for you at the Swamp.": "Tu trouves {BOWWOW}! Quel monstre l'a mis dans un coffre? C'est un bon chien, il t'attend au Marais.",
+    "Good for you.": "Tant mieux pour toi.",
+    "Got ... nothing?": "Tu obtiens... rien?",
+    "He he he. Want to buy something with your life?": "Hé hé hé. Tu veux acheter quelque chose avec ta vie?",
+    "I cannot take your last heart.": "Je ne peux pas prendre ton dernier coeur.",
+    "I found a good item washed up on the beach... Want to have it?": "J'ai trouvé un bel objet échoué sur la plage... Tu le veux?",
+    "It's 30 {RUPEES}! You can play the game three more times with this!": "Ça fait 30 {RUPEES}! Tu peux jouer encore trois fois avec ça!",
+    "It's a secret to everybody.": "C'est un secret pour tout le monde.",
+    "Key Cavern opened!": "La Cave aux Clés est ouverte!",
+    "LOL, ZOL!": "MDR, ZOL!",
+    "NONE": "RIEN",
+    "Nothing?": "Rien?",
+    "Random key": "Clé au hasard",
+    "Read this book?": "Lire ce livre?",
+    "Seashells for you, enjoy. He he he...": "Des Coquillages pour toi. Hé hé hé...",
+    "Some rupees for you, enjoy. He he he...": "Des rubis pour toi. Hé hé hé...",
+    "Tail Cave opened!": "La Cave Flagello est ouverte!",
+    "The last thing I kin remember was bitin' into a big juicy {TOADSTOOL}... Then, I had the darndest dream... I was a raccoon! Yeah, sounds strange, but it sure was fun!": "Je me souviens juste d'avoir croqué un gros {TOADSTOOL} bien juteux... Puis j'ai fait un rêve bizarre... J'étais un raton laveur! Etrange, mais c'était drôle!",
+    "Want to go on a raft ride for a hundred {RUPEES}?": "Une balade en radeau pour cent {RUPEES}?",
+    "Welcome, #####. I admire you for coming this far.": "Bienvenue, #####. Je t'admire d'être venu jusqu'ici.",
+    "You can now carry more Arrows!": "Tu peux porter plus de Flèches!",
+    "You can now carry more Bombs!": "Tu peux porter plus de Bombes!",
+    "You can now carry more Magic Powder!": "Tu peux porter plus de Poudre Magique!",
+    "You got a Piece of Power!": "Un Fragment de Puissance!",
+    "You lost a heart!": "Tu as perdu un coeur!",
+    "You pick the {TOADSTOOL}... As you hold it over your head, a mellow aroma flows into your nostrils.": "Tu cueilles: {TOADSTOOL}... En le brandissant, un doux arôme te monte au nez.",
+    "You're short of {RUPEES}? Don't worry about it. You just come back when you have more money, little buddy.": "Pas assez de {RUPEES}? Pas grave. Reviens quand tu auras plus d'argent, mon gars.",
+    "You've found a {GOLD_LEAF}! Press START to see how many you've collected!": "Tu trouves: {GOLD_LEAF}! Appuie sur START pour voir combien tu en as!",
+    "You've got a Guardian Acorn!": "Tu as le Gland! Tu seras mieux protégé!",
+    "You found the {MEDICINE}! You should apply this and see what happens!": "Tu trouves: {MEDICINE}! A quoi cela peut-il servir?",
+    "You found the {POWER_BRACELET}! At last, you can pick up pots and stones!": "Tu trouves: {POWER_BRACELET}! Tu peux soulever des jarres et des pierres!",
+    "You found your {SWORD}!  It must be yours because it has your name engraved on it!": "Tu as retrouvé: {SWORD}! C'est la tienne, ton nom est gravé dessus!",
+    "You got 100 {RUPEES}! You're Happy!": "Tu as trouvé 100 {RUPEES}. Fantastique!",
+    "You got 20 {RUPEES}! JOY!": "Tu as trouvé 20 {RUPEES}. Ó joie!",
+    "You got 200 {RUPEES}! You're Ecstatic!": "Tu as trouvé 200 {RUPEES}. Quelle extase!",
+    "You got 50 {RUPEES}! Very Nice!": "Tu as trouvé 50 {RUPEES}. Merveilleux!",
+    "You got a {KEY}! You can open a locked door.": "Tu obtiens: {KEY}! Tu peux ouvrir une porte verrouillée!",
+    "You got a {TRADING_ITEM_YOSHI_DOLL}! Recently, he seems to be showing up in many games!": "Tu obtiens: {TRADING_ITEM_YOSHI_DOLL}! On le voit dans tous les jeux, celui-là!",
+    "You got your {SHIELD} back! Press the button and repel enemies with it!": "Tu récupères: {SHIELD}! Utilise-le pour repousser tes ennemis!",
+    "You've got a more Powerful {POWER_BRACELET}! Now you can almost lift a whale!": "Tu obtiens: Super {POWER_BRACELET}! Tu pourrais même soulever... un éléphant!",
+    "You've got a new {SWORD}! You should put your name on it right away!": "Nouvelle arme: {SWORD}! N'oublie pas d'y graver ton nom!",
+    "You've got a {HEART_PIECE}! Press SELECT on the Subscreen to see.": "Tu obtiens: {HEART_PIECE}! Appuie sur SELECT dans le sous-écran.",
+    "You've got a {SHOVEL}! Now you can feel the joy of digging!": "Tu obtiens: {SHOVEL}! Tu peux creuser où tu veux!",
+    "You've got some {MAGIC_POWDER}! Try sprinkling it on a variety of things!": "Tu obtiens: {MAGIC_POWDER}! Essaie d'en saupoudrer sur plein de choses!",
+    "You've got the Mirror {SHIELD}! You can now turn back the beams you couldn't block before!": "Tu obtiens: {SHIELD}-Reflet! Tu peux maintenant bloquer les lasers!",
+    "You've got the {FEATHER}! It feels like your body is a  lot lighter!": "Tu obtiens: {FEATHER}! Tu es plus léger que l'air!",
+    "You've got the {FLIPPERS}! If you press the B Button while you swim, you can dive underwater!": "Tu obtiens: {FLIPPERS}! Appuie sur B en nageant pour plonger!",
+    "You've got the {HOOKSHOT}! Its chain stretches long when you use it!": "Tu obtiens: {HOOKSHOT}! Regarde comme la chaîne s'étire!",
+    "You've got the {MAGIC_ROD}! Now you can burn things! Burn it! Burn, baby burn!": "Tu obtiens: {MAGIC_ROD}! Brûle! Brûle! Brûle tout ce que tu veux!",
+    "You've got the {NIGHTMARE_KEY}! Now you can open the door to the Nightmare's Lair!": "Tu obtiens: {NIGHTMARE_KEY}! Tu peux ouvrir la porte du repaire du Boss!",
+    "You've got the {OCARINA}! You should learn to play many songs!": "Tu obtiens: {OCARINA}! Apprends à jouer plein d'airs!",
+    "You've got the {PEGASUS_BOOTS}! If you hold down the Button, you can dash!": "Tu obtiens: {PEGASUS_BOOTS}! Garde le bouton enfoncé pour foncer!",
+    "You've got the {SLIME_KEY}! Now you can open the gate in Ukuku Prairie!": "Tu obtiens: {SLIME_KEY}! Tu peux ouvrir la grille de La Prairie!",
+    "You've got the {TAIL_KEY}! Now you can open the Tail Cave gate!": "Tu obtiens: {TAIL_KEY}! Tu peux ouvrir la Cave Flagello!",
+    "You've got the {TRADING_ITEM_MAGNIFYING_GLASS}! This will reveal many things you couldn't see before!": "Tu obtiens: {TRADING_ITEM_MAGNIFYING_GLASS}! Elle te montrera ce que tu ne pouvais pas voir!",
+    "You've learned the ^{SONG1}!^ This song will always remain in your heart!": "Tu as appris: {SONG1}! Cette chanson restera gravée en toi!",
+    "Well, it's an {OCARINA}, but you don't know how  to play it...": "Bon, c'est: {OCARINA}, mais tu ne sais pas en jouer...",
+    "Ten {BOMB}\n10 {RUPEES}": "10 {BOMB}\n10 {RUPEES}",
+    "Talk to a buzz blob": "Parle à un Blob électrique",
+    "Turtle Rock Entrance Boss": "Bats le boss de l'entrée du Roc de la Tortue",
+    "Kill Master Stalfos": "Bats le Maître Stalfos",
+    "Kill Dethl": "Bats Dethl",
+    "Arrow upgrade": "Plus de Flèches",
+    "{BOMB} upgrade": "Plus de {BOMB}",
+    "{MAGIC_POWDER} upgrade": "Plus de {MAGIC_POWDER}",
+    "Kill the giant ghini": "Bats le Ghini géant",
+    "Got the Ballad of the Wind Fish": "Apprends la Ballade du Poisson-Rêve",
+    "Got the Manbo's Mambo": "Apprends le Mambo de Manbo",
+    "Got the Frog's Song of Soul": "Apprends la Chanson des Grenouilles",
+    "Win the Yoshi Doll item in the Trendy Game": "Gagne le Yoshi au jeu de la grue",
+    "Give the banana to Kiki": "Donne les bananes à Kiki",
+    "Have 99 or less rupees": "Avoir 99 rubis ou moins",
+    "Have 900 or more rupees": "Avoir 900 rubis ou plus",
+    "Bonk the Beach Monkey": "Cogne le singe de la plage",
+    "Got the Red Tunic": "Obtiens les Habits Rouges",
+    "Got the Blue Tunic": "Obtiens les Habits Bleus",
+    "Buy the first shop item": "Achète le 1er objet de la boutique",
+    "Buy the second shop item": "Achète le 2e objet de la boutique",
+    "Visit the 4 Fountain Fairies": "Visite les 4 fontaines des fées",
+    "Got photo 1: Here Stands A Brave Man": "Photo 1: Un brave est là",
+    "Got photo 2: Looking over the sea with Marin": "Photo 2: Contempler la mer avec Marine",
+    "Got photo 3: Heads up!": "Photo 3: Attention, la tête!",
+    "Got photo 4: Say Mushroom!": "Photo 4: Dis champignon!",
+    "Got photo 5: Ulrira's Secret!": "Photo 5: Le secret de Pépé!",
+    "Got photo 6: Playing with Bowwow!": "Photo 6: On joue avec Toutou!",
+    "Got photo 7: Thief!": "Photo 7: Au voleur!",
+    "Got photo 8: Be more careful next time!": "Photo 8: Fais plus attention!",
+    "Got photo 9: I Found Zora!": "Photo 9: J'ai trouvé Zora!",
+    "Got photo 10: Richard at Kanalet Castle": "Photo 10: Richard au Château Kanalet",
+    "Got photo 11: Ghost": "Photo 11: Le fantôme",
+    "Got photo 12: Close Call": "Photo 12: De justesse",
+    "Open the 4 Overworld Warp Holes": "Ouvre les 4 Trous Warp de l'île",
+    "Finish the Raft Minigame": "Termine la descente en radeau",
+    "Kill the Ball and Chain Trooper": "Bats le soldat au fléau",
+    "Destroy all Pillars with the Ball": "Détruis tous les piliers avec la boule",
+    "Fish the pond empty": "Vide l'étang de ses poissons",
+    "Kill an Anti-Kirby": "Tue un Anti-Kirby",
+    "Kill a Rolling Bones": "Tue un Rolling Bones",
+    "Kill a Hinox": "Tue un Hinox",
+    "Kill a Stone Hinox": "Tue un Hinox de pierre",
+    "Kill a Dodongo": "Tue un Dodongo",
+    "Kill a Cue Ball": "Tue une Boule de billard",
+    "Kill a Smasher": "Tue un Smasher",
+    "Kill an Armos Statue": "Tue une Statue Armos",
+    "Kill a Pokey": "Tue un Pokey",
+    "Kill a Piranha Plant": "Tue une Plante Piranha",
+    "Kill a Wizrobe": "Tue un Sorcier",
+    "Kill a group of Three-of-a-Kinds (hearts)": "Tue un trio de cartes (coeur)",
+    "Kill a group of Three-of-a-Kinds (diamonds)": "Tue un trio de cartes (carreau)",
+    "Kill a group of Three-of-a-Kinds (spades)": "Tue un trio de cartes (pique)",
+    "Kill a group of Three-of-a-Kinds (clubs)": "Tue un trio de cartes (trèfle)",
+    "Save Marin on the Mountain Bridge": "Sauve Marine sur le pont des montagnes",
+    "Save Raccoon Tarin": "Sauve Tarkin le raton laveur",
+    "Trade the {TOADSTOOL} with the witch": "Echange le {TOADSTOOL} chez la sorcière",
+    "Beat the Color Dungeon": "Finis le Donjon des Couleurs",
+    "Solve the 3 statue puzzles in Color Dungeon": "Résous les 3 énigmes de statues du Donjon des Couleurs",
+    "Enter the secret rupee room in Color Dungeon": "Entre dans la salle secrète aux rubis du Donjon des Couleurs",
+    "Play the Chest Game": "Joue au jeu des coffres",
+    "Get the item in the fishing pond": "Pêche l'objet de l'étang",
+    "Empty out the Trendy Game": "Vide le jeu de la grue",
+    "Open the Kanalet Castle gate": "Ouvre la grille du Château Kanalet",
+    "Read the mural in Southern Face Shrine": "Lis la fresque au sud du Temple du Masque",
+    "Let Marin sing for the walrus": "Fais chanter Marine pour le morse",
+    "Play a song for the walrus after Marin left": "Joue un air au morse après le départ de Marine",
+    "Get cursed by the 3 Mad Batters": "Fais-toi maudire par les 3 Chauves-Souris folles",
+    "Get sucked in by a Vacuum Mouth": "Fais-toi aspirer par un Aspirateur",
+    "Learn 2 songs": "Apprends 2 chansons",
+    "BINGO!\nPress any button to finish.": "BINGO!\nAppuie sur un bouton pour finir.",
+    "Bingo!\nYoung lad, I mean... #####, the hero!\nYou have bingo!\nYou have proven your wisdom, courage and power!\n... ... ... ...\nAs part of the Wind Fish's spirit, I am the guardian of his dream world...\nBut one day, we decided to have a bingo game.\nThen you, #####, came to win the bingo...\nThank you, #####...\nMy work is done...\nThe Wind Fish will wake soon.\nGood bye...Bingo!": "Bingo!\nJeune homme... Je veux dire, #####, le héros!\nTu as fait bingo!\nTu as prouvé ta sagesse, ton courage et ta force!\n... ... ... ...\nJe suis une part de l'esprit du Poisson-Rêve, le gardien de son monde onirique...\nMais un jour, nous avons décidé de jouer au bingo.\nEt toi, #####, tu es venu gagner le bingo...\nMerci, #####...\nMa tâche est accomplie...\nLe Poisson-Rêve va bientôt se réveiller.\nAdieu... Bingo!"
+  },
+  "patterns": [
+    [
+      "Find the L2 \\{(\\w+)\\}",
+      "Trouve: {\\1} niveau 2"
+    ],
+    [
+      "Find the \\{(\\w+)\\}",
+      "Trouve: {\\1}"
+    ],
+    [
+      "Have the \\{(\\w+)\\}",
+      "Possède: {\\1}"
+    ],
+    [
+      "Find (\\d+) Secret Seashells",
+      "Trouve \\1 Coquillages"
+    ],
+    [
+      "Find (?:the )?(\\d+) (?:of the )?Golden Leaves",
+      "Trouve \\1 Feuilles d'Or"
+    ],
+    [
+      "Map and Compass in (.+)",
+      "Carte et Boussole: \\1"
+    ],
+    [
+      "Have at least (\\d+) Heart Containers",
+      "Avoir au moins \\1 Coeurs"
+    ],
+    [
+      "Collect (\\d+) Maps",
+      "Récupère \\1 Cartes"
+    ],
+    [
+      "Collect (\\d+) Compasses",
+      "Récupère \\1 Boussoles"
+    ],
+    [
+      "Collect (\\d+) Stone Beaks",
+      "Récupère \\1 Becs de Pierre"
+    ],
+    [
+      "Collect (\\d+) photos",
+      "Récupère \\1 photos"
+    ],
+    [
+      "Find (\\d+) instruments",
+      "Trouve \\1 instruments"
+    ],
+    [
+      "Activate (\\d+) dungeon warps",
+      "Active \\1 téléporteurs de donjon"
+    ],
+    [
+      "Use (\\d+) keys on the overworld",
+      "Utilise \\1 clés sur l'île"
+    ],
+    [
+      "(?:Got|You've got|You got|You found|Found) (?:the |a |an |some |your )?\\{(\\w+)\\}!?",
+      "Tu obtiens: {\\1}!"
+    ],
+    [
+      "(?:Got|You got|You found|Found) (\\d+) \\{(\\w+)\\}!?",
+      "Tu obtiens \\1 {\\2}!"
+    ],
+    [
+      "Got the \\{(\\w+_TUNIC)\\}! You can change Tunics at the phone booths\\.",
+      "Tu obtiens: {\\1}! Change de tenue dans les cabines téléphoniques."
+    ],
+    [
+      "You found a \\{(STONE_BEAK\\d?)\\}! Let's find the owl statue that belongs to it\\.",
+      "Tu trouves: {\\1}! Va compléter une statue de chouette."
+    ],
+    [
+      "You need (?:a |the )\\{(\\w+)\\}!",
+      "Il te faut: {\\1}!"
+    ],
+    [
+      "(?s)You need:\\n(.+)",
+      "Il te faut:\n\\1"
+    ],
+    [
+      "You need (\\d+) instruments",
+      "Il te faut \\1 instruments"
+    ],
+    [
+      "They say that (.+) is at (.+)",
+      "On dit que \\1 est ici: \\2"
+    ],
+    [
+      "If you want (.+) start looking in (.+)",
+      "Pour \\1, cherche ici: \\2"
+    ],
+    [
+      "You might want to look in (.+) for a secret",
+      "Un secret t'attend ici: \\1"
+    ],
+    [
+      "(.+) holds (.+)",
+      "\\1 cache: \\2"
+    ],
+    [
+      "(.+) is at (.+)",
+      "\\1 se trouve ici: \\2"
+    ],
+    [
+      "Deluxe \\{(\\w+)\\} (\\d+) \\{RUPEES\\}!",
+      "{\\1} de luxe: \\2 {RUPEES}!"
+    ],
+    [
+      "(\\d+) \\{RUPEES\\}!?",
+      "\\1 {RUPEES}!"
+    ],
+    [
+      "\\{(\\w+)\\} Only (\\d+) \\{RUPEES\\}!",
+      "{\\1} Seulement \\2 {RUPEES}!"
+    ],
+    [
+      "Only (\\d+) \\{RUPEES\\}!",
+      "Seulement \\1 {RUPEES}!"
+    ],
+    [
+      "Only (\\d+) \\{RUPEES\\}\\? _ _ Buy  No Way",
+      "Seulement \\1 {RUPEES}? _ _ Oui  Non"
+    ],
+    [
+      "How about it\\? (\\d+) \\{RUPEES\\} for my little secret\\.\\.\\.",
+      "Alors? \\1 {RUPEES} pour mon petit secret..."
+    ],
+    [
+      "Will you give me (\\d+) \\{RUPEES\\} for my secret\\?",
+      "Tu me donnes \\1 {RUPEES} pour mon secret?"
+    ],
+    [
+      "How about some fishing, little buddy\\? I'll only charge you (\\d+) \\{RUPEES\\}\\.\\.\\.",
+      "Une partie de pêche, mon gars? Ça ne te coûtera que \\1 {RUPEES}..."
+    ],
+    [
+      "Wow! Nice Fish! It's a lunker!! I'll give you a (\\d+) \\{RUPEE\\} prize! Try again\\?",
+      "Wow! Joli poisson! Un monstre!! Je te donne \\1 {RUPEE} de prix! On recommence?"
+    ],
+    [
+      "Ribbit! Ribbit! I'm Mamu, on vocals! But I don't need to tell you that, do I\\? Everybody knows me! Want to hang out and listen to us jam\\? For (\\d+) \\{RUPEES\\}, we'll let you listen to a previously unreleased cut! What do you do\\?",
+      "Croâ! Croâ! Je suis Mamu, au chant! Mais tu le sais déjà, non? Tout le monde me connaît! Pour \\1 {RUPEES}, on te joue un morceau inédit! Alors?"
+    ],
+    [
+      "Hi ho! Hey you! Is that possibly a <honeycomb> you have\\? I just ran out! Will you swap it for a \\{(\\w+)\\}\\?",
+      "Hé! Toi! Ce ne serait pas une <honeycomb> que tu as là? Je n'en ai plus! Tu me l'échanges contre: {\\1}?"
+    ],
+    [
+      "I would like you to take this \\{(\\w+)\\}, please!",
+      "Prends ceci, je t'en prie: {\\1}!"
+    ],
+    [
+      "It's a \\{(\\w+)\\}! There is space for your name!",
+      "C'est: {\\1}! Il y a de la place pour ton nom!"
+    ],
+    [
+      "Lucky! Thanks! Well, here's your \\{(\\w+)\\}!",
+      "Super! Merci! Voici pour toi: {\\1}!"
+    ],
+    [
+      "AH! This isn't meant to be a reward\\.\\.\\. Here, take this \\{(\\w+)\\}!",
+      "AH! Ce n'était pas prévu comme récompense... Tiens, prends ceci: {\\1}!"
+    ],
+    [
+      "MUNCH MUNCH!! \\.\\.\\. \\.\\.\\. \\.\\.\\. \\.\\.\\. That was great! I know it's not a fair trade, but here's some \\{(\\w+)\\}! YUM\\.\\.\\.",
+      "MIAM MIAM!! ... ... ... ... C'était délicieux! L'échange n'est pas équitable, mais voici pour toi: {\\1}! MIAM..."
+    ],
+    [
+      "Make-up! Jewels! Dresses! I want it all! Sigh\\.\\.\\. And some new accessories would be nice\\.\\.\\. Oh! That Ribbon! I need it! Will you trade for my \\{(\\w+)\\}\\?",
+      "Maquillage! Bijoux! Robes! Je veux tout! Soupir... Oh! Ce Ruban! Il me le faut! Tu l'échanges contre: {\\1}?"
+    ],
+    [
+      "Mmm\\.\\.\\. She's so beautiful\\.\\.\\. I must give you something for your trouble\\.\\.\\. Hmm\\.\\.\\.  Well, it looks like all I have is this \\{(\\w+)\\}\\.\\.\\. how'll that be\\?",
+      "Mmm... Elle est si belle... Je dois te remercier... Hmm... Je n'ai que ceci: {\\1}... Ça te va?"
+    ],
+    [
+      "Okay! In return you can have this \\{(\\w+)\\} I found when I swept by the river bank!",
+      "D'accord! En échange, prends ceci, trouvé en balayant la berge: {\\1}!"
+    ]
+  ]
+}

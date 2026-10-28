@@ -1,0 +1,15 @@
+{
+  "name": "Deutsch",
+  "checksums": {
+    "89992511": "Germany v1.0",
+    "90082342": "Germany v1.1 (Rev A)"
+  },
+  "diacritics": true,
+  "charmap": {
+    "Ä": "C4", "Ö": "D6", "Ü": "DC", "ß": "DF", "ä": "E4", "ö": "F6", "ü": "FC"
+  },
+  "names": {},
+  "asks": {},
+  "texts": {},
+  "patterns": []
+}
