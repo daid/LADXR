@@ -178,6 +178,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.colorBook.fixColorBook(rom)
     patches.aesthetics.noSwordMusic(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
+    hints.addHints(rom, rnd, logic.iteminfo_list)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
     if settings.overworld == "alttp" or settings.overworld == "random":
         # Only apply this to ALTTP/random right now, as it might cause issues otherwise.
@@ -264,8 +265,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
         patches.core.quickswap(rom, 1)
     elif settings.quickswap == 'b':
         patches.core.quickswap(rom, 0)
-
-    hints.addHints(rom, rnd, logic.iteminfo_list)
 
     world_setup = logic.world_setup
     item_list = logic.iteminfo_list
