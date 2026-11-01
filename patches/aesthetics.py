@@ -588,6 +588,22 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0xf0] = formatText("Want to go on a raft ride for a hundred {RUPEES}?", ask="Yes No Way")
 
 
+def removeDungeonTexts(rom):
+    # remove dungeon name dialogs
+    rom.patch(0x01, 0x21FB, ASM("""
+        ldh a, [hMapId]
+        add LOW($056)
+        call OpenDialogInTable0
+    """), "", fill_nop=True)
+
+    # remove hint for where to go next after clearing dungeon
+    rom.patch(0x07, 0x25A1, ASM("""
+        ldh  a, [hMapId]
+        add  LOW($150)
+        call OpenDialogInTable1
+    """), "", fill_nop=True)
+
+
 def enableExtendedLinkSprites(rom):
     # Instead of loading flipped sprites from a lookup table (bank20) in graphics bank 2C,
     # Load the graphics from bank 0C and index directly by hLinkAnimationState
