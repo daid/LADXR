@@ -209,6 +209,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     if settings.textmode == 'notextbox':
         patches.chest.shortenDungeonItemTexts(rom)
         patches.aesthetics.fastText(rom)
+        patches.aesthetics.removeDungeonTexts(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':
