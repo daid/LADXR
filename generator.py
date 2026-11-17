@@ -177,6 +177,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
     patches.colorBook.fixColorBook(rom)
     patches.aesthetics.noSwordMusic(rom)
+    patches.core.silenceAntiKirbyInhale(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     hints.addHints(rom, rnd, logic.iteminfo_list)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
@@ -210,7 +211,6 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
         patches.chest.shortenDungeonItemTexts(rom)
         patches.aesthetics.fastText(rom)
         patches.aesthetics.removeDungeonTexts(rom)
-        patches.core.silenceAntiKirbyInhale(rom)
     if not settings.nagmessages:
         patches.aesthetics.removeNagMessages(rom)
     if settings.lowhpbeep == 'slow':
