@@ -48,6 +48,11 @@ up:
 def bugfixPowderBagSprite(rom):
     rom.patch(0x03, 0x2055, "8E16", "841E")
 
+def silenceAntiKirbyInhale(rom):
+    # Anti-Kirby: do not start the inhale noise (it hangs without textbox)
+    # 06:428F  ld a, NOISE_SFX_KIRBY_INHALE / ldh [hNoiseSfx], a
+    rom.patch(0x06, 0x028F, "3E3BE0F4", "00000000")
+
 def easyColorDungeonAccess(rom):
     re = RoomEditor(rom, 0x312)
     re.entities = [(3, 1, 246), (6, 1, 247)]
