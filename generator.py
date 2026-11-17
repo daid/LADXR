@@ -177,6 +177,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
     patches.colorBook.fixColorBook(rom)
     patches.aesthetics.noSwordMusic(rom)
+    patches.core.silenceAntiKirbyInhale(rom)
     patches.aesthetics.reduceMessageLengths(rom, rnd)
     hints.addHints(rom, rnd, logic.iteminfo_list)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
