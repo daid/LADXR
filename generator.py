@@ -97,6 +97,7 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.core.bugfixWrittingWrongRoomStatus(rom)
     patches.core.bugfixBossroomTopPush(rom)
     patches.core.bugfixPowderBagSprite(rom)
+    patches.core.bugfixTreasureJingleInterruptedByKirby(rom)
     patches.core.fixEggDeathClearingItems(rom)
     patches.core.disablePhotoPrint(rom)
     patches.core.easyColorDungeonAccess(rom)

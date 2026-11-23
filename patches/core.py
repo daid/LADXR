@@ -47,6 +47,32 @@ up:
 
 def bugfixPowderBagSprite(rom):
     rom.patch(0x03, 0x2055, "8E16", "841E")
+    
+def bugfixTreasureJingleInterruptedByKirby(rom):
+    # Sound engine bugfix (bank 1F):
+    # NOISE_SFX_KIRBY_INHALE ($3B) takes over channel 1 by clearing the running
+    # jingle (wD361) without running the jingle's end code.
+    # The treasure jingle ($01) also uses channels 2 and 3, so its last note keeps
+    # playing forever and music channels 2/3 stay muted.
+    # Fix: if the treasure jingle is running, end it properly before the inhale starts.
+    labels = {}
+    code = ASM("""
+        jp   $7F80            ; keep original fall-through of func_01F_7B5C (NOPs up to $7F80)
+KirbyInhaleStart:
+        ld   a, [$D361]       ; running jingle
+        cp   $01              ; JINGLE_TREASURE_FOUND
+        jp   nz, $776E        ; not running: original start of NOISE_SFX_KIRBY_INHALE
+        xor  a
+        ldh  [rNR12], a       ; silence channel 1
+        ldh  [rNR22], a       ; silence channel 2 (channel 3 is silenced by the end code)
+        call $42BB            ; treasure jingle end code: unmute music ch2/3, clear flags
+        jp   $776E            ; original start of NOISE_SFX_KIRBY_INHALE
+    """, 0x7C00, labels)
+    rom.patch(0x1F, 0x3C00, "00" * (len(code) // 2), code)
+
+    # NoiseSfxHandlersTable1 entry for $3B (1F:6460) -> new start routine
+    k = labels["KirbyInhaleStart"]
+    rom.patch(0x1F, 0x2460, "6E77", "%02X%02X" % (k & 0xFF, k >> 8))
 
 def easyColorDungeonAccess(rom):
     re = RoomEditor(rom, 0x312)
