@@ -279,7 +279,7 @@ class World:
         self._addEntrance("castle_upper_left", castle_top_outside, castle_inside, None)
         self._addEntrance("castle_upper_right", castle_top_outside, castle_top_inside, None)
         Location().add(GoldLeaf(0x05A)).connect(castle_courtyard, r.enemy_requirements["MAD_BOMBER"])  # mad bomber, enemy hiding in the 6 holes
-        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(OR[POWER_BRACELET, BOMB], r.enemy_requirements["CROW"]))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
+        crow_gold_leaf = Location().add(GoldLeaf(0x058)).connect(castle_courtyard, AND(OR(POWER_BRACELET, BOMB), r.enemy_requirements["CROW"]))  # bird on tree, can't kill with bomb cause it flies off. immune to magic_powder
         Location().add(GoldLeaf(0x2D2)).connect(castle_inside, AND(r.enemy_requirements["MOBLIN"], r.enemy_requirements["ZOL"]))  # in the castle, kill enemies
         Location().add(GoldLeaf(0x2C5)).connect(castle_inside, AND(BOMB, r.enemy_requirements["MOBLIN_SWORD"]))  # in the castle, bomb wall to show enemy
         kanalet_chain_trooper = Location().add(GoldLeaf(0x2C6))  # in the castle, spinning spikeball enemy
