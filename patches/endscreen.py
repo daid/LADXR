@@ -25,27 +25,29 @@ def updateEndScreen(rom):
     xor a
     ldh  [$FF40], a
     
-    ld  hl, $8000
-    ld  de, $4400
-copyLoop:
-    ld  a, [de]
-    inc de
-    ldi [hl], a
-    bit 4, h
-    jr  z, copyLoop
+    ; Copy all tiles with DMA
+    ld  a, $44
+    ldh [$FF51], a
+    ld  a, $00
+    ldh [$FF52], a
+    ld  a, $80
+    ldh [$FF53], a
+    ld  a, $00
+    ldh [$FF54], a
+    ld  a, $7f
+    ldh [$FF55], a
+    ldh [$FF55], a
 
     ld  a, $01
-    ldh [$FF4F], a
+    ldh [rVBK], a
 
-    ld  hl, $8000
-    ld  de, $5400
-copyLoop2:
-    ld  a, [de]
-    inc de
-    ldi [hl], a
-    bit 4, h
-    jr  z, copyLoop2
+    ld  a, $80
+    ldh [$FF53], a
+    ld  a, $7f
+    ldh [$FF55], a
+    ldh [$FF55], a
 
+    ; Copy the tilemap
     ld  hl, $9800
     ld  de, $4400 + (20 * 18 * $10)
     ld  b, 18
@@ -54,7 +56,7 @@ copyAttrLoop2:
 copyAttrLoop1:
     ld  a, [de]
     inc de
-    ldi [hl], a
+    ld  [hl+], a
     dec c
     jr  nz, copyAttrLoop1
     push de
@@ -65,13 +67,13 @@ copyAttrLoop1:
     jr  nz, copyAttrLoop2
 
     xor  a
-    ldh  [$FF4F], a
+    ldh  [rVBK], a
 
     ld  hl, $9800
     ld  de, $000C
     xor  a
 loadLoop1:
-    ldi  [hl], a
+    ld   [hl+], a
     ld   b, a
     ld   a, l
     and  $1F
@@ -84,7 +86,7 @@ loadLoop1:
     jr   nz, loadLoop1
 
 loadLoop2:
-    ldi  [hl], a
+    ld   [hl+], a
     ld   b, a
     ld   a, l
     and  $1F
@@ -103,7 +105,7 @@ loadLoop2:
 .copyPalLoop:
     ld   a, [de]
     inc  de
-    ldi  [hl], a
+    ld   [hl+], a
     dec  c
     jr   nz, .copyPalLoop
 
@@ -116,7 +118,7 @@ loadLoop2:
 
     ; Enable LCD
     ld  a, $91
-    ldh [$FF40], a
+    ldh [rLCDC], a
     ld  [$d6fd], a
     
     xor a
